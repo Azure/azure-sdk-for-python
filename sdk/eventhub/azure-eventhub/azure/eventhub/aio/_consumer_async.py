@@ -7,7 +7,7 @@ import uuid
 import asyncio
 import logging
 from collections import deque
-from typing import TYPE_CHECKING, Callable, Awaitable, Dict, Optional, Union, List
+from typing import TYPE_CHECKING, Callable, Awaitable, Dict, Optional, Union, List, Any, Deque
 from functools import partial
 
 from ._client_base_async import ConsumerProducerMixin
@@ -17,8 +17,6 @@ from .._utils import create_properties, event_position_selector
 from .._constants import EPOCH_SYMBOL, TIMEOUT_SYMBOL, RECEIVER_RUNTIME_METRIC_SYMBOL
 
 if TYPE_CHECKING:
-    from typing import Deque
-
     try:
         from uamqp import (  # pylint: disable=unused-import
             ReceiveClientAsync as uamqp_ReceiveClientAsync,
@@ -77,12 +75,12 @@ class EventHubConsumer(
         It is set to `False` by default.
     """
 
-    def __init__(self, client: "EventHubConsumerClient", source: str, **kwargs) -> None:
+    def __init__(self, client: "EventHubConsumerClient", source: str, **kwargs: Any) -> None:
         super().__init__()
         event_position = kwargs.get("event_position", None)
         prefetch = kwargs.get("prefetch", 300)
         owner_level = kwargs.get("owner_level", None)
-        keep_alive = kwargs.get("keep_alive", None)
+        keep_alive = kwargs.get("keep_alive", 30)
         auto_reconnect = kwargs.get("auto_reconnect", True)
         track_last_enqueued_event_properties = kwargs.get(
             "track_last_enqueued_event_properties", False
@@ -126,20 +124,20 @@ class EventHubConsumer(
         ) * self._amqp_transport.TIMEOUT_FACTOR
         link_properties[TIMEOUT_SYMBOL] = int(link_property_timeout_ms)
         self._link_properties: Union[
-            Dict[uamqp_AMQPType, uamqp_AMQPType], Dict[types.AMQPTypes, types.AMQPTypes]
+            Dict["uamqp_AMQPType", "uamqp_AMQPType"], Dict[types.AMQPTypes, types.AMQPTypes]
         ] = self._amqp_transport.create_link_properties(link_properties)
         self._handler: Optional[ReceiveClientAsync] = None
         self._track_last_enqueued_event_properties = (
             track_last_enqueued_event_properties
         )
-        self._message_buffer: Deque[uamqp_Message] = deque()
+        self._message_buffer: Deque["uamqp_Message"] = deque()
         self._last_received_event: Optional[EventData] = None
         self._message_buffer_lock = asyncio.Lock()
         self._last_callback_called_time = None
         self._callback_task_run = None
 
     def _create_handler(
-        self, auth: Union[uamqp_JWTTokenAsync, JWTTokenAuthAsync]
+        self, auth: Union["uamqp_JWTTokenAsync", JWTTokenAuthAsync]
     ) -> None:
         source = self._amqp_transport.create_source(
             self._source,
@@ -159,6 +157,7 @@ class EventHubConsumer(
             network_trace=self._client._config.network_tracing,  # pylint:disable=protected-access
             link_credit=self._prefetch,
             link_properties=self._link_properties,
+            timeout=self._timeout,
             idle_timeout=self._idle_timeout,
             retry_policy=self._retry_policy,
             keep_alive_interval=self._keep_alive,
@@ -187,7 +186,10 @@ class EventHubConsumer(
         return event_data
 
     async def receive(
-        self, batch=False, max_batch_size=300, max_wait_time=None
+        self,
+        batch: Union[Optional[int], bool] = False,
+        max_batch_size: int = 300,
+        max_wait_time: Optional[float] = None
     ) -> None:
         await self._amqp_transport.receive_messages_async(
             self, batch, max_batch_size, max_wait_time

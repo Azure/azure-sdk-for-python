@@ -17,7 +17,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class AzureApplicationCredential(ChainedTokenCredential):
-    """A credential for Azure Active Directory applications.
+    """A credential for Microsoft Entra applications.
 
     This credential is designed for applications deployed to Azure (:class:`~azure.identity.aio.DefaultAzureCredential`
     is better suited to local development). It authenticates service principals and managed identities.
@@ -36,15 +36,15 @@ class AzureApplicationCredential(ChainedTokenCredential):
         - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM-encoded certificate file including the private key. The
           certificate must not be password-protected.
 
-    See `Azure CLI documentation <https://docs.microsoft.com/cli/azure/create-an-azure-service-principal-azure-cli>`_
+    See `Azure CLI documentation <https://learn.microsoft.com/cli/azure/create-an-azure-service-principal-azure-cli>`_
     for more information about creating and managing service principals.
 
     When this environment configuration is incomplete, the credential will attempt to authenticate a managed identity.
-    See `Azure Active Directory documentation
-    <https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview>`_ for an overview of
-    managed identities.
+    See `Microsoft Entra ID documentation
+    <https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview>`__ for an overview
+    of managed identities.
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud, which is the default when no value is given for this keyword argument or
         environment variable AZURE_AUTHORITY_HOST. :class:`~azure.identity.AzureAuthorityHosts` defines authorities for
         other clouds. Authority configuration applies only to service principal authentication.
@@ -71,7 +71,7 @@ class AzureApplicationCredential(ChainedTokenCredential):
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
-            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+            https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.

@@ -27,15 +27,22 @@ import asyncio
 from collections.abc import AsyncIterator
 import functools
 import logging
-from typing import Any, Optional, AsyncIterator as AsyncIteratorType, Union, TYPE_CHECKING, overload, Type
+from typing import (
+    Any,
+    Optional,
+    AsyncIterator as AsyncIteratorType,
+    Union,
+    TYPE_CHECKING,
+    overload,
+    Type,
+    MutableMapping,
+)
 from types import TracebackType
 from urllib3.exceptions import (
     ProtocolError,
     NewConnectionError,
     ConnectTimeoutError,
 )
-
-
 import requests
 
 from azure.core.exceptions import (
@@ -106,7 +113,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
 
     @overload  # type: ignore
     async def send(  # pylint:disable=invalid-overridden-method
-        self, request: HttpRequest, **kwargs: Any
+        self, request: HttpRequest, *, proxies: Optional[MutableMapping[str, str]] = None, **kwargs: Any
     ) -> AsyncHttpResponse:
         """Send the request using this HTTP sender.
 
@@ -115,14 +122,12 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
 
-        :keyword requests.Session session: will override the driver session and use yours.
-         Should NOT be done unless really required. Anything else is sent straight to requests.
-        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
     @overload
     async def send(  # pylint:disable=invalid-overridden-method
-        self, request: "RestHttpRequest", **kwargs: Any
+        self, request: "RestHttpRequest", *, proxies: Optional[MutableMapping[str, str]] = None, **kwargs: Any
     ) -> "RestAsyncHttpResponse":
         """Send a `azure.core.rest` request using this HTTP sender.
 
@@ -131,13 +136,15 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.rest.AsyncHttpResponse
 
-        :keyword requests.Session session: will override the driver session and use yours.
-         Should NOT be done unless really required. Anything else is sent straight to requests.
-        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
     async def send(  # pylint:disable=invalid-overridden-method
-        self, request: Union[HttpRequest, "RestHttpRequest"], **kwargs
+        self,
+        request: Union[HttpRequest, "RestHttpRequest"],
+        *,
+        proxies: Optional[MutableMapping[str, str]] = None,
+        **kwargs
     ) -> Union[AsyncHttpResponse, "RestAsyncHttpResponse"]:
         """Send the request using this HTTP sender.
 
@@ -146,9 +153,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
 
-        :keyword requests.Session session: will override the driver session and use yours.
-         Should NOT be done unless really required. Anything else is sent straight to requests.
-        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
         loop = kwargs.get("loop", _get_running_loop())
@@ -169,6 +174,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
                     timeout=kwargs.pop("connection_timeout", self.connection_config.timeout),
                     cert=kwargs.pop("connection_cert", self.connection_config.cert),
                     allow_redirects=False,
+                    proxies=proxies,
                     **kwargs
                 ),
             )

@@ -45,6 +45,7 @@ __version__ = VERSION
 
 _SUPPRESSED_SPAN_FLAG = "SUPPRESSED_SPAN_FLAG"
 _LAST_UNSUPPRESSED_SPAN = "LAST_UNSUPPRESSED_SPAN"
+_ERROR_SPAN_ATTRIBUTE = "error.type"
 
 
 class OpenTelemetrySpan(HttpSpanMixin, object):
@@ -79,17 +80,23 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         otel_kind = (
             OpenTelemetrySpanKind.CLIENT
             if span_kind == SpanKind.CLIENT
-            else OpenTelemetrySpanKind.PRODUCER
-            if span_kind == SpanKind.PRODUCER
-            else OpenTelemetrySpanKind.SERVER
-            if span_kind == SpanKind.SERVER
-            else OpenTelemetrySpanKind.CONSUMER
-            if span_kind == SpanKind.CONSUMER
-            else OpenTelemetrySpanKind.INTERNAL
-            if span_kind == SpanKind.INTERNAL
-            else OpenTelemetrySpanKind.INTERNAL
-            if span_kind == SpanKind.UNSPECIFIED
-            else None
+            else (
+                OpenTelemetrySpanKind.PRODUCER
+                if span_kind == SpanKind.PRODUCER
+                else (
+                    OpenTelemetrySpanKind.SERVER
+                    if span_kind == SpanKind.SERVER
+                    else (
+                        OpenTelemetrySpanKind.CONSUMER
+                        if span_kind == SpanKind.CONSUMER
+                        else (
+                            OpenTelemetrySpanKind.INTERNAL
+                            if span_kind == SpanKind.INTERNAL
+                            else OpenTelemetrySpanKind.INTERNAL if span_kind == SpanKind.UNSPECIFIED else None
+                        )
+                    )
+                )
+            )
         )
         if span_kind and otel_kind is None:
             raise ValueError("Kind {} is not supported in OpenTelemetry".format(span_kind))
@@ -164,15 +171,19 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         return (
             SpanKind.CLIENT
             if value == OpenTelemetrySpanKind.CLIENT
-            else SpanKind.PRODUCER
-            if value == OpenTelemetrySpanKind.PRODUCER
-            else SpanKind.SERVER
-            if value == OpenTelemetrySpanKind.SERVER
-            else SpanKind.CONSUMER
-            if value == OpenTelemetrySpanKind.CONSUMER
-            else SpanKind.INTERNAL
-            if value == OpenTelemetrySpanKind.INTERNAL
-            else None
+            else (
+                SpanKind.PRODUCER
+                if value == OpenTelemetrySpanKind.PRODUCER
+                else (
+                    SpanKind.SERVER
+                    if value == OpenTelemetrySpanKind.SERVER
+                    else (
+                        SpanKind.CONSUMER
+                        if value == OpenTelemetrySpanKind.CONSUMER
+                        else SpanKind.INTERNAL if value == OpenTelemetrySpanKind.INTERNAL else None
+                    )
+                )
+            )
         )
 
     @kind.setter
@@ -185,17 +196,23 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         kind = (
             OpenTelemetrySpanKind.CLIENT
             if value == SpanKind.CLIENT
-            else OpenTelemetrySpanKind.PRODUCER
-            if value == SpanKind.PRODUCER
-            else OpenTelemetrySpanKind.SERVER
-            if value == SpanKind.SERVER
-            else OpenTelemetrySpanKind.CONSUMER
-            if value == SpanKind.CONSUMER
-            else OpenTelemetrySpanKind.INTERNAL
-            if value == SpanKind.INTERNAL
-            else OpenTelemetrySpanKind.INTERNAL
-            if value == SpanKind.UNSPECIFIED
-            else None
+            else (
+                OpenTelemetrySpanKind.PRODUCER
+                if value == SpanKind.PRODUCER
+                else (
+                    OpenTelemetrySpanKind.SERVER
+                    if value == SpanKind.SERVER
+                    else (
+                        OpenTelemetrySpanKind.CONSUMER
+                        if value == SpanKind.CONSUMER
+                        else (
+                            OpenTelemetrySpanKind.INTERNAL
+                            if value == SpanKind.INTERNAL
+                            else OpenTelemetrySpanKind.INTERNAL if value == SpanKind.UNSPECIFIED else None
+                        )
+                    )
+                )
+            )
         )
         if kind is None:
             raise ValueError("Kind {} is not supported in OpenTelemetry".format(value))
@@ -226,6 +243,10 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
 
     def __exit__(self, exception_type, exception_value, traceback) -> None:
         # Finish the span.
+        if exception_type:
+            module = exception_type.__module__ if exception_type.__module__ != "builtins" else ""
+            error_type = f"{module}.{exception_type.__qualname__}" if module else exception_type.__qualname__
+            self.add_attribute(_ERROR_SPAN_ATTRIBUTE, error_type)
         if self._current_ctxt_manager:
             self._current_ctxt_manager.__exit__(exception_type, exception_value, traceback)  # pylint: disable=no-member
             self._current_ctxt_manager = None

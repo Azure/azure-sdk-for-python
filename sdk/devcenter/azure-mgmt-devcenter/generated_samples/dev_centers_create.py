@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.devcenter import DevCenterMgmtClient
 
 """
@@ -32,11 +35,15 @@ def main():
     response = client.dev_centers.begin_create_or_update(
         resource_group_name="rg1",
         dev_center_name="Contoso",
-        body={"location": "centralus", "properties": {}, "tags": {"CostCode": "12345"}},
+        body={
+            "location": "centralus",
+            "properties": {"displayName": "ContosoDevCenter"},
+            "tags": {"CostCode": "12345"},
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/stable/2023-04-01/examples/DevCenters_Create.json
+# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/stable/2024-02-01/examples/DevCenters_Create.json
 if __name__ == "__main__":
     main()

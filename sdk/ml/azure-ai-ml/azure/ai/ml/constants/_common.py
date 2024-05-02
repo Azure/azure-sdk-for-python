@@ -17,6 +17,7 @@ TYPE = "type"
 JOBLIMITSTYPE = "JobLimitsType"
 DATA_ARM_TYPE = "data"
 ARM_ID_PREFIX = "azureml:"
+PROMPTFLOW_AZUREML_OVERRIDE_KEY = "azureml"
 CURATED_ENV_PREFIX = "AzureML-"
 FILE_PREFIX = "file:"
 FOLDER_PREFIX = "folder:"
@@ -55,6 +56,11 @@ PYTHON = "python"
 AML_TOKEN_YAML = "aml_token"
 AAD_TOKEN_YAML = "aad_token"
 KEY = "key"
+AAD_TOKEN = "aadtoken"
+AAD_TOKEN_RESOURCE_ENDPOINT = "https://ml.azure.com"
+EMPTY_CREDENTIALS_ERROR = (
+    "Credentials unavailable. Initialize credentials using 'MLClient' for SDK or 'az login' for CLI."
+)
 DEFAULT_ARM_RETRY_INTERVAL = 60
 COMPONENT_TYPE = "type"
 TID_FMT = "&tid={}"
@@ -133,7 +139,6 @@ CREATE_ENVIRONMENT_ERROR_MESSAGE = (
     "--file/-f is reserved for the Azure ML Environment definition (see schema here: {}). "
     "To specify a conda file via command-line argument, please use --conda-file/-c argument."
 )
-API_URL_KEY = "api"
 ANONYMOUS_ENV_NAME = "CliV2AnonymousEnvironment"
 SKIP_VALIDATION_MESSAGE = "To skip this validation use the --skip-validation param"
 MLTABLE_METADATA_SCHEMA_URL_FALLBACK = "https://azuremlschemasprod.azureedge.net/latest/MLTable.schema.json"
@@ -182,6 +187,27 @@ SPARK_ENVIRONMENT_WARNING_MESSAGE = (
     "Spark job will only install the packages defined in the Conda configuration. It "
     "will not create a docker container using the image defined in the environment."
 )
+CONNECTION_API_VERSION_KEY = "ApiVersion"
+CONNECTION_API_TYPE_KEY = "ApiType"
+CONNECTION_KIND_KEY = "Kind"
+CONNECTION_CONTAINER_NAME_KEY = "ContainerName"
+CONNECTION_ACCOUNT_NAME_KEY = "AccountName"
+CONNECTION_RESOURCE_ID_KEY = "ResourceId"
+
+
+class WorkspaceDiscoveryUrlKey(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum that captures keys URL types returned from querying a workspace's discovery url."""
+
+    API = "api"
+    CATALOG = "catalog"
+    EXPERIMENTATION = "experimentation"
+    GALLERY = "gallery"
+    HISTORY = "history"
+    HYPERDRIVE = "hyperdrive"
+    LABELING = "labeling"
+    MODEL_MANAGEMENT = "modelmanagement"
+    PIPELINES = "pipelines"
+    STUDIO = "studio"
 
 
 class DefaultOpenEncoding:
@@ -224,8 +250,8 @@ class AzureMLResourceType:
     """Virtual cluster resource type."""
     WORKSPACE = "workspaces"
     """Workspace resource type."""
-    WORKSPACE_CONNECTION = "workspace_connections"
-    """Workspace connection resource type."""
+    CONNECTION = "connections"
+    """connection resource type."""
     COMPONENT = "components"
     """Component resource type."""
     SCHEDULE = "schedules"
@@ -240,8 +266,16 @@ class AzureMLResourceType:
     """Feature store entity resource type."""
     FEATURE_STORE = "feature_store"
     """Feature store resource type."""
-    WORKSPACE_HUB = "workspace_hub"
-    """WorkspaceHub resource type."""
+    HUB = "hub"
+    """Hub resource type."""
+    PROJECT = "project"
+    """Project resource type."""
+    SERVERLESS_ENDPOINT = "serverless_endpoints"
+    """Serverless endpoint resource type."""
+    MARKETPLACE_SUBSCRIPTION = "marketplace_subscriptions"
+    """Marketplace subscription resource type."""
+    INDEX = "indexes"
+    """Index resource type."""
 
     NAMED_TYPES = {
         JOB,
@@ -252,7 +286,7 @@ class AzureMLResourceType:
         DATASTORE,
         SCHEDULE,
     }
-    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURE_SET, FEATURE_STORE_ENTITY}
+    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURE_SET, FEATURE_STORE_ENTITY, INDEX}
 
 
 class ArmConstants:
@@ -303,11 +337,13 @@ class ArmConstants:
     ENVIRONMENT_TYPE = "environment"
     ENVIRONMENT_VERSION_TYPE = "environment_version"
     ONLINE_ENDPOINT_TYPE = "online_endpoint"
+    MULTIPLE_ENDPOINTS_TYPE = "endpoints"
     ONLINE_DEPLOYMENT_TYPE = "online_deployment"
     UPDATE_ONLINE_ENDPOINT_TYPE = "update_online_endpoint"
     BASE_TYPE = "base"
     WORKSPACE_BASE = "workspace_base"
     WORKSPACE_PARAM = "workspace_param"
+    ROLE_ASSIGNMENTS = "roleAssignments"
     FEATURE_STORE_ROLE_ASSIGNMENTS = "feature_store_role_assignments"
     FEATURE_STORE_ROLE_ASSIGNMENTS_PARAM = "feature_store_role_assignments_param"
     WORKSPACE_PROJECT = "workspace_project"
@@ -324,10 +360,12 @@ class ArmConstants:
     DEFAULT_VALUE = "defaultValue"
 
     STORAGE = "StorageAccount"
+    STORAGE_CONTAINER = "StorageContainer"
     KEY_VAULT = "KeyVault"
     APP_INSIGHTS = "AppInsights"
     LOG_ANALYTICS = "LogAnalytics"
     WORKSPACE = "Workspace"
+    CONTAINER_REGISTRY = "ContainerRegistry"
 
     AZURE_MGMT_RESOURCE_API_VERSION = "2020-06-01"
     AZURE_MGMT_STORAGE_API_VERSION = "2019-06-01"
@@ -380,6 +418,7 @@ class CommonYamlFields:
     """Name."""
     SCHEMA = "$schema"
     """Schema."""
+    KIND = "kind"
 
 
 class SchemaUrl:
@@ -480,7 +519,7 @@ class YAMLRefDocLinks:
     FEATURE_STORE = "https://aka.ms/ml-cli-v2-featurestore-yaml-reference"
     FEATURE_SET = "https://aka.ms/ml-cli-v2-featureset-yaml-reference"
     FEATURE_STORE_ENTITY = "https://aka.ms/ml-cli-v2-featurestore-entity-yaml-reference"
-    WORKSPACEHUB = "https://aka.ms/ml-cli-v2-workspace-hub-entity-yaml-reference"
+    HUB = "https://aka.ms/ml-cli-v2-workspace-hub-entity-yaml-reference"
 
 
 class YAMLRefDocSchemaNames:
@@ -782,6 +821,33 @@ class InputOutputModes:
     """Direct asset type."""
 
 
+class ConnectionTypes:
+    """Names for connection types that are different from that underlying api enum values
+    from the ConnectionCategory class."""
+
+    CUSTOM = "custom"  # Corresponds to "custom_keys".
+    AZURE_DATA_LAKE_GEN_2 = "azure_data_lake_gen2"  # Corresponds to "alds_gen2".
+    AZURE_CONTENT_SAFETY = "azure_content_safety"  # Corresponds to "cognitive_service" with kind "content_safety".
+    AZURE_SPEECH_SERVICES = "azure_speech_services"  # Corresponds to "cognitive_service" with kind "speech".
+    AZURE_SEARCH = "azure_ai_search"  # Corresponds to "cognitive_search"
+    AZURE_AI_SERVICES = "azure_ai_services"  # Corresponds to "ai_services"
+    AI_SERVICES_REST_PLACEHOLDER = "AIServices"  # placeholder until REST enum "ai_services" is published.
+
+
+class OneLakeArtifactTypes:
+    """Names for fabric types that specific sub-types of MicrosoftOneLakeConnections"""
+
+    ONE_LAKE = "lake_house"
+
+
+class CognitiveServiceKinds:
+    """Subtypes for connections using the Cognitive serive type. These
+    values are plugged into the connection's metadata."""
+
+    CONTENT_SAFETY = "content_safety"
+    SPEECH = "speech"
+
+
 class LegacyAssetTypes:
     """LegacyAssetTypes is an enumeration of values for the legacy asset types.
 
@@ -893,3 +959,12 @@ class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class AutoDeleteCondition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CREATED_GREATER_THAN = "created_greater_than"
     LAST_ACCESSED_GREATER_THAN = "last_accessed_greater_than"
+
+
+class WorkspaceKind:
+    """Enum of workspace categories."""
+
+    DEFAULT = "default"
+    HUB = "hub"
+    PROJECT = "project"
+    FEATURE_STORE = "featurestore"

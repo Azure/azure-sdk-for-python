@@ -4,7 +4,7 @@ import warnings
 import sys
 from urllib.request import urlopen
 from azure.eventgrid._generated import models
-from _constants import files, backward_compat, additional_events, EXCEPTIONS
+from _constants import files, backward_compat, additional_events, EXCEPTIONS, NAMING_CHANGES
 
 def extract(definitions):
     if not definitions:
@@ -12,13 +12,21 @@ def extract(definitions):
     tups = []
     for event in definitions:
         if event.endswith('Data') and event not in EXCEPTIONS:
+            key, txt = "Name".join(event.rsplit('Data', 1)), definitions[event]['description']
+            if key in NAMING_CHANGES:
+                key = key.replace("Acs", "AcsAdvanced")
             try:
-                key, txt = "Name".join(event.rsplit('Data', 1)), definitions[event]['description']
-                val = re.findall("Microsoft.[a-zA-Z]+.[a-zA-Z]+", txt)
+                val = re.findall("Microsoft.[a-zA-Z]+.[a-zA-Z]+.[a-zA-Z]+", txt)
+                if " event" in val[0]:
+                    val[0] = val[0].split(" event")[0]
                 tups.append((key, val[0]))
             except:
-                warnings.warn("Unable to generate the event mapping for {}".format(event[0]))
-                sys.exit(1)
+                try:
+                    val = re.findall("Microsoft.[a-zA-Z]+.[a-zA-Z]+", txt)
+                    tups.append((key, val[0]))
+                except:
+                    warnings.warn("Unable to generate the event mapping for {}".format(event[0]))
+                    sys.exit(1)
     return tups
 
 def generate_enum_content(tuples):

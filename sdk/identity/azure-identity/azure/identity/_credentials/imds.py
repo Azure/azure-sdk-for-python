@@ -21,7 +21,8 @@ IMDS_TOKEN_PATH = "/metadata/identity/oauth2/token"
 
 PIPELINE_SETTINGS = {
     "connection_timeout": 2,
-    "retry_backoff_factor": 2,
+    # Five retries, with each retry sleeping for [0.0s, 1.6s, 3.2s, 6.4s, 12.8s] between attempts.
+    "retry_backoff_factor": 0.8,
     "retry_backoff_max": 60,
     "retry_on_status_codes": [404, 410, 429] + list(range(500, 600)),
     "retry_status": 5,
@@ -43,13 +44,13 @@ def _check_forbidden_response(ex: HttpResponseError) -> None:
     """Special case handling for Docker Desktop.
 
     Docker Desktop proxies all HTTP traffic, and if the IMDS endpoint is unreachable, it
-    responds with a 403 with a message that contains "A socket operation was attempted to an unreachable network".
+    responds with a 403 with a message that contains "unreachable".
 
     :param ~azure.core.exceptions.HttpResponseError ex: The exception raised by the request
     :raises ~azure.core.exceptions.CredentialUnavailableError: When the IMDS endpoint is unreachable
     """
     if ex.status_code == 403:
-        if ex.message and "A socket operation was attempted to an unreachable network" in ex.message:
+        if ex.message and "unreachable" in ex.message:
             error_message = f"ManagedIdentityCredential authentication unavailable. Error: {ex.message}"
             raise CredentialUnavailableError(message=error_message) from ex
 
@@ -65,7 +66,7 @@ class ImdsCredential(GetTokenMixin):
             self._endpoint_available = None
         self._user_assigned_identity = "client_id" in kwargs or "identity_config" in kwargs
 
-    def __enter__(self):
+    def __enter__(self) -> "ImdsCredential":
         self._client.__enter__()
         return self
 

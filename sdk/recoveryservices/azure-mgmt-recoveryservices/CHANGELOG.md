@@ -1,5 +1,22 @@
 # Release History
 
+## 3.0.0 (2024-04-22)
+
+### Features Added
+
+  - Model AzureMonitorAlertSettings has a new parameter alerts_for_all_failover_issues
+  - Model AzureMonitorAlertSettings has a new parameter alerts_for_all_replication_issues
+  - Model ClassicAlertSettings has a new parameter email_notifications_for_site_recovery
+  - Model SoftDeleteSettings has a new parameter enhanced_security_state
+  - Model VaultProperties has a new parameter bcdr_security_level
+  - Model VaultProperties has a new parameter resource_guard_operation_requests
+  - Operation VaultsOperations.begin_create_or_update has a new optional parameter x_ms_authorization_auxiliary
+  - Operation VaultsOperations.begin_update has a new optional parameter x_ms_authorization_auxiliary
+
+### Breaking Changes
+
+  - Renamed operation VaultsOperations.delete to VaultsOperations.begin_delete
+
 ## 2.5.0 (2023-09-05)
 
 ### Features Added

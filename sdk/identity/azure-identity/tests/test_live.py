@@ -10,6 +10,9 @@ from azure.identity import (
     ClientSecretCredential,
     DeviceCodeCredential,
     UsernamePasswordCredential,
+    AzureCliCredential,
+    AzurePowerShellCredential,
+    AzureDeveloperCliCredential,
 )
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 
@@ -36,18 +39,21 @@ def test_certificate_credential(certificate_fixture, request):
     credential = CertificateCredential(tenant_id, client_id, cert["cert_path"])
     get_token(credential)
 
-    credential = CertificateCredential(tenant_id, client_id, cert["cert_with_password_path"], password=cert["password"])
-    get_token(credential)
-
     credential = CertificateCredential(tenant_id, client_id, certificate_data=cert["cert_bytes"])
-    get_token(credential)
-
-    credential = CertificateCredential(
-        tenant_id, client_id, certificate_data=cert["cert_with_password_bytes"], password=cert["password"]
-    )
     token = get_token(credential, enable_cae=True)
     parsed_payload = get_token_payload_contents(token.token)
     assert "xms_cc" in parsed_payload and "CP1" in parsed_payload["xms_cc"]
+
+    if "password" in cert:
+        credential = CertificateCredential(
+            tenant_id, client_id, cert["cert_with_password_path"], password=cert["password"]
+        )
+        get_token(credential)
+
+        credential = CertificateCredential(
+            tenant_id, client_id, certificate_data=cert["cert_with_password_bytes"], password=cert["password"]
+        )
+        get_token(credential)
 
 
 def test_client_secret_credential(live_service_principal):
@@ -73,6 +79,24 @@ def test_username_password_auth(live_user_details):
         password=live_user_details["password"],
         tenant_id=live_user_details["tenant"],
     )
+    get_token(credential)
+
+
+@pytest.mark.manual
+def test_cli_credential():
+    credential = AzureCliCredential()
+    get_token(credential)
+
+
+@pytest.mark.manual
+def test_dev_cli_credential():
+    credential = AzureDeveloperCliCredential()
+    get_token(credential)
+
+
+@pytest.mark.manual
+def test_powershell_credential():
+    credential = AzurePowerShellCredential()
     get_token(credential)
 
 

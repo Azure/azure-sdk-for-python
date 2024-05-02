@@ -63,8 +63,8 @@ class EventProcessor(
             Awaitable[None],
         ],
         *,
-        batch: Optional[bool] = False,
-        max_batch_size: Optional[int] = 300,
+        batch: bool = False,
+        max_batch_size: int = 300,
         max_wait_time: Optional[float] = None,
         partition_id: Optional[str] = None,
         checkpoint_store: Optional[CheckpointStore] = None,
@@ -113,8 +113,8 @@ class EventProcessor(
         self._load_balancing_strategy = (
             load_balancing_strategy or LoadBalancingStrategy.GREEDY
         )
-        self._tasks = {}  # type: Dict[str, asyncio.Task]
-        self._partition_contexts = {}  # type: Dict[str, PartitionContext]
+        self._tasks: Dict[str, asyncio.Task] = {}
+        self._partition_contexts: Dict[str, PartitionContext] = {}
         self._owner_level = owner_level
         if checkpoint_store and self._owner_level is None:
             self._owner_level = 0
@@ -126,7 +126,7 @@ class EventProcessor(
         self._internal_kwargs = get_dict_with_loop_if_needed(loop)
         self._running = False
 
-        self._consumers = {}  # type: Dict[str, EventHubConsumer]
+        self._consumers: Dict[str, EventHubConsumer] = {}
         self._ownership_manager = OwnershipManager(
             cast("EventHubConsumerClient", self._eventhub_client),
             self._consumer_group,
@@ -280,6 +280,7 @@ class EventProcessor(
                 initial_event_position,
                 event_position_inclusive,
             ) = self.get_init_event_position(partition_id, checkpoint)
+            partition_context: PartitionContext
             if partition_id in self._partition_contexts:
                 partition_context = self._partition_contexts[partition_id]
                 partition_context._last_received_event = (  # pylint:disable=protected-access

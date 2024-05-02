@@ -20,13 +20,14 @@ USAGE:
     3) AZURE_SEARCH_API_KEY - your search API key
 """
 
+from typing import List, Dict, cast
 import os
 import asyncio
 
 
-service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
-index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
-key = os.getenv("AZURE_SEARCH_API_KEY")
+service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
+index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
+key = os.environ["AZURE_SEARCH_API_KEY"]
 
 
 async def filter_query():
@@ -39,7 +40,7 @@ async def filter_query():
     async with search_client:
         results = await search_client.search(search_text="WiFi", facets=["category,count:3", "parkingIncluded"])
 
-        facets = await results.get_facets()
+        facets: Dict[str, List[str]] = cast(Dict[str, List[str]], await results.get_facets())
 
         print("Catgory facet counts for hotels:")
         for facet in facets["category"]:

@@ -82,6 +82,14 @@ class UpdateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Updates installation failed but are ready to retry again."""
     RETRY_LATER = "RetryLater"
     """Updates installation failed and should be retried later."""
+    NO_UPDATES_PENDING = "NoUpdatesPending"
+    """No updates are pending."""
+    CANCEL = "Cancel"
+    """Cancel the schedule and stop creating PMR for resources part of it. Applicable to Maintenance
+    #: Configuration resource type only."""
+    CANCELLED = "Cancelled"
+    """Send the Cancelled response to the user if request came to cancel the schedule. Applicable to
+    #: Maintenance Configuration resource type only."""
 
 
 class Visibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):

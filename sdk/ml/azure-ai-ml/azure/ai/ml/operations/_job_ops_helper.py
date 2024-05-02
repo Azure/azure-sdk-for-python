@@ -11,7 +11,7 @@ import re
 import subprocess
 import sys
 import time
-from typing import Dict, Iterable, List, Optional, Union
+from typing import Any, Dict, Iterable, List, Optional, TextIO, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import get_datastore_info, list_logs_in_datastore
 from azure.ai.ml._restclient.runhistory.models import Run, RunDetails, TypedAssetReference
@@ -86,7 +86,7 @@ def _get_sorted_filtered_logs(
     return filtered_logs[previously_printed_index:]
 
 
-def _incremental_print(log: str, processed_logs: Dict[str, int], current_log_name: str, fileout) -> None:
+def _incremental_print(log: str, processed_logs: Dict[str, int], current_log_name: str, fileout: TextIO) -> None:
     """Incremental print.
 
     :param log:
@@ -118,7 +118,7 @@ def _incremental_print(log: str, processed_logs: Dict[str, int], current_log_nam
     processed_logs[current_log_name] = doc_length
 
 
-def _get_last_log_primary_instance(logs):
+def _get_last_log_primary_instance(logs: List) -> Any:
     """Return last log for primary instance.
 
     :param logs:
@@ -149,7 +149,7 @@ def _get_last_log_primary_instance(logs):
     return matching_logs[0]
 
 
-def _wait_before_polling(current_seconds):
+def _wait_before_polling(current_seconds: float) -> int:
     if current_seconds < 0:
         msg = "current_seconds must be positive"
         raise JobException(
@@ -161,13 +161,13 @@ def _wait_before_polling(current_seconds):
     import math
 
     # Sigmoid that tapers off near the_get_logs max at ~ 3 min
-    duration = RunHistoryConstants._WAIT_COMPLETION_POLLING_INTERVAL_MAX / (
-        1.0 + 100 * math.exp(-current_seconds / 20.0)
+    duration = int(
+        int(RunHistoryConstants._WAIT_COMPLETION_POLLING_INTERVAL_MAX) / (1.0 + 100 * math.exp(-current_seconds / 20.0))
     )
-    return max(RunHistoryConstants._WAIT_COMPLETION_POLLING_INTERVAL_MIN, duration)
+    return max(int(RunHistoryConstants._WAIT_COMPLETION_POLLING_INTERVAL_MIN), duration)
 
 
-def list_logs(run_operations: RunOperations, job_resource: JobBase):
+def list_logs(run_operations: RunOperations, job_resource: JobBase) -> Dict:
     details: RunDetails = run_operations.get_run_details(job_resource.name)
     logs_dict = details.log_files
     keys = _get_sorted_filtered_logs(logs_dict, job_resource.properties.job_type)
@@ -179,7 +179,7 @@ def stream_logs_until_completion(
     run_operations: RunOperations,
     job_resource: JobBase,
     datastore_operations: Optional[DatastoreOperations] = None,
-    raise_exception_on_failed_job=True,
+    raise_exception_on_failed_job: bool = True,
     *,
     requests_pipeline: HttpPipeline
 ) -> None:
@@ -193,6 +193,8 @@ def stream_logs_until_completion(
     :type datastore_operations: Optional[DatastoreOperations]
     :param raise_exception_on_failed_job: Should this method fail if job fails
     :type raise_exception_on_failed_job: Boolean
+    :keyword requests_pipeline: The HTTP pipeline to use for requests.
+    :type requests_pipeline: ~azure.ai.ml._utils._http_utils.HttpPipeline
     :return:
     :rtype: None
     """
@@ -258,7 +260,7 @@ def stream_logs_until_completion(
 
         _current_details: RunDetails = run_operations.get_run_details(job_name)
 
-        processed_logs = {}
+        processed_logs: Dict = {}
 
         poll_start_time = time.time()
         pipeline_with_retries = create_requests_pipeline_with_retry(requests_pipeline=requests_pipeline)
@@ -268,7 +270,7 @@ def stream_logs_until_completion(
         ):
             file_handle.flush()
             time.sleep(_wait_before_polling(time.time() - poll_start_time))
-            _current_details: RunDetails = run_operations.get_run_details(job_name)  # TODO use FileWatcher
+            _current_details = run_operations.get_run_details(job_name)  # TODO use FileWatcher
             if job_type.lower() in JobType.PIPELINE:
                 legacy_folder_name = "/logs/azureml/"
             else:
@@ -276,7 +278,7 @@ def stream_logs_until_completion(
             _current_logs_dict = (
                 list_logs_in_datastore(
                     ds_properties,
-                    prefix=prefix,
+                    prefix=str(prefix),
                     legacy_log_folder_name=legacy_folder_name,
                 )
                 if ds_properties is not None
@@ -360,12 +362,12 @@ def get_git_properties() -> Dict[str, str]:
     :rtype: dict
     """
 
-    def _clean_git_property_bool(value) -> Optional[bool]:
+    def _clean_git_property_bool(value: Any) -> Optional[bool]:
         if value is None:
             return None
         return str(value).strip().lower() in ["true", "1"]
 
-    def _clean_git_property_str(value) -> Optional[str]:
+    def _clean_git_property_str(value: Any) -> Optional[str]:
         if value is None:
             return None
         return str(value).strip() or None
@@ -383,14 +385,14 @@ def get_git_properties() -> Dict[str, str]:
                 return subprocess.check_output(["git"] + list(args), stderr=devnull).decode()
         except KeyboardInterrupt:
             raise
-        except BaseException:  # pylint: disable=broad-except
+        except BaseException:  # pylint: disable=W0718
             return None
 
     # Check for environment variable overrides.
     repository_uri = os.environ.get(GitProperties.ENV_REPOSITORY_URI, None)
     branch = os.environ.get(GitProperties.ENV_BRANCH, None)
     commit = os.environ.get(GitProperties.ENV_COMMIT, None)
-    dirty = os.environ.get(GitProperties.ENV_DIRTY, None)
+    dirty: Optional[Union[str, bool]] = os.environ.get(GitProperties.ENV_DIRTY, None)
     build_id = os.environ.get(GitProperties.ENV_BUILD_ID, None)
     build_uri = os.environ.get(GitProperties.ENV_BUILD_URI, None)
 
@@ -434,10 +436,10 @@ def get_git_properties() -> Dict[str, str]:
 
 
 def get_job_output_uris_from_dataplane(
-    job_name: str,
+    job_name: Optional[str],
     run_operations: RunOperations,
     dataset_dataplane_operations: DatasetDataplaneOperations,
-    model_dataplane_operations: ModelDataplaneOperations,
+    model_dataplane_operations: Optional[ModelDataplaneOperations],
     output_names: Optional[Union[Iterable[str], str]] = None,
 ) -> Dict[str, str]:
     """Returns the output path for the given output in cloud storage of the given job.
@@ -461,7 +463,7 @@ def get_job_output_uris_from_dataplane(
     :return: Dictionary mapping user-defined output name to output uri
     :rtype: Dict[str, str]
     """
-    run_metadata: Run = run_operations.get_run_data(job_name).run_metadata
+    run_metadata: Run = run_operations.get_run_data(str(job_name)).run_metadata
     run_outputs: Dict[str, TypedAssetReference] = run_metadata.outputs or {}
 
     # Create a reverse mapping from internal asset id to user-defined output name
@@ -500,7 +502,11 @@ def get_job_output_uris_from_dataplane(
     # This is a repeat of the logic above for models.
     output_name_to_model_uri = {}
     if model_ids:
-        model_uris = model_dataplane_operations.get_batch_model_uris(model_ids)
+        model_uris = (
+            model_dataplane_operations.get_batch_model_uris(model_ids)
+            if model_dataplane_operations is not None
+            else None
+        )
         output_name_to_model_uri = {asset_id_to_output_name[k]: v.path for k, v in model_uris.values.items()}
 
     return {**output_name_to_dataset_uri, **output_name_to_model_uri}

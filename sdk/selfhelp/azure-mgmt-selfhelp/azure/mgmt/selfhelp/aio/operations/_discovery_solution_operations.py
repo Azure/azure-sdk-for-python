@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -54,31 +54,28 @@ class DiscoverySolutionOperations:
 
     @distributed_trace
     def list(
-        self, scope: str, filter: Optional[str] = None, skiptoken: Optional[str] = None, **kwargs: Any
+        self, filter: Optional[str] = None, skiptoken: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable["_models.SolutionMetadataResource"]:
-        """Solutions Discovery is the initial point of entry within Help API, which helps you identify the
-        relevant solutions for your Azure issue.:code:`<br/>`:code:`<br/>` You can discover solutions
-        using resourceUri OR resourceUri + problemClassificationId.:code:`<br/>`:code:`<br/>`We will do
-        our best in returning relevant diagnostics for your Azure issue.:code:`<br/>`:code:`<br/>` Get
-        the problemClassificationId(s) using this `reference
-        <https://learn.microsoft.com/rest/api/support/problem-classifications/list?tabs=HTTP>`_.:code:`<br/>`:code:`<br/>`
-        :code:`<b>Note: </b>` ‘requiredParameterSets’ from Solutions Discovery API response must be
-        passed via ‘additionalParameters’ as an input to Diagnostics API.
+        """Lists the relevant Azure Diagnostics, Solutions and Troubleshooters using
+        `problemClassification API
+        <https://learn.microsoft.com/rest/api/support/problem-classifications/list?tabs=HTTP>`_\ ) AND
+        resourceUri or resourceType.:code:`<br/>` Discovery Solutions is the initial entry point within
+        Help API, which identifies relevant Azure diagnostics and solutions. :code:`<br/>`:code:`<br/>`
+        Required Input :  problemClassificationId (Use the `problemClassification API
+        <https://learn.microsoft.com/rest/api/support/problem-classifications/list?tabs=HTTP>`_\ )
+        :code:`<br/>`Optional input: resourceUri OR resource Type :code:`<br/>`:code:`<br/>`
+        :code:`<b>Note: </b>`  ‘requiredInputs’ from Discovery solutions response must be passed via
+        ‘additionalParameters’ as an input to Diagnostics and Solutions API.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
-        :type scope: str
-        :param filter: Can be used to filter solutionIds by 'ProblemClassificationId'. The filter
-         supports only 'and' and 'eq' operators. Example: $filter=ProblemClassificationId eq
-         '1ddda5b4-cf6c-4d4f-91ad-bc38ab0e811e' and ProblemClassificationId eq
-         '0a9673c2-7af6-4e19-90d3-4ee2461076d9'. Default value is None.
+        :param filter: 'ProblemClassificationId' is a mandatory filter to get solutions ids. It also
+         supports optional 'ResourceType' and 'SolutionType' filters. The `$filter
+         <https://learn.microsoft.com/en-us/odata/webapi/first-odata-api#filter>`_ supports only 'and',
+         'or' and 'eq' operators. Example: $filter=ProblemClassificationId eq
+         '1ddda5b4-cf6c-4d4f-91ad-bc38ab0e811e'. Default value is None.
         :type filter: str
-        :param skiptoken: Skiptoken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skiptoken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
+        :param skiptoken: Skiptoken is only used if a previous operation returned a partial result.
+         Default value is None.
         :type skiptoken: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SolutionMetadataResource or the result of
          cls(response)
         :rtype:
@@ -102,17 +99,15 @@ class DiscoverySolutionOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
-                    scope=scope,
+                _request = build_list_request(
                     filter=filter,
                     skiptoken=skiptoken,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -124,13 +119,13 @@ class DiscoverySolutionOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("DiscoveryResponse", pipeline_response)
@@ -140,11 +135,11 @@ class DiscoverySolutionOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -156,5 +151,3 @@ class DiscoverySolutionOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/{scope}/providers/Microsoft.Help/discoverySolutions"}

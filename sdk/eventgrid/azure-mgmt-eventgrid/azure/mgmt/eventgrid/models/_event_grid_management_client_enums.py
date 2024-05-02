@@ -35,7 +35,9 @@ class AdvancedFilterOperatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class AlternativeAuthenticationNameSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """AlternativeAuthenticationNameSource."""
+    """Alternative authentication name sources related to client authentication settings for namespace
+    resource.
+    """
 
     CLIENT_CERTIFICATE_SUBJECT = "ClientCertificateSubject"
     CLIENT_CERTIFICATE_DNS = "ClientCertificateDns"
@@ -129,6 +131,31 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
+class CustomDomainIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of managed identity used. Can be either 'SystemAssigned' or 'UserAssigned'."""
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+
+
+class CustomDomainValidationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Validation state for the custom domain. This is a read only property and is initially set to
+    'Pending' and will be updated to 'Approved' by Event Grid only after ownership of the domain
+    name has been successfully validated.
+    """
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    ERROR_RETRIEVING_DNS_RECORD = "ErrorRetrievingDnsRecord"
+
+
+class CustomJwtAuthenticationManagedIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of managed identity used. Can be either 'SystemAssigned' or 'UserAssigned'."""
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+
+
 class DataResidencyBoundary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Data Residency Boundary of the resource."""
 
@@ -153,6 +180,7 @@ class DeliveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Delivery mode of the event subscription."""
 
     QUEUE = "Queue"
+    PUSH = "Push"
 
 
 class DeliverySchema(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -194,6 +222,8 @@ class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SERVICE_BUS_TOPIC = "ServiceBusTopic"
     AZURE_FUNCTION = "AzureFunction"
     PARTNER_DESTINATION = "PartnerDestination"
+    MONITOR_ALERT = "MonitorAlert"
+    NAMESPACE_TOPIC = "NamespaceTopic"
 
 
 class EventDefinitionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -217,10 +247,7 @@ class EventInputSchema(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class EventSubscriptionIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of managed identity used. The type 'SystemAssigned, UserAssigned' includes both an
-    implicitly created identity and a set of user-assigned identities. The type 'None' will remove
-    any identity.
-    """
+    """The type of managed identity used. Can be either 'SystemAssigned' or 'UserAssigned'."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
@@ -296,6 +323,18 @@ class IpActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALLOW = "Allow"
 
 
+class MonitorAlertSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The severity that will be attached to every Alert fired through this event subscription.
+    This field must be provided.
+    """
+
+    SEV0 = "Sev0"
+    SEV1 = "Sev1"
+    SEV2 = "Sev2"
+    SEV3 = "Sev3"
+    SEV4 = "Sev4"
+
+
 class NamespaceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the namespace resource."""
 
@@ -324,6 +363,59 @@ class NamespaceTopicProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMe
     DELETE_FAILED = "DeleteFailed"
     CREATE_FAILED = "CreateFailed"
     UPDATED_FAILED = "UpdatedFailed"
+
+
+class NetworkSecurityPerimeterAssociationAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Network security perimeter access mode."""
+
+    LEARNING = "Learning"
+    ENFORCED = "Enforced"
+    AUDIT = "Audit"
+
+
+class NetworkSecurityPerimeterConfigProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state to reflect configuration state and indicate status of nsp profile
+    configuration retrieval.
+    """
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    DELETED = "Deleted"
+    ACCEPTED = "Accepted"
+
+
+class NetworkSecurityPerimeterConfigurationIssueSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning issue severity."""
+
+    WARNING = "Warning"
+    ERROR = "Error"
+
+
+class NetworkSecurityPerimeterConfigurationIssueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning issue type."""
+
+    MISSING_PERIMETER_CONFIGURATION = "MissingPerimeterConfiguration"
+    MISSING_IDENTITY_CONFIGURATION = "MissingIdentityConfiguration"
+    CONFIGURATION_PROPAGATION_FAILURE = "ConfigurationPropagationFailure"
+    OTHER = "Other"
+
+
+class NetworkSecurityPerimeterProfileAccessRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """NSP access rule direction."""
+
+    INBOUND = "Inbound"
+    OUTBOUND = "Outbound"
+
+
+class NetworkSecurityPerimeterResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """NetworkSecurityPerimeterResourceType."""
+
+    TOPICS = "topics"
+    DOMAINS = "domains"
 
 
 class PartnerClientAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -467,6 +559,7 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+    SECURED_BY_PERIMETER = "SecuredByPerimeter"
 
 
 class PublisherType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -508,7 +601,7 @@ class ResourceRegionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class RoutingIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RoutingIdentityType."""
+    """Routing identity type for topic spaces configuration."""
 
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"

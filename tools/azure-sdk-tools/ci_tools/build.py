@@ -1,4 +1,4 @@
-import argparse, sys, os, logging, pdb
+import argparse, sys, os, logging, glob, shutil
 
 from subprocess import run
 
@@ -11,6 +11,7 @@ from ci_tools.versioning.version_shared import set_version_py, set_dev_classifie
 from ci_tools.versioning.version_set_dev import get_dev_version, format_build_id
 from ci_tools.logging import initialize_logger, run_logged
 
+logger = initialize_logger("build.py")
 
 def build() -> None:
     parser = argparse.ArgumentParser(
@@ -105,9 +106,17 @@ def build() -> None:
     else:
         target_dir = repo_root
 
+    logger.debug(f"Searching for packages starting from {target_dir} with glob string {args.glob_string} and package filter {args.package_filter_string}")
+
     targeted_packages = discover_targeted_packages(
-        args.glob_string, target_dir, args.package_filter_string, filter_type="Build", compatibility_filter=True, include_inactive=args.inactive
+        args.glob_string,
+        target_dir,
+        args.package_filter_string,
+        filter_type="Build",
+        compatibility_filter=True,
+        include_inactive=args.inactive,
     )
+
     artifact_directory = get_artifact_directory(args.distribution_directory)
 
     build_id = format_build_id(args.build_id or DEFAULT_BUILD_ID)
@@ -121,6 +130,19 @@ def build() -> None:
     )
 
 
+def cleanup_build_artifacts(build_folder):
+    # clean up egginfo
+    results = glob.glob(os.path.join(build_folder, "*.egg-info"))
+
+    if results:
+        shutil.rmtree(results[0])
+
+    # clean up build results
+    build_path = os.path.join(build_folder, "build")
+    if os.path.exists(build_path):
+        shutil.rmtree(build_path)
+
+
 def build_packages(
     targeted_packages: List[str],
     distribution_directory: str = None,
@@ -128,17 +150,15 @@ def build_packages(
     build_apiview_artifact: bool = False,
     build_id: str = "",
 ):
-    logger = initialize_logger("build.py")
-    logger.log(level=logging.INFO, msg=f"Generating Package Using Python {sys.version}")
+    logger.log(level=logging.INFO, msg=f"Generating {targeted_packages} using python{sys.version}")
 
     for package_root in targeted_packages:
         setup_parsed = ParsedSetup.from_path(package_root)
-
         package_name_in_artifacts = os.path.join(os.path.basename(package_root))
         dist_dir = os.path.join(distribution_directory, package_name_in_artifacts)
 
         if is_dev_build:
-            process_requires(package_root)
+            process_requires(package_root, True)
 
             new_version = get_dev_version(setup_parsed.version, build_id)
 
@@ -159,17 +179,13 @@ def create_package(
     """
 
     dist = get_artifact_directory(dest_folder)
-
-    if not os.path.isdir(setup_directory_or_file):
-        setup_directory_or_file = os.path.dirname(setup_directory_or_file)
+    setup_parsed = ParsedSetup.from_path(setup_directory_or_file)
 
     if enable_wheel:
-        run_logged(
-            [sys.executable, "setup.py", "bdist_wheel", "-d", dist], prefix="create_wheel", cwd=setup_directory_or_file
-        )
+        if setup_parsed.ext_modules:
+            run([sys.executable, "-m", "cibuildwheel", "--output-dir", dist], cwd=setup_parsed.folder, check=True)
+        else:
+            run([sys.executable, "setup.py", "bdist_wheel", "-d", dist], cwd=setup_parsed.folder, check=True)
+
     if enable_sdist:
-        run_logged(
-            [sys.executable, "setup.py", "sdist", "-d", dist],
-            prefix="create_sdist",
-            cwd=setup_directory_or_file,
-        )
+        run([sys.executable, "setup.py", "sdist", "-d", dist], cwd=setup_parsed.folder, check=True)

@@ -45,9 +45,11 @@ client = RoomsClient.from_connection_string(conn_str='<connection_str>' )
 - `participants`: A list of `RoomParticipant`s containing MRI's of invitees to the room as well as optional `ParticipantRole`. If `ParticipantRole` is not specified, then it will be `Attendee` by default.
 All the above attributes are optional. The service provides default values of valid_until and
 valid_from if they are missing. The default for`valid_from` is current date time and the default for `valid_until` is `valid_from + 180 days`.
+- `pstn_dial_out_enabled`: Set this flag to true if, at the time of the call, dial out to a PSTN number is enabled in a particular room. This flag is optional.
 
 ### Create a room
 To create a room, call the `create_room` function from `RoomsClient`. The `valid_from`, `valid_until`, and `participants` arguments are all optional.
+Starting in 1.1.0 release, ACS Rooms supports PSTN Dial-Out feature. To create room with PSTN Dial-Out property, call `create_room` function and set `pstn_dial_out_enabled` to either true or false. If `pstn_dial_out_enabled` is not provided, then the default value for `pstn_dial_out_enabled` is false.
 
 ```python
 from azure.core.exceptions import HttpResponseError
@@ -72,20 +74,24 @@ try:
     create_room_response = client.create_room(
         valid_from=valid_from,
         valid_until=valid_until,
-        participants=participants
+        participants=participants,
+        pstn_dial_out_enabled=false
+
     )
 except HttpResponseError as ex:
     print(ex)
 ```
 ### Update a room
 The `valid_from` and `valid_until` properties of a created room can be updated by calling the `update_room` function from `RoomsClient`.
+Starting in 1.1.0 release, ACS Rooms supports PSTN Dial-Out feature. To update a room with PSTN Dial-Out property, call `update_room` and set `pstn_dial_out_enabled` to either true or false. If `pstn_dial_out_enabled`  is not provided, then there is no changes to PstnDialOutEnabled property in the room.
 
 ```python
 try:
     update_room_response = client.update_room(
         room_id="id of the room to be updated",
         valid_from=datetime.now(),
-        valid_until=valid_from + timedelta(weeks=4)
+        valid_until=valid_from + timedelta(weeks=4),
+        pstn_dial_out_enabled=false
     )
 except HttpResponseError as e:
     print('service responds error: {}'.format(e))

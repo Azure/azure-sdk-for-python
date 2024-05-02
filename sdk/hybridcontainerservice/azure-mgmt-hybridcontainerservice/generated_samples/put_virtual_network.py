@@ -31,7 +31,7 @@ def main():
 
     response = client.virtual_networks.begin_create_or_update(
         resource_group_name="test-arcappliance-resgrp",
-        virtual_networks_name="test-vnet-static",
+        virtual_network_name="test-vnet-static",
         virtual_networks={
             "extendedLocation": {
                 "name": "/subscriptions/a3e42606-29b1-4d7d-b1d9-9ff6b9d3c71b/resourcegroups/test-arcappliance-resgrp/providers/microsoft.extendedlocation/customlocations/testcustomlocation",
@@ -39,10 +39,14 @@ def main():
             },
             "location": "westus",
             "properties": {
+                "dnsServers": ["192.168.0.1"],
+                "gateway": "192.168.0.1",
                 "infraVnetProfile": {
-                    "hci": {"mocGroup": "target-group", "mocLocation": "MocLocation", "mocVnetName": "test-vnet"}
+                    "hci": {"mocGroup": "target-group", "mocLocation": "MocLocation", "mocVnetName": "vnet1"}
                 },
+                "ipAddressPrefix": "192.168.0.0/16",
                 "vipPool": [{"endIP": "192.168.0.50", "startIP": "192.168.0.10"}],
+                "vlanID": 10,
                 "vmipPool": [{"endIP": "192.168.0.130", "startIP": "192.168.0.110"}],
             },
         },
@@ -50,6 +54,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/preview/2022-09-01-preview/examples/PutVirtualNetwork.json
+# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/stable/2024-01-01/examples/PutVirtualNetwork.json
 if __name__ == "__main__":
     main()

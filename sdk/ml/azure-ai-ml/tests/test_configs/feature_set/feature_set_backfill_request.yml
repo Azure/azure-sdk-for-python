@@ -8,7 +8,7 @@ feature_window:
 description: "September backfill run for feature set customer_transactions:1"
 resource:
     instance_type: Standard_E8S_V3
-spark_conf:
+spark_configuration:
     spark.driver.cores: "1"
     spark.driver.memory: "2g"
     spark.executor.cores: "2"

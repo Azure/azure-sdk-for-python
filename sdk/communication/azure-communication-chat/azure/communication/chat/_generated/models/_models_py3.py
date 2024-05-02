@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,42 +8,42 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._azure_communication_chat_service_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class AddChatParticipantsRequest(msrest.serialization.Model):
+class AddChatParticipantsRequest(_serialization.Model):
     """Participants to be added to the thread.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param participants: Required. Participants to add to a chat thread.
-    :type participants: list[~azure.communication.chat.models.ChatParticipant]
+    :ivar participants: Participants to add to a chat thread. Required.
+    :vartype participants: list[~azure.communication.chat.models.ChatParticipant]
     """
 
     _validation = {
-        'participants': {'required': True},
+        "participants": {"required": True},
     }
 
     _attribute_map = {
-        'participants': {'key': 'participants', 'type': '[ChatParticipant]'},
+        "participants": {"key": "participants", "type": "[ChatParticipant]"},
     }
 
-    def __init__(
-        self,
-        *,
-        participants: List["ChatParticipant"],
-        **kwargs
-    ):
-        super(AddChatParticipantsRequest, self).__init__(**kwargs)
+    def __init__(self, *, participants: List["_models.ChatParticipant"], **kwargs: Any) -> None:
+        """
+        :keyword participants: Participants to add to a chat thread. Required.
+        :paramtype participants: list[~azure.communication.chat.models.ChatParticipant]
+        """
+        super().__init__(**kwargs)
         self.participants = participants
 
 
-class AddChatParticipantsResult(msrest.serialization.Model):
+class AddChatParticipantsResult(_serialization.Model):
     """Result of the add chat participants operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -52,32 +53,91 @@ class AddChatParticipantsResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'invalid_participants': {'readonly': True},
+        "invalid_participants": {"readonly": True},
     }
 
     _attribute_map = {
-        'invalid_participants': {'key': 'invalidParticipants', 'type': '[ChatError]'},
+        "invalid_participants": {"key": "invalidParticipants", "type": "[ChatError]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.invalid_participants = None
+
+
+class ChatAttachment(_serialization.Model):
+    """An attachment in a chat message.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Id of the attachment. Required.
+    :vartype id: str
+    :ivar attachment_type: The type of attachment. Required. Known values are: "image" and "file".
+    :vartype attachment_type: str or ~azure.communication.chat.models.ChatAttachmentType
+    :ivar name: The name of the attachment content.
+    :vartype name: str
+    :ivar url: The URL where the attachment can be downloaded.
+    :vartype url: str
+    :ivar preview_url: The URL where the preview of attachment can be downloaded.
+    :vartype preview_url: str
+    """
+
+    _validation = {
+        "id": {"required": True},
+        "attachment_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "attachment_type": {"key": "attachmentType", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "url": {"key": "url", "type": "str"},
+        "preview_url": {"key": "previewUrl", "type": "str"},
     }
 
     def __init__(
         self,
-        **kwargs
-    ):
-        super(AddChatParticipantsResult, self).__init__(**kwargs)
-        self.invalid_participants = None
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        attachment_type: Union[str, "_models.ChatAttachmentType"],
+        name: Optional[str] = None,
+        url: Optional[str] = None,
+        preview_url: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: Id of the attachment. Required.
+        :paramtype id: str
+        :keyword attachment_type: The type of attachment. Required. Known values are: "image" and
+         "file".
+        :paramtype attachment_type: str or ~azure.communication.chat.models.ChatAttachmentType
+        :keyword name: The name of the attachment content.
+        :paramtype name: str
+        :keyword url: The URL where the attachment can be downloaded.
+        :paramtype url: str
+        :keyword preview_url: The URL where the preview of attachment can be downloaded.
+        :paramtype preview_url: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.attachment_type = attachment_type
+        self.name = name
+        self.url = url
+        self.preview_url = preview_url
 
 
-class ChatError(msrest.serialization.Model):
+class ChatError(_serialization.Model):
     """The Communication Services error.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param code: Required. The error code.
-    :type code: str
-    :param message: Required. The error message.
-    :type message: str
+    :ivar code: The error code. Required.
+    :vartype code: str
+    :ivar message: The error message. Required.
+    :vartype message: str
     :ivar target: The error target.
     :vartype target: str
     :ivar details: Further details about specific errors that led to this error.
@@ -87,29 +147,29 @@ class ChatError(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'inner_error': {'readonly': True},
+        "code": {"required": True},
+        "message": {"required": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "inner_error": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ChatError]'},
-        'inner_error': {'key': 'innererror', 'type': 'ChatError'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ChatError]"},
+        "inner_error": {"key": "innererror", "type": "ChatError"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-        **kwargs
-    ):
-        super(ChatError, self).__init__(**kwargs)
+    def __init__(self, *, code: str, message: str, **kwargs: Any) -> None:
+        """
+        :keyword code: The error code. Required.
+        :paramtype code: str
+        :keyword message: The error message. Required.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = None
@@ -117,83 +177,119 @@ class ChatError(msrest.serialization.Model):
         self.inner_error = None
 
 
-class ChatMessage(msrest.serialization.Model):
+class ChatMessage(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Chat message.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param id: Required. The id of the chat message. This id is server generated.
-    :type id: str
-    :param type: Required. The chat message type. Possible values include: "text", "html",
-     "topicUpdated", "participantAdded", "participantRemoved".
-    :type type: str or ~azure.communication.chat.models.ChatMessageType
-    :param sequence_id: Required. Sequence of the chat message in the conversation.
-    :type sequence_id: str
-    :param version: Required. Version of the chat message.
-    :type version: str
-    :param content: Content of a chat message.
-    :type content: ~azure.communication.chat.models.ChatMessageContent
-    :param sender_display_name: The display name of the chat message sender. This property is used
+    :ivar id: The id of the chat message. This id is server generated. Required.
+    :vartype id: str
+    :ivar type: The chat message type. Required. Known values are: "text", "html", "topicUpdated",
+     "participantAdded", and "participantRemoved".
+    :vartype type: str or ~azure.communication.chat.models.ChatMessageType
+    :ivar sequence_id: Sequence of the chat message in the conversation. Required.
+    :vartype sequence_id: str
+    :ivar version: Version of the chat message. Required.
+    :vartype version: str
+    :ivar content: Content of a chat message.
+    :vartype content: ~azure.communication.chat.models.ChatMessageContent
+    :ivar sender_display_name: The display name of the chat message sender. This property is used
      to populate sender name for push notifications.
-    :type sender_display_name: str
-    :param created_on: Required. The timestamp when the chat message arrived at the server. The
-     timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-    :type created_on: ~datetime.datetime
-    :param sender_communication_identifier: Identifies a participant in Azure Communication
+    :vartype sender_display_name: str
+    :ivar created_on: The timestamp when the chat message arrived at the server. The timestamp is
+     in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``. Required.
+    :vartype created_on: ~datetime.datetime
+    :ivar sender_communication_identifier: Identifies a participant in Azure Communication
      services. A participant is, for example, a phone number or an Azure communication user. This
-     model must be interpreted as a union: Apart from rawId, at most one further property may be
-     set.
-    :type sender_communication_identifier:
+     model is polymorphic: Apart from kind and rawId, at most one further property may be set which
+     must match the kind enum value.
+    :vartype sender_communication_identifier:
      ~azure.communication.chat.models.CommunicationIdentifierModel
-    :param deleted_on: The timestamp (if applicable) when the message was deleted. The timestamp is
+    :ivar deleted_on: The timestamp (if applicable) when the message was deleted. The timestamp is
      in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-    :type deleted_on: ~datetime.datetime
-    :param edited_on: The last timestamp (if applicable) when the message was edited. The timestamp
+    :vartype deleted_on: ~datetime.datetime
+    :ivar edited_on: The last timestamp (if applicable) when the message was edited. The timestamp
      is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-    :type edited_on: ~datetime.datetime
-    :param metadata: Message metadata.
-    :type metadata: dict[str, str]
+    :vartype edited_on: ~datetime.datetime
+    :ivar metadata: Message metadata.
+    :vartype metadata: dict[str, str]
     """
 
     _validation = {
-        'id': {'required': True},
-        'type': {'required': True},
-        'sequence_id': {'required': True},
-        'version': {'required': True},
-        'created_on': {'required': True},
+        "id": {"required": True},
+        "type": {"required": True},
+        "sequence_id": {"required": True},
+        "version": {"required": True},
+        "created_on": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'sequence_id': {'key': 'sequenceId', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-        'content': {'key': 'content', 'type': 'ChatMessageContent'},
-        'sender_display_name': {'key': 'senderDisplayName', 'type': 'str'},
-        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
-        'sender_communication_identifier': {'key': 'senderCommunicationIdentifier', 'type': 'CommunicationIdentifierModel'},
-        'deleted_on': {'key': 'deletedOn', 'type': 'iso-8601'},
-        'edited_on': {'key': 'editedOn', 'type': 'iso-8601'},
-        'metadata': {'key': 'metadata', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "sequence_id": {"key": "sequenceId", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+        "content": {"key": "content", "type": "ChatMessageContent"},
+        "sender_display_name": {"key": "senderDisplayName", "type": "str"},
+        "created_on": {"key": "createdOn", "type": "iso-8601"},
+        "sender_communication_identifier": {
+            "key": "senderCommunicationIdentifier",
+            "type": "CommunicationIdentifierModel",
+        },
+        "deleted_on": {"key": "deletedOn", "type": "iso-8601"},
+        "edited_on": {"key": "editedOn", "type": "iso-8601"},
+        "metadata": {"key": "metadata", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        id: str,
-        type: Union[str, "ChatMessageType"],
+        id: str,  # pylint: disable=redefined-builtin
+        type: Union[str, "_models.ChatMessageType"],
         sequence_id: str,
         version: str,
         created_on: datetime.datetime,
-        content: Optional["ChatMessageContent"] = None,
+        content: Optional["_models.ChatMessageContent"] = None,
         sender_display_name: Optional[str] = None,
-        sender_communication_identifier: Optional["CommunicationIdentifierModel"] = None,
+        sender_communication_identifier: Optional["_models.CommunicationIdentifierModel"] = None,
         deleted_on: Optional[datetime.datetime] = None,
         edited_on: Optional[datetime.datetime] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(ChatMessage, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: The id of the chat message. This id is server generated. Required.
+        :paramtype id: str
+        :keyword type: The chat message type. Required. Known values are: "text", "html",
+         "topicUpdated", "participantAdded", and "participantRemoved".
+        :paramtype type: str or ~azure.communication.chat.models.ChatMessageType
+        :keyword sequence_id: Sequence of the chat message in the conversation. Required.
+        :paramtype sequence_id: str
+        :keyword version: Version of the chat message. Required.
+        :paramtype version: str
+        :keyword content: Content of a chat message.
+        :paramtype content: ~azure.communication.chat.models.ChatMessageContent
+        :keyword sender_display_name: The display name of the chat message sender. This property is
+         used to populate sender name for push notifications.
+        :paramtype sender_display_name: str
+        :keyword created_on: The timestamp when the chat message arrived at the server. The timestamp
+         is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``. Required.
+        :paramtype created_on: ~datetime.datetime
+        :keyword sender_communication_identifier: Identifies a participant in Azure Communication
+         services. A participant is, for example, a phone number or an Azure communication user. This
+         model is polymorphic: Apart from kind and rawId, at most one further property may be set which
+         must match the kind enum value.
+        :paramtype sender_communication_identifier:
+         ~azure.communication.chat.models.CommunicationIdentifierModel
+        :keyword deleted_on: The timestamp (if applicable) when the message was deleted. The timestamp
+         is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+        :paramtype deleted_on: ~datetime.datetime
+        :keyword edited_on: The last timestamp (if applicable) when the message was edited. The
+         timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+        :paramtype edited_on: ~datetime.datetime
+        :keyword metadata: Message metadata.
+        :paramtype metadata: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.type = type
         self.sequence_id = sequence_id
@@ -207,29 +303,35 @@ class ChatMessage(msrest.serialization.Model):
         self.metadata = metadata
 
 
-class ChatMessageContent(msrest.serialization.Model):
+class ChatMessageContent(_serialization.Model):
     """Content of a chat message.
 
-    :param message: Chat message content for messages of types text or html.
-    :type message: str
-    :param topic: Chat message content for messages of type topicUpdated.
-    :type topic: str
-    :param participants: Chat message content for messages of types participantAdded or
+    :ivar message: Chat message content for messages of types text or html.
+    :vartype message: str
+    :ivar topic: Chat message content for messages of type topicUpdated.
+    :vartype topic: str
+    :ivar participants: Chat message content for messages of types participantAdded or
      participantRemoved.
-    :type participants: list[~azure.communication.chat.models.ChatParticipant]
-    :param initiator_communication_identifier: Identifies a participant in Azure Communication
+    :vartype participants: list[~azure.communication.chat.models.ChatParticipant]
+    :ivar attachments: List of attachments for this message.
+    :vartype attachments: list[~azure.communication.chat.models.ChatAttachment]
+    :ivar initiator_communication_identifier: Identifies a participant in Azure Communication
      services. A participant is, for example, a phone number or an Azure communication user. This
-     model must be interpreted as a union: Apart from rawId, at most one further property may be
-     set.
-    :type initiator_communication_identifier:
+     model is polymorphic: Apart from kind and rawId, at most one further property may be set which
+     must match the kind enum value.
+    :vartype initiator_communication_identifier:
      ~azure.communication.chat.models.CommunicationIdentifierModel
     """
 
     _attribute_map = {
-        'message': {'key': 'message', 'type': 'str'},
-        'topic': {'key': 'topic', 'type': 'str'},
-        'participants': {'key': 'participants', 'type': '[ChatParticipant]'},
-        'initiator_communication_identifier': {'key': 'initiatorCommunicationIdentifier', 'type': 'CommunicationIdentifierModel'},
+        "message": {"key": "message", "type": "str"},
+        "topic": {"key": "topic", "type": "str"},
+        "participants": {"key": "participants", "type": "[ChatParticipant]"},
+        "attachments": {"key": "attachments", "type": "[ChatAttachment]"},
+        "initiator_communication_identifier": {
+            "key": "initiatorCommunicationIdentifier",
+            "type": "CommunicationIdentifierModel",
+        },
     }
 
     def __init__(
@@ -237,304 +339,381 @@ class ChatMessageContent(msrest.serialization.Model):
         *,
         message: Optional[str] = None,
         topic: Optional[str] = None,
-        participants: Optional[List["ChatParticipant"]] = None,
-        initiator_communication_identifier: Optional["CommunicationIdentifierModel"] = None,
-        **kwargs
-    ):
-        super(ChatMessageContent, self).__init__(**kwargs)
+        participants: Optional[List["_models.ChatParticipant"]] = None,
+        attachments: Optional[List["_models.ChatAttachment"]] = None,
+        initiator_communication_identifier: Optional["_models.CommunicationIdentifierModel"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword message: Chat message content for messages of types text or html.
+        :paramtype message: str
+        :keyword topic: Chat message content for messages of type topicUpdated.
+        :paramtype topic: str
+        :keyword participants: Chat message content for messages of types participantAdded or
+         participantRemoved.
+        :paramtype participants: list[~azure.communication.chat.models.ChatParticipant]
+        :keyword attachments: List of attachments for this message.
+        :paramtype attachments: list[~azure.communication.chat.models.ChatAttachment]
+        :keyword initiator_communication_identifier: Identifies a participant in Azure Communication
+         services. A participant is, for example, a phone number or an Azure communication user. This
+         model is polymorphic: Apart from kind and rawId, at most one further property may be set which
+         must match the kind enum value.
+        :paramtype initiator_communication_identifier:
+         ~azure.communication.chat.models.CommunicationIdentifierModel
+        """
+        super().__init__(**kwargs)
         self.message = message
         self.topic = topic
         self.participants = participants
+        self.attachments = attachments
         self.initiator_communication_identifier = initiator_communication_identifier
 
 
-class ChatMessageReadReceipt(msrest.serialization.Model):
+class ChatMessageReadReceipt(_serialization.Model):
     """A chat message read receipt indicates the time a chat message was read by a recipient.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param sender_communication_identifier: Required. Identifies a participant in Azure
-     Communication services. A participant is, for example, a phone number or an Azure communication
-     user. This model must be interpreted as a union: Apart from rawId, at most one further property
-     may be set.
-    :type sender_communication_identifier:
+    :ivar sender_communication_identifier: Identifies a participant in Azure Communication
+     services. A participant is, for example, a phone number or an Azure communication user. This
+     model is polymorphic: Apart from kind and rawId, at most one further property may be set which
+     must match the kind enum value. Required.
+    :vartype sender_communication_identifier:
      ~azure.communication.chat.models.CommunicationIdentifierModel
-    :param chat_message_id: Required. Id of the chat message that has been read. This id is
-     generated by the server.
-    :type chat_message_id: str
-    :param read_on: Required. The time at which the message was read. The timestamp is in RFC3339
-     format: ``yyyy-MM-ddTHH:mm:ssZ``.
-    :type read_on: ~datetime.datetime
+    :ivar chat_message_id: Id of the chat message that has been read. This id is generated by the
+     server. Required.
+    :vartype chat_message_id: str
+    :ivar read_on: The time at which the message was read. The timestamp is in RFC3339 format:
+     ``yyyy-MM-ddTHH:mm:ssZ``. Required.
+    :vartype read_on: ~datetime.datetime
     """
 
     _validation = {
-        'sender_communication_identifier': {'required': True},
-        'chat_message_id': {'required': True},
-        'read_on': {'required': True},
+        "sender_communication_identifier": {"required": True},
+        "chat_message_id": {"required": True},
+        "read_on": {"required": True},
     }
 
     _attribute_map = {
-        'sender_communication_identifier': {'key': 'senderCommunicationIdentifier', 'type': 'CommunicationIdentifierModel'},
-        'chat_message_id': {'key': 'chatMessageId', 'type': 'str'},
-        'read_on': {'key': 'readOn', 'type': 'iso-8601'},
+        "sender_communication_identifier": {
+            "key": "senderCommunicationIdentifier",
+            "type": "CommunicationIdentifierModel",
+        },
+        "chat_message_id": {"key": "chatMessageId", "type": "str"},
+        "read_on": {"key": "readOn", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
-        sender_communication_identifier: "CommunicationIdentifierModel",
+        sender_communication_identifier: "_models.CommunicationIdentifierModel",
         chat_message_id: str,
         read_on: datetime.datetime,
-        **kwargs
-    ):
-        super(ChatMessageReadReceipt, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword sender_communication_identifier: Identifies a participant in Azure Communication
+         services. A participant is, for example, a phone number or an Azure communication user. This
+         model is polymorphic: Apart from kind and rawId, at most one further property may be set which
+         must match the kind enum value. Required.
+        :paramtype sender_communication_identifier:
+         ~azure.communication.chat.models.CommunicationIdentifierModel
+        :keyword chat_message_id: Id of the chat message that has been read. This id is generated by
+         the server. Required.
+        :paramtype chat_message_id: str
+        :keyword read_on: The time at which the message was read. The timestamp is in RFC3339 format:
+         ``yyyy-MM-ddTHH:mm:ssZ``. Required.
+        :paramtype read_on: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.sender_communication_identifier = sender_communication_identifier
         self.chat_message_id = chat_message_id
         self.read_on = read_on
 
 
-class ChatMessageReadReceiptsCollection(msrest.serialization.Model):
+class ChatMessageReadReceiptsCollection(_serialization.Model):
     """A paged collection of chat message read receipts.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param value: Required. Collection of chat message read receipts.
-    :type value: list[~azure.communication.chat.models.ChatMessageReadReceipt]
+    :ivar value: Collection of chat message read receipts. Required.
+    :vartype value: list[~azure.communication.chat.models.ChatMessageReadReceipt]
     :ivar next_link: If there are more chat message read receipts that can be retrieved, the next
      link will be populated.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ChatMessageReadReceipt]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ChatMessageReadReceipt]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["ChatMessageReadReceipt"],
-        **kwargs
-    ):
-        super(ChatMessageReadReceiptsCollection, self).__init__(**kwargs)
+    def __init__(self, *, value: List["_models.ChatMessageReadReceipt"], **kwargs: Any) -> None:
+        """
+        :keyword value: Collection of chat message read receipts. Required.
+        :paramtype value: list[~azure.communication.chat.models.ChatMessageReadReceipt]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ChatMessagesCollection(msrest.serialization.Model):
+class ChatMessagesCollection(_serialization.Model):
     """Collection of chat messages for a particular chat thread.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param value: Required. Collection of chat messages.
-    :type value: list[~azure.communication.chat.models.ChatMessage]
+    :ivar value: Collection of chat messages. Required.
+    :vartype value: list[~azure.communication.chat.models.ChatMessage]
     :ivar next_link: If there are more chat messages that can be retrieved, the next link will be
      populated.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ChatMessage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ChatMessage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["ChatMessage"],
-        **kwargs
-    ):
-        super(ChatMessagesCollection, self).__init__(**kwargs)
+    def __init__(self, *, value: List["_models.ChatMessage"], **kwargs: Any) -> None:
+        """
+        :keyword value: Collection of chat messages. Required.
+        :paramtype value: list[~azure.communication.chat.models.ChatMessage]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ChatParticipant(msrest.serialization.Model):
+class ChatParticipant(_serialization.Model):
     """A participant of the chat thread.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param communication_identifier: Required. Identifies a participant in Azure Communication
-     services. A participant is, for example, a phone number or an Azure communication user. This
-     model must be interpreted as a union: Apart from rawId, at most one further property may be
-     set.
-    :type communication_identifier: ~azure.communication.chat.models.CommunicationIdentifierModel
-    :param display_name: Display name for the chat participant.
-    :type display_name: str
-    :param share_history_time: Time from which the chat history is shared with the participant. The
+    :ivar communication_identifier: Identifies a participant in Azure Communication services. A
+     participant is, for example, a phone number or an Azure communication user. This model is
+     polymorphic: Apart from kind and rawId, at most one further property may be set which must
+     match the kind enum value. Required.
+    :vartype communication_identifier:
+     ~azure.communication.chat.models.CommunicationIdentifierModel
+    :ivar display_name: Display name for the chat participant.
+    :vartype display_name: str
+    :ivar share_history_time: Time from which the chat history is shared with the participant. The
      timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-    :type share_history_time: ~datetime.datetime
+    :vartype share_history_time: ~datetime.datetime
     """
 
     _validation = {
-        'communication_identifier': {'required': True},
+        "communication_identifier": {"required": True},
     }
 
     _attribute_map = {
-        'communication_identifier': {'key': 'communicationIdentifier', 'type': 'CommunicationIdentifierModel'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'share_history_time': {'key': 'shareHistoryTime', 'type': 'iso-8601'},
+        "communication_identifier": {"key": "communicationIdentifier", "type": "CommunicationIdentifierModel"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "share_history_time": {"key": "shareHistoryTime", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
-        communication_identifier: "CommunicationIdentifierModel",
+        communication_identifier: "_models.CommunicationIdentifierModel",
         display_name: Optional[str] = None,
         share_history_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
-        super(ChatParticipant, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword communication_identifier: Identifies a participant in Azure Communication services. A
+         participant is, for example, a phone number or an Azure communication user. This model is
+         polymorphic: Apart from kind and rawId, at most one further property may be set which must
+         match the kind enum value. Required.
+        :paramtype communication_identifier:
+         ~azure.communication.chat.models.CommunicationIdentifierModel
+        :keyword display_name: Display name for the chat participant.
+        :paramtype display_name: str
+        :keyword share_history_time: Time from which the chat history is shared with the participant.
+         The timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+        :paramtype share_history_time: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.communication_identifier = communication_identifier
         self.display_name = display_name
         self.share_history_time = share_history_time
 
 
-class ChatParticipantsCollection(msrest.serialization.Model):
+class ChatParticipantsCollection(_serialization.Model):
     """Collection of participants belong to a particular thread.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param value: Required. Chat participants.
-    :type value: list[~azure.communication.chat.models.ChatParticipant]
+    :ivar value: Chat participants. Required.
+    :vartype value: list[~azure.communication.chat.models.ChatParticipant]
     :ivar next_link: If there are more chat participants that can be retrieved, the next link will
      be populated.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ChatParticipant]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ChatParticipant]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["ChatParticipant"],
-        **kwargs
-    ):
-        super(ChatParticipantsCollection, self).__init__(**kwargs)
+    def __init__(self, *, value: List["_models.ChatParticipant"], **kwargs: Any) -> None:
+        """
+        :keyword value: Chat participants. Required.
+        :paramtype value: list[~azure.communication.chat.models.ChatParticipant]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ChatThreadItem(msrest.serialization.Model):
+class ChatThreadItem(_serialization.Model):
     """Summary information of a chat thread.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param id: Required. Chat thread id.
-    :type id: str
-    :param topic: Required. Chat thread topic.
-    :type topic: str
-    :param deleted_on: The timestamp when the chat thread was deleted. The timestamp is in RFC3339
+    :ivar id: Chat thread id. Required.
+    :vartype id: str
+    :ivar topic: Chat thread topic. Required.
+    :vartype topic: str
+    :ivar deleted_on: The timestamp when the chat thread was deleted. The timestamp is in RFC3339
      format: ``yyyy-MM-ddTHH:mm:ssZ``.
-    :type deleted_on: ~datetime.datetime
+    :vartype deleted_on: ~datetime.datetime
     :ivar last_message_received_on: The timestamp when the last message arrived at the server. The
      timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :vartype last_message_received_on: ~datetime.datetime
     """
 
     _validation = {
-        'id': {'required': True},
-        'topic': {'required': True},
-        'last_message_received_on': {'readonly': True},
+        "id": {"required": True},
+        "topic": {"required": True},
+        "last_message_received_on": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'topic': {'key': 'topic', 'type': 'str'},
-        'deleted_on': {'key': 'deletedOn', 'type': 'iso-8601'},
-        'last_message_received_on': {'key': 'lastMessageReceivedOn', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "topic": {"key": "topic", "type": "str"},
+        "deleted_on": {"key": "deletedOn", "type": "iso-8601"},
+        "last_message_received_on": {"key": "lastMessageReceivedOn", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
-        id: str,
+        id: str,  # pylint: disable=redefined-builtin
         topic: str,
         deleted_on: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
-        super(ChatThreadItem, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: Chat thread id. Required.
+        :paramtype id: str
+        :keyword topic: Chat thread topic. Required.
+        :paramtype topic: str
+        :keyword deleted_on: The timestamp when the chat thread was deleted. The timestamp is in
+         RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+        :paramtype deleted_on: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.topic = topic
         self.deleted_on = deleted_on
         self.last_message_received_on = None
 
 
-class ChatThreadProperties(msrest.serialization.Model):
+class ChatThreadProperties(_serialization.Model):
     """Chat thread.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param id: Required. Chat thread id.
-    :type id: str
-    :param topic: Required. Chat thread topic.
-    :type topic: str
-    :param created_on: Required. The timestamp when the chat thread was created. The timestamp is
-     in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-    :type created_on: ~datetime.datetime
-    :param created_by_communication_identifier: Required. Identifies a participant in Azure
-     Communication services. A participant is, for example, a phone number or an Azure communication
-     user. This model must be interpreted as a union: Apart from rawId, at most one further property
-     may be set.
-    :type created_by_communication_identifier:
+    :ivar id: Chat thread id. Required.
+    :vartype id: str
+    :ivar topic: Chat thread topic. Required.
+    :vartype topic: str
+    :ivar created_on: The timestamp when the chat thread was created. The timestamp is in RFC3339
+     format: ``yyyy-MM-ddTHH:mm:ssZ``. Required.
+    :vartype created_on: ~datetime.datetime
+    :ivar created_by_communication_identifier: Identifies a participant in Azure Communication
+     services. A participant is, for example, a phone number or an Azure communication user. This
+     model is polymorphic: Apart from kind and rawId, at most one further property may be set which
+     must match the kind enum value. Required.
+    :vartype created_by_communication_identifier:
      ~azure.communication.chat.models.CommunicationIdentifierModel
-    :param deleted_on: The timestamp when the chat thread was deleted. The timestamp is in RFC3339
+    :ivar deleted_on: The timestamp when the chat thread was deleted. The timestamp is in RFC3339
      format: ``yyyy-MM-ddTHH:mm:ssZ``.
-    :type deleted_on: ~datetime.datetime
+    :vartype deleted_on: ~datetime.datetime
     """
 
     _validation = {
-        'id': {'required': True},
-        'topic': {'required': True},
-        'created_on': {'required': True},
-        'created_by_communication_identifier': {'required': True},
+        "id": {"required": True},
+        "topic": {"required": True},
+        "created_on": {"required": True},
+        "created_by_communication_identifier": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'topic': {'key': 'topic', 'type': 'str'},
-        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
-        'created_by_communication_identifier': {'key': 'createdByCommunicationIdentifier', 'type': 'CommunicationIdentifierModel'},
-        'deleted_on': {'key': 'deletedOn', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "topic": {"key": "topic", "type": "str"},
+        "created_on": {"key": "createdOn", "type": "iso-8601"},
+        "created_by_communication_identifier": {
+            "key": "createdByCommunicationIdentifier",
+            "type": "CommunicationIdentifierModel",
+        },
+        "deleted_on": {"key": "deletedOn", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
-        id: str,
+        id: str,  # pylint: disable=redefined-builtin
         topic: str,
         created_on: datetime.datetime,
-        created_by_communication_identifier: "CommunicationIdentifierModel",
+        created_by_communication_identifier: "_models.CommunicationIdentifierModel",
         deleted_on: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
-        super(ChatThreadProperties, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: Chat thread id. Required.
+        :paramtype id: str
+        :keyword topic: Chat thread topic. Required.
+        :paramtype topic: str
+        :keyword created_on: The timestamp when the chat thread was created. The timestamp is in
+         RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``. Required.
+        :paramtype created_on: ~datetime.datetime
+        :keyword created_by_communication_identifier: Identifies a participant in Azure Communication
+         services. A participant is, for example, a phone number or an Azure communication user. This
+         model is polymorphic: Apart from kind and rawId, at most one further property may be set which
+         must match the kind enum value. Required.
+        :paramtype created_by_communication_identifier:
+         ~azure.communication.chat.models.CommunicationIdentifierModel
+        :keyword deleted_on: The timestamp when the chat thread was deleted. The timestamp is in
+         RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+        :paramtype deleted_on: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.topic = topic
         self.created_on = created_on
@@ -542,218 +721,287 @@ class ChatThreadProperties(msrest.serialization.Model):
         self.deleted_on = deleted_on
 
 
-class ChatThreadsItemCollection(msrest.serialization.Model):
+class ChatThreadsItemCollection(_serialization.Model):
     """Collection of chat threads.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param value: Required. Collection of chat threads.
-    :type value: list[~azure.communication.chat.models.ChatThreadItem]
+    :ivar value: Collection of chat threads. Required.
+    :vartype value: list[~azure.communication.chat.models.ChatThreadItem]
     :ivar next_link: If there are more chat threads that can be retrieved, the next link will be
      populated.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ChatThreadItem]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ChatThreadItem]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["ChatThreadItem"],
-        **kwargs
-    ):
-        super(ChatThreadsItemCollection, self).__init__(**kwargs)
+    def __init__(self, *, value: List["_models.ChatThreadItem"], **kwargs: Any) -> None:
+        """
+        :keyword value: Collection of chat threads. Required.
+        :paramtype value: list[~azure.communication.chat.models.ChatThreadItem]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class CommunicationErrorResponse(msrest.serialization.Model):
+class CommunicationErrorResponse(_serialization.Model):
     """The Communication Services error.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param error: Required. The Communication Services error.
-    :type error: ~azure.communication.chat.models.ChatError
+    :ivar error: The Communication Services error. Required.
+    :vartype error: ~azure.communication.chat.models.ChatError
     """
 
     _validation = {
-        'error': {'required': True},
+        "error": {"required": True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ChatError'},
+        "error": {"key": "error", "type": "ChatError"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: "ChatError",
-        **kwargs
-    ):
-        super(CommunicationErrorResponse, self).__init__(**kwargs)
+    def __init__(self, *, error: "_models.ChatError", **kwargs: Any) -> None:
+        """
+        :keyword error: The Communication Services error. Required.
+        :paramtype error: ~azure.communication.chat.models.ChatError
+        """
+        super().__init__(**kwargs)
         self.error = error
 
 
-class CommunicationIdentifierModel(msrest.serialization.Model):
-    """Identifies a participant in Azure Communication services. A participant is, for example, a phone number or an Azure communication user. This model must be interpreted as a union: Apart from rawId, at most one further property may be set.
+class CommunicationIdentifierModel(_serialization.Model):
+    """Identifies a participant in Azure Communication services. A participant is, for example, a
+    phone number or an Azure communication user. This model is polymorphic: Apart from kind and
+    rawId, at most one further property may be set which must match the kind enum value.
 
-    :param raw_id: Raw Id of the identifier. Optional in requests, required in responses.
-    :type raw_id: str
-    :param communication_user: The communication user.
-    :type communication_user: ~azure.communication.chat.models.CommunicationUserIdentifierModel
-    :param phone_number: The phone number.
-    :type phone_number: ~azure.communication.chat.models.PhoneNumberIdentifierModel
-    :param microsoft_teams_user: The Microsoft Teams user.
-    :type microsoft_teams_user: ~azure.communication.chat.models.MicrosoftTeamsUserIdentifierModel
+    :ivar kind: The identifier kind. Only required in responses. Known values are: "unknown",
+     "communicationUser", "phoneNumber", "microsoftTeamsUser", and "microsoftTeamsApp".
+    :vartype kind: str or ~azure.communication.chat.models.CommunicationIdentifierModelKind
+    :ivar raw_id: Raw Id of the identifier. Optional in requests, required in responses.
+    :vartype raw_id: str
+    :ivar communication_user: The communication user.
+    :vartype communication_user: ~azure.communication.chat.models.CommunicationUserIdentifierModel
+    :ivar phone_number: The phone number.
+    :vartype phone_number: ~azure.communication.chat.models.PhoneNumberIdentifierModel
+    :ivar microsoft_teams_user: The Microsoft Teams user.
+    :vartype microsoft_teams_user:
+     ~azure.communication.chat.models.MicrosoftTeamsUserIdentifierModel
+    :ivar microsoft_teams_app: The Microsoft Teams application.
+    :vartype microsoft_teams_app: ~azure.communication.chat.models.MicrosoftTeamsAppIdentifierModel
     """
 
     _attribute_map = {
-        'raw_id': {'key': 'rawId', 'type': 'str'},
-        'communication_user': {'key': 'communicationUser', 'type': 'CommunicationUserIdentifierModel'},
-        'phone_number': {'key': 'phoneNumber', 'type': 'PhoneNumberIdentifierModel'},
-        'microsoft_teams_user': {'key': 'microsoftTeamsUser', 'type': 'MicrosoftTeamsUserIdentifierModel'},
+        "kind": {"key": "kind", "type": "str"},
+        "raw_id": {"key": "rawId", "type": "str"},
+        "communication_user": {"key": "communicationUser", "type": "CommunicationUserIdentifierModel"},
+        "phone_number": {"key": "phoneNumber", "type": "PhoneNumberIdentifierModel"},
+        "microsoft_teams_user": {"key": "microsoftTeamsUser", "type": "MicrosoftTeamsUserIdentifierModel"},
+        "microsoft_teams_app": {"key": "microsoftTeamsApp", "type": "MicrosoftTeamsAppIdentifierModel"},
     }
 
     def __init__(
         self,
         *,
+        kind: Optional[Union[str, "_models.CommunicationIdentifierModelKind"]] = None,
         raw_id: Optional[str] = None,
-        communication_user: Optional["CommunicationUserIdentifierModel"] = None,
-        phone_number: Optional["PhoneNumberIdentifierModel"] = None,
-        microsoft_teams_user: Optional["MicrosoftTeamsUserIdentifierModel"] = None,
-        **kwargs
-    ):
-        super(CommunicationIdentifierModel, self).__init__(**kwargs)
+        communication_user: Optional["_models.CommunicationUserIdentifierModel"] = None,
+        phone_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
+        microsoft_teams_user: Optional["_models.MicrosoftTeamsUserIdentifierModel"] = None,
+        microsoft_teams_app: Optional["_models.MicrosoftTeamsAppIdentifierModel"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword kind: The identifier kind. Only required in responses. Known values are: "unknown",
+         "communicationUser", "phoneNumber", "microsoftTeamsUser", and "microsoftTeamsApp".
+        :paramtype kind: str or ~azure.communication.chat.models.CommunicationIdentifierModelKind
+        :keyword raw_id: Raw Id of the identifier. Optional in requests, required in responses.
+        :paramtype raw_id: str
+        :keyword communication_user: The communication user.
+        :paramtype communication_user:
+         ~azure.communication.chat.models.CommunicationUserIdentifierModel
+        :keyword phone_number: The phone number.
+        :paramtype phone_number: ~azure.communication.chat.models.PhoneNumberIdentifierModel
+        :keyword microsoft_teams_user: The Microsoft Teams user.
+        :paramtype microsoft_teams_user:
+         ~azure.communication.chat.models.MicrosoftTeamsUserIdentifierModel
+        :keyword microsoft_teams_app: The Microsoft Teams application.
+        :paramtype microsoft_teams_app:
+         ~azure.communication.chat.models.MicrosoftTeamsAppIdentifierModel
+        """
+        super().__init__(**kwargs)
+        self.kind = kind
         self.raw_id = raw_id
         self.communication_user = communication_user
         self.phone_number = phone_number
         self.microsoft_teams_user = microsoft_teams_user
+        self.microsoft_teams_app = microsoft_teams_app
 
 
-class CommunicationUserIdentifierModel(msrest.serialization.Model):
+class CommunicationUserIdentifierModel(_serialization.Model):
     """A user that got created with an Azure Communication Services resource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param id: Required. The Id of the communication user.
-    :type id: str
+    :ivar id: The Id of the communication user. Required.
+    :vartype id: str
     """
 
     _validation = {
-        'id': {'required': True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: str,
-        **kwargs
-    ):
-        super(CommunicationUserIdentifierModel, self).__init__(**kwargs)
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        """
+        :keyword id: The Id of the communication user. Required.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
         self.id = id
 
 
-class CreateChatThreadRequest(msrest.serialization.Model):
+class CreateChatThreadRequest(_serialization.Model):
     """Request payload for creating a chat thread.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param topic: Required. The chat thread topic.
-    :type topic: str
-    :param participants: Participants to be added to the chat thread.
-    :type participants: list[~azure.communication.chat.models.ChatParticipant]
+    :ivar topic: The chat thread topic. Required.
+    :vartype topic: str
+    :ivar participants: Participants to be added to the chat thread.
+    :vartype participants: list[~azure.communication.chat.models.ChatParticipant]
     """
 
     _validation = {
-        'topic': {'required': True},
+        "topic": {"required": True},
     }
 
     _attribute_map = {
-        'topic': {'key': 'topic', 'type': 'str'},
-        'participants': {'key': 'participants', 'type': '[ChatParticipant]'},
+        "topic": {"key": "topic", "type": "str"},
+        "participants": {"key": "participants", "type": "[ChatParticipant]"},
     }
 
     def __init__(
-        self,
-        *,
-        topic: str,
-        participants: Optional[List["ChatParticipant"]] = None,
-        **kwargs
-    ):
-        super(CreateChatThreadRequest, self).__init__(**kwargs)
+        self, *, topic: str, participants: Optional[List["_models.ChatParticipant"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword topic: The chat thread topic. Required.
+        :paramtype topic: str
+        :keyword participants: Participants to be added to the chat thread.
+        :paramtype participants: list[~azure.communication.chat.models.ChatParticipant]
+        """
+        super().__init__(**kwargs)
         self.topic = topic
         self.participants = participants
 
 
-class CreateChatThreadResult(msrest.serialization.Model):
+class CreateChatThreadResult(_serialization.Model):
     """Result of the create chat thread operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param chat_thread: Chat thread.
-    :type chat_thread: ~azure.communication.chat.models.ChatThreadProperties
+    :ivar chat_thread: Chat thread.
+    :vartype chat_thread: ~azure.communication.chat.models.ChatThreadProperties
     :ivar invalid_participants: The participants that failed to be added to the chat thread.
     :vartype invalid_participants: list[~azure.communication.chat.models.ChatError]
     """
 
     _validation = {
-        'invalid_participants': {'readonly': True},
+        "invalid_participants": {"readonly": True},
     }
 
     _attribute_map = {
-        'chat_thread': {'key': 'chatThread', 'type': 'ChatThreadProperties'},
-        'invalid_participants': {'key': 'invalidParticipants', 'type': '[ChatError]'},
+        "chat_thread": {"key": "chatThread", "type": "ChatThreadProperties"},
+        "invalid_participants": {"key": "invalidParticipants", "type": "[ChatError]"},
+    }
+
+    def __init__(self, *, chat_thread: Optional["_models.ChatThreadProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword chat_thread: Chat thread.
+        :paramtype chat_thread: ~azure.communication.chat.models.ChatThreadProperties
+        """
+        super().__init__(**kwargs)
+        self.chat_thread = chat_thread
+        self.invalid_participants = None
+
+
+class MicrosoftTeamsAppIdentifierModel(_serialization.Model):
+    """A Microsoft Teams application.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar app_id: The Id of the Microsoft Teams application. Required.
+    :vartype app_id: str
+    :ivar cloud: The cloud that the Microsoft Teams application belongs to. By default 'public' if
+     missing. Known values are: "public", "dod", and "gcch".
+    :vartype cloud: str or ~azure.communication.chat.models.CommunicationCloudEnvironmentModel
+    """
+
+    _validation = {
+        "app_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "app_id": {"key": "appId", "type": "str"},
+        "cloud": {"key": "cloud", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        chat_thread: Optional["ChatThreadProperties"] = None,
-        **kwargs
-    ):
-        super(CreateChatThreadResult, self).__init__(**kwargs)
-        self.chat_thread = chat_thread
-        self.invalid_participants = None
+        app_id: str,
+        cloud: Optional[Union[str, "_models.CommunicationCloudEnvironmentModel"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword app_id: The Id of the Microsoft Teams application. Required.
+        :paramtype app_id: str
+        :keyword cloud: The cloud that the Microsoft Teams application belongs to. By default 'public'
+         if missing. Known values are: "public", "dod", and "gcch".
+        :paramtype cloud: str or ~azure.communication.chat.models.CommunicationCloudEnvironmentModel
+        """
+        super().__init__(**kwargs)
+        self.app_id = app_id
+        self.cloud = cloud
 
 
-class MicrosoftTeamsUserIdentifierModel(msrest.serialization.Model):
+class MicrosoftTeamsUserIdentifierModel(_serialization.Model):
     """A Microsoft Teams user.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param user_id: Required. The Id of the Microsoft Teams user. If not anonymous, this is the AAD
-     object Id of the user.
-    :type user_id: str
-    :param is_anonymous: True if the Microsoft Teams user is anonymous. By default false if
-     missing.
-    :type is_anonymous: bool
-    :param cloud: The cloud that the Microsoft Teams user belongs to. By default 'public' if
-     missing. Possible values include: "public", "dod", "gcch".
-    :type cloud: str or ~azure.communication.chat.models.CommunicationCloudEnvironmentModel
+    :ivar user_id: The Id of the Microsoft Teams user. If not anonymous, this is the AAD object Id
+     of the user. Required.
+    :vartype user_id: str
+    :ivar is_anonymous: True if the Microsoft Teams user is anonymous. By default false if missing.
+    :vartype is_anonymous: bool
+    :ivar cloud: The cloud that the Microsoft Teams user belongs to. By default 'public' if
+     missing. Known values are: "public", "dod", and "gcch".
+    :vartype cloud: str or ~azure.communication.chat.models.CommunicationCloudEnvironmentModel
     """
 
     _validation = {
-        'user_id': {'required': True},
+        "user_id": {"required": True},
     }
 
     _attribute_map = {
-        'user_id': {'key': 'userId', 'type': 'str'},
-        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
-        'cloud': {'key': 'cloud', 'type': 'str'},
+        "user_id": {"key": "userId", "type": "str"},
+        "is_anonymous": {"key": "isAnonymous", "type": "bool"},
+        "cloud": {"key": "cloud", "type": "str"},
     }
 
     def __init__(
@@ -761,68 +1009,78 @@ class MicrosoftTeamsUserIdentifierModel(msrest.serialization.Model):
         *,
         user_id: str,
         is_anonymous: Optional[bool] = None,
-        cloud: Optional[Union[str, "CommunicationCloudEnvironmentModel"]] = None,
-        **kwargs
-    ):
-        super(MicrosoftTeamsUserIdentifierModel, self).__init__(**kwargs)
+        cloud: Optional[Union[str, "_models.CommunicationCloudEnvironmentModel"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword user_id: The Id of the Microsoft Teams user. If not anonymous, this is the AAD object
+         Id of the user. Required.
+        :paramtype user_id: str
+        :keyword is_anonymous: True if the Microsoft Teams user is anonymous. By default false if
+         missing.
+        :paramtype is_anonymous: bool
+        :keyword cloud: The cloud that the Microsoft Teams user belongs to. By default 'public' if
+         missing. Known values are: "public", "dod", and "gcch".
+        :paramtype cloud: str or ~azure.communication.chat.models.CommunicationCloudEnvironmentModel
+        """
+        super().__init__(**kwargs)
         self.user_id = user_id
         self.is_anonymous = is_anonymous
         self.cloud = cloud
 
 
-class PhoneNumberIdentifierModel(msrest.serialization.Model):
+class PhoneNumberIdentifierModel(_serialization.Model):
     """A phone number.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param value: Required. The phone number in E.164 format.
-    :type value: str
+    :ivar value: The phone number in E.164 format. Required.
+    :vartype value: str
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: str,
-        **kwargs
-    ):
-        super(PhoneNumberIdentifierModel, self).__init__(**kwargs)
+    def __init__(self, *, value: str, **kwargs: Any) -> None:
+        """
+        :keyword value: The phone number in E.164 format. Required.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class SendChatMessageRequest(msrest.serialization.Model):
+class SendChatMessageRequest(_serialization.Model):
     """Details of the message to send.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param content: Required. Chat message content.
-    :type content: str
-    :param sender_display_name: The display name of the chat message sender. This property is used
+    :ivar content: Chat message content. Required.
+    :vartype content: str
+    :ivar sender_display_name: The display name of the chat message sender. This property is used
      to populate sender name for push notifications.
-    :type sender_display_name: str
-    :param type: The chat message type. Possible values include: "text", "html", "topicUpdated",
-     "participantAdded", "participantRemoved".
-    :type type: str or ~azure.communication.chat.models.ChatMessageType
-    :param metadata: Message metadata.
-    :type metadata: dict[str, str]
+    :vartype sender_display_name: str
+    :ivar type: The chat message type. Known values are: "text", "html", "topicUpdated",
+     "participantAdded", and "participantRemoved".
+    :vartype type: str or ~azure.communication.chat.models.ChatMessageType
+    :ivar metadata: Message metadata.
+    :vartype metadata: dict[str, str]
     """
 
     _validation = {
-        'content': {'required': True},
+        "content": {"required": True},
     }
 
     _attribute_map = {
-        'content': {'key': 'content', 'type': 'str'},
-        'sender_display_name': {'key': 'senderDisplayName', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'metadata': {'key': 'metadata', 'type': '{str}'},
+        "content": {"key": "content", "type": "str"},
+        "sender_display_name": {"key": "senderDisplayName", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "metadata": {"key": "metadata", "type": "{str}"},
     }
 
     def __init__(
@@ -830,135 +1088,146 @@ class SendChatMessageRequest(msrest.serialization.Model):
         *,
         content: str,
         sender_display_name: Optional[str] = None,
-        type: Optional[Union[str, "ChatMessageType"]] = None,
+        type: Optional[Union[str, "_models.ChatMessageType"]] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(SendChatMessageRequest, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword content: Chat message content. Required.
+        :paramtype content: str
+        :keyword sender_display_name: The display name of the chat message sender. This property is
+         used to populate sender name for push notifications.
+        :paramtype sender_display_name: str
+        :keyword type: The chat message type. Known values are: "text", "html", "topicUpdated",
+         "participantAdded", and "participantRemoved".
+        :paramtype type: str or ~azure.communication.chat.models.ChatMessageType
+        :keyword metadata: Message metadata.
+        :paramtype metadata: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.content = content
         self.sender_display_name = sender_display_name
         self.type = type
         self.metadata = metadata
 
 
-class SendChatMessageResult(msrest.serialization.Model):
+class SendChatMessageResult(_serialization.Model):
     """Result of the send message operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param id: Required. A server-generated message id.
-    :type id: str
+    :ivar id: A server-generated message id. Required.
+    :vartype id: str
     """
 
     _validation = {
-        'id': {'required': True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: str,
-        **kwargs
-    ):
-        super(SendChatMessageResult, self).__init__(**kwargs)
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        """
+        :keyword id: A server-generated message id. Required.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
         self.id = id
 
 
-class SendReadReceiptRequest(msrest.serialization.Model):
+class SendReadReceiptRequest(_serialization.Model):
     """Request payload for sending a read receipt.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param chat_message_id: Required. Id of the latest chat message read by the user.
-    :type chat_message_id: str
+    :ivar chat_message_id: Id of the latest chat message read by the user. Required.
+    :vartype chat_message_id: str
     """
 
     _validation = {
-        'chat_message_id': {'required': True},
+        "chat_message_id": {"required": True},
     }
 
     _attribute_map = {
-        'chat_message_id': {'key': 'chatMessageId', 'type': 'str'},
+        "chat_message_id": {"key": "chatMessageId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        chat_message_id: str,
-        **kwargs
-    ):
-        super(SendReadReceiptRequest, self).__init__(**kwargs)
+    def __init__(self, *, chat_message_id: str, **kwargs: Any) -> None:
+        """
+        :keyword chat_message_id: Id of the latest chat message read by the user. Required.
+        :paramtype chat_message_id: str
+        """
+        super().__init__(**kwargs)
         self.chat_message_id = chat_message_id
 
 
-class SendTypingNotificationRequest(msrest.serialization.Model):
+class SendTypingNotificationRequest(_serialization.Model):
     """Request payload for typing notifications.
 
-    :param sender_display_name: The display name of the typing notification sender. This property
-     is used to populate sender name for push notifications.
-    :type sender_display_name: str
+    :ivar sender_display_name: The display name of the typing notification sender. This property is
+     used to populate sender name for push notifications.
+    :vartype sender_display_name: str
     """
 
     _attribute_map = {
-        'sender_display_name': {'key': 'senderDisplayName', 'type': 'str'},
+        "sender_display_name": {"key": "senderDisplayName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        sender_display_name: Optional[str] = None,
-        **kwargs
-    ):
-        super(SendTypingNotificationRequest, self).__init__(**kwargs)
+    def __init__(self, *, sender_display_name: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword sender_display_name: The display name of the typing notification sender. This property
+         is used to populate sender name for push notifications.
+        :paramtype sender_display_name: str
+        """
+        super().__init__(**kwargs)
         self.sender_display_name = sender_display_name
 
 
-class UpdateChatMessageRequest(msrest.serialization.Model):
+class UpdateChatMessageRequest(_serialization.Model):
     """Request payload for updating a chat message.
 
-    :param content: Chat message content.
-    :type content: str
-    :param metadata: Message metadata.
-    :type metadata: dict[str, str]
+    :ivar content: Chat message content.
+    :vartype content: str
+    :ivar metadata: Message metadata.
+    :vartype metadata: dict[str, str]
     """
 
     _attribute_map = {
-        'content': {'key': 'content', 'type': 'str'},
-        'metadata': {'key': 'metadata', 'type': '{str}'},
+        "content": {"key": "content", "type": "str"},
+        "metadata": {"key": "metadata", "type": "{str}"},
     }
 
     def __init__(
-        self,
-        *,
-        content: Optional[str] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(UpdateChatMessageRequest, self).__init__(**kwargs)
+        self, *, content: Optional[str] = None, metadata: Optional[Dict[str, str]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword content: Chat message content.
+        :paramtype content: str
+        :keyword metadata: Message metadata.
+        :paramtype metadata: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.content = content
         self.metadata = metadata
 
 
-class UpdateChatThreadRequest(msrest.serialization.Model):
+class UpdateChatThreadRequest(_serialization.Model):
     """Request payload for updating a chat thread.
 
-    :param topic: Chat thread topic.
-    :type topic: str
+    :ivar topic: Chat thread topic.
+    :vartype topic: str
     """
 
     _attribute_map = {
-        'topic': {'key': 'topic', 'type': 'str'},
+        "topic": {"key": "topic", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        topic: Optional[str] = None,
-        **kwargs
-    ):
-        super(UpdateChatThreadRequest, self).__init__(**kwargs)
+    def __init__(self, *, topic: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword topic: Chat thread topic.
+        :paramtype topic: str
+        """
+        super().__init__(**kwargs)
         self.topic = topic

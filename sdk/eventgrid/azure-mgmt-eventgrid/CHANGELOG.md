@@ -1,5 +1,34 @@
 # Release History
 
+## 10.3.0b4 (2024-04-29)
+
+### Features Added
+
+  - Added operation NamespaceTopicEventSubscriptionsOperations.get_full_url
+  - Added operation NamespacesOperations.begin_validate_custom_domain_ownership
+  - Model ClientAuthenticationSettings has a new parameter custom_jwt_authentication
+  - Model NamespaceUpdateParameters has a new parameter topics_configuration
+  - Model PushInfo has a new parameter destination
+  - Model Subscription has a new parameter expiration_time_utc
+  - Model SubscriptionUpdateParameters has a new parameter expiration_time_utc
+  - Model TopicSpacesConfiguration has a new parameter custom_domains
+  - Model TopicsConfiguration has a new parameter custom_domains
+  - Model UpdateTopicSpacesConfigurationInfo has a new parameter custom_domains
+
+## 10.3.0b3 (2023-12-04)
+
+### Features Added
+
+  - Added operation NamespaceTopicEventSubscriptionsOperations.get_delivery_attributes
+  - Added operation group NetworkSecurityPerimeterConfigurationsOperations
+  - Model DeliveryConfiguration has a new parameter push
+  - Model TopicTypeInfo has a new parameter additional_enforced_permissions
+
+### Breaking Changes
+
+  - Model Client no longer has parameter authentication
+  - Parameter value_type of model StaticRoutingEnrichment is now required
+
 ## 10.3.0b2 (2023-05-19)
 
 ### Features Added

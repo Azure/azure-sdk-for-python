@@ -10,12 +10,12 @@ import unittest
 
 import azure.mgmt.hanaonazure.models
 
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer
 
-class MgmtHanaOnAzureTest(AzureMgmtTestCase):
+class TestMgmtHanaOnAzure(AzureMgmtRecordedTestCase):
 
     def setUp(self):
-        super(MgmtHanaOnAzureTest, self).setUp()
+        super(TestMgmtHanaOnAzure, self).setUp()
 
         self.hanaonazure_client = self.create_mgmt_client(
             azure.mgmt.hanaonazure.HanaManagementClient

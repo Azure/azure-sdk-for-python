@@ -10,8 +10,9 @@ from functools import wraps
 from typing import List, Any, Dict
 from packaging.version import Version
 from ghapi.all import GhApi
-from azure.storage.blob import BlobServiceClient, ContainerClient
+from github import Github
 from datetime import datetime, timedelta
+import importlib
 
 _LOG = logging.getLogger()
 
@@ -97,22 +98,6 @@ def current_time_month() -> str:
     date = time.localtime(time.time())
     return '{}-{:02d}'.format(date.tm_year, date.tm_mon)
 
-
-def set_test_env_var():
-    setting_path = str(Path(os.getenv('SCRIPT_PATH')) / 'mgmt_settings_real_.py')
-    # edit mgmt_settings_real.py
-    with open(setting_path, 'r') as file_in:
-        list_in = file_in.readlines()
-
-    for i in range(0, len(list_in)):
-        list_in[i] = list_in[i].replace('ENV_TENANT_ID', os.environ['TENANT_ID'])
-        list_in[i] = list_in[i].replace('ENV_CLIENT_ID', os.environ['CLIENT_ID'])
-        list_in[i] = list_in[i].replace('ENV_CLIENT_SECRET', os.environ['CLIENT_SECRET'])
-        list_in[i] = list_in[i].replace('ENV_SUBSCRIPTION_ID', os.environ['SUBSCRIPTION_ID'])
-    with open(str(Path('tools/azure-sdk-tools/devtools_testutils/mgmt_settings_real.py')), 'w') as file_out:
-        file_out.writelines(list_in)
-
-
 class CodegenTestPR:
     """
     This class can generate SDK code, run live test and create RP
@@ -124,20 +109,17 @@ class CodegenTestPR:
         self.bot_token = os.getenv('BOT_TOKEN')
         self.spec_readme = os.getenv('SPEC_README', '')
         self.spec_repo = os.getenv('SPEC_REPO', '')
-        self.conn_str = os.getenv('STORAGE_CONN_STR')
-        self.storage_endpoint = os.getenv('STORAGE_ENDPOINT').strip('/')
         self.target_date = os.getenv('TARGET_DATE', '')
         self.test_folder = os.getenv('TEST_FOLDER', '')
 
         self.package_name = '' # 'dns' of 'sdk/compute/azure-mgmt-dns'
+        self.whole_package_name = '' # 'azure-mgmt-dns'
         self.new_branch = ''
         self.sdk_folder = ''  # 'compute' of 'sdk/compute/azure-mgmt-dns'
         self.autorest_result = ''
         self.next_version = ''
         self.test_result = ''
         self.pr_number = 0
-        self.container_name = ''
-        self.private_package_link = []  # List[str]
         self.tag_is_stable = False
         self.has_test = False
         self.check_package_size_result = []  # List[str]
@@ -182,16 +164,21 @@ class CodegenTestPR:
         if self.spec_repo:
             os.chdir(Path(self.spec_repo))
             self.checkout_branch("DEBUG_REST_BRANCH", "azure-rest-api-specs")
+    
+    @property
+    def from_swagger(self) -> bool:
+        return "readme.md" in self.spec_readme
 
     def generate_code(self):
         self.checkout_azure_default_branch()
 
         # prepare input data
+        file_name = "relatedReadmeMdFiles" if self.from_swagger else "relatedTypeSpecProjectFolder"
         input_data = {
             'headSha': self.get_latest_commit_in_swagger_repo(),
             'repoHttpsUrl': "https://github.com/Azure/azure-rest-api-specs",
             'specFolder': self.spec_repo,
-            'relatedReadmeMdFiles': [self.readme_local_folder()]
+            file_name: [self.readme_local_folder()],
         }
         log(str(input_data))
 
@@ -215,7 +202,8 @@ class CodegenTestPR:
 
     def get_package_name_with_autorest_result(self):
         generate_result = self.get_autorest_result()
-        self.package_name = generate_result["packages"][0]["packageName"].split('-', 2)[-1]
+        self.whole_package_name = generate_result["packages"][0]["packageName"]
+        self.package_name = self.whole_package_name.split('-', 2)[-1]
 
     def prepare_branch_with_readme(self):
         self.generate_code()
@@ -228,7 +216,7 @@ class CodegenTestPR:
         print_check(f'git checkout -b {self.new_branch}')
 
     def check_sdk_readme(self):
-        sdk_readme = str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}/README.md'))
+        sdk_readme = str(Path(f'sdk/{self.sdk_folder}/{self.whole_package_name}/README.md'))
 
         def edit_sdk_readme(content: List[str]):
             for i in range(0, len(content)):
@@ -237,23 +225,31 @@ class CodegenTestPR:
 
         modify_file(sdk_readme, edit_sdk_readme)
 
+    @property
+    def readme_md_path(self)-> Path:
+        return Path(self.spec_repo) / "specification" / self.spec_readme.split("specification/")[-1]
+
+    @property
+    def readme_python_md_path(self)-> Path:
+        return Path(str(self.readme_md_path).replace("readme.md", "readme.python.md"))
+
     # Use the template to update readme and setup by packaging_tools
     @return_origin_path
     def check_file_with_packaging_tool(self):
-        python_md = Path(self.spec_repo) / "specification" / self.spec_readme.split("specification/")[-1].replace("readme.md", "readme.python.md")
+        print_check(f"pip install {self.get_whl_package} --force-reinstall")
+        module = importlib.import_module(self.whole_package_name.replace("-", "."))
         title = ""
-        if python_md.exists():
-            with open(python_md, "r") as file_in:
-                md_content = file_in.readlines()
-            for line in md_content:
-                if "title:" in line:
-                    title = line.replace("title:", "").strip(" \r\n")
-                    break
-        else:
-            log("{python_md} does not exist")
+        for item in getattr(module, "__all__", []):
+            if item.endswith("Client"):
+                title = item
+                break
+        
+        if not title:
+            log(f"Can not find the title in {self.whole_package_name}")
+        
         os.chdir(Path(f'sdk/{self.sdk_folder}'))
         # add `title` and update `is_stable` in sdk_packaging.toml
-        toml = Path(f"azure-mgmt-{self.package_name}") / "sdk_packaging.toml"
+        toml = Path(self.whole_package_name) / "sdk_packaging.toml"
         stable_config = "is_stable = " + ("true" if self.tag_is_stable else "false") + "\n"
         if toml.exists():
             def edit_toml(content: List[str]):
@@ -273,7 +269,7 @@ class CodegenTestPR:
         else:
             log(f"{os.getcwd()}/{toml} does not exist")
 
-        print_check(f'python -m packaging_tools --build-conf azure-mgmt-{self.package_name}')
+        print_check(f'python -m packaging_tools --build-conf {self.whole_package_name}')
         log('packaging_tools --build-conf successfully ')
 
     def check_pprint_name(self):
@@ -381,10 +377,9 @@ class CodegenTestPR:
             self.edit_changelog()
 
     def check_dev_requirement(self):
-        file = Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}/dev_requirements.txt')
+        file = Path(f'sdk/{self.sdk_folder}/{self.whole_package_name}/dev_requirements.txt')
         content = [
             "-e ../../../tools/azure-sdk-tools\n",
-            "-e ../../../tools/azure-devtools\n",
             "../../identity/azure-identity\n"
         ]
         if not file.exists():
@@ -398,6 +393,25 @@ class CodegenTestPR:
                 if os.path.getsize(package) > 2 * 1024 * 1024:
                     self.check_package_size_result.append(f'ERROR: Package size is over 2MBytes: {Path(package).name}!!!')
 
+    def check_model_flatten(self):
+        if self.from_swagger:
+            last_version = self.get_last_release_version()
+            if last_version == "" or last_version.startswith("1.0.0b"):
+                with open(self.readme_md_path, 'r') as file_in:
+                    readme_md_content = file_in.read()
+
+                with open(self.readme_python_md_path, 'r') as file_in:
+                    readme_python_md_content = file_in.read()
+                
+                if "flatten-models: false" not in readme_md_content and "flatten-models: false" not in readme_python_md_content and self.issue_link:
+                    api = Github(self.bot_token).get_repo("Azure/sdk-release-request")
+                    issue_number = int(self.issue_link.split('/')[-1])
+                    issue = api.get_issue(issue_number)
+                    assignee = issue.assignee.login if issue.assignee else ""
+                    message = "please set `flatten-models: false` in readme.md or readme.python.md"
+                    issue.create_comment(f'@{assignee}, {message}')
+                    raise Exception(message)
+
     def check_file(self):
         self.check_file_with_packaging_tool()
         self.check_pprint_name()
@@ -406,9 +420,10 @@ class CodegenTestPR:
         self.check_changelog_file()
         self.check_dev_requirement()
         self.check_package_size()
+        self.check_model_flatten()
 
     def sdk_code_path(self) -> str:
-        return str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}'))
+        return str(Path(f'sdk/{self.sdk_folder}/{self.whole_package_name}'))
 
     @property
     def is_single_path(self) -> bool:
@@ -424,7 +439,6 @@ class CodegenTestPR:
 
     def prepare_test_env(self):
         self.install_package_locally()
-        set_test_env_var()
     
     @staticmethod
     def is_live_test()-> bool:
@@ -485,7 +499,7 @@ class CodegenTestPR:
         pr_body = "" if not self.check_package_size_result else "{}\n".format("\n".join(self.check_package_size_result))
         pr_body = pr_body + "{} \n{} \n{}".format(self.issue_link, self.test_result, self.pipeline_link)
         if not self.is_single_path:
-            pr_body += f'\nBuildTargetingString\n  azure-mgmt-{self.package_name}\nSkip.CreateApiReview\ntrue'
+            pr_body += f'\nBuildTargetingString\n  {self.whole_package_name}\nSkip.CreateApiReview\ntrue'
         res_create = api.pulls.create(pr_title, pr_head, pr_base, pr_body)
 
         # Add issue link on PR
@@ -500,17 +514,6 @@ class CodegenTestPR:
                 issue_number = int(self.issue_link.split('/')[-1])
                 api_request.issues.add_labels(issue_number=issue_number, labels=['base-branch-attention'])
 
-    def get_container_name(self) -> str:
-        container_name = current_time_month()
-        service_client = BlobServiceClient.from_connection_string(conn_str=self.conn_str)
-        containers_exist = [container for container in service_client.list_containers()]
-        containers_name = {container.name for container in containers_exist}
-        # create new container if it does not exist
-        if container_name not in containers_name:
-            container_client = service_client.get_container_client(container=container_name)
-            container_client.create_container(public_access='container', timeout=60 * 24 * 3600)
-        return container_name
-
     @property
     def after_multiapi_combiner(self) -> bool:
         content = self.get_autorest_result()
@@ -520,30 +523,9 @@ class CodegenTestPR:
         content = self.get_autorest_result()
         return content["packages"][0]["artifacts"]
 
-    def upload_private_package_proc(self, container_name: str):
-        container_client = ContainerClient.from_connection_string(conn_str=self.conn_str, container_name=container_name)
-        private_package = self.get_private_package()
-        for package in private_package:
-            package_name = Path(package).parts[-1]
-            # package will be uploaded to storage account in the folder : container_name / pr_number / package_name
-            blob_name = f'sdk_pr_{self.pr_number}/{package_name}'
-            blob_client = container_client.get_blob_client(blob=blob_name)
-            with open(package, 'rb') as data:
-                blob_client.upload_blob(data, overwrite=True)
-            self.private_package_link.append(f'{self.storage_endpoint}/{container_name}/{blob_name}')
-
-    def upload_private_package(self):
-        container_name = self.get_container_name()
-        self.upload_private_package_proc(container_name)
-
-    def get_private_package_link(self) -> str:
-        self.upload_private_package()
-        result = []
-        # it is for markdown
-        for link in self.private_package_link:
-            package_name = link.split('/')[-1]
-            result.append(f'* [{package_name}]({link})\n')
-        return ''.join(result)
+    @property
+    def get_whl_package(self) -> str:
+        return [package for package in self.get_private_package() if package.endswith('.whl')][0]
 
     def ask_check_policy(self):
         changelog = self.get_changelog()
@@ -555,15 +537,13 @@ class CodegenTestPR:
             issue_number = int(self.issue_link.split('/')[-1])
             api = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
             author = api.issues.get(issue_number=issue_number).user.login
-            body = f'Hi @{author}, Please check whether the package works well and the CHANGELOG info is as below:\n' \
-                f'{self.get_private_package_link()}' \
+            body = f'Hi @{author}, please check whether CHANGELOG for this release meet requirements:\n' \
                 f'```\n' \
                 f'CHANGELOG:\n' \
                 f'{changelog}\n' \
                 f'```\n' \
-                f'* (If you are not a Python User, you can mainly check whether the changelog meets your requirements)\n\n' \
-                f'* (The version of the package is only a temporary version for testing)\n\n' \
-                f'https://github.com/Azure/azure-sdk-for-python/pull/{self.pr_number}'
+                '* (If you want private package for test or development, ' \
+                f'please build it locally based on https://github.com/Azure/azure-sdk-for-python/pull/{self.pr_number} with [guidance](https://github.com/Azure/azure-sdk-for-python/wiki/Common-issues-about-Python-SDK#build-private-package-with-pr))\n\n'
             api.issues.create_comment(issue_number=issue_number, body=body)
 
             # comment for hint

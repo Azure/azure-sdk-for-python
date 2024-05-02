@@ -4,8 +4,8 @@
 # ------------------------------------
 """
 
-This sample is intended to assist in authenticating with AAD via redis-py library. 
-It focuses on displaying the logic required to fetch an AAD access token and to use it as password when setting up the redis client.
+This sample is intended to assist in authenticating with Microsoft Entra ID via redis-py library. 
+It focuses on displaying the logic required to fetch a Microsoft Entra access token and to use it as password when setting up the redis client.
 
 """
 
@@ -14,7 +14,7 @@ import logging
 import redis
 from azure.identity import DefaultAzureCredential
 
-scope = "acca5fbb-b7e4-4009-81f1-37e38fd66d78/.default"  # The current scope is for public preview and may change for GA release.
+scope = "https://redis.azure.com/.default"  # The current scope is for public preview and may change for GA release.
 host = ""  # Required
 port = 6380  # Required
 user_name = ""  # Required

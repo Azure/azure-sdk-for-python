@@ -132,7 +132,6 @@ from ._operations import VpnServerConfigurationsAssociatedWithVirtualWanOperatio
 from ._operations import VirtualHubRouteTableV2SOperations
 from ._operations import ExpressRouteGatewaysOperations
 from ._operations import ExpressRouteConnectionsOperations
-from ._operations import NetworkVirtualApplianceConnectionsOperations
 from ._operations import VirtualHubBgpConnectionOperations
 from ._operations import VirtualHubBgpConnectionsOperations
 from ._operations import VirtualHubIpConfigurationOperations
@@ -271,7 +270,6 @@ __all__ = [
     "VirtualHubRouteTableV2SOperations",
     "ExpressRouteGatewaysOperations",
     "ExpressRouteConnectionsOperations",
-    "NetworkVirtualApplianceConnectionsOperations",
     "VirtualHubBgpConnectionOperations",
     "VirtualHubBgpConnectionsOperations",
     "VirtualHubIpConfigurationOperations",

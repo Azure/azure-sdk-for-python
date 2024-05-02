@@ -41,11 +41,18 @@ def text_classification(
     :paramtype primary_metric: Union[str, ClassificationPrimaryMetrics]
     :keyword log_verbosity: Log verbosity level.
     :paramtype log_verbosity: str
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
 
     :return: The TextClassificationJob object.
     :rtype: TextClassificationJob
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_nlp.py
+                :start-after: [START automl.text_classification]
+                :end-before: [END automl.text_classification]
+                :language: python
+                :dedent: 8
+                :caption: creating an automl text classification job
     """
 
     text_classification_job = TextClassificationJob(
@@ -90,11 +97,18 @@ def text_classification_multilabel(
     :paramtype primary_metric: str
     :keyword log_verbosity: Log verbosity level.
     :paramtype log_verbosity: str
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
 
     :return: The TextClassificationMultilabelJob object.
     :rtype: TextClassificationMultilabelJob
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_nlp.py
+                :start-after: [START automl.text_classification_multilabel]
+                :end-before: [END automl.text_classification_multilabel]
+                :language: python
+                :dedent: 8
+                :caption: creating an automl text multilabel classification job
     """
 
     text_classification_multilabel_job = TextClassificationMultilabelJob(
@@ -136,11 +150,18 @@ def text_ner(
     :paramtype primary_metric: str
     :keyword log_verbosity: Log verbosity level.
     :paramtype log_verbosity: str
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
 
     :return: The TextNerJob object.
     :rtype: TextNerJob
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_nlp.py
+                :start-after: [START automl.text_ner]
+                :end-before: [END automl.text_ner]
+                :language: python
+                :dedent: 8
+                :caption: creating an automl text ner job
     """
 
     text_ner_job = TextNerJob(

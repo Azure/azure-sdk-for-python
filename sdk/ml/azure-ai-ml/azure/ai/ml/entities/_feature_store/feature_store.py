@@ -7,24 +7,23 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._schema._feature_store.feature_store_schema import FeatureStoreSchema
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
-from azure.ai.ml.entities import CustomerManagedKey, Workspace
 from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._workspace.compute_runtime import ComputeRuntime
+from azure.ai.ml.entities._workspace.customer_managed_key import CustomerManagedKey
 from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
-
-from ._constants import DEFAULT_SPARK_RUNTIME_VERSION, FEATURE_STORE_KIND
+from azure.ai.ml.entities._workspace.workspace import Workspace
+from azure.ai.ml.constants._common import WorkspaceKind
+from ._constants import DEFAULT_SPARK_RUNTIME_VERSION
 from .materialization_store import MaterializationStore
 
 
-@experimental
 class FeatureStore(Workspace):
     """Feature Store
 
@@ -120,22 +119,24 @@ class FeatureStore(Workspace):
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         feature_store_settings = kwargs.pop(
             "feature_store_settings",
             FeatureStoreSettings(
-                compute_runtime=compute_runtime
-                if compute_runtime
-                else ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
+                compute_runtime=(
+                    compute_runtime
+                    if compute_runtime
+                    else ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION)
+                ),
             ),
         )
-        self._workspace_id = kwargs.pop("workspace_id", "")
+        # TODO: Refactor this so that super().__init__() is not called twice coming from _from_rest_object()
         super().__init__(
             name=name,
             description=description,
             tags=tags,
-            kind=FEATURE_STORE_KIND,
+            kind=WorkspaceKind.FEATURE_STORE,
             display_name=display_name,
             location=location,
             resource_group=resource_group,
@@ -161,38 +162,42 @@ class FeatureStore(Workspace):
         self.managed_network = managed_network
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspace) -> "FeatureStore":
+    def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["FeatureStore"]:
         if not rest_obj:
             return None
 
         workspace_object = Workspace._from_rest_object(rest_obj)
+        if workspace_object is not None:
+            return FeatureStore(
+                name=str(workspace_object.name),
+                id=workspace_object.id,
+                description=workspace_object.description,
+                tags=workspace_object.tags,
+                compute_runtime=ComputeRuntime._from_rest_object(
+                    workspace_object._feature_store_settings.compute_runtime
+                    if workspace_object._feature_store_settings
+                    else None
+                ),
+                display_name=workspace_object.display_name,
+                discovery_url=workspace_object.discovery_url,
+                location=workspace_object.location,
+                resource_group=workspace_object.resource_group,
+                hbi_workspace=workspace_object.hbi_workspace,
+                storage_account=workspace_object.storage_account,
+                container_registry=workspace_object.container_registry,
+                key_vault=workspace_object.key_vault,
+                application_insights=workspace_object.application_insights,
+                customer_managed_key=workspace_object.customer_managed_key,
+                image_build_compute=workspace_object.image_build_compute,
+                public_network_access=workspace_object.public_network_access,
+                identity=workspace_object.identity,
+                primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
+                managed_network=workspace_object.managed_network,
+                workspace_id=rest_obj.workspace_id,
+                feature_store_settings=workspace_object._feature_store_settings,
+            )
 
-        return FeatureStore(
-            name=workspace_object.name,
-            description=workspace_object.description,
-            tags=workspace_object.tags,
-            compute_runtime=ComputeRuntime._from_rest_object(
-                workspace_object._feature_store_settings.compute_runtime
-                if workspace_object._feature_store_settings
-                else None
-            ),
-            display_name=workspace_object.display_name,
-            location=workspace_object.location,
-            resource_group=workspace_object.resource_group,
-            hbi_workspace=workspace_object.hbi_workspace,
-            storage_account=workspace_object.storage_account,
-            container_registry=workspace_object.container_registry,
-            key_vault=workspace_object.key_vault,
-            application_insights=workspace_object.application_insights,
-            customer_managed_key=workspace_object.customer_managed_key,
-            image_build_compute=workspace_object.image_build_compute,
-            public_network_access=workspace_object.public_network_access,
-            identity=workspace_object.identity,
-            primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
-            managed_network=workspace_object.managed_network,
-            workspace_id=rest_obj.workspace_id,
-            feature_store_settings=workspace_object._feature_store_settings,
-        )
+        return None
 
     @classmethod
     def _load(
@@ -200,7 +205,7 @@ class FeatureStore(Workspace):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "FeatureStore":
         data = data or {}
         params_override = params_override or []
@@ -213,4 +218,5 @@ class FeatureStore(Workspace):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return FeatureStoreSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = FeatureStoreSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res

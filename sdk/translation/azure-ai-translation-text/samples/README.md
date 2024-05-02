@@ -34,7 +34,7 @@ For some of these operations you can create a new `TextTranslationClient` withou
 <!-- SNIPPET: sample_text_translation_client.create_text_translation_client_with_endpoint -->
 
 ```python
-text_translator = TextTranslationClient(endpoint)
+text_translator = TextTranslationClient(endpoint=endpoint)
 ```
 
 <!-- END SNIPPET -->
@@ -49,7 +49,7 @@ The appropriate constructor is invoked in each sample to create a `TextTranslati
 
 ```python
 credential = TranslatorCredential(apikey, region)
-text_translator = TextTranslationClient(credential, endpoint)
+text_translator = TextTranslationClient(credential=credential, endpoint=endpoint)
 ```
 
 <!-- END SNIPPET -->
@@ -68,9 +68,15 @@ This will return language metadata from all supported scopes.
 try:
     response = text_translator.get_languages()
 
-    print(f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}")
-    print(f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}")
-    print(f"Number of supported languages for dictionary operations: {len(response.dictionary) if response.dictionary is not None else 0}")
+    print(
+        f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}"
+    )
+    print(
+        f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}"
+    )
+    print(
+        f"Number of supported languages for dictionary operations: {len(response.dictionary) if response.dictionary is not None else 0}"
+    )
 
     if response.translation is not None:
         print("Translation Languages:")
@@ -107,9 +113,15 @@ try:
     scope = "translation"
     response = text_translator.get_languages(scope=scope)
 
-    print(f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}")
-    print(f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}")
-    print(f"Number of supported languages for dictionary operations: {len(response.dictionary) if response.dictionary is not None else 0}")
+    print(
+        f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}"
+    )
+    print(
+        f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}"
+    )
+    print(
+        f"Number of supported languages for dictionary operations: {len(response.dictionary) if response.dictionary is not None else 0}"
+    )
 
     if response.translation is not None:
         print("Translation Languages:")
@@ -147,9 +159,15 @@ try:
     accept_language = "es"
     response = text_translator.get_languages(accept_language=accept_language)
 
-    print(f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}")
-    print(f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}")
-    print(f"Number of supported languages for dictionary operations: {len(response.dictionary) if response.dictionary is not None else 0}")
+    print(
+        f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}"
+    )
+    print(
+        f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}"
+    )
+    print(
+        f"Number of supported languages for dictionary operations: {len(response.dictionary) if response.dictionary is not None else 0}"
+    )
 
     if response.translation is not None:
         print("Translation Languages:")
@@ -187,9 +205,11 @@ Translate text from known source language to target language.
 try:
     source_language = "en"
     target_languages = ["cs"]
-    input_text_elements = [ InputTextItem(text = "This is a test") ]
+    input_text_elements = ["This is a test"]
 
-    response = text_translator.translate(content = input_text_elements, to = target_languages, from_parameter = source_language)
+    response = text_translator.translate(
+        request_body=input_text_elements, to=target_languages, from_parameter=source_language
+    )
     translation = response[0] if response else None
 
     if translation:
@@ -218,15 +238,17 @@ You can omit source language of the input text. In this case, API will try to au
 ```python
 try:
     target_languages = ["cs"]
-    input_text_elements = [ InputTextItem(text = "This is a test") ]
+    input_text_elements = ["This is a test"]
 
-    response = text_translator.translate(content = input_text_elements, to = target_languages)
+    response = text_translator.translate(request_body=input_text_elements, to=target_languages)
     translation = response[0] if response else None
 
     if translation:
         detected_language = translation.detected_language
         if detected_language:
-            print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
+            print(
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+            )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
@@ -251,9 +273,15 @@ try:
     from_language = "ar"
     to_script = "Latn"
     target_languages = ["zh-Hans"]
-    input_text_elements = [ InputTextItem(text = "hudha akhtabar.") ]
+    input_text_elements = ["hudha akhtabar."]
 
-    response = text_translator.translate(content = input_text_elements, to = target_languages, from_script=from_script, from_parameter=from_language, to_script=to_script)
+    response = text_translator.translate(
+        request_body=input_text_elements,
+        to=target_languages,
+        from_script=from_script,
+        from_parameter=from_language,
+        to_script=to_script,
+    )
     translation = response[0] if response else None
 
     if translation:
@@ -284,20 +312,26 @@ You can translate multiple text elements with a various length. Each input eleme
 ```python
 try:
     target_languages = ["cs"]
-    input_text_elements = [ 
-        InputTextItem(text = "This is a test."),
-        InputTextItem(text = "Esto es una prueba."),
-        InputTextItem(text = "Dies ist ein Test.")]
+    input_text_elements = [
+        "This is a test.",
+        "Esto es una prueba.",
+        "Dies ist ein Test.",
+    ]
 
-    translations = text_translator.translate(content = input_text_elements, to = target_languages)
+    translations = text_translator.translate(request_body=input_text_elements, to=target_languages)
 
     for translation in translations:
-        print(f"Detected languages of the input text: {translation.detected_language.language if translation.detected_language else None} with score: {translation.detected_language.score if translation.detected_language else None}.")
-        print(f"Text was translated to: '{translation.translations[0].to if translation.translations else None}' and the result is: '{translation.translations[0].text if translation.translations else None}'.")
+        print(
+            f"Detected languages of the input text: {translation.detected_language.language if translation.detected_language else None} with score: {translation.detected_language.score if translation.detected_language else None}."
+        )
+        print(
+            f"Text was translated to: '{translation.translations[0].to if translation.translations else None}' and the result is: '{translation.translations[0].text if translation.translations else None}'."
+        )
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->
@@ -311,21 +345,24 @@ You can provide multiple target languages which results to each input element be
 ```python
 try:
     target_languages = ["cs", "es", "de"]
-    input_text_elements = [ InputTextItem(text = "This is a test") ]
+    input_text_elements = ["This is a test"]
 
-    response = text_translator.translate(content = input_text_elements, to = target_languages)
+    response = text_translator.translate(request_body=input_text_elements, to=target_languages)
     translation = response[0] if response else None
 
     if translation:
         detected_language = translation.detected_language
         if detected_language:
-            print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
+            print(
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+            )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->
@@ -340,21 +377,24 @@ You can select whether the translated text is plain text or HTML text. Any HTML 
 try:
     text_type = TextType.HTML
     target_languages = ["cs"]
-    input_text_elements = [ InputTextItem(text = "<html><body>This <b>is</b> a test.</body></html>") ]
+    input_text_elements = ["<html><body>This <b>is</b> a test.</body></html>"]
 
-    response = text_translator.translate(content = input_text_elements, to = target_languages, text_type = text_type)
+    response = text_translator.translate(request_body=input_text_elements, to=target_languages, text_type=text_type)
     translation = response[0] if response else None
 
     if translation:
         detected_language = translation.detected_language
         if detected_language:
-            print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
+            print(
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+            )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->
@@ -370,9 +410,13 @@ try:
     text_type = TextType.HTML
     source_language = "en"
     target_languages = ["cs"]
-    input_text_elements = [ InputTextItem(text = "<div class=\"notranslate\">This will not be translated.</div><div>This will be translated. </div>") ]
+    input_text_elements = [
+        '<div class="notranslate">This will not be translated.</div><div>This will be translated. </div>'
+    ]
 
-    response = text_translator.translate(content = input_text_elements, to = target_languages, from_parameter = source_language, text_type=text_type)
+    response = text_translator.translate(
+        request_body=input_text_elements, to=target_languages, from_parameter=source_language, text_type=text_type
+    )
     translation = response[0] if response else None
 
     if translation:
@@ -380,8 +424,9 @@ try:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->
@@ -398,9 +443,13 @@ If you already know the translation you want to apply to a word or a phrase, you
 try:
     source_language = "en"
     target_languages = ["cs"]
-    input_text_elements = [ InputTextItem(text = "The word <mstrans:dictionary translation=\"wordomatic\">wordomatic</mstrans:dictionary> is a dictionary entry.") ]
+    input_text_elements = [
+        'The word <mstrans:dictionary translation="wordomatic">wordomatic</mstrans:dictionary> is a dictionary entry.'
+    ]
 
-    response = text_translator.translate(content = input_text_elements, to = target_languages, from_parameter = source_language)
+    response = text_translator.translate(
+        request_body=input_text_elements, to=target_languages, from_parameter=source_language
+    )
     translation = response[0] if response else None
 
     if translation:
@@ -408,8 +457,9 @@ try:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->
@@ -427,21 +477,29 @@ try:
     profanity_action = ProfanityAction.MARKED
     profanity_maker = ProfanityMarker.ASTERISK
     target_languages = ["cs"]
-    input_text_elements = [ InputTextItem(text = "This is ***.") ]
+    input_text_elements = ["This is ***."]
 
-    response = text_translator.translate(content = input_text_elements, to = target_languages, profanity_action=profanity_action, profanity_marker=profanity_maker)
+    response = text_translator.translate(
+        request_body=input_text_elements,
+        to=target_languages,
+        profanity_action=profanity_action,
+        profanity_marker=profanity_maker,
+    )
     translation = response[0] if response else None
 
     if translation:
         detected_language = translation.detected_language
         if detected_language:
-            print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
+            print(
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+            )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->
@@ -456,23 +514,28 @@ You can ask translation service to include alignment projection from source text
 try:
     include_alignment = True
     target_languages = ["cs"]
-    input_text_elements = [ InputTextItem(text = "The answer lies in machine translation.") ]
+    input_text_elements = ["The answer lies in machine translation."]
 
-    response = text_translator.translate(content = input_text_elements, to = target_languages, include_alignment = include_alignment)
+    response = text_translator.translate(
+        request_body=input_text_elements, to=target_languages, include_alignment=include_alignment
+    )
     translation = response[0] if response else None
 
     if translation:
         detected_language = translation.detected_language
         if detected_language:
-            print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
+            print(
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+            )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
-            if (translated_text.alignment):
+            if translated_text.alignment:
                 print(f"Alignments: {translated_text.alignment.proj}")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->
@@ -487,24 +550,29 @@ You can ask translator service to include sentence boundaries for the input text
 try:
     include_sentence_length = True
     target_languages = ["cs"]
-    input_text_elements = [ InputTextItem(text = "The answer lies in machine translation. This is a test.") ]
+    input_text_elements = ["The answer lies in machine translation. This is a test."]
 
-    response = text_translator.translate(content = input_text_elements, to = target_languages, include_sentence_length=include_sentence_length)
+    response = text_translator.translate(
+        request_body=input_text_elements, to=target_languages, include_sentence_length=include_sentence_length
+    )
     translation = response[0] if response else None
 
     if translation:
         detected_language = translation.detected_language
         if detected_language:
-            print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
+            print(
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+            )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
-            if (translated_text.sent_len):
+            if translated_text.sent_len:
                 print(f"Source Sentence length: {translated_text.sent_len.src_sent_len}")
                 print(f"Translated Sentence length: {translated_text.sent_len.trans_sent_len}")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->
@@ -523,21 +591,24 @@ It is possible to set `allow_fallback` parameter. It specifies that the service 
 try:
     category = "<<Category ID>>"
     target_languages = ["cs"]
-    input_text_elements = [ InputTextItem(text = "This is a test") ]
+    input_text_elements = ["This is a test"]
 
-    response = text_translator.translate(content = input_text_elements, to = target_languages, category = category)
+    response = text_translator.translate(request_body=input_text_elements, to=target_languages, category=category)
     translation = response[0] if response else None
 
     if translation:
         detected_language = translation.detected_language
         if detected_language:
-            print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
+            print(
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+            )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->
@@ -555,13 +626,17 @@ try:
     language = "zh-Hans"
     from_script = "Hans"
     to_script = "Latn"
-    input_text_elements = [ InputTextItem(text = "这是个测试。") ]
+    input_text_elements = ["这是个测试。"]
 
-    response = text_translator.transliterate(content = input_text_elements, language = language, from_script = from_script, to_script = to_script)
+    response = text_translator.transliterate(
+        request_body=input_text_elements, language=language, from_script=from_script, to_script=to_script
+    )
     transliteration = response[0] if response else None
 
     if transliteration:
-        print(f"Input text was transliterated to '{transliteration.script}' script. Transliterated text: '{transliteration.text}'.")
+        print(
+            f"Input text was transliterated to '{transliteration.script}' script. Transliterated text: '{transliteration.text}'."
+        )
 
 except HttpResponseError as exception:
     if exception.error is not None:
@@ -584,15 +659,19 @@ When the input language is known, you can provide those to the service call.
 try:
     source_language = "zh-Hans"
     source_script = "Latn"
-    input_text_elements = [ InputTextItem(text = "zhè shì gè cè shì。") ]
+    input_text_elements = ["zhè shì gè cè shì。"]
 
-    response = text_translator.find_sentence_boundaries(content = input_text_elements, language = source_language, script = source_script)
+    response = text_translator.find_sentence_boundaries(
+        request_body=input_text_elements, language=source_language, script=source_script
+    )
     sentence_boundaries = response[0] if response else None
 
     if sentence_boundaries:
         detected_language = sentence_boundaries.detected_language
         if detected_language:
-            print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
+            print(
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+            )
         print(f"The detected sentence boundaries:")
         for boundary in sentence_boundaries.sent_len:
             print(boundary)
@@ -614,22 +693,25 @@ You can omit source language of the input text. In this case, API will try to au
 
 ```python
 try:
-    input_text_elements = [ InputTextItem(text = "This is a test. This is the second sentence.") ]
+    input_text_elements = ["This is a test. This is the second sentence."]
 
-    response = text_translator.find_sentence_boundaries(content = input_text_elements)
+    response = text_translator.find_sentence_boundaries(request_body=input_text_elements)
     sentence_boundaries = response[0] if response else None
 
     if sentence_boundaries:
         detected_language = sentence_boundaries.detected_language
         if detected_language:
-            print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
+            print(
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+            )
         print(f"The detected sentence boundaries:")
         for boundary in sentence_boundaries.sent_len:
             print(boundary)
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->
@@ -646,14 +728,18 @@ Returns equivalent words for the source term in the target language.
 try:
     source_language = "en"
     target_language = "es"
-    input_text_elements = [ InputTextItem(text = "fly") ]
+    input_text_elements = ["fly"]
 
-    response = text_translator.lookup_dictionary_entries(content = input_text_elements, from_parameter = source_language, to = target_language)
+    response = text_translator.lookup_dictionary_entries(
+        request_body=input_text_elements, from_parameter=source_language, to=target_language
+    )
     dictionary_entry = response[0] if response else None
 
     if dictionary_entry:
         print(f"For the given input {len(dictionary_entry.translations)} entries were found in the dictionary.")
-        print(f"First entry: '{dictionary_entry.translations[0].display_target}', confidence: {dictionary_entry.translations[0].confidence}.")
+        print(
+            f"First entry: '{dictionary_entry.translations[0].display_target}', confidence: {dictionary_entry.translations[0].confidence}."
+        )
 
 except HttpResponseError as exception:
     if exception.error is not None:
@@ -674,14 +760,18 @@ Returns grammatical structure and context examples for the source term and targe
 try:
     source_language = "en"
     target_language = "es"
-    input_text_elements = [ DictionaryExampleTextItem(text = "fly", translation = "volar") ]
+    input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
 
-    response = text_translator.lookup_dictionary_examples(content = input_text_elements, from_parameter = source_language, to = target_language)
+    response = text_translator.lookup_dictionary_examples(
+        content=input_text_elements, from_parameter=source_language, to=target_language
+    )
     dictionary_entry = response[0] if response else None
 
     if dictionary_entry:
         print(f"For the given input {len(dictionary_entry.examples)} entries were found in the dictionary.")
-        print(f"First example: '{dictionary_entry.examples[0].target_prefix}{dictionary_entry.examples[0].target_term}{dictionary_entry.examples[0].target_suffix}'.")
+        print(
+            f"First example: '{dictionary_entry.examples[0].target_prefix}{dictionary_entry.examples[0].target_term}{dictionary_entry.examples[0].target_suffix}'."
+        )
 
 except HttpResponseError as exception:
     if exception.error is not None:

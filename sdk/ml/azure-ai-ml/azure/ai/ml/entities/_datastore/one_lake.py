@@ -6,23 +6,21 @@
 
 from abc import ABC
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    OneLakeDatastore as RestOneLakeDatastore,
-    Datastore as DatastoreData,
-    DatastoreType,
-    LakeHouseArtifact as RestLakeHouseArtifact,
-    NoneDatastoreCredentials as RestNoneDatastoreCredentials,
-)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData
+from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import LakeHouseArtifact as RestLakeHouseArtifact
+from azure.ai.ml._restclient.v2023_04_01_preview.models import NoneDatastoreCredentials as RestNoneDatastoreCredentials
+from azure.ai.ml._restclient.v2023_04_01_preview.models import OneLakeDatastore as RestOneLakeDatastore
 from azure.ai.ml._schema._datastore.one_lake import OneLakeSchema
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration, ServicePrincipalConfiguration
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.entities._datastore.utils import from_rest_datastore_credentials
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
@@ -92,7 +90,7 @@ class OneLakeDatastore(Datastore):
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         credentials: Optional[Union[NoneCredentialConfiguration, ServicePrincipalConfiguration]] = None,
-        **kwargs
+        **kwargs: Any
     ):
         kwargs[TYPE] = DatastoreType.ONE_LAKE
         super().__init__(
@@ -104,9 +102,11 @@ class OneLakeDatastore(Datastore):
 
     def _to_rest_object(self) -> DatastoreData:
         one_lake_ds = RestOneLakeDatastore(
-            credentials=RestNoneDatastoreCredentials()
-            if self.credentials is None
-            else self.credentials._to_datastore_rest_object(),
+            credentials=(
+                RestNoneDatastoreCredentials()
+                if self.credentials is None
+                else self.credentials._to_datastore_rest_object()
+            ),
             artifact=RestLakeHouseArtifact(artifact_name=self.artifact["name"]),
             one_lake_workspace_name=self.one_lake_workspace_name,
             endpoint=self.endpoint,
@@ -116,11 +116,12 @@ class OneLakeDatastore(Datastore):
         return DatastoreData(properties=one_lake_ds)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "OneLakeDatastore":
-        return load_from_dict(OneLakeSchema, data, context, additional_message, **kwargs)
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "OneLakeDatastore":
+        res: OneLakeDatastore = load_from_dict(OneLakeSchema, data, context, additional_message, **kwargs)
+        return res
 
     @classmethod
-    def _from_rest_object(cls, datastore_resource: DatastoreData):
+    def _from_rest_object(cls, datastore_resource: DatastoreData) -> "OneLakeDatastore":
         properties: RestOneLakeDatastore = datastore_resource.properties
         return OneLakeDatastore(
             name=datastore_resource.name,
@@ -128,23 +129,25 @@ class OneLakeDatastore(Datastore):
             artifact=LakeHouseArtifact(name=properties.artifact.artifact_name),
             one_lake_workspace_name=properties.one_lake_workspace_name,
             endpoint=properties.endpoint,
-            credentials=from_rest_datastore_credentials(properties.credentials),
+            credentials=from_rest_datastore_credentials(properties.credentials),  # type: ignore[arg-type]
             description=properties.description,
             tags=properties.tags,
         )
 
-    def __eq__(self, other) -> bool:
-        return (
+    def __eq__(self, other: Any) -> bool:
+        res: bool = (
             super().__eq__(other)
             and self.one_lake_workspace_name == other.one_lake_workspace_name
             and self.artifact.type == other.artifact["type"]
             and self.artifact.name == other.artifact["name"]
             and self.endpoint == other.endpoint
         )
+        return res
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
     def _to_dict(self) -> Dict:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
-        return OneLakeSchema(context=context).dump(self)
+        res: dict = OneLakeSchema(context=context).dump(self)
+        return res

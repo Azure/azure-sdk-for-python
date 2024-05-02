@@ -9,7 +9,7 @@ import threading
 from os import makedirs
 from os.path import exists, join
 
-from azure.monitor.opentelemetry._constants import (
+from azure.monitor.opentelemetry._utils import (
     _EXTENSION_VERSION,
     _IS_DIAGNOSTICS_ENABLED,
     _env_var_or_default,
@@ -28,6 +28,7 @@ _logger = logging.getLogger(__name__)
 _logger.propagate = False
 _logger.setLevel(logging.INFO)
 _DIAGNOSTIC_LOG_PATH = _get_log_path()
+_DISTRO_DETECTS_ATTACH = "4100"
 _ATTACH_SUCCESS_DISTRO = "4200"
 _ATTACH_SUCCESS_CONFIGURATOR = "4201"
 _ATTACH_FAILURE_DISTRO = "4400"
@@ -51,7 +52,7 @@ class AzureDiagnosticLogging:
                         + '"message":"%(message)s", '
                         + '"properties":{'
                         + '"operation":"Startup", '
-                        + f'"sitename":"{_SITE_NAME}", '
+                        + f'"siteName":"{_SITE_NAME}", '
                         + f'"ikey":"{_get_customer_ikey_from_env_var()}", '
                         + f'"extensionVersion":"{_EXTENSION_VERSION}", '
                         + f'"sdkVersion":"{VERSION}", '
@@ -76,16 +77,16 @@ class AzureDiagnosticLogging:
                     AzureDiagnosticLogging._initialized = True
 
     @classmethod
-    def info(cls, message: str, message_id: int):
+    def info(cls, message: str, message_id: str):
         AzureDiagnosticLogging._initialize()
         _logger.info(message, extra={'msgId': message_id})
 
     @classmethod
-    def warning(cls, message: str, message_id: int):
+    def warning(cls, message: str, message_id: str):
         AzureDiagnosticLogging._initialize()
         _logger.warning(message, extra={'msgId': message_id})
 
     @classmethod
-    def error(cls, message: str, message_id: int):
+    def error(cls, message: str, message_id: str):
         AzureDiagnosticLogging._initialize()
         _logger.error(message, extra={'msgId': message_id})

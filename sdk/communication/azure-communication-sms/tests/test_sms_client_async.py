@@ -18,7 +18,20 @@ class FakeTokenCredential(object):
     async def get_token(self, *args, **kwargs):
         return self.token
 
+
 class TestSMSClientAsync(aiounittest.AsyncTestCase):
+    def test_invalid_url(self):
+        with self.assertRaises(ValueError) as context:
+            SmsClient(None, FakeTokenCredential(), transport=Mock())
+
+        self.assertTrue("Account URL must be a string." in str(context.exception))
+
+    def test_invalid_credential(self):
+        with self.assertRaises(ValueError) as context:
+            SmsClient("endpoint", None, transport=Mock())
+
+        self.assertTrue("invalid credential from connection string." in str(context.exception))
+
     async def test_send_message_async(self):
         phone_number = "+14255550123"
         raised = False

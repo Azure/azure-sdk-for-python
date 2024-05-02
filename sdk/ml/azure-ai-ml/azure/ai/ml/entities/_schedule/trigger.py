@@ -42,7 +42,7 @@ class TriggerBase(RestTranslatableMixin, ABC):
         type: str,  # pylint: disable=redefined-builtin
         start_time: Optional[Union[str, datetime]] = None,
         end_time: Optional[Union[str, datetime]] = None,
-        time_zone: TimeZone = TimeZone.UTC,
+        time_zone: Union[str, TimeZone] = TimeZone.UTC,
     ) -> None:
         super().__init__()
         self.type = type
@@ -64,14 +64,14 @@ class RecurrencePattern(RestTranslatableMixin):
     """Recurrence pattern for a job schedule.
 
     :keyword hours: The number of hours for the recurrence schedule pattern.
-    :paramtype hours: Union[int, list[int]]
+    :paramtype hours: Union[int, List[int]]
     :keyword minutes: The number of minutes for the recurrence schedule pattern.
-    :paramtype minutes: Union[int, list[int]]
+    :paramtype minutes: Union[int, List[int]]
     :keyword week_days: A list of days of the week for the recurrence schedule pattern.
         Acceptable values include: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
-    :type week_days: Optional[Union[str, list[str]]]
+    :type week_days: Optional[Union[str, List[str]]]
     :keyword month_days: A list of days of the month for the recurrence schedule pattern.
-    :paramtype month_days: Optional[Union[int, list[int]]]
+    :paramtype month_days: Optional[Union[int, List[int]]]
 
     .. admonition:: Example:
 
@@ -101,9 +101,9 @@ class RecurrencePattern(RestTranslatableMixin):
             hours=[self.hours] if not isinstance(self.hours, list) else self.hours,
             minutes=[self.minutes] if not isinstance(self.minutes, list) else self.minutes,
             week_days=[self.week_days] if self.week_days and not isinstance(self.week_days, list) else self.week_days,
-            month_days=[self.month_days]
-            if self.month_days and not isinstance(self.month_days, list)
-            else self.month_days,
+            month_days=(
+                [self.month_days] if self.month_days and not isinstance(self.month_days, list) else self.month_days
+            ),
         )
 
     def _to_rest_compute_pattern_object(self) -> RestRecurrencePattern:

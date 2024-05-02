@@ -1,11 +1,21 @@
 {
-  "commit": "3c2bb08d44536eecec0a8624587776a05692031c",
+  "commit": "fe6e5b6e46f03c2c23f16029f25431bc90e07de2",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.9.2",
+  "autorest": "3.9.7",
   "use": [
-    "@autorest/python@6.4.12",
-    "@autorest/modelerfour@4.24.3"
+    "@autorest/python@6.7.1",
+    "@autorest/modelerfour@4.26.2"
   ],
-  "autorest_command": "autorest specification/keyvault/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.4.12 --use=@autorest/modelerfour@4.24.3 --version=3.9.2 --version-tolerant=False",
-  "readme": "specification/keyvault/resource-manager/readme.md"
+  "autorest_command": "autorest specification/keyvault/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.7.1 --use=@autorest/modelerfour@4.26.2 --version=3.9.7 --version-tolerant=False",
+  "readme": "specification/keyvault/resource-manager/readme.md",
+  "package-2019-09": "2021-07-15 01:23:27 -0700 4fe5435a25386ee460ba89817465c7deba818284 Microsoft.KeyVault/stable/2019-09-01/keyvault.json",
+  "package-2018-02": "2020-11-03 15:27:00 -0500 111dab2fbec96b208a78b36bb8dcefd958036476 Microsoft.KeyVault/preview/2018-02-14-preview/keyvault.json",
+  "package-2016-10": "2020-11-03 15:27:00 -0500 111dab2fbec96b208a78b36bb8dcefd958036476 Microsoft.KeyVault/stable/2016-10-01/keyvault.json",
+  "package-preview-2020-04-full": "2023-04-10 18:34:42 -0700 33f06ff82a4c751bcbc842b7ed4da2e81b0717b6 Microsoft.KeyVault/preview/2020-04-01-preview/managedHsm.json",
+  "package-preview-2021-04": "2023-04-10 18:34:42 -0700 33f06ff82a4c751bcbc842b7ed4da2e81b0717b6 Microsoft.KeyVault/preview/2021-04-01-preview/managedHsm.json",
+  "package-preview-2021-06": "2023-09-13 16:38:17 -0700 5dd1107d5f2be8d600325d795450e1d854fbe7e8 Microsoft.KeyVault/preview/2021-06-01-preview/keys.json",
+  "package-2021-10": "2023-04-10 18:34:42 -0700 33f06ff82a4c751bcbc842b7ed4da2e81b0717b6 Microsoft.KeyVault/stable/2021-10-01/managedHsm.json",
+  "package-2022-07": "2023-09-13 16:38:17 -0700 5dd1107d5f2be8d600325d795450e1d854fbe7e8 Microsoft.KeyVault/stable/2022-07-01/keys.json",
+  "package-2023-02": "2023-09-13 16:38:17 -0700 5dd1107d5f2be8d600325d795450e1d854fbe7e8 Microsoft.KeyVault/stable/2023-02-01/keysManagedHsm.json",
+  "package-2023-07": "2023-10-12 19:27:13 +0100 b594fd4145904c9bbd018f4a2ddea75c7134aee7 Microsoft.KeyVault/stable/2023-07-01/secrets.json"
 }

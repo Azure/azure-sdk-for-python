@@ -23,8 +23,8 @@ from .._generated.models import (
     AppendPositionAccessConditions,
     ModifiedAccessConditions,
 )
+from ._encryption_async import GCMBlobEncryptionStream
 from .._encryption import (
-    GCMBlobEncryptionStream,
     encrypt_blob,
     get_adjusted_upload_size,
     get_blob_encryptor_and_padder,
@@ -40,7 +40,6 @@ if TYPE_CHECKING:
 
 async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
         client=None,
-        data=None,
         stream=None,
         length=None,
         overwrite=None,
@@ -68,17 +67,16 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
 
         # Do single put if the size is smaller than config.max_single_put_size
         if adjusted_count is not None and (adjusted_count <= blob_settings.max_single_put_size):
-            try:
-                data = data.read(length)
-                if inspect.isawaitable(data):
-                    data = await data
-                if not isinstance(data, bytes):
-                    raise TypeError('Blob data should be of type bytes.')
-            except AttributeError:
-                pass
+            data = stream.read(length)
+            if inspect.isawaitable(data):
+                data = await data
+            if not isinstance(data, bytes):
+                raise TypeError('Blob data should be of type bytes.')
+
             if encryption_options.get('key'):
                 encryption_data, data = encrypt_blob(data, encryption_options['key'], encryption_options['version'])
                 headers['x-ms-meta-encryptiondata'] = encryption_data
+
             response = await client.upload(
                 body=data,
                 content_length=adjusted_count,

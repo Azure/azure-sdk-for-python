@@ -78,7 +78,7 @@ class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpRespons
     """
 
     def stream_download(
-        self, pipeline: AsyncPipeline[HttpRequest, "AsyncHttpResponse"], **kwargs: Any
+        self, pipeline: AsyncPipeline[HttpRequest, "AsyncHttpResponse"], *, decompress: bool = True, **kwargs: Any
     ) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 

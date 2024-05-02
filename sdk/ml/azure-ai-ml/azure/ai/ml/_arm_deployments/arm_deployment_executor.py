@@ -15,7 +15,7 @@ from azure.ai.ml._azure_environments import (
     _get_cloud_details,
     _resource_to_scopes,
 )
-from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
+from azure.ai.ml._utils._arm_id_utils import AzureResourceId, get_arm_id_object_from_id
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
 from azure.ai.ml._utils.utils import from_iso_duration_format_min_sec
 from azure.ai.ml._vendor.azure_resources._resource_management_client import ResourceManagementClient
@@ -111,7 +111,7 @@ class ArmDeploymentExecutor(object):
 
                     if poller._exception is not None:
                         error = poller._exception
-                except Exception as e:  # pylint: disable=broad-except
+                except Exception as e:  # pylint: disable=W0718
                     error = e
                 finally:
                     # one last check to make sure all print statements make it
@@ -170,11 +170,12 @@ class ArmDeploymentExecutor(object):
                 f"{arm_id_obj.asset_name} {arm_id_obj.asset_version if hasattr(arm_id_obj,'asset_version') else ''}"
             )
             # do swap on asset_type to avoid collision with workspaces asset_type in arm id
-            arm_id_obj.asset_type = (
-                arm_id_obj.asset_type
-                if not arm_id_obj.provider_namespace_with_type == "OperationalInsightsworkspaces"
-                else "LogAnalytics"
-            )
+            if isinstance(arm_id_obj, AzureResourceId):
+                arm_id_obj.asset_type = (
+                    arm_id_obj.asset_type
+                    if not arm_id_obj.provider_namespace_with_type == "OperationalInsightsworkspaces"
+                    else "LogAnalytics"
+                )
             deployment_message = deployment_message_mapping[arm_id_obj.asset_type].format(f"{resource_name} ")
             if target_resource.resource_name not in self._resources_being_deployed:
                 self._resources_being_deployed[target_resource.resource_name] = (
@@ -212,7 +213,7 @@ class ArmDeploymentExecutor(object):
                 # duration comes in format: "PT1M56.3454108S"
                 try:
                     duration_in_min_sec = from_iso_duration_format_min_sec(duration)
-                except Exception:  # pylint: disable=broad-except
+                except Exception:  # pylint: disable=W0718
                     duration_in_min_sec = ""
 
                 self._resources_being_deployed[resource_name] = (

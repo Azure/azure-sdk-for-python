@@ -6,13 +6,13 @@
 
 import logging
 from abc import ABC
-from typing import Any, Generic, TypeVar, Optional
+from typing import Any, Dict, Generic, List, Optional, TypeVar
 
 K = TypeVar("K")
 V = TypeVar("V")
 
 
-class _AttrDict(Generic[K, V], dict, ABC):
+class _AttrDict(Generic[K, V], Dict, ABC):
     """This class is used for accessing values with instance.some_key. It supports the following scenarios:
 
     1. Setting arbitrary attribute, eg: obj.resource_layout.node_count = 2
@@ -29,11 +29,12 @@ class _AttrDict(Generic[K, V], dict, ABC):
     3. Calling arbitrary methods is not allowed, eg: obj.resource_layout() should raise AttributeError
     """
 
-    def __init__(self, allowed_keys=None, **kwargs):
+    def __init__(self, allowed_keys: Optional[Dict] = None, **kwargs: Any):
         """Initialize a attribute dictionary.
 
         :param allowed_keys: A dictionary of keys that allowed to set as arbitrary attributes. None means all keys can
             be set as arbitrary attributes.
+
         :type dict
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
@@ -61,7 +62,7 @@ class _AttrDict(Generic[K, V], dict, ABC):
         """
 
         # TODO: check this
-        def remove_empty_values(data):
+        def remove_empty_values(data: Dict) -> Dict:
             if not isinstance(data, dict):
                 return data
             # skip empty dicts as default value of _AttrDict is empty dict
@@ -100,10 +101,9 @@ class _AttrDict(Generic[K, V], dict, ABC):
             self.__getattribute__(attr_name)
         except AttributeError:
             return True
-        else:
-            return False
+        return False
 
-    def __getattr__(self, key: K) -> V:
+    def __getattr__(self, key: Any) -> Any:
         if not self._is_arbitrary_attr(key):
             return super().__getattribute__(key)
         self._logger.debug("getting %s", key)
@@ -111,30 +111,30 @@ class _AttrDict(Generic[K, V], dict, ABC):
             return super().__getitem__(key)
         except KeyError:
             allowed_keys = self._allowed_keys.get(key, None) if self._key_restriction else None
-            result = _AttrDict(allowed_keys=allowed_keys)
+            result: Any = _AttrDict(allowed_keys=allowed_keys)
             self.__setattr__(key, result)
             return result
 
-    def __setattr__(self, key: K, value: V) -> None:
+    def __setattr__(self, key: Any, value: V) -> None:
         if not self._is_arbitrary_attr(key):
             super().__setattr__(key, value)
         else:
             self._logger.debug("setting %s to %s", key, value)
             super().__setitem__(key, value)
 
-    def __setitem__(self, key: K, value: V) -> None:
+    def __setitem__(self, key: Any, value: V) -> None:
         self.__setattr__(key, value)
 
-    def __getitem__(self, item: V):
+    def __getitem__(self, item: V) -> Any:
         # support attr_dict[item] since dumping it in marshmallow requires this.
         return self.__getattr__(item)
 
-    def __dir__(self):
+    def __dir__(self) -> List:
         # For Jupyter Notebook auto-completion
         return list(super().__dir__()) + list(self.keys())
 
 
-def has_attr_safe(obj, attr):
+def has_attr_safe(obj: Any, attr: Any) -> bool:
     if isinstance(obj, _AttrDict):
         has_attr = not obj._is_arbitrary_attr(attr)
     elif isinstance(obj, dict):

@@ -41,7 +41,7 @@ class KubernetesCompute(Compute):
         namespace: str = "default",
         properties: Optional[Dict[str, Any]] = None,
         identity: Optional[IdentityConfiguration] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         kwargs[TYPE] = ComputeType.KUBERNETES
         super().__init__(**kwargs)
@@ -62,9 +62,11 @@ class KubernetesCompute(Compute):
             resource_id=prop.resource_id,
             tags=rest_obj.tags if rest_obj.tags else None,
             provisioning_state=prop.provisioning_state,
-            provisioning_errors=prop.provisioning_errors[0].error.code
-            if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
-            else None,
+            provisioning_errors=(
+                prop.provisioning_errors[0].error.code
+                if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
+                else None
+            ),
             created_on=prop.additional_properties.get("createdOn", None),
             properties=prop.properties.as_dict() if prop.properties else None,
             namespace=prop.properties.namespace,
@@ -73,10 +75,11 @@ class KubernetesCompute(Compute):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return KubernetesComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = KubernetesComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "KubernetesCompute":
+    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs: Any) -> "KubernetesCompute":
         if not data:
             data = {"namespace": "default"}
         if "namespace" not in data:

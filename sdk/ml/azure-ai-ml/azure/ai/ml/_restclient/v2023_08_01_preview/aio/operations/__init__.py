@@ -12,6 +12,7 @@ from ._quotas_operations import QuotasOperations
 from ._compute_operations import ComputeOperations
 from ._registries_operations import RegistriesOperations
 from ._workspace_features_operations import WorkspaceFeaturesOperations
+from ._capacity_reservation_groups_operations import CapacityReservationGroupsOperations
 from ._registry_code_containers_operations import RegistryCodeContainersOperations
 from ._registry_code_versions_operations import RegistryCodeVersionsOperations
 from ._registry_component_containers_operations import RegistryComponentContainersOperations
@@ -38,6 +39,9 @@ from ._features_operations import FeaturesOperations
 from ._featureset_versions_operations import FeaturesetVersionsOperations
 from ._featurestore_entity_containers_operations import FeaturestoreEntityContainersOperations
 from ._featurestore_entity_versions_operations import FeaturestoreEntityVersionsOperations
+from ._inference_pools_operations import InferencePoolsOperations
+from ._inference_endpoints_operations import InferenceEndpointsOperations
+from ._inference_groups_operations import InferenceGroupsOperations
 from ._jobs_operations import JobsOperations
 from ._labeling_jobs_operations import LabelingJobsOperations
 from ._model_containers_operations import ModelContainersOperations
@@ -61,6 +65,7 @@ __all__ = [
     'ComputeOperations',
     'RegistriesOperations',
     'WorkspaceFeaturesOperations',
+    'CapacityReservationGroupsOperations',
     'RegistryCodeContainersOperations',
     'RegistryCodeVersionsOperations',
     'RegistryComponentContainersOperations',
@@ -87,6 +92,9 @@ __all__ = [
     'FeaturesetVersionsOperations',
     'FeaturestoreEntityContainersOperations',
     'FeaturestoreEntityVersionsOperations',
+    'InferencePoolsOperations',
+    'InferenceEndpointsOperations',
+    'InferenceGroupsOperations',
     'JobsOperations',
     'LabelingJobsOperations',
     'ModelContainersOperations',

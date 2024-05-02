@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 import functools
 import warnings
@@ -33,7 +34,7 @@ from ._blob_client import BlobClient
 from ._deserialize import service_stats_deserialize, service_properties_deserialize
 from ._encryption import StorageEncryptionMixin
 from ._list_blobs_helper import FilteredBlobPaged
-from ._models import ContainerPropertiesPaged
+from ._models import BlobProperties, ContainerPropertiesPaged
 from ._serialize import get_api_version
 
 if TYPE_CHECKING:
@@ -43,7 +44,6 @@ if TYPE_CHECKING:
     from ._lease import BlobLeaseClient
     from ._models import (
         ContainerProperties,
-        BlobProperties,
         PublicAccess,
         BlobAnalyticsLogging,
         Metrics,
@@ -100,6 +100,9 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
     :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
         or 4MB.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
 
     .. admonition:: Example:
 
@@ -169,7 +172,14 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials.TokenCredential or
+            str or dict[str, str] or None
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
         :returns: A Blob service client.
         :rtype: ~azure.storage.blob.BlobServiceClient
 
@@ -546,6 +556,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
+        :returns: A container client to interact with the newly created container.
         :rtype: ~azure.storage.blob.ContainerClient
 
         .. admonition:: Example:
@@ -566,11 +577,10 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def delete_container(
-            self, container,  # type: Union[ContainerProperties, str]
-            lease=None,  # type: Optional[Union[BlobLeaseClient, str]]
-            **kwargs
-        ):
-        # type: (...) -> None
+        self, container: Union["ContainerProperties", str],
+        lease: Optional[Union["BlobLeaseClient", str]] = None,
+        **kwargs: Any
+    ) -> None:
         """Marks the specified container for deletion.
 
         The container and any blobs contained within it are later deleted during garbage collection.
@@ -584,7 +594,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             If specified, delete_container only succeeds if the
             container's lease is active and matches this ID.
             Required if the container has an active lease.
-        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :type lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -608,7 +618,6 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
-        :rtype: None
 
         .. admonition:: Example:
 
@@ -648,6 +657,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
+        :returns: A container client for the renamed container.
         :rtype: ~azure.storage.blob.ContainerClient
         """
         renamed_container = self.get_container_client(new_name)
@@ -736,11 +746,11 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
 
     def get_blob_client(
-            self, container,  # type: Union[ContainerProperties, str]
-            blob,  # type: Union[BlobProperties, str]
-            snapshot=None,  # type: Optional[Union[Dict[str, Any], str]]
+            self, container: Union["ContainerProperties", str],
+            blob: str,
+            snapshot: Optional[Union[Dict[str, Any], str]] = None,
             *,
-            version_id=None  # type: Optional[str]
+            version_id: Optional[str] = None
         ):
         # type: (...) -> BlobClient
         """Get a client to interact with the specified blob.
@@ -751,10 +761,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             The container that the blob is in. This can either be the name of the container,
             or an instance of ContainerProperties.
         :type container: str or ~azure.storage.blob.ContainerProperties
-        :param blob:
-            The blob with which to interact. This can either be the name of the blob,
-            or an instance of BlobProperties.
-        :type blob: str or ~azure.storage.blob.BlobProperties
+        :param str blob: The name of the blob with which to interact.
         :param snapshot:
             The optional blob snapshot on which to operate. This can either be the ID of the snapshot,
             or a dictionary output returned by :func:`~azure.storage.blob.BlobClient.create_snapshot()`.
@@ -773,6 +780,12 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 12
                 :caption: Getting the blob client to interact with a specific blob.
         """
+        if isinstance(blob, BlobProperties):
+            warnings.warn(
+                "The use of a 'BlobProperties' instance for param blob is deprecated. " +
+                "Please use 'BlobProperties.name' or any other str input type instead.",
+                DeprecationWarning
+            )
         try:
             container_name = container.name
         except AttributeError:

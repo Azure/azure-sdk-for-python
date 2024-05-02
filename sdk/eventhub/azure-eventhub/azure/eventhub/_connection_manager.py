@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Dict, Optional, Union, Any
 from threading import Lock
 from enum import Enum
 
@@ -30,9 +30,8 @@ if TYPE_CHECKING:
         def get_connection(
             self,
             *,
-            host: Optional[str] = None,
+            endpoint: str,
             auth: Optional[Union[JWTTokenAuth, uamqp_JWTTokenAuth]] = None,
-            endpoint: Optional[str] = None,
         ) -> Union[Connection, uamqp_Connection]:
             pass
 
@@ -48,38 +47,53 @@ class _ConnectionMode(Enum):
     SeparateConnection = 2
 
 
-class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attributes
-    def __init__(self, **kwargs):
+class _SharedConnectionManager:  # pylint:disable=too-many-instance-attributes
+    def __init__( #pylint:disable=unused-argument
+            self,
+            *,
+            container_id: Optional[str] = None,
+            custom_endpoint_address: Optional[str] = None,
+            debug: bool = False,
+            error_policy: Optional[Any] = None,
+            properties: Optional[Dict[str, Any]] = None,
+            encoding: str = "UTF-8",
+            transport_type: TransportType = TransportType.Amqp,
+            http_proxy: Optional[str] = None,
+            max_frame_size: int,
+            channel_max: int,
+            idle_timeout: float,
+            remote_idle_timeout_empty_frame_send_ratio: float,
+            amqp_transport: AmqpTransport,
+            **kwargs: Any
+            ):
         self._lock = Lock()
         self._conn: Union[Connection, uamqp_Connection] = None
 
-        self._container_id = kwargs.get("container_id")
-        self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
-        self._debug = kwargs.get("debug")
-        self._error_policy = kwargs.get("error_policy")
-        self._properties = kwargs.get("properties")
-        self._encoding = kwargs.get("encoding") or "UTF-8"
-        self._transport_type = kwargs.get("transport_type") or TransportType.Amqp
-        self._http_proxy = kwargs.get("http_proxy")
-        self._max_frame_size = kwargs.get("max_frame_size")
-        self._channel_max = kwargs.get("channel_max")
-        self._idle_timeout = kwargs.get("idle_timeout")
-        self._remote_idle_timeout_empty_frame_send_ratio = kwargs.get("remote_idle_timeout_empty_frame_send_ratio")
-        self._amqp_transport: AmqpTransport = kwargs.pop("amqp_transport")
+        self._container_id = container_id
+        self._custom_endpoint_address = custom_endpoint_address
+        self._debug = debug
+        self._error_policy = error_policy
+        self._properties = properties
+        self._encoding = encoding
+        self._transport_type = transport_type
+        self._http_proxy = http_proxy
+        self._max_frame_size = max_frame_size
+        self._channel_max = channel_max
+        self._idle_timeout = idle_timeout
+        self._remote_idle_timeout_empty_frame_send_ratio = remote_idle_timeout_empty_frame_send_ratio
+        self._amqp_transport: AmqpTransport = amqp_transport
 
     def get_connection(
         self,
         *,
-        host: Optional[str] = None,
+        endpoint: str,
         auth: Optional[Union[JWTTokenAuth, uamqp_JWTTokenAuth]] = None,
-        endpoint: Optional[str] = None,
     ) -> Union[Connection, uamqp_Connection]:
         with self._lock:
             if self._conn is None:
                 self._conn = self._amqp_transport.create_connection(
-                    host=host,
-                    auth=auth,
                     endpoint=endpoint,
+                    auth=auth,
                     custom_endpoint_address=self._custom_endpoint_address,
                     container_id=self._container_id,
                     max_frame_size=self._max_frame_size,
@@ -93,45 +107,39 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
                 )
             return self._conn
 
-    def close_connection(self):
-        # type: () -> None
+    def close_connection(self) -> None:
         with self._lock:
             if self._conn:
                 self._amqp_transport.close_connection(self._conn)
             self._conn = None
 
-    def reset_connection_if_broken(self):
-        # type: () -> None
+    def reset_connection_if_broken(self) -> None:
         with self._lock:
             conn_state = self._amqp_transport.get_connection_state(self._conn)
             if self._conn and conn_state in self._amqp_transport.CONNECTION_CLOSING_STATES:
                 self._conn = None
 
 
-class _SeparateConnectionManager(object):
+class _SeparateConnectionManager:
     def __init__(self, **kwargs):
         pass
 
     def get_connection(  # pylint:disable=unused-argument
         self,
         *,
-        host: Optional[str] = None,
+        endpoint: str,
         auth: Optional[Union[JWTTokenAuth, uamqp_JWTTokenAuth]] = None,
-        endpoint: Optional[str] = None,
     ) -> None:
         return None
 
-    def close_connection(self):
-        # type: () -> None
+    def close_connection(self) -> None:
         pass
 
-    def reset_connection_if_broken(self):
-        # type: () -> None
+    def reset_connection_if_broken(self) -> None:
         pass
 
 
-def get_connection_manager(**kwargs):
-    # type: (...) -> 'ConnectionManager'
+def get_connection_manager(**kwargs: Any) -> "ConnectionManager":
     connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)  # type: ignore
     if connection_mode == _ConnectionMode.ShareConnection:
         return _SharedConnectionManager(**kwargs)

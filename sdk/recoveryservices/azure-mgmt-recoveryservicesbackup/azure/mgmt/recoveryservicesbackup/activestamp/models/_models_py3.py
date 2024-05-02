@@ -23,7 +23,7 @@ class FeatureSupportRequest(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureBackupGoalFeatureSupportRequest, AzureVMResourceFeatureSupportRequest
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar feature_type: backup support feature type. Required.
     :vartype feature_type: str
@@ -53,7 +53,7 @@ class FeatureSupportRequest(_serialization.Model):
 class AzureBackupGoalFeatureSupportRequest(FeatureSupportRequest):
     """Azure backup goal feature specific request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar feature_type: backup support feature type. Required.
     :vartype feature_type: str
@@ -81,7 +81,7 @@ class ProtectionContainer(_serialization.Model):
     AzureSqlContainer, AzureWorkloadContainer, DpmContainer, GenericContainer, IaaSVMContainer,
     AzureStorageContainer, MabContainer
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar friendly_name: Friendly name of the container.
     :vartype friendly_name: str
@@ -180,7 +180,7 @@ class DpmContainer(ProtectionContainer):  # pylint: disable=too-many-instance-at
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureBackupServerContainer
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar friendly_name: Friendly name of the container.
     :vartype friendly_name: str
@@ -326,7 +326,7 @@ class DpmContainer(ProtectionContainer):  # pylint: disable=too-many-instance-at
 class AzureBackupServerContainer(DpmContainer):  # pylint: disable=too-many-instance-attributes
     """AzureBackupServer (DPMVenus) workload-specific protection container.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar friendly_name: Friendly name of the container.
     :vartype friendly_name: str
@@ -473,7 +473,7 @@ class BackupEngineBase(_serialization.Model):  # pylint: disable=too-many-instan
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureBackupServerEngine, DpmBackupEngine
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar friendly_name: Friendly name of the backup engine.
     :vartype friendly_name: str
@@ -608,7 +608,7 @@ class BackupEngineBase(_serialization.Model):  # pylint: disable=too-many-instan
 class AzureBackupServerEngine(BackupEngineBase):  # pylint: disable=too-many-instance-attributes
     """Backup engine type when Azure Backup Server is used to manage the backups.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar friendly_name: Friendly name of the backup engine.
     :vartype friendly_name: str
@@ -741,7 +741,7 @@ class BackupRequest(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureFileShareBackupRequest, AzureWorkloadBackupRequest, IaasVMBackupRequest
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -773,7 +773,7 @@ class BackupRequest(_serialization.Model):
 class AzureFileShareBackupRequest(BackupRequest):
     """AzureFileShare workload-specific backup request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -809,7 +809,7 @@ class WorkloadProtectableItem(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureFileShareProtectableItem, AzureVmWorkloadProtectableItem, IaaSVMProtectableItem
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -877,7 +877,7 @@ class WorkloadProtectableItem(_serialization.Model):
 class AzureFileShareProtectableItem(WorkloadProtectableItem):
     """Protectable item for Azure Fileshare workloads.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -974,7 +974,7 @@ class ProtectedItem(_serialization.Model):  # pylint: disable=too-many-instance-
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -1025,12 +1025,15 @@ class ProtectedItem(_serialization.Model):  # pylint: disable=too-many-instance-
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     """
 
     _validation = {
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1052,6 +1055,7 @@ class ProtectedItem(_serialization.Model):  # pylint: disable=too-many-instance-
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
     }
 
     _subtype_map = {
@@ -1144,6 +1148,7 @@ class ProtectedItem(_serialization.Model):  # pylint: disable=too-many-instance-
         self.is_archive_enabled = is_archive_enabled
         self.policy_name = policy_name
         self.soft_delete_retention_period_in_days = soft_delete_retention_period_in_days
+        self.vault_id = None
 
 
 class AzureFileshareProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
@@ -1151,7 +1156,7 @@ class AzureFileshareProtectedItem(ProtectedItem):  # pylint: disable=too-many-in
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -1202,6 +1207,8 @@ class AzureFileshareProtectedItem(ProtectedItem):  # pylint: disable=too-many-in
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the fileshare represented by this backup item.
     :vartype friendly_name: str
     :ivar protection_status: Backup status of this backup item.
@@ -1227,6 +1234,7 @@ class AzureFileshareProtectedItem(ProtectedItem):  # pylint: disable=too-many-in
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1248,6 +1256,7 @@ class AzureFileshareProtectedItem(ProtectedItem):  # pylint: disable=too-many-in
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "protection_status": {"key": "protectionStatus", "type": "str"},
         "protection_state": {"key": "protectionState", "type": "str"},
@@ -1435,7 +1444,7 @@ class ProtectionPolicy(_serialization.Model):
     AzureIaaSVMProtectionPolicy, AzureSqlProtectionPolicy, AzureFileShareProtectionPolicy,
     AzureVmWorkloadProtectionPolicy, GenericProtectionPolicy, MabProtectionPolicy
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_items_count: Number of items associated with this policy.
     :vartype protected_items_count: int
@@ -1489,7 +1498,7 @@ class ProtectionPolicy(_serialization.Model):
 class AzureFileShareProtectionPolicy(ProtectionPolicy):
     """AzureStorage backup policy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_items_count: Number of items associated with this policy.
     :vartype protected_items_count: int
@@ -1509,6 +1518,10 @@ class AzureFileShareProtectionPolicy(ProtectionPolicy):
     :ivar retention_policy: Retention policy with the details on backup copy retention ranges.
     :vartype retention_policy:
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.RetentionPolicy
+    :ivar vault_retention_policy: Retention policy with the details on hardened backup copy
+     retention ranges.
+    :vartype vault_retention_policy:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.VaultRetentionPolicy
     :ivar time_zone: TimeZone optional input as string. For example: TimeZone = "Pacific Standard
      Time".
     :vartype time_zone: str
@@ -1525,6 +1538,7 @@ class AzureFileShareProtectionPolicy(ProtectionPolicy):
         "work_load_type": {"key": "workLoadType", "type": "str"},
         "schedule_policy": {"key": "schedulePolicy", "type": "SchedulePolicy"},
         "retention_policy": {"key": "retentionPolicy", "type": "RetentionPolicy"},
+        "vault_retention_policy": {"key": "vaultRetentionPolicy", "type": "VaultRetentionPolicy"},
         "time_zone": {"key": "timeZone", "type": "str"},
     }
 
@@ -1536,6 +1550,7 @@ class AzureFileShareProtectionPolicy(ProtectionPolicy):
         work_load_type: Optional[Union[str, "_models.WorkloadType"]] = None,
         schedule_policy: Optional["_models.SchedulePolicy"] = None,
         retention_policy: Optional["_models.RetentionPolicy"] = None,
+        vault_retention_policy: Optional["_models.VaultRetentionPolicy"] = None,
         time_zone: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1556,6 +1571,10 @@ class AzureFileShareProtectionPolicy(ProtectionPolicy):
         :keyword retention_policy: Retention policy with the details on backup copy retention ranges.
         :paramtype retention_policy:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RetentionPolicy
+        :keyword vault_retention_policy: Retention policy with the details on hardened backup copy
+         retention ranges.
+        :paramtype vault_retention_policy:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.VaultRetentionPolicy
         :keyword time_zone: TimeZone optional input as string. For example: TimeZone = "Pacific
          Standard Time".
         :paramtype time_zone: str
@@ -1569,6 +1588,7 @@ class AzureFileShareProtectionPolicy(ProtectionPolicy):
         self.work_load_type = work_load_type
         self.schedule_policy = schedule_policy
         self.retention_policy = retention_policy
+        self.vault_retention_policy = vault_retention_policy
         self.time_zone = time_zone
 
 
@@ -1578,7 +1598,7 @@ class ILRRequest(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureFileShareProvisionILRRequest, IaasVMILRRegistrationRequest
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -1609,7 +1629,7 @@ class ILRRequest(_serialization.Model):
 class AzureFileShareProvisionILRRequest(ILRRequest):
     """Update snapshot Uri with the correct friendly Name of the source Azure file share.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -1652,7 +1672,7 @@ class RecoveryPoint(_serialization.Model):
     AzureFileShareRecoveryPoint, AzureWorkloadRecoveryPoint, GenericRecoveryPoint,
     IaasVMRecoveryPoint
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -1685,7 +1705,7 @@ class RecoveryPoint(_serialization.Model):
 class AzureFileShareRecoveryPoint(RecoveryPoint):
     """Azure File Share workload specific backup copy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -1756,11 +1776,14 @@ class RestoreRequest(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureFileShareRestoreRequest, AzureWorkloadRestoreRequest, IaasVMRestoreRequest
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
     :vartype object_type: str
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     """
 
     _validation = {
@@ -1769,6 +1792,7 @@ class RestoreRequest(_serialization.Model):
 
     _attribute_map = {
         "object_type": {"key": "objectType", "type": "str"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
     }
 
     _subtype_map = {
@@ -1779,20 +1803,28 @@ class RestoreRequest(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, resource_guard_operation_requests: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
+        """
         super().__init__(**kwargs)
         self.object_type: Optional[str] = None
+        self.resource_guard_operation_requests = resource_guard_operation_requests
 
 
 class AzureFileShareRestoreRequest(RestoreRequest):
     """AzureFileShare Restore Request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
     :vartype object_type: str
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     :ivar recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
      "AlternateLocation", "RestoreDisks", and "Offline".
     :vartype recovery_type: str or
@@ -1821,6 +1853,7 @@ class AzureFileShareRestoreRequest(RestoreRequest):
 
     _attribute_map = {
         "object_type": {"key": "objectType", "type": "str"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "recovery_type": {"key": "recoveryType", "type": "str"},
         "source_resource_id": {"key": "sourceResourceId", "type": "str"},
         "copy_options": {"key": "copyOptions", "type": "str"},
@@ -1832,6 +1865,7 @@ class AzureFileShareRestoreRequest(RestoreRequest):
     def __init__(
         self,
         *,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         recovery_type: Optional[Union[str, "_models.RecoveryType"]] = None,
         source_resource_id: Optional[str] = None,
         copy_options: Optional[Union[str, "_models.CopyOptions"]] = None,
@@ -1841,6 +1875,9 @@ class AzureFileShareRestoreRequest(RestoreRequest):
         **kwargs: Any
     ) -> None:
         """
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
          "AlternateLocation", "RestoreDisks", and "Offline".
         :paramtype recovery_type: str or
@@ -1863,7 +1900,7 @@ class AzureFileShareRestoreRequest(RestoreRequest):
         :paramtype target_details:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetAFSRestoreInfo
         """
-        super().__init__(**kwargs)
+        super().__init__(resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
         self.object_type: str = "AzureFileShareRestoreRequest"
         self.recovery_type = recovery_type
         self.source_resource_id = source_resource_id
@@ -1879,7 +1916,7 @@ class IaaSVMContainer(ProtectionContainer):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureIaaSClassicComputeVMContainer, AzureIaaSComputeVMContainer
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar friendly_name: Friendly name of the container.
     :vartype friendly_name: str
@@ -1997,7 +2034,7 @@ class IaaSVMContainer(ProtectionContainer):
 class AzureIaaSClassicComputeVMContainer(IaaSVMContainer):
     """IaaS VM workload-specific backup item representing a classic virtual machine.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar friendly_name: Friendly name of the container.
     :vartype friendly_name: str
@@ -2111,7 +2148,7 @@ class IaaSVMProtectableItem(WorkloadProtectableItem):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureIaaSClassicComputeVMProtectableItem, AzureIaaSComputeVMProtectableItem
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -2203,7 +2240,7 @@ class IaaSVMProtectableItem(WorkloadProtectableItem):
 class AzureIaaSClassicComputeVMProtectableItem(IaaSVMProtectableItem):
     """IaaS VM workload-specific backup item representing the Classic Compute VM.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -2293,7 +2330,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):  # pylint: disable=too-many-insta
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -2344,6 +2381,8 @@ class AzureIaaSVMProtectedItem(ProtectedItem):  # pylint: disable=too-many-insta
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the VM represented by this backup item.
     :vartype friendly_name: str
     :ivar virtual_machine_id: Fully qualified ARM ID of the virtual machine represented by this
@@ -2384,6 +2423,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):  # pylint: disable=too-many-insta
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
         "friendly_name": {"readonly": True},
         "virtual_machine_id": {"readonly": True},
         "health_status": {"readonly": True},
@@ -2410,6 +2450,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):  # pylint: disable=too-many-insta
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "virtual_machine_id": {"key": "virtualMachineId", "type": "str"},
         "protection_status": {"key": "protectionStatus", "type": "str"},
@@ -2556,7 +2597,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylin
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -2607,6 +2648,8 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylin
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the VM represented by this backup item.
     :vartype friendly_name: str
     :ivar virtual_machine_id: Fully qualified ARM ID of the virtual machine represented by this
@@ -2647,6 +2690,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylin
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
         "friendly_name": {"readonly": True},
         "virtual_machine_id": {"readonly": True},
         "health_status": {"readonly": True},
@@ -2673,6 +2717,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylin
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "virtual_machine_id": {"key": "virtualMachineId", "type": "str"},
         "protection_status": {"key": "protectionStatus", "type": "str"},
@@ -2805,7 +2850,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylin
 class AzureIaaSComputeVMContainer(IaaSVMContainer):
     """IaaS VM workload-specific backup item representing an Azure Resource Manager virtual machine.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar friendly_name: Friendly name of the container.
     :vartype friendly_name: str
@@ -2916,7 +2961,7 @@ class AzureIaaSComputeVMContainer(IaaSVMContainer):
 class AzureIaaSComputeVMProtectableItem(IaaSVMProtectableItem):
     """IaaS VM workload-specific backup item representing the Azure Resource Manager VM.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -3003,7 +3048,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disa
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -3054,6 +3099,8 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disa
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the VM represented by this backup item.
     :vartype friendly_name: str
     :ivar virtual_machine_id: Fully qualified ARM ID of the virtual machine represented by this
@@ -3094,6 +3141,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disa
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
         "friendly_name": {"readonly": True},
         "virtual_machine_id": {"readonly": True},
         "health_status": {"readonly": True},
@@ -3120,6 +3168,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disa
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "virtual_machine_id": {"key": "virtualMachineId", "type": "str"},
         "protection_status": {"key": "protectionStatus", "type": "str"},
@@ -3340,24 +3389,6 @@ class AzureIaaSVMHealthDetails(ResourceHealthDetails):
     :vartype recommendations: list[str]
     """
 
-    _validation = {
-        "code": {"readonly": True},
-        "title": {"readonly": True},
-        "message": {"readonly": True},
-        "recommendations": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "int"},
-        "title": {"key": "title", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "recommendations": {"key": "recommendations", "type": "[str]"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
 
 class Job(_serialization.Model):
     """Defines workload agnostic properties for a job.
@@ -3365,7 +3396,7 @@ class Job(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureIaaSVMJob, AzureIaaSVMJobV2, AzureStorageJob, AzureWorkloadJob, DpmJob, MabJob, VaultJob
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar entity_friendly_name: Friendly name of the entity on which the current job is executing.
     :vartype entity_friendly_name: str
@@ -3462,7 +3493,7 @@ class Job(_serialization.Model):
 class AzureIaaSVMJob(Job):  # pylint: disable=too-many-instance-attributes
     """Azure IaaS VM workload-specific job object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar entity_friendly_name: Friendly name of the entity on which the current job is executing.
     :vartype entity_friendly_name: str
@@ -3746,7 +3777,7 @@ class AzureIaaSVMJobTaskDetails(_serialization.Model):
 class AzureIaaSVMJobV2(Job):  # pylint: disable=too-many-instance-attributes
     """Azure IaaS VM workload-specific job object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar entity_friendly_name: Friendly name of the entity on which the current job is executing.
     :vartype entity_friendly_name: str
@@ -3950,10 +3981,10 @@ class AzureIaaSVMProtectedItemExtendedInfo(_serialization.Model):
         self.policy_inconsistent = policy_inconsistent
 
 
-class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
+class AzureIaaSVMProtectionPolicy(ProtectionPolicy):  # pylint: disable=too-many-instance-attributes
     """IaaS VM workload-specific backup policy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_items_count: Number of items associated with this policy.
     :vartype protected_items_count: int
@@ -3983,6 +4014,9 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
     :ivar policy_type: Known values are: "Invalid", "V1", and "V2".
     :vartype policy_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.IAASVMPolicyType
+    :ivar snapshot_consistency_type: "OnlyCrashConsistent"
+    :vartype snapshot_consistency_type: str or
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.IaasVMSnapshotConsistencyType
     """
 
     _validation = {
@@ -4000,6 +4034,7 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
         "instant_rp_retention_range_in_days": {"key": "instantRpRetentionRangeInDays", "type": "int"},
         "time_zone": {"key": "timeZone", "type": "str"},
         "policy_type": {"key": "policyType", "type": "str"},
+        "snapshot_consistency_type": {"key": "snapshotConsistencyType", "type": "str"},
     }
 
     def __init__(
@@ -4014,6 +4049,7 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
         instant_rp_retention_range_in_days: Optional[int] = None,
         time_zone: Optional[str] = None,
         policy_type: Optional[Union[str, "_models.IAASVMPolicyType"]] = None,
+        snapshot_consistency_type: Optional[Union[str, "_models.IaasVMSnapshotConsistencyType"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4043,6 +4079,9 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
         :keyword policy_type: Known values are: "Invalid", "V1", and "V2".
         :paramtype policy_type: str or
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.IAASVMPolicyType
+        :keyword snapshot_consistency_type: "OnlyCrashConsistent"
+        :paramtype snapshot_consistency_type: str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.IaasVMSnapshotConsistencyType
         """
         super().__init__(
             protected_items_count=protected_items_count,
@@ -4057,6 +4096,7 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
         self.instant_rp_retention_range_in_days = instant_rp_retention_range_in_days
         self.time_zone = time_zone
         self.policy_type = policy_type
+        self.snapshot_consistency_type = snapshot_consistency_type
 
 
 class ProtectionIntent(_serialization.Model):
@@ -4066,7 +4106,7 @@ class ProtectionIntent(_serialization.Model):
     AzureResourceProtectionIntent, AzureWorkloadContainerAutoProtectionIntent,
     AzureRecoveryServiceVaultProtectionIntent
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protection_intent_item_type: backup protectionIntent type. Required. Known values are:
      "Invalid", "AzureResourceItem", "RecoveryServiceVaultItem",
@@ -4150,13 +4190,13 @@ class ProtectionIntent(_serialization.Model):
         self.protection_state = protection_state
 
 
-class AzureRecoveryServiceVaultProtectionIntent(ProtectionIntent):
+class AzureRecoveryServiceVaultProtectionIntent(ProtectionIntent):  # pylint: disable=name-too-long
     """Azure Recovery Services Vault specific protection intent item.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureWorkloadAutoProtectionIntent
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protection_intent_item_type: backup protectionIntent type. Required. Known values are:
      "Invalid", "AzureResourceItem", "RecoveryServiceVaultItem",
@@ -4241,7 +4281,7 @@ class AzureRecoveryServiceVaultProtectionIntent(ProtectionIntent):
 class AzureResourceProtectionIntent(ProtectionIntent):
     """IaaS VM specific backup protection intent item.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protection_intent_item_type: backup protectionIntent type. Required. Known values are:
      "Invalid", "AzureResourceItem", "RecoveryServiceVaultItem",
@@ -4332,7 +4372,7 @@ class AzureWorkloadContainer(ProtectionContainer):  # pylint: disable=too-many-i
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureSQLAGWorkloadContainerProtectionContainer, AzureVMAppContainerProtectionContainer
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar friendly_name: Friendly name of the container.
     :vartype friendly_name: str
@@ -4475,10 +4515,10 @@ class AzureWorkloadContainer(ProtectionContainer):  # pylint: disable=too-many-i
 
 class AzureSQLAGWorkloadContainerProtectionContainer(
     AzureWorkloadContainer
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Container for SQL workloads under SQL Availability Group.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar friendly_name: Friendly name of the container.
     :vartype friendly_name: str
@@ -4615,7 +4655,7 @@ class AzureSQLAGWorkloadContainerProtectionContainer(
 class AzureSqlContainer(ProtectionContainer):
     """Azure Sql workload-specific container.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar friendly_name: Friendly name of the container.
     :vartype friendly_name: str
@@ -4703,7 +4743,7 @@ class AzureSqlProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -4754,6 +4794,8 @@ class AzureSqlProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar protected_item_data_id: Internal ID of a backup item. Used by Azure SQL Backup engine to
      contact Recovery Services.
     :vartype protected_item_data_id: str
@@ -4771,6 +4813,7 @@ class AzureSqlProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
     }
 
     _attribute_map = {
@@ -4792,6 +4835,7 @@ class AzureSqlProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "protected_item_data_id": {"key": "protectedItemDataId", "type": "str"},
         "protection_state": {"key": "protectionState", "type": "str"},
         "extended_info": {"key": "extendedInfo", "type": "AzureSqlProtectedItemExtendedInfo"},
@@ -4937,7 +4981,7 @@ class AzureSqlProtectedItemExtendedInfo(_serialization.Model):
 class AzureSqlProtectionPolicy(ProtectionPolicy):
     """Azure SQL workload-specific backup policy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_items_count: Number of items associated with this policy.
     :vartype protected_items_count: int
@@ -4991,7 +5035,7 @@ class AzureSqlProtectionPolicy(ProtectionPolicy):
 class AzureStorageContainer(ProtectionContainer):  # pylint: disable=too-many-instance-attributes
     """Azure Storage Account workload-specific container.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar friendly_name: Friendly name of the container.
     :vartype friendly_name: str
@@ -5155,7 +5199,7 @@ class AzureStorageErrorInfo(_serialization.Model):
 class AzureStorageJob(Job):  # pylint: disable=too-many-instance-attributes
     """Azure storage specific job.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar entity_friendly_name: Friendly name of the entity on which the current job is executing.
     :vartype entity_friendly_name: str
@@ -5369,7 +5413,7 @@ class ProtectableContainer(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureStorageProtectableContainer, AzureVMAppContainerProtectableContainer
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar friendly_name: Friendly name of the container.
     :vartype friendly_name: str
@@ -5448,7 +5492,7 @@ class ProtectableContainer(_serialization.Model):
 class AzureStorageProtectableContainer(ProtectableContainer):
     """Azure Storage-specific protectable containers.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar friendly_name: Friendly name of the container.
     :vartype friendly_name: str
@@ -5522,7 +5566,7 @@ class AzureStorageProtectableContainer(ProtectableContainer):
 class AzureVMAppContainerProtectableContainer(ProtectableContainer):
     """Azure workload-specific container.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar friendly_name: Friendly name of the container.
     :vartype friendly_name: str
@@ -5596,7 +5640,7 @@ class AzureVMAppContainerProtectableContainer(ProtectableContainer):
 class AzureVMAppContainerProtectionContainer(AzureWorkloadContainer):  # pylint: disable=too-many-instance-attributes
     """Container for SQL workloads under Azure Virtual Machines.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar friendly_name: Friendly name of the container.
     :vartype friendly_name: str
@@ -5733,7 +5777,7 @@ class AzureVMAppContainerProtectionContainer(AzureWorkloadContainer):  # pylint:
 class AzureVMResourceFeatureSupportRequest(FeatureSupportRequest):
     """AzureResource(IaaS VM) Specific feature support request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar feature_type: backup support feature type. Required.
     :vartype feature_type: str
@@ -5796,7 +5840,7 @@ class WorkloadItem(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureVmWorkloadItem
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -5863,7 +5907,7 @@ class AzureVmWorkloadItem(WorkloadItem):
     AzureVmWorkloadSAPHanaDatabaseWorkloadItem, AzureVmWorkloadSAPHanaSystemWorkloadItem,
     AzureVmWorkloadSQLDatabaseWorkloadItem, AzureVmWorkloadSQLInstanceWorkloadItem
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -5978,7 +6022,7 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem):  # pylint: disabl
     AzureVmWorkloadSQLAvailabilityGroupProtectableItem, AzureVmWorkloadSQLDatabaseProtectableItem,
     AzureVmWorkloadSQLInstanceProtectableItem
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -6128,7 +6172,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-i
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -6179,6 +6223,8 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-i
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the DB represented by this backup item.
     :vartype friendly_name: str
     :ivar server_name: Host/Cluster Name for instance or AG.
@@ -6226,6 +6272,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-i
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
         "friendly_name": {"readonly": True},
         "protection_status": {"readonly": True},
     }
@@ -6249,6 +6296,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-i
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "server_name": {"key": "serverName", "type": "str"},
         "parent_name": {"key": "parentName", "type": "str"},
@@ -6499,7 +6547,7 @@ class AzureVmWorkloadProtectedItemExtendedInfo(_serialization.Model):
 class AzureVmWorkloadProtectionPolicy(ProtectionPolicy):
     """Azure VM (Mercury) workload-specific backup policy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_items_count: Number of items associated with this policy.
     :vartype protected_items_count: int
@@ -6583,12 +6631,12 @@ class AzureVmWorkloadProtectionPolicy(ProtectionPolicy):
 
 class AzureVmWorkloadSAPAseDatabaseProtectedItem(
     AzureVmWorkloadProtectedItem
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Azure VM workload-specific protected item representing SAP ASE Database.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -6639,6 +6687,8 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the DB represented by this backup item.
     :vartype friendly_name: str
     :ivar server_name: Host/Cluster Name for instance or AG.
@@ -6686,6 +6736,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
         "friendly_name": {"readonly": True},
         "protection_status": {"readonly": True},
     }
@@ -6709,6 +6760,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "server_name": {"key": "serverName", "type": "str"},
         "parent_name": {"key": "parentName", "type": "str"},
@@ -6866,10 +6918,10 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
         self.protected_item_type: str = "AzureVmWorkloadSAPAseDatabase"
 
 
-class AzureVmWorkloadSAPAseDatabaseWorkloadItem(AzureVmWorkloadItem):
+class AzureVmWorkloadSAPAseDatabaseWorkloadItem(AzureVmWorkloadItem):  # pylint: disable=name-too-long
     """Azure VM workload-specific workload item representing SAP ASE Database.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -6965,10 +7017,10 @@ class AzureVmWorkloadSAPAseDatabaseWorkloadItem(AzureVmWorkloadItem):
 
 class AzureVmWorkloadSAPAseSystemProtectableItem(
     AzureVmWorkloadProtectableItem
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Azure VM workload-specific protectable item representing SAP ASE System.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -7099,7 +7151,7 @@ class AzureVmWorkloadSAPAseSystemProtectableItem(
 class AzureVmWorkloadSAPAseSystemWorkloadItem(AzureVmWorkloadItem):
     """Azure VM workload-specific workload item representing SAP ASE System.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -7195,10 +7247,10 @@ class AzureVmWorkloadSAPAseSystemWorkloadItem(AzureVmWorkloadItem):
 
 class AzureVmWorkloadSAPHanaDatabaseProtectableItem(
     AzureVmWorkloadProtectableItem
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Azure VM workload-specific protectable item representing SAP HANA Database.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -7328,12 +7380,12 @@ class AzureVmWorkloadSAPHanaDatabaseProtectableItem(
 
 class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
     AzureVmWorkloadProtectedItem
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Azure VM workload-specific protected item representing SAP HANA Database.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -7384,6 +7436,8 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the DB represented by this backup item.
     :vartype friendly_name: str
     :ivar server_name: Host/Cluster Name for instance or AG.
@@ -7431,6 +7485,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
         "friendly_name": {"readonly": True},
         "protection_status": {"readonly": True},
     }
@@ -7454,6 +7509,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "server_name": {"key": "serverName", "type": "str"},
         "parent_name": {"key": "parentName", "type": "str"},
@@ -7611,10 +7667,10 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
         self.protected_item_type: str = "AzureVmWorkloadSAPHanaDatabase"
 
 
-class AzureVmWorkloadSAPHanaDatabaseWorkloadItem(AzureVmWorkloadItem):
+class AzureVmWorkloadSAPHanaDatabaseWorkloadItem(AzureVmWorkloadItem):  # pylint: disable=name-too-long
     """Azure VM workload-specific workload item representing SAP HANA Database.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -7711,7 +7767,7 @@ class AzureVmWorkloadSAPHanaDatabaseWorkloadItem(AzureVmWorkloadItem):
 class AzureVmWorkloadSAPHanaDBInstance(AzureVmWorkloadProtectableItem):  # pylint: disable=too-many-instance-attributes
     """Azure VM workload-specific protectable item representing SAP HANA Dbinstance.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -7841,12 +7897,12 @@ class AzureVmWorkloadSAPHanaDBInstance(AzureVmWorkloadProtectableItem):  # pylin
 
 class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
     AzureVmWorkloadProtectedItem
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Azure VM workload-specific protected item representing SAP HANA DBInstance.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -7897,6 +7953,8 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the DB represented by this backup item.
     :vartype friendly_name: str
     :ivar server_name: Host/Cluster Name for instance or AG.
@@ -7944,6 +8002,7 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
         "friendly_name": {"readonly": True},
         "protection_status": {"readonly": True},
     }
@@ -7967,6 +8026,7 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "server_name": {"key": "serverName", "type": "str"},
         "parent_name": {"key": "parentName", "type": "str"},
@@ -8129,7 +8189,7 @@ class AzureVmWorkloadSAPHanaHSRProtectableItem(
 ):  # pylint: disable=too-many-instance-attributes
     """Azure VM workload-specific protectable item representing HANA HSR.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -8259,10 +8319,10 @@ class AzureVmWorkloadSAPHanaHSRProtectableItem(
 
 class AzureVmWorkloadSAPHanaSystemProtectableItem(
     AzureVmWorkloadProtectableItem
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Azure VM workload-specific protectable item representing SAP HANA System.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -8393,7 +8453,7 @@ class AzureVmWorkloadSAPHanaSystemProtectableItem(
 class AzureVmWorkloadSAPHanaSystemWorkloadItem(AzureVmWorkloadItem):
     """Azure VM workload-specific workload item representing SAP HANA System.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -8489,10 +8549,10 @@ class AzureVmWorkloadSAPHanaSystemWorkloadItem(AzureVmWorkloadItem):
 
 class AzureVmWorkloadSQLAvailabilityGroupProtectableItem(
     AzureVmWorkloadProtectableItem
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Azure VM workload-specific protectable item representing SQL Availability Group.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -8631,10 +8691,10 @@ class AzureVmWorkloadSQLAvailabilityGroupProtectableItem(
 
 class AzureVmWorkloadSQLDatabaseProtectableItem(
     AzureVmWorkloadProtectableItem
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Azure VM workload-specific protectable item representing SQL Database.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -8769,7 +8829,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -8820,6 +8880,8 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the DB represented by this backup item.
     :vartype friendly_name: str
     :ivar server_name: Host/Cluster Name for instance or AG.
@@ -8867,6 +8929,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
         "friendly_name": {"readonly": True},
         "protection_status": {"readonly": True},
     }
@@ -8890,6 +8953,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "server_name": {"key": "serverName", "type": "str"},
         "parent_name": {"key": "parentName", "type": "str"},
@@ -9050,7 +9114,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
 class AzureVmWorkloadSQLDatabaseWorkloadItem(AzureVmWorkloadItem):
     """Azure VM workload-specific workload item representing SQL Database.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -9146,10 +9210,10 @@ class AzureVmWorkloadSQLDatabaseWorkloadItem(AzureVmWorkloadItem):
 
 class AzureVmWorkloadSQLInstanceProtectableItem(
     AzureVmWorkloadProtectableItem
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Azure VM workload-specific protectable item representing SQL Instance.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -9280,7 +9344,7 @@ class AzureVmWorkloadSQLInstanceProtectableItem(
 class AzureVmWorkloadSQLInstanceWorkloadItem(AzureVmWorkloadItem):  # pylint: disable=too-many-instance-attributes
     """Azure VM workload-specific workload item representing SQL Instance.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Type of backup management to backup an item.
     :vartype backup_management_type: str
@@ -9389,7 +9453,7 @@ class AzureWorkloadAutoProtectionIntent(AzureRecoveryServiceVaultProtectionInten
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureWorkloadSQLAutoProtectionIntent
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protection_intent_item_type: backup protectionIntent type. Required. Known values are:
      "Invalid", "AzureResourceItem", "RecoveryServiceVaultItem",
@@ -9474,7 +9538,7 @@ class AzureWorkloadAutoProtectionIntent(AzureRecoveryServiceVaultProtectionInten
 class AzureWorkloadBackupRequest(BackupRequest):
     """AzureWorkload workload-specific backup request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -9527,10 +9591,10 @@ class AzureWorkloadBackupRequest(BackupRequest):
         self.recovery_point_expiry_time_in_utc = recovery_point_expiry_time_in_utc
 
 
-class AzureWorkloadContainerAutoProtectionIntent(ProtectionIntent):
+class AzureWorkloadContainerAutoProtectionIntent(ProtectionIntent):  # pylint: disable=name-too-long
     """Azure workload specific protection intent item.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protection_intent_item_type: backup protectionIntent type. Required. Known values are:
      "Invalid", "AzureResourceItem", "RecoveryServiceVaultItem",
@@ -9707,7 +9771,7 @@ class AzureWorkloadErrorInfo(_serialization.Model):
 class AzureWorkloadJob(Job):  # pylint: disable=too-many-instance-attributes
     """Azure storage specific job.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar entity_friendly_name: Friendly name of the entity on which the current job is executing.
     :vartype entity_friendly_name: str
@@ -9906,7 +9970,7 @@ class AzureWorkloadRecoveryPoint(RecoveryPoint):
     AzureWorkloadPointInTimeRecoveryPoint, AzureWorkloadSAPHanaRecoveryPoint,
     AzureWorkloadSQLRecoveryPoint
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -9992,7 +10056,7 @@ class AzureWorkloadPointInTimeRecoveryPoint(AzureWorkloadRecoveryPoint):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureWorkloadSAPHanaPointInTimeRecoveryPoint
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -10079,18 +10143,21 @@ class AzureWorkloadPointInTimeRecoveryPoint(AzureWorkloadRecoveryPoint):
         self.time_ranges = time_ranges
 
 
-class AzureWorkloadRestoreRequest(RestoreRequest):
+class AzureWorkloadRestoreRequest(RestoreRequest):  # pylint: disable=too-many-instance-attributes
     """AzureWorkload-specific restore.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureWorkloadPointInTimeRestoreRequest, AzureWorkloadSAPHanaRestoreRequest,
     AzureWorkloadSQLRestoreRequest
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
     :vartype object_type: str
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     :ivar recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
      "AlternateLocation", "RestoreDisks", and "Offline".
     :vartype recovery_type: str or
@@ -10103,9 +10170,20 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
     :ivar target_info: Details of target database.
     :vartype target_info: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetRestoreInfo
     :ivar recovery_mode: Defines whether the current recovery mode is file restore or database
-     restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
+     restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery", "SnapshotAttach",
+     "RecoveryUsingSnapshot", and "SnapshotAttachAndRecover".
     :vartype recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryMode
+    :ivar target_resource_group_name: Defines the Resource group of the Target VM.
+    :vartype target_resource_group_name: str
+    :ivar user_assigned_managed_identity_details: User Assigned managed identity details
+     Currently used for snapshot.
+    :vartype user_assigned_managed_identity_details:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+    :ivar snapshot_restore_parameters: Additional details for snapshot recovery
+     Currently used for snapshot for SAP Hana.
+    :vartype snapshot_restore_parameters:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotRestoreParameters
     :ivar target_virtual_machine_id: This is the complete ARM Id of the target VM
      For e.g.
      /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
@@ -10118,11 +10196,18 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
 
     _attribute_map = {
         "object_type": {"key": "objectType", "type": "str"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "recovery_type": {"key": "recoveryType", "type": "str"},
         "source_resource_id": {"key": "sourceResourceId", "type": "str"},
         "property_bag": {"key": "propertyBag", "type": "{str}"},
         "target_info": {"key": "targetInfo", "type": "TargetRestoreInfo"},
         "recovery_mode": {"key": "recoveryMode", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
+        "user_assigned_managed_identity_details": {
+            "key": "userAssignedManagedIdentityDetails",
+            "type": "UserAssignedManagedIdentityDetails",
+        },
+        "snapshot_restore_parameters": {"key": "snapshotRestoreParameters", "type": "SnapshotRestoreParameters"},
         "target_virtual_machine_id": {"key": "targetVirtualMachineId", "type": "str"},
     }
 
@@ -10137,15 +10222,22 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
     def __init__(
         self,
         *,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         recovery_type: Optional[Union[str, "_models.RecoveryType"]] = None,
         source_resource_id: Optional[str] = None,
         property_bag: Optional[Dict[str, str]] = None,
         target_info: Optional["_models.TargetRestoreInfo"] = None,
         recovery_mode: Optional[Union[str, "_models.RecoveryMode"]] = None,
+        target_resource_group_name: Optional[str] = None,
+        user_assigned_managed_identity_details: Optional["_models.UserAssignedManagedIdentityDetails"] = None,
+        snapshot_restore_parameters: Optional["_models.SnapshotRestoreParameters"] = None,
         target_virtual_machine_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
          "AlternateLocation", "RestoreDisks", and "Offline".
         :paramtype recovery_type: str or
@@ -10158,32 +10250,51 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
         :keyword target_info: Details of target database.
         :paramtype target_info: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetRestoreInfo
         :keyword recovery_mode: Defines whether the current recovery mode is file restore or database
-         restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
+         restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery", "SnapshotAttach",
+         "RecoveryUsingSnapshot", and "SnapshotAttachAndRecover".
         :paramtype recovery_mode: str or
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryMode
+        :keyword target_resource_group_name: Defines the Resource group of the Target VM.
+        :paramtype target_resource_group_name: str
+        :keyword user_assigned_managed_identity_details: User Assigned managed identity details
+         Currently used for snapshot.
+        :paramtype user_assigned_managed_identity_details:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+        :keyword snapshot_restore_parameters: Additional details for snapshot recovery
+         Currently used for snapshot for SAP Hana.
+        :paramtype snapshot_restore_parameters:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotRestoreParameters
         :keyword target_virtual_machine_id: This is the complete ARM Id of the target VM
          For e.g.
          /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
         :paramtype target_virtual_machine_id: str
         """
-        super().__init__(**kwargs)
+        super().__init__(resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
         self.object_type: str = "AzureWorkloadRestoreRequest"
         self.recovery_type = recovery_type
         self.source_resource_id = source_resource_id
         self.property_bag = property_bag
         self.target_info = target_info
         self.recovery_mode = recovery_mode
+        self.target_resource_group_name = target_resource_group_name
+        self.user_assigned_managed_identity_details = user_assigned_managed_identity_details
+        self.snapshot_restore_parameters = snapshot_restore_parameters
         self.target_virtual_machine_id = target_virtual_machine_id
 
 
-class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
+class AzureWorkloadPointInTimeRestoreRequest(
+    AzureWorkloadRestoreRequest
+):  # pylint: disable=too-many-instance-attributes
     """AzureWorkload SAP Hana -specific restore. Specifically for PointInTime/Log restore.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
     :vartype object_type: str
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     :ivar recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
      "AlternateLocation", "RestoreDisks", and "Offline".
     :vartype recovery_type: str or
@@ -10196,9 +10307,20 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
     :ivar target_info: Details of target database.
     :vartype target_info: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetRestoreInfo
     :ivar recovery_mode: Defines whether the current recovery mode is file restore or database
-     restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
+     restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery", "SnapshotAttach",
+     "RecoveryUsingSnapshot", and "SnapshotAttachAndRecover".
     :vartype recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryMode
+    :ivar target_resource_group_name: Defines the Resource group of the Target VM.
+    :vartype target_resource_group_name: str
+    :ivar user_assigned_managed_identity_details: User Assigned managed identity details
+     Currently used for snapshot.
+    :vartype user_assigned_managed_identity_details:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+    :ivar snapshot_restore_parameters: Additional details for snapshot recovery
+     Currently used for snapshot for SAP Hana.
+    :vartype snapshot_restore_parameters:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotRestoreParameters
     :ivar target_virtual_machine_id: This is the complete ARM Id of the target VM
      For e.g.
      /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
@@ -10213,11 +10335,18 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
 
     _attribute_map = {
         "object_type": {"key": "objectType", "type": "str"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "recovery_type": {"key": "recoveryType", "type": "str"},
         "source_resource_id": {"key": "sourceResourceId", "type": "str"},
         "property_bag": {"key": "propertyBag", "type": "{str}"},
         "target_info": {"key": "targetInfo", "type": "TargetRestoreInfo"},
         "recovery_mode": {"key": "recoveryMode", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
+        "user_assigned_managed_identity_details": {
+            "key": "userAssignedManagedIdentityDetails",
+            "type": "UserAssignedManagedIdentityDetails",
+        },
+        "snapshot_restore_parameters": {"key": "snapshotRestoreParameters", "type": "SnapshotRestoreParameters"},
         "target_virtual_machine_id": {"key": "targetVirtualMachineId", "type": "str"},
         "point_in_time": {"key": "pointInTime", "type": "iso-8601"},
     }
@@ -10225,16 +10354,23 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
     def __init__(
         self,
         *,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         recovery_type: Optional[Union[str, "_models.RecoveryType"]] = None,
         source_resource_id: Optional[str] = None,
         property_bag: Optional[Dict[str, str]] = None,
         target_info: Optional["_models.TargetRestoreInfo"] = None,
         recovery_mode: Optional[Union[str, "_models.RecoveryMode"]] = None,
+        target_resource_group_name: Optional[str] = None,
+        user_assigned_managed_identity_details: Optional["_models.UserAssignedManagedIdentityDetails"] = None,
+        snapshot_restore_parameters: Optional["_models.SnapshotRestoreParameters"] = None,
         target_virtual_machine_id: Optional[str] = None,
         point_in_time: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
          "AlternateLocation", "RestoreDisks", and "Offline".
         :paramtype recovery_type: str or
@@ -10247,9 +10383,20 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
         :keyword target_info: Details of target database.
         :paramtype target_info: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetRestoreInfo
         :keyword recovery_mode: Defines whether the current recovery mode is file restore or database
-         restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
+         restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery", "SnapshotAttach",
+         "RecoveryUsingSnapshot", and "SnapshotAttachAndRecover".
         :paramtype recovery_mode: str or
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryMode
+        :keyword target_resource_group_name: Defines the Resource group of the Target VM.
+        :paramtype target_resource_group_name: str
+        :keyword user_assigned_managed_identity_details: User Assigned managed identity details
+         Currently used for snapshot.
+        :paramtype user_assigned_managed_identity_details:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+        :keyword snapshot_restore_parameters: Additional details for snapshot recovery
+         Currently used for snapshot for SAP Hana.
+        :paramtype snapshot_restore_parameters:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotRestoreParameters
         :keyword target_virtual_machine_id: This is the complete ARM Id of the target VM
          For e.g.
          /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
@@ -10258,11 +10405,15 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
         :paramtype point_in_time: ~datetime.datetime
         """
         super().__init__(
+            resource_guard_operation_requests=resource_guard_operation_requests,
             recovery_type=recovery_type,
             source_resource_id=source_resource_id,
             property_bag=property_bag,
             target_info=target_info,
             recovery_mode=recovery_mode,
+            target_resource_group_name=target_resource_group_name,
+            user_assigned_managed_identity_details=user_assigned_managed_identity_details,
+            snapshot_restore_parameters=snapshot_restore_parameters,
             target_virtual_machine_id=target_virtual_machine_id,
             **kwargs
         )
@@ -10270,10 +10421,12 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
         self.point_in_time = point_in_time
 
 
-class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadPointInTimeRecoveryPoint):
+class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(
+    AzureWorkloadPointInTimeRecoveryPoint
+):  # pylint: disable=name-too-long
     """Recovery point specific to PointInTime in SAPHana.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -10356,17 +10509,20 @@ class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadPointInTimeRecov
         self.object_type: str = "AzureWorkloadSAPHanaPointInTimeRecoveryPoint"
 
 
-class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
+class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):  # pylint: disable=too-many-instance-attributes
     """AzureWorkload SAP Hana-specific restore.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureWorkloadSAPHanaPointInTimeRestoreRequest, AzureWorkloadSAPHanaRestoreWithRehydrateRequest
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
     :vartype object_type: str
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     :ivar recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
      "AlternateLocation", "RestoreDisks", and "Offline".
     :vartype recovery_type: str or
@@ -10379,9 +10535,20 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
     :ivar target_info: Details of target database.
     :vartype target_info: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetRestoreInfo
     :ivar recovery_mode: Defines whether the current recovery mode is file restore or database
-     restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
+     restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery", "SnapshotAttach",
+     "RecoveryUsingSnapshot", and "SnapshotAttachAndRecover".
     :vartype recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryMode
+    :ivar target_resource_group_name: Defines the Resource group of the Target VM.
+    :vartype target_resource_group_name: str
+    :ivar user_assigned_managed_identity_details: User Assigned managed identity details
+     Currently used for snapshot.
+    :vartype user_assigned_managed_identity_details:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+    :ivar snapshot_restore_parameters: Additional details for snapshot recovery
+     Currently used for snapshot for SAP Hana.
+    :vartype snapshot_restore_parameters:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotRestoreParameters
     :ivar target_virtual_machine_id: This is the complete ARM Id of the target VM
      For e.g.
      /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
@@ -10394,11 +10561,18 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
 
     _attribute_map = {
         "object_type": {"key": "objectType", "type": "str"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "recovery_type": {"key": "recoveryType", "type": "str"},
         "source_resource_id": {"key": "sourceResourceId", "type": "str"},
         "property_bag": {"key": "propertyBag", "type": "{str}"},
         "target_info": {"key": "targetInfo", "type": "TargetRestoreInfo"},
         "recovery_mode": {"key": "recoveryMode", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
+        "user_assigned_managed_identity_details": {
+            "key": "userAssignedManagedIdentityDetails",
+            "type": "UserAssignedManagedIdentityDetails",
+        },
+        "snapshot_restore_parameters": {"key": "snapshotRestoreParameters", "type": "SnapshotRestoreParameters"},
         "target_virtual_machine_id": {"key": "targetVirtualMachineId", "type": "str"},
     }
 
@@ -10412,15 +10586,22 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
     def __init__(
         self,
         *,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         recovery_type: Optional[Union[str, "_models.RecoveryType"]] = None,
         source_resource_id: Optional[str] = None,
         property_bag: Optional[Dict[str, str]] = None,
         target_info: Optional["_models.TargetRestoreInfo"] = None,
         recovery_mode: Optional[Union[str, "_models.RecoveryMode"]] = None,
+        target_resource_group_name: Optional[str] = None,
+        user_assigned_managed_identity_details: Optional["_models.UserAssignedManagedIdentityDetails"] = None,
+        snapshot_restore_parameters: Optional["_models.SnapshotRestoreParameters"] = None,
         target_virtual_machine_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
          "AlternateLocation", "RestoreDisks", and "Offline".
         :paramtype recovery_type: str or
@@ -10433,37 +10614,57 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
         :keyword target_info: Details of target database.
         :paramtype target_info: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetRestoreInfo
         :keyword recovery_mode: Defines whether the current recovery mode is file restore or database
-         restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
+         restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery", "SnapshotAttach",
+         "RecoveryUsingSnapshot", and "SnapshotAttachAndRecover".
         :paramtype recovery_mode: str or
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryMode
+        :keyword target_resource_group_name: Defines the Resource group of the Target VM.
+        :paramtype target_resource_group_name: str
+        :keyword user_assigned_managed_identity_details: User Assigned managed identity details
+         Currently used for snapshot.
+        :paramtype user_assigned_managed_identity_details:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+        :keyword snapshot_restore_parameters: Additional details for snapshot recovery
+         Currently used for snapshot for SAP Hana.
+        :paramtype snapshot_restore_parameters:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotRestoreParameters
         :keyword target_virtual_machine_id: This is the complete ARM Id of the target VM
          For e.g.
          /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
         :paramtype target_virtual_machine_id: str
         """
         super().__init__(
+            resource_guard_operation_requests=resource_guard_operation_requests,
             recovery_type=recovery_type,
             source_resource_id=source_resource_id,
             property_bag=property_bag,
             target_info=target_info,
             recovery_mode=recovery_mode,
+            target_resource_group_name=target_resource_group_name,
+            user_assigned_managed_identity_details=user_assigned_managed_identity_details,
+            snapshot_restore_parameters=snapshot_restore_parameters,
             target_virtual_machine_id=target_virtual_machine_id,
             **kwargs
         )
         self.object_type: str = "AzureWorkloadSAPHanaRestoreRequest"
 
 
-class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreRequest):
+class AzureWorkloadSAPHanaPointInTimeRestoreRequest(
+    AzureWorkloadSAPHanaRestoreRequest
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """AzureWorkload SAP Hana -specific restore. Specifically for PointInTime/Log restore.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
     :vartype object_type: str
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     :ivar recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
      "AlternateLocation", "RestoreDisks", and "Offline".
     :vartype recovery_type: str or
@@ -10476,9 +10677,20 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
     :ivar target_info: Details of target database.
     :vartype target_info: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetRestoreInfo
     :ivar recovery_mode: Defines whether the current recovery mode is file restore or database
-     restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
+     restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery", "SnapshotAttach",
+     "RecoveryUsingSnapshot", and "SnapshotAttachAndRecover".
     :vartype recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryMode
+    :ivar target_resource_group_name: Defines the Resource group of the Target VM.
+    :vartype target_resource_group_name: str
+    :ivar user_assigned_managed_identity_details: User Assigned managed identity details
+     Currently used for snapshot.
+    :vartype user_assigned_managed_identity_details:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+    :ivar snapshot_restore_parameters: Additional details for snapshot recovery
+     Currently used for snapshot for SAP Hana.
+    :vartype snapshot_restore_parameters:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotRestoreParameters
     :ivar target_virtual_machine_id: This is the complete ARM Id of the target VM
      For e.g.
      /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
@@ -10493,11 +10705,18 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
 
     _attribute_map = {
         "object_type": {"key": "objectType", "type": "str"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "recovery_type": {"key": "recoveryType", "type": "str"},
         "source_resource_id": {"key": "sourceResourceId", "type": "str"},
         "property_bag": {"key": "propertyBag", "type": "{str}"},
         "target_info": {"key": "targetInfo", "type": "TargetRestoreInfo"},
         "recovery_mode": {"key": "recoveryMode", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
+        "user_assigned_managed_identity_details": {
+            "key": "userAssignedManagedIdentityDetails",
+            "type": "UserAssignedManagedIdentityDetails",
+        },
+        "snapshot_restore_parameters": {"key": "snapshotRestoreParameters", "type": "SnapshotRestoreParameters"},
         "target_virtual_machine_id": {"key": "targetVirtualMachineId", "type": "str"},
         "point_in_time": {"key": "pointInTime", "type": "iso-8601"},
     }
@@ -10511,16 +10730,23 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
     def __init__(
         self,
         *,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         recovery_type: Optional[Union[str, "_models.RecoveryType"]] = None,
         source_resource_id: Optional[str] = None,
         property_bag: Optional[Dict[str, str]] = None,
         target_info: Optional["_models.TargetRestoreInfo"] = None,
         recovery_mode: Optional[Union[str, "_models.RecoveryMode"]] = None,
+        target_resource_group_name: Optional[str] = None,
+        user_assigned_managed_identity_details: Optional["_models.UserAssignedManagedIdentityDetails"] = None,
+        snapshot_restore_parameters: Optional["_models.SnapshotRestoreParameters"] = None,
         target_virtual_machine_id: Optional[str] = None,
         point_in_time: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
          "AlternateLocation", "RestoreDisks", and "Offline".
         :paramtype recovery_type: str or
@@ -10533,9 +10759,20 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
         :keyword target_info: Details of target database.
         :paramtype target_info: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetRestoreInfo
         :keyword recovery_mode: Defines whether the current recovery mode is file restore or database
-         restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
+         restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery", "SnapshotAttach",
+         "RecoveryUsingSnapshot", and "SnapshotAttachAndRecover".
         :paramtype recovery_mode: str or
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryMode
+        :keyword target_resource_group_name: Defines the Resource group of the Target VM.
+        :paramtype target_resource_group_name: str
+        :keyword user_assigned_managed_identity_details: User Assigned managed identity details
+         Currently used for snapshot.
+        :paramtype user_assigned_managed_identity_details:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+        :keyword snapshot_restore_parameters: Additional details for snapshot recovery
+         Currently used for snapshot for SAP Hana.
+        :paramtype snapshot_restore_parameters:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotRestoreParameters
         :keyword target_virtual_machine_id: This is the complete ARM Id of the target VM
          For e.g.
          /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
@@ -10544,11 +10781,15 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
         :paramtype point_in_time: ~datetime.datetime
         """
         super().__init__(
+            resource_guard_operation_requests=resource_guard_operation_requests,
             recovery_type=recovery_type,
             source_resource_id=source_resource_id,
             property_bag=property_bag,
             target_info=target_info,
             recovery_mode=recovery_mode,
+            target_resource_group_name=target_resource_group_name,
+            user_assigned_managed_identity_details=user_assigned_managed_identity_details,
+            snapshot_restore_parameters=snapshot_restore_parameters,
             target_virtual_machine_id=target_virtual_machine_id,
             **kwargs
         )
@@ -10556,14 +10797,19 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
         self.point_in_time = point_in_time
 
 
-class AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest(AzureWorkloadSAPHanaPointInTimeRestoreRequest):
+class AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest(
+    AzureWorkloadSAPHanaPointInTimeRestoreRequest
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """AzureWorkload SAP Hana-specific restore with integrated rehydration of recovery point.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
     :vartype object_type: str
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     :ivar recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
      "AlternateLocation", "RestoreDisks", and "Offline".
     :vartype recovery_type: str or
@@ -10576,9 +10822,20 @@ class AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest(AzureWorkloadSA
     :ivar target_info: Details of target database.
     :vartype target_info: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetRestoreInfo
     :ivar recovery_mode: Defines whether the current recovery mode is file restore or database
-     restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
+     restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery", "SnapshotAttach",
+     "RecoveryUsingSnapshot", and "SnapshotAttachAndRecover".
     :vartype recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryMode
+    :ivar target_resource_group_name: Defines the Resource group of the Target VM.
+    :vartype target_resource_group_name: str
+    :ivar user_assigned_managed_identity_details: User Assigned managed identity details
+     Currently used for snapshot.
+    :vartype user_assigned_managed_identity_details:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+    :ivar snapshot_restore_parameters: Additional details for snapshot recovery
+     Currently used for snapshot for SAP Hana.
+    :vartype snapshot_restore_parameters:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotRestoreParameters
     :ivar target_virtual_machine_id: This is the complete ARM Id of the target VM
      For e.g.
      /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
@@ -10596,11 +10853,18 @@ class AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest(AzureWorkloadSA
 
     _attribute_map = {
         "object_type": {"key": "objectType", "type": "str"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "recovery_type": {"key": "recoveryType", "type": "str"},
         "source_resource_id": {"key": "sourceResourceId", "type": "str"},
         "property_bag": {"key": "propertyBag", "type": "{str}"},
         "target_info": {"key": "targetInfo", "type": "TargetRestoreInfo"},
         "recovery_mode": {"key": "recoveryMode", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
+        "user_assigned_managed_identity_details": {
+            "key": "userAssignedManagedIdentityDetails",
+            "type": "UserAssignedManagedIdentityDetails",
+        },
+        "snapshot_restore_parameters": {"key": "snapshotRestoreParameters", "type": "SnapshotRestoreParameters"},
         "target_virtual_machine_id": {"key": "targetVirtualMachineId", "type": "str"},
         "point_in_time": {"key": "pointInTime", "type": "iso-8601"},
         "recovery_point_rehydration_info": {
@@ -10612,17 +10876,24 @@ class AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest(AzureWorkloadSA
     def __init__(
         self,
         *,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         recovery_type: Optional[Union[str, "_models.RecoveryType"]] = None,
         source_resource_id: Optional[str] = None,
         property_bag: Optional[Dict[str, str]] = None,
         target_info: Optional["_models.TargetRestoreInfo"] = None,
         recovery_mode: Optional[Union[str, "_models.RecoveryMode"]] = None,
+        target_resource_group_name: Optional[str] = None,
+        user_assigned_managed_identity_details: Optional["_models.UserAssignedManagedIdentityDetails"] = None,
+        snapshot_restore_parameters: Optional["_models.SnapshotRestoreParameters"] = None,
         target_virtual_machine_id: Optional[str] = None,
         point_in_time: Optional[datetime.datetime] = None,
         recovery_point_rehydration_info: Optional["_models.RecoveryPointRehydrationInfo"] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
          "AlternateLocation", "RestoreDisks", and "Offline".
         :paramtype recovery_type: str or
@@ -10635,9 +10906,20 @@ class AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest(AzureWorkloadSA
         :keyword target_info: Details of target database.
         :paramtype target_info: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetRestoreInfo
         :keyword recovery_mode: Defines whether the current recovery mode is file restore or database
-         restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
+         restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery", "SnapshotAttach",
+         "RecoveryUsingSnapshot", and "SnapshotAttachAndRecover".
         :paramtype recovery_mode: str or
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryMode
+        :keyword target_resource_group_name: Defines the Resource group of the Target VM.
+        :paramtype target_resource_group_name: str
+        :keyword user_assigned_managed_identity_details: User Assigned managed identity details
+         Currently used for snapshot.
+        :paramtype user_assigned_managed_identity_details:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+        :keyword snapshot_restore_parameters: Additional details for snapshot recovery
+         Currently used for snapshot for SAP Hana.
+        :paramtype snapshot_restore_parameters:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotRestoreParameters
         :keyword target_virtual_machine_id: This is the complete ARM Id of the target VM
          For e.g.
          /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
@@ -10649,11 +10931,15 @@ class AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest(AzureWorkloadSA
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointRehydrationInfo
         """
         super().__init__(
+            resource_guard_operation_requests=resource_guard_operation_requests,
             recovery_type=recovery_type,
             source_resource_id=source_resource_id,
             property_bag=property_bag,
             target_info=target_info,
             recovery_mode=recovery_mode,
+            target_resource_group_name=target_resource_group_name,
+            user_assigned_managed_identity_details=user_assigned_managed_identity_details,
+            snapshot_restore_parameters=snapshot_restore_parameters,
             target_virtual_machine_id=target_virtual_machine_id,
             point_in_time=point_in_time,
             **kwargs
@@ -10665,7 +10951,7 @@ class AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest(AzureWorkloadSA
 class AzureWorkloadSAPHanaRecoveryPoint(AzureWorkloadRecoveryPoint):
     """SAPHana specific recoverypoint, specifically encapsulates full/diff recoverypoints.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -10739,14 +11025,19 @@ class AzureWorkloadSAPHanaRecoveryPoint(AzureWorkloadRecoveryPoint):
         self.object_type: str = "AzureWorkloadSAPHanaRecoveryPoint"
 
 
-class AzureWorkloadSAPHanaRestoreWithRehydrateRequest(AzureWorkloadSAPHanaRestoreRequest):
+class AzureWorkloadSAPHanaRestoreWithRehydrateRequest(
+    AzureWorkloadSAPHanaRestoreRequest
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """AzureWorkload SAP Hana-specific restore with integrated rehydration of recovery point.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
     :vartype object_type: str
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     :ivar recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
      "AlternateLocation", "RestoreDisks", and "Offline".
     :vartype recovery_type: str or
@@ -10759,9 +11050,20 @@ class AzureWorkloadSAPHanaRestoreWithRehydrateRequest(AzureWorkloadSAPHanaRestor
     :ivar target_info: Details of target database.
     :vartype target_info: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetRestoreInfo
     :ivar recovery_mode: Defines whether the current recovery mode is file restore or database
-     restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
+     restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery", "SnapshotAttach",
+     "RecoveryUsingSnapshot", and "SnapshotAttachAndRecover".
     :vartype recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryMode
+    :ivar target_resource_group_name: Defines the Resource group of the Target VM.
+    :vartype target_resource_group_name: str
+    :ivar user_assigned_managed_identity_details: User Assigned managed identity details
+     Currently used for snapshot.
+    :vartype user_assigned_managed_identity_details:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+    :ivar snapshot_restore_parameters: Additional details for snapshot recovery
+     Currently used for snapshot for SAP Hana.
+    :vartype snapshot_restore_parameters:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotRestoreParameters
     :ivar target_virtual_machine_id: This is the complete ARM Id of the target VM
      For e.g.
      /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
@@ -10777,11 +11079,18 @@ class AzureWorkloadSAPHanaRestoreWithRehydrateRequest(AzureWorkloadSAPHanaRestor
 
     _attribute_map = {
         "object_type": {"key": "objectType", "type": "str"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "recovery_type": {"key": "recoveryType", "type": "str"},
         "source_resource_id": {"key": "sourceResourceId", "type": "str"},
         "property_bag": {"key": "propertyBag", "type": "{str}"},
         "target_info": {"key": "targetInfo", "type": "TargetRestoreInfo"},
         "recovery_mode": {"key": "recoveryMode", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
+        "user_assigned_managed_identity_details": {
+            "key": "userAssignedManagedIdentityDetails",
+            "type": "UserAssignedManagedIdentityDetails",
+        },
+        "snapshot_restore_parameters": {"key": "snapshotRestoreParameters", "type": "SnapshotRestoreParameters"},
         "target_virtual_machine_id": {"key": "targetVirtualMachineId", "type": "str"},
         "recovery_point_rehydration_info": {
             "key": "recoveryPointRehydrationInfo",
@@ -10792,16 +11101,23 @@ class AzureWorkloadSAPHanaRestoreWithRehydrateRequest(AzureWorkloadSAPHanaRestor
     def __init__(
         self,
         *,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         recovery_type: Optional[Union[str, "_models.RecoveryType"]] = None,
         source_resource_id: Optional[str] = None,
         property_bag: Optional[Dict[str, str]] = None,
         target_info: Optional["_models.TargetRestoreInfo"] = None,
         recovery_mode: Optional[Union[str, "_models.RecoveryMode"]] = None,
+        target_resource_group_name: Optional[str] = None,
+        user_assigned_managed_identity_details: Optional["_models.UserAssignedManagedIdentityDetails"] = None,
+        snapshot_restore_parameters: Optional["_models.SnapshotRestoreParameters"] = None,
         target_virtual_machine_id: Optional[str] = None,
         recovery_point_rehydration_info: Optional["_models.RecoveryPointRehydrationInfo"] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
          "AlternateLocation", "RestoreDisks", and "Offline".
         :paramtype recovery_type: str or
@@ -10814,9 +11130,20 @@ class AzureWorkloadSAPHanaRestoreWithRehydrateRequest(AzureWorkloadSAPHanaRestor
         :keyword target_info: Details of target database.
         :paramtype target_info: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetRestoreInfo
         :keyword recovery_mode: Defines whether the current recovery mode is file restore or database
-         restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
+         restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery", "SnapshotAttach",
+         "RecoveryUsingSnapshot", and "SnapshotAttachAndRecover".
         :paramtype recovery_mode: str or
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryMode
+        :keyword target_resource_group_name: Defines the Resource group of the Target VM.
+        :paramtype target_resource_group_name: str
+        :keyword user_assigned_managed_identity_details: User Assigned managed identity details
+         Currently used for snapshot.
+        :paramtype user_assigned_managed_identity_details:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+        :keyword snapshot_restore_parameters: Additional details for snapshot recovery
+         Currently used for snapshot for SAP Hana.
+        :paramtype snapshot_restore_parameters:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotRestoreParameters
         :keyword target_virtual_machine_id: This is the complete ARM Id of the target VM
          For e.g.
          /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
@@ -10826,11 +11153,15 @@ class AzureWorkloadSAPHanaRestoreWithRehydrateRequest(AzureWorkloadSAPHanaRestor
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointRehydrationInfo
         """
         super().__init__(
+            resource_guard_operation_requests=resource_guard_operation_requests,
             recovery_type=recovery_type,
             source_resource_id=source_resource_id,
             property_bag=property_bag,
             target_info=target_info,
             recovery_mode=recovery_mode,
+            target_resource_group_name=target_resource_group_name,
+            user_assigned_managed_identity_details=user_assigned_managed_identity_details,
+            snapshot_restore_parameters=snapshot_restore_parameters,
             target_virtual_machine_id=target_virtual_machine_id,
             **kwargs
         )
@@ -10841,7 +11172,7 @@ class AzureWorkloadSAPHanaRestoreWithRehydrateRequest(AzureWorkloadSAPHanaRestor
 class AzureWorkloadSQLAutoProtectionIntent(AzureWorkloadAutoProtectionIntent):
     """Azure Workload SQL Auto Protection intent item.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protection_intent_item_type: backup protectionIntent type. Required. Known values are:
      "Invalid", "AzureResourceItem", "RecoveryServiceVaultItem",
@@ -10939,7 +11270,7 @@ class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureWorkloadSQLPointInTimeRecoveryPoint
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -11035,7 +11366,7 @@ class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
 class AzureWorkloadSQLPointInTimeRecoveryPoint(AzureWorkloadSQLRecoveryPoint):
     """Recovery point specific to PointInTime.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -11133,17 +11464,20 @@ class AzureWorkloadSQLPointInTimeRecoveryPoint(AzureWorkloadSQLRecoveryPoint):
         self.time_ranges = time_ranges
 
 
-class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
+class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):  # pylint: disable=too-many-instance-attributes
     """AzureWorkload SQL -specific restore. Specifically for full/diff restore.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureWorkloadSQLPointInTimeRestoreRequest, AzureWorkloadSQLRestoreWithRehydrateRequest
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
     :vartype object_type: str
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     :ivar recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
      "AlternateLocation", "RestoreDisks", and "Offline".
     :vartype recovery_type: str or
@@ -11156,9 +11490,20 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
     :ivar target_info: Details of target database.
     :vartype target_info: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetRestoreInfo
     :ivar recovery_mode: Defines whether the current recovery mode is file restore or database
-     restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
+     restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery", "SnapshotAttach",
+     "RecoveryUsingSnapshot", and "SnapshotAttachAndRecover".
     :vartype recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryMode
+    :ivar target_resource_group_name: Defines the Resource group of the Target VM.
+    :vartype target_resource_group_name: str
+    :ivar user_assigned_managed_identity_details: User Assigned managed identity details
+     Currently used for snapshot.
+    :vartype user_assigned_managed_identity_details:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+    :ivar snapshot_restore_parameters: Additional details for snapshot recovery
+     Currently used for snapshot for SAP Hana.
+    :vartype snapshot_restore_parameters:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotRestoreParameters
     :ivar target_virtual_machine_id: This is the complete ARM Id of the target VM
      For e.g.
      /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
@@ -11180,11 +11525,18 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
 
     _attribute_map = {
         "object_type": {"key": "objectType", "type": "str"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "recovery_type": {"key": "recoveryType", "type": "str"},
         "source_resource_id": {"key": "sourceResourceId", "type": "str"},
         "property_bag": {"key": "propertyBag", "type": "{str}"},
         "target_info": {"key": "targetInfo", "type": "TargetRestoreInfo"},
         "recovery_mode": {"key": "recoveryMode", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
+        "user_assigned_managed_identity_details": {
+            "key": "userAssignedManagedIdentityDetails",
+            "type": "UserAssignedManagedIdentityDetails",
+        },
+        "snapshot_restore_parameters": {"key": "snapshotRestoreParameters", "type": "SnapshotRestoreParameters"},
         "target_virtual_machine_id": {"key": "targetVirtualMachineId", "type": "str"},
         "should_use_alternate_target_location": {"key": "shouldUseAlternateTargetLocation", "type": "bool"},
         "is_non_recoverable": {"key": "isNonRecoverable", "type": "bool"},
@@ -11201,11 +11553,15 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
     def __init__(
         self,
         *,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         recovery_type: Optional[Union[str, "_models.RecoveryType"]] = None,
         source_resource_id: Optional[str] = None,
         property_bag: Optional[Dict[str, str]] = None,
         target_info: Optional["_models.TargetRestoreInfo"] = None,
         recovery_mode: Optional[Union[str, "_models.RecoveryMode"]] = None,
+        target_resource_group_name: Optional[str] = None,
+        user_assigned_managed_identity_details: Optional["_models.UserAssignedManagedIdentityDetails"] = None,
+        snapshot_restore_parameters: Optional["_models.SnapshotRestoreParameters"] = None,
         target_virtual_machine_id: Optional[str] = None,
         should_use_alternate_target_location: Optional[bool] = None,
         is_non_recoverable: Optional[bool] = None,
@@ -11213,6 +11569,9 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
         **kwargs: Any
     ) -> None:
         """
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
          "AlternateLocation", "RestoreDisks", and "Offline".
         :paramtype recovery_type: str or
@@ -11225,9 +11584,20 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
         :keyword target_info: Details of target database.
         :paramtype target_info: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetRestoreInfo
         :keyword recovery_mode: Defines whether the current recovery mode is file restore or database
-         restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
+         restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery", "SnapshotAttach",
+         "RecoveryUsingSnapshot", and "SnapshotAttachAndRecover".
         :paramtype recovery_mode: str or
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryMode
+        :keyword target_resource_group_name: Defines the Resource group of the Target VM.
+        :paramtype target_resource_group_name: str
+        :keyword user_assigned_managed_identity_details: User Assigned managed identity details
+         Currently used for snapshot.
+        :paramtype user_assigned_managed_identity_details:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+        :keyword snapshot_restore_parameters: Additional details for snapshot recovery
+         Currently used for snapshot for SAP Hana.
+        :paramtype snapshot_restore_parameters:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotRestoreParameters
         :keyword target_virtual_machine_id: This is the complete ARM Id of the target VM
          For e.g.
          /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
@@ -11243,11 +11613,15 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
          list[~azure.mgmt.recoveryservicesbackup.activestamp.models.SQLDataDirectoryMapping]
         """
         super().__init__(
+            resource_guard_operation_requests=resource_guard_operation_requests,
             recovery_type=recovery_type,
             source_resource_id=source_resource_id,
             property_bag=property_bag,
             target_info=target_info,
             recovery_mode=recovery_mode,
+            target_resource_group_name=target_resource_group_name,
+            user_assigned_managed_identity_details=user_assigned_managed_identity_details,
+            snapshot_restore_parameters=snapshot_restore_parameters,
             target_virtual_machine_id=target_virtual_machine_id,
             **kwargs
         )
@@ -11259,17 +11633,20 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
 
 class AzureWorkloadSQLPointInTimeRestoreRequest(
     AzureWorkloadSQLRestoreRequest
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """AzureWorkload SQL -specific restore. Specifically for PointInTime/Log restore.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
     :vartype object_type: str
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     :ivar recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
      "AlternateLocation", "RestoreDisks", and "Offline".
     :vartype recovery_type: str or
@@ -11282,9 +11659,20 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(
     :ivar target_info: Details of target database.
     :vartype target_info: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetRestoreInfo
     :ivar recovery_mode: Defines whether the current recovery mode is file restore or database
-     restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
+     restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery", "SnapshotAttach",
+     "RecoveryUsingSnapshot", and "SnapshotAttachAndRecover".
     :vartype recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryMode
+    :ivar target_resource_group_name: Defines the Resource group of the Target VM.
+    :vartype target_resource_group_name: str
+    :ivar user_assigned_managed_identity_details: User Assigned managed identity details
+     Currently used for snapshot.
+    :vartype user_assigned_managed_identity_details:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+    :ivar snapshot_restore_parameters: Additional details for snapshot recovery
+     Currently used for snapshot for SAP Hana.
+    :vartype snapshot_restore_parameters:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotRestoreParameters
     :ivar target_virtual_machine_id: This is the complete ARM Id of the target VM
      For e.g.
      /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
@@ -11308,11 +11696,18 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(
 
     _attribute_map = {
         "object_type": {"key": "objectType", "type": "str"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "recovery_type": {"key": "recoveryType", "type": "str"},
         "source_resource_id": {"key": "sourceResourceId", "type": "str"},
         "property_bag": {"key": "propertyBag", "type": "{str}"},
         "target_info": {"key": "targetInfo", "type": "TargetRestoreInfo"},
         "recovery_mode": {"key": "recoveryMode", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
+        "user_assigned_managed_identity_details": {
+            "key": "userAssignedManagedIdentityDetails",
+            "type": "UserAssignedManagedIdentityDetails",
+        },
+        "snapshot_restore_parameters": {"key": "snapshotRestoreParameters", "type": "SnapshotRestoreParameters"},
         "target_virtual_machine_id": {"key": "targetVirtualMachineId", "type": "str"},
         "should_use_alternate_target_location": {"key": "shouldUseAlternateTargetLocation", "type": "bool"},
         "is_non_recoverable": {"key": "isNonRecoverable", "type": "bool"},
@@ -11329,11 +11724,15 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(
     def __init__(
         self,
         *,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         recovery_type: Optional[Union[str, "_models.RecoveryType"]] = None,
         source_resource_id: Optional[str] = None,
         property_bag: Optional[Dict[str, str]] = None,
         target_info: Optional["_models.TargetRestoreInfo"] = None,
         recovery_mode: Optional[Union[str, "_models.RecoveryMode"]] = None,
+        target_resource_group_name: Optional[str] = None,
+        user_assigned_managed_identity_details: Optional["_models.UserAssignedManagedIdentityDetails"] = None,
+        snapshot_restore_parameters: Optional["_models.SnapshotRestoreParameters"] = None,
         target_virtual_machine_id: Optional[str] = None,
         should_use_alternate_target_location: Optional[bool] = None,
         is_non_recoverable: Optional[bool] = None,
@@ -11342,6 +11741,9 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(
         **kwargs: Any
     ) -> None:
         """
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
          "AlternateLocation", "RestoreDisks", and "Offline".
         :paramtype recovery_type: str or
@@ -11354,9 +11756,20 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(
         :keyword target_info: Details of target database.
         :paramtype target_info: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetRestoreInfo
         :keyword recovery_mode: Defines whether the current recovery mode is file restore or database
-         restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
+         restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery", "SnapshotAttach",
+         "RecoveryUsingSnapshot", and "SnapshotAttachAndRecover".
         :paramtype recovery_mode: str or
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryMode
+        :keyword target_resource_group_name: Defines the Resource group of the Target VM.
+        :paramtype target_resource_group_name: str
+        :keyword user_assigned_managed_identity_details: User Assigned managed identity details
+         Currently used for snapshot.
+        :paramtype user_assigned_managed_identity_details:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+        :keyword snapshot_restore_parameters: Additional details for snapshot recovery
+         Currently used for snapshot for SAP Hana.
+        :paramtype snapshot_restore_parameters:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotRestoreParameters
         :keyword target_virtual_machine_id: This is the complete ARM Id of the target VM
          For e.g.
          /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
@@ -11374,11 +11787,15 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(
         :paramtype point_in_time: ~datetime.datetime
         """
         super().__init__(
+            resource_guard_operation_requests=resource_guard_operation_requests,
             recovery_type=recovery_type,
             source_resource_id=source_resource_id,
             property_bag=property_bag,
             target_info=target_info,
             recovery_mode=recovery_mode,
+            target_resource_group_name=target_resource_group_name,
+            user_assigned_managed_identity_details=user_assigned_managed_identity_details,
+            snapshot_restore_parameters=snapshot_restore_parameters,
             target_virtual_machine_id=target_virtual_machine_id,
             should_use_alternate_target_location=should_use_alternate_target_location,
             is_non_recoverable=is_non_recoverable,
@@ -11391,14 +11808,17 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(
 
 class AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest(
     AzureWorkloadSQLPointInTimeRestoreRequest
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """AzureWorkload SQL-specific restore with integrated rehydration of recovery point.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
     :vartype object_type: str
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     :ivar recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
      "AlternateLocation", "RestoreDisks", and "Offline".
     :vartype recovery_type: str or
@@ -11411,9 +11831,20 @@ class AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest(
     :ivar target_info: Details of target database.
     :vartype target_info: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetRestoreInfo
     :ivar recovery_mode: Defines whether the current recovery mode is file restore or database
-     restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
+     restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery", "SnapshotAttach",
+     "RecoveryUsingSnapshot", and "SnapshotAttachAndRecover".
     :vartype recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryMode
+    :ivar target_resource_group_name: Defines the Resource group of the Target VM.
+    :vartype target_resource_group_name: str
+    :ivar user_assigned_managed_identity_details: User Assigned managed identity details
+     Currently used for snapshot.
+    :vartype user_assigned_managed_identity_details:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+    :ivar snapshot_restore_parameters: Additional details for snapshot recovery
+     Currently used for snapshot for SAP Hana.
+    :vartype snapshot_restore_parameters:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotRestoreParameters
     :ivar target_virtual_machine_id: This is the complete ARM Id of the target VM
      For e.g.
      /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
@@ -11440,11 +11871,18 @@ class AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest(
 
     _attribute_map = {
         "object_type": {"key": "objectType", "type": "str"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "recovery_type": {"key": "recoveryType", "type": "str"},
         "source_resource_id": {"key": "sourceResourceId", "type": "str"},
         "property_bag": {"key": "propertyBag", "type": "{str}"},
         "target_info": {"key": "targetInfo", "type": "TargetRestoreInfo"},
         "recovery_mode": {"key": "recoveryMode", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
+        "user_assigned_managed_identity_details": {
+            "key": "userAssignedManagedIdentityDetails",
+            "type": "UserAssignedManagedIdentityDetails",
+        },
+        "snapshot_restore_parameters": {"key": "snapshotRestoreParameters", "type": "SnapshotRestoreParameters"},
         "target_virtual_machine_id": {"key": "targetVirtualMachineId", "type": "str"},
         "should_use_alternate_target_location": {"key": "shouldUseAlternateTargetLocation", "type": "bool"},
         "is_non_recoverable": {"key": "isNonRecoverable", "type": "bool"},
@@ -11459,11 +11897,15 @@ class AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest(
     def __init__(
         self,
         *,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         recovery_type: Optional[Union[str, "_models.RecoveryType"]] = None,
         source_resource_id: Optional[str] = None,
         property_bag: Optional[Dict[str, str]] = None,
         target_info: Optional["_models.TargetRestoreInfo"] = None,
         recovery_mode: Optional[Union[str, "_models.RecoveryMode"]] = None,
+        target_resource_group_name: Optional[str] = None,
+        user_assigned_managed_identity_details: Optional["_models.UserAssignedManagedIdentityDetails"] = None,
+        snapshot_restore_parameters: Optional["_models.SnapshotRestoreParameters"] = None,
         target_virtual_machine_id: Optional[str] = None,
         should_use_alternate_target_location: Optional[bool] = None,
         is_non_recoverable: Optional[bool] = None,
@@ -11473,6 +11915,9 @@ class AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest(
         **kwargs: Any
     ) -> None:
         """
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
          "AlternateLocation", "RestoreDisks", and "Offline".
         :paramtype recovery_type: str or
@@ -11485,9 +11930,20 @@ class AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest(
         :keyword target_info: Details of target database.
         :paramtype target_info: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetRestoreInfo
         :keyword recovery_mode: Defines whether the current recovery mode is file restore or database
-         restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
+         restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery", "SnapshotAttach",
+         "RecoveryUsingSnapshot", and "SnapshotAttachAndRecover".
         :paramtype recovery_mode: str or
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryMode
+        :keyword target_resource_group_name: Defines the Resource group of the Target VM.
+        :paramtype target_resource_group_name: str
+        :keyword user_assigned_managed_identity_details: User Assigned managed identity details
+         Currently used for snapshot.
+        :paramtype user_assigned_managed_identity_details:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+        :keyword snapshot_restore_parameters: Additional details for snapshot recovery
+         Currently used for snapshot for SAP Hana.
+        :paramtype snapshot_restore_parameters:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotRestoreParameters
         :keyword target_virtual_machine_id: This is the complete ARM Id of the target VM
          For e.g.
          /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
@@ -11508,11 +11964,15 @@ class AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest(
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointRehydrationInfo
         """
         super().__init__(
+            resource_guard_operation_requests=resource_guard_operation_requests,
             recovery_type=recovery_type,
             source_resource_id=source_resource_id,
             property_bag=property_bag,
             target_info=target_info,
             recovery_mode=recovery_mode,
+            target_resource_group_name=target_resource_group_name,
+            user_assigned_managed_identity_details=user_assigned_managed_identity_details,
+            snapshot_restore_parameters=snapshot_restore_parameters,
             target_virtual_machine_id=target_virtual_machine_id,
             should_use_alternate_target_location=should_use_alternate_target_location,
             is_non_recoverable=is_non_recoverable,
@@ -11524,7 +11984,7 @@ class AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest(
         self.recovery_point_rehydration_info = recovery_point_rehydration_info
 
 
-class AzureWorkloadSQLRecoveryPointExtendedInfo(_serialization.Model):
+class AzureWorkloadSQLRecoveryPointExtendedInfo(_serialization.Model):  # pylint: disable=name-too-long
     """Extended info class details.
 
     :ivar data_directory_time_in_utc: UTC time at which data directory info was captured.
@@ -11560,14 +12020,17 @@ class AzureWorkloadSQLRecoveryPointExtendedInfo(_serialization.Model):
 
 class AzureWorkloadSQLRestoreWithRehydrateRequest(
     AzureWorkloadSQLRestoreRequest
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """AzureWorkload SQL-specific restore with integrated rehydration of recovery point.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
     :vartype object_type: str
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     :ivar recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
      "AlternateLocation", "RestoreDisks", and "Offline".
     :vartype recovery_type: str or
@@ -11580,9 +12043,20 @@ class AzureWorkloadSQLRestoreWithRehydrateRequest(
     :ivar target_info: Details of target database.
     :vartype target_info: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetRestoreInfo
     :ivar recovery_mode: Defines whether the current recovery mode is file restore or database
-     restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
+     restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery", "SnapshotAttach",
+     "RecoveryUsingSnapshot", and "SnapshotAttachAndRecover".
     :vartype recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryMode
+    :ivar target_resource_group_name: Defines the Resource group of the Target VM.
+    :vartype target_resource_group_name: str
+    :ivar user_assigned_managed_identity_details: User Assigned managed identity details
+     Currently used for snapshot.
+    :vartype user_assigned_managed_identity_details:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+    :ivar snapshot_restore_parameters: Additional details for snapshot recovery
+     Currently used for snapshot for SAP Hana.
+    :vartype snapshot_restore_parameters:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotRestoreParameters
     :ivar target_virtual_machine_id: This is the complete ARM Id of the target VM
      For e.g.
      /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
@@ -11607,11 +12081,18 @@ class AzureWorkloadSQLRestoreWithRehydrateRequest(
 
     _attribute_map = {
         "object_type": {"key": "objectType", "type": "str"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "recovery_type": {"key": "recoveryType", "type": "str"},
         "source_resource_id": {"key": "sourceResourceId", "type": "str"},
         "property_bag": {"key": "propertyBag", "type": "{str}"},
         "target_info": {"key": "targetInfo", "type": "TargetRestoreInfo"},
         "recovery_mode": {"key": "recoveryMode", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
+        "user_assigned_managed_identity_details": {
+            "key": "userAssignedManagedIdentityDetails",
+            "type": "UserAssignedManagedIdentityDetails",
+        },
+        "snapshot_restore_parameters": {"key": "snapshotRestoreParameters", "type": "SnapshotRestoreParameters"},
         "target_virtual_machine_id": {"key": "targetVirtualMachineId", "type": "str"},
         "should_use_alternate_target_location": {"key": "shouldUseAlternateTargetLocation", "type": "bool"},
         "is_non_recoverable": {"key": "isNonRecoverable", "type": "bool"},
@@ -11625,11 +12106,15 @@ class AzureWorkloadSQLRestoreWithRehydrateRequest(
     def __init__(
         self,
         *,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         recovery_type: Optional[Union[str, "_models.RecoveryType"]] = None,
         source_resource_id: Optional[str] = None,
         property_bag: Optional[Dict[str, str]] = None,
         target_info: Optional["_models.TargetRestoreInfo"] = None,
         recovery_mode: Optional[Union[str, "_models.RecoveryMode"]] = None,
+        target_resource_group_name: Optional[str] = None,
+        user_assigned_managed_identity_details: Optional["_models.UserAssignedManagedIdentityDetails"] = None,
+        snapshot_restore_parameters: Optional["_models.SnapshotRestoreParameters"] = None,
         target_virtual_machine_id: Optional[str] = None,
         should_use_alternate_target_location: Optional[bool] = None,
         is_non_recoverable: Optional[bool] = None,
@@ -11638,6 +12123,9 @@ class AzureWorkloadSQLRestoreWithRehydrateRequest(
         **kwargs: Any
     ) -> None:
         """
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
          "AlternateLocation", "RestoreDisks", and "Offline".
         :paramtype recovery_type: str or
@@ -11650,9 +12138,20 @@ class AzureWorkloadSQLRestoreWithRehydrateRequest(
         :keyword target_info: Details of target database.
         :paramtype target_info: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetRestoreInfo
         :keyword recovery_mode: Defines whether the current recovery mode is file restore or database
-         restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
+         restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery", "SnapshotAttach",
+         "RecoveryUsingSnapshot", and "SnapshotAttachAndRecover".
         :paramtype recovery_mode: str or
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryMode
+        :keyword target_resource_group_name: Defines the Resource group of the Target VM.
+        :paramtype target_resource_group_name: str
+        :keyword user_assigned_managed_identity_details: User Assigned managed identity details
+         Currently used for snapshot.
+        :paramtype user_assigned_managed_identity_details:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+        :keyword snapshot_restore_parameters: Additional details for snapshot recovery
+         Currently used for snapshot for SAP Hana.
+        :paramtype snapshot_restore_parameters:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotRestoreParameters
         :keyword target_virtual_machine_id: This is the complete ARM Id of the target VM
          For e.g.
          /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
@@ -11671,11 +12170,15 @@ class AzureWorkloadSQLRestoreWithRehydrateRequest(
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointRehydrationInfo
         """
         super().__init__(
+            resource_guard_operation_requests=resource_guard_operation_requests,
             recovery_type=recovery_type,
             source_resource_id=source_resource_id,
             property_bag=property_bag,
             target_info=target_info,
             recovery_mode=recovery_mode,
+            target_resource_group_name=target_resource_group_name,
+            user_assigned_managed_identity_details=user_assigned_managed_identity_details,
+            snapshot_restore_parameters=snapshot_restore_parameters,
             target_virtual_machine_id=target_virtual_machine_id,
             should_use_alternate_target_location=should_use_alternate_target_location,
             is_non_recoverable=is_non_recoverable,
@@ -12365,7 +12868,7 @@ class BackupResourceEncryptionConfigExtended(BackupResourceEncryptionConfig):
         self.use_system_assigned_identity = use_system_assigned_identity
 
 
-class BackupResourceEncryptionConfigExtendedResource(Resource):
+class BackupResourceEncryptionConfigExtendedResource(Resource):  # pylint: disable=name-too-long
     """BackupResourceEncryptionConfigExtendedResource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12697,7 +13200,7 @@ class BackupStatusRequest(_serialization.Model):
         self.po_logical_name = po_logical_name
 
 
-class BackupStatusResponse(_serialization.Model):
+class BackupStatusResponse(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """BackupStatus response.
 
     :ivar protection_status: Specifies whether the container is registered or not. Known values
@@ -12723,6 +13226,12 @@ class BackupStatusResponse(_serialization.Model):
     :vartype policy_name: str
     :ivar registration_status: Container registration status.
     :vartype registration_status: str
+    :ivar protected_items_count: Number of protected items.
+    :vartype protected_items_count: int
+    :ivar acquire_storage_account_lock: Specifies whether the storage account lock has been
+     acquired or not. Known values are: "Acquire" and "NotAcquire".
+    :vartype acquire_storage_account_lock: str or
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.AcquireStorageAccountLock
     """
 
     _attribute_map = {
@@ -12735,6 +13244,8 @@ class BackupStatusResponse(_serialization.Model):
         "error_message": {"key": "errorMessage", "type": "str"},
         "policy_name": {"key": "policyName", "type": "str"},
         "registration_status": {"key": "registrationStatus", "type": "str"},
+        "protected_items_count": {"key": "protectedItemsCount", "type": "int"},
+        "acquire_storage_account_lock": {"key": "acquireStorageAccountLock", "type": "str"},
     }
 
     def __init__(
@@ -12749,6 +13260,8 @@ class BackupStatusResponse(_serialization.Model):
         error_message: Optional[str] = None,
         policy_name: Optional[str] = None,
         registration_status: Optional[str] = None,
+        protected_items_count: Optional[int] = None,
+        acquire_storage_account_lock: Optional[Union[str, "_models.AcquireStorageAccountLock"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -12775,6 +13288,12 @@ class BackupStatusResponse(_serialization.Model):
         :paramtype policy_name: str
         :keyword registration_status: Container registration status.
         :paramtype registration_status: str
+        :keyword protected_items_count: Number of protected items.
+        :paramtype protected_items_count: int
+        :keyword acquire_storage_account_lock: Specifies whether the storage account lock has been
+         acquired or not. Known values are: "Acquire" and "NotAcquire".
+        :paramtype acquire_storage_account_lock: str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.AcquireStorageAccountLock
         """
         super().__init__(**kwargs)
         self.protection_status = protection_status
@@ -12786,6 +13305,8 @@ class BackupStatusResponse(_serialization.Model):
         self.error_message = error_message
         self.policy_name = policy_name
         self.registration_status = registration_status
+        self.protected_items_count = protected_items_count
+        self.acquire_storage_account_lock = acquire_storage_account_lock
 
 
 class BEKDetails(_serialization.Model):
@@ -12917,7 +13438,7 @@ class BMSBackupSummariesQueryObject(_serialization.Model):
 class BMSContainerQueryObject(_serialization.Model):
     """The query filters that can be used with the list containers API.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_management_type: Backup management type for this container. Required. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
@@ -13857,7 +14378,7 @@ class DistributedNodesInfo(_serialization.Model):
 class DpmBackupEngine(BackupEngineBase):  # pylint: disable=too-many-instance-attributes
     """Data Protection Manager (DPM) specific backup engine.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar friendly_name: Friendly name of the backup engine.
     :vartype friendly_name: str
@@ -14035,7 +14556,7 @@ class DpmErrorInfo(_serialization.Model):
 class DpmJob(Job):  # pylint: disable=too-many-instance-attributes
     """DPM workload-specific job object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar entity_friendly_name: Friendly name of the entity on which the current job is executing.
     :vartype entity_friendly_name: str
@@ -14280,7 +14801,7 @@ class DPMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attr
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -14331,6 +14852,8 @@ class DPMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attr
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the managed item.
     :vartype friendly_name: str
     :ivar backup_engine_name: Backup Management server protecting this backup item.
@@ -14349,6 +14872,7 @@ class DPMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attr
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
     }
 
     _attribute_map = {
@@ -14370,6 +14894,7 @@ class DPMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attr
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "backup_engine_name": {"key": "backupEngineName", "type": "str"},
         "protection_state": {"key": "protectionState", "type": "str"},
@@ -14714,7 +15239,7 @@ class OperationResultInfoBase(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ExportJobsOperationResultInfo, OperationResultInfo
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -14745,7 +15270,7 @@ class OperationResultInfoBase(_serialization.Model):
 class ExportJobsOperationResultInfo(OperationResultInfoBase):
     """This class is used to send blob details after exporting jobs.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -14860,10 +15385,345 @@ class ExtendedProperties(_serialization.Model):
         self.linux_vm_application_name = linux_vm_application_name
 
 
+class FetchTieringCostInfoRequest(_serialization.Model):
+    """Base class for tiering cost request.
+    Specific cost request types are derived from this class.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    FetchTieringCostInfoForRehydrationRequest, FetchTieringCostSavingsInfoForPolicyRequest,
+    FetchTieringCostSavingsInfoForProtectedItemRequest, FetchTieringCostSavingsInfoForVaultRequest
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar source_tier_type: Source tier for the request. Required. Known values are: "Invalid",
+     "InstantRP", "HardenedRP", and "ArchivedRP".
+    :vartype source_tier_type: str or
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierType
+    :ivar target_tier_type: target tier for the request. Required. Known values are: "Invalid",
+     "InstantRP", "HardenedRP", and "ArchivedRP".
+    :vartype target_tier_type: str or
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierType
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
+    :vartype object_type: str
+    """
+
+    _validation = {
+        "source_tier_type": {"required": True},
+        "target_tier_type": {"required": True},
+        "object_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "source_tier_type": {"key": "sourceTierType", "type": "str"},
+        "target_tier_type": {"key": "targetTierType", "type": "str"},
+        "object_type": {"key": "objectType", "type": "str"},
+    }
+
+    _subtype_map = {
+        "object_type": {
+            "FetchTieringCostInfoForRehydrationRequest": "FetchTieringCostInfoForRehydrationRequest",
+            "FetchTieringCostSavingsInfoForPolicyRequest": "FetchTieringCostSavingsInfoForPolicyRequest",
+            "FetchTieringCostSavingsInfoForProtectedItemRequest": "FetchTieringCostSavingsInfoForProtectedItemRequest",
+            "FetchTieringCostSavingsInfoForVaultRequest": "FetchTieringCostSavingsInfoForVaultRequest",
+        }
+    }
+
+    def __init__(
+        self,
+        *,
+        source_tier_type: Union[str, "_models.RecoveryPointTierType"],
+        target_tier_type: Union[str, "_models.RecoveryPointTierType"],
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword source_tier_type: Source tier for the request. Required. Known values are: "Invalid",
+         "InstantRP", "HardenedRP", and "ArchivedRP".
+        :paramtype source_tier_type: str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierType
+        :keyword target_tier_type: target tier for the request. Required. Known values are: "Invalid",
+         "InstantRP", "HardenedRP", and "ArchivedRP".
+        :paramtype target_tier_type: str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierType
+        """
+        super().__init__(**kwargs)
+        self.source_tier_type = source_tier_type
+        self.target_tier_type = target_tier_type
+        self.object_type: Optional[str] = None
+
+
+class FetchTieringCostInfoForRehydrationRequest(FetchTieringCostInfoRequest):  # pylint: disable=name-too-long
+    """Request parameters for fetching cost info of rehydration.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar source_tier_type: Source tier for the request. Required. Known values are: "Invalid",
+     "InstantRP", "HardenedRP", and "ArchivedRP".
+    :vartype source_tier_type: str or
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierType
+    :ivar target_tier_type: target tier for the request. Required. Known values are: "Invalid",
+     "InstantRP", "HardenedRP", and "ArchivedRP".
+    :vartype target_tier_type: str or
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierType
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
+    :vartype object_type: str
+    :ivar container_name: Name of the protected item container. Required.
+    :vartype container_name: str
+    :ivar protected_item_name: Name of the protectedItemName. Required.
+    :vartype protected_item_name: str
+    :ivar recovery_point_id: ID of the backup copy for rehydration cost info needs to be fetched.
+     Required.
+    :vartype recovery_point_id: str
+    :ivar rehydration_priority: Rehydration Priority. Required. Known values are: "Standard" and
+     "High".
+    :vartype rehydration_priority: str or
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.RehydrationPriority
+    """
+
+    _validation = {
+        "source_tier_type": {"required": True},
+        "target_tier_type": {"required": True},
+        "object_type": {"required": True},
+        "container_name": {"required": True},
+        "protected_item_name": {"required": True},
+        "recovery_point_id": {"required": True},
+        "rehydration_priority": {"required": True},
+    }
+
+    _attribute_map = {
+        "source_tier_type": {"key": "sourceTierType", "type": "str"},
+        "target_tier_type": {"key": "targetTierType", "type": "str"},
+        "object_type": {"key": "objectType", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "protected_item_name": {"key": "protectedItemName", "type": "str"},
+        "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
+        "rehydration_priority": {"key": "rehydrationPriority", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        source_tier_type: Union[str, "_models.RecoveryPointTierType"],
+        target_tier_type: Union[str, "_models.RecoveryPointTierType"],
+        container_name: str,
+        protected_item_name: str,
+        recovery_point_id: str,
+        rehydration_priority: Union[str, "_models.RehydrationPriority"],
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword source_tier_type: Source tier for the request. Required. Known values are: "Invalid",
+         "InstantRP", "HardenedRP", and "ArchivedRP".
+        :paramtype source_tier_type: str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierType
+        :keyword target_tier_type: target tier for the request. Required. Known values are: "Invalid",
+         "InstantRP", "HardenedRP", and "ArchivedRP".
+        :paramtype target_tier_type: str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierType
+        :keyword container_name: Name of the protected item container. Required.
+        :paramtype container_name: str
+        :keyword protected_item_name: Name of the protectedItemName. Required.
+        :paramtype protected_item_name: str
+        :keyword recovery_point_id: ID of the backup copy for rehydration cost info needs to be
+         fetched. Required.
+        :paramtype recovery_point_id: str
+        :keyword rehydration_priority: Rehydration Priority. Required. Known values are: "Standard" and
+         "High".
+        :paramtype rehydration_priority: str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.RehydrationPriority
+        """
+        super().__init__(source_tier_type=source_tier_type, target_tier_type=target_tier_type, **kwargs)
+        self.object_type: str = "FetchTieringCostInfoForRehydrationRequest"
+        self.container_name = container_name
+        self.protected_item_name = protected_item_name
+        self.recovery_point_id = recovery_point_id
+        self.rehydration_priority = rehydration_priority
+
+
+class FetchTieringCostSavingsInfoForPolicyRequest(FetchTieringCostInfoRequest):  # pylint: disable=name-too-long
+    """Request parameters for tiering cost info for policy.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar source_tier_type: Source tier for the request. Required. Known values are: "Invalid",
+     "InstantRP", "HardenedRP", and "ArchivedRP".
+    :vartype source_tier_type: str or
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierType
+    :ivar target_tier_type: target tier for the request. Required. Known values are: "Invalid",
+     "InstantRP", "HardenedRP", and "ArchivedRP".
+    :vartype target_tier_type: str or
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierType
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
+    :vartype object_type: str
+    :ivar policy_name: Name of the backup policy for which the cost savings information is
+     requested. Required.
+    :vartype policy_name: str
+    """
+
+    _validation = {
+        "source_tier_type": {"required": True},
+        "target_tier_type": {"required": True},
+        "object_type": {"required": True},
+        "policy_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "source_tier_type": {"key": "sourceTierType", "type": "str"},
+        "target_tier_type": {"key": "targetTierType", "type": "str"},
+        "object_type": {"key": "objectType", "type": "str"},
+        "policy_name": {"key": "policyName", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        source_tier_type: Union[str, "_models.RecoveryPointTierType"],
+        target_tier_type: Union[str, "_models.RecoveryPointTierType"],
+        policy_name: str,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword source_tier_type: Source tier for the request. Required. Known values are: "Invalid",
+         "InstantRP", "HardenedRP", and "ArchivedRP".
+        :paramtype source_tier_type: str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierType
+        :keyword target_tier_type: target tier for the request. Required. Known values are: "Invalid",
+         "InstantRP", "HardenedRP", and "ArchivedRP".
+        :paramtype target_tier_type: str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierType
+        :keyword policy_name: Name of the backup policy for which the cost savings information is
+         requested. Required.
+        :paramtype policy_name: str
+        """
+        super().__init__(source_tier_type=source_tier_type, target_tier_type=target_tier_type, **kwargs)
+        self.object_type: str = "FetchTieringCostSavingsInfoForPolicyRequest"
+        self.policy_name = policy_name
+
+
+class FetchTieringCostSavingsInfoForProtectedItemRequest(FetchTieringCostInfoRequest):  # pylint: disable=name-too-long
+    """Request parameters for tiering cost info for protected item.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar source_tier_type: Source tier for the request. Required. Known values are: "Invalid",
+     "InstantRP", "HardenedRP", and "ArchivedRP".
+    :vartype source_tier_type: str or
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierType
+    :ivar target_tier_type: target tier for the request. Required. Known values are: "Invalid",
+     "InstantRP", "HardenedRP", and "ArchivedRP".
+    :vartype target_tier_type: str or
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierType
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
+    :vartype object_type: str
+    :ivar container_name: Name of the protected item container. Required.
+    :vartype container_name: str
+    :ivar protected_item_name: Name of the protectedItemName. Required.
+    :vartype protected_item_name: str
+    """
+
+    _validation = {
+        "source_tier_type": {"required": True},
+        "target_tier_type": {"required": True},
+        "object_type": {"required": True},
+        "container_name": {"required": True},
+        "protected_item_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "source_tier_type": {"key": "sourceTierType", "type": "str"},
+        "target_tier_type": {"key": "targetTierType", "type": "str"},
+        "object_type": {"key": "objectType", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "protected_item_name": {"key": "protectedItemName", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        source_tier_type: Union[str, "_models.RecoveryPointTierType"],
+        target_tier_type: Union[str, "_models.RecoveryPointTierType"],
+        container_name: str,
+        protected_item_name: str,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword source_tier_type: Source tier for the request. Required. Known values are: "Invalid",
+         "InstantRP", "HardenedRP", and "ArchivedRP".
+        :paramtype source_tier_type: str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierType
+        :keyword target_tier_type: target tier for the request. Required. Known values are: "Invalid",
+         "InstantRP", "HardenedRP", and "ArchivedRP".
+        :paramtype target_tier_type: str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierType
+        :keyword container_name: Name of the protected item container. Required.
+        :paramtype container_name: str
+        :keyword protected_item_name: Name of the protectedItemName. Required.
+        :paramtype protected_item_name: str
+        """
+        super().__init__(source_tier_type=source_tier_type, target_tier_type=target_tier_type, **kwargs)
+        self.object_type: str = "FetchTieringCostSavingsInfoForProtectedItemRequest"
+        self.container_name = container_name
+        self.protected_item_name = protected_item_name
+
+
+class FetchTieringCostSavingsInfoForVaultRequest(FetchTieringCostInfoRequest):  # pylint: disable=name-too-long
+    """Request parameters for tiering cost info for vault.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar source_tier_type: Source tier for the request. Required. Known values are: "Invalid",
+     "InstantRP", "HardenedRP", and "ArchivedRP".
+    :vartype source_tier_type: str or
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierType
+    :ivar target_tier_type: target tier for the request. Required. Known values are: "Invalid",
+     "InstantRP", "HardenedRP", and "ArchivedRP".
+    :vartype target_tier_type: str or
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierType
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
+    :vartype object_type: str
+    """
+
+    _validation = {
+        "source_tier_type": {"required": True},
+        "target_tier_type": {"required": True},
+        "object_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "source_tier_type": {"key": "sourceTierType", "type": "str"},
+        "target_tier_type": {"key": "targetTierType", "type": "str"},
+        "object_type": {"key": "objectType", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        source_tier_type: Union[str, "_models.RecoveryPointTierType"],
+        target_tier_type: Union[str, "_models.RecoveryPointTierType"],
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword source_tier_type: Source tier for the request. Required. Known values are: "Invalid",
+         "InstantRP", "HardenedRP", and "ArchivedRP".
+        :paramtype source_tier_type: str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierType
+        :keyword target_tier_type: target tier for the request. Required. Known values are: "Invalid",
+         "InstantRP", "HardenedRP", and "ArchivedRP".
+        :paramtype target_tier_type: str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierType
+        """
+        super().__init__(source_tier_type=source_tier_type, target_tier_type=target_tier_type, **kwargs)
+        self.object_type: str = "FetchTieringCostSavingsInfoForVaultRequest"
+
+
 class GenericContainer(ProtectionContainer):
     """Base class for generic container of backup items.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar friendly_name: Friendly name of the container.
     :vartype friendly_name: str
@@ -15008,7 +15868,7 @@ class GenericProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -15059,6 +15919,8 @@ class GenericProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the container.
     :vartype friendly_name: str
     :ivar policy_state: Indicates consistency of policy object and policy applied to this backup
@@ -15082,6 +15944,7 @@ class GenericProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
     }
 
     _attribute_map = {
@@ -15103,6 +15966,7 @@ class GenericProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "policy_state": {"key": "policyState", "type": "str"},
         "protection_state": {"key": "protectionState", "type": "str"},
@@ -15223,7 +16087,7 @@ class GenericProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-
 class GenericProtectionPolicy(ProtectionPolicy):
     """Azure VM (Mercury) workload-specific backup policy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_items_count: Number of items associated with this policy.
     :vartype protected_items_count: int
@@ -15295,7 +16159,7 @@ class GenericProtectionPolicy(ProtectionPolicy):
 class GenericRecoveryPoint(RecoveryPoint):
     """Generic backup copy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -15423,7 +16287,7 @@ class HourlySchedule(_serialization.Model):
 class IaasVMBackupRequest(BackupRequest):
     """IaaS VM workload-specific backup request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -15456,7 +16320,7 @@ class IaasVMBackupRequest(BackupRequest):
 class IaasVMILRRegistrationRequest(ILRRequest):
     """Restore files/folders from a backup copy of IaaS VM.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -15519,7 +16383,7 @@ class IaasVMILRRegistrationRequest(ILRRequest):
 class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-attributes
     """IaaS VM workload specific backup copy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -15570,6 +16434,10 @@ class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-a
     :ivar is_private_access_enabled_on_any_disk: This flag denotes if any of the disks in the VM
      are using Private access network setting.
     :vartype is_private_access_enabled_on_any_disk: bool
+    :ivar extended_location: Extended location of the VM recovery point,
+     should be null if VM is in public cloud.
+    :vartype extended_location:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.ExtendedLocation
     """
 
     _validation = {
@@ -15602,6 +16470,7 @@ class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-a
         "security_type": {"key": "securityType", "type": "str"},
         "recovery_point_properties": {"key": "recoveryPointProperties", "type": "RecoveryPointProperties"},
         "is_private_access_enabled_on_any_disk": {"key": "isPrivateAccessEnabledOnAnyDisk", "type": "bool"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
     }
 
     def __init__(
@@ -15625,6 +16494,7 @@ class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-a
         security_type: Optional[str] = None,
         recovery_point_properties: Optional["_models.RecoveryPointProperties"] = None,
         is_private_access_enabled_on_any_disk: Optional[bool] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -15675,6 +16545,10 @@ class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-a
         :keyword is_private_access_enabled_on_any_disk: This flag denotes if any of the disks in the VM
          are using Private access network setting.
         :paramtype is_private_access_enabled_on_any_disk: bool
+        :keyword extended_location: Extended location of the VM recovery point,
+         should be null if VM is in public cloud.
+        :paramtype extended_location:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.ExtendedLocation
         """
         super().__init__(**kwargs)
         self.object_type: str = "IaasVMRecoveryPoint"
@@ -15696,6 +16570,7 @@ class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-a
         self.security_type = security_type
         self.recovery_point_properties = recovery_point_properties
         self.is_private_access_enabled_on_any_disk = is_private_access_enabled_on_any_disk
+        self.extended_location = extended_location
 
 
 class IaasVMRestoreRequest(RestoreRequest):  # pylint: disable=too-many-instance-attributes
@@ -15704,11 +16579,14 @@ class IaasVMRestoreRequest(RestoreRequest):  # pylint: disable=too-many-instance
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     IaasVMRestoreWithRehydrationRequest
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
     :vartype object_type: str
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     :ivar recovery_point_id: ID of the backup copy to be recovered.
     :vartype recovery_point_id: str
     :ivar recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
@@ -15791,6 +16669,7 @@ class IaasVMRestoreRequest(RestoreRequest):  # pylint: disable=too-many-instance
 
     _attribute_map = {
         "object_type": {"key": "objectType", "type": "str"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
         "recovery_type": {"key": "recoveryType", "type": "str"},
         "source_resource_id": {"key": "sourceResourceId", "type": "str"},
@@ -15824,6 +16703,7 @@ class IaasVMRestoreRequest(RestoreRequest):  # pylint: disable=too-many-instance
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         recovery_point_id: Optional[str] = None,
         recovery_type: Optional[Union[str, "_models.RecoveryType"]] = None,
         source_resource_id: Optional[str] = None,
@@ -15850,6 +16730,9 @@ class IaasVMRestoreRequest(RestoreRequest):  # pylint: disable=too-many-instance
         **kwargs: Any
     ) -> None:
         """
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         :keyword recovery_point_id: ID of the backup copy to be recovered.
         :paramtype recovery_point_id: str
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
@@ -15926,7 +16809,7 @@ class IaasVMRestoreRequest(RestoreRequest):  # pylint: disable=too-many-instance
         :paramtype target_disk_network_access_settings:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetDiskNetworkAccessSettings
         """
-        super().__init__(**kwargs)
+        super().__init__(resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
         self.object_type: str = "IaasVMRestoreRequest"
         self.recovery_point_id = recovery_point_id
         self.recovery_type = recovery_type
@@ -15956,11 +16839,14 @@ class IaasVMRestoreRequest(RestoreRequest):  # pylint: disable=too-many-instance
 class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest):  # pylint: disable=too-many-instance-attributes
     """IaaS VM workload-specific restore with integrated rehydration of recovery point.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
     :vartype object_type: str
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     :ivar recovery_point_id: ID of the backup copy to be recovered.
     :vartype recovery_point_id: str
     :ivar recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
@@ -16046,6 +16932,7 @@ class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest):  # pylint: disa
 
     _attribute_map = {
         "object_type": {"key": "objectType", "type": "str"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
         "recovery_type": {"key": "recoveryType", "type": "str"},
         "source_resource_id": {"key": "sourceResourceId", "type": "str"},
@@ -16081,6 +16968,7 @@ class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest):  # pylint: disa
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         recovery_point_id: Optional[str] = None,
         recovery_type: Optional[Union[str, "_models.RecoveryType"]] = None,
         source_resource_id: Optional[str] = None,
@@ -16108,6 +16996,9 @@ class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest):  # pylint: disa
         **kwargs: Any
     ) -> None:
         """
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         :keyword recovery_point_id: ID of the backup copy to be recovered.
         :paramtype recovery_point_id: str
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
@@ -16188,6 +17079,7 @@ class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest):  # pylint: disa
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointRehydrationInfo
         """
         super().__init__(
+            resource_guard_operation_requests=resource_guard_operation_requests,
             recovery_point_id=recovery_point_id,
             recovery_type=recovery_type,
             source_resource_id=source_resource_id,
@@ -16777,7 +17669,7 @@ class KPIResourceHealthDetails(_serialization.Model):
         self.resource_health_details = resource_health_details
 
 
-class ListRecoveryPointsRecommendedForMoveRequest(_serialization.Model):
+class ListRecoveryPointsRecommendedForMoveRequest(_serialization.Model):  # pylint: disable=name-too-long
     """ListRecoveryPointsRecommendedForMoveRequest Request.
 
     :ivar object_type: Gets the class type.
@@ -16811,7 +17703,7 @@ class SchedulePolicy(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     LogSchedulePolicy, LongTermSchedulePolicy, SimpleSchedulePolicy, SimpleSchedulePolicyV2
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar schedule_policy_type: This property will be used as the discriminator for deciding the
      specific types in the polymorphic chain of types. Required.
@@ -16844,7 +17736,7 @@ class SchedulePolicy(_serialization.Model):
 class LogSchedulePolicy(SchedulePolicy):
     """Log policy schedule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar schedule_policy_type: This property will be used as the discriminator for deciding the
      specific types in the polymorphic chain of types. Required.
@@ -16880,7 +17772,7 @@ class RetentionPolicy(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     LongTermRetentionPolicy, SimpleRetentionPolicy
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar retention_policy_type: This property will be used as the discriminator for deciding the
      specific types in the polymorphic chain of types. Required.
@@ -16911,7 +17803,7 @@ class RetentionPolicy(_serialization.Model):
 class LongTermRetentionPolicy(RetentionPolicy):
     """Long term retention policy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar retention_policy_type: This property will be used as the discriminator for deciding the
      specific types in the polymorphic chain of types. Required.
@@ -16976,7 +17868,7 @@ class LongTermRetentionPolicy(RetentionPolicy):
 class LongTermSchedulePolicy(SchedulePolicy):
     """Long term policy schedule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar schedule_policy_type: This property will be used as the discriminator for deciding the
      specific types in the polymorphic chain of types. Required.
@@ -17000,7 +17892,7 @@ class LongTermSchedulePolicy(SchedulePolicy):
 class MabContainer(ProtectionContainer):  # pylint: disable=too-many-instance-attributes
     """Container with items backed up using MAB backup engine.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar friendly_name: Friendly name of the container.
     :vartype friendly_name: str
@@ -17276,7 +18168,7 @@ class MabFileFolderProtectedItem(ProtectedItem):  # pylint: disable=too-many-ins
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -17327,6 +18219,8 @@ class MabFileFolderProtectedItem(ProtectedItem):  # pylint: disable=too-many-ins
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of this backup item.
     :vartype friendly_name: str
     :ivar computer_name: Name of the computer associated with this backup item.
@@ -17348,6 +18242,7 @@ class MabFileFolderProtectedItem(ProtectedItem):  # pylint: disable=too-many-ins
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
     }
 
     _attribute_map = {
@@ -17369,6 +18264,7 @@ class MabFileFolderProtectedItem(ProtectedItem):  # pylint: disable=too-many-ins
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "computer_name": {"key": "computerName", "type": "str"},
         "last_backup_status": {"key": "lastBackupStatus", "type": "str"},
@@ -17529,7 +18425,7 @@ class MabFileFolderProtectedItemExtendedInfo(_serialization.Model):
 class MabJob(Job):  # pylint: disable=too-many-instance-attributes
     """MAB workload-specific job.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar entity_friendly_name: Friendly name of the entity on which the current job is executing.
     :vartype entity_friendly_name: str
@@ -17781,7 +18677,7 @@ class MabJobTaskDetails(_serialization.Model):
 class MabProtectionPolicy(ProtectionPolicy):
     """Mab container-specific backup policy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_items_count: Number of items associated with this policy.
     :vartype protected_items_count: int
@@ -18043,7 +18939,7 @@ class NewErrorResponseError(_serialization.Model):
 class OperationResultInfo(OperationResultInfoBase):
     """Operation result info.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -18083,8 +18979,8 @@ class OperationWorkerResponse(_serialization.Model):
      "RequestTimeout", "Conflict", "Gone", "LengthRequired", "PreconditionFailed",
      "RequestEntityTooLarge", "RequestUriTooLong", "UnsupportedMediaType",
      "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired", "InternalServerError",
-     "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
-     "HttpVersionNotSupported", and "Continue".
+     "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout", and
+     "HttpVersionNotSupported".
     :vartype status_code: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.HttpStatusCode
     :ivar headers: HTTP headers associated with this operation.
@@ -18113,8 +19009,8 @@ class OperationWorkerResponse(_serialization.Model):
          "RequestTimeout", "Conflict", "Gone", "LengthRequired", "PreconditionFailed",
          "RequestEntityTooLarge", "RequestUriTooLong", "UnsupportedMediaType",
          "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired", "InternalServerError",
-         "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
-         "HttpVersionNotSupported", and "Continue".
+         "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout", and
+         "HttpVersionNotSupported".
         :paramtype status_code: str or
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.HttpStatusCode
         :keyword headers: HTTP headers associated with this operation.
@@ -18137,8 +19033,8 @@ class OperationResultInfoBaseResource(OperationWorkerResponse):
      "RequestTimeout", "Conflict", "Gone", "LengthRequired", "PreconditionFailed",
      "RequestEntityTooLarge", "RequestUriTooLong", "UnsupportedMediaType",
      "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired", "InternalServerError",
-     "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
-     "HttpVersionNotSupported", and "Continue".
+     "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout", and
+     "HttpVersionNotSupported".
     :vartype status_code: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.HttpStatusCode
     :ivar headers: HTTP headers associated with this operation.
@@ -18172,8 +19068,8 @@ class OperationResultInfoBaseResource(OperationWorkerResponse):
          "RequestTimeout", "Conflict", "Gone", "LengthRequired", "PreconditionFailed",
          "RequestEntityTooLarge", "RequestUriTooLong", "UnsupportedMediaType",
          "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired", "InternalServerError",
-         "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
-         "HttpVersionNotSupported", and "Continue".
+         "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout", and
+         "HttpVersionNotSupported".
         :paramtype status_code: str or
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.HttpStatusCode
         :keyword headers: HTTP headers associated with this operation.
@@ -18292,7 +19188,7 @@ class OperationStatusExtendedInfo(_serialization.Model):
     OperationStatusJobExtendedInfo, OperationStatusJobsExtendedInfo,
     OperationStatusProvisionILRExtendedInfo, OperationStatusValidateOperationExtendedInfo
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -18325,7 +19221,7 @@ class OperationStatusExtendedInfo(_serialization.Model):
 class OperationStatusJobExtendedInfo(OperationStatusExtendedInfo):
     """Operation status job extended info.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -18356,7 +19252,7 @@ class OperationStatusJobExtendedInfo(OperationStatusExtendedInfo):
 class OperationStatusJobsExtendedInfo(OperationStatusExtendedInfo):
     """Operation status extended info for list of jobs.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -18396,7 +19292,7 @@ class OperationStatusJobsExtendedInfo(OperationStatusExtendedInfo):
 class OperationStatusProvisionILRExtendedInfo(OperationStatusExtendedInfo):
     """Operation status extended info for ILR provision action.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -18426,10 +19322,10 @@ class OperationStatusProvisionILRExtendedInfo(OperationStatusExtendedInfo):
         self.recovery_target = recovery_target
 
 
-class OperationStatusValidateOperationExtendedInfo(OperationStatusExtendedInfo):
+class OperationStatusValidateOperationExtendedInfo(OperationStatusExtendedInfo):  # pylint: disable=name-too-long
     """Operation status extended info for ValidateOperation action.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -18537,7 +19433,7 @@ class PreBackupValidation(_serialization.Model):
 class PrepareDataMoveRequest(_serialization.Model):
     """Prepare DataMove Request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_resource_id: ARM Id of target vault. Required.
     :vartype target_resource_id: str
@@ -18601,13 +19497,13 @@ class PrepareDataMoveRequest(_serialization.Model):
         self.ignore_moved = ignore_moved
 
 
-class VaultStorageConfigOperationResultResponse(_serialization.Model):
+class VaultStorageConfigOperationResultResponse(_serialization.Model):  # pylint: disable=name-too-long
     """Operation result response for Vault Storage Config.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     PrepareDataMoveResponse
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -18633,7 +19529,7 @@ class VaultStorageConfigOperationResultResponse(_serialization.Model):
 class PrepareDataMoveResponse(VaultStorageConfigOperationResultResponse):
     """Prepare DataMove Response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -19989,34 +20885,6 @@ class RecoveryPointTierInformationV2(RecoveryPointTierInformation):
     :vartype extended_info: dict[str, str]
     """
 
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "status": {"key": "status", "type": "str"},
-        "extended_info": {"key": "extendedInfo", "type": "{str}"},
-    }
-
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "_models.RecoveryPointTierType"]] = None,
-        status: Optional[Union[str, "_models.RecoveryPointTierStatus"]] = None,
-        extended_info: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword type: Recovery point tier type. Known values are: "Invalid", "InstantRP",
-         "HardenedRP", and "ArchivedRP".
-        :paramtype type: str or
-         ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierType
-        :keyword status: Recovery point tier status. Known values are: "Invalid", "Valid", "Disabled",
-         "Deleted", and "Rehydrated".
-        :paramtype status: str or
-         ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointTierStatus
-        :keyword extended_info: Recovery point tier status.
-        :paramtype extended_info: dict[str, str]
-        """
-        super().__init__(type=type, status=status, extended_info=extended_info, **kwargs)
-
 
 class ResourceGuardOperationDetail(_serialization.Model):
     """ResourceGuardOperationDetail.
@@ -20053,7 +20921,9 @@ class ResourceGuardOperationDetail(_serialization.Model):
 class ResourceGuardProxyBase(_serialization.Model):
     """ResourceGuardProxyBase.
 
-    :ivar resource_guard_resource_id:
+    All required parameters must be populated in order to send to server.
+
+    :ivar resource_guard_resource_id: Required.
     :vartype resource_guard_resource_id: str
     :ivar resource_guard_operation_details:
     :vartype resource_guard_operation_details:
@@ -20063,6 +20933,10 @@ class ResourceGuardProxyBase(_serialization.Model):
     :ivar description:
     :vartype description: str
     """
+
+    _validation = {
+        "resource_guard_resource_id": {"required": True},
+    }
 
     _attribute_map = {
         "resource_guard_resource_id": {"key": "resourceGuardResourceId", "type": "str"},
@@ -20077,14 +20951,14 @@ class ResourceGuardProxyBase(_serialization.Model):
     def __init__(
         self,
         *,
-        resource_guard_resource_id: Optional[str] = None,
+        resource_guard_resource_id: str,
         resource_guard_operation_details: Optional[List["_models.ResourceGuardOperationDetail"]] = None,
         last_updated_time: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword resource_guard_resource_id:
+        :keyword resource_guard_resource_id: Required.
         :paramtype resource_guard_resource_id: str
         :keyword resource_guard_operation_details:
         :paramtype resource_guard_operation_details:
@@ -20428,7 +21302,7 @@ class Settings(_serialization.Model):
 class SimpleRetentionPolicy(RetentionPolicy):
     """Simple policy retention.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar retention_policy_type: This property will be used as the discriminator for deciding the
      specific types in the polymorphic chain of types. Required.
@@ -20461,7 +21335,7 @@ class SimpleRetentionPolicy(RetentionPolicy):
 class SimpleSchedulePolicy(SchedulePolicy):
     """Simple policy schedule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar schedule_policy_type: This property will be used as the discriminator for deciding the
      specific types in the polymorphic chain of types. Required.
@@ -20532,7 +21406,7 @@ class SimpleSchedulePolicy(SchedulePolicy):
 class SimpleSchedulePolicyV2(SchedulePolicy):
     """The V2 policy schedule for IaaS that supports hourly backups.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar schedule_policy_type: This property will be used as the discriminator for deciding the
      specific types in the polymorphic chain of types. Required.
@@ -20590,6 +21464,82 @@ class SimpleSchedulePolicyV2(SchedulePolicy):
         self.hourly_schedule = hourly_schedule
         self.daily_schedule = daily_schedule
         self.weekly_schedule = weekly_schedule
+
+
+class SnapshotBackupAdditionalDetails(_serialization.Model):
+    """Snapshot Backup related fields for WorkloadType SaPHanaSystem.
+
+    :ivar instant_rp_retention_range_in_days:
+    :vartype instant_rp_retention_range_in_days: int
+    :ivar instant_rp_details:
+    :vartype instant_rp_details: str
+    :ivar user_assigned_managed_identity_details: User assigned managed identity details.
+    :vartype user_assigned_managed_identity_details:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+    """
+
+    _attribute_map = {
+        "instant_rp_retention_range_in_days": {"key": "instantRpRetentionRangeInDays", "type": "int"},
+        "instant_rp_details": {"key": "instantRPDetails", "type": "str"},
+        "user_assigned_managed_identity_details": {
+            "key": "userAssignedManagedIdentityDetails",
+            "type": "UserAssignedManagedIdentityDetails",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        instant_rp_retention_range_in_days: Optional[int] = None,
+        instant_rp_details: Optional[str] = None,
+        user_assigned_managed_identity_details: Optional["_models.UserAssignedManagedIdentityDetails"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword instant_rp_retention_range_in_days:
+        :paramtype instant_rp_retention_range_in_days: int
+        :keyword instant_rp_details:
+        :paramtype instant_rp_details: str
+        :keyword user_assigned_managed_identity_details: User assigned managed identity details.
+        :paramtype user_assigned_managed_identity_details:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedManagedIdentityDetails
+        """
+        super().__init__(**kwargs)
+        self.instant_rp_retention_range_in_days = instant_rp_retention_range_in_days
+        self.instant_rp_details = instant_rp_details
+        self.user_assigned_managed_identity_details = user_assigned_managed_identity_details
+
+
+class SnapshotRestoreParameters(_serialization.Model):
+    """Encapsulates information regarding snapshot recovery for SAP Hana.
+
+    :ivar skip_attach_and_mount:
+    :vartype skip_attach_and_mount: bool
+    :ivar log_point_in_time_for_db_recovery:
+    :vartype log_point_in_time_for_db_recovery: str
+    """
+
+    _attribute_map = {
+        "skip_attach_and_mount": {"key": "skipAttachAndMount", "type": "bool"},
+        "log_point_in_time_for_db_recovery": {"key": "logPointInTimeForDBRecovery", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        skip_attach_and_mount: Optional[bool] = None,
+        log_point_in_time_for_db_recovery: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword skip_attach_and_mount:
+        :paramtype skip_attach_and_mount: bool
+        :keyword log_point_in_time_for_db_recovery:
+        :paramtype log_point_in_time_for_db_recovery: str
+        """
+        super().__init__(**kwargs)
+        self.skip_attach_and_mount = skip_attach_and_mount
+        self.log_point_in_time_for_db_recovery = log_point_in_time_for_db_recovery
 
 
 class SQLDataDirectory(_serialization.Model):
@@ -20700,6 +21650,10 @@ class SubProtectionPolicy(_serialization.Model):
      Tiering policy specifies the criteria to move RP to the target tier.
     :vartype tiering_policy: dict[str,
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.TieringPolicy]
+    :ivar snapshot_backup_additional_details: Snapshot Backup related fields for WorkloadType
+     SaPHanaSystem.
+    :vartype snapshot_backup_additional_details:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotBackupAdditionalDetails
     """
 
     _attribute_map = {
@@ -20707,6 +21661,10 @@ class SubProtectionPolicy(_serialization.Model):
         "schedule_policy": {"key": "schedulePolicy", "type": "SchedulePolicy"},
         "retention_policy": {"key": "retentionPolicy", "type": "RetentionPolicy"},
         "tiering_policy": {"key": "tieringPolicy", "type": "{TieringPolicy}"},
+        "snapshot_backup_additional_details": {
+            "key": "snapshotBackupAdditionalDetails",
+            "type": "SnapshotBackupAdditionalDetails",
+        },
     }
 
     def __init__(
@@ -20716,6 +21674,7 @@ class SubProtectionPolicy(_serialization.Model):
         schedule_policy: Optional["_models.SchedulePolicy"] = None,
         retention_policy: Optional["_models.RetentionPolicy"] = None,
         tiering_policy: Optional[Dict[str, "_models.TieringPolicy"]] = None,
+        snapshot_backup_additional_details: Optional["_models.SnapshotBackupAdditionalDetails"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -20734,12 +21693,17 @@ class SubProtectionPolicy(_serialization.Model):
          Tiering policy specifies the criteria to move RP to the target tier.
         :paramtype tiering_policy: dict[str,
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.TieringPolicy]
+        :keyword snapshot_backup_additional_details: Snapshot Backup related fields for WorkloadType
+         SaPHanaSystem.
+        :paramtype snapshot_backup_additional_details:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.SnapshotBackupAdditionalDetails
         """
         super().__init__(**kwargs)
         self.policy_type = policy_type
         self.schedule_policy = schedule_policy
         self.retention_policy = retention_policy
         self.tiering_policy = tiering_policy
+        self.snapshot_backup_additional_details = snapshot_backup_additional_details
 
 
 class TargetAFSRestoreInfo(_serialization.Model):
@@ -20860,6 +21824,152 @@ class TargetRestoreInfo(_serialization.Model):
         self.target_directory_for_file_restore = target_directory_for_file_restore
 
 
+class TieringCostInfo(_serialization.Model):
+    """Base class for tiering cost response.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    TieringCostRehydrationInfo, TieringCostSavingInfo
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
+    :vartype object_type: str
+    """
+
+    _validation = {
+        "object_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "object_type": {"key": "objectType", "type": "str"},
+    }
+
+    _subtype_map = {
+        "object_type": {
+            "TieringCostRehydrationInfo": "TieringCostRehydrationInfo",
+            "TieringCostSavingInfo": "TieringCostSavingInfo",
+        }
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.object_type: Optional[str] = None
+
+
+class TieringCostRehydrationInfo(TieringCostInfo):
+    """Response parameters for tiering cost info for rehydration.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
+    :vartype object_type: str
+    :ivar rehydration_size_in_bytes: Rehydration size in bytes. Required.
+    :vartype rehydration_size_in_bytes: int
+    :ivar retail_rehydration_cost_per_gb_per_month: Source tier to target tier rehydration cost per
+     GB per month. Required.
+    :vartype retail_rehydration_cost_per_gb_per_month: float
+    """
+
+    _validation = {
+        "object_type": {"required": True},
+        "rehydration_size_in_bytes": {"required": True},
+        "retail_rehydration_cost_per_gb_per_month": {"required": True},
+    }
+
+    _attribute_map = {
+        "object_type": {"key": "objectType", "type": "str"},
+        "rehydration_size_in_bytes": {"key": "rehydrationSizeInBytes", "type": "int"},
+        "retail_rehydration_cost_per_gb_per_month": {"key": "retailRehydrationCostPerGBPerMonth", "type": "float"},
+    }
+
+    def __init__(
+        self, *, rehydration_size_in_bytes: int, retail_rehydration_cost_per_gb_per_month: float, **kwargs: Any
+    ) -> None:
+        """
+        :keyword rehydration_size_in_bytes: Rehydration size in bytes. Required.
+        :paramtype rehydration_size_in_bytes: int
+        :keyword retail_rehydration_cost_per_gb_per_month: Source tier to target tier rehydration cost
+         per GB per month. Required.
+        :paramtype retail_rehydration_cost_per_gb_per_month: float
+        """
+        super().__init__(**kwargs)
+        self.object_type: str = "TieringCostRehydrationInfo"
+        self.rehydration_size_in_bytes = rehydration_size_in_bytes
+        self.retail_rehydration_cost_per_gb_per_month = retail_rehydration_cost_per_gb_per_month
+
+
+class TieringCostSavingInfo(TieringCostInfo):
+    """Response parameters for tiering cost info for savings.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
+    :vartype object_type: str
+    :ivar source_tier_size_reduction_in_bytes: Source tier size reduction in bytes after moving all
+     the recommended backup points to target tier. Required.
+    :vartype source_tier_size_reduction_in_bytes: int
+    :ivar target_tier_size_increase_in_bytes: Target tier size increase in bytes after moving all
+     the recommended backup points to target tier. Required.
+    :vartype target_tier_size_increase_in_bytes: int
+    :ivar retail_source_tier_cost_per_gb_per_month: Source tier retail cost per GB per month.
+     Required.
+    :vartype retail_source_tier_cost_per_gb_per_month: float
+    :ivar retail_target_tier_cost_per_gb_per_month: Target tier retail cost per GB per month.
+     Required.
+    :vartype retail_target_tier_cost_per_gb_per_month: float
+    """
+
+    _validation = {
+        "object_type": {"required": True},
+        "source_tier_size_reduction_in_bytes": {"required": True},
+        "target_tier_size_increase_in_bytes": {"required": True},
+        "retail_source_tier_cost_per_gb_per_month": {"required": True},
+        "retail_target_tier_cost_per_gb_per_month": {"required": True},
+    }
+
+    _attribute_map = {
+        "object_type": {"key": "objectType", "type": "str"},
+        "source_tier_size_reduction_in_bytes": {"key": "sourceTierSizeReductionInBytes", "type": "int"},
+        "target_tier_size_increase_in_bytes": {"key": "targetTierSizeIncreaseInBytes", "type": "int"},
+        "retail_source_tier_cost_per_gb_per_month": {"key": "retailSourceTierCostPerGBPerMonth", "type": "float"},
+        "retail_target_tier_cost_per_gb_per_month": {"key": "retailTargetTierCostPerGBPerMonth", "type": "float"},
+    }
+
+    def __init__(
+        self,
+        *,
+        source_tier_size_reduction_in_bytes: int,
+        target_tier_size_increase_in_bytes: int,
+        retail_source_tier_cost_per_gb_per_month: float,
+        retail_target_tier_cost_per_gb_per_month: float,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword source_tier_size_reduction_in_bytes: Source tier size reduction in bytes after moving
+         all the recommended backup points to target tier. Required.
+        :paramtype source_tier_size_reduction_in_bytes: int
+        :keyword target_tier_size_increase_in_bytes: Target tier size increase in bytes after moving
+         all the recommended backup points to target tier. Required.
+        :paramtype target_tier_size_increase_in_bytes: int
+        :keyword retail_source_tier_cost_per_gb_per_month: Source tier retail cost per GB per month.
+         Required.
+        :paramtype retail_source_tier_cost_per_gb_per_month: float
+        :keyword retail_target_tier_cost_per_gb_per_month: Target tier retail cost per GB per month.
+         Required.
+        :paramtype retail_target_tier_cost_per_gb_per_month: float
+        """
+        super().__init__(**kwargs)
+        self.object_type: str = "TieringCostSavingInfo"
+        self.source_tier_size_reduction_in_bytes = source_tier_size_reduction_in_bytes
+        self.target_tier_size_increase_in_bytes = target_tier_size_increase_in_bytes
+        self.retail_source_tier_cost_per_gb_per_month = retail_source_tier_cost_per_gb_per_month
+        self.retail_target_tier_cost_per_gb_per_month = retail_target_tier_cost_per_gb_per_month
+
+
 class TieringPolicy(_serialization.Model):
     """Tiering Policy for a target tier.
     If the policy is not specified for a given target tier, service retains the existing configured
@@ -20970,7 +22080,7 @@ class TokenInformation(_serialization.Model):
 class TriggerDataMoveRequest(_serialization.Model):
     """Trigger DataMove Request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source_resource_id: ARM Id of source vault. Required.
     :vartype source_resource_id: str
@@ -21094,13 +22204,83 @@ class UnlockDeleteResponse(_serialization.Model):
         self.unlock_delete_expiry_time = unlock_delete_expiry_time
 
 
+class UserAssignedIdentityProperties(_serialization.Model):
+    """User assigned managed identity properties.
+
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    """
+
+    _attribute_map = {
+        "client_id": {"key": "clientId", "type": "str"},
+        "principal_id": {"key": "principalId", "type": "str"},
+    }
+
+    def __init__(self, *, client_id: Optional[str] = None, principal_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword client_id: The client ID of the assigned identity.
+        :paramtype client_id: str
+        :keyword principal_id: The principal ID of the assigned identity.
+        :paramtype principal_id: str
+        """
+        super().__init__(**kwargs)
+        self.client_id = client_id
+        self.principal_id = principal_id
+
+
+class UserAssignedManagedIdentityDetails(_serialization.Model):
+    """User assigned managed identity details.
+
+    :ivar identity_arm_id: The ARM id of the assigned identity.
+    :vartype identity_arm_id: str
+    :ivar identity_name: The name of the assigned identity.
+    :vartype identity_name: str
+    :ivar user_assigned_identity_properties: User assigned managed identity properties.
+    :vartype user_assigned_identity_properties:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedIdentityProperties
+    """
+
+    _attribute_map = {
+        "identity_arm_id": {"key": "identityArmId", "type": "str"},
+        "identity_name": {"key": "identityName", "type": "str"},
+        "user_assigned_identity_properties": {
+            "key": "userAssignedIdentityProperties",
+            "type": "UserAssignedIdentityProperties",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        identity_arm_id: Optional[str] = None,
+        identity_name: Optional[str] = None,
+        user_assigned_identity_properties: Optional["_models.UserAssignedIdentityProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword identity_arm_id: The ARM id of the assigned identity.
+        :paramtype identity_arm_id: str
+        :keyword identity_name: The name of the assigned identity.
+        :paramtype identity_name: str
+        :keyword user_assigned_identity_properties: User assigned managed identity properties.
+        :paramtype user_assigned_identity_properties:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.UserAssignedIdentityProperties
+        """
+        super().__init__(**kwargs)
+        self.identity_arm_id = identity_arm_id
+        self.identity_name = identity_name
+        self.user_assigned_identity_properties = user_assigned_identity_properties
+
+
 class ValidateOperationRequest(_serialization.Model):
     """Base class for validate operation request.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ValidateRestoreOperationRequest
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -21129,7 +22309,7 @@ class ValidateRestoreOperationRequest(ValidateOperationRequest):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ValidateIaasVMRestoreOperationRequest
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -21163,7 +22343,7 @@ class ValidateRestoreOperationRequest(ValidateOperationRequest):
 class ValidateIaasVMRestoreOperationRequest(ValidateRestoreOperationRequest):
     """AzureRestoreValidation request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -21189,6 +22369,47 @@ class ValidateIaasVMRestoreOperationRequest(ValidateRestoreOperationRequest):
         """
         super().__init__(restore_request=restore_request, **kwargs)
         self.object_type: str = "ValidateIaasVMRestoreOperationRequest"
+
+
+class ValidateOperationRequestResource(_serialization.Model):
+    """Base class for validate operation request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Recovery point ID. Required.
+    :vartype id: str
+    :ivar properties: ValidateOperationRequestResource properties. Required.
+    :vartype properties:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.ValidateOperationRequest
+    """
+
+    _validation = {
+        "id": {"required": True},
+        "properties": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "properties": {"key": "properties", "type": "ValidateOperationRequest"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        properties: "_models.ValidateOperationRequest",
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: Recovery point ID. Required.
+        :paramtype id: str
+        :keyword properties: ValidateOperationRequestResource properties. Required.
+        :paramtype properties:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.ValidateOperationRequest
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.properties = properties
 
 
 class ValidateOperationResponse(_serialization.Model):
@@ -21240,7 +22461,7 @@ class ValidateOperationsResponse(_serialization.Model):
 class VaultJob(Job):  # pylint: disable=too-many-instance-attributes
     """Vault level Job.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar entity_friendly_name: Friendly name of the entity on which the current job is executing.
     :vartype entity_friendly_name: str
@@ -21415,6 +22636,42 @@ class VaultJobExtendedInfo(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.property_bag = property_bag
+
+
+class VaultRetentionPolicy(_serialization.Model):
+    """Vault retention policy for AzureFileShare.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar vault_retention: Base class for retention policy. Required.
+    :vartype vault_retention: ~azure.mgmt.recoveryservicesbackup.activestamp.models.RetentionPolicy
+    :ivar snapshot_retention_in_days: Required.
+    :vartype snapshot_retention_in_days: int
+    """
+
+    _validation = {
+        "vault_retention": {"required": True},
+        "snapshot_retention_in_days": {"required": True},
+    }
+
+    _attribute_map = {
+        "vault_retention": {"key": "vaultRetention", "type": "RetentionPolicy"},
+        "snapshot_retention_in_days": {"key": "snapshotRetentionInDays", "type": "int"},
+    }
+
+    def __init__(
+        self, *, vault_retention: "_models.RetentionPolicy", snapshot_retention_in_days: int, **kwargs: Any
+    ) -> None:
+        """
+        :keyword vault_retention: Base class for retention policy. Required.
+        :paramtype vault_retention:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.RetentionPolicy
+        :keyword snapshot_retention_in_days: Required.
+        :paramtype snapshot_retention_in_days: int
+        """
+        super().__init__(**kwargs)
+        self.vault_retention = vault_retention
+        self.snapshot_retention_in_days = snapshot_retention_in_days
 
 
 class WeeklyRetentionFormat(_serialization.Model):

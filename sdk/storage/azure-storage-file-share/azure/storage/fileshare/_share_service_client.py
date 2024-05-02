@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 import sys
 import functools
@@ -69,6 +70,11 @@ class ShareServiceClient(StorageAccountHostsMixin):
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.TokenCredential or
+        str or dict[str, str] or None
     :keyword token_intent:
         Required when using `TokenCredential` for authentication and ignored for other forms of authentication.
         Specifies the intent for all requests when using `TokenCredential` authentication. Possible values are:
@@ -120,8 +126,10 @@ class ShareServiceClient(StorageAccountHostsMixin):
         if not sas_token and not credential:
             raise ValueError(
                 'You need to provide either an account shared key or SAS token when creating a storage service.')
+
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(ShareServiceClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
+        super(ShareServiceClient, self).__init__(
+            parsed_url, service='file-share', credential=credential, **kwargs)
         self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
         self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
         self.file_request_intent = token_intent
@@ -153,7 +161,11 @@ class ShareServiceClient(StorageAccountHostsMixin):
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials.TokenCredential or
+            str or dict[str, str] or None
         :returns: A File Share service client.
         :rtype: ~azure.storage.fileshare.ShareServiceClient
 
@@ -228,7 +240,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             You can include up to five CorsRule elements in the
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
-        :type cors: list(:class:`~azure.storage.fileshare.CorsRule`)
+        :type cors: list[~azure.storage.fileshare.CorsRule]
         :param protocol:
             Sets protocol settings
         :type protocol: ~azure.storage.fileshare.ShareProtocolSettings
@@ -332,7 +344,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
         which to interact with the newly created share.
 
         :param str share_name: The name of the share to create.
-        :keyword dict(str,str) metadata:
+        :keyword dict[str, str] metadata:
             A dict with name_value pairs to associate with the
             share as metadata. Example:{'Category':'test'}
         :keyword int quota:

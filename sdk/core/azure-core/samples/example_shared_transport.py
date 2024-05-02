@@ -23,27 +23,30 @@ import os
 from azure.core.pipeline.transport import RequestsTransport
 from azure.storage.blob import BlobServiceClient
 
-connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+connection_string = os.environ["AZURE_STORAGE_CONNECTION_STRING"]
 
 
 def shared_transport():
     # [START shared_transport]
-    shared_transport = RequestsTransport()
+    import requests
+
+    session = requests.Session()
+    shared_transport = RequestsTransport(
+        session=session, session_owner=False
+    )  # here we set session_owner to False to indicate that we don't want to close the session when the client is closed
     with shared_transport:
         blob_service_client1 = BlobServiceClient.from_connection_string(
             connection_string,
             transport=shared_transport,
-            session_owner=False,  # here we set session_owner to False to indicate that we don't want to close the session when the client is closed
         )
-        blob_service_client2 = BlobServiceClient.from_connection_string(
-            connection_string, transport=shared_transport, session_owner=False
-        )
+        blob_service_client2 = BlobServiceClient.from_connection_string(connection_string, transport=shared_transport)
         containers1 = blob_service_client1.list_containers()
         for contain in containers1:
             print(contain.name)
         containers2 = blob_service_client2.list_containers()
         for contain in containers2:
             print(contain.name)
+    session.close()  # we need to close the session manually
     # [END shared_transport]
 
 
@@ -55,20 +58,17 @@ def shared_transport_with_pooling():
     adapter = requests.adapters.HTTPAdapter(pool_connections=100, pool_maxsize=100)
     session.mount("http://", adapter)
     session.mount("https://", adapter)
-    shared_transport = RequestsTransport(session=session)
+    shared_transport = RequestsTransport(session=session, session_owner=False)
     with shared_transport:
-        blob_service_client1 = BlobServiceClient.from_connection_string(
-            connection_string, transport=shared_transport, session_owner=False
-        )
-        blob_service_client2 = BlobServiceClient.from_connection_string(
-            connection_string, transport=shared_transport, session_owner=False
-        )
+        blob_service_client1 = BlobServiceClient.from_connection_string(connection_string, transport=shared_transport)
+        blob_service_client2 = BlobServiceClient.from_connection_string(connection_string, transport=shared_transport)
         containers1 = blob_service_client1.list_containers()
         for contain in containers1:
             print(contain.name)
         containers2 = blob_service_client2.list_containers()
         for contain in containers2:
             print(contain.name)
+    session.close()  # we need to close the session manually
     # [END shared_transport_with_pooling]
 
 

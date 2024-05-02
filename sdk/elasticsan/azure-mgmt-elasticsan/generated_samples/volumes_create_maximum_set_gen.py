@@ -35,12 +35,16 @@ def main():
         volume_group_name="volumegroupname",
         volume_name="volumename",
         parameters={
-            "properties": {"creationData": {"createSource": "None", "sourceUri": " ARM Id of resource"}, "sizeGiB": 23}
+            "properties": {
+                "creationData": {"createSource": "None", "sourceId": "ARM Id of Resource"},
+                "managedBy": {"resourceId": "mtkeip"},
+                "sizeGiB": 9,
+            }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/preview/2022-12-01-preview/examples/Volumes_Create_MaximumSet_Gen.json
+# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/Volumes_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

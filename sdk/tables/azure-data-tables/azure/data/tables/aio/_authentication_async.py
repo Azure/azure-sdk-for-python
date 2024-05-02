@@ -72,28 +72,23 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
 
 
 @overload
-def _configure_credential(credential: AzureNamedKeyCredential) -> SharedKeyCredentialPolicy:
-    ...
+def _configure_credential(credential: AzureNamedKeyCredential) -> SharedKeyCredentialPolicy: ...
 
 
 @overload
-def _configure_credential(credential: SharedKeyCredentialPolicy) -> SharedKeyCredentialPolicy:
-    ...
+def _configure_credential(credential: SharedKeyCredentialPolicy) -> SharedKeyCredentialPolicy: ...
 
 
 @overload
-def _configure_credential(credential: AzureSasCredential) -> AzureSasCredentialPolicy:
-    ...
+def _configure_credential(credential: AzureSasCredential) -> AzureSasCredentialPolicy: ...
 
 
 @overload
-def _configure_credential(credential: AsyncTokenCredential) -> AsyncBearerTokenChallengePolicy:
-    ...
+def _configure_credential(credential: AsyncTokenCredential) -> AsyncBearerTokenChallengePolicy: ...
 
 
 @overload
-def _configure_credential(credential: None) -> None:
-    ...
+def _configure_credential(credential: None) -> None: ...
 
 
 def _configure_credential(
@@ -111,5 +106,5 @@ def _configure_credential(
     if isinstance(credential, AzureNamedKeyCredential):
         return SharedKeyCredentialPolicy(credential)
     if credential is not None:
-        raise TypeError(f"Unsupported credential: {credential}")
+        raise TypeError(f"Unsupported credential: {type(credential)}")
     return None

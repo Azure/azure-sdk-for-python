@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 # pylint: disable=protected-access
-from typing import Any, Callable, Dict, List, Mapping, Optional, Union
+from typing import Any, Callable, Dict, List, Mapping, Optional, Union, cast
 
 from marshmallow import INCLUDE
 
@@ -40,9 +40,9 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 class _PipelineNodeFactory:
     """A class to create pipeline node instances from yaml dict or rest objects without hard-coded type check."""
 
-    def __init__(self):
-        self._create_instance_funcs = {}
-        self._load_from_rest_object_funcs = {}
+    def __init__(self) -> None:
+        self._create_instance_funcs: dict = {}
+        self._load_from_rest_object_funcs: dict = {}
 
         self.register_type(
             _type=NodeType.COMMAND,
@@ -155,9 +155,7 @@ class _PipelineNodeFactory:
         """
         return self._get_func(_type, self._create_instance_funcs)
 
-    def get_load_from_rest_object_func(
-        self, _type: str
-    ) -> Callable[[Any], Union[BaseNode, AutoMLJob, ControlFlowNode]]:
+    def get_load_from_rest_object_func(self, _type: str) -> Callable:
         """Get the function to load a node from a rest object.
 
         :param _type: The type of the node.
@@ -172,9 +170,9 @@ class _PipelineNodeFactory:
         _type: str,
         *,
         create_instance_func: Optional[Callable[..., Union[BaseNode, AutoMLJob]]] = None,
-        load_from_rest_object_func: Optional[Callable[[Any], Union[BaseNode, AutoMLJob, ControlFlowNode]]] = None,
+        load_from_rest_object_func: Optional[Callable] = None,
         nested_schema: Optional[Union[NestedField, List[NestedField]]] = None,
-    ):
+    ) -> None:
         """Register a type of node.
 
         :param _type: The type of the node.
@@ -236,12 +234,12 @@ class _PipelineNodeFactory:
                     data=data[component_key],
                     yaml_path=data[component_key].pop(SOURCE_PATH_CONTEXT_KEY, None),
                 )
-
-        new_instance.__init__(**data)
+        # TODO: Bug Item number: 2883415
+        new_instance.__init__(**data)  # type: ignore
         return new_instance
 
     def load_from_rest_object(
-        self, *, obj: dict, _type: Optional[str] = None, **kwargs
+        self, *, obj: dict, _type: Optional[str] = None, **kwargs: Any
     ) -> Union[BaseNode, AutoMLJob, ControlFlowNode]:
         """Load a node from a rest object.
 
@@ -265,12 +263,14 @@ class _PipelineNodeFactory:
         else:
             obj[CommonYamlFields.TYPE] = _type
 
-        return self.get_load_from_rest_object_func(_type)(obj, **kwargs)
+        res: Union[BaseNode, AutoMLJob, ControlFlowNode] = self.get_load_from_rest_object_func(_type)(obj, **kwargs)
+        return res
 
     @classmethod
     def _automl_from_rest_object(cls, node: Dict) -> AutoMLJob:
+        _outputs = cast(Dict[str, Union[str, dict]], node.get("outputs"))
         # rest dict outputs -> Output objects
-        outputs = AutoMLJob._from_rest_outputs(node.get("outputs"))
+        outputs = AutoMLJob._from_rest_outputs(_outputs)
         # Output objects -> yaml dict outputs
         parsed_outputs = {}
         for key, val in outputs.items():
@@ -291,14 +291,15 @@ def _generate_component_function(
     override_definitions: Optional[Mapping[str, OverrideDefinition]] = None,  # pylint: disable=unused-argument
 ) -> Callable[..., Union[Command, Parallel]]:
     # Generate a function which returns a component node.
-    def create_component_func(**kwargs):
+    def create_component_func(**kwargs: Any) -> Union[BaseNode, AutoMLJob]:
         # todo: refine Hard code for now to support different task type for DataTransfer node
         _type = component_entity.type
         if _type == NodeType.DATA_TRANSFER:
-            _type = "_".join([NodeType.DATA_TRANSFER, component_entity.task])
-            if component_entity.task == DataTransferTaskType.IMPORT_DATA:
+            # TODO: Bug Item number: 2883431
+            _type = "_".join([NodeType.DATA_TRANSFER, component_entity.task])  # type: ignore
+            if component_entity.task == DataTransferTaskType.IMPORT_DATA:  # type: ignore
                 return pipeline_node_factory.load_from_dict(
-                    data=dict(component=component_entity, **kwargs, _from_component_func=True),
+                    data={"component": component_entity, "_from_component_func": True, **kwargs},
                     _type=_type,
                 )
         return pipeline_node_factory.load_from_dict(
@@ -306,7 +307,8 @@ def _generate_component_function(
             _type=_type,
         )
 
-    return to_component_func(component_entity, create_component_func)
+    res: Callable = to_component_func(component_entity, create_component_func)
+    return res
 
 
 pipeline_node_factory = _PipelineNodeFactory()

@@ -4,3 +4,7 @@ pyright = false
 type_check_samples = false
 verifytypes = false
 pylint = true
+latestdependency = false
+mindependency = false
+whl_no_aio = false
+strict_sphinx = true

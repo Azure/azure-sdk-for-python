@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, cast
 
 from marshmallow import Schema
 
@@ -76,7 +76,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         when used as a node or step in a pipeline. In that scenario, no compute resources will be used.
     :paramtype is_deterministic: Optional[bool]
     :keyword additional_includes: A list of shared additional files to be included in the component. Defaults to None.
-    :paramtype additional_includes: Optional[list[str]]
+    :paramtype additional_includes: Optional[List[str]]
     :keyword properties: The job property dictionary. Defaults to None.
     :paramtype properties: Optional[dict[str, str]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully validated.
@@ -101,10 +101,17 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         tags: Optional[Dict] = None,
         display_name: Optional[str] = None,
         command: Optional[str] = None,
-        code: Optional[str] = None,
+        code: Optional[Union[str, os.PathLike]] = None,
         environment: Optional[Union[str, Environment]] = None,
         distribution: Optional[
-            Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]
+            Union[
+                Dict,
+                MpiDistribution,
+                TensorFlowDistribution,
+                PyTorchDistribution,
+                RayDistribution,
+                DistributionConfiguration,
+            ]
         ] = None,
         resources: Optional[JobResourceConfiguration] = None,
         inputs: Optional[Dict] = None,
@@ -113,7 +120,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         is_deterministic: bool = True,
         additional_includes: Optional[List] = None,
         properties: Optional[Dict] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
@@ -143,7 +150,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         self.code = code
         self.environment_variables = environment_variables
         self.environment = environment
-        self.resources = resources
+        self.resources = resources  # type: ignore[assignment]
         self.distribution = distribution
 
         # check mutual exclusivity of promoted properties
@@ -165,20 +172,20 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         :rtype: Dict
         """
 
-        obj = super()._to_ordered_dict_for_yaml_dump()
+        obj: dict = super()._to_ordered_dict_for_yaml_dump()
         # dict dumped base on schema will transfer code to an absolute path, while we want to keep its original value
         if self.code and isinstance(self.code, str):
             obj["code"] = self.code
         return obj
 
     @property
-    def instance_count(self) -> int:
+    def instance_count(self) -> Optional[int]:
         """The number of instances or nodes to be used by the compute target.
 
         :return: The number of instances or nodes.
         :rtype: int
         """
-        return self.resources.instance_count if self.resources else None
+        return self.resources.instance_count if self.resources and not isinstance(self.resources, dict) else None
 
     @instance_count.setter
     def instance_count(self, value: int) -> None:
@@ -192,7 +199,8 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         if not self.resources:
             self.resources = JobResourceConfiguration(instance_count=value)
         else:
-            self.resources.instance_count = value
+            if not isinstance(self.resources, dict):
+                self.resources.instance_count = value
 
     @classmethod
     def _attr_type_map(cls) -> dict:
@@ -204,13 +212,15 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         }
 
     def _to_dict(self) -> Dict:
-        return convert_ordered_dict_to_dict({**self._other_parameter, **super(CommandComponent, self)._to_dict()})
+        return cast(
+            dict, convert_ordered_dict_to_dict({**self._other_parameter, **super(CommandComponent, self)._to_dict()})
+        )
 
     @classmethod
     def _from_rest_object_to_init_params(cls, obj: ComponentVersion) -> Dict:
         # put it here as distribution is shared by some components, e.g. command
         distribution = obj.properties.component_spec.pop("distribution", None)
-        init_kwargs = super()._from_rest_object_to_init_params(obj)
+        init_kwargs: dict = super()._from_rest_object_to_init_params(obj)
         if distribution:
             init_kwargs["distribution"] = DistributionConfiguration._from_rest_object(distribution)
         return init_kwargs
@@ -219,15 +229,16 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         # Return environment id of environment
         # handle case when environment is defined inline
         if isinstance(self.environment, Environment):
-            return self.environment.id
+            _id: Optional[str] = self.environment.id
+            return _id
         return self.environment
 
     # region SchemaValidatableMixin
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         return CommandComponentSchema(context=context)
 
-    def _customized_validate(self):
+    def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(CommandComponent, self)._customized_validate()
         self._append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(validation_result)
         validation_result.merge_with(self._validate_command())
@@ -262,25 +273,28 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         return validation_result
 
     def _is_valid_data_binding_expression(self, data_binding_expression: str) -> bool:
-        current_obj = self
+        current_obj: Any = self
         for item in data_binding_expression.split("."):
             if hasattr(current_obj, item):
                 current_obj = getattr(current_obj, item)
             else:
                 try:
                     current_obj = current_obj[item]
-                except Exception:  # pylint: disable=broad-except
+                except Exception:  # pylint: disable=W0718
                     return False
         return True
 
     # endregion
 
     @classmethod
-    def _parse_args_description_from_docstring(cls, docstring):
-        return parse_args_description_from_docstring(docstring)
+    def _parse_args_description_from_docstring(cls, docstring: str) -> Dict:
+        res: dict = parse_args_description_from_docstring(docstring)
+        return res
 
-    def __str__(self):
+    def __str__(self) -> str:
         try:
-            return self._to_yaml()
-        except BaseException:  # pylint: disable=broad-except
-            return super(CommandComponent, self).__str__()
+            toYaml: str = self._to_yaml()
+            return toYaml
+        except BaseException:  # pylint: disable=W0718
+            toStr: str = super(CommandComponent, self).__str__()
+            return toStr

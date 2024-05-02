@@ -10,7 +10,7 @@ from collections import OrderedDict
 from functools import wraps
 from inspect import Parameter, signature
 from pathlib import Path
-from typing import Callable, Dict, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, List, Optional, TypeVar, Union, overload
 
 from typing_extensions import ParamSpec
 
@@ -57,7 +57,7 @@ P = ParamSpec("P")
 # Overload the returns a decorator when func is None
 @overload
 def pipeline(
-    func: None = None,
+    func: None,
     *,
     name: Optional[str] = None,
     version: Optional[str] = None,
@@ -65,15 +65,14 @@ def pipeline(
     description: Optional[str] = None,
     experiment_name: Optional[str] = None,
     tags: Optional[Dict[str, str]] = None,
-    **kwargs,
-) -> Callable[[Callable[P, T]], Callable[P, PipelineJob]]:
-    ...
+    **kwargs: Any,
+) -> Callable[[Callable[P, T]], Callable[P, PipelineJob]]: ...
 
 
 # Overload the returns a decorated function when func isn't None
 @overload
 def pipeline(
-    func: Callable[P, T] = None,
+    func: Callable[P, T],
     *,
     name: Optional[str] = None,
     version: Optional[str] = None,
@@ -81,9 +80,8 @@ def pipeline(
     description: Optional[str] = None,
     experiment_name: Optional[str] = None,
     tags: Optional[Dict[str, str]] = None,
-    **kwargs,
-) -> Callable[P, PipelineJob]:
-    ...
+    **kwargs: Any,
+) -> Callable[P, PipelineJob]: ...
 
 
 def pipeline(
@@ -94,8 +92,8 @@ def pipeline(
     display_name: Optional[str] = None,
     description: Optional[str] = None,
     experiment_name: Optional[str] = None,
-    tags: Optional[Dict[str, str]] = None,
-    **kwargs,
+    tags: Optional[Union[Dict[str, str], str]] = None,
+    **kwargs: Any,
 ) -> Union[Callable[[Callable[P, T]], Callable[P, PipelineJob]], Callable[P, PipelineJob]]:
     """Build a pipeline which contains all component nodes defined in this function.
 
@@ -110,18 +108,18 @@ def pipeline(
     :keyword description: The description of the built pipeline.
     :paramtype description: str
     :keyword experiment_name: Name of the experiment the job will be created under, \
-                if None is provided, experiment will be set to current directory.
+        if None is provided, experiment will be set to current directory.
     :paramtype experiment_name: str
     :keyword tags: The tags of pipeline component.
     :paramtype tags: dict[str, str]
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
     :return: Either
       * A decorator, if `func` is None
       * The decorated `func`
+
     :rtype: Union[
         Callable[[Callable], Callable[..., ~azure.ai.ml.entities.PipelineJob]],
         Callable[P, ~azure.ai.ml.entities.PipelineJob]
+
       ]
 
     .. admonition:: Example:
@@ -134,8 +132,9 @@ def pipeline(
             :caption: Shows how to create a pipeline using this decorator.
     """
 
-    def pipeline_decorator(func: Callable[P, T]) -> Callable[P, PipelineJob]:
-        if not isinstance(func, Callable):  # pylint: disable=isinstance-second-argument-not-valid-type
+    def pipeline_decorator(func: Callable[P, T]) -> Callable:
+        # pylint: disable=isinstance-second-argument-not-valid-type
+        if not isinstance(func, Callable):  # type: ignore
             raise UserErrorException(f"Dsl pipeline decorator accept only function type, got {type(func)}.")
 
         non_pipeline_inputs = kwargs.get("non_pipeline_inputs", []) or kwargs.get("non_pipeline_parameters", [])
@@ -179,7 +178,7 @@ def pipeline(
         )
 
         @wraps(func)
-        def wrapper(*args: P.args, **kwargs: P.kwargs) -> PipelineJob:
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> Union[Pipeline, PipelineJob]:
             # Default args will be added here.
             # pylint: disable=abstract-class-instantiated
             # Node: push/pop stack here instead of put it inside build()
@@ -216,12 +215,13 @@ def pipeline(
                 job_settings["on_finalize"] = dsl_settings.finalize_job_name(pipeline_component.jobs)
 
             # TODO: pass compute & default_compute separately?
-            common_init_args = {
+            common_init_args: Any = {
                 "experiment_name": experiment_name,
                 "component": pipeline_component,
                 "inputs": pipeline_parameters,
                 "tags": tags,
             }
+            built_pipeline: Any = None
             if _is_inside_dsl_pipeline_func():
                 # on_init/on_finalize is not supported for pipeline component
                 if job_settings.get("on_init") is not None or job_settings.get("on_finalize") is not None:
@@ -244,9 +244,10 @@ def pipeline(
 
             return built_pipeline
 
-        wrapper._is_dsl_func = True
-        wrapper._job_settings = job_settings
-        wrapper._pipeline_builder = pipeline_builder
+        # Bug Item number: 2883169
+        wrapper._is_dsl_func = True  # type: ignore
+        wrapper._job_settings = job_settings  # type: ignore
+        wrapper._pipeline_builder = pipeline_builder  # type: ignore
         return wrapper
 
     # enable use decorator without "()" if all arguments are default values
@@ -256,7 +257,7 @@ def pipeline(
 
 
 # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
-def _validate_args(func, args, kwargs, non_pipeline_inputs):
+def _validate_args(func: Callable, args: Any, kwargs: Dict, non_pipeline_inputs: List) -> OrderedDict:
     """Validate customer function args and convert them to kwargs."""
     if not isinstance(non_pipeline_inputs, List) or any(not isinstance(param, str) for param in non_pipeline_inputs):
         msg = "Type of 'non_pipeline_parameter' in dsl.pipeline should be a list of string"
@@ -297,7 +298,7 @@ def _validate_args(func, args, kwargs, non_pipeline_inputs):
             raise MultipleValueError(func.__name__, _k)
         provided_args[_k] = _v
 
-    def _is_supported_data_type(_data):
+    def _is_supported_data_type(_data: object) -> bool:
         return isinstance(_data, SUPPORTED_INPUT_TYPES) or is_group(_data)
 
     for pipeline_input_name in provided_args:

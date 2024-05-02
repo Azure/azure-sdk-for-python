@@ -27,6 +27,7 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING, Union, overload, cast, IO, Dict
 from functools import partial
 
+from typing_extensions import TypedDict
 from azure.core.tracing.decorator import distributed_trace
 
 from ._utils import (
@@ -47,6 +48,16 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.rest import HttpResponse
 
+    class SchemaPropertiesDict(TypedDict):  # needed for use with spread operator
+        """
+        Typing for SchemaProperties dict.
+        """
+        id: str
+        format: "SchemaFormat"
+        group_name: str
+        name: str
+        version: int
+
 
 class SchemaRegistryClient(object):
     """
@@ -57,7 +68,7 @@ class SchemaRegistryClient(object):
     :param credential: To authenticate managing the entities of the SchemaRegistry namespace.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword str api_version: The Schema Registry service API version to use for requests.
-     Default value is "2022-10".
+     Default value is "2023-07-01".
 
     .. admonition:: Example:
 
@@ -139,7 +150,8 @@ class SchemaRegistryClient(object):
             cls=partial(prepare_schema_properties_result, format),
             **http_request_kwargs,
         )
-        return SchemaProperties(**schema_properties)
+        properties = cast("SchemaPropertiesDict", schema_properties)
+        return SchemaProperties(**properties)
 
     @overload
     def get_schema(self, schema_id: str, **kwargs: Any) -> Schema:
@@ -223,9 +235,10 @@ class SchemaRegistryClient(object):
                 **http_request_kwargs,
             )
         http_response.read()
+        properties = cast("SchemaPropertiesDict", schema_properties)
         return Schema(
             definition=http_response.text(),
-            properties=SchemaProperties(**schema_properties),
+            properties=SchemaProperties(**properties),
         )
 
     @distributed_trace
@@ -273,4 +286,5 @@ class SchemaRegistryClient(object):
                 **http_request_kwargs,
             )
         )
-        return SchemaProperties(**schema_properties)
+        properties = cast("SchemaPropertiesDict", schema_properties)
+        return SchemaProperties(**properties)

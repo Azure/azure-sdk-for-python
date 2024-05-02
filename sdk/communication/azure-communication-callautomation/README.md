@@ -43,21 +43,20 @@ client = CallAutomationClient.from_connection_string(endpoint_url)
 ```Python
 from azure.communication.callautomation import (
     CallAutomationClient,
-    CallInvite,
     CommunicationUserIdentifier
 )
 
 # target endpoint for ACS User
 user = CommunicationUserIdentifier("8:acs:...")
 
-# make invitation
-call_invite = CallInvite(target=user)
-
 # callback url to receive callback events
 callback_url = "https://<MY-EVENT-HANDLER-URL>/events"
 
 # send out the invitation, creating call
-result = client.create_call(call_invite, callback_url)
+result = client.create_call(
+    target_participant=user,
+    callback_url=callback_uri
+)
 
 # this id can be used to do further actions in the call
 call_connection_id = result.call_connection_id

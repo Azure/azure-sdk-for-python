@@ -7,8 +7,15 @@
 # --------------------------------------------------------------------------
 
 from ._operations import Operations
+from ._check_name_availability_operations import CheckNameAvailabilityOperations
 from ._diagnostics_operations import DiagnosticsOperations
 from ._discovery_solution_operations import DiscoverySolutionOperations
+from ._solution_operations import SolutionOperations
+from ._simplified_solutions_operations import SimplifiedSolutionsOperations
+from ._troubleshooters_operations import TroubleshootersOperations
+from ._solution_self_help_operations import SolutionSelfHelpOperations
+from ._discovery_solution_nlp_tenant_scope_operations import DiscoverySolutionNLPTenantScopeOperations
+from ._discovery_solution_nlp_subscription_scope_operations import DiscoverySolutionNLPSubscriptionScopeOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -16,8 +23,15 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "Operations",
+    "CheckNameAvailabilityOperations",
     "DiagnosticsOperations",
     "DiscoverySolutionOperations",
+    "SolutionOperations",
+    "SimplifiedSolutionsOperations",
+    "TroubleshootersOperations",
+    "SolutionSelfHelpOperations",
+    "DiscoverySolutionNLPTenantScopeOperations",
+    "DiscoverySolutionNLPSubscriptionScopeOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

@@ -14,6 +14,7 @@ try:
     from ._models_py3 import AccountKeyDatastoreCredentials
     from ._models_py3 import AccountKeyDatastoreSecrets
     from ._models_py3 import AcrDetails
+    from ._models_py3 import ActualCapacityInfo
     from ._models_py3 import AksComputeSecrets
     from ._models_py3 import AksComputeSecretsProperties
     from ._models_py3 import AksNetworkingConfiguration
@@ -24,8 +25,6 @@ try:
     from ._models_py3 import AmlComputeNodesInformation
     from ._models_py3 import AmlComputeProperties
     from ._models_py3 import AmlComputeSchema
-    from ._models_py3 import AmlOperation
-    from ._models_py3 import AmlOperationListResult
     from ._models_py3 import AmlToken
     from ._models_py3 import AmlTokenComputeIdentity
     from ._models_py3 import AmlUserFeature
@@ -48,7 +47,6 @@ try:
     from ._models_py3 import AutoTargetLags
     from ._models_py3 import AutoTargetRollingWindowSize
     from ._models_py3 import AutologgerSettings
-    from ._models_py3 import AzMonMonitoringAlertNotificationSettings
     from ._models_py3 import AzureBlobDatastore
     from ._models_py3 import AzureDataLakeGen1Datastore
     from ._models_py3 import AzureDataLakeGen2Datastore
@@ -74,6 +72,9 @@ try:
     from ._models_py3 import BindOptions
     from ._models_py3 import BlobReferenceForConsumptionDto
     from ._models_py3 import BuildContext
+    from ._models_py3 import CapacityReservationGroup
+    from ._models_py3 import CapacityReservationGroupProperties
+    from ._models_py3 import CapacityReservationGroupTrackedResourceArmPaginatedResult
     from ._models_py3 import CategoricalDataDriftMetricThreshold
     from ._models_py3 import CategoricalDataQualityMetricThreshold
     from ._models_py3 import CategoricalPredictionDriftMetricThreshold
@@ -117,6 +118,7 @@ try:
     from ._models_py3 import ComputeInstanceSchema
     from ._models_py3 import ComputeInstanceSshSettings
     from ._models_py3 import ComputeInstanceVersion
+    from ._models_py3 import ComputeRecurrenceSchedule
     from ._models_py3 import ComputeResource
     from ._models_py3 import ComputeResourceSchema
     from ._models_py3 import ComputeRuntimeDto
@@ -185,7 +187,6 @@ try:
     from ._models_py3 import DistributionConfiguration
     from ._models_py3 import Docker
     from ._models_py3 import EarlyTerminationPolicy
-    from ._models_py3 import EmailMonitoringAlertNotificationSettings
     from ._models_py3 import EncryptionKeyVaultUpdateProperties
     from ._models_py3 import EncryptionProperty
     from ._models_py3 import EncryptionUpdateProperties
@@ -216,6 +217,7 @@ try:
     from ._models_py3 import Feature
     from ._models_py3 import FeatureAttributionDriftMonitoringSignal
     from ._models_py3 import FeatureAttributionMetricThreshold
+    from ._models_py3 import FeatureImportanceSettings
     from ._models_py3 import FeatureProperties
     from ._models_py3 import FeatureResourceArmPaginatedResult
     from ._models_py3 import FeatureStoreSettings
@@ -247,9 +249,10 @@ try:
     from ._models_py3 import FqdnOutboundRule
     from ._models_py3 import GenerationSafetyQualityMetricThreshold
     from ._models_py3 import GenerationSafetyQualityMonitoringSignal
-    from ._models_py3 import GenerationTokenStatisticsMetricThreshold
-    from ._models_py3 import GenerationTokenStatisticsSignal
+    from ._models_py3 import GenerationTokenUsageMetricThreshold
+    from ._models_py3 import GenerationTokenUsageSignal
     from ._models_py3 import GridSamplingAlgorithm
+    from ._models_py3 import GroupStatus
     from ._models_py3 import HDInsight
     from ._models_py3 import HDInsightProperties
     from ._models_py3 import HDInsightSchema
@@ -278,6 +281,15 @@ try:
     from ._models_py3 import ImportDataAction
     from ._models_py3 import IndexColumn
     from ._models_py3 import InferenceContainerProperties
+    from ._models_py3 import InferenceEndpoint
+    from ._models_py3 import InferenceEndpointProperties
+    from ._models_py3 import InferenceEndpointTrackedResourceArmPaginatedResult
+    from ._models_py3 import InferenceGroup
+    from ._models_py3 import InferenceGroupProperties
+    from ._models_py3 import InferenceGroupTrackedResourceArmPaginatedResult
+    from ._models_py3 import InferencePool
+    from ._models_py3 import InferencePoolProperties
+    from ._models_py3 import InferencePoolTrackedResourceArmPaginatedResult
     from ._models_py3 import InferencingServer
     from ._models_py3 import InstanceTypeSchema
     from ._models_py3 import InstanceTypeSchemaResources
@@ -291,6 +303,7 @@ try:
     from ._models_py3 import JobResourceConfiguration
     from ._models_py3 import JobScheduleAction
     from ._models_py3 import JobService
+    from ._models_py3 import JupyterKernelConfig
     from ._models_py3 import KerberosCredentials
     from ._models_py3 import KerberosKeytabCredentials
     from ._models_py3 import KerberosKeytabSecrets
@@ -345,15 +358,15 @@ try:
     from ._models_py3 import ModelPackageInput
     from ._models_py3 import ModelPerformanceMetricThresholdBase
     from ._models_py3 import ModelPerformanceSignal
-    from ._models_py3 import ModelProfile
     from ._models_py3 import ModelVersion
     from ._models_py3 import ModelVersionProperties
     from ._models_py3 import ModelVersionResourceArmPaginatedResult
     from ._models_py3 import MonitorComputeConfigurationBase
     from ._models_py3 import MonitorComputeIdentityBase
     from ._models_py3 import MonitorDefinition
+    from ._models_py3 import MonitorEmailNotificationSettings
+    from ._models_py3 import MonitorNotificationSettings
     from ._models_py3 import MonitorServerlessSparkCompute
-    from ._models_py3 import MonitoringAlertNotificationSettingsBase
     from ._models_py3 import MonitoringDataSegment
     from ._models_py3 import MonitoringFeatureFilterBase
     from ._models_py3 import MonitoringInputDataBase
@@ -392,7 +405,9 @@ try:
     from ._models_py3 import OnlineInferenceConfiguration
     from ._models_py3 import OnlineRequestSettings
     from ._models_py3 import OnlineScaleSettings
+    from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationListResult
     from ._models_py3 import OsPatchingStatus
     from ._models_py3 import OutboundRule
     from ._models_py3 import OutboundRuleBasicResource
@@ -424,6 +439,9 @@ try:
     from ._models_py3 import PendingUploadResponseDto
     from ._models_py3 import PersonalComputeInstanceSettings
     from ._models_py3 import PipelineJob
+    from ._models_py3 import PoolEnvironmentConfiguration
+    from ._models_py3 import PoolModelConfiguration
+    from ._models_py3 import PoolStatus
     from ._models_py3 import PredictionDriftMetricThresholdBase
     from ._models_py3 import PredictionDriftMonitoringSignal
     from ._models_py3 import PrivateEndpoint
@@ -437,6 +455,8 @@ try:
     from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import ProbeSettings
     from ._models_py3 import ProgressMetrics
+    from ._models_py3 import PropertiesBase
+    from ._models_py3 import ProxyResource
     from ._models_py3 import PyTorch
     from ._models_py3 import QueueSettings
     from ._models_py3 import QuotaBaseProperties
@@ -457,6 +477,7 @@ try:
     from ._models_py3 import Regression
     from ._models_py3 import RegressionModelPerformanceMetricThreshold
     from ._models_py3 import RegressionTrainingSettings
+    from ._models_py3 import RequestConfiguration
     from ._models_py3 import RequestLogging
     from ._models_py3 import ResizeSchema
     from ._models_py3 import Resource
@@ -465,6 +486,7 @@ try:
     from ._models_py3 import ResourceId
     from ._models_py3 import ResourceName
     from ._models_py3 import ResourceQuota
+    from ._models_py3 import RollingInputData
     from ._models_py3 import Route
     from ._models_py3 import SASAuthTypeWorkspaceConnectionProperties
     from ._models_py3 import SASCredentialDto
@@ -482,9 +504,14 @@ try:
     from ._models_py3 import ScriptsToExecute
     from ._models_py3 import Seasonality
     from ._models_py3 import SecretConfiguration
+    from ._models_py3 import ServerlessComputeSettings
     from ._models_py3 import ServerlessEndpoint
+    from ._models_py3 import ServerlessEndpointCapacityReservation
     from ._models_py3 import ServerlessEndpointProperties
+    from ._models_py3 import ServerlessEndpointStatus
     from ._models_py3 import ServerlessEndpointTrackedResourceArmPaginatedResult
+    from ._models_py3 import ServerlessInferenceEndpoint
+    from ._models_py3 import ServerlessOffer
     from ._models_py3 import ServiceManagedResourcesSettings
     from ._models_py3 import ServicePrincipalAuthTypeWorkspaceConnectionProperties
     from ._models_py3 import ServicePrincipalDatastoreCredentials
@@ -532,7 +559,6 @@ try:
     from ._models_py3 import TmpfsOptions
     from ._models_py3 import TopNFeaturesByAttribution
     from ._models_py3 import TrackedResource
-    from ._models_py3 import TrailingInputData
     from ._models_py3 import TrainingSettings
     from ._models_py3 import TrialComponent
     from ._models_py3 import TriggerBase
@@ -592,6 +618,7 @@ except (SyntaxError, ImportError):
     from ._models import AccountKeyDatastoreCredentials  # type: ignore
     from ._models import AccountKeyDatastoreSecrets  # type: ignore
     from ._models import AcrDetails  # type: ignore
+    from ._models import ActualCapacityInfo  # type: ignore
     from ._models import AksComputeSecrets  # type: ignore
     from ._models import AksComputeSecretsProperties  # type: ignore
     from ._models import AksNetworkingConfiguration  # type: ignore
@@ -602,8 +629,6 @@ except (SyntaxError, ImportError):
     from ._models import AmlComputeNodesInformation  # type: ignore
     from ._models import AmlComputeProperties  # type: ignore
     from ._models import AmlComputeSchema  # type: ignore
-    from ._models import AmlOperation  # type: ignore
-    from ._models import AmlOperationListResult  # type: ignore
     from ._models import AmlToken  # type: ignore
     from ._models import AmlTokenComputeIdentity  # type: ignore
     from ._models import AmlUserFeature  # type: ignore
@@ -626,7 +651,6 @@ except (SyntaxError, ImportError):
     from ._models import AutoTargetLags  # type: ignore
     from ._models import AutoTargetRollingWindowSize  # type: ignore
     from ._models import AutologgerSettings  # type: ignore
-    from ._models import AzMonMonitoringAlertNotificationSettings  # type: ignore
     from ._models import AzureBlobDatastore  # type: ignore
     from ._models import AzureDataLakeGen1Datastore  # type: ignore
     from ._models import AzureDataLakeGen2Datastore  # type: ignore
@@ -652,6 +676,9 @@ except (SyntaxError, ImportError):
     from ._models import BindOptions  # type: ignore
     from ._models import BlobReferenceForConsumptionDto  # type: ignore
     from ._models import BuildContext  # type: ignore
+    from ._models import CapacityReservationGroup  # type: ignore
+    from ._models import CapacityReservationGroupProperties  # type: ignore
+    from ._models import CapacityReservationGroupTrackedResourceArmPaginatedResult  # type: ignore
     from ._models import CategoricalDataDriftMetricThreshold  # type: ignore
     from ._models import CategoricalDataQualityMetricThreshold  # type: ignore
     from ._models import CategoricalPredictionDriftMetricThreshold  # type: ignore
@@ -695,6 +722,7 @@ except (SyntaxError, ImportError):
     from ._models import ComputeInstanceSchema  # type: ignore
     from ._models import ComputeInstanceSshSettings  # type: ignore
     from ._models import ComputeInstanceVersion  # type: ignore
+    from ._models import ComputeRecurrenceSchedule  # type: ignore
     from ._models import ComputeResource  # type: ignore
     from ._models import ComputeResourceSchema  # type: ignore
     from ._models import ComputeRuntimeDto  # type: ignore
@@ -763,7 +791,6 @@ except (SyntaxError, ImportError):
     from ._models import DistributionConfiguration  # type: ignore
     from ._models import Docker  # type: ignore
     from ._models import EarlyTerminationPolicy  # type: ignore
-    from ._models import EmailMonitoringAlertNotificationSettings  # type: ignore
     from ._models import EncryptionKeyVaultUpdateProperties  # type: ignore
     from ._models import EncryptionProperty  # type: ignore
     from ._models import EncryptionUpdateProperties  # type: ignore
@@ -794,6 +821,7 @@ except (SyntaxError, ImportError):
     from ._models import Feature  # type: ignore
     from ._models import FeatureAttributionDriftMonitoringSignal  # type: ignore
     from ._models import FeatureAttributionMetricThreshold  # type: ignore
+    from ._models import FeatureImportanceSettings  # type: ignore
     from ._models import FeatureProperties  # type: ignore
     from ._models import FeatureResourceArmPaginatedResult  # type: ignore
     from ._models import FeatureStoreSettings  # type: ignore
@@ -825,9 +853,10 @@ except (SyntaxError, ImportError):
     from ._models import FqdnOutboundRule  # type: ignore
     from ._models import GenerationSafetyQualityMetricThreshold  # type: ignore
     from ._models import GenerationSafetyQualityMonitoringSignal  # type: ignore
-    from ._models import GenerationTokenStatisticsMetricThreshold  # type: ignore
-    from ._models import GenerationTokenStatisticsSignal  # type: ignore
+    from ._models import GenerationTokenUsageMetricThreshold  # type: ignore
+    from ._models import GenerationTokenUsageSignal  # type: ignore
     from ._models import GridSamplingAlgorithm  # type: ignore
+    from ._models import GroupStatus  # type: ignore
     from ._models import HDInsight  # type: ignore
     from ._models import HDInsightProperties  # type: ignore
     from ._models import HDInsightSchema  # type: ignore
@@ -856,6 +885,15 @@ except (SyntaxError, ImportError):
     from ._models import ImportDataAction  # type: ignore
     from ._models import IndexColumn  # type: ignore
     from ._models import InferenceContainerProperties  # type: ignore
+    from ._models import InferenceEndpoint  # type: ignore
+    from ._models import InferenceEndpointProperties  # type: ignore
+    from ._models import InferenceEndpointTrackedResourceArmPaginatedResult  # type: ignore
+    from ._models import InferenceGroup  # type: ignore
+    from ._models import InferenceGroupProperties  # type: ignore
+    from ._models import InferenceGroupTrackedResourceArmPaginatedResult  # type: ignore
+    from ._models import InferencePool  # type: ignore
+    from ._models import InferencePoolProperties  # type: ignore
+    from ._models import InferencePoolTrackedResourceArmPaginatedResult  # type: ignore
     from ._models import InferencingServer  # type: ignore
     from ._models import InstanceTypeSchema  # type: ignore
     from ._models import InstanceTypeSchemaResources  # type: ignore
@@ -869,6 +907,7 @@ except (SyntaxError, ImportError):
     from ._models import JobResourceConfiguration  # type: ignore
     from ._models import JobScheduleAction  # type: ignore
     from ._models import JobService  # type: ignore
+    from ._models import JupyterKernelConfig  # type: ignore
     from ._models import KerberosCredentials  # type: ignore
     from ._models import KerberosKeytabCredentials  # type: ignore
     from ._models import KerberosKeytabSecrets  # type: ignore
@@ -923,15 +962,15 @@ except (SyntaxError, ImportError):
     from ._models import ModelPackageInput  # type: ignore
     from ._models import ModelPerformanceMetricThresholdBase  # type: ignore
     from ._models import ModelPerformanceSignal  # type: ignore
-    from ._models import ModelProfile  # type: ignore
     from ._models import ModelVersion  # type: ignore
     from ._models import ModelVersionProperties  # type: ignore
     from ._models import ModelVersionResourceArmPaginatedResult  # type: ignore
     from ._models import MonitorComputeConfigurationBase  # type: ignore
     from ._models import MonitorComputeIdentityBase  # type: ignore
     from ._models import MonitorDefinition  # type: ignore
+    from ._models import MonitorEmailNotificationSettings  # type: ignore
+    from ._models import MonitorNotificationSettings  # type: ignore
     from ._models import MonitorServerlessSparkCompute  # type: ignore
-    from ._models import MonitoringAlertNotificationSettingsBase  # type: ignore
     from ._models import MonitoringDataSegment  # type: ignore
     from ._models import MonitoringFeatureFilterBase  # type: ignore
     from ._models import MonitoringInputDataBase  # type: ignore
@@ -970,7 +1009,9 @@ except (SyntaxError, ImportError):
     from ._models import OnlineInferenceConfiguration  # type: ignore
     from ._models import OnlineRequestSettings  # type: ignore
     from ._models import OnlineScaleSettings  # type: ignore
+    from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
+    from ._models import OperationListResult  # type: ignore
     from ._models import OsPatchingStatus  # type: ignore
     from ._models import OutboundRule  # type: ignore
     from ._models import OutboundRuleBasicResource  # type: ignore
@@ -1002,6 +1043,9 @@ except (SyntaxError, ImportError):
     from ._models import PendingUploadResponseDto  # type: ignore
     from ._models import PersonalComputeInstanceSettings  # type: ignore
     from ._models import PipelineJob  # type: ignore
+    from ._models import PoolEnvironmentConfiguration  # type: ignore
+    from ._models import PoolModelConfiguration  # type: ignore
+    from ._models import PoolStatus  # type: ignore
     from ._models import PredictionDriftMetricThresholdBase  # type: ignore
     from ._models import PredictionDriftMonitoringSignal  # type: ignore
     from ._models import PrivateEndpoint  # type: ignore
@@ -1015,6 +1059,8 @@ except (SyntaxError, ImportError):
     from ._models import PrivateLinkServiceConnectionState  # type: ignore
     from ._models import ProbeSettings  # type: ignore
     from ._models import ProgressMetrics  # type: ignore
+    from ._models import PropertiesBase  # type: ignore
+    from ._models import ProxyResource  # type: ignore
     from ._models import PyTorch  # type: ignore
     from ._models import QueueSettings  # type: ignore
     from ._models import QuotaBaseProperties  # type: ignore
@@ -1035,6 +1081,7 @@ except (SyntaxError, ImportError):
     from ._models import Regression  # type: ignore
     from ._models import RegressionModelPerformanceMetricThreshold  # type: ignore
     from ._models import RegressionTrainingSettings  # type: ignore
+    from ._models import RequestConfiguration  # type: ignore
     from ._models import RequestLogging  # type: ignore
     from ._models import ResizeSchema  # type: ignore
     from ._models import Resource  # type: ignore
@@ -1043,6 +1090,7 @@ except (SyntaxError, ImportError):
     from ._models import ResourceId  # type: ignore
     from ._models import ResourceName  # type: ignore
     from ._models import ResourceQuota  # type: ignore
+    from ._models import RollingInputData  # type: ignore
     from ._models import Route  # type: ignore
     from ._models import SASAuthTypeWorkspaceConnectionProperties  # type: ignore
     from ._models import SASCredentialDto  # type: ignore
@@ -1060,9 +1108,14 @@ except (SyntaxError, ImportError):
     from ._models import ScriptsToExecute  # type: ignore
     from ._models import Seasonality  # type: ignore
     from ._models import SecretConfiguration  # type: ignore
+    from ._models import ServerlessComputeSettings  # type: ignore
     from ._models import ServerlessEndpoint  # type: ignore
+    from ._models import ServerlessEndpointCapacityReservation  # type: ignore
     from ._models import ServerlessEndpointProperties  # type: ignore
+    from ._models import ServerlessEndpointStatus  # type: ignore
     from ._models import ServerlessEndpointTrackedResourceArmPaginatedResult  # type: ignore
+    from ._models import ServerlessInferenceEndpoint  # type: ignore
+    from ._models import ServerlessOffer  # type: ignore
     from ._models import ServiceManagedResourcesSettings  # type: ignore
     from ._models import ServicePrincipalAuthTypeWorkspaceConnectionProperties  # type: ignore
     from ._models import ServicePrincipalDatastoreCredentials  # type: ignore
@@ -1110,7 +1163,6 @@ except (SyntaxError, ImportError):
     from ._models import TmpfsOptions  # type: ignore
     from ._models import TopNFeaturesByAttribution  # type: ignore
     from ._models import TrackedResource  # type: ignore
-    from ._models import TrailingInputData  # type: ignore
     from ._models import TrainingSettings  # type: ignore
     from ._models import TrialComponent  # type: ignore
     from ._models import TriggerBase  # type: ignore
@@ -1164,9 +1216,11 @@ except (SyntaxError, ImportError):
     from ._models import WorkspaceUpdateParameters  # type: ignore
 
 from ._azure_machine_learning_workspaces_enums import (
+    ActionType,
     AllocationState,
     ApplicationSharingPolicy,
     AssetProvisioningState,
+    AuthMode,
     AutoDeleteCondition,
     AutoRebuildSetting,
     Autosave,
@@ -1188,7 +1242,10 @@ from ._azure_machine_learning_workspaces_enums import (
     ComputeInstanceAuthorizationType,
     ComputeInstanceState,
     ComputePowerAction,
+    ComputeRecurrenceFrequency,
+    ComputeTriggerType,
     ComputeType,
+    ComputeWeekDay,
     ConnectionAuthType,
     ConnectionCategory,
     ContainerType,
@@ -1215,13 +1272,14 @@ from ._azure_machine_learning_workspaces_enums import (
     ExportFormatType,
     FeatureAttributionMetric,
     FeatureDataType,
+    FeatureImportanceMode,
     FeatureLags,
     FeaturizationMode,
     ForecastHorizonMode,
     ForecastingModels,
     ForecastingPrimaryMetrics,
     GenerationSafetyQualityMetric,
-    GenerationTokenStatisticsMetric,
+    GenerationTokenUsageMetric,
     Goal,
     IdentityConfigurationType,
     ImageAnnotationType,
@@ -1257,12 +1315,11 @@ from ._azure_machine_learning_workspaces_enums import (
     ModelTaskType,
     MonitorComputeIdentityType,
     MonitorComputeType,
-    MonitoringAlertNotificationType,
     MonitoringFeatureDataType,
     MonitoringFeatureFilterType,
     MonitoringInputDataType,
     MonitoringModelType,
-    MonitoringNotificationMode,
+    MonitoringNotificationType,
     MonitoringSignalType,
     MountAction,
     MountState,
@@ -1282,6 +1339,7 @@ from ._azure_machine_learning_workspaces_enums import (
     OperationStatus,
     OperationTrigger,
     OrderString,
+    Origin,
     OsType,
     OutputDeliveryMode,
     PackageBuildState,
@@ -1290,6 +1348,7 @@ from ._azure_machine_learning_workspaces_enums import (
     PatchStatus,
     PendingUploadCredentialType,
     PendingUploadType,
+    PoolProvisioningState,
     PrivateEndpointConnectionProvisioningState,
     ProtectionLevel,
     Protocol,
@@ -1318,6 +1377,7 @@ from ._azure_machine_learning_workspaces_enums import (
     ScheduleStatus,
     SeasonalityMode,
     SecretsType,
+    ServerlessInferenceEndpointAuthMode,
     ServiceDataAccessAuthIdentity,
     ShortSeriesHandlingConfiguration,
     SkuScaleType,
@@ -1359,6 +1419,7 @@ __all__ = [
     'AccountKeyDatastoreCredentials',
     'AccountKeyDatastoreSecrets',
     'AcrDetails',
+    'ActualCapacityInfo',
     'AksComputeSecrets',
     'AksComputeSecretsProperties',
     'AksNetworkingConfiguration',
@@ -1369,8 +1430,6 @@ __all__ = [
     'AmlComputeNodesInformation',
     'AmlComputeProperties',
     'AmlComputeSchema',
-    'AmlOperation',
-    'AmlOperationListResult',
     'AmlToken',
     'AmlTokenComputeIdentity',
     'AmlUserFeature',
@@ -1393,7 +1452,6 @@ __all__ = [
     'AutoTargetLags',
     'AutoTargetRollingWindowSize',
     'AutologgerSettings',
-    'AzMonMonitoringAlertNotificationSettings',
     'AzureBlobDatastore',
     'AzureDataLakeGen1Datastore',
     'AzureDataLakeGen2Datastore',
@@ -1419,6 +1477,9 @@ __all__ = [
     'BindOptions',
     'BlobReferenceForConsumptionDto',
     'BuildContext',
+    'CapacityReservationGroup',
+    'CapacityReservationGroupProperties',
+    'CapacityReservationGroupTrackedResourceArmPaginatedResult',
     'CategoricalDataDriftMetricThreshold',
     'CategoricalDataQualityMetricThreshold',
     'CategoricalPredictionDriftMetricThreshold',
@@ -1462,6 +1523,7 @@ __all__ = [
     'ComputeInstanceSchema',
     'ComputeInstanceSshSettings',
     'ComputeInstanceVersion',
+    'ComputeRecurrenceSchedule',
     'ComputeResource',
     'ComputeResourceSchema',
     'ComputeRuntimeDto',
@@ -1530,7 +1592,6 @@ __all__ = [
     'DistributionConfiguration',
     'Docker',
     'EarlyTerminationPolicy',
-    'EmailMonitoringAlertNotificationSettings',
     'EncryptionKeyVaultUpdateProperties',
     'EncryptionProperty',
     'EncryptionUpdateProperties',
@@ -1561,6 +1622,7 @@ __all__ = [
     'Feature',
     'FeatureAttributionDriftMonitoringSignal',
     'FeatureAttributionMetricThreshold',
+    'FeatureImportanceSettings',
     'FeatureProperties',
     'FeatureResourceArmPaginatedResult',
     'FeatureStoreSettings',
@@ -1592,9 +1654,10 @@ __all__ = [
     'FqdnOutboundRule',
     'GenerationSafetyQualityMetricThreshold',
     'GenerationSafetyQualityMonitoringSignal',
-    'GenerationTokenStatisticsMetricThreshold',
-    'GenerationTokenStatisticsSignal',
+    'GenerationTokenUsageMetricThreshold',
+    'GenerationTokenUsageSignal',
     'GridSamplingAlgorithm',
+    'GroupStatus',
     'HDInsight',
     'HDInsightProperties',
     'HDInsightSchema',
@@ -1623,6 +1686,15 @@ __all__ = [
     'ImportDataAction',
     'IndexColumn',
     'InferenceContainerProperties',
+    'InferenceEndpoint',
+    'InferenceEndpointProperties',
+    'InferenceEndpointTrackedResourceArmPaginatedResult',
+    'InferenceGroup',
+    'InferenceGroupProperties',
+    'InferenceGroupTrackedResourceArmPaginatedResult',
+    'InferencePool',
+    'InferencePoolProperties',
+    'InferencePoolTrackedResourceArmPaginatedResult',
     'InferencingServer',
     'InstanceTypeSchema',
     'InstanceTypeSchemaResources',
@@ -1636,6 +1708,7 @@ __all__ = [
     'JobResourceConfiguration',
     'JobScheduleAction',
     'JobService',
+    'JupyterKernelConfig',
     'KerberosCredentials',
     'KerberosKeytabCredentials',
     'KerberosKeytabSecrets',
@@ -1690,15 +1763,15 @@ __all__ = [
     'ModelPackageInput',
     'ModelPerformanceMetricThresholdBase',
     'ModelPerformanceSignal',
-    'ModelProfile',
     'ModelVersion',
     'ModelVersionProperties',
     'ModelVersionResourceArmPaginatedResult',
     'MonitorComputeConfigurationBase',
     'MonitorComputeIdentityBase',
     'MonitorDefinition',
+    'MonitorEmailNotificationSettings',
+    'MonitorNotificationSettings',
     'MonitorServerlessSparkCompute',
-    'MonitoringAlertNotificationSettingsBase',
     'MonitoringDataSegment',
     'MonitoringFeatureFilterBase',
     'MonitoringInputDataBase',
@@ -1737,7 +1810,9 @@ __all__ = [
     'OnlineInferenceConfiguration',
     'OnlineRequestSettings',
     'OnlineScaleSettings',
+    'Operation',
     'OperationDisplay',
+    'OperationListResult',
     'OsPatchingStatus',
     'OutboundRule',
     'OutboundRuleBasicResource',
@@ -1769,6 +1844,9 @@ __all__ = [
     'PendingUploadResponseDto',
     'PersonalComputeInstanceSettings',
     'PipelineJob',
+    'PoolEnvironmentConfiguration',
+    'PoolModelConfiguration',
+    'PoolStatus',
     'PredictionDriftMetricThresholdBase',
     'PredictionDriftMonitoringSignal',
     'PrivateEndpoint',
@@ -1782,6 +1860,8 @@ __all__ = [
     'PrivateLinkServiceConnectionState',
     'ProbeSettings',
     'ProgressMetrics',
+    'PropertiesBase',
+    'ProxyResource',
     'PyTorch',
     'QueueSettings',
     'QuotaBaseProperties',
@@ -1802,6 +1882,7 @@ __all__ = [
     'Regression',
     'RegressionModelPerformanceMetricThreshold',
     'RegressionTrainingSettings',
+    'RequestConfiguration',
     'RequestLogging',
     'ResizeSchema',
     'Resource',
@@ -1810,6 +1891,7 @@ __all__ = [
     'ResourceId',
     'ResourceName',
     'ResourceQuota',
+    'RollingInputData',
     'Route',
     'SASAuthTypeWorkspaceConnectionProperties',
     'SASCredentialDto',
@@ -1827,9 +1909,14 @@ __all__ = [
     'ScriptsToExecute',
     'Seasonality',
     'SecretConfiguration',
+    'ServerlessComputeSettings',
     'ServerlessEndpoint',
+    'ServerlessEndpointCapacityReservation',
     'ServerlessEndpointProperties',
+    'ServerlessEndpointStatus',
     'ServerlessEndpointTrackedResourceArmPaginatedResult',
+    'ServerlessInferenceEndpoint',
+    'ServerlessOffer',
     'ServiceManagedResourcesSettings',
     'ServicePrincipalAuthTypeWorkspaceConnectionProperties',
     'ServicePrincipalDatastoreCredentials',
@@ -1877,7 +1964,6 @@ __all__ = [
     'TmpfsOptions',
     'TopNFeaturesByAttribution',
     'TrackedResource',
-    'TrailingInputData',
     'TrainingSettings',
     'TrialComponent',
     'TriggerBase',
@@ -1929,9 +2015,11 @@ __all__ = [
     'WorkspaceListResult',
     'WorkspacePrivateEndpointResource',
     'WorkspaceUpdateParameters',
+    'ActionType',
     'AllocationState',
     'ApplicationSharingPolicy',
     'AssetProvisioningState',
+    'AuthMode',
     'AutoDeleteCondition',
     'AutoRebuildSetting',
     'Autosave',
@@ -1953,7 +2041,10 @@ __all__ = [
     'ComputeInstanceAuthorizationType',
     'ComputeInstanceState',
     'ComputePowerAction',
+    'ComputeRecurrenceFrequency',
+    'ComputeTriggerType',
     'ComputeType',
+    'ComputeWeekDay',
     'ConnectionAuthType',
     'ConnectionCategory',
     'ContainerType',
@@ -1980,13 +2071,14 @@ __all__ = [
     'ExportFormatType',
     'FeatureAttributionMetric',
     'FeatureDataType',
+    'FeatureImportanceMode',
     'FeatureLags',
     'FeaturizationMode',
     'ForecastHorizonMode',
     'ForecastingModels',
     'ForecastingPrimaryMetrics',
     'GenerationSafetyQualityMetric',
-    'GenerationTokenStatisticsMetric',
+    'GenerationTokenUsageMetric',
     'Goal',
     'IdentityConfigurationType',
     'ImageAnnotationType',
@@ -2022,12 +2114,11 @@ __all__ = [
     'ModelTaskType',
     'MonitorComputeIdentityType',
     'MonitorComputeType',
-    'MonitoringAlertNotificationType',
     'MonitoringFeatureDataType',
     'MonitoringFeatureFilterType',
     'MonitoringInputDataType',
     'MonitoringModelType',
-    'MonitoringNotificationMode',
+    'MonitoringNotificationType',
     'MonitoringSignalType',
     'MountAction',
     'MountState',
@@ -2047,6 +2138,7 @@ __all__ = [
     'OperationStatus',
     'OperationTrigger',
     'OrderString',
+    'Origin',
     'OsType',
     'OutputDeliveryMode',
     'PackageBuildState',
@@ -2055,6 +2147,7 @@ __all__ = [
     'PatchStatus',
     'PendingUploadCredentialType',
     'PendingUploadType',
+    'PoolProvisioningState',
     'PrivateEndpointConnectionProvisioningState',
     'ProtectionLevel',
     'Protocol',
@@ -2083,6 +2176,7 @@ __all__ = [
     'ScheduleStatus',
     'SeasonalityMode',
     'SecretsType',
+    'ServerlessInferenceEndpointAuthMode',
     'ServiceDataAccessAuthIdentity',
     'ShortSeriesHandlingConfiguration',
     'SkuScaleType',

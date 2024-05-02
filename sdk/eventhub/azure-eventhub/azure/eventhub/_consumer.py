@@ -83,7 +83,7 @@ class EventHubConsumer(
         event_position = kwargs.get("event_position", None)
         prefetch = kwargs.get("prefetch", 300)
         owner_level = kwargs.get("owner_level", None)
-        keep_alive = kwargs.get("keep_alive", None)
+        keep_alive = kwargs.get("keep_alive", 30)
         auto_reconnect = kwargs.get("auto_reconnect", True)
         track_last_enqueued_event_properties = kwargs.get(
             "track_last_enqueued_event_properties", False
@@ -139,6 +139,8 @@ class EventHubConsumer(
         self._last_received_event: Optional[EventData] = None
         self._receive_start_time: Optional[float] = None
 
+        super(EventHubConsumer, self).__init__()
+
     def _create_handler(self, auth: Union[uamqp_JWTTokenAuth, JWTTokenAuth]) -> None:
         source = self._amqp_transport.create_source(
             self._source,
@@ -157,7 +159,7 @@ class EventHubConsumer(
             auth=auth,
             network_trace=self._client._config.network_tracing,  # pylint:disable=protected-access
             link_credit=self._prefetch,
-            link_properties=self._link_properties,
+            link_properties=self._link_properties, # type: ignore
             timeout=self._timeout,
             idle_timeout=self._idle_timeout,
             retry_policy=self._retry_policy,
@@ -201,7 +203,7 @@ class EventHubConsumer(
             auth = self._client._create_auth()
             self._create_handler(auth)
             conn = self._client._conn_manager.get_connection(  # pylint: disable=protected-access
-                host=self._client._address.hostname, auth=auth
+                endpoint=self._client._address.hostname, auth=auth
             )
             self._handler = cast("ReceiveClient", self._handler)
             self._handler.open(connection=conn)

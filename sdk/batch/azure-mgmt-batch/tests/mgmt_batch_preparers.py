@@ -4,13 +4,7 @@ import os
 import azure.mgmt.keyvault
 import azure.mgmt.batch
 
-from azure_devtools.scenario_tests.preparers import (
-    AbstractPreparer,
-    SingleValueReplacer,
-)
-from azure_devtools.scenario_tests.exceptions import AzureTestError
-
-from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer, FakeResource
+from devtools_testutils import AzureMgmtPreparer, AzureTestError, ResourceGroupPreparer, FakeResource
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 
 

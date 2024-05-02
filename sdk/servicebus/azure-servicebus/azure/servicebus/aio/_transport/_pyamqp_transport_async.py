@@ -7,10 +7,12 @@ from __future__ import annotations
 import functools
 from typing import TYPE_CHECKING, Optional, Any, Callable, Union, AsyncIterator, cast
 import time
+import math
+import random
 
 from ..._pyamqp import constants
 from ..._pyamqp.message import BatchMessage
-from ..._pyamqp.utils import amqp_string_value
+from ..._pyamqp.utils import amqp_string_value, amqp_uint_value
 from ..._pyamqp.aio import SendClientAsync, ReceiveClientAsync
 from ..._pyamqp.aio._authentication_async import JWTTokenAuthAsync
 from ..._pyamqp.aio._connection_async import Connection as ConnectionAsync
@@ -35,6 +37,8 @@ from ..._common.constants import (
     MESSAGE_DEFER,
     MESSAGE_DEAD_LETTER,
     ServiceBusReceiveMode,
+    OPERATION_TIMEOUT,
+    NEXT_AVAILABLE_SESSION,
 )
 from ..._transport._pyamqp_transport import PyamqpTransport
 from ...exceptions import (
@@ -179,6 +183,27 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         config = receiver._config   # pylint: disable=protected-access
         source = kwargs.pop("source")
         receive_mode = kwargs.pop("receive_mode")
+        link_properties = kwargs.pop("link_properties")
+
+        # When NEXT_AVAILABLE_SESSION is set, the default time to wait to connect to a session is 65 seconds.
+        # If there are no messages in the topic/queue the client will wait for 65 seconds for an AttachFrame
+        # frame from the service before raising an OperationTimeoutError due to failure to connect.
+        # max_wait_time, if specified, will allow the user to wait for fewer or more than 65 seconds to
+        # connect to a session.
+        if receiver._session_id == NEXT_AVAILABLE_SESSION and receiver._max_wait_time: # pylint: disable=protected-access
+            timeout_in_ms = receiver._max_wait_time * 1000 # pylint: disable=protected-access
+            open_receive_link_base_jitter_in_ms = 100
+            open_recieve_link_buffer_in_ms = 20
+            open_receive_link_buffer_threshold_in_ms = 1000
+            jitter_base_in_ms = min(timeout_in_ms * 0.01, open_receive_link_base_jitter_in_ms)
+            timeout_in_ms = math.floor(timeout_in_ms - jitter_base_in_ms * random.random())
+            if timeout_in_ms >= open_receive_link_buffer_threshold_in_ms:
+                timeout_in_ms -= open_recieve_link_buffer_in_ms
+
+            # If we have specified a client-side timeout, assure that it is encoded as an uint
+            link_properties[OPERATION_TIMEOUT] = amqp_uint_value(timeout_in_ms)
+
+        kwargs["link_properties"] = link_properties
 
         return ReceiveClientAsync(
             config.hostname,
@@ -204,8 +229,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         receiver: "ServiceBusReceiver", max_wait_time: Optional[int] = None
     ) -> AsyncIterator["ServiceBusReceivedMessage"]:
         while True:
+            # pylint: disable=protected-access
             try:
-                # pylint: disable=protected-access
                 message = await receiver._inner_anext(wait_time=max_wait_time)
                 links = get_receive_links(message)
                 with receive_trace_context_manager(receiver, links=links):
@@ -241,6 +266,18 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         frame: "AttachFrame",
         message: "Message"
     ) -> None:
+        """Callback run on receipt of every message.
+
+        Releases messages from the internal buffer when there is no active receive call. In PEEKLOCK mode,
+        this helps avoid messages from expiring in the buffer and incrementing the delivery count of a message.
+
+        Should not be used with RECEIVE_AND_DELETE mode, since those messages are settled right away and removed
+        from the Service Bus entity.
+
+        :param ~azure.servicebus.aio.ServiceBusReceiver receiver: The receiver object.
+        :param ~pyamqp.performatives.AttachFrame frame: The attach frame.
+        :param ~pyamqp.message.Message message: The received message.
+        """
         # pylint: disable=protected-access
         receiver._handler._last_activity_timestamp = time.time()
         if receiver._receive_context.is_set():

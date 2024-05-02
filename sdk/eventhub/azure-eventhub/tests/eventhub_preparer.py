@@ -12,11 +12,7 @@ import functools
 from azure.mgmt.eventhub import EventHubManagementClient
 from azure.mgmt.eventhub.models import Eventhub, AccessRights
 
-from azure_devtools.scenario_tests.exceptions import AzureTestError
-
-from devtools_testutils import (
-    ResourceGroupPreparer, AzureMgmtPreparer, FakeResource
-)
+from devtools_testutils import ResourceGroupPreparer, AzureMgmtPreparer, AzureTestError, FakeResource
 
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 

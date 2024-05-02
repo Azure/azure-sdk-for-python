@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.datafactory import DataFactoryManagementClient
 
 """
@@ -29,12 +30,11 @@ def main():
         subscription_id="12345678-1234-1234-1234-12345678abc",
     )
 
-    response = client.data_flows.delete(
+    client.data_flows.delete(
         resource_group_name="exampleResourceGroup",
         factory_name="exampleFactoryName",
         data_flow_name="exampleDataFlow",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/datafactory/resource-manager/Microsoft.DataFactory/stable/2018-06-01/examples/DataFlows_Delete.json

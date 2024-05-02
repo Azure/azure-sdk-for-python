@@ -9,56 +9,130 @@
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
+from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
+from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
 
 from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import SelfHelpMgmtClientConfiguration
-from .operations import DiagnosticsOperations, DiscoverySolutionOperations, Operations
+from .operations import (
+    CheckNameAvailabilityOperations,
+    DiagnosticsOperations,
+    DiscoverySolutionNLPSubscriptionScopeOperations,
+    DiscoverySolutionNLPTenantScopeOperations,
+    DiscoverySolutionOperations,
+    Operations,
+    SimplifiedSolutionsOperations,
+    SolutionOperations,
+    SolutionSelfHelpOperations,
+    TroubleshootersOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class SelfHelpMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
+class SelfHelpMgmtClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Help RP provider.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.selfhelp.aio.operations.Operations
+    :ivar check_name_availability: CheckNameAvailabilityOperations operations
+    :vartype check_name_availability:
+     azure.mgmt.selfhelp.aio.operations.CheckNameAvailabilityOperations
     :ivar diagnostics: DiagnosticsOperations operations
     :vartype diagnostics: azure.mgmt.selfhelp.aio.operations.DiagnosticsOperations
     :ivar discovery_solution: DiscoverySolutionOperations operations
     :vartype discovery_solution: azure.mgmt.selfhelp.aio.operations.DiscoverySolutionOperations
+    :ivar solution: SolutionOperations operations
+    :vartype solution: azure.mgmt.selfhelp.aio.operations.SolutionOperations
+    :ivar simplified_solutions: SimplifiedSolutionsOperations operations
+    :vartype simplified_solutions: azure.mgmt.selfhelp.aio.operations.SimplifiedSolutionsOperations
+    :ivar troubleshooters: TroubleshootersOperations operations
+    :vartype troubleshooters: azure.mgmt.selfhelp.aio.operations.TroubleshootersOperations
+    :ivar solution_self_help: SolutionSelfHelpOperations operations
+    :vartype solution_self_help: azure.mgmt.selfhelp.aio.operations.SolutionSelfHelpOperations
+    :ivar discovery_solution_nlp_tenant_scope: DiscoverySolutionNLPTenantScopeOperations operations
+    :vartype discovery_solution_nlp_tenant_scope:
+     azure.mgmt.selfhelp.aio.operations.DiscoverySolutionNLPTenantScopeOperations
+    :ivar discovery_solution_nlp_subscription_scope:
+     DiscoverySolutionNLPSubscriptionScopeOperations operations
+    :vartype discovery_solution_nlp_subscription_scope:
+     azure.mgmt.selfhelp.aio.operations.DiscoverySolutionNLPSubscriptionScopeOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
+    :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-06-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2024-03-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
     def __init__(
-        self, credential: "AsyncTokenCredential", base_url: str = "https://management.azure.com", **kwargs: Any
+        self,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: str = "https://management.azure.com",
+        **kwargs: Any
     ) -> None:
-        self._config = SelfHelpMgmtClientConfiguration(credential=credential, **kwargs)
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = SelfHelpMgmtClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                AsyncARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.check_name_availability = CheckNameAvailabilityOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.diagnostics = DiagnosticsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.discovery_solution = DiscoverySolutionOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.solution = SolutionOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.simplified_solutions = SimplifiedSolutionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.troubleshooters = TroubleshootersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.solution_self_help = SolutionSelfHelpOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.discovery_solution_nlp_tenant_scope = DiscoverySolutionNLPTenantScopeOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.discovery_solution_nlp_subscription_scope = DiscoverySolutionNLPSubscriptionScopeOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -78,7 +152,7 @@ class SelfHelpMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
         await self._client.close()

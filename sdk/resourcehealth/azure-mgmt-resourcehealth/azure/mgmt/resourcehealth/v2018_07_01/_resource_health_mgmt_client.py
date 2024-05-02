@@ -71,13 +71,15 @@ class ResourceHealthMgmtClient:  # pylint: disable=client-accepts-api-version-ke
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.events = EventsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.events = EventsOperations(self._client, self._config, self._serialize, self._deserialize, "2018-07-01")
         self.availability_statuses = AvailabilityStatusesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2018-07-01"
         )
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.emerging_issues = EmergingIssuesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.metadata = MetadataOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize, "2018-07-01")
+        self.emerging_issues = EmergingIssuesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2018-07-01"
+        )
+        self.metadata = MetadataOperations(self._client, self._config, self._serialize, self._deserialize, "2018-07-01")
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

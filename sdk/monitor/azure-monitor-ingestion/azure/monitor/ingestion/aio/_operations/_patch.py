@@ -6,6 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+from collections.abc import Sequence
 from io import IOBase
 import logging
 import sys
@@ -30,7 +31,7 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
         self,
         rule_id: str,
         stream_name: str,
-        logs: Union[List[JSON], IO],
+        logs: Union[List[JSON], IO[bytes]],
         *,
         on_error: Optional[Callable[[LogsUploadError], Awaitable[None]]] = None,
         **kwargs: Any
@@ -42,8 +43,8 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
 
         :param rule_id: The immutable ID of the Data Collection Rule resource.
         :type rule_id: str
-        :param stream: The streamDeclaration name as defined in the Data Collection Rule.
-        :type stream: str
+        :param stream_name: The streamDeclaration name as defined in the Data Collection Rule.
+        :type stream_name: str
         :param logs: An array of objects matching the schema defined by the provided stream.
         :type logs: list[JSON] or IO
         :keyword on_error: The callback function that is called when a chunk of logs fails to upload.
@@ -66,6 +67,11 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
 
             await super()._upload(rule_id, stream=stream_name, body=logs, content_encoding=content_encoding, **kwargs)
             return
+
+        if not isinstance(logs, Sequence) or isinstance(logs, str):
+            raise ValueError(
+                "The 'logs' parameter must be a list of mappings/dictionaries or an I/O stream that is readable."
+            )
 
         for gzip_data, log_chunk in _create_gzip_requests(cast(List[JSON], logs)):
             try:

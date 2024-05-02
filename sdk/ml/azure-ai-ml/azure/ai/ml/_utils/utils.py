@@ -12,6 +12,7 @@ import os
 import random
 import re
 import string
+import sys
 import tempfile
 import time
 import warnings
@@ -33,7 +34,6 @@ from azure.ai.ml._restclient.v2022_05_01.models import ListViewType, ManagedServ
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml.constants._common import (
-    API_URL_KEY,
     AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION,
     AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR,
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
@@ -41,7 +41,9 @@ from azure.ai.ml.constants._common import (
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
     CommonYamlFields,
     DefaultOpenEncoding,
+    WorkspaceDiscoveryUrlKey,
 )
+from azure.ai.ml.exceptions import MlException
 from azure.core.pipeline.policies import RetryPolicy
 
 module_logger = logging.getLogger(__name__)
@@ -165,8 +167,8 @@ def create_requests_pipeline_with_retry(*, requests_pipeline: HttpPipeline, retr
 
     :keyword requests_pipeline: Pipeline to base new one off of.
     :paramtype requests_pipeline: HttpPipeline
-    :keyword retry: Number of retries. Defaults to 3
-    :paramtype retry: int
+    :keyword retries: Number of retries. Defaults to 3.
+    :paramtype retries: int
     :return: Pipeline identical to provided one, except with a new retry policy
     :rtype: HttpPipeline
     """
@@ -691,32 +693,44 @@ def _(duration: timedelta) -> int:
     return int(duration.days)
 
 
-def _get_mfe_base_url_from_discovery_service(
-    workspace_operations: Any, workspace_name: str, requests_pipeline: HttpPipeline
-) -> str:
+def _get_base_urls_from_discovery_service(
+    workspace_operations: "WorkspaceOperations", workspace_name: str, requests_pipeline: HttpPipeline
+) -> Dict[WorkspaceDiscoveryUrlKey, str]:
+    """Fetch base urls for a workspace from the discovery service.
+
+    :param WorkspaceOperations workspace_operations:
+    :param str workspace_name: The name of the workspace
+    :param HttpPipeline requests_pipeline: An HTTP pipeline to make requests with
+    :returns: A dictionary mapping url types to base urls
+    :rtype: Dict[WorkspaceDiscoveryUrlKey,str]
+    """
     discovery_url = workspace_operations.get(workspace_name).discovery_url
 
-    all_urls = json.loads(
+    return json.loads(
         download_text_from_url(
             discovery_url,
             create_requests_pipeline_with_retry(requests_pipeline=requests_pipeline),
         )
     )
-    return f"{all_urls[API_URL_KEY]}{MFE_PATH_PREFIX}"
+
+
+def _get_mfe_base_url_from_discovery_service(
+    workspace_operations: Any, workspace_name: str, requests_pipeline: HttpPipeline
+) -> str:
+    all_urls = _get_base_urls_from_discovery_service(workspace_operations, workspace_name, requests_pipeline)
+    return f"{all_urls[WorkspaceDiscoveryUrlKey.API]}{MFE_PATH_PREFIX}"
 
 
 def _get_mfe_base_url_from_registry_discovery_service(
     workspace_operations: Any, workspace_name: str, requests_pipeline: HttpPipeline
 ) -> str:
-    discovery_url = workspace_operations.get(workspace_name).discovery_url
+    all_urls = _get_base_urls_from_discovery_service(workspace_operations, workspace_name, requests_pipeline)
+    return all_urls[WorkspaceDiscoveryUrlKey.API]
 
-    all_urls = json.loads(
-        download_text_from_url(
-            discovery_url,
-            create_requests_pipeline_with_retry(requests_pipeline=requests_pipeline),
-        )
-    )
-    return all_urls[API_URL_KEY]
+
+def _get_workspace_base_url(workspace_operations: Any, workspace_name: str, requests_pipeline: HttpPipeline) -> str:
+    all_urls = _get_base_urls_from_discovery_service(workspace_operations, workspace_name, requests_pipeline)
+    return all_urls[WorkspaceDiscoveryUrlKey.API]
 
 
 def _get_mfe_base_url_from_batch_endpoint(endpoint: "BatchEndpoint") -> str:
@@ -920,7 +934,7 @@ def retry(
 
     def retry_decorator(f):
         @wraps(f)
-        def func_with_retries(*args, **kwargs):
+        def func_with_retries(*args, **kwargs):  # pylint: disable=inconsistent-return-statements
             tries = max_attempts + 1
             counter = 1
             while tries > 1:
@@ -952,7 +966,8 @@ def get_list_view_type(include_archived: bool, archived_only: bool) -> ListViewT
     :rtype: ListViewType
     """
     if include_archived and archived_only:
-        raise Exception("Cannot provide both archived-only and include-archived.")
+        msg = "Cannot provide both archived-only and include-archived."
+        raise MlException(message=msg, no_personal_data_message=msg)
     if include_archived:
         return ListViewType.ALL
     if archived_only:
@@ -1013,6 +1028,23 @@ def is_private_preview_enabled():
     :rtype: bool
     """
     return os.getenv(AZUREML_PRIVATE_FEATURES_ENV_VAR) in ["True", "true", True]
+
+
+def is_bytecode_optimization_enabled():
+    """Check if bytecode optimization is enabled:
+    1) bytecode package is installed
+    2) private preview is enabled
+    3) python version is between 3.6 and 3.11
+
+    :return: True if bytecode optimization is enabled, False otherwise.
+    :rtype: bool
+    """
+    try:
+        import bytecode  # pylint: disable=unused-import
+
+        return is_private_preview_enabled() and (3, 6) < sys.version_info < (3, 12)
+    except ImportError:
+        return False
 
 
 def is_on_disk_cache_enabled():
@@ -1224,9 +1256,8 @@ class DockerProxy:
 
             return getattr(docker, name)
         except ModuleNotFoundError as e:
-            raise Exception(
-                "Please install docker in the current python environment with `pip install docker` and try again."
-            ) from e
+            msg = "Please install docker in the current python environment with `pip install docker` and try again."
+            raise MlException(message=msg, no_personal_data_message=msg) from e
 
 
 def get_all_enum_values_iter(enum_type: type) -> Iterable[Any]:
@@ -1355,6 +1386,20 @@ def get_versioned_base_directory_for_cache() -> Path:
     from azure.ai.ml._version import VERSION
 
     return get_base_directory_for_cache().joinpath(VERSION)
+
+
+# pylint: disable-next=name-too-long
+def get_resource_and_group_name_from_resource_id(armstr: str) -> str:
+    if armstr.find("/") == -1:
+        return armstr, None
+    return armstr.split("/")[-1], armstr.split("/")[-5]
+
+
+# pylint: disable-next=name-too-long
+def get_resource_group_name_from_resource_group_id(armstr: str) -> str:
+    if armstr.find("/") == -1:
+        return armstr
+    return armstr.split("/")[-1]
 
 
 def extract_name_and_version(azureml_id: str) -> Dict[str, str]:

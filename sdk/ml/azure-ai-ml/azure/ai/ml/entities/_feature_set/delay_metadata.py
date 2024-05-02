@@ -5,8 +5,13 @@
 # pylint: disable=unused-argument
 
 
+from typing import Any, Optional
+
+
 class DelayMetadata(object):
-    def __init__(self, *, days: int = None, hours: int = None, minutes: int = None, **kwargs):
+    def __init__(
+        self, *, days: Optional[int] = None, hours: Optional[int] = None, minutes: Optional[int] = None, **kwargs: Any
+    ):
         self.days = days
         self.hours = hours
         self.minutes = minutes

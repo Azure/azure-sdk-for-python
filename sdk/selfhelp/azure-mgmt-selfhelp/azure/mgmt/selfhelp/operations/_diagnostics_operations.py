@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -28,7 +28,7 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -37,38 +37,11 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_check_name_availability_request(scope: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "/{scope}/providers/Microsoft.Help/checkNameAvailability")
-    path_format_arguments = {
-        "scope": _SERIALIZER.url("scope", scope, "str", skip_quote=True),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_create_request(scope: str, diagnostics_resource_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -86,7 +59,7 @@ def build_create_request(scope: str, diagnostics_resource_name: str, **kwargs: A
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -103,7 +76,7 @@ def build_get_request(scope: str, diagnostics_resource_name: str, **kwargs: Any)
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -120,7 +93,7 @@ def build_get_request(scope: str, diagnostics_resource_name: str, **kwargs: Any)
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -150,147 +123,11 @@ class DiagnosticsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @overload
-    def check_name_availability(
-        self,
-        scope: str,
-        check_name_availability_request: Optional[_models.CheckNameAvailabilityRequest] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.CheckNameAvailabilityResponse:
-        """This API is used to check the uniqueness of a resource name used for a diagnostic check.
-
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
-        :type scope: str
-        :param check_name_availability_request: The required parameters for availability check. Default
-         value is None.
-        :type check_name_availability_request: ~azure.mgmt.selfhelp.models.CheckNameAvailabilityRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CheckNameAvailabilityResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.selfhelp.models.CheckNameAvailabilityResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def check_name_availability(
-        self,
-        scope: str,
-        check_name_availability_request: Optional[IO] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.CheckNameAvailabilityResponse:
-        """This API is used to check the uniqueness of a resource name used for a diagnostic check.
-
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
-        :type scope: str
-        :param check_name_availability_request: The required parameters for availability check. Default
-         value is None.
-        :type check_name_availability_request: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CheckNameAvailabilityResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.selfhelp.models.CheckNameAvailabilityResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def check_name_availability(
-        self,
-        scope: str,
-        check_name_availability_request: Optional[Union[_models.CheckNameAvailabilityRequest, IO]] = None,
-        **kwargs: Any
-    ) -> _models.CheckNameAvailabilityResponse:
-        """This API is used to check the uniqueness of a resource name used for a diagnostic check.
-
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
-        :type scope: str
-        :param check_name_availability_request: The required parameters for availability check. Is
-         either a CheckNameAvailabilityRequest type or a IO type. Default value is None.
-        :type check_name_availability_request: ~azure.mgmt.selfhelp.models.CheckNameAvailabilityRequest
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CheckNameAvailabilityResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.selfhelp.models.CheckNameAvailabilityResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.CheckNameAvailabilityResponse] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(check_name_availability_request, (IOBase, bytes)):
-            _content = check_name_availability_request
-        else:
-            if check_name_availability_request is not None:
-                _json = self._serialize.body(check_name_availability_request, "CheckNameAvailabilityRequest")
-            else:
-                _json = None
-
-        request = build_check_name_availability_request(
-            scope=scope,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            template_url=self.check_name_availability.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("CheckNameAvailabilityResponse", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    check_name_availability.metadata = {"url": "/{scope}/providers/Microsoft.Help/checkNameAvailability"}
-
     def _create_initial(
         self,
         scope: str,
         diagnostics_resource_name: str,
-        diagnostic_resource_request: Optional[Union[_models.DiagnosticResource, IO]] = None,
+        diagnostic_resource_request: Optional[Union[_models.DiagnosticResource, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.DiagnosticResource:
         error_map = {
@@ -319,23 +156,22 @@ class DiagnosticsOperations:
             else:
                 _json = None
 
-        request = build_create_request(
+        _request = build_create_request(
             scope=scope,
             diagnostics_resource_name=diagnostics_resource_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -356,8 +192,6 @@ class DiagnosticsOperations:
 
         return deserialized  # type: ignore
 
-    _create_initial.metadata = {"url": "/{scope}/providers/Microsoft.Help/diagnostics/{diagnosticsResourceName}"}
-
     @overload
     def begin_create(
         self,
@@ -368,15 +202,14 @@ class DiagnosticsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.DiagnosticResource]:
-        """Diagnostics tells you precisely the root cause of the issue and how to address it. You can get
-        diagnostics once you discover and identify the relevant solution for your Azure
-        issue.:code:`<br/>`:code:`<br/>` You can create diagnostics using the ‘solutionId’  from
-        Solution Discovery API response and ‘additionalParameters’ :code:`<br/>`:code:`<br/>`
-        :code:`<b>Note: </b>`‘requiredParameterSets’ from Solutions Discovery API response must be
-        passed via ‘additionalParameters’ as an input to Diagnostics API.
+        """Creates a diagnostic for the specific resource using solutionId from discovery solutions.
+        :code:`<br/>`Diagnostics are powerful solutions that access product resources or other relevant
+        data and provide the root cause of the issue and the steps to address the
+        issue.:code:`<br/>`:code:`<br/>`.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param diagnostics_resource_name: Unique resource name for insight resources. Required.
         :type diagnostics_resource_name: str
@@ -386,14 +219,6 @@ class DiagnosticsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either DiagnosticResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.selfhelp.models.DiagnosticResource]
@@ -405,37 +230,28 @@ class DiagnosticsOperations:
         self,
         scope: str,
         diagnostics_resource_name: str,
-        diagnostic_resource_request: Optional[IO] = None,
+        diagnostic_resource_request: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.DiagnosticResource]:
-        """Diagnostics tells you precisely the root cause of the issue and how to address it. You can get
-        diagnostics once you discover and identify the relevant solution for your Azure
-        issue.:code:`<br/>`:code:`<br/>` You can create diagnostics using the ‘solutionId’  from
-        Solution Discovery API response and ‘additionalParameters’ :code:`<br/>`:code:`<br/>`
-        :code:`<b>Note: </b>`‘requiredParameterSets’ from Solutions Discovery API response must be
-        passed via ‘additionalParameters’ as an input to Diagnostics API.
+        """Creates a diagnostic for the specific resource using solutionId from discovery solutions.
+        :code:`<br/>`Diagnostics are powerful solutions that access product resources or other relevant
+        data and provide the root cause of the issue and the steps to address the
+        issue.:code:`<br/>`:code:`<br/>`.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param diagnostics_resource_name: Unique resource name for insight resources. Required.
         :type diagnostics_resource_name: str
         :param diagnostic_resource_request: The required request body for this insightResource
          invocation. Default value is None.
-        :type diagnostic_resource_request: IO
+        :type diagnostic_resource_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either DiagnosticResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.selfhelp.models.DiagnosticResource]
@@ -447,35 +263,23 @@ class DiagnosticsOperations:
         self,
         scope: str,
         diagnostics_resource_name: str,
-        diagnostic_resource_request: Optional[Union[_models.DiagnosticResource, IO]] = None,
+        diagnostic_resource_request: Optional[Union[_models.DiagnosticResource, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[_models.DiagnosticResource]:
-        """Diagnostics tells you precisely the root cause of the issue and how to address it. You can get
-        diagnostics once you discover and identify the relevant solution for your Azure
-        issue.:code:`<br/>`:code:`<br/>` You can create diagnostics using the ‘solutionId’  from
-        Solution Discovery API response and ‘additionalParameters’ :code:`<br/>`:code:`<br/>`
-        :code:`<b>Note: </b>`‘requiredParameterSets’ from Solutions Discovery API response must be
-        passed via ‘additionalParameters’ as an input to Diagnostics API.
+        """Creates a diagnostic for the specific resource using solutionId from discovery solutions.
+        :code:`<br/>`Diagnostics are powerful solutions that access product resources or other relevant
+        data and provide the root cause of the issue and the steps to address the
+        issue.:code:`<br/>`:code:`<br/>`.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param diagnostics_resource_name: Unique resource name for insight resources. Required.
         :type diagnostics_resource_name: str
         :param diagnostic_resource_request: The required request body for this insightResource
-         invocation. Is either a DiagnosticResource type or a IO type. Default value is None.
-        :type diagnostic_resource_request: ~azure.mgmt.selfhelp.models.DiagnosticResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         invocation. Is either a DiagnosticResource type or a IO[bytes] type. Default value is None.
+        :type diagnostic_resource_request: ~azure.mgmt.selfhelp.models.DiagnosticResource or IO[bytes]
         :return: An instance of LROPoller that returns either DiagnosticResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.selfhelp.models.DiagnosticResource]
@@ -507,7 +311,7 @@ class DiagnosticsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("DiagnosticResource", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -519,27 +323,27 @@ class DiagnosticsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.DiagnosticResource].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create.metadata = {"url": "/{scope}/providers/Microsoft.Help/diagnostics/{diagnosticsResourceName}"}
+        return LROPoller[_models.DiagnosticResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def get(self, scope: str, diagnostics_resource_name: str, **kwargs: Any) -> _models.DiagnosticResource:
         """Get the diagnostics using the 'diagnosticsResourceName' you chose while creating the
         diagnostic.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param diagnostics_resource_name: Unique resource name for insight resources. Required.
         :type diagnostics_resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticResource or the result of cls(response)
         :rtype: ~azure.mgmt.selfhelp.models.DiagnosticResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -558,20 +362,19 @@ class DiagnosticsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.DiagnosticResource] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             scope=scope,
             diagnostics_resource_name=diagnostics_resource_name,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -584,8 +387,6 @@ class DiagnosticsOperations:
         deserialized = self._deserialize("DiagnosticResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {"url": "/{scope}/providers/Microsoft.Help/diagnostics/{diagnosticsResourceName}"}
+        return deserialized  # type: ignore

@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     AutoPauseProperties,
@@ -151,7 +151,7 @@ class SynapseSparkCompute(Compute):
         identity: Optional[IdentityConfiguration] = None,
         scale_settings: Optional[AutoScaleSettings] = None,
         auto_pause_settings: Optional[AutoPauseSettings] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         kwargs[TYPE] = ComputeType.SYNAPSESPARK
         super().__init__(name=name, description=description, location=kwargs.pop("location", None), tags=tags, **kwargs)
@@ -197,17 +197,20 @@ class SynapseSparkCompute(Compute):
             scale_settings=scale_settings,
             auto_pause_settings=auto_pause_settings,
             provisioning_state=prop.provisioning_state,
-            provisioning_errors=prop.provisioning_errors[0].error.code
-            if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
-            else None,
+            provisioning_errors=(
+                prop.provisioning_errors[0].error.code
+                if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
+                else None
+            ),
         )
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return SynapseSparkComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = SynapseSparkComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "SynapseSparkCompute":
+    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs: Any) -> "SynapseSparkCompute":
         loaded_data = load_from_dict(SynapseSparkComputeSchema, data, context, **kwargs)
         return SynapseSparkCompute(**loaded_data)
 

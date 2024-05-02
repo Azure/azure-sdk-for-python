@@ -31,6 +31,12 @@ if TYPE_CHECKING:
 class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
     """API spec for Microsoft.Security (Azure Security Center) resource provider.
 
+    :ivar health_reports: HealthReportsOperations operations
+    :vartype health_reports:
+     azure.mgmt.security.v2023_02_01_preview.aio.operations.HealthReportsOperations
+    :ivar health_report: HealthReportOperations operations
+    :vartype health_report:
+     azure.mgmt.security.v2023_02_01_preview.aio.operations.HealthReportOperations
     :ivar sql_vulnerability_assessment_baseline_rules:
      SqlVulnerabilityAssessmentBaselineRulesOperations operations
     :vartype sql_vulnerability_assessment_baseline_rules:
@@ -42,12 +48,6 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
      SqlVulnerabilityAssessmentScanResultsOperations operations
     :vartype sql_vulnerability_assessment_scan_results:
      azure.mgmt.security.v2023_02_01_preview.aio.operations.SqlVulnerabilityAssessmentScanResultsOperations
-    :ivar health_reports: HealthReportsOperations operations
-    :vartype health_reports:
-     azure.mgmt.security.v2023_02_01_preview.aio.operations.HealthReportsOperations
-    :ivar health_report: HealthReportOperations operations
-    :vartype health_report:
-     azure.mgmt.security.v2023_02_01_preview.aio.operations.HealthReportOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param base_url: Service URL. Default value is "https://management.azure.com".
@@ -67,17 +67,21 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self.health_reports = HealthReportsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2023-02-01-preview"
+        )
+        self.health_report = HealthReportOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2023-02-01-preview"
+        )
         self.sql_vulnerability_assessment_baseline_rules = SqlVulnerabilityAssessmentBaselineRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2023-02-01-preview"
         )
         self.sql_vulnerability_assessment_scans = SqlVulnerabilityAssessmentScansOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2023-02-01-preview"
         )
         self.sql_vulnerability_assessment_scan_results = SqlVulnerabilityAssessmentScanResultsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2023-02-01-preview"
         )
-        self.health_reports = HealthReportsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.health_report = HealthReportOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

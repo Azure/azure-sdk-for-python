@@ -648,7 +648,11 @@ class SSLTransport(_AbstractTransport):
         """Write a string out to the SSL socket fully.
         :param str s: The string to write.
         """
-        write = self.sock.send
+        try:
+            write = self.sock.send
+        except AttributeError:
+            raise IOError("Socket has already been closed.") from None
+
         while s:
             try:
                 n = write(s)
@@ -659,7 +663,7 @@ class SSLTransport(_AbstractTransport):
                 # None.
                 n = 0
             if not n:
-                raise IOError("Socket closed")
+                raise IOError("Socket closed.")
             s = s[n:]
 
     def negotiate(self):
@@ -767,7 +771,7 @@ class WebSocketTransport(_AbstractTransport):
         :return: The data read.
         :rtype: bytearray
         """
-        from websocket import WebSocketTimeoutException
+        from websocket import WebSocketTimeoutException, WebSocketConnectionClosedException
         try:
             length = 0
             view = buffer or memoryview(bytearray(n))
@@ -790,6 +794,8 @@ class WebSocketTransport(_AbstractTransport):
                 raise IOError("Websocket connection has already been closed.") from None
             except WebSocketTimeoutException as wte:
                 raise TimeoutError('Websocket receive timed out (%s)' % wte) from wte
+            except (WebSocketConnectionClosedException, SSLError) as e:
+                raise ConnectionError('Websocket disconnected: %r' % e) from e
         except:
             self._read_buffer = BytesIO(view[:length])
             raise

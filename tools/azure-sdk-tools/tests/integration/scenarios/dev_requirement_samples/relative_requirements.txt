@@ -1,0 +1,11 @@
+tests/testserver_tests/coretestserver
+-e tests/testserver_tests/coretestserver
+-e ../../identity/azure-identity
+../../identity/azure-identity
+
+../azure-mgmt-core
+-e ../azure-mgmt-core
+../../../tools/azure-sdk-tools[build]
+-e ../../../tools/azure-sdk-tools[build]
+-e .
+.

@@ -74,8 +74,8 @@ class FunctionProperties(_serialization.Model):
         inputs: Optional[List["_models.FunctionInput"]] = None,
         output: Optional["_models.FunctionOutput"] = None,
         binding: Optional["_models.FunctionBinding"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword inputs:
         :paramtype inputs: list[~azure.mgmt.streamanalytics.models.FunctionInput]
@@ -86,7 +86,7 @@ class FunctionProperties(_serialization.Model):
         :paramtype binding: ~azure.mgmt.streamanalytics.models.FunctionBinding
         """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
         self.etag = None
         self.inputs = inputs
         self.output = output
@@ -134,8 +134,8 @@ class AggregateFunctionProperties(FunctionProperties):
         inputs: Optional[List["_models.FunctionInput"]] = None,
         output: Optional["_models.FunctionOutput"] = None,
         binding: Optional["_models.FunctionBinding"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword inputs:
         :paramtype inputs: list[~azure.mgmt.streamanalytics.models.FunctionInput]
@@ -146,21 +146,22 @@ class AggregateFunctionProperties(FunctionProperties):
         :paramtype binding: ~azure.mgmt.streamanalytics.models.FunctionBinding
         """
         super().__init__(inputs=inputs, output=output, binding=binding, **kwargs)
-        self.type = "Aggregate"  # type: str
+        self.type: str = "Aggregate"
 
 
 class Serialization(_serialization.Model):
-    """Describes how data from an input is serialized or how data is serialized when written to an output.
+    """Describes how data from an input is serialized or how data is serialized when written to an
+    output.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AvroSerialization, CsvSerialization, CustomClrSerialization, JsonSerialization,
-    ParquetSerialization
+    AvroSerialization, CsvSerialization, CustomClrSerialization, DeltaSerialization,
+    JsonSerialization, ParquetSerialization
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar type: Indicates the type of serialization that the input or output uses. Required on PUT
-     (CreateOrReplace) requests. Required. Known values are: "Csv", "Avro", "Json", "CustomClr", and
-     "Parquet".
+     (CreateOrReplace) requests. Required. Known values are: "Csv", "Avro", "Json", "CustomClr",
+     "Parquet", and "Delta".
     :vartype type: str or ~azure.mgmt.streamanalytics.models.EventSerializationType
     """
 
@@ -177,25 +178,27 @@ class Serialization(_serialization.Model):
             "Avro": "AvroSerialization",
             "Csv": "CsvSerialization",
             "CustomClr": "CustomClrSerialization",
+            "Delta": "DeltaSerialization",
             "Json": "JsonSerialization",
             "Parquet": "ParquetSerialization",
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class AvroSerialization(Serialization):
-    """Describes how data from an input is serialized or how data is serialized when written to an output in Avro format.
+    """Describes how data from an input is serialized or how data is serialized when written to an
+    output in Avro format.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar type: Indicates the type of serialization that the input or output uses. Required on PUT
-     (CreateOrReplace) requests. Required. Known values are: "Csv", "Avro", "Json", "CustomClr", and
-     "Parquet".
+     (CreateOrReplace) requests. Required. Known values are: "Csv", "Avro", "Json", "CustomClr",
+     "Parquet", and "Delta".
     :vartype type: str or ~azure.mgmt.streamanalytics.models.EventSerializationType
     :ivar properties: The properties that are associated with the Avro serialization type. Required
      on PUT (CreateOrReplace) requests.
@@ -211,14 +214,14 @@ class AvroSerialization(Serialization):
         "properties": {"key": "properties", "type": "object"},
     }
 
-    def __init__(self, *, properties: Optional[JSON] = None, **kwargs):
+    def __init__(self, *, properties: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword properties: The properties that are associated with the Avro serialization type.
          Required on PUT (CreateOrReplace) requests.
         :paramtype properties: JSON
         """
         super().__init__(**kwargs)
-        self.type = "Avro"  # type: str
+        self.type: str = "Avro"
         self.properties = properties
 
 
@@ -227,8 +230,9 @@ class OutputDataSource(_serialization.Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     GatewayMessageBusOutputDataSource, AzureFunctionOutputDataSource, PostgreSQLOutputDataSource,
-    AzureDataLakeStoreOutputDataSource, EventHubV2OutputDataSource, EventHubOutputDataSource,
-    ServiceBusQueueOutputDataSource, ServiceBusTopicOutputDataSource, AzureSynapseOutputDataSource,
+    AzureDataLakeStoreOutputDataSource, EventHubV2OutputDataSource,
+    AzureDataExplorerOutputDataSource, EventHubOutputDataSource, ServiceBusQueueOutputDataSource,
+    ServiceBusTopicOutputDataSource, AzureSynapseOutputDataSource,
     AzureSqlDatabaseOutputDataSource, BlobOutputDataSource, DocumentDbOutputDataSource,
     AzureTableOutputDataSource, PowerBIOutputDataSource, RawOutputDatasource
 
@@ -254,6 +258,7 @@ class OutputDataSource(_serialization.Model):
             "Microsoft.DBForPostgreSQL/servers/databases": "PostgreSQLOutputDataSource",
             "Microsoft.DataLake/Accounts": "AzureDataLakeStoreOutputDataSource",
             "Microsoft.EventHub/EventHub": "EventHubV2OutputDataSource",
+            "Microsoft.Kusto/clusters/databases": "AzureDataExplorerOutputDataSource",
             "Microsoft.ServiceBus/EventHub": "EventHubOutputDataSource",
             "Microsoft.ServiceBus/Queue": "ServiceBusQueueOutputDataSource",
             "Microsoft.ServiceBus/Topic": "ServiceBusTopicOutputDataSource",
@@ -267,10 +272,73 @@ class OutputDataSource(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
+
+
+class AzureDataExplorerOutputDataSource(OutputDataSource):
+    """Describes an Azure Data Explorer output data source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Indicates the type of data source output will be written to. Required on PUT
+     (CreateOrReplace) requests. Required.
+    :vartype type: str
+    :ivar cluster: The name of the Azure Data Explorer cluster. Required on PUT (CreateOrReplace)
+     requests.
+    :vartype cluster: str
+    :ivar database: The name of the Azure Data Explorer database. Required on PUT (CreateOrReplace)
+     requests.
+    :vartype database: str
+    :ivar table: The name of the Azure Table. Required on PUT (CreateOrReplace) requests.
+    :vartype table: str
+    :ivar authentication_mode: Authentication Mode. Known values are: "Msi", "UserToken", and
+     "ConnectionString".
+    :vartype authentication_mode: str or ~azure.mgmt.streamanalytics.models.AuthenticationMode
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "cluster": {"key": "properties.cluster", "type": "str"},
+        "database": {"key": "properties.database", "type": "str"},
+        "table": {"key": "properties.table", "type": "str"},
+        "authentication_mode": {"key": "properties.authenticationMode", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        cluster: Optional[str] = None,
+        database: Optional[str] = None,
+        table: Optional[str] = None,
+        authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword cluster: The name of the Azure Data Explorer cluster. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype cluster: str
+        :keyword database: The name of the Azure Data Explorer database. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype database: str
+        :keyword table: The name of the Azure Table. Required on PUT (CreateOrReplace) requests.
+        :paramtype table: str
+        :keyword authentication_mode: Authentication Mode. Known values are: "Msi", "UserToken", and
+         "ConnectionString".
+        :paramtype authentication_mode: str or ~azure.mgmt.streamanalytics.models.AuthenticationMode
+        """
+        super().__init__(**kwargs)
+        self.type: str = "Microsoft.Kusto/clusters/databases"
+        self.cluster = cluster
+        self.database = database
+        self.table = table
+        self.authentication_mode = authentication_mode
 
 
 class AzureDataLakeStoreOutputDataSource(OutputDataSource):
@@ -345,8 +413,8 @@ class AzureDataLakeStoreOutputDataSource(OutputDataSource):
         date_format: Optional[str] = None,
         time_format: Optional[str] = None,
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword refresh_token: A refresh token that can be used to obtain a valid access token that
          can then be used to authenticate with the data source. A valid refresh token is currently only
@@ -383,7 +451,7 @@ class AzureDataLakeStoreOutputDataSource(OutputDataSource):
         :paramtype authentication_mode: str or ~azure.mgmt.streamanalytics.models.AuthenticationMode
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.DataLake/Accounts"  # type: str
+        self.type: str = "Microsoft.DataLake/Accounts"
         self.refresh_token = refresh_token
         self.token_user_principal_name = token_user_principal_name
         self.token_user_display_name = token_user_display_name
@@ -396,7 +464,8 @@ class AzureDataLakeStoreOutputDataSource(OutputDataSource):
 
 
 class OAuthBasedDataSourceProperties(_serialization.Model):
-    """The properties that are associated with data sources that use OAuth as their authentication model.
+    """The properties that are associated with data sources that use OAuth as their authentication
+    model.
 
     :ivar refresh_token: A refresh token that can be used to obtain a valid access token that can
      then be used to authenticate with the data source. A valid refresh token is currently only
@@ -427,8 +496,8 @@ class OAuthBasedDataSourceProperties(_serialization.Model):
         refresh_token: Optional[str] = None,
         token_user_principal_name: Optional[str] = None,
         token_user_display_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword refresh_token: A refresh token that can be used to obtain a valid access token that
          can then be used to authenticate with the data source. A valid refresh token is currently only
@@ -514,8 +583,8 @@ class AzureDataLakeStoreOutputDataSourceProperties(OAuthBasedDataSourcePropertie
         date_format: Optional[str] = None,
         time_format: Optional[str] = None,
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword refresh_token: A refresh token that can be used to obtain a valid access token that
          can then be used to authenticate with the data source. A valid refresh token is currently only
@@ -610,8 +679,8 @@ class AzureFunctionOutputDataSource(OutputDataSource):
         api_key: Optional[str] = None,
         max_batch_size: Optional[float] = None,
         max_batch_count: Optional[float] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword function_app_name: The name of your Azure Functions app.
         :paramtype function_app_name: str
@@ -629,7 +698,7 @@ class AzureFunctionOutputDataSource(OutputDataSource):
         :paramtype max_batch_count: float
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.AzureFunction"  # type: str
+        self.type: str = "Microsoft.AzureFunction"
         self.function_app_name = function_app_name
         self.function_name = function_name
         self.api_key = api_key
@@ -638,7 +707,8 @@ class AzureFunctionOutputDataSource(OutputDataSource):
 
 
 class FunctionBinding(_serialization.Model):
-    """The physical binding of the function. For example, in the Azure Machine Learning web service’s case, this describes the endpoint.
+    """The physical binding of the function. For example, in the Azure Machine Learning web service’s
+    case, this describes the endpoint.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureMachineLearningStudioFunctionBinding, AzureMachineLearningServiceFunctionBinding,
@@ -667,10 +737,10 @@ class FunctionBinding(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class AzureMachineLearningServiceFunctionBinding(FunctionBinding):
@@ -731,8 +801,8 @@ class AzureMachineLearningServiceFunctionBinding(FunctionBinding):
         number_of_parallel_requests: Optional[int] = None,
         input_request_name: Optional[str] = None,
         output_response_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword endpoint: The Request-Response execute endpoint of the Azure Machine Learning web
          service.
@@ -758,7 +828,7 @@ class AzureMachineLearningServiceFunctionBinding(FunctionBinding):
         :paramtype output_response_name: str
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.MachineLearningServices"  # type: str
+        self.type: str = "Microsoft.MachineLearningServices"
         self.endpoint = endpoint
         self.api_key = api_key
         self.inputs = inputs
@@ -801,16 +871,17 @@ class FunctionRetrieveDefaultDefinitionParameters(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.binding_type = None  # type: Optional[str]
+        self.binding_type: Optional[str] = None
 
 
 class AzureMachineLearningServiceFunctionRetrieveDefaultDefinitionParameters(
     FunctionRetrieveDefaultDefinitionParameters
 ):
-    """The parameters needed to retrieve the default function definition for an Azure Machine Learning web service function.
+    """The parameters needed to retrieve the default function definition for an Azure Machine Learning
+    web service function.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -834,8 +905,8 @@ class AzureMachineLearningServiceFunctionRetrieveDefaultDefinitionParameters(
     }
 
     def __init__(
-        self, *, execute_endpoint: Optional[str] = None, udf_type: Optional[Literal["Scalar"]] = None, **kwargs
-    ):
+        self, *, execute_endpoint: Optional[str] = None, udf_type: Optional[Literal["Scalar"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword execute_endpoint: The Request-Response execute endpoint of the Azure Machine Learning
          web service.
@@ -844,7 +915,7 @@ class AzureMachineLearningServiceFunctionRetrieveDefaultDefinitionParameters(
         :paramtype udf_type: str
         """
         super().__init__(**kwargs)
-        self.binding_type = "Microsoft.MachineLearningServices"  # type: str
+        self.binding_type: str = "Microsoft.MachineLearningServices"
         self.execute_endpoint = execute_endpoint
         self.udf_type = udf_type
 
@@ -867,8 +938,13 @@ class AzureMachineLearningServiceInputColumn(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: Optional[str] = None, data_type: Optional[str] = None, map_to: Optional[int] = None, **kwargs
-    ):
+        self,
+        *,
+        name: Optional[str] = None,
+        data_type: Optional[str] = None,
+        map_to: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the input column.
         :paramtype name: str
@@ -904,8 +980,8 @@ class AzureMachineLearningServiceInputs(_serialization.Model):
         *,
         name: Optional[str] = None,
         column_names: Optional[List["_models.AzureMachineLearningServiceInputColumn"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the input. This is the name provided while authoring the endpoint.
         :paramtype name: str
@@ -937,8 +1013,13 @@ class AzureMachineLearningServiceOutputColumn(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: Optional[str] = None, data_type: Optional[str] = None, map_to: Optional[int] = None, **kwargs
-    ):
+        self,
+        *,
+        name: Optional[str] = None,
+        data_type: Optional[str] = None,
+        map_to: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the output column.
         :paramtype name: str
@@ -997,8 +1078,8 @@ class AzureMachineLearningStudioFunctionBinding(FunctionBinding):
         inputs: Optional["_models.AzureMachineLearningStudioInputs"] = None,
         outputs: Optional[List["_models.AzureMachineLearningStudioOutputColumn"]] = None,
         batch_size: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword endpoint: The Request-Response execute endpoint of the Azure Machine Learning Studio.
          Find out more here:
@@ -1016,7 +1097,7 @@ class AzureMachineLearningStudioFunctionBinding(FunctionBinding):
         :paramtype batch_size: int
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.MachineLearning/WebService"  # type: str
+        self.type: str = "Microsoft.MachineLearning/WebService"
         self.endpoint = endpoint
         self.api_key = api_key
         self.inputs = inputs
@@ -1027,7 +1108,8 @@ class AzureMachineLearningStudioFunctionBinding(FunctionBinding):
 class AzureMachineLearningStudioFunctionRetrieveDefaultDefinitionParameters(
     FunctionRetrieveDefaultDefinitionParameters
 ):
-    """The parameters needed to retrieve the default function definition for an Azure Machine Learning Studio function.
+    """The parameters needed to retrieve the default function definition for an Azure Machine Learning
+    Studio function.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1052,8 +1134,8 @@ class AzureMachineLearningStudioFunctionRetrieveDefaultDefinitionParameters(
     }
 
     def __init__(
-        self, *, execute_endpoint: Optional[str] = None, udf_type: Optional[Literal["Scalar"]] = None, **kwargs
-    ):
+        self, *, execute_endpoint: Optional[str] = None, udf_type: Optional[Literal["Scalar"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword execute_endpoint: The Request-Response execute endpoint of the Azure Machine Learning
          Studio. Find out more here:
@@ -1063,7 +1145,7 @@ class AzureMachineLearningStudioFunctionRetrieveDefaultDefinitionParameters(
         :paramtype udf_type: str
         """
         super().__init__(**kwargs)
-        self.binding_type = "Microsoft.MachineLearning/WebService"  # type: str
+        self.binding_type: str = "Microsoft.MachineLearning/WebService"
         self.execute_endpoint = execute_endpoint
         self.udf_type = udf_type
 
@@ -1088,8 +1170,13 @@ class AzureMachineLearningStudioInputColumn(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: Optional[str] = None, data_type: Optional[str] = None, map_to: Optional[int] = None, **kwargs
-    ):
+        self,
+        *,
+        name: Optional[str] = None,
+        data_type: Optional[str] = None,
+        map_to: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the input column.
         :paramtype name: str
@@ -1126,8 +1213,8 @@ class AzureMachineLearningStudioInputs(_serialization.Model):
         *,
         name: Optional[str] = None,
         column_names: Optional[List["_models.AzureMachineLearningStudioInputColumn"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the input. This is the name provided while authoring the endpoint.
         :paramtype name: str
@@ -1156,7 +1243,7 @@ class AzureMachineLearningStudioOutputColumn(_serialization.Model):
         "data_type": {"key": "dataType", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, data_type: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, data_type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the output column.
         :paramtype name: str
@@ -1220,8 +1307,8 @@ class AzureSqlDatabaseDataSourceProperties(_serialization.Model):
         max_batch_count: Optional[float] = None,
         max_writer_count: Optional[float] = None,
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword server: The name of the SQL server containing the Azure SQL database. Required on PUT
          (CreateOrReplace) requests.
@@ -1319,8 +1406,8 @@ class AzureSqlDatabaseOutputDataSource(OutputDataSource):
         max_batch_count: Optional[float] = None,
         max_writer_count: Optional[float] = None,
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword server: The name of the SQL server containing the Azure SQL database. Required on PUT
          (CreateOrReplace) requests.
@@ -1348,7 +1435,7 @@ class AzureSqlDatabaseOutputDataSource(OutputDataSource):
         :paramtype authentication_mode: str or ~azure.mgmt.streamanalytics.models.AuthenticationMode
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.Sql/Server/Database"  # type: str
+        self.type: str = "Microsoft.Sql/Server/Database"
         self.server = server
         self.database = database
         self.user = user
@@ -1409,8 +1496,8 @@ class AzureSqlDatabaseOutputDataSourceProperties(AzureSqlDatabaseDataSourcePrope
         max_batch_count: Optional[float] = None,
         max_writer_count: Optional[float] = None,
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword server: The name of the SQL server containing the Azure SQL database. Required on PUT
          (CreateOrReplace) requests.
@@ -1481,10 +1568,10 @@ class ReferenceInputDataSource(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class AzureSqlReferenceInputDataSource(ReferenceInputDataSource):
@@ -1554,8 +1641,8 @@ class AzureSqlReferenceInputDataSource(ReferenceInputDataSource):
         full_snapshot_query: Optional[str] = None,
         delta_snapshot_query: Optional[str] = None,
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword server: This element is associated with the datasource element. This is the name of
          the server that contains the database that will be written to.
@@ -1587,7 +1674,7 @@ class AzureSqlReferenceInputDataSource(ReferenceInputDataSource):
         :paramtype authentication_mode: str or ~azure.mgmt.streamanalytics.models.AuthenticationMode
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.Sql/Server/Database"  # type: str
+        self.type: str = "Microsoft.Sql/Server/Database"
         self.server = server
         self.database = database
         self.user = user
@@ -1639,8 +1726,8 @@ class AzureSynapseDataSourceProperties(_serialization.Model):
         user: Optional[str] = None,
         password: Optional[str] = None,
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword server: The name of the SQL server containing the Azure SQL database. Required on PUT
          (CreateOrReplace) requests.
@@ -1720,8 +1807,8 @@ class AzureSynapseOutputDataSource(OutputDataSource):
         user: Optional[str] = None,
         password: Optional[str] = None,
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword server: The name of the SQL server containing the Azure SQL database. Required on PUT
          (CreateOrReplace) requests.
@@ -1743,7 +1830,7 @@ class AzureSynapseOutputDataSource(OutputDataSource):
         :paramtype authentication_mode: str or ~azure.mgmt.streamanalytics.models.AuthenticationMode
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.Sql/Server/DataWarehouse"  # type: str
+        self.type: str = "Microsoft.Sql/Server/DataWarehouse"
         self.server = server
         self.database = database
         self.table = table
@@ -1792,8 +1879,8 @@ class AzureSynapseOutputDataSourceProperties(AzureSynapseDataSourceProperties):
         user: Optional[str] = None,
         password: Optional[str] = None,
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword server: The name of the SQL server containing the Azure SQL database. Required on PUT
          (CreateOrReplace) requests.
@@ -1881,8 +1968,8 @@ class AzureTableOutputDataSource(OutputDataSource):
         row_key: Optional[str] = None,
         columns_to_remove: Optional[List[str]] = None,
         batch_size: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword account_name: The name of the Azure Storage account. Required on PUT (CreateOrReplace)
          requests.
@@ -1907,7 +1994,7 @@ class AzureTableOutputDataSource(OutputDataSource):
         :paramtype batch_size: int
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.Storage/Table"  # type: str
+        self.type: str = "Microsoft.Storage/Table"
         self.account_name = account_name
         self.account_key = account_key
         self.table = table
@@ -1963,8 +2050,8 @@ class BlobDataSourceProperties(_serialization.Model):
         date_format: Optional[str] = None,
         time_format: Optional[str] = None,
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
          (CreateOrReplace) requests.
@@ -2063,8 +2150,8 @@ class BlobOutputDataSource(OutputDataSource):
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
         blob_path_prefix: Optional[str] = None,
         blob_write_mode: Optional[Union[str, "_models.BlobWriteMode"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
          (CreateOrReplace) requests.
@@ -2095,7 +2182,7 @@ class BlobOutputDataSource(OutputDataSource):
         :paramtype blob_write_mode: str or ~azure.mgmt.streamanalytics.models.BlobWriteMode
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.Storage/Blob"  # type: str
+        self.type: str = "Microsoft.Storage/Blob"
         self.storage_accounts = storage_accounts
         self.container = container
         self.path_pattern = path_pattern
@@ -2160,8 +2247,8 @@ class BlobOutputDataSourceProperties(BlobDataSourceProperties):
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
         blob_path_prefix: Optional[str] = None,
         blob_write_mode: Optional[Union[str, "_models.BlobWriteMode"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
          (CreateOrReplace) requests.
@@ -2281,8 +2368,8 @@ class BlobReferenceInputDataSource(ReferenceInputDataSource):  # pylint: disable
         source_partition_count: Optional[int] = None,
         full_snapshot_refresh_rate: Optional[str] = None,
         delta_snapshot_refresh_rate: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
          (CreateOrReplace) requests.
@@ -2321,7 +2408,7 @@ class BlobReferenceInputDataSource(ReferenceInputDataSource):  # pylint: disable
         :paramtype delta_snapshot_refresh_rate: str
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.Storage/Blob"  # type: str
+        self.type: str = "Microsoft.Storage/Blob"
         self.storage_accounts = storage_accounts
         self.container = container
         self.path_pattern = path_pattern
@@ -2402,8 +2489,8 @@ class BlobReferenceInputDataSourceProperties(BlobDataSourceProperties):  # pylin
         source_partition_count: Optional[int] = None,
         full_snapshot_refresh_rate: Optional[str] = None,
         delta_snapshot_refresh_rate: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
          (CreateOrReplace) requests.
@@ -2492,10 +2579,10 @@ class StreamInputDataSource(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class BlobStreamInputDataSource(StreamInputDataSource):
@@ -2559,8 +2646,8 @@ class BlobStreamInputDataSource(StreamInputDataSource):
         time_format: Optional[str] = None,
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
         source_partition_count: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
          (CreateOrReplace) requests.
@@ -2590,7 +2677,7 @@ class BlobStreamInputDataSource(StreamInputDataSource):
         :paramtype source_partition_count: int
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.Storage/Blob"  # type: str
+        self.type: str = "Microsoft.Storage/Blob"
         self.storage_accounts = storage_accounts
         self.container = container
         self.path_pattern = path_pattern
@@ -2651,8 +2738,8 @@ class BlobStreamInputDataSourceProperties(BlobDataSourceProperties):
         time_format: Optional[str] = None,
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
         source_partition_count: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
          (CreateOrReplace) requests.
@@ -2720,7 +2807,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -2761,7 +2848,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, location: Optional[str] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, location: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -2826,8 +2913,8 @@ class Cluster(TrackedResource):
         location: Optional[str] = None,
         sku: Optional["_models.ClusterSku"] = None,
         properties: Optional["_models.ClusterProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -2856,7 +2943,7 @@ class ClusterInfo(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: The resource id of cluster.
         :paramtype id: str
@@ -2892,7 +2979,7 @@ class ClusterJob(_serialization.Model):
         "job_state": {"key": "jobState", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -2921,7 +3008,7 @@ class ClusterJobListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2949,7 +3036,7 @@ class ClusterListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2993,7 +3080,7 @@ class ClusterProperties(_serialization.Model):
         "capacity_assigned": {"key": "capacityAssigned", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.created_date = None
@@ -3004,7 +3091,8 @@ class ClusterProperties(_serialization.Model):
 
 
 class ClusterSku(_serialization.Model):
-    """The SKU of the cluster. This determines the size/capacity of the cluster. Required on PUT (CreateOrUpdate) requests.
+    """The SKU of the cluster. This determines the size/capacity of the cluster. Required on PUT
+    (CreateOrUpdate) requests.
 
     :ivar name: Specifies the SKU name of the cluster. Required on PUT (CreateOrUpdate) requests.
      "Default"
@@ -3025,8 +3113,12 @@ class ClusterSku(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: Optional[Union[str, "_models.ClusterSkuName"]] = None, capacity: Optional[int] = None, **kwargs
-    ):
+        self,
+        *,
+        name: Optional[Union[str, "_models.ClusterSkuName"]] = None,
+        capacity: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Specifies the SKU name of the cluster. Required on PUT (CreateOrUpdate)
          requests. "Default"
@@ -3042,7 +3134,8 @@ class ClusterSku(_serialization.Model):
 
 
 class CompileQuery(_serialization.Model):
-    """The query compilation object which defines the input, output, and transformation for the query compilation.
+    """The query compilation object which defines the input, output, and transformation for the query
+    compilation.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3080,8 +3173,8 @@ class CompileQuery(_serialization.Model):
         inputs: Optional[List["_models.QueryInput"]] = None,
         functions: Optional[List["_models.QueryFunction"]] = None,
         compatibility_level: Optional[Union[str, "_models.CompatibilityLevel"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword query: The query to compile. Required.
         :paramtype query: str
@@ -3121,7 +3214,7 @@ class Compression(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: Union[str, "_models.CompressionType"] = "None", **kwargs):
+    def __init__(self, *, type: Union[str, "_models.CompressionType"] = "None", **kwargs: Any) -> None:
         """
         :keyword type: Indicates the type of compression that the input uses. Required on PUT
          (CreateOrReplace) requests. Known values are: "None", "GZip", and "Deflate".
@@ -3168,8 +3261,8 @@ class CSharpFunctionBinding(FunctionBinding):
         class_property: Optional[str] = None,
         method: Optional[str] = None,
         update_mode: Optional[Union[str, "_models.UpdateMode"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword dll_path: The Csharp code containing a single function definition.
         :paramtype dll_path: str
@@ -3182,7 +3275,7 @@ class CSharpFunctionBinding(FunctionBinding):
         :paramtype update_mode: str or ~azure.mgmt.streamanalytics.models.UpdateMode
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.StreamAnalytics/CLRUdf"  # type: str
+        self.type: str = "Microsoft.StreamAnalytics/CLRUdf"
         self.dll_path = dll_path
         self.class_property = class_property
         self.method = method
@@ -3212,7 +3305,9 @@ class CSharpFunctionRetrieveDefaultDefinitionParameters(FunctionRetrieveDefaultD
         "udf_type": {"key": "bindingRetrievalProperties.udfType", "type": "str"},
     }
 
-    def __init__(self, *, script: Optional[str] = None, udf_type: Optional[Literal["Scalar"]] = None, **kwargs):
+    def __init__(
+        self, *, script: Optional[str] = None, udf_type: Optional[Literal["Scalar"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword script: The CSharp code containing a single function definition.
         :paramtype script: str
@@ -3220,19 +3315,20 @@ class CSharpFunctionRetrieveDefaultDefinitionParameters(FunctionRetrieveDefaultD
         :paramtype udf_type: str
         """
         super().__init__(**kwargs)
-        self.binding_type = "Microsoft.StreamAnalytics/CLRUdf"  # type: str
+        self.binding_type: str = "Microsoft.StreamAnalytics/CLRUdf"
         self.script = script
         self.udf_type = udf_type
 
 
 class CsvSerialization(Serialization):
-    """Describes how data from an input is serialized or how data is serialized when written to an output in CSV format.
+    """Describes how data from an input is serialized or how data is serialized when written to an
+    output in CSV format.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar type: Indicates the type of serialization that the input or output uses. Required on PUT
-     (CreateOrReplace) requests. Required. Known values are: "Csv", "Avro", "Json", "CustomClr", and
-     "Parquet".
+     (CreateOrReplace) requests. Required. Known values are: "Csv", "Avro", "Json", "CustomClr",
+     "Parquet", and "Delta".
     :vartype type: str or ~azure.mgmt.streamanalytics.models.EventSerializationType
     :ivar field_delimiter: Specifies the delimiter that will be used to separate comma-separated
      value (CSV) records. See
@@ -3261,8 +3357,8 @@ class CsvSerialization(Serialization):
         *,
         field_delimiter: Optional[str] = None,
         encoding: Optional[Union[str, "_models.Encoding"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword field_delimiter: Specifies the delimiter that will be used to separate comma-separated
          value (CSV) records. See
@@ -3276,19 +3372,20 @@ class CsvSerialization(Serialization):
         :paramtype encoding: str or ~azure.mgmt.streamanalytics.models.Encoding
         """
         super().__init__(**kwargs)
-        self.type = "Csv"  # type: str
+        self.type: str = "Csv"
         self.field_delimiter = field_delimiter
         self.encoding = encoding
 
 
 class CustomClrSerialization(Serialization):
-    """Describes how data from an input is serialized or how data is serialized when written to an output in custom format.
+    """Describes how data from an input is serialized or how data is serialized when written to an
+    output in custom format.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar type: Indicates the type of serialization that the input or output uses. Required on PUT
-     (CreateOrReplace) requests. Required. Known values are: "Csv", "Avro", "Json", "CustomClr", and
-     "Parquet".
+     (CreateOrReplace) requests. Required. Known values are: "Csv", "Avro", "Json", "CustomClr",
+     "Parquet", and "Delta".
     :vartype type: str or ~azure.mgmt.streamanalytics.models.EventSerializationType
     :ivar serialization_dll_path: The serialization library path.
     :vartype serialization_dll_path: str
@@ -3307,8 +3404,12 @@ class CustomClrSerialization(Serialization):
     }
 
     def __init__(
-        self, *, serialization_dll_path: Optional[str] = None, serialization_class_name: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        serialization_dll_path: Optional[str] = None,
+        serialization_class_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword serialization_dll_path: The serialization library path.
         :paramtype serialization_dll_path: str
@@ -3316,9 +3417,56 @@ class CustomClrSerialization(Serialization):
         :paramtype serialization_class_name: str
         """
         super().__init__(**kwargs)
-        self.type = "CustomClr"  # type: str
+        self.type: str = "CustomClr"
         self.serialization_dll_path = serialization_dll_path
         self.serialization_class_name = serialization_class_name
+
+
+class DeltaSerialization(Serialization):
+    """Describes how data from an input is serialized or how data is serialized when written to an
+    output in Delta Lake format.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Indicates the type of serialization that the input or output uses. Required on PUT
+     (CreateOrReplace) requests. Required. Known values are: "Csv", "Avro", "Json", "CustomClr",
+     "Parquet", and "Delta".
+    :vartype type: str or ~azure.mgmt.streamanalytics.models.EventSerializationType
+    :ivar delta_table_path: Specifies the path of the Delta Lake table that the output will be
+     written to.
+    :vartype delta_table_path: str
+    :ivar partition_columns: Specifies the names of the columns for which the Delta Lake table will
+     be partitioned. We are only supporting 1 partition column, but keeping it as an array for
+     extensibility.
+    :vartype partition_columns: list[str]
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "delta_table_path": {"key": "properties.deltaTablePath", "type": "str"},
+        "partition_columns": {"key": "properties.partitionColumns", "type": "[str]"},
+    }
+
+    def __init__(
+        self, *, delta_table_path: Optional[str] = None, partition_columns: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword delta_table_path: Specifies the path of the Delta Lake table that the output will be
+         written to.
+        :paramtype delta_table_path: str
+        :keyword partition_columns: Specifies the names of the columns for which the Delta Lake table
+         will be partitioned. We are only supporting 1 partition column, but keeping it as an array for
+         extensibility.
+        :paramtype partition_columns: list[str]
+        """
+        super().__init__(**kwargs)
+        self.type: str = "Delta"
+        self.delta_table_path = delta_table_path
+        self.partition_columns = partition_columns
 
 
 class DiagnosticCondition(_serialization.Model):
@@ -3348,7 +3496,7 @@ class DiagnosticCondition(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.since = None
@@ -3357,7 +3505,8 @@ class DiagnosticCondition(_serialization.Model):
 
 
 class Diagnostics(_serialization.Model):
-    """Describes conditions applicable to the Input, Output, or the job overall, that warrant customer attention.
+    """Describes conditions applicable to the Input, Output, or the job overall, that warrant customer
+    attention.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3374,7 +3523,7 @@ class Diagnostics(_serialization.Model):
         "conditions": {"key": "conditions", "type": "[DiagnosticCondition]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.conditions = None
@@ -3440,8 +3589,8 @@ class DocumentDbOutputDataSource(OutputDataSource):
         partition_key: Optional[str] = None,
         document_id: Optional[str] = None,
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword account_id: The DocumentDB account name or ID. Required on PUT (CreateOrReplace)
          requests.
@@ -3470,7 +3619,7 @@ class DocumentDbOutputDataSource(OutputDataSource):
         :paramtype authentication_mode: str or ~azure.mgmt.streamanalytics.models.AuthenticationMode
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.Storage/DocumentDB"  # type: str
+        self.type: str = "Microsoft.Storage/DocumentDB"
         self.account_id = account_id
         self.account_key = account_key
         self.database = database
@@ -3491,7 +3640,7 @@ class Error(_serialization.Model):
         "error": {"key": "error", "type": "ErrorError"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorError"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorError"] = None, **kwargs: Any) -> None:
         """
         :keyword error: Error definition properties.
         :paramtype error: ~azure.mgmt.streamanalytics.models.ErrorError
@@ -3518,8 +3667,8 @@ class ErrorDetails(_serialization.Model):
     }
 
     def __init__(
-        self, *, code: Optional[str] = None, target: Optional[str] = None, message: Optional[str] = None, **kwargs
-    ):
+        self, *, code: Optional[str] = None, target: Optional[str] = None, message: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -3561,8 +3710,8 @@ class ErrorError(_serialization.Model):
         message: Optional[str] = None,
         target: Optional[str] = None,
         details: Optional[List["_models.ErrorDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -3601,7 +3750,7 @@ class ErrorResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -3648,8 +3797,8 @@ class EventGridStreamInputDataSource(StreamInputDataSource):
         schema: Optional[Union[str, "_models.EventGridEventSchemaType"]] = None,
         storage_accounts: Optional[List["_models.StorageAccount"]] = None,
         event_types: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword subscriber: Subscribers for the Event Grid. Currently only EventHub Subscriber is
          supported.
@@ -3664,7 +3813,7 @@ class EventGridStreamInputDataSource(StreamInputDataSource):
         :paramtype event_types: list[str]
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.EventGrid/EventSubscriptions"  # type: str
+        self.type: str = "Microsoft.EventGrid/EventSubscriptions"
         self.subscriber = subscriber
         self.schema = schema
         self.storage_accounts = storage_accounts
@@ -3672,7 +3821,8 @@ class EventGridStreamInputDataSource(StreamInputDataSource):
 
 
 class ServiceBusDataSourceProperties(_serialization.Model):
-    """The common properties that are associated with Service Bus data sources (Queues, Topics, Event Hubs, etc.).
+    """The common properties that are associated with Service Bus data sources (Queues, Topics, Event
+    Hubs, etc.).
 
     :ivar service_bus_namespace: The namespace that is associated with the desired Event Hub,
      Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
@@ -3702,8 +3852,8 @@ class ServiceBusDataSourceProperties(_serialization.Model):
         shared_access_policy_name: Optional[str] = None,
         shared_access_policy_key: Optional[str] = None,
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
          Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
@@ -3764,8 +3914,8 @@ class EventHubDataSourceProperties(ServiceBusDataSourceProperties):
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
         event_hub_name: Optional[str] = None,
         partition_count: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
          Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
@@ -3853,8 +4003,8 @@ class EventHubOutputDataSource(OutputDataSource):
         partition_count: Optional[int] = None,
         partition_key: Optional[str] = None,
         property_columns: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
          Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
@@ -3879,7 +4029,7 @@ class EventHubOutputDataSource(OutputDataSource):
         :paramtype property_columns: list[str]
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.ServiceBus/EventHub"  # type: str
+        self.type: str = "Microsoft.ServiceBus/EventHub"
         self.service_bus_namespace = service_bus_namespace
         self.shared_access_policy_name = shared_access_policy_name
         self.shared_access_policy_key = shared_access_policy_key
@@ -3938,8 +4088,8 @@ class EventHubOutputDataSourceProperties(EventHubDataSourceProperties):
         partition_count: Optional[int] = None,
         partition_key: Optional[str] = None,
         property_columns: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
          Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
@@ -4037,8 +4187,8 @@ class EventHubStreamInputDataSource(StreamInputDataSource):
         partition_count: Optional[int] = None,
         consumer_group_name: Optional[str] = None,
         prefetch_count: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
          Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
@@ -4066,7 +4216,7 @@ class EventHubStreamInputDataSource(StreamInputDataSource):
         :paramtype prefetch_count: int
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.ServiceBus/EventHub"  # type: str
+        self.type: str = "Microsoft.ServiceBus/EventHub"
         self.service_bus_namespace = service_bus_namespace
         self.shared_access_policy_name = shared_access_policy_name
         self.shared_access_policy_key = shared_access_policy_key
@@ -4128,8 +4278,8 @@ class EventHubStreamInputDataSourceProperties(EventHubDataSourceProperties):
         partition_count: Optional[int] = None,
         consumer_group_name: Optional[str] = None,
         prefetch_count: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
          Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
@@ -4227,8 +4377,8 @@ class EventHubV2OutputDataSource(OutputDataSource):
         partition_count: Optional[int] = None,
         partition_key: Optional[str] = None,
         property_columns: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
          Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
@@ -4253,7 +4403,7 @@ class EventHubV2OutputDataSource(OutputDataSource):
         :paramtype property_columns: list[str]
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.EventHub/EventHub"  # type: str
+        self.type: str = "Microsoft.EventHub/EventHub"
         self.service_bus_namespace = service_bus_namespace
         self.shared_access_policy_name = shared_access_policy_name
         self.shared_access_policy_key = shared_access_policy_key
@@ -4325,8 +4475,8 @@ class EventHubV2StreamInputDataSource(StreamInputDataSource):
         partition_count: Optional[int] = None,
         consumer_group_name: Optional[str] = None,
         prefetch_count: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
          Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
@@ -4354,7 +4504,7 @@ class EventHubV2StreamInputDataSource(StreamInputDataSource):
         :paramtype prefetch_count: int
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.EventHub/EventHub"  # type: str
+        self.type: str = "Microsoft.EventHub/EventHub"
         self.service_bus_namespace = service_bus_namespace
         self.shared_access_policy_name = shared_access_policy_name
         self.shared_access_policy_key = shared_access_policy_key
@@ -4393,8 +4543,8 @@ class External(_serialization.Model):
         container: Optional[str] = None,
         path: Optional[str] = None,
         refresh_configuration: Optional["_models.RefreshConfiguration"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_account: The properties that are associated with an Azure Storage account.
         :paramtype storage_account: ~azure.mgmt.streamanalytics.models.StorageAccount
@@ -4434,13 +4584,13 @@ class FileReferenceInputDataSource(ReferenceInputDataSource):
         "path": {"key": "properties.path", "type": "str"},
     }
 
-    def __init__(self, *, path: Optional[str] = None, **kwargs):
+    def __init__(self, *, path: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword path: The path of the file.
         :paramtype path: str
         """
         super().__init__(**kwargs)
-        self.type = "File"  # type: str
+        self.type: str = "File"
         self.path = path
 
 
@@ -4468,7 +4618,7 @@ class SubResource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Resource name.
         :paramtype name: str
@@ -4480,7 +4630,8 @@ class SubResource(_serialization.Model):
 
 
 class Function(SubResource):
-    """A function object, containing all information associated with the named function. All functions are contained under a streaming job.
+    """A function object, containing all information associated with the named function. All functions
+    are contained under a streaming job.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4507,8 +4658,8 @@ class Function(SubResource):
     }
 
     def __init__(
-        self, *, name: Optional[str] = None, properties: Optional["_models.FunctionProperties"] = None, **kwargs
-    ):
+        self, *, name: Optional[str] = None, properties: Optional["_models.FunctionProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: Resource name.
         :paramtype name: str
@@ -4536,7 +4687,9 @@ class FunctionInput(_serialization.Model):
         "is_configuration_parameter": {"key": "isConfigurationParameter", "type": "bool"},
     }
 
-    def __init__(self, *, data_type: Optional[str] = None, is_configuration_parameter: Optional[bool] = None, **kwargs):
+    def __init__(
+        self, *, data_type: Optional[str] = None, is_configuration_parameter: Optional[bool] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword data_type: The (Azure Stream Analytics supported) data type of the function input
          parameter. A list of valid Azure Stream Analytics data types are described at
@@ -4572,7 +4725,7 @@ class FunctionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -4592,7 +4745,7 @@ class FunctionOutput(_serialization.Model):
         "data_type": {"key": "dataType", "type": "str"},
     }
 
-    def __init__(self, *, data_type: Optional[str] = None, **kwargs):
+    def __init__(self, *, data_type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword data_type: The (Azure Stream Analytics supported) data type of the function output. A
          list of valid Azure Stream Analytics data types are described at
@@ -4624,13 +4777,13 @@ class GatewayMessageBusOutputDataSource(OutputDataSource):
         "topic": {"key": "properties.topic", "type": "str"},
     }
 
-    def __init__(self, *, topic: Optional[str] = None, **kwargs):
+    def __init__(self, *, topic: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword topic: The name of the Service Bus topic.
         :paramtype topic: str
         """
         super().__init__(**kwargs)
-        self.type = "GatewayMessageBus"  # type: str
+        self.type: str = "GatewayMessageBus"
         self.topic = topic
 
 
@@ -4645,7 +4798,7 @@ class GatewayMessageBusSourceProperties(_serialization.Model):
         "topic": {"key": "topic", "type": "str"},
     }
 
-    def __init__(self, *, topic: Optional[str] = None, **kwargs):
+    def __init__(self, *, topic: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword topic: The name of the Service Bus topic.
         :paramtype topic: str
@@ -4665,7 +4818,7 @@ class GatewayMessageBusOutputDataSourceProperties(GatewayMessageBusSourcePropert
         "topic": {"key": "topic", "type": "str"},
     }
 
-    def __init__(self, *, topic: Optional[str] = None, **kwargs):
+    def __init__(self, *, topic: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword topic: The name of the Service Bus topic.
         :paramtype topic: str
@@ -4694,13 +4847,13 @@ class GatewayMessageBusStreamInputDataSource(StreamInputDataSource):
         "topic": {"key": "properties.topic", "type": "str"},
     }
 
-    def __init__(self, *, topic: Optional[str] = None, **kwargs):
+    def __init__(self, *, topic: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword topic: The name of the Service Bus topic.
         :paramtype topic: str
         """
         super().__init__(**kwargs)
-        self.type = "GatewayMessageBus"  # type: str
+        self.type: str = "GatewayMessageBus"
         self.topic = topic
 
 
@@ -4715,7 +4868,7 @@ class GatewayMessageBusStreamInputDataSourceProperties(GatewayMessageBusSourcePr
         "topic": {"key": "topic", "type": "str"},
     }
 
-    def __init__(self, *, topic: Optional[str] = None, **kwargs):
+    def __init__(self, *, topic: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword topic: The name of the Service Bus topic.
         :paramtype topic: str
@@ -4749,7 +4902,7 @@ class GetStreamingJobSkuResult(_serialization.Model):
         "capacity": {"key": "capacity", "type": "SkuCapacity"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.resource_type = None
@@ -4777,7 +4930,7 @@ class GetStreamingJobSkuResults(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.GetStreamingJobSkuResult"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.GetStreamingJobSkuResult"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of available SKUs that the streaming job can use.
         :paramtype value: list[~azure.mgmt.streamanalytics.models.GetStreamingJobSkuResult]
@@ -4798,7 +4951,7 @@ class GetStreamingJobSkuResultSku(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[Union[str, "_models.SkuName"]] = None, **kwargs):
+    def __init__(self, *, name: Optional[Union[str, "_models.SkuName"]] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the SKU. "Standard"
         :paramtype name: str or ~azure.mgmt.streamanalytics.models.SkuName
@@ -4820,7 +4973,7 @@ class Identity(_serialization.Model):
     :vartype type: str
     :ivar user_assigned_identities: The user assigned identities associated with the streaming job
      resource.
-    :vartype user_assigned_identities: JSON
+    :vartype user_assigned_identities: dict[str, JSON]
     """
 
     _validation = {
@@ -4832,16 +4985,18 @@ class Identity(_serialization.Model):
         "tenant_id": {"key": "tenantId", "type": "str"},
         "principal_id": {"key": "principalId", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "object"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{object}"},
     }
 
-    def __init__(self, *, type: Optional[str] = None, user_assigned_identities: Optional[JSON] = None, **kwargs):
+    def __init__(
+        self, *, type: Optional[str] = None, user_assigned_identities: Optional[Dict[str, JSON]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of identity, can be SystemAssigned or UserAssigned.
         :paramtype type: str
         :keyword user_assigned_identities: The user assigned identities associated with the streaming
          job resource.
-        :paramtype user_assigned_identities: JSON
+        :paramtype user_assigned_identities: dict[str, JSON]
         """
         super().__init__(**kwargs)
         self.tenant_id = None
@@ -4851,7 +5006,8 @@ class Identity(_serialization.Model):
 
 
 class Input(SubResource):
-    """An input object, containing all information associated with the named input. All inputs are contained under a streaming job.
+    """An input object, containing all information associated with the named input. All inputs are
+    contained under a streaming job.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4878,7 +5034,9 @@ class Input(SubResource):
         "properties": {"key": "properties", "type": "InputProperties"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, properties: Optional["_models.InputProperties"] = None, **kwargs):
+    def __init__(
+        self, *, name: Optional[str] = None, properties: Optional["_models.InputProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: Resource name.
         :paramtype name: str
@@ -4911,7 +5069,7 @@ class InputListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -4975,8 +5133,8 @@ class InputProperties(_serialization.Model):
         compression: Optional["_models.Compression"] = None,
         partition_key: Optional[str] = None,
         watermark_settings: Optional["_models.InputWatermarkProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword serialization: Describes how data from an input is serialized or how data is
          serialized when written to an output. Required on PUT (CreateOrReplace) requests.
@@ -4990,7 +5148,7 @@ class InputProperties(_serialization.Model):
         :paramtype watermark_settings: ~azure.mgmt.streamanalytics.models.InputWatermarkProperties
         """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
         self.serialization = serialization
         self.diagnostics = None
         self.etag = None
@@ -5010,7 +5168,9 @@ class InputWatermarkProperties(_serialization.Model):
         "watermark_mode": {"key": "watermarkMode", "type": "str"},
     }
 
-    def __init__(self, *, watermark_mode: Optional[Union[str, "_models.InputWatermarkMode"]] = None, **kwargs):
+    def __init__(
+        self, *, watermark_mode: Optional[Union[str, "_models.InputWatermarkMode"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword watermark_mode: The input watermark mode. Known values are: "None" and
          "ReadWatermark".
@@ -5067,8 +5227,8 @@ class IoTHubStreamInputDataSource(StreamInputDataSource):
         shared_access_policy_key: Optional[str] = None,
         consumer_group_name: Optional[str] = None,
         endpoint: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword iot_hub_namespace: The name or the URI of the IoT Hub. Required on PUT
          (CreateOrReplace) requests.
@@ -5088,7 +5248,7 @@ class IoTHubStreamInputDataSource(StreamInputDataSource):
         :paramtype endpoint: str
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.Devices/IotHubs"  # type: str
+        self.type: str = "Microsoft.Devices/IotHubs"
         self.iot_hub_namespace = iot_hub_namespace
         self.shared_access_policy_name = shared_access_policy_name
         self.shared_access_policy_key = shared_access_policy_key
@@ -5117,14 +5277,14 @@ class JavaScriptFunctionBinding(FunctionBinding):
         "script": {"key": "properties.script", "type": "str"},
     }
 
-    def __init__(self, *, script: Optional[str] = None, **kwargs):
+    def __init__(self, *, script: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword script: The JavaScript code containing a single function definition. For example:
          'function (x, y) { return x + y; }'.
         :paramtype script: str
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.StreamAnalytics/JavascriptUdf"  # type: str
+        self.type: str = "Microsoft.StreamAnalytics/JavascriptUdf"
         self.script = script
 
 
@@ -5152,7 +5312,9 @@ class JavaScriptFunctionRetrieveDefaultDefinitionParameters(FunctionRetrieveDefa
         "udf_type": {"key": "bindingRetrievalProperties.udfType", "type": "str"},
     }
 
-    def __init__(self, *, script: Optional[str] = None, udf_type: Optional[Literal["Scalar"]] = None, **kwargs):
+    def __init__(
+        self, *, script: Optional[str] = None, udf_type: Optional[Literal["Scalar"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword script: The JavaScript code containing a single function definition. For example:
          'function (x, y) { return x + y; }'.
@@ -5161,7 +5323,7 @@ class JavaScriptFunctionRetrieveDefaultDefinitionParameters(FunctionRetrieveDefa
         :paramtype udf_type: str
         """
         super().__init__(**kwargs)
-        self.binding_type = "Microsoft.StreamAnalytics/JavascriptUdf"  # type: str
+        self.binding_type: str = "Microsoft.StreamAnalytics/JavascriptUdf"
         self.script = script
         self.udf_type = udf_type
 
@@ -5192,8 +5354,8 @@ class StorageAccount(_serialization.Model):
         account_name: Optional[str] = None,
         account_key: Optional[str] = None,
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword account_name: The name of the Azure Storage account. Required on PUT (CreateOrReplace)
          requests.
@@ -5237,8 +5399,8 @@ class JobStorageAccount(StorageAccount):
         account_name: Optional[str] = None,
         account_key: Optional[str] = None,
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword account_name: The name of the Azure Storage account. Required on PUT (CreateOrReplace)
          requests.
@@ -5256,13 +5418,14 @@ class JobStorageAccount(StorageAccount):
 
 
 class JsonSerialization(Serialization):
-    """Describes how data from an input is serialized or how data is serialized when written to an output in JSON format.
+    """Describes how data from an input is serialized or how data is serialized when written to an
+    output in JSON format.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar type: Indicates the type of serialization that the input or output uses. Required on PUT
-     (CreateOrReplace) requests. Required. Known values are: "Csv", "Avro", "Json", "CustomClr", and
-     "Parquet".
+     (CreateOrReplace) requests. Required. Known values are: "Csv", "Avro", "Json", "CustomClr",
+     "Parquet", and "Delta".
     :vartype type: str or ~azure.mgmt.streamanalytics.models.EventSerializationType
     :ivar encoding: Specifies the encoding of the incoming data in the case of input and the
      encoding of outgoing data in the case of output. Required on PUT (CreateOrReplace) requests.
@@ -5292,8 +5455,8 @@ class JsonSerialization(Serialization):
         *,
         encoding: Optional[Union[str, "_models.Encoding"]] = None,
         format: Optional[Union[str, "_models.JsonOutputSerializationFormat"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword encoding: Specifies the encoding of the incoming data in the case of input and the
          encoding of outgoing data in the case of output. Required on PUT (CreateOrReplace) requests.
@@ -5308,7 +5471,7 @@ class JsonSerialization(Serialization):
         :paramtype format: str or ~azure.mgmt.streamanalytics.models.JsonOutputSerializationFormat
         """
         super().__init__(**kwargs)
-        self.type = "Json"  # type: str
+        self.type: str = "Json"
         self.encoding = encoding
         self.format = format
 
@@ -5328,8 +5491,8 @@ class LastOutputEventTimestamp(_serialization.Model):
     }
 
     def __init__(
-        self, *, last_output_event_time: Optional[str] = None, last_update_time: Optional[str] = None, **kwargs
-    ):
+        self, *, last_output_event_time: Optional[str] = None, last_update_time: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword last_output_event_time: The last output event time.
         :paramtype last_output_event_time: str
@@ -5366,7 +5529,7 @@ class Operation(_serialization.Model):
         "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(self, *, is_data_action: Optional[bool] = None, **kwargs):
+    def __init__(self, *, is_data_action: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword is_data_action: Indicates whether the operation is a data action.
         :paramtype is_data_action: bool
@@ -5407,7 +5570,7 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provider = None
@@ -5417,7 +5580,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """Result of the request to list Stream Analytics operations. It contains a list of operations and a URL link to get the next set of results.
+    """Result of the request to list Stream Analytics operations. It contains a list of operations and
+    a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -5438,7 +5602,7 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -5446,7 +5610,8 @@ class OperationListResult(_serialization.Model):
 
 
 class Output(SubResource):  # pylint: disable=too-many-instance-attributes
-    """An output object, containing all information associated with the named output. All outputs are contained under a streaming job.
+    """An output object, containing all information associated with the named output. All outputs are
+    contained under a streaming job.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -5462,7 +5627,7 @@ class Output(SubResource):  # pylint: disable=too-many-instance-attributes
     :ivar time_window: The time frame for filtering Stream Analytics job outputs.
     :vartype time_window: str
     :ivar size_window: The size window to constrain a Stream Analytics output to.
-    :vartype size_window: float
+    :vartype size_window: int
     :ivar serialization: Describes how data from an input is serialized or how data is serialized
      when written to an output. Required on PUT (CreateOrReplace) requests.
     :vartype serialization: ~azure.mgmt.streamanalytics.models.Serialization
@@ -5495,7 +5660,7 @@ class Output(SubResource):  # pylint: disable=too-many-instance-attributes
         "type": {"key": "type", "type": "str"},
         "datasource": {"key": "properties.datasource", "type": "OutputDataSource"},
         "time_window": {"key": "properties.timeWindow", "type": "str"},
-        "size_window": {"key": "properties.sizeWindow", "type": "float"},
+        "size_window": {"key": "properties.sizeWindow", "type": "int"},
         "serialization": {"key": "properties.serialization", "type": "Serialization"},
         "diagnostics": {"key": "properties.diagnostics", "type": "Diagnostics"},
         "etag": {"key": "properties.etag", "type": "str"},
@@ -5512,11 +5677,11 @@ class Output(SubResource):  # pylint: disable=too-many-instance-attributes
         name: Optional[str] = None,
         datasource: Optional["_models.OutputDataSource"] = None,
         time_window: Optional[str] = None,
-        size_window: Optional[float] = None,
+        size_window: Optional[int] = None,
         serialization: Optional["_models.Serialization"] = None,
         watermark_settings: Optional["_models.OutputWatermarkProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Resource name.
         :paramtype name: str
@@ -5526,7 +5691,7 @@ class Output(SubResource):  # pylint: disable=too-many-instance-attributes
         :keyword time_window: The time frame for filtering Stream Analytics job outputs.
         :paramtype time_window: str
         :keyword size_window: The size window to constrain a Stream Analytics output to.
-        :paramtype size_window: float
+        :paramtype size_window: int
         :keyword serialization: Describes how data from an input is serialized or how data is
          serialized when written to an output. Required on PUT (CreateOrReplace) requests.
         :paramtype serialization: ~azure.mgmt.streamanalytics.models.Serialization
@@ -5565,7 +5730,7 @@ class OutputListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -5594,8 +5759,8 @@ class OutputWatermarkProperties(_serialization.Model):
         *,
         watermark_mode: Optional[Union[str, "_models.OutputWatermarkMode"]] = None,
         max_watermark_difference_across_partitions: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword watermark_mode: The output watermark mode. Known values are: "None",
          "SendCurrentPartitionWatermark", and "SendLowestWatermarkAcrossPartitions".
@@ -5611,13 +5776,14 @@ class OutputWatermarkProperties(_serialization.Model):
 
 
 class ParquetSerialization(Serialization):
-    """Describes how data from an input is serialized or how data is serialized when written to an output in Parquet format.
+    """Describes how data from an input is serialized or how data is serialized when written to an
+    output in Parquet format.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar type: Indicates the type of serialization that the input or output uses. Required on PUT
-     (CreateOrReplace) requests. Required. Known values are: "Csv", "Avro", "Json", "CustomClr", and
-     "Parquet".
+     (CreateOrReplace) requests. Required. Known values are: "Csv", "Avro", "Json", "CustomClr",
+     "Parquet", and "Delta".
     :vartype type: str or ~azure.mgmt.streamanalytics.models.EventSerializationType
     :ivar properties: The properties that are associated with the Parquet serialization type.
      Required on PUT (CreateOrReplace) requests.
@@ -5633,14 +5799,14 @@ class ParquetSerialization(Serialization):
         "properties": {"key": "properties", "type": "object"},
     }
 
-    def __init__(self, *, properties: Optional[JSON] = None, **kwargs):
+    def __init__(self, *, properties: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword properties: The properties that are associated with the Parquet serialization type.
          Required on PUT (CreateOrReplace) requests.
         :paramtype properties: JSON
         """
         super().__init__(**kwargs)
-        self.type = "Parquet"  # type: str
+        self.type: str = "Parquet"
         self.properties = properties
 
 
@@ -5689,8 +5855,8 @@ class PostgreSQLDataSourceProperties(_serialization.Model):
         password: Optional[str] = None,
         max_writer_count: Optional[float] = None,
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword server: The name of the SQL server containing the Azure SQL database. Required on PUT
          (CreateOrReplace) requests.
@@ -5779,8 +5945,8 @@ class PostgreSQLOutputDataSource(OutputDataSource):
         password: Optional[str] = None,
         max_writer_count: Optional[float] = None,
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword server: The name of the SQL server containing the Azure SQL database. Required on PUT
          (CreateOrReplace) requests.
@@ -5805,7 +5971,7 @@ class PostgreSQLOutputDataSource(OutputDataSource):
         :paramtype authentication_mode: str or ~azure.mgmt.streamanalytics.models.AuthenticationMode
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.DBForPostgreSQL/servers/databases"  # type: str
+        self.type: str = "Microsoft.DBForPostgreSQL/servers/databases"
         self.server = server
         self.database = database
         self.table = table
@@ -5860,8 +6026,8 @@ class PostgreSQLOutputDataSourceProperties(PostgreSQLDataSourceProperties):
         password: Optional[str] = None,
         max_writer_count: Optional[float] = None,
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword server: The name of the SQL server containing the Azure SQL database. Required on PUT
          (CreateOrReplace) requests.
@@ -5962,8 +6128,8 @@ class PowerBIOutputDataSource(OutputDataSource):
         group_id: Optional[str] = None,
         group_name: Optional[str] = None,
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword refresh_token: A refresh token that can be used to obtain a valid access token that
          can then be used to authenticate with the data source. A valid refresh token is currently only
@@ -5995,7 +6161,7 @@ class PowerBIOutputDataSource(OutputDataSource):
         :paramtype authentication_mode: str or ~azure.mgmt.streamanalytics.models.AuthenticationMode
         """
         super().__init__(**kwargs)
-        self.type = "PowerBI"  # type: str
+        self.type: str = "PowerBI"
         self.refresh_token = refresh_token
         self.token_user_principal_name = token_user_principal_name
         self.token_user_display_name = token_user_display_name
@@ -6061,8 +6227,8 @@ class PowerBIOutputDataSourceProperties(OAuthBasedDataSourceProperties):
         group_id: Optional[str] = None,
         group_name: Optional[str] = None,
         authentication_mode: Union[str, "_models.AuthenticationMode"] = "ConnectionString",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword refresh_token: A refresh token that can be used to obtain a valid access token that
          can then be used to authenticate with the data source. A valid refresh token is currently only
@@ -6107,7 +6273,8 @@ class PowerBIOutputDataSourceProperties(OAuthBasedDataSourceProperties):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
+    """The resource model definition for a ARM proxy resource. It will have everything other than
+    required location and tags.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -6133,7 +6300,7 @@ class ProxyResource(Resource):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -6174,7 +6341,7 @@ class PrivateEndpoint(ProxyResource):
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(self, *, properties: Optional["_models.PrivateEndpointProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.PrivateEndpointProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: The properties associated with a private endpoint.
         :paramtype properties: ~azure.mgmt.streamanalytics.models.PrivateEndpointProperties
@@ -6205,7 +6372,7 @@ class PrivateEndpointListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -6241,8 +6408,8 @@ class PrivateEndpointProperties(_serialization.Model):
         self,
         *,
         manual_private_link_service_connections: Optional[List["_models.PrivateLinkServiceConnection"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword manual_private_link_service_connections: A list of connections to the remote resource.
          Immutable after it is set.
@@ -6255,7 +6422,8 @@ class PrivateEndpointProperties(_serialization.Model):
 
 
 class PrivateLinkConnectionState(_serialization.Model):
-    """A collection of read-only information about the state of the connection to the private remote resource.
+    """A collection of read-only information about the state of the connection to the private remote
+    resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -6281,7 +6449,7 @@ class PrivateLinkConnectionState(_serialization.Model):
         "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.status = None
@@ -6329,8 +6497,8 @@ class PrivateLinkServiceConnection(_serialization.Model):
         private_link_service_id: Optional[str] = None,
         group_ids: Optional[List[str]] = None,
         private_link_service_connection_state: Optional["_models.PrivateLinkConnectionState"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_link_service_id: The resource id of the private link service. Required on PUT
          (CreateOrUpdate) requests.
@@ -6391,7 +6559,7 @@ class QueryCompilationError(_serialization.Model):
         "is_global": {"key": "isGlobal", "type": "bool"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.message = None
@@ -6435,7 +6603,7 @@ class QueryCompilationResult(_serialization.Model):
         "functions": {"key": "functions", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.errors = None
@@ -6486,8 +6654,8 @@ class QueryFunction(_serialization.Model):
         binding_type: str,
         inputs: List["_models.FunctionInput"],
         output: "_models.FunctionOutput",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the function. Required.
         :paramtype name: str
@@ -6529,7 +6697,7 @@ class QueryInput(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, name: str, type: str, **kwargs):
+    def __init__(self, *, name: str, type: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the input. Required.
         :paramtype name: str
@@ -6566,7 +6734,7 @@ class QueryTestingResult(Error):
         "output_uri": {"key": "outputUri", "type": "str"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorError"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorError"] = None, **kwargs: Any) -> None:
         """
         :keyword error: Error definition properties.
         :paramtype error: ~azure.mgmt.streamanalytics.models.ErrorError
@@ -6577,7 +6745,9 @@ class QueryTestingResult(Error):
 
 
 class RawOutputDatasource(OutputDataSource):
-    """Describes a raw output data source. This data source type is only applicable/usable when using the query testing API. You cannot create a job with this data source type or add an output of this data source type to an existing job.
+    """Describes a raw output data source. This data source type is only applicable/usable when using
+    the query testing API. You cannot create a job with this data source type or add an output of
+    this data source type to an existing job.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -6599,7 +6769,7 @@ class RawOutputDatasource(OutputDataSource):
         "payload_uri": {"key": "properties.payloadUri", "type": "str"},
     }
 
-    def __init__(self, *, payload_uri: Optional[str] = None, **kwargs):
+    def __init__(self, *, payload_uri: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword payload_uri: The SAS URL to a blob where the output should be written. If this
          property is not set, output data will be written into a temporary storage, and a SAS URL to
@@ -6607,12 +6777,14 @@ class RawOutputDatasource(OutputDataSource):
         :paramtype payload_uri: str
         """
         super().__init__(**kwargs)
-        self.type = "Raw"  # type: str
+        self.type: str = "Raw"
         self.payload_uri = payload_uri
 
 
 class RawReferenceInputDataSource(ReferenceInputDataSource):
-    """Describes a raw input data source that contains reference data. This data source type is only applicable/usable when using the query testing API. You cannot create a job with this data source type or add an input of this data source type to an existing job.
+    """Describes a raw input data source that contains reference data. This data source type is only
+    applicable/usable when using the query testing API. You cannot create a job with this data
+    source type or add an input of this data source type to an existing job.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -6637,7 +6809,7 @@ class RawReferenceInputDataSource(ReferenceInputDataSource):
         "payload_uri": {"key": "properties.payloadUri", "type": "str"},
     }
 
-    def __init__(self, *, payload: Optional[str] = None, payload_uri: Optional[str] = None, **kwargs):
+    def __init__(self, *, payload: Optional[str] = None, payload_uri: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword payload: The JSON serialized content of the input data. Either payload or payloadUri
          must be set, but not both.
@@ -6647,13 +6819,15 @@ class RawReferenceInputDataSource(ReferenceInputDataSource):
         :paramtype payload_uri: str
         """
         super().__init__(**kwargs)
-        self.type = "Raw"  # type: str
+        self.type: str = "Raw"
         self.payload = payload
         self.payload_uri = payload_uri
 
 
 class RawStreamInputDataSource(StreamInputDataSource):
-    """Describes a raw input data source that contains stream data. This data source type is only applicable/usable when using the query testing API. You cannot create a job with this data source type or add an input of this data source type to an existing job.
+    """Describes a raw input data source that contains stream data. This data source type is only
+    applicable/usable when using the query testing API. You cannot create a job with this data
+    source type or add an input of this data source type to an existing job.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -6678,7 +6852,7 @@ class RawStreamInputDataSource(StreamInputDataSource):
         "payload_uri": {"key": "properties.payloadUri", "type": "str"},
     }
 
-    def __init__(self, *, payload: Optional[str] = None, payload_uri: Optional[str] = None, **kwargs):
+    def __init__(self, *, payload: Optional[str] = None, payload_uri: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword payload: The JSON serialized content of the input data. Either payload or payloadUri
          must be set, but not both.
@@ -6688,7 +6862,7 @@ class RawStreamInputDataSource(StreamInputDataSource):
         :paramtype payload_uri: str
         """
         super().__init__(**kwargs)
-        self.type = "Raw"  # type: str
+        self.type: str = "Raw"
         self.payload = payload
         self.payload_uri = payload_uri
 
@@ -6750,8 +6924,8 @@ class ReferenceInputProperties(InputProperties):
         partition_key: Optional[str] = None,
         watermark_settings: Optional["_models.InputWatermarkProperties"] = None,
         datasource: Optional["_models.ReferenceInputDataSource"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword serialization: Describes how data from an input is serialized or how data is
          serialized when written to an output. Required on PUT (CreateOrReplace) requests.
@@ -6774,7 +6948,7 @@ class ReferenceInputProperties(InputProperties):
             watermark_settings=watermark_settings,
             **kwargs
         )
-        self.type = "Reference"  # type: str
+        self.type: str = "Reference"
         self.datasource = datasource
 
 
@@ -6817,8 +6991,8 @@ class RefreshConfiguration(_serialization.Model):
         time_format: Optional[str] = None,
         refresh_interval: Optional[str] = None,
         refresh_type: Optional[Union[str, "_models.UpdatableUdfRefreshType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
          against which blob names will be matched to determine whether or not they should be included as
@@ -6868,7 +7042,7 @@ class ResourceTestStatus(_serialization.Model):
         "error": {"key": "error", "type": "ErrorResponse"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.status = None
@@ -6905,8 +7079,8 @@ class SampleInput(_serialization.Model):
         compatibility_level: Optional[str] = None,
         events_uri: Optional[str] = None,
         data_locale: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword input: The stream analytics input to sample.
         :paramtype input: ~azure.mgmt.streamanalytics.models.Input
@@ -6962,7 +7136,7 @@ class SampleInputResult(Error):
         "last_arrival_time": {"key": "lastArrivalTime", "type": "str"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorError"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorError"] = None, **kwargs: Any) -> None:
         """
         :keyword error: Error definition properties.
         :paramtype error: ~azure.mgmt.streamanalytics.models.ErrorError
@@ -7015,8 +7189,8 @@ class ScalarFunctionProperties(FunctionProperties):
         inputs: Optional[List["_models.FunctionInput"]] = None,
         output: Optional["_models.FunctionOutput"] = None,
         binding: Optional["_models.FunctionBinding"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword inputs:
         :paramtype inputs: list[~azure.mgmt.streamanalytics.models.FunctionInput]
@@ -7027,7 +7201,7 @@ class ScalarFunctionProperties(FunctionProperties):
         :paramtype binding: ~azure.mgmt.streamanalytics.models.FunctionBinding
         """
         super().__init__(inputs=inputs, output=output, binding=binding, **kwargs)
-        self.type = "Scalar"  # type: str
+        self.type: str = "Scalar"
 
 
 class ScaleStreamingJobParameters(_serialization.Model):
@@ -7042,7 +7216,7 @@ class ScaleStreamingJobParameters(_serialization.Model):
         "streaming_units": {"key": "streamingUnits", "type": "int"},
     }
 
-    def __init__(self, *, streaming_units: Optional[int] = None, **kwargs):
+    def __init__(self, *, streaming_units: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword streaming_units: Specifies the number of streaming units that the streaming job will
          scale to.
@@ -7110,8 +7284,8 @@ class ServiceBusQueueOutputDataSource(OutputDataSource):
         queue_name: Optional[str] = None,
         property_columns: Optional[List[str]] = None,
         system_property_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
          Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
@@ -7138,7 +7312,7 @@ class ServiceBusQueueOutputDataSource(OutputDataSource):
         :paramtype system_property_columns: JSON
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.ServiceBus/Queue"  # type: str
+        self.type: str = "Microsoft.ServiceBus/Queue"
         self.service_bus_namespace = service_bus_namespace
         self.shared_access_policy_name = shared_access_policy_name
         self.shared_access_policy_key = shared_access_policy_key
@@ -7196,8 +7370,8 @@ class ServiceBusQueueOutputDataSourceProperties(ServiceBusDataSourceProperties):
         queue_name: Optional[str] = None,
         property_columns: Optional[List[str]] = None,
         system_property_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
          Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
@@ -7293,8 +7467,8 @@ class ServiceBusTopicOutputDataSource(OutputDataSource):
         topic_name: Optional[str] = None,
         property_columns: Optional[List[str]] = None,
         system_property_columns: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
          Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
@@ -7321,7 +7495,7 @@ class ServiceBusTopicOutputDataSource(OutputDataSource):
         :paramtype system_property_columns: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.type = "Microsoft.ServiceBus/Topic"  # type: str
+        self.type: str = "Microsoft.ServiceBus/Topic"
         self.service_bus_namespace = service_bus_namespace
         self.shared_access_policy_name = shared_access_policy_name
         self.shared_access_policy_key = shared_access_policy_key
@@ -7379,8 +7553,8 @@ class ServiceBusTopicOutputDataSourceProperties(ServiceBusDataSourceProperties):
         topic_name: Optional[str] = None,
         property_columns: Optional[List[str]] = None,
         system_property_columns: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
          Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
@@ -7433,8 +7607,8 @@ class Sku(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: Optional[Union[str, "_models.SkuName"]] = None, capacity: Optional[int] = None, **kwargs
-    ):
+        self, *, name: Optional[Union[str, "_models.SkuName"]] = None, capacity: Optional[int] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the SKU. Required on PUT (CreateOrReplace) requests. "Standard"
         :paramtype name: str or ~azure.mgmt.streamanalytics.models.SkuName
@@ -7480,7 +7654,7 @@ class SkuCapacity(_serialization.Model):
         "allowed_values": {"key": "allowedValues", "type": "[int]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.minimum = None
@@ -7516,8 +7690,8 @@ class StartStreamingJobParameters(_serialization.Model):
         *,
         output_start_mode: Optional[Union[str, "_models.OutputStartMode"]] = None,
         output_start_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword output_start_mode: Value may be JobStartTime, CustomTime, or LastOutputEventTime to
          indicate whether the starting point of the output event stream should start whenever the job is
@@ -7727,8 +7901,8 @@ class StreamingJob(TrackedResource):  # pylint: disable=too-many-instance-attrib
         content_storage_policy: Optional[Union[str, "_models.ContentStoragePolicy"]] = None,
         externals: Optional["_models.External"] = None,
         cluster: Optional["_models.ClusterInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -7863,7 +8037,7 @@ class StreamingJobListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -7927,8 +8101,8 @@ class StreamInputProperties(InputProperties):
         partition_key: Optional[str] = None,
         watermark_settings: Optional["_models.InputWatermarkProperties"] = None,
         datasource: Optional["_models.StreamInputDataSource"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword serialization: Describes how data from an input is serialized or how data is
          serialized when written to an output. Required on PUT (CreateOrReplace) requests.
@@ -7951,7 +8125,7 @@ class StreamInputProperties(InputProperties):
             watermark_settings=watermark_settings,
             **kwargs
         )
-        self.type = "Stream"  # type: str
+        self.type: str = "Stream"
         self.datasource = datasource
 
 
@@ -7987,7 +8161,7 @@ class SubscriptionQuota(SubResource):
         "current_count": {"key": "properties.currentCount", "type": "int"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Resource name.
         :paramtype name: str
@@ -7998,7 +8172,8 @@ class SubscriptionQuota(SubResource):
 
 
 class SubscriptionQuotasListResult(_serialization.Model):
-    """Result of the GetQuotas operation. It contains a list of quotas for the subscription in a particular region.
+    """Result of the GetQuotas operation. It contains a list of quotas for the subscription in a
+    particular region.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -8014,7 +8189,7 @@ class SubscriptionQuotasListResult(_serialization.Model):
         "value": {"key": "value", "type": "[SubscriptionQuota]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -8041,7 +8216,7 @@ class TestDatasourceResult(Error):
         "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorError"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorError"] = None, **kwargs: Any) -> None:
         """
         :keyword error: Error definition properties.
         :paramtype error: ~azure.mgmt.streamanalytics.models.ErrorError
@@ -8067,7 +8242,7 @@ class TestInput(_serialization.Model):
         "input": {"key": "input", "type": "Input"},
     }
 
-    def __init__(self, *, input: "_models.Input", **kwargs):
+    def __init__(self, *, input: "_models.Input", **kwargs: Any) -> None:
         """
         :keyword input: The stream analytics input to test. Required.
         :paramtype input: ~azure.mgmt.streamanalytics.models.Input
@@ -8093,7 +8268,7 @@ class TestOutput(_serialization.Model):
         "output": {"key": "output", "type": "Output"},
     }
 
-    def __init__(self, *, output: "_models.Output", **kwargs):
+    def __init__(self, *, output: "_models.Output", **kwargs: Any) -> None:
         """
         :keyword output: The stream analytics output to test. Required.
         :paramtype output: ~azure.mgmt.streamanalytics.models.Output
@@ -8128,8 +8303,8 @@ class TestQuery(_serialization.Model):
         *,
         streaming_job: "_models.StreamingJob",
         diagnostics: Optional["_models.TestQueryDiagnostics"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword diagnostics: Diagnostics information related to query testing.
         :paramtype diagnostics: ~azure.mgmt.streamanalytics.models.TestQueryDiagnostics
@@ -8162,7 +8337,7 @@ class TestQueryDiagnostics(_serialization.Model):
         "path": {"key": "path", "type": "str"},
     }
 
-    def __init__(self, *, write_uri: str, path: Optional[str] = None, **kwargs):
+    def __init__(self, *, write_uri: str, path: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword write_uri: The SAS URI to the container or directory. Required.
         :paramtype write_uri: str
@@ -8175,7 +8350,8 @@ class TestQueryDiagnostics(_serialization.Model):
 
 
 class Transformation(SubResource):
-    """A transformation object, containing all information associated with the named transformation. All transformations are contained under a streaming job.
+    """A transformation object, containing all information associated with the named transformation.
+    All transformations are contained under a streaming job.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -8222,8 +8398,8 @@ class Transformation(SubResource):
         streaming_units: int = 3,
         valid_streaming_units: Optional[List[int]] = None,
         query: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Resource name.
         :paramtype name: str

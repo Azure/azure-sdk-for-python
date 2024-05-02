@@ -70,6 +70,8 @@ class ResourceHealthMgmtClient(MultiApiClientMixin, _SDKClient):
         profile: KnownProfiles = KnownProfiles.default,
         **kwargs: Any
     ) -> None:
+        if api_version:
+            kwargs.setdefault('api_version', api_version)
         self._config = ResourceHealthMgmtClientConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(ResourceHealthMgmtClient, self).__init__(
@@ -88,6 +90,7 @@ class ResourceHealthMgmtClient(MultiApiClientMixin, _SDKClient):
            * 2015-01-01: :mod:`v2015_01_01.models<azure.mgmt.resourcehealth.v2015_01_01.models>`
            * 2018-07-01: :mod:`v2018_07_01.models<azure.mgmt.resourcehealth.v2018_07_01.models>`
            * 2022-10-01: :mod:`v2022_10_01.models<azure.mgmt.resourcehealth.v2022_10_01.models>`
+           * 2023-10-01-preview: :mod:`v2023_10_01_preview.models<azure.mgmt.resourcehealth.v2023_10_01_preview.models>`
         """
         if api_version == '2015-01-01':
             from ..v2015_01_01 import models
@@ -98,6 +101,9 @@ class ResourceHealthMgmtClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2022-10-01':
             from ..v2022_10_01 import models
             return models
+        elif api_version == '2023-10-01-preview':
+            from ..v2023_10_01_preview import models
+            return models
         raise ValueError("API version {} is not available".format(api_version))
 
     @property
@@ -107,6 +113,7 @@ class ResourceHealthMgmtClient(MultiApiClientMixin, _SDKClient):
            * 2015-01-01: :class:`AvailabilityStatusesOperations<azure.mgmt.resourcehealth.v2015_01_01.aio.operations.AvailabilityStatusesOperations>`
            * 2018-07-01: :class:`AvailabilityStatusesOperations<azure.mgmt.resourcehealth.v2018_07_01.aio.operations.AvailabilityStatusesOperations>`
            * 2022-10-01: :class:`AvailabilityStatusesOperations<azure.mgmt.resourcehealth.v2022_10_01.aio.operations.AvailabilityStatusesOperations>`
+           * 2023-10-01-preview: :class:`AvailabilityStatusesOperations<azure.mgmt.resourcehealth.v2023_10_01_preview.aio.operations.AvailabilityStatusesOperations>`
         """
         api_version = self._get_api_version('availability_statuses')
         if api_version == '2015-01-01':
@@ -115,10 +122,12 @@ class ResourceHealthMgmtClient(MultiApiClientMixin, _SDKClient):
             from ..v2018_07_01.aio.operations import AvailabilityStatusesOperations as OperationClass
         elif api_version == '2022-10-01':
             from ..v2022_10_01.aio.operations import AvailabilityStatusesOperations as OperationClass
+        elif api_version == '2023-10-01-preview':
+            from ..v2023_10_01_preview.aio.operations import AvailabilityStatusesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'availability_statuses'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def child_availability_statuses(self):
@@ -126,16 +135,19 @@ class ResourceHealthMgmtClient(MultiApiClientMixin, _SDKClient):
 
            * 2015-01-01: :class:`ChildAvailabilityStatusesOperations<azure.mgmt.resourcehealth.v2015_01_01.aio.operations.ChildAvailabilityStatusesOperations>`
            * 2022-10-01: :class:`ChildAvailabilityStatusesOperations<azure.mgmt.resourcehealth.v2022_10_01.aio.operations.ChildAvailabilityStatusesOperations>`
+           * 2023-10-01-preview: :class:`ChildAvailabilityStatusesOperations<azure.mgmt.resourcehealth.v2023_10_01_preview.aio.operations.ChildAvailabilityStatusesOperations>`
         """
         api_version = self._get_api_version('child_availability_statuses')
         if api_version == '2015-01-01':
             from ..v2015_01_01.aio.operations import ChildAvailabilityStatusesOperations as OperationClass
         elif api_version == '2022-10-01':
             from ..v2022_10_01.aio.operations import ChildAvailabilityStatusesOperations as OperationClass
+        elif api_version == '2023-10-01-preview':
+            from ..v2023_10_01_preview.aio.operations import ChildAvailabilityStatusesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'child_availability_statuses'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def child_resources(self):
@@ -143,16 +155,19 @@ class ResourceHealthMgmtClient(MultiApiClientMixin, _SDKClient):
 
            * 2015-01-01: :class:`ChildResourcesOperations<azure.mgmt.resourcehealth.v2015_01_01.aio.operations.ChildResourcesOperations>`
            * 2022-10-01: :class:`ChildResourcesOperations<azure.mgmt.resourcehealth.v2022_10_01.aio.operations.ChildResourcesOperations>`
+           * 2023-10-01-preview: :class:`ChildResourcesOperations<azure.mgmt.resourcehealth.v2023_10_01_preview.aio.operations.ChildResourcesOperations>`
         """
         api_version = self._get_api_version('child_resources')
         if api_version == '2015-01-01':
             from ..v2015_01_01.aio.operations import ChildResourcesOperations as OperationClass
         elif api_version == '2022-10-01':
             from ..v2022_10_01.aio.operations import ChildResourcesOperations as OperationClass
+        elif api_version == '2023-10-01-preview':
+            from ..v2023_10_01_preview.aio.operations import ChildResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'child_resources'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def emerging_issues(self):
@@ -160,30 +175,36 @@ class ResourceHealthMgmtClient(MultiApiClientMixin, _SDKClient):
 
            * 2018-07-01: :class:`EmergingIssuesOperations<azure.mgmt.resourcehealth.v2018_07_01.aio.operations.EmergingIssuesOperations>`
            * 2022-10-01: :class:`EmergingIssuesOperations<azure.mgmt.resourcehealth.v2022_10_01.aio.operations.EmergingIssuesOperations>`
+           * 2023-10-01-preview: :class:`EmergingIssuesOperations<azure.mgmt.resourcehealth.v2023_10_01_preview.aio.operations.EmergingIssuesOperations>`
         """
         api_version = self._get_api_version('emerging_issues')
         if api_version == '2018-07-01':
             from ..v2018_07_01.aio.operations import EmergingIssuesOperations as OperationClass
         elif api_version == '2022-10-01':
             from ..v2022_10_01.aio.operations import EmergingIssuesOperations as OperationClass
+        elif api_version == '2023-10-01-preview':
+            from ..v2023_10_01_preview.aio.operations import EmergingIssuesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'emerging_issues'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def event(self):
         """Instance depends on the API version:
 
            * 2022-10-01: :class:`EventOperations<azure.mgmt.resourcehealth.v2022_10_01.aio.operations.EventOperations>`
+           * 2023-10-01-preview: :class:`EventOperations<azure.mgmt.resourcehealth.v2023_10_01_preview.aio.operations.EventOperations>`
         """
         api_version = self._get_api_version('event')
         if api_version == '2022-10-01':
             from ..v2022_10_01.aio.operations import EventOperations as OperationClass
+        elif api_version == '2023-10-01-preview':
+            from ..v2023_10_01_preview.aio.operations import EventOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'event'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def events(self):
@@ -191,30 +212,36 @@ class ResourceHealthMgmtClient(MultiApiClientMixin, _SDKClient):
 
            * 2018-07-01: :class:`EventsOperations<azure.mgmt.resourcehealth.v2018_07_01.aio.operations.EventsOperations>`
            * 2022-10-01: :class:`EventsOperations<azure.mgmt.resourcehealth.v2022_10_01.aio.operations.EventsOperations>`
+           * 2023-10-01-preview: :class:`EventsOperations<azure.mgmt.resourcehealth.v2023_10_01_preview.aio.operations.EventsOperations>`
         """
         api_version = self._get_api_version('events')
         if api_version == '2018-07-01':
             from ..v2018_07_01.aio.operations import EventsOperations as OperationClass
         elif api_version == '2022-10-01':
             from ..v2022_10_01.aio.operations import EventsOperations as OperationClass
+        elif api_version == '2023-10-01-preview':
+            from ..v2023_10_01_preview.aio.operations import EventsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'events'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def impacted_resources(self):
         """Instance depends on the API version:
 
            * 2022-10-01: :class:`ImpactedResourcesOperations<azure.mgmt.resourcehealth.v2022_10_01.aio.operations.ImpactedResourcesOperations>`
+           * 2023-10-01-preview: :class:`ImpactedResourcesOperations<azure.mgmt.resourcehealth.v2023_10_01_preview.aio.operations.ImpactedResourcesOperations>`
         """
         api_version = self._get_api_version('impacted_resources')
         if api_version == '2022-10-01':
             from ..v2022_10_01.aio.operations import ImpactedResourcesOperations as OperationClass
+        elif api_version == '2023-10-01-preview':
+            from ..v2023_10_01_preview.aio.operations import ImpactedResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'impacted_resources'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def metadata(self):
@@ -222,16 +249,19 @@ class ResourceHealthMgmtClient(MultiApiClientMixin, _SDKClient):
 
            * 2018-07-01: :class:`MetadataOperations<azure.mgmt.resourcehealth.v2018_07_01.aio.operations.MetadataOperations>`
            * 2022-10-01: :class:`MetadataOperations<azure.mgmt.resourcehealth.v2022_10_01.aio.operations.MetadataOperations>`
+           * 2023-10-01-preview: :class:`MetadataOperations<azure.mgmt.resourcehealth.v2023_10_01_preview.aio.operations.MetadataOperations>`
         """
         api_version = self._get_api_version('metadata')
         if api_version == '2018-07-01':
             from ..v2018_07_01.aio.operations import MetadataOperations as OperationClass
         elif api_version == '2022-10-01':
             from ..v2022_10_01.aio.operations import MetadataOperations as OperationClass
+        elif api_version == '2023-10-01-preview':
+            from ..v2023_10_01_preview.aio.operations import MetadataOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'metadata'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def operations(self):
@@ -240,6 +270,7 @@ class ResourceHealthMgmtClient(MultiApiClientMixin, _SDKClient):
            * 2015-01-01: :class:`Operations<azure.mgmt.resourcehealth.v2015_01_01.aio.operations.Operations>`
            * 2018-07-01: :class:`Operations<azure.mgmt.resourcehealth.v2018_07_01.aio.operations.Operations>`
            * 2022-10-01: :class:`Operations<azure.mgmt.resourcehealth.v2022_10_01.aio.operations.Operations>`
+           * 2023-10-01-preview: :class:`Operations<azure.mgmt.resourcehealth.v2023_10_01_preview.aio.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2015-01-01':
@@ -248,24 +279,29 @@ class ResourceHealthMgmtClient(MultiApiClientMixin, _SDKClient):
             from ..v2018_07_01.aio.operations import Operations as OperationClass
         elif api_version == '2022-10-01':
             from ..v2022_10_01.aio.operations import Operations as OperationClass
+        elif api_version == '2023-10-01-preview':
+            from ..v2023_10_01_preview.aio.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def security_advisory_impacted_resources(self):
         """Instance depends on the API version:
 
            * 2022-10-01: :class:`SecurityAdvisoryImpactedResourcesOperations<azure.mgmt.resourcehealth.v2022_10_01.aio.operations.SecurityAdvisoryImpactedResourcesOperations>`
+           * 2023-10-01-preview: :class:`SecurityAdvisoryImpactedResourcesOperations<azure.mgmt.resourcehealth.v2023_10_01_preview.aio.operations.SecurityAdvisoryImpactedResourcesOperations>`
         """
         api_version = self._get_api_version('security_advisory_impacted_resources')
         if api_version == '2022-10-01':
             from ..v2022_10_01.aio.operations import SecurityAdvisoryImpactedResourcesOperations as OperationClass
+        elif api_version == '2023-10-01-preview':
+            from ..v2023_10_01_preview.aio.operations import SecurityAdvisoryImpactedResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'security_advisory_impacted_resources'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     async def close(self):
         await self._client.close()

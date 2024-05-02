@@ -12,14 +12,14 @@ from urllib.parse import urlparse
 import yaml
 
 from .._artifacts._artifact_utilities import get_datastore_info, get_storage_client
-from .._restclient.v2023_04_01_preview.operations import (  # pylint: disable = unused-import
+from .._restclient.v2023_10_01.operations import (  # pylint: disable = unused-import
     FeaturesetContainersOperations,
     FeaturesetVersionsOperations,
     FeaturestoreEntityContainersOperations,
     FeaturestoreEntityVersionsOperations,
 )
 from ..constants._common import DefaultOpenEncoding
-from ..exceptions import ValidationException, ErrorTarget, ErrorCategory, ValidationErrorType
+from ..exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from ..operations._datastore_operations import DatastoreOperations
 from ._storage_utils import AzureMLDatastorePathUri
 from .utils import load_yaml
@@ -94,7 +94,7 @@ def _archive_or_restore(
 
     version_resource.properties.is_archived = is_archived
     version_resource.properties.stage = "Archived" if is_archived else "Development"
-    version_operation.begin_create_or_update(
+    poller = version_operation.begin_create_or_update(
         name=name,
         version=version,
         resource_group_name=resource_group_name,
@@ -102,6 +102,7 @@ def _archive_or_restore(
         body=version_resource,
         **kwargs,
     )
+    poller.result()
 
 
 def _datetime_to_str(datetime_obj: Union[str, datetime]):

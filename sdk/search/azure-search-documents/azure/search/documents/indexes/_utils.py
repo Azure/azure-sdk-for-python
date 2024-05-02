@@ -64,7 +64,7 @@ def get_access_conditions(
             error_map[412] = ResourceNotFoundError
         if match_condition == MatchConditions.IfMissing:
             error_map[412] = ResourceExistsError
-        return error_map, dict(if_match=if_match, if_none_match=if_none_match)
+        return error_map, {"if_match": if_match, "if_none_match": if_none_match}
     except AttributeError as ex:
         raise ValueError("Unable to get e_tag from the model") from ex
 

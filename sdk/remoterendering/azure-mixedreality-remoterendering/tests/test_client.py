@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import pytest
 import uuid
+import json
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
@@ -69,6 +70,8 @@ class TestRemoteRenderingClient(AzureRecordedTestCase):
         conversion_id = account_info["id_placeholder"]
         if self.is_live:
             conversion_id += str(uuid.uuid4())
+            
+        print("Using conversion id: {}".format(conversion_id))
 
         storage_container_uri = "https://"+account_info["storage_account_name"] + \
             ".blob."+account_info["storage_endpoint_suffix"]+"/"+account_info["blob_container_name"]
@@ -120,6 +123,8 @@ class TestRemoteRenderingClient(AzureRecordedTestCase):
         conversion_id = account_info["id_placeholder"]
         if self.is_live:
             conversion_id += str(uuid.uuid4())
+            
+        print("Using conversion id: {}".format(conversion_id))
 
         storage_container_uri = "https://"+account_info["storage_account_name"] + \
             ".blob."+account_info["storage_endpoint_suffix"]+"/"+account_info["blob_container_name"]
@@ -182,6 +187,8 @@ class TestRemoteRenderingClient(AzureRecordedTestCase):
         if self.is_live:
             conversion_id += str(uuid.uuid4())
 
+        print("Using conversion id: {}".format(conversion_id))
+
         storage_container_uri = "https://"+account_info["storage_account_name"] + \
             ".blob."+account_info["storage_endpoint_suffix"]+"/"+account_info["blob_container_name"]
 
@@ -204,13 +211,21 @@ class TestRemoteRenderingClient(AzureRecordedTestCase):
             conversion_poller.result()
 
         error_details = excinfo.value
-        assert "invalid input" in error_details.error.message.lower()
-        assert "logs" in error_details.error.message.lower()
+
+        print(json.dumps(error_details.error.__dict__))
+
+        assert "InputContainerError" == error_details.error.code
+        # Message: "Could not find the asset file in the storage account. Please make sure all paths and names are correct and the file is uploaded to storage."
+        assert error_details.error.message is not None
+        assert "Could not find the asset file in the storage account" in error_details.error.message
 
     def test_simple_session(self, recorded_test, account_info, arr_client):
         session_id = account_info["id_placeholder"]
         if self.is_live:
             session_id += str(uuid.uuid4())
+
+        print("Using session id: {}".format(session_id))
+
         session_poller = arr_client.begin_rendering_session(
             session_id=session_id, size=RenderingSessionSize.STANDARD, lease_time_minutes=15)
 
@@ -252,6 +267,8 @@ class TestRemoteRenderingClient(AzureRecordedTestCase):
         session_id = account_info["id_placeholder"]
         if self.is_live:
             session_id += str(uuid.uuid4())
+            
+        print("Using session id: {}".format(session_id))
 
         with pytest.raises(HttpResponseError) as excinfo:
             # Make an invalid request (negative lease time).

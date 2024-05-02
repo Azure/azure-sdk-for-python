@@ -20,8 +20,8 @@ from azure.monitor.opentelemetry.exporter._constants import _SAMPLE_RATE_KEY
 
 
 _HASH = 5381
-_INTEGER_MAX = Int32.maxval
-_INTEGER_MIN = Int32.minval
+_INTEGER_MAX: int = Int32.maxval
+_INTEGER_MIN: int = Int32.minval
 
 
 # Sampler is responsible for the following:
@@ -46,10 +46,10 @@ class ApplicationInsightsSampler(Sampler):
         parent_context: Optional[Context],
         trace_id: int,
         name: str,
-        kind: SpanKind = None,
+        kind: Optional[SpanKind] = None,
         attributes: Attributes = None,
-        links: Sequence["Link"] = None,
-        trace_state: "TraceState" = None,
+        links: Optional[Sequence["Link"]] = None,
+        trace_state: Optional["TraceState"] = None,
     ) -> "SamplingResult":
         if self._sample_rate == 0:
             decision = Decision.DROP
@@ -65,14 +65,14 @@ class ApplicationInsightsSampler(Sampler):
         # Add sample rate as span attribute
         if attributes is None:
             attributes = {}
-        attributes[_SAMPLE_RATE_KEY] = self._sample_rate
+        attributes[_SAMPLE_RATE_KEY] = self._sample_rate # type: ignore
         return SamplingResult(
             decision,
             attributes,
-            _get_parent_trace_state(parent_context),
+            _get_parent_trace_state(parent_context), # type: ignore
         )
 
-    def _get_DJB2_sample_score(self, trace_id_hex: str) -> int:
+    def _get_DJB2_sample_score(self, trace_id_hex: str) -> float:
         # This algorithm uses 32bit integers
         hash_value = Int32(_HASH)
         for char in trace_id_hex:
@@ -95,5 +95,5 @@ def azure_monitor_opentelemetry_sampler_factory(sampler_argument):  # pylint: di
     try:
         rate = float(sampler_argument)
         return ApplicationInsightsSampler(rate)
-    except ValueError:
+    except (ValueError, TypeError):
         return ApplicationInsightsSampler()

@@ -24,9 +24,9 @@ import os
 import asyncio
 
 
-service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
-index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
-key = os.getenv("AZURE_SEARCH_API_KEY")
+service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
+index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
+key = os.environ["AZURE_SEARCH_API_KEY"]
 
 
 async def filter_query():
@@ -36,13 +36,12 @@ async def filter_query():
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
-    select = ("hotelName", "rating")
     async with search_client:
         results = await search_client.search(
             search_text="WiFi",
             filter="Address/StateProvince eq 'FL' and Address/Country eq 'USA'",
-            select=",".join(select),
-            order_by="rating desc",
+            select=["hotelName", "rating"],
+            order_by=["rating desc"],
         )
 
         print("Florida hotels containing 'WiFi', sorted by Rating:")

@@ -29,7 +29,6 @@ from ._models import Translation
 from ._models import TranslationLanguage
 from ._models import TransliterableScript
 from ._models import TransliteratedText
-from ._models import Transliteration
 from ._models import TransliterationLanguage
 
 from ._enums import ProfanityAction
@@ -63,7 +62,6 @@ __all__ = [
     "TranslationLanguage",
     "TransliterableScript",
     "TransliteratedText",
-    "Transliteration",
     "TransliterationLanguage",
     "ProfanityAction",
     "ProfanityMarker",

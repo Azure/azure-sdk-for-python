@@ -11,18 +11,18 @@ from .._internal.get_token_mixin import GetTokenMixin
 
 
 class AuthorizationCodeCredential(GetTokenMixin):
-    """Authenticates by redeeming an authorization code previously obtained from Azure Active Directory.
+    """Authenticates by redeeming an authorization code previously obtained from Microsoft Entra ID.
 
-    See `Azure Active Directory documentation
-    <https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow>`_ for more information
+    See `Microsoft Entra ID documentation
+    <https://learn.microsoft.com/entra/identity-platform/v2-oauth2-auth-code-flow>`__ for more information
     about the authentication flow.
 
-    :param str tenant_id: ID of the application's Azure Active Directory tenant. Also called its "directory" ID.
+    :param str tenant_id: ID of the application's Microsoft Entra tenant. Also called its "directory" ID.
     :param str client_id: The application's client ID
     :param str authorization_code: The authorization code from the user's log-in
     :param str redirect_uri: The application's redirect URI. Must match the URI used to request the authorization code.
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
     :keyword str client_secret: One of the application's client secrets. Required only for web apps and web APIs.
@@ -50,11 +50,11 @@ class AuthorizationCodeCredential(GetTokenMixin):
         self._redirect_uri = redirect_uri
         super(AuthorizationCodeCredential, self).__init__()
 
-    def __enter__(self):
+    def __enter__(self) -> "AuthorizationCodeCredential":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)
 
     def close(self) -> None:
@@ -74,7 +74,7 @@ class AuthorizationCodeCredential(GetTokenMixin):
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
-            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+            https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
@@ -82,11 +82,13 @@ class AuthorizationCodeCredential(GetTokenMixin):
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
-          attribute gives a reason. Any error response from Azure Active Directory is available as the error's
+          attribute gives a reason. Any error response from Microsoft Entra ID is available as the error's
           ``response`` attribute.
         """
         # pylint:disable=useless-super-delegation
-        return super(AuthorizationCodeCredential, self).get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        return super(AuthorizationCodeCredential, self).get_token(
+            *scopes, claims=claims, tenant_id=tenant_id, client_secret=self._client_secret, **kwargs
+        )
 
     def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)

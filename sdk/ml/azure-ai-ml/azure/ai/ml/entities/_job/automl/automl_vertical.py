@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from abc import abstractmethod
-from typing import Optional
+from typing import Any, Optional
 
 from azure.ai.ml import Input
 
@@ -29,7 +29,12 @@ class AutoMLVertical(AutoMLJob):
 
     @abstractmethod
     def __init__(
-        self, task_type: str, training_data: Input, validation_data: Input, test_data: Optional[Input] = None, **kwargs
+        self,
+        task_type: str,
+        training_data: Input,
+        validation_data: Input,
+        test_data: Optional[Input] = None,
+        **kwargs: Any
     ) -> None:
         """Initialize AutoMLVertical.
 
@@ -52,7 +57,7 @@ class AutoMLVertical(AutoMLJob):
         self._task_type = task_type
         self.training_data = training_data
         self.validation_data = validation_data
-        self.test_data = test_data
+        self.test_data = test_data  # type: ignore
         super().__init__(**kwargs)
 
     @property

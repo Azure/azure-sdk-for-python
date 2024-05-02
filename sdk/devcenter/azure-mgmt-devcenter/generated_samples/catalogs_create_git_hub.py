@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.devcenter import DevCenterMgmtClient
 
 """
@@ -40,13 +43,14 @@ def main():
                     "path": "/templates",
                     "secretIdentifier": "https://contosokv.vault.azure.net/secrets/CentralRepoPat",
                     "uri": "https://github.com/Contoso/centralrepo-fake.git",
-                }
+                },
+                "syncType": "Manual",
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/stable/2023-04-01/examples/Catalogs_CreateGitHub.json
+# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/stable/2024-02-01/examples/Catalogs_CreateGitHub.json
 if __name__ == "__main__":
     main()

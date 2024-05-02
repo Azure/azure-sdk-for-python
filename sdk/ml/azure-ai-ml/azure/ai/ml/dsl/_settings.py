@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import logging
 from collections import deque
-from typing import Dict, Optional, Union
+from typing import Any, Deque, Dict, Optional, Union
 
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.exceptions import UserErrorException
@@ -12,10 +12,10 @@ module_logger = logging.getLogger(__name__)
 
 
 class _DSLSettingsStack:
-    def __init__(self):
-        self._stack = deque()
+    def __init__(self) -> None:
+        self._stack: Deque["_DSLSettings"] = deque()
 
-    def push(self):
+    def push(self) -> None:
         self._stack.append(_DSLSettings())
 
     def pop(self) -> "_DSLSettings":
@@ -47,16 +47,16 @@ class _DSLSettings:
     Store settings from `dsl.set_pipeline_settings` during pipeline definition.
     """
 
-    def __init__(self):
-        self._init_job = None
-        self._finalize_job = None
+    def __init__(self) -> None:
+        self._init_job: Any = None
+        self._finalize_job: Any = None
 
     @property
-    def init_job(self) -> BaseNode:
+    def init_job(self) -> Union[BaseNode, str]:
         return self._init_job
 
     @init_job.setter
-    def init_job(self, value: Union[BaseNode, str]):
+    def init_job(self, value: Optional[Union[BaseNode, str]]) -> None:
         # pylint: disable=logging-fstring-interpolation
         if isinstance(value, (BaseNode, str)):
             self._init_job = value
@@ -68,7 +68,7 @@ class _DSLSettings:
         # note: need to use `BaseNode is not None` as `bool(BaseNode)` will return False
         return self._init_job is not None
 
-    def init_job_name(self, jobs: Dict[str, BaseNode]) -> str:
+    def init_job_name(self, jobs: Dict[str, BaseNode]) -> Optional[str]:
         if isinstance(self._init_job, str):
             return self._init_job
         for name, job in jobs.items():
@@ -78,11 +78,11 @@ class _DSLSettings:
         return None
 
     @property
-    def finalize_job(self) -> BaseNode:
+    def finalize_job(self) -> Union[BaseNode, str]:
         return self._finalize_job
 
     @finalize_job.setter
-    def finalize_job(self, value: Union[BaseNode, str]):
+    def finalize_job(self, value: Optional[Union[BaseNode, str]]) -> None:
         # pylint: disable=logging-fstring-interpolation
         if isinstance(value, (BaseNode, str)):
             self._finalize_job = value

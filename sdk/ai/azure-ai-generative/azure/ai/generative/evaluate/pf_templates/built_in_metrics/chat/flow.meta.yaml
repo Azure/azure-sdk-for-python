@@ -1,0 +1,10 @@
+$schema: https://azuremlschemas.azureedge.net/latest/flow.schema.json
+name: chat_quality_safety_eval
+display_name: Chat Quality Safety Evaluation
+type: evaluate
+path: ./flow.dag.yaml
+description: Template Evaluation Flow
+properties:
+  promptflow.stage: prod
+  promptflow.section: template
+  promptflow.batch_inputs: samples.json

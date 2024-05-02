@@ -5,69 +5,112 @@
 # ------------------------------------
 
 import os
-import functools
 
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
-from azure.ai.contentsafety import ContentSafetyClient
-from azure.ai.contentsafety.models import AnalyzeTextOptions, ImageData, AnalyzeImageOptions, TextBlocklist
-from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import recorded_by_proxy
 
-ContentSafetyPreparer = functools.partial(
-    EnvironmentVariableLoader,
-    "content_safety",
-    content_safety_endpoint="https://fake_cs_resource.cognitiveservices.azure.com",
-    content_safety_key="00000000000000000000000000000000",
+from azure.ai.contentsafety.models import (
+    AnalyzeTextOptions,
+    ImageData,
+    AnalyzeImageOptions,
+    TextCategory,
+    TextBlocklist,
+    TextBlocklistItem,
+    AddOrUpdateTextBlocklistItemsOptions,
 )
+from test_case import ContentSafetyTest, ContentSafetyPreparer
 
 
-class TestContentSafety(AzureRecordedTestCase):
-    def create_client(self, endpoint, key):
-        client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
-        return client
-
-
-class TestContentSafetyCase(TestContentSafety):
+class TestContentSafetyCase(ContentSafetyTest):
     @ContentSafetyPreparer()
     @recorded_by_proxy
     def test_analyze_text(self, content_safety_endpoint, content_safety_key):
-        client = self.create_client(content_safety_endpoint, content_safety_key)
-        assert client is not None
+        client = self.create_content_safety_client_from_key(content_safety_endpoint, content_safety_key)
 
-        text_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./samples/sample_data/text.txt"))
+        text_path = os.path.abspath(
+            os.path.join(os.path.abspath(__file__), "..", "..", "./samples/sample_data/text.txt")
+        )
         with open(text_path) as f:
             request = AnalyzeTextOptions(text=f.readline(), categories=[])
         response = client.analyze_text(request)
 
         assert response is not None
-        assert response.hate_result is not None
-        assert response.violence_result is not None
-        assert response.sexual_result is not None
-        assert response.self_harm_result is not None
-        assert response.hate_result.severity > 0
+        assert response.categories_analysis is not None
+        assert next(item for item in response.categories_analysis if item.category == TextCategory.HATE) is not None
+        assert next(item for item in response.categories_analysis if item.category == TextCategory.VIOLENCE) is not None
+        assert next(item for item in response.categories_analysis if item.category == TextCategory.SEXUAL) is not None
+        assert (
+            next(item for item in response.categories_analysis if item.category == TextCategory.SELF_HARM) is not None
+        )
+        assert next(item for item in response.categories_analysis if item.category == TextCategory.HATE).severity > 0
 
     @ContentSafetyPreparer()
     @recorded_by_proxy
     def test_analyze_image(self, content_safety_endpoint, content_safety_key):
-        client = self.create_client(content_safety_endpoint, content_safety_key)
-        assert client is not None
+        client = self.create_content_safety_client_from_key(content_safety_endpoint, content_safety_key)
 
-        image_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./samples/sample_data/image.jpg"))
+        image_path = os.path.abspath(
+            os.path.join(os.path.abspath(__file__), "..", "..", "./samples/sample_data/image.jpg")
+        )
         with open(image_path, "rb") as file:
             request = AnalyzeImageOptions(image=ImageData(content=file.read()))
         response = client.analyze_image(request)
 
-        assert response.violence_result.severity > 0
+        assert response is not None
+        assert response.categories_analysis is not None
 
     @ContentSafetyPreparer()
     @recorded_by_proxy
-    def test_create_blocklist(self, content_safety_endpoint, content_safety_key):
-        client = self.create_client(content_safety_endpoint, content_safety_key)
-        assert client is not None
+    def test_analyze_text_with_blocklists(self, content_safety_endpoint, content_safety_key):
+        content_safety_client = self.create_content_safety_client_from_key(content_safety_endpoint, content_safety_key)
+        blocklist_client = self.create_blocklist_client_from_key(content_safety_endpoint, content_safety_key)
 
-        name = "TestBlocklist"
-        description = "Test blocklist management."
-        response = client.create_or_update_text_blocklist(blocklist_name=name, resource={"description": description})
+        # Create blocklist
+        blocklist_name = "TestAnalyzeTextWithBlocklist"
+        blocklist_description = "Test blocklist management."
+        create_blocklist_response = blocklist_client.create_or_update_text_blocklist(
+            blocklist_name=blocklist_name,
+            options=TextBlocklist(blocklist_name=blocklist_name, description=blocklist_description),
+        )
+        if not create_blocklist_response or not create_blocklist_response.blocklist_name:
+            raise RuntimeError("Failed to create blocklist.")
+
+        # Add blocklist item
+        block_item_text_1 = "k*ll"
+        block_item_text_2 = "h*te"
+        block_items = [TextBlocklistItem(text=block_item_text_1), TextBlocklistItem(text=block_item_text_2)]
+        add_item_response = blocklist_client.add_or_update_blocklist_items(
+            blocklist_name=blocklist_name, options=AddOrUpdateTextBlocklistItemsOptions(blocklist_items=block_items)
+        )
+        if not add_item_response or not add_item_response.blocklist_items or len(add_item_response.blocklist_items) < 0:
+            raise RuntimeError("Failed to add blocklist item.")
+
+        input_text = "I h*te you and I want to k*ll you."
+        analysis_result = content_safety_client.analyze_text(
+            AnalyzeTextOptions(text=input_text, blocklist_names=[blocklist_name], halt_on_blocklist_hit=False)
+        )
+        assert analysis_result is not None
+        assert analysis_result.blocklists_match is not None
+        assert any(block_item_text_1 in item.blocklist_item_text for item in analysis_result.blocklists_match) is True
+        assert any(block_item_text_2 in item.blocklist_item_text for item in analysis_result.blocklists_match) is True
+
+    @ContentSafetyPreparer()
+    @recorded_by_proxy
+    def test_analyze_text_with_entra_id_credential(self, content_safety_endpoint):
+        client = self.create_content_safety_client_from_entra_id(content_safety_endpoint)
+
+        text_path = os.path.abspath(
+            os.path.join(os.path.abspath(__file__), "..", "..", "./samples/sample_data/text.txt")
+        )
+        with open(text_path) as f:
+            request = AnalyzeTextOptions(text=f.readline(), categories=[])
+        response = client.analyze_text(request)
 
         assert response is not None
-        assert response.blocklist_name == name
-        assert response.description == description
+        assert response.categories_analysis is not None
+        assert next(item for item in response.categories_analysis if item.category == TextCategory.HATE) is not None
+        assert next(item for item in response.categories_analysis if item.category == TextCategory.VIOLENCE) is not None
+        assert next(item for item in response.categories_analysis if item.category == TextCategory.SEXUAL) is not None
+        assert (
+            next(item for item in response.categories_analysis if item.category == TextCategory.SELF_HARM) is not None
+        )
+        assert next(item for item in response.categories_analysis if item.category == TextCategory.HATE).severity > 0

@@ -6,10 +6,14 @@
 import logging
 import os
 
-from . import AzureMgmtPreparer
-from azure_devtools.scenario_tests.exceptions import AzureTestError
 from dotenv import load_dotenv, find_dotenv
+
+from . import AzureMgmtPreparer
+from .exceptions import AzureTestError
 from .sanitizers import add_general_string_sanitizer
+
+
+_logger = logging.getLogger(__name__)
 
 
 class EnvironmentVariableLoader(AzureMgmtPreparer):
@@ -52,9 +56,41 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
 
     def _set_mgmt_settings_real_values(self):
         if self.is_live:
-            os.environ["AZURE_TENANT_ID"] = os.environ["{}_TENANT_ID".format(self.directory.upper())]
-            os.environ["AZURE_CLIENT_ID"] = os.environ["{}_CLIENT_ID".format(self.directory.upper())]
-            os.environ["AZURE_CLIENT_SECRET"] = os.environ["{}_CLIENT_SECRET".format(self.directory.upper())]
+            tenant = os.environ.get(f"{self.directory.upper()}_TENANT_ID")
+            client = os.environ.get(f"{self.directory.upper()}_CLIENT_ID")
+            secret = os.environ.get(f"{self.directory.upper()}_CLIENT_SECRET")
+
+            # If environment variables are not all set, check if user-based authentication is requested
+            if not all(x is not None for x in [tenant, client, secret]):
+                use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH", "false")
+                use_cli = os.environ.get("AZURE_TEST_USE_CLI_AUTH", "false")
+                user_auth = use_pwsh.lower() == "true" or use_cli.lower() == "true"
+                if not user_auth:
+                    # All variables are required for service principal authentication
+                    raise AzureTestError(
+                        f"Environment variables for service principal credentials are not all set. "
+                        "Please either set the variables or request user-based authentication by setting "
+                        "'AZURE_TEST_USE_PWSH_AUTH' or 'AZURE_TEST_USE_CLI_AUTH' to 'true'."
+                    )
+
+                _logger.debug(
+                    "Environment variables for service principal credentials are not all set but user-based "
+                    f"authentication was requested. Updating 'AZURE_*' variables to match '{self.directory.upper()}_*'."
+                )
+
+            # Set environment vars to directory values (and unset vars if directory vars are missing)
+            if tenant is not None:
+                os.environ["AZURE_TENANT_ID"] = tenant
+            else:
+                os.environ.pop("AZURE_TENANT_ID", None)
+            if client is not None:
+                os.environ["AZURE_CLIENT_ID"] = client
+            else:
+                os.environ.pop("AZURE_CLIENT_ID", None)
+            if secret is not None:
+                os.environ["AZURE_CLIENT_SECRET"] = secret
+            else:
+                os.environ.pop("AZURE_CLIENT_SECRET", None)
 
     def create_resource(self, name, **kwargs):
         load_dotenv(find_dotenv())
@@ -81,17 +117,18 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
                                     target=self.real_values[key.lower()],
                                 )
                             except:
-                                logger = logging.getLogger()
-                                logger.info(
+                                _logger.info(
                                     "This test class instance has no scrubber and a sanitizer could not be registered "
-                                    "with the test proxy, so the EnvironmentVariableLoader will not scrub the value of {} in "
-                                    "recordings.".format(key)
+                                    "with the test proxy, so the EnvironmentVariableLoader will not scrub the value of "
+                                    f"{key} in recordings."
                                 )
                     else:
-                        template = 'To pass a live ID you must provide the scrubbed value for recordings to \
-                            prevent secrets from being written to files. {} was not given. For example: \
-                                @EnvironmentVariableLoader("schemaregistry", schemaregistry_endpoint="fake_endpoint.servicebus.windows.net")'
-                        raise AzureTestError(template.format(key))
+                        raise AzureTestError(
+                            'To pass a live ID you must provide the scrubbed value for recordings to prevent secrets '
+                            f'from being written to files. {key} was not given. For example: '
+                            '@EnvironmentVariableLoader("schemaregistry", '
+                            'schemaregistry_endpoint="fake_endpoint.servicebus.windows.net")'
+                        )
             except KeyError as key_error:
                 if not self._backup_preparers:
                     raise

@@ -32,18 +32,22 @@ create_monitor:
         - input_data:
             path: azureml:my_model_inputs_data:1
             type: mltable
-          data_window_size: P7D
+          data_window:
+            lookback_window_size: P7D
+            lookback_window_offset: P0D
           data_column_names:
             correlation_id: inference_correlation_id
         - input_data:
             path: azureml:my_model_outputs_data:1
             type: mltable
-          data_window_size: P7D
+          data_window:
+            lookback_window_size: P7D
+            lookback_window_offset: P0D
           data_column_names:
             prediction: is_fraud
             prediction_probability: is_fraud_probability
             correlation_id: inference_correlation_id
-      workspace_connection_id: fake_workspace_connection_id
+      connection_id: fake_workspace_connection_id
       sampling_rate: 1
       metric_thresholds:
         groundedness:

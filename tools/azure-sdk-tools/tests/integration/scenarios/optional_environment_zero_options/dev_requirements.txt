@@ -1,0 +1,4 @@
+-e ../../../../../../tools/azure-sdk-tools
+../../../../../../sdk/core/azure-core
+aiohttp
+requests

@@ -42,9 +42,9 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
     :keyword stored_procedure: The name of the stored procedure.
     :paramtype stored_procedure: str
     :keyword stored_procedure_params: The parameters for the stored procedure.
-    :paramtype stored_procedure_params: List[dict, StoredProcedureParameter]
+    :paramtype stored_procedure_params: List
     :keyword connection: The connection string for the database.
-        The credential information should be stored in the workspace connection.
+        The credential information should be stored in the connection.
     :paramtype connection: str
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the Database object cannot be successfully validated.
         Details will be provided in the error message.
@@ -67,7 +67,7 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
         query: Optional[str] = None,
         table_name: Optional[str] = None,
         stored_procedure: Optional[str] = None,
-        stored_procedure_params: Optional[List[dict]] = None,
+        stored_procedure_params: Optional[List[Dict]] = None,
         connection: Optional[str] = None,
     ) -> None:
         # As an annotation, it is not allowed to initialize the name.
@@ -100,7 +100,8 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
         if remove_name:
             keys.remove("name")
         result = {key: getattr(self, key) for key in keys}
-        return _remove_empty_values(result)
+        res: dict = _remove_empty_values(result)
+        return res
 
     def _to_rest_object(self) -> Dict:
         # this is for component rest object when using Source as component inputs, as for job input usage,
@@ -108,7 +109,7 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
         result = self._to_dict()
         return result
 
-    def _update_name(self, name):
+    def _update_name(self, name: str) -> None:
         self.name = name
 
     @classmethod
@@ -116,7 +117,7 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
         return Database(**obj)
 
     @property
-    def stored_procedure_params(self) -> Optional[StoredProcedureParameter]:
+    def stored_procedure_params(self) -> Optional[List]:
         """Get or set the parameters for the stored procedure.
 
         :return: The parameters for the stored procedure.
@@ -126,7 +127,7 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
         return self._stored_procedure_params
 
     @stored_procedure_params.setter
-    def stored_procedure_params(self, value: Union[Dict[str, str], StoredProcedureParameter, None]):
+    def stored_procedure_params(self, value: Union[Dict[str, str], List, None]) -> None:
         """Set the parameters for the stored procedure.
 
         :param value: The parameters for the stored procedure.
@@ -166,8 +167,9 @@ class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-
         connection: Optional[str] = None,
     ) -> None:
         self.type = ExternalDataType.FILE_SYSTEM
-        self.name = None
+        self.name: Optional[str] = None
         self.connection = connection
+        self.path: Optional[str] = None
 
         if path is not None and not isinstance(path, str):
             # this logic will make dsl data binding expression working in the same way as yaml
@@ -176,7 +178,7 @@ class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-
         else:
             self.path = path
 
-    def _to_dict(self, remove_name: bool = True):
+    def _to_dict(self, remove_name: bool = True) -> Dict:
         """Convert the Source object to a dict.
 
         :param remove_name: Whether to remove the `name` key from the  dict representation. Defaults to True.
@@ -188,7 +190,8 @@ class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-
         if remove_name:
             keys.remove("name")
         result = {key: getattr(self, key) for key in keys}
-        return _remove_empty_values(result)
+        res: dict = _remove_empty_values(result)
+        return res
 
     def _to_rest_object(self) -> Dict:
         # this is for component rest object when using Source as component inputs, as for job input usage,
@@ -196,7 +199,7 @@ class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-
         result = self._to_dict()
         return result
 
-    def _update_name(self, name):
+    def _update_name(self, name: str) -> None:
         self.name = name
 
     @classmethod

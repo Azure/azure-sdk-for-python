@@ -9,7 +9,7 @@ import uuid
 from abc import abstractmethod
 from enum import Enum
 from functools import wraps
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
 from azure.ai.ml.constants import JobType
@@ -49,7 +49,7 @@ def parse_inputs_outputs(data: dict) -> dict:
     return data
 
 
-def pipeline_node_decorator(func):
+def pipeline_node_decorator(func: Any) -> Any:
     """Wrap a function and add its return value to the current DSL pipeline.
 
     :param func: The function to be wrapped.
@@ -59,7 +59,7 @@ def pipeline_node_decorator(func):
     """
 
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         automl_job = func(*args, **kwargs)
         from azure.ai.ml.dsl._pipeline_component_builder import (
             _add_component_to_current_definition_builder,
@@ -124,24 +124,9 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         self,
         *,
         type: str = JobType.COMPONENT,  # pylint: disable=redefined-builtin
-        component: Component,
-        inputs: Optional[
-            Dict[
-                str,
-                Union[
-                    PipelineInput,
-                    NodeOutput,
-                    Input,
-                    str,
-                    bool,
-                    int,
-                    float,
-                    Enum,
-                    "Input",
-                ],
-            ]
-        ] = None,
-        outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
+        component: Any,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
         name: Optional[str] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
@@ -150,13 +135,13 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         comment: Optional[str] = None,
         compute: Optional[str] = None,
         experiment_name: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         self._init = True
         # property _source can't be set
-        kwargs.pop("_source", None)
+        source = kwargs.pop("_source", None)
         _from_component_func = kwargs.pop("_from_component_func", False)
-        self._name = None
+        self._name: Optional[str] = None
         super(BaseNode, self).__init__(
             type=type,
             name=name,
@@ -192,7 +177,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
             self._outputs = self._build_outputs_dict(outputs or {})
 
         self._component = component
-        self._referenced_control_flow_node_instance_id = None
+        self._referenced_control_flow_node_instance_id: Optional[str] = None
         self.kwargs = kwargs
 
         # Generate an id for every instance
@@ -201,16 +186,17 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
             # add current component in pipeline stack for dsl scenario
             self._register_in_current_pipeline_component_builder()
 
-        self._source = (
-            self._component._source
-            if isinstance(self._component, Component)
-            else Component._resolve_component_source_from_id(id=self._component)
-        )
+        if source is None:
+            if isinstance(component, Component):
+                source = self._component._source
+            else:
+                source = Component._resolve_component_source_from_id(id=self._component)
+        self._source = source
         self._validate_required_input_not_provided = True
         self._init = False
 
     @property
-    def name(self) -> str:
+    def name(self) -> Optional[str]:
         """Get the name of the node.
 
         :return: The name of the node.
@@ -219,7 +205,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         return self._name
 
     @name.setter
-    def name(self, value):
+    def name(self, value: str) -> None:
         """Set the name of the node.
 
         :param value: The name to set for the node.
@@ -237,7 +223,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         self._name = value
 
     @classmethod
-    def _get_supported_inputs_types(cls):
+    def _get_supported_inputs_types(cls) -> Any:
         """Get the supported input types for node input.
 
         :param cls: The class (or instance) to retrieve supported input types for.
@@ -262,7 +248,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         )
 
     @property
-    def _skip_required_compute_missing_validation(self):
+    def _skip_required_compute_missing_validation(self) -> bool:
         return False
 
     def _initializing(self) -> bool:
@@ -271,7 +257,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         # TODO: replace this hack
         return self._init
 
-    def _set_base_path(self, base_path: Union[str, os.PathLike]):
+    def _set_base_path(self, base_path: Optional[Union[str, os.PathLike]]) -> None:
         """Set the base path for the node.
 
         Will be used for schema validation. If not set, will use Path.cwd() as the base path
@@ -303,29 +289,30 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
             # If component is remote, return it's asset id
             return self._component.id
         # Otherwise, return the component version or arm id.
-        return self._component
+        res: Union[str, Component] = self._component
+        return res
 
-    def _get_component_name(self):
+    def _get_component_name(self) -> Optional[str]:
         # first use component version/job's display name or name as component name
         # make it unique when pipeline build finished.
         if self._component is None:
             return None
         if isinstance(self._component, str):
             return self._component
-        return self._component.name
+        return str(self._component.name)
 
     def _to_dict(self) -> Dict:
-        return convert_ordered_dict_to_dict(self._dump_for_validation())
+        return dict(convert_ordered_dict_to_dict(self._dump_for_validation()))
 
     @classmethod
-    def _create_validation_error(cls, message: str, no_personal_data_message: str):
+    def _create_validation_error(cls, message: str, no_personal_data_message: str) -> ValidationException:
         return ValidationException(
             message=message,
             no_personal_data_message=no_personal_data_message,
             target=ErrorTarget.PIPELINE,
         )
 
-    def _validate_inputs(self):
+    def _validate_inputs(self) -> MutableValidationResult:
         validation_result = self._create_empty_validation_result()
         if self._validate_required_input_not_provided:
             # validate required inputs not provided
@@ -402,7 +389,8 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
             _type = "_".join([NodeType.DATA_TRANSFER, obj.get("task", "")])
         instance: BaseNode = pipeline_node_factory.get_create_instance_func(_type)()
         init_kwargs = instance._from_rest_object_to_init_params(obj)
-        instance.__init__(**init_kwargs)
+        # TODO: Bug Item number: 2883415
+        instance.__init__(**init_kwargs)  # type: ignore
         return instance
 
     @classmethod
@@ -453,7 +441,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
 
         return []
 
-    def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
+    def _to_rest_object(self, **kwargs: Any) -> dict:  # pylint: disable=unused-argument
         """Convert self to a rest object for remote call.
 
         :return: The rest object
@@ -465,7 +453,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
                 rest_obj[key] = base_dict.get(key)
 
         rest_obj.update(
-            dict(
+            dict(  # pylint: disable=use-dict-literal
                 name=self.name,
                 type=self.type,
                 display_name=self.display_name,
@@ -483,43 +471,45 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         if self.comment is not None:
             rest_obj.update({"comment": self.comment})
 
-        return convert_ordered_dict_to_dict(rest_obj)
+        return dict(convert_ordered_dict_to_dict(rest_obj))
 
     @property
-    def inputs(self) -> Dict[str, Union[Input, str, bool, int, float]]:
+    def inputs(self) -> Dict:
         """Get the inputs for the object.
 
         :return: A dictionary containing the inputs for the object.
         :rtype: Dict[str, Union[Input, str, bool, int, float]]
         """
-        return self._inputs
+        return self._inputs  # type: ignore
 
     @property
-    def outputs(self) -> Dict[str, Union[str, Output]]:
+    def outputs(self) -> Dict:
         """Get the outputs of the object.
 
         :return: A dictionary containing the outputs for the object.
         :rtype: Dict[str, Union[str, Output]]
         """
-        return self._outputs
+        return self._outputs  # type: ignore
 
-    def __str__(self):
+    def __str__(self) -> str:
         try:
             return str(self._to_yaml())
-        except BaseException:  # pylint: disable=broad-except
+        except BaseException:  # pylint: disable=W0718
             # add try catch in case component job failed in schema parse
-            return _AttrDict.__str__()
+            _obj: _AttrDict = _AttrDict()
+            return _obj.__str__()
 
-    def __hash__(self):
+    def __hash__(self) -> int:  # type: ignore
         return hash(self.__str__())
 
-    def __help__(self):
+    def __help__(self) -> Any:
         # only show help when component has definition
         if isinstance(self._component, Component):
-            return self._component.__help__()
+            # TODO: Bug Item number: 2883422
+            return self._component.__help__()  # type: ignore
         return None
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         # _attr_dict will return False if no extra attributes are set
         return True
 
@@ -529,7 +519,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         :return: The origin job outputs
         :rtype: Dict[str, Union[str, Output]]
         """
-        outputs: Dict[str, Union[str, Output]] = {}
+        outputs: Dict = {}
         if self.outputs is not None:
             for output_name, output_obj in self.outputs.items():
                 if isinstance(output_obj, NodeOutput):
@@ -538,11 +528,11 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
                     raise TypeError("unsupported built output type: {}: {}".format(output_name, type(output_obj)))
         return outputs
 
-    def _get_telemetry_values(self):
+    def _get_telemetry_values(self) -> Dict:
         telemetry_values = {"type": self.type, "source": self._source}
         return telemetry_values
 
-    def _register_in_current_pipeline_component_builder(self):
+    def _register_in_current_pipeline_component_builder(self) -> None:
         """Register this node in current pipeline component builder by adding self to a global stack."""
         from azure.ai.ml.dsl._pipeline_component_builder import _add_component_to_current_definition_builder
 
@@ -555,7 +545,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         return input_name in built_inputs and built_inputs[input_name] is not None
 
     @classmethod
-    def _refine_optional_inputs_with_no_value(cls, node: "BaseNode", kwargs):
+    def _refine_optional_inputs_with_no_value(cls, node: "BaseNode", kwargs: Any) -> None:
         """Refine optional inputs that have no default value and no value is provided when calling command/parallel
         function.
 

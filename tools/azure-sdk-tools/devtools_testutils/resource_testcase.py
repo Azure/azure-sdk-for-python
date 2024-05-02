@@ -9,15 +9,14 @@ import os
 import datetime
 import logging
 
-from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameError
-
 try:
     from azure.mgmt.resource import ResourceManagementClient
 except ImportError:
     pass
 
 from . import AzureMgmtPreparer
-from .sanitizers import add_general_regex_sanitizer
+from .exceptions import AzureTestError, ReservedResourceNameError
+from .sanitizers import add_general_string_sanitizer
 
 
 logging.getLogger().setLevel(logging.INFO)
@@ -99,11 +98,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                 id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/" + name,
             )
         if name != self.moniker:
-            try:
-                self.test_class_instance.scrubber.register_name_pair(name, self.moniker)
-            # tests using the test proxy don't have a scrubber instance
-            except AttributeError:
-                add_general_regex_sanitizer(regex=name, value=self.moniker)
+                add_general_string_sanitizer(target=name, value=self.moniker)
         return {
             self.parameter_name: self.resource,
             self.parameter_name_for_location: self.location,

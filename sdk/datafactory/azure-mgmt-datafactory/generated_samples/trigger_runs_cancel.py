@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.datafactory import DataFactoryManagementClient
 
 """
@@ -29,13 +30,12 @@ def main():
         subscription_id="12345678-1234-1234-1234-12345678abc",
     )
 
-    response = client.trigger_runs.cancel(
+    client.trigger_runs.cancel(
         resource_group_name="exampleResourceGroup",
         factory_name="exampleFactoryName",
         trigger_name="exampleTrigger",
         run_id="2f7fdb90-5df1-4b8e-ac2f-064cfa58202b",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/datafactory/resource-manager/Microsoft.DataFactory/stable/2018-06-01/examples/TriggerRuns_Cancel.json

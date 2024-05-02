@@ -38,12 +38,18 @@ class TestFlowComponent:
                     "is_deterministic": True,
                     "code": "/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/codes/xxx/versions/1",
                     "flow_file_name": "flow.dag.yaml",
+                    "environment_variables": {
+                        "AZURE_OPENAI_API_BASE": "${my_connection.api_base}",
+                        "AZURE_OPENAI_API_KEY": "${my_connection.api_key}",
+                        "AZURE_OPENAI_API_TYPE": "azure",
+                        "AZURE_OPENAI_API_VERSION": "2023-03-15-preview",
+                    },
                 },
                 "description": "test load component from flow",
                 "is_anonymous": False,
                 "is_archived": False,
                 "properties": {
-                    "client_component_hash": "b503491e-be3a-de50-0413-30c8c8abb43a",
+                    "client_component_hash": "19278001-3d52-0e43-dc43-4082128d8243",
                 },
                 "tags": {},
             },
@@ -65,6 +71,17 @@ class TestFlowComponent:
         )
 
         assert named_component._to_rest_object().as_dict() == expected_rest_dict
+
+    def test_component_normalize_folder_name(self):
+        target_path = "./tests/test_configs/flows/basic/"
+        with tempfile.TemporaryDirectory() as temp_dir:
+            shutil.copytree(
+                target_path,
+                f"{temp_dir}/basic-with-slash",
+            )
+            target_flow_dag_path = f"{temp_dir}/basic-with-slash/flow.dag.yaml"
+            component = load_component(target_flow_dag_path)
+            assert component.name == "basic_with_slash"
 
     def test_component_load_from_run(self):
         target_path = "./tests/test_configs/flows/runs/basic_run.yml"

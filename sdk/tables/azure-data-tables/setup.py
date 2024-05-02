@@ -9,7 +9,7 @@
 import re
 import os.path
 from io import open
-from setuptools import find_packages, setup  # type: ignore
+from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-data-tables"
@@ -22,7 +22,7 @@ namespace_name = PACKAGE_NAME.replace("-", ".")
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
-    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)  # type: ignore
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
 
 if not version:
     raise RuntimeError("Cannot find version information")
@@ -49,11 +49,11 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -65,11 +65,11 @@ setup(
             "azure.data",
         ]
     ),
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     install_requires=[
-        "azure-core<2.0.0,>=1.29.4",
-        "yarl<2.0,>=1.0",
-        "isodate<1.0.0,>=0.6.1",
+        "azure-core>=1.29.4",
+        "yarl>=1.0",
+        "isodate>=0.6.1",
         "typing-extensions>=4.3.0",
     ],
 )

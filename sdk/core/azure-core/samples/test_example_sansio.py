@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 
 import sys
+from azure.core.pipeline import PipelineRequest
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core import PipelineClient
 from azure.core.pipeline.policies import RedirectPolicy
@@ -159,3 +160,30 @@ def example_proxy_policy():
     # You can also configure proxies by setting the environment variables
     # HTTP_PROXY and HTTPS_PROXY.
     # [END proxy_policy]
+
+
+def test_example_per_call_policy():
+    """Per call policy example.
+
+    This example shows how to define your own policy and inject it with the "per_call_policies" parameter.
+    """
+    from azure.core.pipeline.policies import SansIOHTTPPolicy
+
+    # Define your own policy
+    class MyPolicy(SansIOHTTPPolicy[HttpRequest, HttpResponse]):
+        def on_request(self, request: PipelineRequest[HttpRequest]) -> None:
+            # Simple hook that redirect google calls to bing :).
+            current_url = request.http_request.url
+            request.http_request.url = current_url.replace("google", "bing")
+
+    # Replace "PipelineClient" by your actual client (KeyVault, Storage, etc.)
+    # "per_call_policies" is available on any client this team produces.
+    client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient(
+        base_url="https://google.com", per_call_policies=MyPolicy()
+    )
+    # This part will be done by your client
+    request = HttpRequest("GET", "https://google.com/")
+    response: HttpResponse = client.send_request(request)
+
+    # Checking that the response is coming from bing.
+    assert "bing" in response.url

@@ -70,13 +70,15 @@ class ResourceHealthMgmtClient:  # pylint: disable=client-accepts-api-version-ke
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.availability_statuses = AvailabilityStatusesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-01-01"
         )
         self.child_availability_statuses = ChildAvailabilityStatusesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-01-01"
         )
-        self.child_resources = ChildResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.child_resources = ChildResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2015-01-01"
+        )
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize, "2015-01-01")
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

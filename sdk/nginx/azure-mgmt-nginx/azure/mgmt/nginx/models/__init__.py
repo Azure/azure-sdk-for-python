@@ -6,9 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models_py3 import ErrorResponseBody
+from ._models_py3 import AnalysisCreate
+from ._models_py3 import AnalysisCreateConfig
+from ._models_py3 import AnalysisDiagnostic
+from ._models_py3 import AnalysisResult
+from ._models_py3 import AnalysisResultData
+from ._models_py3 import AutoUpgradeProfile
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
 from ._models_py3 import IdentityProperties
 from ._models_py3 import NginxCertificate
+from ._models_py3 import NginxCertificateErrorResponseBody
 from ._models_py3 import NginxCertificateListResponse
 from ._models_py3 import NginxCertificateProperties
 from ._models_py3 import NginxConfiguration
@@ -19,8 +27,10 @@ from ._models_py3 import NginxConfigurationProperties
 from ._models_py3 import NginxDeployment
 from ._models_py3 import NginxDeploymentListResponse
 from ._models_py3 import NginxDeploymentProperties
+from ._models_py3 import NginxDeploymentScalingProperties
 from ._models_py3 import NginxDeploymentUpdateParameters
 from ._models_py3 import NginxDeploymentUpdateProperties
+from ._models_py3 import NginxDeploymentUserProfile
 from ._models_py3 import NginxFrontendIPConfiguration
 from ._models_py3 import NginxLogging
 from ._models_py3 import NginxNetworkInterfaceConfiguration
@@ -33,6 +43,8 @@ from ._models_py3 import OperationListResult
 from ._models_py3 import OperationResult
 from ._models_py3 import ResourceProviderDefaultErrorResponse
 from ._models_py3 import ResourceSku
+from ._models_py3 import ScaleProfile
+from ._models_py3 import ScaleProfileCapacity
 from ._models_py3 import SystemData
 from ._models_py3 import UserIdentityProperties
 
@@ -45,9 +57,17 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "ErrorResponseBody",
+    "AnalysisCreate",
+    "AnalysisCreateConfig",
+    "AnalysisDiagnostic",
+    "AnalysisResult",
+    "AnalysisResultData",
+    "AutoUpgradeProfile",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
     "IdentityProperties",
     "NginxCertificate",
+    "NginxCertificateErrorResponseBody",
     "NginxCertificateListResponse",
     "NginxCertificateProperties",
     "NginxConfiguration",
@@ -58,8 +78,10 @@ __all__ = [
     "NginxDeployment",
     "NginxDeploymentListResponse",
     "NginxDeploymentProperties",
+    "NginxDeploymentScalingProperties",
     "NginxDeploymentUpdateParameters",
     "NginxDeploymentUpdateProperties",
+    "NginxDeploymentUserProfile",
     "NginxFrontendIPConfiguration",
     "NginxLogging",
     "NginxNetworkInterfaceConfiguration",
@@ -72,6 +94,8 @@ __all__ = [
     "OperationResult",
     "ResourceProviderDefaultErrorResponse",
     "ResourceSku",
+    "ScaleProfile",
+    "ScaleProfileCapacity",
     "SystemData",
     "UserIdentityProperties",
     "CreatedByType",

@@ -22,21 +22,21 @@ class AddOnFeatures(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ArmServicePackageActivationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The activation Mode of the service package."""
 
-    #: Indicates the application package activation mode will use shared process.
     SHARED_PROCESS = "SharedProcess"
-    #: Indicates the application package activation mode will use exclusive process.
+    """Indicates the application package activation mode will use shared process."""
     EXCLUSIVE_PROCESS = "ExclusiveProcess"
+    """Indicates the application package activation mode will use exclusive process."""
 
 
 class ArmUpgradeFailureAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The activation Mode of the service package."""
 
-    #: Indicates that a rollback of the upgrade will be performed by Service Fabric if the upgrade
-    #: fails.
     ROLLBACK = "Rollback"
-    #: Indicates that a manual repair will need to be performed by the administrator if the upgrade
-    #: fails. Service Fabric will not proceed to the next upgrade domain automatically.
+    """Indicates that a rollback of the upgrade will be performed by Service Fabric if the upgrade
+    #: fails."""
     MANUAL = "Manual"
+    """Indicates that a manual repair will need to be performed by the administrator if the upgrade
+    #: fails. Service Fabric will not proceed to the next upgrade domain automatically."""
 
 
 class ClusterEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -88,15 +88,15 @@ class ClusterUpgradeCadence(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     default is Wave0.
     """
 
-    #: Cluster upgrade starts immediately after a new version is rolled out. Recommended for Test/Dev
-    #: clusters.
     WAVE0 = "Wave0"
-    #: Cluster upgrade starts 7 days after a new version is rolled out. Recommended for Pre-prod
-    #: clusters.
+    """Cluster upgrade starts immediately after a new version is rolled out. Recommended for Test/Dev
+    #: clusters."""
     WAVE1 = "Wave1"
-    #: Cluster upgrade starts 14 days after a new version is rolled out. Recommended for Production
-    #: clusters.
+    """Cluster upgrade starts 7 days after a new version is rolled out. Recommended for Pre-prod
+    #: clusters."""
     WAVE2 = "Wave2"
+    """Cluster upgrade starts 14 days after a new version is rolled out. Recommended for Production
+    #: clusters."""
 
 
 class ClusterVersionsEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -125,35 +125,35 @@ class DurabilityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ManagedIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of managed identity for the resource."""
 
-    #: Indicates that system assigned identity is associated with the resource.
     SYSTEM_ASSIGNED = "SystemAssigned"
-    #: Indicates that user assigned identity is associated with the resource.
+    """Indicates that system assigned identity is associated with the resource."""
     USER_ASSIGNED = "UserAssigned"
-    #: Indicates that both system assigned and user assigned identity are associated with the
-    #: resource.
+    """Indicates that user assigned identity is associated with the resource."""
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
-    #: Indicates that no identity is associated with the resource.
+    """Indicates that both system assigned and user assigned identity are associated with the
+    #: resource."""
     NONE = "None"
+    """Indicates that no identity is associated with the resource."""
 
 
 class MoveCost(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the move cost for the service."""
 
-    #: Zero move cost. This value is zero.
     ZERO = "Zero"
-    #: Specifies the move cost of the service as Low. The value is 1.
+    """Zero move cost. This value is zero."""
     LOW = "Low"
-    #: Specifies the move cost of the service as Medium. The value is 2.
+    """Specifies the move cost of the service as Low. The value is 1."""
     MEDIUM = "Medium"
-    #: Specifies the move cost of the service as High. The value is 3.
+    """Specifies the move cost of the service as Medium. The value is 2."""
     HIGH = "High"
+    """Specifies the move cost of the service as High. The value is 3."""
 
 
 class NotificationCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The category of notification."""
 
-    #: Notification will be regarding wave progress.
     WAVE_PROGRESS = "WaveProgress"
+    """Notification will be regarding wave progress."""
 
 
 class NotificationChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -161,39 +161,39 @@ class NotificationChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     user or subscription.
     """
 
-    #: For email user receivers. In this case, the parameter receivers should be a list of email
-    #: addresses that will receive the notifications.
     EMAIL_USER = "EmailUser"
-    #: For subscription receivers. In this case, the parameter receivers should be a list of roles of
-    #: the subscription for the cluster (eg. Owner, AccountAdmin, etc) that will receive the
-    #: notifications.
+    """For email user receivers. In this case, the parameter receivers should be a list of email
+    #: addresses that will receive the notifications."""
     EMAIL_SUBSCRIPTION = "EmailSubscription"
+    """For subscription receivers. In this case, the parameter receivers should be a list of roles of
+    #: the subscription for the cluster (eg. Owner, AccountAdmin, etc) that will receive the
+    #: notifications."""
 
 
 class NotificationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The level of notification."""
 
-    #: Receive only critical notifications.
     CRITICAL = "Critical"
-    #: Receive all notifications.
+    """Receive only critical notifications."""
     ALL = "All"
+    """Receive all notifications."""
 
 
 class PartitionScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumerates the ways that a service can be partitioned."""
 
-    #: Indicates the partition kind is invalid. All Service Fabric enumerations have the invalid type.
-    #: The value is zero.
     INVALID = "Invalid"
-    #: Indicates that the partition is based on string names, and is a
-    #: SingletonPartitionSchemeDescription object, The value is 1.
+    """Indicates the partition kind is invalid. All Service Fabric enumerations have the invalid type.
+    #: The value is zero."""
     SINGLETON = "Singleton"
-    #: Indicates that the partition is based on Int64 key ranges, and is a
-    #: UniformInt64RangePartitionSchemeDescription object. The value is 2.
+    """Indicates that the partition is based on string names, and is a
+    #: SingletonPartitionSchemeDescription object, The value is 1."""
     UNIFORM_INT64_RANGE = "UniformInt64Range"
-    #: Indicates that the partition is based on string names, and is a NamedPartitionSchemeDescription
-    #: object. The value is 3
+    """Indicates that the partition is based on Int64 key ranges, and is a
+    #: UniformInt64RangePartitionSchemeDescription object. The value is 2."""
     NAMED = "Named"
+    """Indicates that the partition is based on string names, and is a NamedPartitionSchemeDescription
+    #: object. The value is 3"""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -232,49 +232,49 @@ class RollingUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UnmonitoredManual, and Monitored.
     """
 
-    #: Indicates the upgrade mode is invalid. All Service Fabric enumerations have the invalid type.
-    #: The value is zero.
     INVALID = "Invalid"
-    #: The upgrade will proceed automatically without performing any health monitoring. The value is 1
+    """Indicates the upgrade mode is invalid. All Service Fabric enumerations have the invalid type.
+    #: The value is zero."""
     UNMONITORED_AUTO = "UnmonitoredAuto"
-    #: The upgrade will stop after completing each upgrade domain, giving the opportunity to manually
-    #: monitor health before proceeding. The value is 2
+    """The upgrade will proceed automatically without performing any health monitoring. The value is 1"""
     UNMONITORED_MANUAL = "UnmonitoredManual"
-    #: The upgrade will stop after completing each upgrade domain and automatically monitor health
-    #: before proceeding. The value is 3
+    """The upgrade will stop after completing each upgrade domain, giving the opportunity to manually
+    #: monitor health before proceeding. The value is 2"""
     MONITORED = "Monitored"
+    """The upgrade will stop after completing each upgrade domain and automatically monitor health
+    #: before proceeding. The value is 3"""
 
 
 class ServiceCorrelationScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The service correlation scheme."""
 
-    #: An invalid correlation scheme. Cannot be used. The value is zero.
     INVALID = "Invalid"
-    #: Indicates that this service has an affinity relationship with another service. Provided for
-    #: backwards compatibility, consider preferring the Aligned or NonAlignedAffinity options. The
-    #: value is 1.
+    """An invalid correlation scheme. Cannot be used. The value is zero."""
     AFFINITY = "Affinity"
-    #: Aligned affinity ensures that the primaries of the partitions of the affinitized services are
-    #: collocated on the same nodes. This is the default and is the same as selecting the Affinity
-    #: scheme. The value is 2.
+    """Indicates that this service has an affinity relationship with another service. Provided for
+    #: backwards compatibility, consider preferring the Aligned or NonAlignedAffinity options. The
+    #: value is 1."""
     ALIGNED_AFFINITY = "AlignedAffinity"
-    #: Non-Aligned affinity guarantees that all replicas of each service will be placed on the same
-    #: nodes. Unlike Aligned Affinity, this does not guarantee that replicas of particular role will
-    #: be collocated. The value is 3.
+    """Aligned affinity ensures that the primaries of the partitions of the affinitized services are
+    #: collocated on the same nodes. This is the default and is the same as selecting the Affinity
+    #: scheme. The value is 2."""
     NON_ALIGNED_AFFINITY = "NonAlignedAffinity"
+    """Non-Aligned affinity guarantees that all replicas of each service will be placed on the same
+    #: nodes. Unlike Aligned Affinity, this does not guarantee that replicas of particular role will
+    #: be collocated. The value is 3."""
 
 
 class ServiceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of service (Stateless or Stateful)."""
 
-    #: Indicates the service kind is invalid. All Service Fabric enumerations have the invalid type.
-    #: The value is zero.
     INVALID = "Invalid"
-    #: Does not use Service Fabric to make its state highly available or reliable. The value is 1.
+    """Indicates the service kind is invalid. All Service Fabric enumerations have the invalid type.
+    #: The value is zero."""
     STATELESS = "Stateless"
-    #: Uses Service Fabric to make its state or part of its state highly available and reliable. The
-    #: value is 2.
+    """Does not use Service Fabric to make its state highly available or reliable. The value is 1."""
     STATEFUL = "Stateful"
+    """Uses Service Fabric to make its state or part of its state highly available and reliable. The
+    #: value is 2."""
 
 
 class ServiceLoadMetricWeight(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -283,44 +283,44 @@ class ServiceLoadMetricWeight(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     prefers the metric with the higher weight.
     """
 
-    #: Disables resource balancing for this metric. This value is zero.
     ZERO = "Zero"
-    #: Specifies the metric weight of the service load as Low. The value is 1.
+    """Disables resource balancing for this metric. This value is zero."""
     LOW = "Low"
-    #: Specifies the metric weight of the service load as Medium. The value is 2.
+    """Specifies the metric weight of the service load as Low. The value is 1."""
     MEDIUM = "Medium"
-    #: Specifies the metric weight of the service load as High. The value is 3.
+    """Specifies the metric weight of the service load as Medium. The value is 2."""
     HIGH = "High"
+    """Specifies the metric weight of the service load as High. The value is 3."""
 
 
 class ServicePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of placement policy for a service fabric service. Following are the possible values."""
 
-    #: Indicates the type of the placement policy is invalid. All Service Fabric enumerations have the
-    #: invalid type. The value is zero.
     INVALID = "Invalid"
-    #: Indicates that the ServicePlacementPolicyDescription is of type
-    #: ServicePlacementInvalidDomainPolicyDescription, which indicates that a particular fault or
-    #: upgrade domain cannot be used for placement of this service. The value is 1.
+    """Indicates the type of the placement policy is invalid. All Service Fabric enumerations have the
+    #: invalid type. The value is zero."""
     INVALID_DOMAIN = "InvalidDomain"
-    #: Indicates that the ServicePlacementPolicyDescription is of type
-    #: ServicePlacementRequireDomainDistributionPolicyDescription indicating that the replicas of the
-    #: service must be placed in a specific domain. The value is 2.
+    """Indicates that the ServicePlacementPolicyDescription is of type
+    #: ServicePlacementInvalidDomainPolicyDescription, which indicates that a particular fault or
+    #: upgrade domain cannot be used for placement of this service. The value is 1."""
     REQUIRED_DOMAIN = "RequiredDomain"
-    #: Indicates that the ServicePlacementPolicyDescription is of type
+    """Indicates that the ServicePlacementPolicyDescription is of type
+    #: ServicePlacementRequireDomainDistributionPolicyDescription indicating that the replicas of the
+    #: service must be placed in a specific domain. The value is 2."""
+    PREFERRED_PRIMARY_DOMAIN = "PreferredPrimaryDomain"
+    """Indicates that the ServicePlacementPolicyDescription is of type
     #: ServicePlacementPreferPrimaryDomainPolicyDescription, which indicates that if possible the
     #: Primary replica for the partitions of the service should be located in a particular domain as
-    #: an optimization. The value is 3.
-    PREFERRED_PRIMARY_DOMAIN = "PreferredPrimaryDomain"
-    #: Indicates that the ServicePlacementPolicyDescription is of type
+    #: an optimization. The value is 3."""
+    REQUIRED_DOMAIN_DISTRIBUTION = "RequiredDomainDistribution"
+    """Indicates that the ServicePlacementPolicyDescription is of type
     #: ServicePlacementRequireDomainDistributionPolicyDescription, indicating that the system will
     #: disallow placement of any two replicas from the same partition in the same domain at any time.
-    #: The value is 4.
-    REQUIRED_DOMAIN_DISTRIBUTION = "RequiredDomainDistribution"
-    #: Indicates that the ServicePlacementPolicyDescription is of type
-    #: ServicePlacementNonPartiallyPlaceServicePolicyDescription, which indicates that if possible all
-    #: replicas of a particular partition of the service should be placed atomically. The value is 5.
+    #: The value is 4."""
     NON_PARTIALLY_PLACE_SERVICE = "NonPartiallyPlaceService"
+    """Indicates that the ServicePlacementPolicyDescription is of type
+    #: ServicePlacementNonPartiallyPlaceServicePolicyDescription, which indicates that if possible all
+    #: replicas of a particular partition of the service should be placed atomically. The value is 5."""
 
 
 class SfZonalUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -329,16 +329,16 @@ class SfZonalUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     cluster.
     """
 
-    #: VMs under the node type are grouped into UDs and ignore the zone info in five UDs. This setting
+    PARALLEL = "Parallel"
+    """VMs under the node type are grouped into UDs and ignore the zone info in five UDs. This setting
     #: causes UDs across all zones to be upgraded at the same time. This deployment mode is faster for
     #: upgrades, we don't recommend it because it goes against the SDP guidelines, which state that
-    #: the updates should be applied to one zone at a time.
-    PARALLEL = "Parallel"
-    #: If this value is omitted or set to Hierarchical, VMs are grouped to reflect the zonal
+    #: the updates should be applied to one zone at a time."""
+    HIERARCHICAL = "Hierarchical"
+    """If this value is omitted or set to Hierarchical, VMs are grouped to reflect the zonal
     #: distribution in up to 15 UDs. Each of the three zones has five UDs. This ensures that the zones
     #: are updated one at a time, moving to next zone only after completing five UDs within the first
-    #: zone. This update process is safer for the cluster and the user application.
-    HIERARCHICAL = "Hierarchical"
+    #: zone. This update process is safer for the cluster and the user application."""
 
 
 class StoreName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -357,12 +357,12 @@ class StoreName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class UpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The upgrade mode of the cluster when new Service Fabric runtime version is available."""
 
-    #: The cluster will be automatically upgraded to the latest Service Fabric runtime version,
-    #: **upgradeWave** will determine when the upgrade starts after the new version becomes available.
     AUTOMATIC = "Automatic"
-    #: The cluster will not be automatically upgraded to the latest Service Fabric runtime version.
-    #: The cluster is upgraded by setting the **clusterCodeVersion** property in the cluster resource.
+    """The cluster will be automatically upgraded to the latest Service Fabric runtime version,
+    #: **upgradeWave** will determine when the upgrade starts after the new version becomes available."""
     MANUAL = "Manual"
+    """The cluster will not be automatically upgraded to the latest Service Fabric runtime version.
+    #: The cluster is upgraded by setting the **clusterCodeVersion** property in the cluster resource."""
 
 
 class VmssZonalUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -370,9 +370,9 @@ class VmssZonalUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     node type with multiple Availability Zones is added.
     """
 
-    #: Updates will happen in all Availability Zones at once for the virtual machine scale sets.
     PARALLEL = "Parallel"
-    #: VMs are grouped to reflect the zonal distribution in up to 15 UDs. Each of the three zones has
-    #: five UDs. This ensures that the zones are updated one at a time, moving to next zone only after
-    #: completing five UDs within the first zone.
+    """Updates will happen in all Availability Zones at once for the virtual machine scale sets."""
     HIERARCHICAL = "Hierarchical"
+    """VMs are grouped to reflect the zonal distribution in up to 15 UDs. Each of the three zones has
+    #: five UDs. This ensures that the zones are updated one at a time, moving to next zone only after
+    #: completing five UDs within the first zone."""

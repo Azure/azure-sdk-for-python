@@ -61,6 +61,7 @@ USER_AGENT_PREFIX = "azsdk-python-servicebus"
 CONSUMER_IDENTIFIER = VENDOR + b":receiver-name"
 UAMQP_LIBRARY = "uamqp"
 PYAMQP_LIBRARY = "pyamqp"
+OPERATION_TIMEOUT = VENDOR + b":timeout"
 
 MANAGEMENT_PATH_SUFFIX = "/$management"
 
@@ -154,10 +155,8 @@ class ServiceBusMessageState(int, Enum):
     DEFERRED = 1
     SCHEDULED = 2
 
-
 class ServiceBusSessionFilter(Enum):
     NEXT_AVAILABLE = 0
-
 
 class ServiceBusSubQueue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DEAD_LETTER = "deadletter"
@@ -170,9 +169,9 @@ NEXT_AVAILABLE_SESSION = ServiceBusSessionFilter.NEXT_AVAILABLE
 class TransportType(Enum):
     """Transport type
     The underlying transport protocol type:
-     Amqp: AMQP over the default TCP transport protocol, it uses port 5671.
-     AmqpOverWebsocket: Amqp over the Web Sockets transport protocol, it uses
-     port 443.
+    - Amqp: AMQP over the default TCP transport protocol, it uses port 5671.
+    - AmqpOverWebsocket: Amqp over the Web Sockets transport protocol, it uses
+    port 443.
     """
     Amqp = 1
     AmqpOverWebsocket = 2

@@ -41,14 +41,14 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: MIT License",
     ],
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     zip_safe=False,
     packages=find_packages(exclude=[
         'tests',
@@ -65,12 +65,12 @@ setup(
         'azure.ai.language.questionanswering': ['py.typed'],
     },
     install_requires=[
-        "azure-core<2.0.0,>=1.24.0",
-        "isodate<1.0.0,>=0.6.1",
+        "azure-core>=1.28.0",
+        "isodate>=0.6.1",
         "typing-extensions>=4.0.1",
     ],
     project_urls={
         'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',
-        'Source': 'https://github.com/Azure/azure-sdk-python',
+        'Source': 'https://github.com/Azure/azure-sdk-for-python',
     }
 )

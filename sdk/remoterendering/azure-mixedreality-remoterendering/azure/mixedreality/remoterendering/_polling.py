@@ -40,7 +40,7 @@ class RemoteRenderingPolling(PollingMethod):
     def _update_status(self):
         # type: () -> None
         if self._query_status is None:
-            raise Exception("this poller has not been initialized")
+            raise RuntimeError("this poller has not been initialized")
         self._response = self._query_status()  # pylint: disable=E1102
         if self._response.error is not None:
             error = HttpResponseError("Polling returned a status indicating an error state.", model=self._response)

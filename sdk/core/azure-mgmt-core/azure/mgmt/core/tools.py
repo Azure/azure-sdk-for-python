@@ -88,7 +88,7 @@ def parse_resource_id(rid: str) -> Mapping[str, Union[str, int]]:
         result["last_child_num"] = count + 1 if isinstance(count, int) else None
         final_result = _populate_alternate_kwargs(result)
     else:
-        final_result = result = dict(name=rid)
+        final_result = result = {"name": rid}
     return {key: value for key, value in final_result.items() if value is not None}
 
 
@@ -138,7 +138,7 @@ def _get_parents_from_parts(kwargs: MutableMapping[str, Union[None, str, int]]) 
     return kwargs
 
 
-def resource_id(**kwargs: Optional[str]) -> str:
+def resource_id(**kwargs: Optional[str]) -> str:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Create a valid resource id string from the given parts.
 
     This method builds the resource id from the left until the next required id parameter
@@ -184,7 +184,7 @@ def is_valid_resource_id(rid: str, exception_type: Optional[Type[BaseException]]
     :param rid: The resource id being validated.
     :type rid: str
     :param exception_type: Raises this Exception if invalid.
-    :type exception_type: :class:`Exception`
+    :type exception_type: Exception
     :returns: A boolean describing whether the id is valid.
     :rtype: bool
     """
@@ -205,7 +205,7 @@ def is_valid_resource_name(rname: str, exception_type: Optional[Type[BaseExcepti
     :param rname: The resource name being validated.
     :type rname: str
     :param exception_type: Raises this Exception if invalid.
-    :type exception_type: :class:`Exception`
+    :type exception_type: Exception
     :returns: A boolean describing whether the name is valid.
     :rtype: bool
     """

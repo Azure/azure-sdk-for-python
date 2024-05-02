@@ -85,15 +85,45 @@ class DiagnosticsPackageStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ERROR = "Error"
 
 
+class HomeNetworkPrivateKeysProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the private keys for SUPI concealment."""
+
+    NOT_PROVISIONED = "NotProvisioned"
+    """Provisioning of the private keys for SUPI concealment has not been attempted."""
+    PROVISIONED = "Provisioned"
+    """The private keys for SUPI concealment are successfully provisioned."""
+    FAILED = "Failed"
+    """Provisioning of the private keys for SUPI concealment has failed."""
+
+
 class InstallationReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The reason for the installation state of the packet core."""
+    """The reason or list of reasons why a packet core has not been installed or requires a reinstall."""
 
     NO_SLICES = "NoSlices"
-    """The mobile network does not have any applicable configured slices."""
+    """The packet core has not been installed as the mobile network does not have any applicable
+    #: configured slices."""
     NO_PACKET_CORE_DATA_PLANE = "NoPacketCoreDataPlane"
-    """There is no configured data plane for this packet core."""
+    """The packet core has not been installed as there is no configured data plane for this packet
+    #: core."""
     NO_ATTACHED_DATA_NETWORKS = "NoAttachedDataNetworks"
-    """The packet core has no attached data networks."""
+    """The packet core has not been installed as the packet core has no attached data networks."""
+    PUBLIC_LAND_MOBILE_NETWORK_IDENTIFIER_HAS_CHANGED = "PublicLandMobileNetworkIdentifierHasChanged"
+    """A reinstall is required as the packet core is running with out-of-date PLMN ID."""
+    CONTROL_PLANE_ACCESS_INTERFACE_HAS_CHANGED = "ControlPlaneAccessInterfaceHasChanged"
+    """A reinstall is required as the packet core is running with out-of-date control plane access
+    #: interface information."""
+    USER_PLANE_ACCESS_INTERFACE_HAS_CHANGED = "UserPlaneAccessInterfaceHasChanged"
+    """A reinstall is required as the packet core is running with out-of-date user plane core
+    #: interface."""
+    USER_PLANE_DATA_INTERFACE_HAS_CHANGED = "UserPlaneDataInterfaceHasChanged"
+    """A reinstall is required as the packet core is running with out-of-date user plane access
+    #: interface."""
+    CONTROL_PLANE_ACCESS_VIRTUAL_IPV4_ADDRESSES_HAS_CHANGED = "ControlPlaneAccessVirtualIpv4AddressesHasChanged"
+    """A reinstall is required as the packet core is running with out-of-date control plane access
+    #: network virtual IP address."""
+    USER_PLANE_ACCESS_VIRTUAL_IPV4_ADDRESSES_HAS_CHANGED = "UserPlaneAccessVirtualIpv4AddressesHasChanged"
+    """A reinstall is required as the packet core is running with out-of-date user plane access
+    #: network virtual IP address."""
 
 
 class InstallationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -153,6 +183,12 @@ class PacketCaptureStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ERROR = "Error"
 
 
+class PdnType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Packet Data Network Type."""
+
+    IPV4 = "IPV4"
+
+
 class PduSessionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PDU session type (IPv4/IPv6)."""
 
@@ -201,6 +237,13 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETED = "Deleted"
 
 
+class RatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """RAT Type."""
+
+    FOUR_G = "4G"
+    FIVE_G = "5G"
+
+
 class RecommendedVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates whether this is the recommended version to use for new packet core control plane
     deployments.
@@ -219,6 +262,17 @@ class ReinstallRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A reinstall of the packet core is required."""
     NOT_REQUIRED = "NotRequired"
     """A reinstall of the packet core is not required."""
+
+
+class RrcEstablishmentCause(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Radio connection establishment cause."""
+
+    EMERGENCY = "Emergency"
+    MOBILE_ORIGINATED_SIGNALING = "MobileOriginatedSignaling"
+    MOBILE_TERMINATED_SIGNALING = "MobileTerminatedSignaling"
+    MOBILE_ORIGINATED_DATA = "MobileOriginatedData"
+    MOBILE_TERMINATED_DATA = "MobileTerminatedData"
+    SMS = "SMS"
 
 
 class SdfDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -267,6 +321,23 @@ class TrafficControlPermission(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Traffic matching this rule is allowed to flow."""
     BLOCKED = "Blocked"
     """Traffic matching this rule is not allowed to flow."""
+
+
+class UeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of the UE."""
+
+    CONNECTED = "Connected"
+    IDLE = "Idle"
+    DETACHED = "Detached"
+    DEREGISTERED = "Deregistered"
+    UNKNOWN = "Unknown"
+
+
+class UeUsageSetting(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The UE's usage setting."""
+
+    VOICE_CENTRIC = "VoiceCentric"
+    DATA_CENTRIC = "DataCentric"
 
 
 class VersionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

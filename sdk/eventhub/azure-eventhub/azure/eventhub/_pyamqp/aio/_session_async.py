@@ -9,7 +9,7 @@ import uuid
 import logging
 import time
 import asyncio
-from typing import Optional, Union, List
+from typing import Optional, Union
 
 from ..constants import ConnectionState, SessionState, SessionTransferState, Role
 from ._sender_async import SenderLink
@@ -204,7 +204,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             self._input_handles[frame[1]] = new_link
         except ValueError as e:
             # Reject Link
-            _LOGGER.error(
+            _LOGGER.debug(
                     "Unable to attach new link: %r",
                     e,
                     extra=self.network_trace_params

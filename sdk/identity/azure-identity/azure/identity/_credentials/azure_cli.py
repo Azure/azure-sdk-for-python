@@ -9,14 +9,13 @@ import re
 import shutil
 import subprocess
 import sys
-import time
 from typing import List, Optional, Any, Dict
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._internal import _scopes_to_resource, resolve_tenant, within_dac
+from .._internal import _scopes_to_resource, resolve_tenant, within_dac, validate_tenant_id, validate_scope
 from .._internal.decorators import log_get_token
 
 
@@ -54,15 +53,16 @@ class AzureCliCredential:
         additionally_allowed_tenants: Optional[List[str]] = None,
         process_timeout: int = 10,
     ) -> None:
-
+        if tenant_id:
+            validate_tenant_id(tenant_id)
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
 
-    def __enter__(self):
+    def __enter__(self) -> "AzureCliCredential":
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         pass
 
     def close(self) -> None:
@@ -83,7 +83,7 @@ class AzureCliCredential:
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
-            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+            https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
         :keyword str claims: not used by this credential; any value provided will be ignored.
         :keyword str tenant_id: optional tenant to include in the token request.
 
@@ -94,6 +94,10 @@ class AzureCliCredential:
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure CLI but didn't
           receive an access token.
         """
+        if tenant_id:
+            validate_tenant_id(tenant_id)
+        for scope in scopes:
+            validate_scope(scope)
 
         resource = _scopes_to_resource(*scopes)
         command = COMMAND_LINE.format(resource)
@@ -134,14 +138,13 @@ def parse_token(output) -> Optional[AccessToken]:
     """
     try:
         token = json.loads(output)
-        dt = datetime.strptime(token["expiresOn"], "%Y-%m-%d %H:%M:%S.%f")
-        if hasattr(dt, "timestamp"):
-            # Python >= 3.3
-            expires_on = dt.timestamp()
-        else:
-            # taken from Python 3.5's datetime.timestamp()
-            expires_on = time.mktime((dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, -1, -1, -1))
 
+        # Use "expires_on" if it's present, otherwise use "expiresOn".
+        if "expires_on" in token:
+            return AccessToken(token["accessToken"], int(token["expires_on"]))
+
+        dt = datetime.strptime(token["expiresOn"], "%Y-%m-%d %H:%M:%S.%f")
+        expires_on = dt.timestamp()
         return AccessToken(token["accessToken"], int(expires_on))
     except (KeyError, ValueError):
         return None

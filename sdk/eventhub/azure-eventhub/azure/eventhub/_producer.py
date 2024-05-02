@@ -101,7 +101,7 @@ class EventHubProducer(
         self.running = False
         self.closed = False
 
-        self._max_message_size_on_link = None
+        self._max_message_size_on_link: Optional[int] = None
         self._client = client
         self._target = target
         self._partition = partition
@@ -131,6 +131,8 @@ class EventHubProducer(
             {TIMEOUT_SYMBOL: int(self._timeout * self._amqp_transport.TIMEOUT_FACTOR)}
         )
 
+        super(EventHubProducer, self).__init__()
+
     def _create_handler(
         self, auth: Union[uamqp_JWTTokenAuth, JWTTokenAuth]
     ) -> None:
@@ -143,7 +145,7 @@ class EventHubProducer(
             retry_policy=self._retry_policy,
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
-            link_properties=self._link_properties,
+            link_properties=self._link_properties, # type: ignore
             properties=create_properties(
                 self._client._config.user_agent,  # pylint: disable=protected-access
                 amqp_transport=self._amqp_transport,

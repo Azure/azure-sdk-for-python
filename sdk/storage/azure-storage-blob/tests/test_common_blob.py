@@ -6,10 +6,10 @@
 
 import os
 import tempfile
-import time
 import uuid
 from datetime import datetime, timedelta
 from enum import Enum
+from io import BytesIO
 
 from azure.mgmt.storage import StorageManagementClient
 
@@ -40,6 +40,7 @@ from azure.storage.blob import (
     LinearRetry,
     ResourceTypes,
     RetentionPolicy,
+    Services,
     StandardBlobTier,
     StorageErrorCode,
     download_blob_from_url,
@@ -2139,6 +2140,25 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert blob_list is not None
         assert blob_props is not None
 
+    @BlobPreparer()
+    def test_multiple_services_sas(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Act
+        token = self.generate_sas(
+            generate_account_sas,
+            storage_account_name,
+            storage_account_key,
+            ResourceTypes(container=True, object=True, service=True),
+            AccountSasPermissions(read=True, list=True),
+            datetime.utcnow() + timedelta(hours=1),
+            services=Services(blob=True, fileshare=True)
+        )
+
+        # Assert
+        assert 'ss=bf' in token
+
     @pytest.mark.live_test_only
     @BlobPreparer()
     def test_set_immutability_policy_using_sas(self, **kwargs):
@@ -2225,7 +2245,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Assert response using blob sas
         assert resp_with_blob_sas['immutability_policy_until_date'] is not None
         assert resp_with_blob_sas['immutability_policy_mode'] is not None
-        
+
         if self.is_live:
             blob_client.delete_immutability_policy()
             blob_client.set_legal_hold(False)
@@ -3290,5 +3310,114 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert v1_blob.exists() is True
         assert v1_blob.exists(version_id=v2_props['version_id']) is False
         assert blob_client.exists() is True
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_storage_account_audience_blob_service_client(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        self.bsc.list_containers()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), credential=token_credential,
+            audience=f'https://{storage_account_name}.blob.core.windows.net'
+        )
+
+        # Assert
+        response = bsc.list_containers()
+        assert response is not None
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_storage_account_audience_blob_client(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        blob_name = self._create_block_blob()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.exists()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        blob = BlobClient(
+            self.bsc.url, container_name=self.container_name, blob_name=blob_name,
+            credential=token_credential, audience=f'https://{storage_account_name}.blob.core.windows.net'
+        )
+
+        # Assert
+        response = blob.exists()
+        assert response is not None
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_oauth_error_handling(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        # Arrange
+        from azure.identity import ClientSecretCredential
+
+        # Generate an invalid credential
+        creds = ClientSecretCredential(
+            self.get_settings_value("TENANT_ID"),
+            self.get_settings_value("CLIENT_ID"),
+            self.get_settings_value("CLIENT_SECRET") + 'a'
+        )
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=creds, retry_total=0)
+        container = bsc.get_container_client('testing')
+
+        # Act
+        with pytest.raises(ClientAuthenticationError):
+            container.exists()
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_upload_blob_partial_stream(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        blob = self.bsc.get_container_client(self.container_name).get_blob_client(self._get_blob_reference())
+        data = b'abcde' * 100
+        stream = BytesIO(data)
+        read_length = 207
+
+        # Act
+        blob.upload_blob(stream, length=read_length, overwrite=True)
+
+        # Assert
+        result = blob.download_blob().readall()
+        assert result == data[:read_length]
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_upload_blob_partial_stream_chunked(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        self.bsc._config.max_single_put_size = 1024
+        self.bsc._config.max_block_size = 1024
+
+        blob = self.bsc.get_container_client(self.container_name).get_blob_client(self._get_blob_reference())
+        data = b'abcde' * 1024
+        stream = BytesIO(data)
+        length = 3000
+
+        # Act
+        blob.upload_blob(stream, length=length, overwrite=True)
+
+        # Assert
+        result = blob.download_blob().readall()
+        assert result == data[:length]
 
     # ------------------------------------------------------------------------------

@@ -1,11 +1,12 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, Optional, Type, Union
+from typing import Any, Dict, List, Optional, Type, Union
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from ..job_limits import SweepJobLimits
+from ..job_resource_configuration import JobResourceConfiguration
 from ..queue_settings import QueueSettings
 from .early_termination_policy import (
     BanditPolicy,
@@ -25,18 +26,6 @@ from .sampling_algorithm import (
     RestSamplingAlgorithm,
     SamplingAlgorithm,
     SamplingAlgorithmType,
-)
-from .search_space import (
-    Choice,
-    LogNormal,
-    LogUniform,
-    Normal,
-    QLogNormal,
-    QLogUniform,
-    QNormal,
-    QUniform,
-    Randint,
-    Uniform,
 )
 
 # pylint: disable=unnecessary-lambda
@@ -62,16 +51,10 @@ class ParameterizedSweep:
         limits: Optional[SweepJobLimits] = None,
         sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
         objective: Optional[Union[Dict, Objective]] = None,
-        early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
-        search_space: Optional[
-            Dict[
-                str,
-                Union[
-                    Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
-                ],
-            ]
-        ] = None,
+        early_termination: Optional[Any] = None,
+        search_space: Optional[Dict] = None,
         queue_settings: Optional[QueueSettings] = None,
+        resources: Optional[Union[dict, JobResourceConfiguration]] = None,
     ) -> None:
         """
         :param limits: Limits for sweep job.
@@ -83,18 +66,31 @@ class ParameterizedSweep:
         :param early_termination: Early termination policy for sweep job.
         :type early_termination: ~azure.ai.ml.entities._job.sweep.early_termination_policy.EarlyTerminationPolicy
         :param search_space: Search space for sweep job.
-        :type search_space: Dict[str, Union[~azure.ai.ml.sweep.Choice, ~azure.ai.ml.sweep.LogNormal,
-        ~azure.ai.ml.sweep.LogUniform, ~azure.ai.ml.sweep.Normal, ~azure.ai.ml.sweep.QLogNormal,
-        ~azure.ai.ml.sweep.QLogUniform, ~azure.ai.ml.sweep.QNormal, ~azure.ai.ml.sweep.QUniform,
-        ~azure.ai.ml.sweep.Randint, ~azure.ai.ml.sweep.Uniform]]
+        :type search_space: Dict[str, Union[
+            ~azure.ai.ml.sweep.Choice,
+            ~azure.ai.ml.sweep.LogNormal,
+            ~azure.ai.ml.sweep.LogUniform,
+            ~azure.ai.ml.sweep.Normal,
+            ~azure.ai.ml.sweep.QLogNormal,
+            ~azure.ai.ml.sweep.QLogUniform,
+            ~azure.ai.ml.sweep.QNormal,
+            ~azure.ai.ml.sweep.QUniform,
+            ~azure.ai.ml.sweep.Randint,
+            ~azure.ai.ml.sweep.Uniform
+
+            ]]
         :param queue_settings: Queue settings for sweep job.
         :type queue_settings: ~azure.ai.ml.entities.QueueSettings
+        :param resources: Compute Resource configuration for the job.
+        :type resources: ~azure.ai.ml.entities.ResourceConfiguration
         """
         self.sampling_algorithm = sampling_algorithm
-        self.early_termination = early_termination
+        self.early_termination = early_termination  # type: ignore[assignment]
         self._limits = limits
         self.search_space = search_space
         self.queue_settings = queue_settings
+        self.objective: Optional[Objective] = None
+        self.resources = resources
 
         if isinstance(objective, Dict):
             self.objective = Objective(**objective)
@@ -102,7 +98,27 @@ class ParameterizedSweep:
             self.objective = objective
 
     @property
-    def limits(self) -> SweepJobLimits:
+    def resources(self) -> Optional[Union[dict, JobResourceConfiguration]]:
+        """Resources for sweep job.
+
+        :returns: Resources for sweep job.
+        :rtype: ~azure.ai.ml.entities.ResourceConfiguration
+        """
+        return self._resources
+
+    @resources.setter
+    def resources(self, value: Optional[Union[dict, JobResourceConfiguration]]) -> None:
+        """Set Resources for sweep job.
+
+        :param value: Compute Resource configuration for the job.
+        :type value: ~azure.ai.ml.entities.ResourceConfiguration
+        """
+        if isinstance(value, dict):
+            value = JobResourceConfiguration(**value)
+        self._resources = value
+
+    @property
+    def limits(self) -> Optional[SweepJobLimits]:
         """Limits for sweep job.
 
         :returns: Limits for sweep job.
@@ -127,6 +143,48 @@ class ParameterizedSweep:
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
         self._limits = value
+
+    def set_resources(
+        self,
+        *,
+        instance_type: Optional[Union[str, List[str]]] = None,
+        instance_count: Optional[int] = None,
+        locations: Optional[List[str]] = None,
+        properties: Optional[Dict] = None,
+        docker_args: Optional[str] = None,
+        shm_size: Optional[str] = None,
+    ) -> None:
+        """Set resources for Sweep.
+
+        :keyword instance_type: The instance type to use for the job.
+        :paramtype instance_type: Optional[Union[str, List[str]]]
+        :keyword instance_count: The number of instances to use for the job.
+        :paramtype instance_count: Optional[int]
+        :keyword locations: The locations to use for the job.
+        :paramtype locations: Optional[List[str]]
+        :keyword properties: The properties for the job.
+        :paramtype properties: Optional[Dict]
+        :keyword docker_args: The docker arguments for the job.
+        :paramtype docker_args: Optional[str]
+        :keyword shm_size: The shared memory size for the job.
+        :paramtype shm_size: Optional[str]
+        """
+        if self.resources is None:
+            self.resources = JobResourceConfiguration()
+
+        if not isinstance(self.resources, dict):
+            if locations is not None:
+                self.resources.locations = locations
+            if instance_type is not None:
+                self.resources.instance_type = instance_type
+            if instance_count is not None:
+                self.resources.instance_count = instance_count
+            if properties is not None:
+                self.resources.properties = properties
+            if docker_args is not None:
+                self.resources.docker_args = docker_args
+            if shm_size is not None:
+                self.resources.shm_size = shm_size
 
     def set_limits(
         self,
@@ -155,21 +213,22 @@ class ParameterizedSweep:
                 trial_timeout=trial_timeout,
             )
         else:
-            if max_concurrent_trials is not None:
-                self.limits.max_concurrent_trials = max_concurrent_trials
-            if max_total_trials is not None:
-                self.limits.max_total_trials = max_total_trials
-            if timeout is not None:
-                self.limits.timeout = timeout
-            if trial_timeout is not None:
-                self.limits.trial_timeout = trial_timeout
+            if self.limits is not None:
+                if max_concurrent_trials is not None:
+                    self.limits.max_concurrent_trials = max_concurrent_trials
+                if max_total_trials is not None:
+                    self.limits.max_total_trials = max_total_trials
+                if timeout is not None:
+                    self.limits.timeout = timeout
+                if trial_timeout is not None:
+                    self.limits.trial_timeout = trial_timeout
 
     def set_objective(self, *, goal: Optional[str] = None, primary_metric: Optional[str] = None) -> None:
         """Set the sweep object.. Leave parameters as None if you don't want to update corresponding values.
 
         :keyword goal: Defines supported metric goals for hyperparameter tuning. Acceptable values are:
-        "minimize", "maximize".
-        :type goal: str
+            "minimize" and "maximize".
+        :paramtype goal: str
         :keyword primary_metric: Name of the metric to optimize.
         :paramtype primary_metric: str
         """
@@ -183,7 +242,7 @@ class ParameterizedSweep:
             self.objective = Objective(goal=goal, primary_metric=primary_metric)
 
     @property
-    def sampling_algorithm(self) -> Union[str, SamplingAlgorithm]:
+    def sampling_algorithm(self) -> Optional[Union[str, SamplingAlgorithm]]:
         """Sampling algorithm for sweep job.
 
         :returns: Sampling algorithm for sweep job.
@@ -200,9 +259,9 @@ class ParameterizedSweep:
         """
         if value is None:
             self._sampling_algorithm = None
-        elif isinstance(value, SamplingAlgorithm):
-            self._sampling_algorithm = value
-        elif isinstance(value, str) and value.lower().capitalize() in SAMPLING_ALGORITHM_CONSTRUCTOR:
+        elif isinstance(value, SamplingAlgorithm) or (
+            isinstance(value, str) and value.lower().capitalize() in SAMPLING_ALGORITHM_CONSTRUCTOR
+        ):
             self._sampling_algorithm = value
         else:
             msg = f"unsupported sampling algorithm: {value}"
@@ -234,7 +293,7 @@ class ParameterizedSweep:
         )
 
     @property
-    def early_termination(self) -> Union[str, EarlyTerminationPolicy]:
+    def early_termination(self) -> Optional[Union[str, EarlyTerminationPolicy]]:
         """Early termination policy for sweep job.
 
         :returns: Early termination policy for sweep job.
@@ -243,12 +302,13 @@ class ParameterizedSweep:
         return self._early_termination
 
     @early_termination.setter
-    def early_termination(self, value: Union[EarlyTerminationPolicy, str]) -> None:
+    def early_termination(self, value: Any) -> None:
         """Set early termination policy for sweep job.
 
         :param value: Early termination policy for sweep job.
         :type value: ~azure.ai.ml.entities._job.sweep.early_termination_policy.EarlyTerminationPolicy
         """
+        self._early_termination: Optional[Union[str, EarlyTerminationPolicy]]
         if value is None:
             self._early_termination = None
         elif isinstance(value, EarlyTerminationPolicy):

@@ -6,9 +6,9 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_10_01.models import (
     FeaturestoreEntityContainer,
     FeaturestoreEntityContainerProperties,
     FeaturestoreEntityVersion,
@@ -16,7 +16,6 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 )
 from azure.ai.ml._schema._feature_store_entity.feature_store_entity_schema import FeatureStoreEntitySchema
 from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._util import load_from_dict
@@ -25,7 +24,6 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 from .data_column import DataColumn
 
 
-@experimental
 class FeatureStoreEntity(Asset):
     """Feature Store Entity
 
@@ -65,7 +63,7 @@ class FeatureStoreEntity(Asset):
         stage: Optional[str] = "Development",
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         super().__init__(
             name=name,
@@ -132,7 +130,7 @@ class FeatureStoreEntity(Asset):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "FeatureStoreEntity":
         data = data or {}
         params_override = params_override or []
@@ -145,4 +143,5 @@ class FeatureStoreEntity(Asset):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return FeatureStoreEntitySchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = FeatureStoreEntitySchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res

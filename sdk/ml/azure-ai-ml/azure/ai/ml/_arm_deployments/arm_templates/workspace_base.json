@@ -419,8 +419,49 @@
         },
         "spark_runtime_version": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
                 "description": "spark version to be used by all feature sets"
+            }
+        },
+        "offlineStoreStorageAccountOption": {
+            "type": "string",
+            "defaultValue": "none",
+            "allowedValues": [
+                "new",
+                "existing",
+                "none"
+            ],
+            "metadata": {
+                "description": "Determines whether or not to provision a feature store offline store storage account"
+            }
+        },
+        "offline_store_storage_account_name": {
+            "type": "string",
+            "defaultValue": "[concat('sa', uniqueString('featurestore', parameters('resourceGroupName'), parameters('workspaceName')))]",
+            "metadata": {
+                "description": "Name of the feature store offline store storage account."
+            }
+        },
+        "offline_store_container_name": {
+            "type": "string",
+            "defaultValue": "[concat('offlinestore', newGuid())]",
+            "metadata": {
+                "description": "Feature store offline store container"
+            }
+        },
+        "offline_store_resource_group_name": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "Feature store offline store resource group"
+            }
+        },
+        "offline_store_subscription_id": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionId]",
+            "metadata": {
+                "description": "Feature store offline store subscription id"
             }
         },
         "offline_store_connection_name": {
@@ -430,39 +471,11 @@
                 "description": "Feature store offline store config"
             }
         },
-        "online_store_connection_name": {
+        "online_store_resource_id": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
-                "description": "Feature store online store config"
-            }
-        },
-        "offline_store_target": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Feature store offline store connection target"
-            }
-        },
-        "offline_store_resource_group_name": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Feature store offline store resource group"
-            }
-        },
-        "offline_store_subscription_id": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Feature store offline store subscription id"
-            }
-        },
-        "online_store_target": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Feature store online store connection target"
+                "description": "Feature store online store resource id"
             }
         },
         "online_store_resource_group_name": {
@@ -479,11 +492,44 @@
                 "description": "Feature store online store subscription id"
             }
         },
-        "materialization_identity_resource_id": {
+        "online_store_connection_name": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
-                "description": "Feature store materialization identity resource id"
+                "description": "Feature store online store config"
+            }
+        },
+        "materializationIdentityOption": {
+            "type": "string",
+            "defaultValue": "none",
+            "allowedValues": [
+                "new",
+                "existing",
+                "none"
+            ],
+            "metadata": {
+                "description": "Determines whether or not to provision a materialization identity"
+            }
+        },
+        "materialization_identity_name": {
+            "type": "string",
+            "defaultValue": "empty",
+            "metadata": {
+                "description": "Feature store materialization identity name"
+            }
+        },
+        "materialization_identity_subscription_id": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionId]",
+            "metadata": {
+                "description": "Feature store materialization identity subscription id"
+            }
+        },
+        "materialization_identity_resource_group_name": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "Feature store materialization identity resource group name"
             }
         },
         "grant_materialization_permissions": {
@@ -495,13 +541,6 @@
             ],
             "metadata": {
                 "description": "Whether to grant materialization identity permissions"
-            }
-        },
-        "materialization_identity_name": {
-            "defaultValue": "empty",
-            "type": "string",
-            "metadata": {
-                "description": "Feature store materialization identity name"
             }
         },
         "enable_data_isolation": {
@@ -536,22 +575,32 @@
                 "description": "Resource Id of Hub used for lean workspace."
             }
         },
-        "set_up_feature_store" : {
-            "type": "string",
-            "defaultValue": "false",
-            "allowedValues": [
-                "false",
-                "true"
-            ],
+        "serverless_compute_settings": {
+            "type": "object",
+            "defaultValue": {},
             "metadata": {
-                "description": "A flag to determine whether to set up feature store"
+                "description": "Serverless compute settings to be used for the workspace."
             }
         },
-        "byo_open_ai_resource_id": {
+        "endpoint_resource_id": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "null",
             "metadata": {
-                "description": "Resource Id of BYO open ai resource."
+                "description": "The resource id that this workspace hub's endpoints should reference."
+            }
+        },
+        "endpoint_kind": {
+            "type": "string",
+            "defaultValue": "AIServices",
+            "metadata": {
+                "description": "The kind of endpoints this workspace hub ought to contain."
+            }
+        },
+        "endpoint_option": {
+            "type": "string",
+            "defaultValue": "new",
+            "metadata": {
+                "description": "Testing value. Do not touch."
             }
         }
     },
@@ -584,11 +633,8 @@
         },
         "defaultPEConnections": "[array(variables('privateEndpointSettings'))]",
         "privateEndpointDeploymentName": "[concat('DeployPrivateEndpoint-', uniqueString(parameters('privateEndpointName')))]",
-        "materialization_identity_resource_id": "[if(not(equals(parameters('materialization_identity_name'), 'empty')), resourceId(parameters('storageAccountResourceGroupName'), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name')),  parameters('materialization_identity_resource_id'))]",
-        "offlineStoreContainerName": "[concat('offlinestore', guid(variables('storageAccount')))]",
-        "offlineStoreConnectionName": "[if(empty(parameters('offline_store_connection_name')), 'OfflineStoreConnectionName', parameters('offline_store_connection_name'))]",
-        "onlineStoreConnectionName": "[if(empty(parameters('online_store_connection_name')), 'OnlineStoreConnectionName', parameters('online_store_connection_name'))]",
-        "offlineStoreConnectionTarget": "[if(empty(parameters('offline_store_target')), resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', variables('offlineStoreContainerName')), parameters('offline_store_target'))]",
+        "materializationIdentity": "[resourceId(parameters('materialization_identity_subscription_id'), parameters('materialization_identity_resource_group_name'), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]",
+        "offlineStore": "[resourceId(parameters('offline_store_subscription_id'), parameters('offline_store_resource_group_name'), 'Microsoft.Storage/storageAccounts/blobServices/containers', parameters('offline_store_storage_account_name'), 'default', parameters('offline_store_container_name'))]",
         "isWorkspaceHub": "[equals(parameters('kind'), 'hub')]"
     },
     "resources": [
@@ -633,7 +679,7 @@
             }
         },
         {
-            "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), not(equals(parameters('materialization_identity_name'), 'empty')))]",
+            "condition": "[and(equals(parameters('kind'), 'featurestore'), equals(parameters('materializationIdentityOption'), 'new'))]",
             "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
             "apiVersion": "2018-11-30",
             "name": "[parameters('materialization_identity_name')]",
@@ -668,16 +714,47 @@
                 "supportsHttpsTrafficOnly": true,
                 "allowBlobPublicAccess": false,
                 "networkAcls": "[if(equals(parameters('storageAccountBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]",
-                "isHnsEnabled": "[equals(parameters('set_up_feature_store'), 'true')]"
+                "isHnsEnabled": "[equals(parameters('kind'), 'featurestore')]",
+                "minimumTlsVersion": "[if(equals(parameters('kind'), 'featurestore'), 'TLS1_2', 'TLS1_0')]"
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('set_up_feature_store'), 'true'), empty(parameters('offline_store_target')), equals(parameters('storageAccountOption'), 'new'))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('kind'), 'featurestore'), equals(parameters('storageAccountOption'), 'existing'), equals(parameters('offlineStoreStorageAccountOption'), 'new'))]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-04-01",
+            "name": "[parameters('offline_store_storage_account_name')]",
+            "tags": "[parameters('tagValues')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "StorageV2",
+            "properties": {
+                "encryption": {
+                    "services": {
+                        "blob": {
+                            "enabled": true
+                        },
+                        "file": {
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                },
+                "supportsHttpsTrafficOnly": true,
+                "allowBlobPublicAccess": false,
+                "networkAcls": "[json('null')]",
+                "isHnsEnabled": true,
+                "minimumTlsVersion": "TLS1_2"
+            }
+        },
+        {
+            "condition": "[and(variables('enablePE'), equals(parameters('kind'), 'featurestore'), equals(parameters('offlineStoreStorageAccountOption'), 'new'))]",
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
             "apiVersion": "2021-04-01",
-            "name": "[concat(parameters('storageAccountName'), '/default/', variables('offlineStoreContainerName'))]",
+            "name": "[concat(parameters('offline_store_storage_account_name'), '/default/', parameters('offline_store_container_name'))]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('offline_store_storage_account_name'))]"
             ]
         },
         {
@@ -720,7 +797,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'), not(variables('isWorkspaceHub')))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
             "type": "Microsoft.OperationalInsights/workspaces",
             "tags": "[parameters('tagValues')]",
             "apiVersion": "2020-08-01",
@@ -732,7 +809,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'), not(variables('isWorkspaceHub')))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
             "type": "Microsoft.Insights/components",
             "tags": "[parameters('tagValues')]",
             "apiVersion": "2020-02-02-preview",
@@ -750,7 +827,7 @@
         {
             "condition": "[variables('enablePE')]",
             "type": "Microsoft.MachineLearningServices/workspaces",
-            "apiVersion": "2023-04-01-preview",
+            "apiVersion": "2023-08-01-preview",
             "tags": "[parameters('tagValues')]",
             "name": "[parameters('workspaceName')]",
             "kind": "[parameters('kind')]",
@@ -767,7 +844,7 @@
                 "description": "[parameters('description')]",
                 "storageAccount": "[variables('storageAccount')]",
                 "keyVault": "[variables('keyVault')]",
-                "applicationInsights": "[if(variables('isWorkspaceHub'), json('null'), variables('applicationInsights'))]",
+                "applicationInsights": "[variables('applicationInsights')]",
                 "containerRegistry": "[if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null'))]",
                 "hbiWorkspace": "[parameters('confidential_data')]",
                 "imageBuildCompute": "[parameters('imageBuildCompute')]",
@@ -789,27 +866,115 @@
                 "featureStoreSettings": {
                     "computeruntime": {
                         "SparkRuntimeVersion": "[parameters('spark_runtime_version')]"
-                    },
-                    "offlinestoreconnectionname": "[parameters('offline_store_connection_name')]",
-                    "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
+                    }
                 },
                 "enableDataIsolation": "[parameters('enable_data_isolation')]",
                 "workspaceHubConfig": "[parameters('workspace_hub_config')]",
                 "existingWorkspaces": "[parameters('existing_workspaces')]",
-                "azureOpenAI": {
-                    "resourceId": "[parameters('byo_open_ai_resource_id')]"
+                "serverlessComputeSettings": "[parameters('serverless_compute_settings')]"
+            },
+            "resources":[
+                {
+                    "condition": "[equals(parameters('kind'), 'featurestore')]",
+                    "type": "connections",
+                    "apiVersion": "2022-05-01",
+                    "name": "[if(empty(parameters('offline_store_connection_name')), 'empty', parameters('offline_store_connection_name'))]",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
+                        "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('offline_store_storage_account_name'), 'default', parameters('offline_store_container_name'))]",
+                        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]"
+                    ],
+                    "identity": {
+                        "type": "SystemAssigned"
+                    },
+                    "properties": {
+                        "category": "AzureDataLakeGen2",
+                        "target": "[variables('offlineStore')]",
+                        "authType": "ManagedIdentity",
+                        "credentials": {
+                            "clientid": "[if(not(equals(parameters('materializationIdentityOption'), 'none')), reference(variables('materializationIdentity'), '2018-11-30').clientId, '')]",
+                            "resourceid": "[variables('materializationIdentity')]"
+                        }
+                    }
+                },
+                {
+                    "condition": "[and(equals(parameters('kind'), 'featurestore'), not(empty(parameters('online_store_resource_id'))))]",
+                    "type": "connections",
+                    "apiVersion": "2022-05-01",
+                    "name": "[if(empty(parameters('online_store_connection_name')), 'empty', parameters('online_store_connection_name'))]",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
+                        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]"
+                    ],
+                    "identity": {
+                        "type": "SystemAssigned"
+                    },
+                    "properties": {
+                        "category": "Redis",
+                        "target": "[parameters('online_store_resource_id')]",
+                        "authType": "ManagedIdentity",
+                        "credentials": {
+                            "clientid": "[if(not(equals(parameters('materializationIdentityOption'), 'none')), reference(variables('materializationIdentity'), '2018-11-30').clientId, '')]",
+                            "resourceid": "[variables('materializationIdentity')]"
+                        }
+                    }
+                },
+                {
+                    "condition": "[and(equals(parameters('endpoint_option'), 'new'), variables('isWorkspaceHub'))]",
+                    "type": "endpoints",
+                    "apiVersion": "2023-08-01-preview",
+                    "name": "Azure.OpenAI",
+                    "properties": {
+                      "name": "Azure.OpenAI",
+                      "endpointType": "Azure.OpenAI",
+                      "associatedResourceId": "[if(equals(parameters('endpoint_resource_id'), 'null'), null(), parameters('endpoint_resource_id'))]"
+                    },
+                    "dependsOn": [
+                      "[parameters('workspaceName')]"
+                    ]
+                },
+                {
+                    "condition": "[and(equals(parameters('endpoint_kind'), 'AIServices'), equals(parameters('endpoint_option'), 'new'), variables('isWorkspaceHub'))]",
+                    "type": "endpoints",
+                    "apiVersion": "2023-08-01-preview",
+                    "name": "Azure.ContentSafety",
+                    "properties": {
+                        "name": "Azure.ContentSafety",
+                        "endpointType": "Azure.ContentSafety",
+                        "associatedResourceId": "[if(equals(parameters('endpoint_resource_id'), 'null'), null(), parameters('endpoint_resource_id'))]"
+                    },
+                    "dependsOn": [
+                        "[parameters('workspaceName')]"
+                    ]
+                },
+                {
+                    "condition": "[and(equals(parameters('endpoint_kind'), 'AIServices'), equals(parameters('endpoint_option'), 'new'), variables('isWorkspaceHub'))]",
+                    "type": "endpoints",
+                    "apiVersion": "2023-08-01-preview",
+                    "name": "Azure.Speech",
+                    "properties": {
+                        "name": "Azure.Speech",
+                        "endpointType": "Azure.Speech",
+                        "associatedResourceId": "[if(equals(parameters('endpoint_resource_id'), 'null'), null(), parameters('endpoint_resource_id'))]"
+                    },
+                    "dependsOn": [
+                        "[parameters('workspaceName')]"
+                    ]
                 }
-            }
+            ]
         },
         {
-            "condition":"[equals(parameters('set_up_feature_store'), 'true')]",
+            "condition":"[equals(parameters('kind'), 'featurestore')]",
 			"type": "Microsoft.Resources/deployments",
 			"apiVersion": "2022-05-01",
 			"name": "[concat(parameters('workspaceName'), '-deploy-feature-store')]",
 			"dependsOn": [
-				"[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', variables('offlineStoreContainerName'))]",
-                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]"
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]",
+                "[resourceId('Microsoft.MachineLearningServices/workspaces/connections', parameters('workspaceName'), parameters('offline_store_connection_name'))]",
+                "[resourceId('Microsoft.MachineLearningServices/workspaces/connections', parameters('workspaceName'), parameters('online_store_connection_name'))]"
 			],
 			"properties": {
 				"mode": "Incremental",
@@ -827,7 +992,7 @@
                             "identity": {
                                 "type": "SystemAssigned,UserAssigned",
                                 "userAssignedIdentities": {
-                                    "[variables('materialization_identity_resource_id')]": {}
+                                    "[variables('materializationIdentity')]": {}
                                 }
                             },
                             "properties": {
@@ -858,88 +1023,25 @@
                                     "computeruntime": {
                                         "SparkRuntimeVersion": "[parameters('spark_runtime_version')]"
                                     },
-                                    "offlinestoreconnectionname": "[variables('offlineStoreConnectionName')]",
-                                    "onlinestoreconnectionname": "[if(not(empty(parameters('online_store_target'))), variables('onlineStoreConnectionName'), '')]"
+                                    "offlinestoreconnectionname": "[parameters('offline_store_connection_name')]",
+                                    "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
                                 },
                                 "enableDataIsolation": "[parameters('enable_data_isolation')]"
-                            },
-                            "resources":[
-                                {
-                                    "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), not(empty(parameters('online_store_target'))))]",
-                                    "type": "connections",
-                                    "apiVersion": "2022-05-01",
-                                    "name": "[variables('onlineStoreConnectionName')]",
-                                    "location": "[parameters('location')]",
-                                    "dependsOn": [
-                                        "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
-                                        "[resourceId('Microsoft.MachineLearningServices/workspaces/connections', parameters('workspaceName'), variables('offlineStoreConnectionName'))]"
-                                    ],
-                                    "identity": {
-                                        "type": "SystemAssigned"
-                                    },
-                                    "properties": {
-                                        "category": "Redis",
-                                        "target": "[parameters('online_store_target')]",
-                                        "authType": "ManagedIdentity",
-                                        "credentials": {
-                                            "clientid": "[if(empty(variables('materialization_identity_resource_id')), '', reference(variables('materialization_identity_resource_id'), '2018-11-30').clientId)]",
-                                            "resourceid": "[variables('materialization_identity_resource_id')]"
-                                        }
-                                    }
-                                },
-                                {
-                                    "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), not(empty(variables('offlineStoreConnectionName'))))]",
-                                    "type": "connections",
-                                    "apiVersion": "2022-05-01",
-                                    "name": "[variables('offlineStoreConnectionName')]",
-                                    "location": "[parameters('location')]",
-                                    "dependsOn": [
-                                        "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]"
-                                    ],
-                                    "identity": {
-                                        "type": "SystemAssigned"
-                                    },
-                                    "properties": {
-                                        "category": "AzureDataLakeGen2",
-                                        "target": "[variables('offlineStoreConnectionTarget')]",
-                                        "authType": "ManagedIdentity",
-                                        "credentials": {
-                                            "clientid": "[if(empty(variables('materialization_identity_resource_id')), '', reference(variables('materialization_identity_resource_id'), '2018-11-30').clientId)]",
-                                            "resourceid": "[variables('materialization_identity_resource_id')]"
-                                        }
-                                    }
-                                },
-                                {
-                                    "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), equals(parameters('grant_materialization_permissions'), 'true'))]",
-                                    "type": "Microsoft.MachineLearningServices/workspaces/providers/roleAssignments",
-                                    "apiVersion": "2019-04-01-preview",
-                                    "name": "[concat(parameters('workspaceName'), '/Microsoft.Authorization/', guid(variables('materialization_identity_resource_id'), parameters('workspaceName'), 'azureml ds role'))]",
-                                    "dependsOn": [
-                                        "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]"
-                                    ],
-                                    "properties": {
-                                        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'f6c7c914-8db3-469d-8ca1-694a8f32e121')]",
-                                        "principalId": "[if(empty(variables('materialization_identity_resource_id')), '', reference(variables('materialization_identity_resource_id'), '2018-11-30').principalId)]",
-                                        "principalType": "ServicePrincipal"
-                                    }
-                                }
-                            ]
+                            }
                         }
                     ]
 				}
 			}
 		},
         {
-            "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), equals(parameters('grant_materialization_permissions'), 'true'))]",
+            "condition": "[and(equals(parameters('kind'), 'featurestore'), equals(parameters('grant_materialization_permissions'), 'true'))]",
             "type": "Microsoft.Resources/deployments",
-            "name": "offline-store-role-assignment",
+            "name": "[concat('workspace-role-assign-', guid(variables('materializationIdentity'), resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName')), 'azureml ds role'))]",
             "apiVersion": "2020-06-01",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', variables('offlineStoreContainerName'))]",
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
                 "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]"
             ],
-            "resourceGroup": "[If(empty(parameters('offline_store_resource_group_name')), resourceGroup().name, parameters('offline_store_resource_group_name'))]",
-            "subscriptionId": "[If(empty(parameters('offline_store_subscription_id')), subscription().subscriptionId, parameters('offline_store_subscription_id'))]",
             "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -949,11 +1051,12 @@
                         {
                             "type": "Microsoft.Authorization/roleAssignments",
                             "apiVersion": "2022-04-01",
-                            "name": "[guid(variables('materialization_identity_resource_id'), variables('offlineStoreConnectionTarget'), 'storage blob data contributor')]",
-                            "scope": "[variables('offlineStoreConnectionTarget')]",
+                            "name": "[guid(variables('materializationIdentity'), resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName')), 'azureml ds role')]",
+                            "scope": "[resourceId(resourceGroup().name, 'Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
+                            "location": "[parameters('location')]",
                             "properties": {
-                                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
-                                "principalId": "[if(empty(variables('materialization_identity_resource_id')), '', reference(variables('materialization_identity_resource_id'), '2023-01-31').principalId)]",
+                                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'f6c7c914-8db3-469d-8ca1-694a8f32e121')]",
+                                "principalId": "[if(not(equals(parameters('materializationIdentityOption'), 'none')), reference(variables('materializationIdentity'), '2018-11-30').principalId, '')]",
                                 "principalType": "ServicePrincipal"
                             }
                         }
@@ -962,15 +1065,16 @@
             }
         },
         {
-            "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), equals(parameters('grant_materialization_permissions'), 'true'), not(empty(parameters('online_store_target'))))]",
+            "condition": "[and(equals(parameters('kind'), 'featurestore'), equals(parameters('grant_materialization_permissions'), 'true'), not(equals(parameters('materializationIdentityOption'), 'none')))]",
             "type": "Microsoft.Resources/deployments",
-            "name": "online-store-role-assignment",
+            "name": "[concat('offline-store-role-assign-', guid(variables('materializationIdentity'), variables('offlineStore'), 'storage blob data contributor'))]",
             "apiVersion": "2020-06-01",
             "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('offline_store_storage_account_name'), 'default', parameters('offline_store_container_name'))]",
                 "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]"
             ],
-            "resourceGroup": "[If(empty(parameters('online_store_resource_group_name')), resourceGroup().name, parameters('online_store_resource_group_name'))]",
-            "subscriptionId": "[If(empty(parameters('online_store_subscription_id')), subscription().subscriptionId, parameters('online_store_subscription_id'))]",
+            "resourceGroup": "[parameters('offline_store_resource_group_name')]",
+            "subscriptionId": "[parameters('offline_store_subscription_id')]",
             "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -980,11 +1084,44 @@
                         {
                             "type": "Microsoft.Authorization/roleAssignments",
                             "apiVersion": "2022-04-01",
-                            "name": "[guid(variables('materialization_identity_resource_id'), parameters('online_store_target'), 'contributor')]",
-                            "scope": "[parameters('online_store_target')]",
+                            "name": "[guid(variables('materializationIdentity'), variables('offlineStore'), 'storage blob data contributor')]",
+                            "scope": "[variables('offlineStore')]",
+                            "location": "[parameters('location')]",
+                            "properties": {
+                                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
+                                "principalId": "[if(not(equals(parameters('materializationIdentityOption'), 'none')), reference(variables('materializationIdentity'), '2023-01-31').principalId, '')]",
+                                "principalType": "ServicePrincipal"
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "condition": "[and(equals(parameters('kind'), 'featurestore'), equals(parameters('grant_materialization_permissions'), 'true'), not(equals(parameters('materializationIdentityOption'), 'none')), not(empty(parameters('online_store_resource_id'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "name": "[concat('online-store-role-assign-', guid(variables('materializationIdentity'), parameters('online_store_resource_id'), 'contributor'))]",
+            "apiVersion": "2020-06-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]"
+            ],
+            "resourceGroup": "[parameters('online_store_resource_group_name')]",
+            "subscriptionId": "[parameters('online_store_subscription_id')]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.Authorization/roleAssignments",
+                            "apiVersion": "2022-04-01",
+                            "name": "[guid(variables('materializationIdentity'), parameters('online_store_resource_id'), 'contributor')]",
+                            "scope": "[parameters('online_store_resource_id')]",
+                            "location": "[parameters('location')]",
                             "properties": {
                                 "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
-                                "principalId": "[if(empty(variables('materialization_identity_resource_id')), '', reference(variables('materialization_identity_resource_id'), '2023-01-31').principalId)]",
+                                "principalId": "[if(not(equals(parameters('materializationIdentityOption'), 'none')), reference(variables('materializationIdentity'), '2023-01-31').principalId, '')]",
                                 "principalType": "ServicePrincipal"
                             }
                         }

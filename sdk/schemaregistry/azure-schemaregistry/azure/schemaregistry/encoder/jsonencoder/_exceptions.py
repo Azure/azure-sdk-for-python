@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
+from typing import Any, Optional, Dict
 
 class InvalidContentError(ValueError):
     """Error during encoding or decoding content with a schema.
@@ -32,11 +32,16 @@ class InvalidContentError(ValueError):
     :keyword error: The original exception, if any.
 
     :ivar str message: A stringified version of the message parameter
-    :ivar dict details: The error details. Depending on the error, this may include information like:
-        `schema_id`, `schema_definition`, `message_content`.
+    :ivar dict details: The error details. Depending on the error, this may include
+     information like: `schema_id`, `schema_definition`, `message_content`.
     """
 
-    def __init__(self, message, *args, **kwargs):
-        self.message = str(message)
-        self.details = kwargs.pop("details", {})
+    def __init__(
+        self,
+        message: str,
+        *args: Any,
+        details: Optional[Dict[str, str]] = None
+    ) -> None:
+        self.message: str = str(message)
+        self.details: Dict[str, str] = details or {}
         super(InvalidContentError, self).__init__(self.message, *args)

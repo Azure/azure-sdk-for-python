@@ -15,8 +15,8 @@ from .._internal import InteractiveCredential, wrap_exceptions
 class DeviceCodeCredential(InteractiveCredential):
     """Authenticates users through the device code flow.
 
-    When :func:`get_token` is called, this credential acquires a verification URL and code from Azure Active Directory.
-    A user must browse to the URL, enter the code, and authenticate with Azure Active Directory. If the user
+    When :func:`get_token` is called, this credential acquires a verification URL and code from Microsoft Entra ID.
+    A user must browse to the URL, enter the code, and authenticate with Microsoft Entra ID. If the user
     authenticates successfully, the credential receives an access token.
 
     This credential is primarily useful for authenticating a user in an environment without a web browser, such as an
@@ -26,19 +26,20 @@ class DeviceCodeCredential(InteractiveCredential):
     :param str client_id: client ID of the application users will authenticate to. When not specified users will
         authenticate to an Azure development application.
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
-    :keyword str tenant_id: an Azure Active Directory tenant ID. Defaults to the "organizations" tenant, which can
+    :keyword str tenant_id: a Microsoft Entra tenant ID. Defaults to the "organizations" tenant, which can
         authenticate work or school accounts. **Required for single-tenant applications.**
     :keyword int timeout: seconds to wait for the user to authenticate. Defaults to the validity period of the
-        device code as set by Azure Active Directory, which also prevails when **timeout** is longer.
+        device code as set by Microsoft Entra ID, which also prevails when **timeout** is longer.
     :keyword prompt_callback: A callback enabling control of how authentication
         instructions are presented. Must accept arguments (``verification_uri``, ``user_code``, ``expires_on``):
 
         - ``verification_uri`` (str) the URL the user must visit
         - ``user_code`` (str) the code the user must enter there
         - ``expires_on`` (datetime.datetime) the UTC time at which the code will expire
+
         If this argument isn't provided, the credential will print instructions to stdout.
     :paramtype prompt_callback: Callable[str, str, ~datetime.datetime]
     :keyword AuthenticationRecord authentication_record: :class:`AuthenticationRecord` returned by :func:`authenticate`

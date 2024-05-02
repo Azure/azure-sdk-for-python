@@ -11,7 +11,7 @@ import argparse
 import os
 import logging
 from ci_tools.variables import in_ci
-from ci_tools.functions import build_and_install_dev_reqs
+from ci_tools.scenario.generation import build_and_install_dev_reqs
 logging.getLogger().setLevel(logging.INFO)
 
 

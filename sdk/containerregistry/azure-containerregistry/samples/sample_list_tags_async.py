@@ -40,15 +40,16 @@ class ListTagsAsync(object):
         load_dotenv(find_dotenv())
 
     async def list_tags(self):
-        endpoint = os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT")
+        endpoint = os.environ["CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT"]
         load_registry(endpoint)
         # [START list_tags_anonymous]
         async with ContainerRegistryClient(endpoint) as anon_client:
             manifest = await anon_client.get_manifest_properties("library/hello-world", "latest")
-            print(f"Tags of {manifest.repository_name}: ")
-            # Iterate through all the tags
-            for tag in manifest.tags:
-                print(tag)
+            if manifest.tags:
+                print(f"Tags of {manifest.repository_name}: ")
+                # Iterate through all the tags
+                for tag in manifest.tags:
+                    print(tag)
         # [END list_tags_anonymous]
 
 

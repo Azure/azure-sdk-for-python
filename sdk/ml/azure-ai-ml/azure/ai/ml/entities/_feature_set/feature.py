@@ -4,16 +4,14 @@
 
 # pylint: disable=redefined-builtin,disable=unused-argument
 
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Feature as RestFeature
-from azure.ai.ml._restclient.v2023_04_01_preview.models import FeatureProperties
-from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._restclient.v2023_10_01.models import Feature as RestFeature
+from azure.ai.ml._restclient.v2023_10_01.models import FeatureProperties
 from azure.ai.ml.entities._feature_store_entity.data_column_type import DataColumnType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
-@experimental
 class Feature(RestTranslatableMixin):
     """Feature
 
@@ -36,15 +34,15 @@ class Feature(RestTranslatableMixin):
         data_type: DataColumnType,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ) -> None:
+        **kwargs: Any
+    ):
         self.name = name
         self.data_type = data_type
         self.description = description
         self.tags = tags
 
     @classmethod
-    def _from_rest_object(cls, obj: RestFeature) -> "Feature":
+    def _from_rest_object(cls, obj: RestFeature) -> Optional["Feature"]:
         if not obj:
             return None
         feature_rest_object_details: FeatureProperties = obj.properties

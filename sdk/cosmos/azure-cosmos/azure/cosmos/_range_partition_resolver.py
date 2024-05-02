@@ -66,13 +66,13 @@ class RangePartitionResolver(object):
     def ResolveForRead(self, partition_key):
         """Resolves the collection for reading/querying the documents based on the partition key.
 
-        :param dict document: The document to be read/queried.
+        :param str partition_key: The partition key to be used.
         :return: Collection Self link(s) or Name based link(s) which should handle the Read operation.
         :rtype: list
         """
         intersecting_ranges = self._GetIntersectingRanges(partition_key)
 
-        collection_links = list()
+        collection_links = []
         for keyrange in intersecting_ranges:
             collection_links.append(self.partition_map.get(keyrange))
 
@@ -80,6 +80,9 @@ class RangePartitionResolver(object):
 
     def _GetContainingRange(self, partition_key):
         """Get the containing range based on the partition key.
+        :param str partition_key: The partition key to be used.
+        :returns: The containing key range.
+        :rtype: str
         """
         for keyrange in self.partition_map.keys():
             if keyrange.Contains(partition_key):
@@ -89,6 +92,9 @@ class RangePartitionResolver(object):
 
     def _GetIntersectingRanges(self, partition_key):
         """Get the intersecting ranges based on the partition key.
+        :param str partition_key: The partition key to be used.
+        :returns: the set of intersecting ranges for the partition key.
+        :rtype: set
         """
         partitionkey_ranges = set()
         intersecting_ranges = set()

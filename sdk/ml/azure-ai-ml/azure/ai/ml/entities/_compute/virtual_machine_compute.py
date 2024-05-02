@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource
 from azure.ai.ml._restclient.v2022_10_01_preview.models import VirtualMachine as VMResource
@@ -88,10 +88,10 @@ class VirtualMachineCompute(Compute):
         resource_id: str,
         tags: Optional[dict] = None,
         ssh_settings: Optional[VirtualMachineSshSettings] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         kwargs[TYPE] = ComputeType.VIRTUALMACHINE
-        self._public_key_data = kwargs.pop("public_key_data", None)
+        self._public_key_data: str = kwargs.pop("public_key_data", None)
         super().__init__(
             name=name,
             location=kwargs.pop("location", None),
@@ -131,19 +131,22 @@ class VirtualMachineCompute(Compute):
             tags=rest_obj.tags if rest_obj.tags else None,
             public_key_data=credentials.public_key_data if credentials else None,
             provisioning_state=prop.provisioning_state,
-            provisioning_errors=prop.provisioning_errors[0].error.code
-            if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
-            else None,
+            provisioning_errors=(
+                prop.provisioning_errors[0].error.code
+                if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
+                else None
+            ),
             ssh_settings=ssh_settings_param,
         )
         return response
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return VirtualMachineComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = VirtualMachineComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "VirtualMachineCompute":
+    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs: Any) -> "VirtualMachineCompute":
         loaded_data = load_from_dict(VirtualMachineComputeSchema, data, context, **kwargs)
         return VirtualMachineCompute(**loaded_data)
 
@@ -157,9 +160,10 @@ class VirtualMachineCompute(Compute):
             public_key_data=self.public_key_data,
             private_key_data=ssh_key_value,
         )
-        properties = VirtualMachineSchemaProperties(
-            ssh_port=self.ssh_settings.ssh_port, administrator_account=credentials
-        )
+        if self.ssh_settings is not None:
+            properties = VirtualMachineSchemaProperties(
+                ssh_port=self.ssh_settings.ssh_port, administrator_account=credentials
+            )
         vm_compute = VMResource(
             properties=properties,
             resource_id=self.resource_id,

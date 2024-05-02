@@ -605,10 +605,11 @@ try:
             :param ~azure.servicebus.ServiceBusSender sender: The sender with handler
              to send messages.
             :param message: ServiceBusMessage with uamqp.Message to be sent.
-            :paramtype message: ~azure.servicebus.ServiceBusMessage or ~azure.servicebus.ServiceBusMessageBatch
+            :type message: ~azure.servicebus.ServiceBusMessage or ~azure.servicebus.ServiceBusMessageBatch
             :param int timeout: Timeout time.
-            :param last_exception: Exception to raise if message timed out. Only used by uamqp transport.
-            :param logger: Logger.
+            :param Exception or None last_exception: Exception to raise if message timed out.
+             Only used by uamqp transport.
+            :param Logger logger: Logger.
             """
             # pylint: disable=protected-access
             sender._open()
@@ -767,7 +768,7 @@ try:
         # wait_time used by pyamqp
         @staticmethod
         def iter_next(
-            receiver: "ServiceBusReceiver", wait_time: Optional[int] = None
+            receiver: "ServiceBusReceiver", wait_time: Optional[int] = None,
         ) -> "ServiceBusReceivedMessage":  # pylint: disable=unused-argument
             # pylint: disable=protected-access
             try:
@@ -791,11 +792,16 @@ try:
                 receiver._receive_context.clear()
 
         @staticmethod
-        def enhanced_message_received(
+        def enhanced_message_received(  # pylint: disable=arguments-differ
             receiver: "ServiceBusReceiver", message: "Message"
         ) -> None:
             """
-            Receiver enhanced_message_received callback.
+            Releases messages from the internal buffer when there is no active receive call. In PEEKLOCK mode,
+            this helps avoid messages from expiring in the buffer and incrementing the delivery count of a message.
+
+            Should not be used with RECEIVE_AND_DELETE mode, since those messages are settled right away and removed
+            from the Service Bus entity.
+
             :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
             :param ~uamqp.Message message: The received message.
             """
@@ -967,10 +973,11 @@ try:
         ) -> "Message":
             """
             :param message: The message to send in the management request.
-            :paramtype message: Any
+            :type message: Any
             :param Dict[bytes, str] application_properties: App props.
             :param ~azure.servicebus._common._configuration.Configuration config: Configuration.
             :param str reply_to: Reply to.
+            :return: The message to send in the management request.
             :rtype: uamqp.Message
             """
             return Message(  # type: ignore # TODO: fix mypy error

@@ -1,6 +1,6 @@
 # Release History
 
-## 1.3.0b3 (Unreleased)
+## 1.3.0b4 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,17 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.3.0b3 (2023-11-09)
+
+### Features Added
+
+- `V2023_07_01` has been added to `ApiVersion` and set as the default api version.
+  - `Protobuf` has been added to supported formats in `SchemaFormat`.
+
+### Other Changes
+
+- Added support for Python 3.12.
 
 ## 1.3.0b2 (2023-08-09)
 
@@ -31,6 +42,10 @@ The following features are experimental and may be removed:
 ### Bugs Fixed
 
 - Fixed a bug in sync/async `register_schema` and `get_schema_properties` that did not accept case insensitive strings as an argument to the `format` parameter.
+
+### Other Changes
+
+- Added support for Python 3.11.
 
 ## 1.2.0 (2022-10-10)
 

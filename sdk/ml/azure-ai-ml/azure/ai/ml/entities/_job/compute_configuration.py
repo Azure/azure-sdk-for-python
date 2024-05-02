@@ -48,11 +48,11 @@ class ComputeConfiguration(RestTranslatableMixin, DictMixin):
         self.instance_type = instance_type
         self.location = location
         self.properties = properties
-        if deserialize_properties and properties:
+        if deserialize_properties and properties and self.properties is not None:
             for key, value in self.properties.items():
                 try:
                     self.properties[key] = json.loads(value)
-                except Exception:  # pylint: disable=broad-except
+                except Exception:  # pylint: disable=W0718
                     # keep serialized string if load fails
                     pass
 
@@ -68,7 +68,7 @@ class ComputeConfiguration(RestTranslatableMixin, DictMixin):
                     elif key.lower() == JobComputePropertyFields.AISUPERCOMPUTER.lower():
                         key = JobComputePropertyFields.AISUPERCOMPUTER
                     serialized_properties[key] = json.dumps(value)
-                except Exception:  # pylint: disable=broad-except
+                except Exception:  # pylint: disable=W0718
                     pass
         else:
             serialized_properties = None

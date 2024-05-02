@@ -18,6 +18,9 @@ from azure.ai.ml.operations._feature_store_operations import FeatureStoreOperati
 from azure.core.polling import LROPoller
 
 MOCK_MATERIALIZATION_STORE_TARGET = "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/test_storage/blobServices/default/containers/offlinestore"
+MOCK_MATERIALIZATION_STORE_TARGET_INCOMPLETE = (
+    "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/test_storage"
+)
 
 
 @pytest.fixture
@@ -28,13 +31,13 @@ def mock_credential() -> Mock:
 @pytest.fixture
 def mock_feature_store_operation(
     mock_workspace_scope: OperationScope,
-    mock_aml_services_2023_06_01_preview: Mock,
+    mock_aml_services_2023_08_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_credential: Mock,
 ) -> FeatureStoreOperations:
     yield FeatureStoreOperations(
         operation_scope=mock_workspace_scope,
-        service_client=mock_aml_services_2023_06_01_preview,
+        service_client=mock_aml_services_2023_08_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         credentials=mock_credential,
     )
@@ -223,6 +226,24 @@ class TestFeatureStoreOperation:
                 feature_store=FeatureStore(
                     name="name",
                     offline_store=MaterializationStore(
+                        type=ONLINE_MATERIALIZATION_STORE_TYPE, target=MOCK_MATERIALIZATION_STORE_TARGET
+                    ),
+                )
+            )
+        with pytest.raises(ValidationError):
+            mock_feature_store_operation.begin_update(
+                feature_store=FeatureStore(
+                    name="name",
+                    offline_store=MaterializationStore(
+                        type=OFFLINE_MATERIALIZATION_STORE_TYPE, target=MOCK_MATERIALIZATION_STORE_TARGET_INCOMPLETE
+                    ),
+                )
+            )
+        with pytest.raises(ValidationError):
+            mock_feature_store_operation.begin_update(
+                feature_store=FeatureStore(
+                    name="name",
+                    offline_store=MaterializationStore(
                         type=OFFLINE_MATERIALIZATION_STORE_TYPE, target=MOCK_MATERIALIZATION_STORE_TARGET
                     ),
                 )
@@ -257,7 +278,7 @@ class TestFeatureStoreOperation:
             return_value=None,
         )
         mocker.patch(
-            "azure.ai.ml.operations._workspace_connections_operations.WorkspaceConnectionsOperations.get",
+            "azure.ai.ml.operations._connections_operations.ConnectionsOperations.get",
             return_value=None,
         )
 

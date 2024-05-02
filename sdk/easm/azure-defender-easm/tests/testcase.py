@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from devtools_testutils import AzureTestCase, AzureRecordedTestCase, EnvironmentVariableLoader
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.defender.easm import EasmClient
 import datetime
 
