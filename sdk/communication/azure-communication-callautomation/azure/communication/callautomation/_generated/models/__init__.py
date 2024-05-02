@@ -61,6 +61,10 @@ from ._models import FileSource
 from ._models import HoldFailed
 from ._models import HoldRequest
 from ._models import MediaStreamingConfiguration
+from ._models import MediaStreamingFailed
+from ._models import MediaStreamingStarted
+from ._models import MediaStreamingStopped
+from ._models import MediaStreamingUpdate
 from ._models import MicrosoftTeamsAppIdentifierModel
 from ._models import MicrosoftTeamsUserIdentifierModel
 from ._models import MuteParticipantsRequest
@@ -128,6 +132,8 @@ from ._enums import DialogInputType
 from ._enums import DtmfTone
 from ._enums import MediaStreamingAudioChannelType
 from ._enums import MediaStreamingContentType
+from ._enums import MediaStreamingStatus
+from ._enums import MediaStreamingStatusDetails
 from ._enums import MediaStreamingTransportType
 from ._enums import PlaySourceType
 from ._enums import RecognitionType
@@ -202,6 +208,10 @@ __all__ = [
     "HoldFailed",
     "HoldRequest",
     "MediaStreamingConfiguration",
+    "MediaStreamingFailed",
+    "MediaStreamingStarted",
+    "MediaStreamingStopped",
+    "MediaStreamingUpdate",
     "MicrosoftTeamsAppIdentifierModel",
     "MicrosoftTeamsUserIdentifierModel",
     "MuteParticipantsRequest",
@@ -268,6 +278,8 @@ __all__ = [
     "DtmfTone",
     "MediaStreamingAudioChannelType",
     "MediaStreamingContentType",
+    "MediaStreamingStatus",
+    "MediaStreamingStatusDetails",
     "MediaStreamingTransportType",
     "PlaySourceType",
     "RecognitionType",

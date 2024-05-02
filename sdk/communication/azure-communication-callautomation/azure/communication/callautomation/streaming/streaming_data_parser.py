@@ -11,13 +11,14 @@ from azure.communication.callautomation.streaming.models import (TranscriptionMe
 
 class StreamingDataParser:
     @staticmethod
-    def parse(packet_data: Union[str, bytes]) -> Union[TranscriptionMetadata, TranscriptionData]:
-        """
-        Parse the incoming packets.
-        :keyword packet_data: Transcription packet data.
-        :paramtype packet_data: Union[str, bytes]
-        :return: Union[TranscriptionMetadata, TranscriptionData]
-        :rType: TranscriptionMetadata, TranscriptionData
+    def parse(packet_data: Union[str, bytes]
+              ) -> Union[TranscriptionMetadata, TranscriptionData]:
+        """Parse the incoming packets.
+
+        :param packet_data: Transcription packet data.
+        :type packet_data: Union[str, bytes]
+        :return: TranscriptionMetadata, TranscriptionData
+        :rtype: TranscriptionMetadata, TranscriptionData
         :raises: ValueError
         """
         if isinstance(packet_data, str):
@@ -25,7 +26,7 @@ class StreamingDataParser:
         elif isinstance(packet_data,bytes):
             string_json = packet_data.decode('utf-8')
         else:
-            ValueError(packet_data)
+            raise ValueError(packet_data)
 
         json_object = json.loads(string_json)
         kind = json_object['kind']

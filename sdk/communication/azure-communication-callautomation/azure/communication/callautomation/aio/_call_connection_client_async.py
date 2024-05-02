@@ -261,6 +261,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         transferee: Optional['CommunicationIdentifier'] = None,
         sip_headers: Optional[Dict[str, str]] = None,
         voip_headers: Optional[Dict[str, str]] = None,
+        source_caller_id_number: Optional['PhoneNumberIdentifier'] = None,
         **kwargs
     ) -> TransferCallResult:
         """Transfer this call to another participant.
@@ -280,6 +281,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :paramtype sip_headers: dict[str, str]
         :keyword voip_headers: Custom context for VOIP
         :paramtype voip_headers: dict[str, str]
+        :source_caller_id_number: The source caller Id, a phone number, that's will be used when
+        inviting a pstn target. Required only when transferring call to PSTN, if this is an incoming voip call.
+        :vartype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier
         :return: TransferCallResult
         :rtype: ~azure.communication.callautomation.TransferCallResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -291,6 +295,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         request = TransferToParticipantRequest(
             target_participant=serialize_identifier(target_participant),
             operation_context=operation_context,
+            source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
             operation_callback_uri=operation_callback_url,
             custom_calling_context=user_custom_context
         )
@@ -1013,8 +1018,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
         :param target_participant: The participant being added.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
-        :param play_source: A PlaySource representing the source to play.
-        :type play_source: ~azure.communication.callautomation.FileSource or
+        :keyword play_source: A PlaySource representing the source to play.
+        :paramtype play_source: ~azure.communication.callautomation.FileSource or
          ~azure.communication.callautomation.TextSource or
          ~azure.communication.callautomation.SsmlSource
         :keyword operation_context: Value that can be used to track this call and its associated events.

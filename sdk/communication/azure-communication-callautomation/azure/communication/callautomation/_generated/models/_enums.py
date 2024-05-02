@@ -96,6 +96,35 @@ class MediaStreamingContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUDIO = "audio"
 
 
+class MediaStreamingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MediaStreamingStatus."""
+
+    MEDIA_STREAMING_STARTED = "mediaStreamingStarted"
+    MEDIA_STREAMING_FAILED = "mediaStreamingFailed"
+    MEDIA_STREAMING_STOPPED = "mediaStreamingStopped"
+    UNSPECIFIED_ERROR = "unspecifiedError"
+
+
+class MediaStreamingStatusDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MediaStreamingStatusDetails."""
+
+    SUBSCRIPTION_STARTED = "subscriptionStarted"
+    STREAM_CONNECTION_REESTABLISHED = "streamConnectionReestablished"
+    STREAM_CONNECTION_UNSUCCESSFUL = "streamConnectionUnsuccessful"
+    STREAM_URL_MISSING = "streamUrlMissing"
+    SERVICE_SHUTDOWN = "serviceShutdown"
+    STREAM_CONNECTION_INTERRUPTED = "streamConnectionInterrupted"
+    SPEECH_SERVICES_CONNECTION_ERROR = "speechServicesConnectionError"
+    SUBSCRIPTION_STOPPED = "subscriptionStopped"
+    UNSPECIFIED_ERROR = "unspecifiedError"
+    AUTHENTICATION_FAILURE = "authenticationFailure"
+    BAD_REQUEST = "badRequest"
+    TOO_MANY_REQUESTS = "tooManyRequests"
+    FORBIDDEN = "forbidden"
+    SERVICE_TIMEOUT = "serviceTimeout"
+    INITIAL_WEB_SOCKET_CONNECTION_FAILED = "initialWebSocketConnectionFailed"
+
+
 class MediaStreamingTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of transport to be used for media streaming, eg. Websocket."""
 
