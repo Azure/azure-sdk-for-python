@@ -16,7 +16,7 @@ from copy import copy
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import RequestsTransport
-from azure.data.tables import TableClient, TableEntityEncoder, EdmType, EntityProperty, UpdateMode
+from azure.data.tables import TableClient, EdmType, EntityProperty, UpdateMode
 from azure.data.tables._common_conversion import _encode_base64, _to_utc_datetime
 from azure.data.tables._serialize import _add_entity_properties
 
@@ -24,8 +24,6 @@ from _shared.testcase import TableTestCase
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from preparers import tables_decorator
-
-DEFAULT_ENCODER = TableEntityEncoder()
 
 
 class EnumBasicOptions(enum.Enum):
@@ -160,8 +158,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     verify_url=f"/{table_name}",
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
-            assert ("Operation returned an invalid status 'Bad Request'") in str(error.value)
-            assert error.value.response.json()['odata.error']['code'] == "InvalidInput"
+            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
+            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.' in str(error.value)
 
             test_entity = {"PartitionKey": "PK", "RowKey": True}
             expected_entity = test_entity
@@ -173,8 +171,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     verify_url=f"/{table_name}",
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
-            assert ("Operation returned an invalid status 'Bad Request'") in str(error.value)
-            assert error.value.response.json()['odata.error']['code'] == "InvalidInput"
+            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
+            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.' in str(error.value)
 
             test_entity = {"PartitionKey": "PK", "RowKey": 3.14}
             expected_entity = {
@@ -190,8 +188,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     verify_url=f"/{table_name}",
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
-            assert ("Operation returned an invalid status 'Bad Request'") in str(error.value)
-            assert error.value.response.json()['odata.error']['code'] == "InvalidInput"
+            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
+            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.' in str(error.value)
             client.delete_table()
 
     @tables_decorator
@@ -226,8 +224,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     verify_url=f"/{table_name}",
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
-            assert ("Operation returned an invalid status 'Bad Request'") in str(error.value)
-            assert error.value.response.json()['odata.error']['code'] == "InvalidInput"
+            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
+            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.' in str(error.value)
 
             test_entity = {
                 "PartitionKey": b"binarydata",
@@ -246,8 +244,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     verify_url=f"/{table_name}",
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
-            assert ("Operation returned an invalid status 'Bad Request'") in str(error.value)
-            assert error.value.response.json()['odata.error']['code'] == "InvalidInput"
+            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
+            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.' in str(error.value)
             client.delete_table()
         return recorded_variables
 
@@ -577,7 +575,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
         ) as client:
             client.create_table()
             # Non-UTF8 characters in both keys and properties
-            test_entity = {"PartitionKey": "PK", "RowKey": "你好", "Data": "你好"}
+            non_utf8_char = "你好"
+            test_entity = {"PartitionKey": "PK", "RowKey": non_utf8_char, "Data": non_utf8_char}
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
             resp = client.create_entity(
@@ -585,7 +584,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
                 verify_headers={"Content-Type": "application/json;odata=nometadata"},
-                verify_response=(lambda: client.get_entity("PK", "你好"), test_entity),
+                verify_response=(lambda: client.get_entity("PK", non_utf8_char), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
@@ -597,7 +596,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             expected_entity = test_entity
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
-            assert "is too large to be cast to type EdmType.INT32" in str(error.value)
+            assert "is too large to be cast to type Edm.Int32" in str(error.value)
             resp = client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -633,7 +632,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             }
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
-            assert "is too large to be cast to type EdmType.INT64" in str(error.value)
+            assert "is too large to be cast to type Edm.Int64" in str(error.value)
             with pytest.raises(HttpResponseError) as error:
                 resp = client.create_entity(
                     test_entity,
@@ -641,8 +640,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     verify_url=f"/{table_name}",
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
-            assert ("Operation returned an invalid status 'Bad Request'") in str(error.value)
-            assert error.value.response.json()['odata.error']['code'] == "InvalidInput"
+            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
+            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.' in str(error.value)
 
             # Infinite float values
             test_entity = {
@@ -742,7 +741,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     verify_response=(lambda: client.get_entity("PK", "1"), expected_entity),
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert error.value.response.json()['odata.error']['code'] == "InvalidInput"
+            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.' in str(error.value)
             client.delete_table()
 
     @tables_decorator
@@ -1342,7 +1341,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
         ) as client:
             client.create_table()
             # Non-UTF8 characters in both keys and properties
-            test_entity = {"PartitionKey": "PK", "RowKey": "你好", "Data": "你好"}
+            non_utf8_char = "你好"
+            test_entity = {"PartitionKey": "PK", "RowKey": non_utf8_char, "Data": non_utf8_char}
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
             verification = json.dumps(expected_entity, sort_keys=True)
@@ -1350,24 +1350,24 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote("你好")}')",
+                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote(non_utf8_char)}')",
                 verify_headers={
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                verify_response=(lambda: client.get_entity("PK", "你好"), test_entity),
+                verify_response=(lambda: client.get_entity("PK", non_utf8_char), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
             resp = client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote("你好")}')",
+                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote(non_utf8_char)}')",
                 verify_headers={
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                verify_response=(lambda: client.get_entity("PK", "你好"), test_entity),
+                verify_response=(lambda: client.get_entity("PK", non_utf8_char), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
@@ -1379,7 +1379,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             expected_entity = test_entity
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
-            assert "is too large to be cast to type EdmType.INT32" in str(error.value)
+            assert "is too large to be cast to type Edm.Int32" in str(error.value)
             resp = client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
@@ -1447,7 +1447,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             }
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
-            assert "is too large to be cast to type EdmType.INT64" in str(error.value)
+            assert "is too large to be cast to type Edm.Int64" in str(error.value)
             with pytest.raises(HttpResponseError) as error:
                 client.upsert_entity(
                     test_entity,
@@ -1459,7 +1459,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                         "Accept": "application/json",
                     },
                 )
-            assert "An error occurred while processing this request" in str(error.value)
+            assert "An error occurred while processing this request." in str(error.value)
             assert error.value.error_code == "InvalidInput"
             with pytest.raises(HttpResponseError) as error:
                 client.upsert_entity(
@@ -1472,7 +1472,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                         "Accept": "application/json",
                     },
                 )
-            assert "An error occurred while processing this request" in str(error.value)
+            assert "An error occurred while processing this request." in str(error.value)
             assert error.value.error_code == "InvalidInput"
 
             # Infinite float values
@@ -2219,27 +2219,28 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
         ) as client:
             client.create_table()
             # Non-UTF8 characters in both keys and properties
-            test_entity = {"PartitionKey": "PK", "RowKey": "你好", "Data": "你好"}
+            non_utf8_char = "你好"
+            test_entity = {"PartitionKey": "PK", "RowKey": non_utf8_char, "Data": non_utf8_char}
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
-            client.upsert_entity({"PartitionKey": "PK", "RowKey": "你好"})
+            client.upsert_entity({"PartitionKey": "PK", "RowKey": non_utf8_char})
             verification = json.dumps(expected_entity, sort_keys=True)
             resp = client.update_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote("你好")}')",
+                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote(non_utf8_char)}')",
                 verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                verify_response=(lambda: client.get_entity("PK", "你好"), test_entity),
+                verify_response=(lambda: client.get_entity("PK", non_utf8_char), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
             resp = client.update_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote("你好")}')",
+                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote(non_utf8_char)}')",
                 verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                verify_response=(lambda: client.get_entity("PK", "你好"), test_entity),
+                verify_response=(lambda: client.get_entity("PK", non_utf8_char), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
@@ -2252,7 +2253,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             client.upsert_entity({"PartitionKey": "PK1", "RowKey": "RK1"})
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
-            assert "is too large to be cast to type EdmType.INT32" in str(error.value)
+            assert "is too large to be cast to type Edm.Int32" in str(error.value)
             resp = client.update_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
@@ -2309,7 +2310,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             }
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
-            assert "is too large to be cast to type EdmType.INT64" in str(error.value)
+            assert "is too large to be cast to type Edm.Int64" in str(error.value)
             client.upsert_entity({"PartitionKey": "PK3", "RowKey": "RK3"})
             with pytest.raises(HttpResponseError) as error:
                 client.update_entity(
@@ -2616,21 +2617,22 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
         ) as client:
             client.create_table()
             # Non-UTF8 characters in both keys and properties
-            client.upsert_entity({"PartitionKey": "PK", "RowKey": "你好"})
+            non_utf8_char = "你好"
+            client.upsert_entity({"PartitionKey": "PK", "RowKey": non_utf8_char})
             resp = client.delete_entity(
                 "PK",
-                "你好",
+                non_utf8_char,
                 verify_payload=None,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote("你好")}')",
+                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote(non_utf8_char)}')",
                 verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
             )
             assert resp is None
 
-            client.upsert_entity({"PartitionKey": "PK", "RowKey": "你好"})
+            client.upsert_entity({"PartitionKey": "PK", "RowKey": non_utf8_char})
             resp = client.delete_entity(
-                {"PartitionKey": "PK", "RowKey": "你好"},
+                {"PartitionKey": "PK", "RowKey": non_utf8_char},
                 verify_payload=None,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote("你好")}')",
+                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote(non_utf8_char)}')",
                 verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
             )
             assert resp is None
@@ -2761,13 +2763,14 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
         ) as client:
             client.create_table()
             # Non-UTF8 characters in both keys and properties
-            test_entity = {"PartitionKey": "PK", "RowKey": "你好"}
+            non_utf8_char = "你好"
+            test_entity = {"PartitionKey": "PK", "RowKey": non_utf8_char}
             client.upsert_entity(test_entity)
             resp = client.get_entity(
                 "PK",
-                "你好",
+                non_utf8_char,
                 verify_payload=None,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote("你好")}')",
+                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote(non_utf8_char)}')",
                 verify_headers={"Accept": "application/json;odata=minimalmetadata"},
             )
             assert resp == test_entity
