@@ -182,8 +182,11 @@ class EventGridClientOperationsMixin(OperationsMixin):
             else:
                 events = args[0]
 
+        # TODO: check above logic
+
         if events is None:
-            raise ValueError("events is required.")
+            raise ValueError("events is required for the `send` operation.")
+
 
         if self._level == "Standard" and topic_name is None:
             raise ValueError("Topic name is required for standard level client.")
@@ -209,7 +212,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     events = [events]
 
                 if isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
-                    raise TypeError("EventGridEvent is not supported for standard level client.")
+                    raise TypeError("EventGridEvent is not supported for Event Grid Namespaces.")
                 try:
                     # Try to send via namespace
                     await self._send(topic_name, _serialize_events(events), **kwargs)

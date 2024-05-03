@@ -65,7 +65,7 @@ if TYPE_CHECKING:
 def use_standard_only(func):
     """Use the standard client only.
 
-    This decorator raises an AttributeError if the client is not a standard client.
+    This decorator raises an ValueError if the client is not a standard client.
 
     :param func: The function to decorate.
     :type func: Callable
@@ -76,7 +76,7 @@ def use_standard_only(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         if self._level == "Basic":  # pylint: disable=protected-access
-            raise ValueError("The basic client is not supported for this operation.")
+            raise ValueError("The Event Grid Basic service does not support this operation.")
         return func(self, *args, **kwargs)
 
     return wrapper
@@ -258,11 +258,13 @@ class EventGridClientOperationsMixin(OperationsMixin):
             else:
                 events = args[0]
 
+        # TODO: check above logic
+
         if events is None:
-            raise ValueError("events is required.")
+            raise ValueError("events is required for the `send` operation.")
 
         if self._level == "Standard" and topic_name is None:
-            raise ValueError("Topic name is required for standard level client.")
+            raise ValueError("Topic name is required for Event Grid Namespaces.")
 
         # check binary mode
         if binary_mode:
@@ -284,7 +286,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     events = [events]
 
                 if isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
-                    raise TypeError("EventGridEvent is not supported for standard level client.")
+                    raise TypeError("EventGridEvent is not supported for Event Grid Namespaces.")
                 try:
                     # Try to send via namespace
                     self._send(topic_name, _serialize_events(events), **kwargs)
