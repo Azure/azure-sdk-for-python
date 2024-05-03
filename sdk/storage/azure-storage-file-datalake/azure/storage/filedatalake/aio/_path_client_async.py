@@ -3,7 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=invalid-overridden-method
+# pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
+
 from datetime import datetime
 from typing import ( # pylint: disable=unused-import
     Any, Dict, Optional, Union,
@@ -48,6 +49,11 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials_async.AsyncTokenCredential or
+        str or dict[str, str] or None
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -712,14 +718,12 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             Use of customer-provided keys must be done over HTTPS.
             Required if the file/directory was created with a customer-provided key.
         :keyword bool upn:
-            Optional. Valid only when Hierarchical Namespace is
-            enabled for the account. If "True", the user identity values returned
-            in the x-ms-owner, x-ms-group, and x-ms-acl response headers will be
-            transformed from Azure Active Directory Object IDs to User Principal
-            Names. If "False", the values will be returned as Azure Active
-            Directory Object IDs. The default value is false. Note that group and
-            application Object IDs are not translated because they do not have
-            unique friendly names.
+            If True, the user identity values returned in the x-ms-owner, x-ms-group,
+            and x-ms-acl response headers will be transformed from Azure Active Directory Object IDs to User 
+            Principal Names in the owner, group, and acl fields of the respective property object returned.
+            If False, the values will be returned as Azure Active Directory Object IDs.
+            The default value is False. Note that group and application Object IDs are not translate
+            because they do not have unique friendly names.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.

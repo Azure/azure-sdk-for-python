@@ -36,7 +36,7 @@ Write-Host "Sleeping for a bit to ensure container registry is ready."
 Start-Sleep -s 60
 
 az acr login -n $DeploymentOutputs['IDENTITY_ACR_NAME']
-$loginServer = az acr show -n $DeploymentOutputs['IDENTITY_ACR_NAME'] --query loginServer -o tsv
+$loginServer = $DeploymentOutputs['IDENTITY_ACR_LOGIN_SERVER']
 
 
 # Azure Functions app deployment
@@ -127,4 +127,20 @@ cd /sdk/sdk/identity/azure-identity/tests/integration/azure-vms &&
 pip install -r requirements.txt
 "@
 az vm run-command invoke -n $DeploymentOutputs['IDENTITY_VM_NAME'] -g $DeploymentOutputs['IDENTITY_RESOURCE_GROUP'] --command-id RunShellScript --scripts "$vmScript"
-az logout
+
+
+# ACI is easier to provision here than in the bicep file because the image isn't available before now
+Write-Host "Deploying Azure Container Instance"
+az container create -g $($DeploymentOutputs['IDENTITY_RESOURCE_GROUP']) -n $($DeploymentOutputs['IDENTITY_CONTAINER_INSTANCE_NAME']) --image $image `
+  --acr-identity $($DeploymentOutputs['IDENTITY_USER_DEFINED_IDENTITY']) `
+  --assign-identity [system] $($DeploymentOutputs['IDENTITY_USER_DEFINED_IDENTITY']) `
+  --role "Storage Blob Data Reader" `
+  --scope $($DeploymentOutputs['IDENTITY_STORAGE_ID_1']) `
+  -e IDENTITY_STORAGE_NAME=$($DeploymentOutputs['IDENTITY_STORAGE_NAME_1']) `
+     IDENTITY_STORAGE_NAME_USER_ASSIGNED=$($DeploymentOutputs['IDENTITY_STORAGE_NAME_2']) `
+     IDENTITY_USER_DEFINED_IDENTITY_CLIENT_ID=$($DeploymentOutputs['IDENTITY_USER_DEFINED_IDENTITY_CLIENT_ID']) `
+     FUNCTIONS_CUSTOMHANDLER_PORT=80
+
+if ($CI) {
+    az logout
+}
