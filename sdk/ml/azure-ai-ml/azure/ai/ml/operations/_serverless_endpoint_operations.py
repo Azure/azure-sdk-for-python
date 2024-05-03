@@ -62,8 +62,8 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
 
         :param endpoint: The serverless endpoint entity.
         :type endpoint: ~azure.ai.ml.entities.ServerlessEndpoint
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if ServerlessEndpoint cannot be successfully validated.
-            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if ServerlessEndpoint cannot be
+            successfully validated. Details will be provided in the error message.
         :return: A poller to track the operation status
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.ServerlessEndpoint]
         """
@@ -164,7 +164,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
         self,
         name: str,
         *,
-        key_type: Optional[str] = EndpointKeyType.PRIMARY_KEY_TYPE,
+        key_type: str = EndpointKeyType.PRIMARY_KEY_TYPE,
         **kwargs,
     ) -> LROPoller[EndpointAuthKeys]:
         """Regenerate keys for a serverless endpoint.

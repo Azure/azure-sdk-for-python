@@ -39,6 +39,7 @@ class AzureOpenAIDeploymentOperations(_ScopeDependentOperations):
         """List Azure OpenAI deployments of the workspace.
 
         :param connection_name: Name of the connection from which to list deployments
+        :type connection_name: str
         :return: A list of Azure OpenAI deployments
         :rtype: ~typing.Iterable[~azure.ai.ml.entities.AzureOpenAIDeployment]
         """
