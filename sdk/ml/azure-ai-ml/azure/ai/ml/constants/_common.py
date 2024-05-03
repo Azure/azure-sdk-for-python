@@ -139,7 +139,6 @@ CREATE_ENVIRONMENT_ERROR_MESSAGE = (
     "--file/-f is reserved for the Azure ML Environment definition (see schema here: {}). "
     "To specify a conda file via command-line argument, please use --conda-file/-c argument."
 )
-API_URL_KEY = "api"
 ANONYMOUS_ENV_NAME = "CliV2AnonymousEnvironment"
 SKIP_VALIDATION_MESSAGE = "To skip this validation use the --skip-validation param"
 MLTABLE_METADATA_SCHEMA_URL_FALLBACK = "https://azuremlschemasprod.azureedge.net/latest/MLTable.schema.json"
@@ -193,6 +192,22 @@ CONNECTION_API_TYPE_KEY = "ApiType"
 CONNECTION_KIND_KEY = "Kind"
 CONNECTION_CONTAINER_NAME_KEY = "ContainerName"
 CONNECTION_ACCOUNT_NAME_KEY = "AccountName"
+CONNECTION_RESOURCE_ID_KEY = "ResourceId"
+
+
+class WorkspaceDiscoveryUrlKey(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum that captures keys URL types returned from querying a workspace's discovery url."""
+
+    API = "api"
+    CATALOG = "catalog"
+    EXPERIMENTATION = "experimentation"
+    GALLERY = "gallery"
+    HISTORY = "history"
+    HYPERDRIVE = "hyperdrive"
+    LABELING = "labeling"
+    MODEL_MANAGEMENT = "modelmanagement"
+    PIPELINES = "pipelines"
+    STUDIO = "studio"
 
 
 class DefaultOpenEncoding:
@@ -235,8 +250,8 @@ class AzureMLResourceType:
     """Virtual cluster resource type."""
     WORKSPACE = "workspaces"
     """Workspace resource type."""
-    WORKSPACE_CONNECTION = "workspace_connections"
-    """Workspace connection resource type."""
+    CONNECTION = "connections"
+    """connection resource type."""
     COMPONENT = "components"
     """Component resource type."""
     SCHEDULE = "schedules"
@@ -255,6 +270,12 @@ class AzureMLResourceType:
     """Hub resource type."""
     PROJECT = "project"
     """Project resource type."""
+    SERVERLESS_ENDPOINT = "serverless_endpoints"
+    """Serverless endpoint resource type."""
+    MARKETPLACE_SUBSCRIPTION = "marketplace_subscriptions"
+    """Marketplace subscription resource type."""
+    INDEX = "indexes"
+    """Index resource type."""
 
     NAMED_TYPES = {
         JOB,
@@ -265,7 +286,7 @@ class AzureMLResourceType:
         DATASTORE,
         SCHEDULE,
     }
-    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURE_SET, FEATURE_STORE_ENTITY}
+    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURE_SET, FEATURE_STORE_ENTITY, INDEX}
 
 
 class ArmConstants:
@@ -800,11 +821,31 @@ class InputOutputModes:
     """Direct asset type."""
 
 
-class WorkspaceConnectionTypes:
-    """Names for workspace connection types that are different from that underlying api enum values
+class ConnectionTypes:
+    """Names for connection types that are different from that underlying api enum values
     from the ConnectionCategory class."""
 
     CUSTOM = "custom"  # Corresponds to "custom_keys".
+    AZURE_DATA_LAKE_GEN_2 = "azure_data_lake_gen2"  # Corresponds to "alds_gen2".
+    AZURE_CONTENT_SAFETY = "azure_content_safety"  # Corresponds to "cognitive_service" with kind "content_safety".
+    AZURE_SPEECH_SERVICES = "azure_speech_services"  # Corresponds to "cognitive_service" with kind "speech".
+    AZURE_SEARCH = "azure_ai_search"  # Corresponds to "cognitive_search"
+    AZURE_AI_SERVICES = "azure_ai_services"  # Corresponds to "ai_services"
+    AI_SERVICES_REST_PLACEHOLDER = "AIServices"  # placeholder until REST enum "ai_services" is published.
+
+
+class OneLakeArtifactTypes:
+    """Names for fabric types that specific sub-types of MicrosoftOneLakeConnections"""
+
+    ONE_LAKE = "lake_house"
+
+
+class CognitiveServiceKinds:
+    """Subtypes for connections using the Cognitive serive type. These
+    values are plugged into the connection's metadata."""
+
+    CONTENT_SAFETY = "content_safety"
+    SPEECH = "speech"
 
 
 class LegacyAssetTypes:
@@ -920,7 +961,7 @@ class AutoDeleteCondition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LAST_ACCESSED_GREATER_THAN = "last_accessed_greater_than"
 
 
-class WorkspaceKind():
+class WorkspaceKind:
     """Enum of workspace categories."""
 
     DEFAULT = "default"

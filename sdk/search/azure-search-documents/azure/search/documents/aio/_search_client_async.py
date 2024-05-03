@@ -30,6 +30,7 @@ from .._generated.models import (
     SemanticErrorMode,
     QueryDebugMode,
     SuggestRequest,
+    HybridSearch,
 )
 from .._search_documents_error import RequestEntityTooLargeError
 from .._index_documents_batch import IndexDocumentsBatch
@@ -178,6 +179,7 @@ class SearchClient(HeadersMixin):
         semantic_error_mode: Optional[Union[str, SemanticErrorMode]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
         debug: Optional[Union[str, QueryDebugMode]] = None,
+        hybrid_search: Optional[HybridSearch] = None,
         **kwargs
     ) -> AsyncSearchItemPaged[Dict]:
         # pylint:disable=too-many-locals, disable=redefined-builtin
@@ -295,6 +297,8 @@ class SearchClient(HeadersMixin):
         :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
              vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
         :paramtype vector_filter_mode: str or VectorFilterMode
+        :keyword hybrid_search: The query parameters to configure hybrid search behaviors.
+        :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
         :return: A list of documents (dicts) matching the specified search criteria.
         :return: List of search results.
         :rtype:  AsyncSearchItemPaged[dict]
@@ -369,6 +373,7 @@ class SearchClient(HeadersMixin):
             semantic_error_handling=semantic_error_mode,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
             debug=debug,
+            hybrid_search=hybrid_search,
         )
         if isinstance(select, list):
             query.select(select)

@@ -339,7 +339,7 @@ class ClientBaseAsync(ClientBase):
             )
             try:
                 conn = await self._conn_manager_async.get_connection(
-                    host=self._address.hostname, auth=mgmt_auth
+                    endpoint=self._address.hostname, auth=mgmt_auth
                 )
                 await mgmt_client.open_async(connection=conn)
                 while not await mgmt_client.client_ready_async():
@@ -475,7 +475,7 @@ class ConsumerProducerMixin(_MIXIN_BASE):
             auth = await self._client._create_auth_async()
             self._create_handler(auth)
             conn = await self._client._conn_manager_async.get_connection(
-                host=self._client._address.hostname, auth=auth
+                endpoint=self._client._address.hostname, auth=auth
             )
             await self._handler.open_async(connection=conn)
             while not await self._handler.client_ready_async():

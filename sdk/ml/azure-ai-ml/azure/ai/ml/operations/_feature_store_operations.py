@@ -19,10 +19,10 @@ from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import Scope, WorkspaceKind
 from azure.ai.ml.entities import (
+    Connection,
     IdentityConfiguration,
     ManagedIdentityConfiguration,
     ManagedNetworkProvisionStatus,
-    WorkspaceConnection,
 )
 from azure.ai.ml.entities._feature_store._constants import (
     OFFLINE_MATERIALIZATION_STORE_TYPE,
@@ -205,7 +205,11 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
         :param feature_store: FeatureStore definition.
         :type feature_store: FeatureStore
-        :type update_dependent_resources: boolean
+        :keyword grant_materialization_permissions: Whether or not to grant materialization permissions.
+            Defaults to True.
+        :paramtype grant_materialization_permissions: bool
+        :keyword update_dependent_resources: Whether or not to update dependent resources. Defaults to False.
+        :type update_dependent_resources: bool
         :return: An instance of LROPoller that returns a FeatureStore.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
         """
@@ -216,7 +220,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                 return self.begin_update(
                     feature_store=feature_store, update_dependent_resources=update_dependent_resources, kwargs=kwargs
                 )
-        except Exception:  # pylint: disable=broad-except
+        except Exception:  # pylint: disable=W0718
             pass
 
         if feature_store.offline_store and feature_store.offline_store.type != OFFLINE_MATERIALIZATION_STORE_TYPE:
@@ -257,7 +261,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
     @monitor_with_activity(ops_logger, "FeatureStore.BeginUpdate", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-renamed
     # pylint: disable=too-many-locals, too-many-branches, too-many-statements
-    def begin_update(
+    def begin_update(  # pylint: disable=C4758
         self,
         feature_store: FeatureStore,
         *,
@@ -270,6 +274,9 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
         :param feature_store: FeatureStore resource.
         :type feature_store: FeatureStore
+        :keyword grant_materialization_permissions: Whether or not to grant materialization permissions.
+            Defaults to True.
+        :paramtype grant_materialization_permissions: bool
         :keyword update_dependent_resources: gives your consent to update the feature store dependent resources.
             Note that updating the feature store attached Azure Container Registry resource may break lineage
             of previous jobs or your ability to rerun earlier jobs in this feature store.
@@ -400,7 +407,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             if materialization_identity:
                 if update_offline_store_connection:
                     offline_store_connection_name_new = f"{OFFLINE_STORE_CONNECTION_NAME}-{random_string}"
-                    offline_store_connection = WorkspaceConnection(
+                    offline_store_connection = Connection(
                         name=offline_store_connection_name_new,
                         type=offline_store.type,
                         target=offline_store.target,
@@ -426,7 +433,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             if materialization_identity:
                 if update_online_store_connection:
                     online_store_connection_name_new = f"{ONLINE_STORE_CONNECTION_NAME}-{random_string}"
-                    online_store_connection = WorkspaceConnection(
+                    online_store_connection = Connection(
                         name=online_store_connection_name_new,
                         type=online_store.type,
                         target=online_store.target,
@@ -525,6 +532,8 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
         :keyword feature_store_name: Name of the feature store.
         :paramtype feature_store_name: str
+        :keyword include_spark: Whether to include spark in the network provisioning. Defaults to False.
+        :paramtype include_spark: bool
         :return: An instance of LROPoller.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.ManagedNetworkProvisionStatus]
         """
