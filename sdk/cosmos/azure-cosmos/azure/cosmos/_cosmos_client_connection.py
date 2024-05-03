@@ -45,6 +45,7 @@ from azure.core.pipeline.policies import (
 )
 
 from . import _base as base
+from ._base import _set_properties_cache
 from . import documents
 from .documents import ConnectionPolicy, DatabaseAccount
 from ._constants import _Constants as Constants
@@ -3272,11 +3273,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         partition_key_definition: Optional[Dict[str, Any]]
         # If the document collection link is present in the cache, then use the cached partitionkey definition
         if collection_link in self.container_properties_cache:
-            cached_collection: Dict[str, Any] = self.container_properties_cache.get(collection_link, {})
-            partition_key_definition = cached_collection.get("partitionKey")
+            cached_container: Dict[str, Any] = self.container_properties_cache.get(collection_link, {})
+            partition_key_definition = cached_container.get("partitionKey")
         # Else read the collection from backend and add it to the cache
         else:
-            collection = self.ReadContainer(collection_link)
-            partition_key_definition = collection.get("partitionKey")
-            self.container_properties_cache[collection_link] = collection
+            container = self.ReadContainer(collection_link)
+            partition_key_definition = container.get("partitionKey")
+            self.container_properties_cache[collection_link] = _set_properties_cache(container)
         return partition_key_definition
