@@ -27,10 +27,10 @@ class ChecksumAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 def _verify_extensions(module: str) -> None:
     try:
-        import azure.storage.extensions
-    except ImportError:
+        import azure.storage.extensions  # pylint: unused-import
+    except ImportError as exc:
         raise ValueError(f"The use of {module} requires the azure-storage-extensions package to be installed. "
-                         f"Please install this package and try again.")
+                         f"Please install this package and try again.") from exc
 
 
 def parse_validation_option(validate_content: Optional[Union[bool, str]]) -> Optional[Union[bool, str]]:
@@ -56,7 +56,7 @@ def parse_validation_option(validate_content: Optional[Union[bool, str]]) -> Opt
 
 def calculate_md5(data: bytes) -> bytes:
     md5 = hashlib.md5()
-    md5.update(data)
+    md5.update(data)  # nosec
     return md5.digest()
 
 
@@ -64,11 +64,11 @@ def calculate_crc64(data: bytes, initial_crc: int) -> int:
     # Locally import to avoid error if not installed.
     from azure.storage.extensions import crc64
 
-    return crc64.compute_crc64(data, initial_crc)
+    return crc64.compute_crc64(data, initial_crc)  # pylint: c-extension-no-member
 
 
 def calculate_crc64_bytes(data: bytes) -> bytes:
     # Locally import to avoid error if not installed.
     from azure.storage.extensions import crc64
 
-    return crc64.compute_crc64(data, 0).to_bytes(CRC64_LENGTH, 'little')
+    return crc64.compute_crc64(data, 0).to_bytes(CRC64_LENGTH, 'little')  # pylint: c-extension-no-member

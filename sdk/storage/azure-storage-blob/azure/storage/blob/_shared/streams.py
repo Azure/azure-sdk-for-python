@@ -33,11 +33,11 @@ class StructuredMessageProperties(IntFlag):
 
 
 class SMRegion(Enum):
-    MESSAGE_HEADER = 1,
-    SEGMENT_HEADER = 2,
-    SEGMENT_CONTENT = 3,
-    SEGMENT_FOOTER = 4,
-    MESSAGE_FOOTER = 5,
+    MESSAGE_HEADER = 1
+    SEGMENT_HEADER = 2
+    SEGMENT_CONTENT = 3
+    SEGMENT_FOOTER = 4
+    MESSAGE_FOOTER = 5
 
 
 def generate_message_header(version: int, size: int, flags: StructuredMessageProperties, num_segments: int) -> bytes:
@@ -52,7 +52,7 @@ def generate_segment_header(number: int, size: int) -> bytes:
             size.to_bytes(8, 'little'))
 
 
-class StructuredMessageEncodeStream(IOBase):
+class StructuredMessageEncodeStream(IOBase):  # pylint: too-many-instance-attributes
     message_version: int
     content_length: int
     message_length: int
@@ -162,25 +162,25 @@ class StructuredMessageEncodeStream(IOBase):
     def tell(self) -> int:
         if self._current_region == SMRegion.MESSAGE_HEADER:
             return self._current_region_offset
-        elif self._current_region == SMRegion.SEGMENT_HEADER:
+        if self._current_region == SMRegion.SEGMENT_HEADER:
             return (self._message_header_length + self._content_offset +
                     (self._current_segment_number - 1) * (self._segment_header_length + self._segment_footer_length) +
                     self._current_region_offset)
-        elif self._current_region == SMRegion.SEGMENT_CONTENT:
+        if self._current_region == SMRegion.SEGMENT_CONTENT:
             return (self._message_header_length + self._content_offset +
                     (self._current_segment_number - 1) * (self._segment_header_length + self._segment_footer_length) +
                     self._segment_header_length)
-        elif self._current_region == SMRegion.SEGMENT_FOOTER:
+        if self._current_region == SMRegion.SEGMENT_FOOTER:
             return (self._message_header_length + self._content_offset +
                     (self._current_segment_number - 1) * (self._segment_header_length + self._segment_footer_length) +
                     self._segment_header_length +
                     self._current_region_offset)
-        elif self._current_region == SMRegion.MESSAGE_FOOTER:
+        if self._current_region == SMRegion.MESSAGE_FOOTER:
             return (self._message_header_length + self._content_offset +
                     self._current_segment_number * (self._segment_header_length + self._segment_footer_length) +
                     self._current_region_offset)
-        else:
-            raise StructuredMessageError(f"Invalid SMRegion {self._current_region}")
+
+        raise StructuredMessageError(f"Invalid SMRegion {self._current_region}")
 
     def seek(self, offset: int, whence: int = SEEK_SET) -> int:
         if not self.seekable():
@@ -284,25 +284,22 @@ class StructuredMessageEncodeStream(IOBase):
                 self.flags,
                 self._num_segments)
 
-        elif region == SMRegion.SEGMENT_HEADER:
+        if region == SMRegion.SEGMENT_HEADER:
             segment_size = min(self._segment_size, self.content_length - self._content_offset)
             return generate_segment_header(self._current_segment_number, segment_size)
 
-        elif region == SMRegion.SEGMENT_FOOTER:
+        if region == SMRegion.SEGMENT_FOOTER:
             if StructuredMessageProperties.CRC64 in self.flags:
                 return self._segment_crc64s[self._current_segment_number].to_bytes(
                     StructuredMessageConstants.CRC64_LENGTH, 'little')
-            else:
-                return b''
+            return b''
 
-        elif region == SMRegion.MESSAGE_FOOTER:
+        if region == SMRegion.MESSAGE_FOOTER:
             if StructuredMessageProperties.CRC64 in self.flags:
                 return self._message_crc64.to_bytes(StructuredMessageConstants.CRC64_LENGTH, 'little')
-            else:
-                return b''
+            return b''
 
-        else:
-            raise StructuredMessageError(f"Invalid metadata SMRegion {self._current_region}")
+        raise StructuredMessageError(f"Invalid metadata SMRegion {self._current_region}")
 
     def _advance_region(self, current: SMRegion):
         self._current_region_offset = 0
@@ -376,7 +373,7 @@ class StructuredMessageEncodeStream(IOBase):
             self._segment_crc64s.setdefault(self._current_segment_number, 0)
 
 
-class StructuredMessageDecodeStream:
+class StructuredMessageDecodeStream:  # pylint: too-many-instance-attributes
 
     message_version: int
     """The version of the structured message."""
@@ -412,18 +409,15 @@ class StructuredMessageDecodeStream:
 
     @property
     def _segment_header_length(self) -> int:
-        if self.message_version == 1:
-            return StructuredMessageConstants.V1_SEGMENT_HEADER_LENGTH
+        return StructuredMessageConstants.V1_SEGMENT_HEADER_LENGTH
 
     @property
     def _segment_footer_length(self) -> int:
-        if self.message_version == 1:
-            return StructuredMessageConstants.CRC64_LENGTH if StructuredMessageProperties.CRC64 in self.flags else 0
+        return StructuredMessageConstants.CRC64_LENGTH if StructuredMessageProperties.CRC64 in self.flags else 0
 
     @property
     def _message_footer_length(self) -> int:
-        if self.message_version == 1:
-            return StructuredMessageConstants.CRC64_LENGTH if StructuredMessageProperties.CRC64 in self.flags else 0
+        return StructuredMessageConstants.CRC64_LENGTH if StructuredMessageProperties.CRC64 in self.flags else 0
 
     @property
     def _end_of_segment_content(self) -> bool:
