@@ -21,7 +21,6 @@ from azure.ai.ml._scope_dependent_operations import (
 )
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import _resolve_label_to_asset
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _get_base_urls_from_discovery_service
@@ -98,7 +97,6 @@ class IndexOperations(_ScopeDependentOperations):
 
         return self.__azure_ai_assets_client
 
-    @experimental
     @monitor_with_activity(ops_logger, "Index.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, index: Index) -> Index:
         """Returns created or updated index asset.
@@ -128,7 +126,6 @@ class IndexOperations(_ScopeDependentOperations):
             )
         )
 
-    @experimental
     @monitor_with_activity(ops_logger, "Index.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, *, version: Optional[str] = None, label: Optional[str] = None) -> Index:
         """Returns information about the specified index asset.
@@ -171,7 +168,6 @@ class IndexOperations(_ScopeDependentOperations):
     def _get_latest_version(self, name: str) -> Index:
         return Index._from_rest_object(self._azure_ai_assets.indexes.get_latest(name))
 
-    @experimental
     @monitor_with_activity(ops_logger, "Index.List", ActivityType.PUBLICAPI)
     def list(
         self, name: Optional[str] = None, *, list_view_type: ListViewType = ListViewType.ACTIVE_ONLY
