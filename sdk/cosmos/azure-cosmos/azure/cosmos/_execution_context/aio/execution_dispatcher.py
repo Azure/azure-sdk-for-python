@@ -107,7 +107,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                 raise CosmosHttpResponseError(StatusCodes.BAD_REQUEST,
                                   "Cross partition query only supports 'VALUE <AggregateFunc>' for aggregates")
         # throw exception here for vector search query without limit filter
-        if query_execution_info.get_has_non_streaming_order_by():
+        if query_execution_info.has_non_streaming_order_by():
             if query_execution_info.get_top() is None and query_execution_info.get_limit() is None:
                 # TODO: missing one last if statement here to check for the system variable bypass - need name
                 raise CosmosHttpResponseError(StatusCodes.BAD_REQUEST,
@@ -149,7 +149,7 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):  # pylint: disable=
         self._endpoint = endpoint_component._QueryExecutionEndpointComponent(execution_context)
 
         order_by = query_execution_info.get_order_by()
-        if query_execution_info.get_has_non_streaming_order_by():
+        if query_execution_info.has_non_streaming_order_by():
             self._endpoint = endpoint_component._QueryExecutionNonStreamingEndpointComponent(self._endpoint)
         elif order_by:
             self._endpoint = endpoint_component._QueryExecutionOrderByEndpointComponent(self._endpoint)

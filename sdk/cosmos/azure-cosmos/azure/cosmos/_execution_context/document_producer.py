@@ -285,59 +285,12 @@ class _NonStreamingDocumentProducer(object):
     to properly sort items as they get inserted.
     """
 
-    def __init__(self, item_result, sort_order):
+    def __init__(self, item_result):
         """
         Constructor
         """
         self._item_result = item_result
-        self._doc_producer_comp = _NonStreamingOrderByComparator(sort_order)
 
     def __lt__(self, other):
-        return self._doc_producer_comp.compare(self, other) < 0
-
-
-class _NonStreamingOrderByComparator(object):
-    """Provide a Comparator for item results which respects orderby sort order.
-    """
-
-    def __init__(self, sort_order):  # pylint: disable=super-init-not-called
-        """Instantiates this class
-
-        :param list sort_order:
-            List of sort orders (i.e., Ascending, Descending)
-
-        :ivar list sort_order:
-            List of sort orders (i.e., Ascending, Descending)
-
-        """
-        self._sort_order = sort_order
-
-    def compare(self, doc_producer1, doc_producer2):
-        """Compares the given two instances of DocumentProducers.
-
-        Based on the orderby query items and whether the sort order is Ascending
-        or Descending compares the peek result of the two DocumentProducers.
-
-        :param _DocumentProducer doc_producer1: first instance to be compared
-        :param _DocumentProducer doc_producer2: second instance to be compared
-        :return:
-            Integer value of compare result.
-                positive integer if doc_producers1 > doc_producers2
-                negative integer if doc_producers1 < doc_producers2
-        :rtype: int
-        """
-        order1 = doc_producer1._item_result["orderByItems"][0]
-        order2 = doc_producer2._item_result["orderByItems"][0]
-        type1_ord = _OrderByHelper.getTypeOrd(order1)
-        type2_ord = _OrderByHelper.getTypeOrd(order2)
-
-        type_ord_diff = type1_ord - type2_ord
-
-        if type_ord_diff:
-            return type_ord_diff
-
-        # the same type,
-        if type1_ord == 0:
-            return 0
-
-        return _compare_helper(order1['item'], order2['item'])
+        return _OrderByHelper.compare(self._item_result["orderByItems"][0],
+                                               other._item_result["orderByItems"]) < 0

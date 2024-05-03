@@ -60,7 +60,7 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
         # will be a list of (partition_min, partition_max) tuples
         targetPartitionRanges = self._get_target_partition_key_range()
 
-        self._document_producer_comparator = document_producer._NonStreamingOrderByComparator(self._sort_orders)
+        self._document_producer_comparator = document_producer._OrderByDocumentProducerComparator(self._sort_orders)
 
         targetPartitionQueryExecutionContextList = []
         for partitionTargetRange in targetPartitionRanges:
@@ -90,7 +90,7 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
             while True:
                 try:
                     result = doc_producer.peek()
-                    item_result = document_producer._NonStreamingDocumentProducer(result, self._sort_orders)
+                    item_result = document_producer._NonStreamingDocumentProducer(result)
                     self._orderByPQ.push(item_result)
                     next(doc_producer)
                 except StopIteration:

@@ -108,7 +108,7 @@ class _PartitionedQueryExecutionInfo(object):
             rewrittenQuery = rewrittenQuery.replace("{documentdb-formattableorderbyquery-filter}", "true")
         return rewrittenQuery
 
-    def get_has_non_streaming_order_by(self):
+    def has_non_streaming_order_by(self):
         """Returns if the query is a non-streaming order by query.
         :returns: Query is a non-streaming order by query.
         :rtype: bool

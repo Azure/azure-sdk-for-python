@@ -312,18 +312,7 @@ class _NonStreamingOrderByComparator(object):
                 negative integer if doc_producers1 < doc_producers2
         :rtype: int
         """
-        order1 = doc_producer1._item_result["orderByItems"][0]
-        order2 = doc_producer2._item_result["orderByItems"][0]
-        type1_ord = _OrderByHelper.getTypeOrd(order1)
-        type2_ord = _OrderByHelper.getTypeOrd(order2)
-
-        type_ord_diff = type1_ord - type2_ord
-
-        if type_ord_diff:
-            return type_ord_diff
-
-        # the same type,
-        if type1_ord == 0:
-            return 0
-
-        return _compare_helper(order1['item'], order2['item'])
+        # TODO: this is not fully safe - doesn't deal with scenario of having orderByItems of [{}]
+        rank1 = doc_producer1._item_result["orderByItems"][0]
+        rank2 = doc_producer2._item_result["orderByItems"][0]
+        return await _OrderByHelper.compare(rank1, rank2)
