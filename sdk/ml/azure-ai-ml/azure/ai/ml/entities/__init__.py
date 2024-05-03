@@ -38,7 +38,15 @@ from ._assets._artifacts.model import Model
 from ._assets.asset import Asset
 from ._assets.environment import BuildContext, Environment
 from ._assets.intellectual_property import IntellectualProperty
-from ._assets.workspace_asset_reference import WorkspaceAssetReference as WorkspaceModelReference
+from ._assets.workspace_asset_reference import (
+    WorkspaceAssetReference as WorkspaceModelReference,
+)
+from ._autogen_entities.models import (
+    AzureOpenAIDeployment,
+    MarketplaceSubscription,
+    ServerlessEndpoint,
+    MarketplacePlan,
+)
 from ._builders import Command, Parallel, Pipeline, Spark, Sweep
 from ._component.command_component import CommandComponent
 from ._component.component import Component
@@ -46,19 +54,40 @@ from ._component.parallel_component import ParallelComponent
 from ._component.pipeline_component import PipelineComponent
 from ._component.spark_component import SparkComponent
 from ._compute._aml_compute_node_info import AmlComputeNodeInfo
-from ._compute._custom_applications import CustomApplications, EndpointsSettings, ImageSettings, VolumeSettings
+from ._compute._custom_applications import (
+    CustomApplications,
+    EndpointsSettings,
+    ImageSettings,
+    VolumeSettings,
+)
 from ._compute._image_metadata import ImageMetadata
-from ._compute._schedule import ComputePowerAction, ComputeSchedules, ComputeStartStopSchedule, ScheduleState
+from ._compute._schedule import (
+    ComputePowerAction,
+    ComputeSchedules,
+    ComputeStartStopSchedule,
+    ScheduleState,
+)
 from ._compute._setup_scripts import ScriptReference, SetupScripts
 from ._compute._usage import Usage, UsageName
 from ._compute._vm_size import VmSize
 from ._compute.aml_compute import AmlCompute, AmlComputeSshSettings
 from ._compute.compute import Compute, NetworkSettings
-from ._compute.compute_instance import AssignedUserConfiguration, ComputeInstance, ComputeInstanceSshSettings
+from ._compute.compute_instance import (
+    AssignedUserConfiguration,
+    ComputeInstance,
+    ComputeInstanceSshSettings,
+)
 from ._compute.kubernetes_compute import KubernetesCompute
-from ._compute.synapsespark_compute import AutoPauseSettings, AutoScaleSettings, SynapseSparkCompute
+from ._compute.synapsespark_compute import (
+    AutoPauseSettings,
+    AutoScaleSettings,
+    SynapseSparkCompute,
+)
 from ._compute.unsupported_compute import UnsupportedCompute
-from ._compute.virtual_machine_compute import VirtualMachineCompute, VirtualMachineSshSettings
+from ._compute.virtual_machine_compute import (
+    VirtualMachineCompute,
+    VirtualMachineSshSettings,
+)
 from ._credentials import (
     AccessKeyConfiguration,
     AccountKeyConfiguration,
@@ -68,6 +97,7 @@ from ._credentials import (
     IdentityConfiguration,
     ManagedIdentityConfiguration,
     NoneCredentialConfiguration,
+    AadCredentialConfiguration,
     PatTokenConfiguration,
     SasTokenConfiguration,
     ServicePrincipalConfiguration,
@@ -77,7 +107,11 @@ from ._credentials import (
 from ._data_import.data_import import DataImport
 from ._data_import.schedule import ImportDataSchedule
 from ._datastore.adls_gen1 import AzureDataLakeGen1Datastore
-from ._datastore.azure_storage import AzureBlobDatastore, AzureDataLakeGen2Datastore, AzureFileDatastore
+from ._datastore.azure_storage import (
+    AzureBlobDatastore,
+    AzureDataLakeGen2Datastore,
+    AzureFileDatastore,
+)
 from ._datastore.datastore import Datastore
 from ._datastore.one_lake import OneLakeArtifact, OneLakeDatastore
 from ._deployment.batch_deployment import BatchDeployment
@@ -87,7 +121,11 @@ from ._deployment.container_resource_settings import ResourceSettings
 from ._deployment.data_asset import DataAsset
 from ._deployment.data_collector import DataCollector
 from ._deployment.deployment_collection import DeploymentCollection
-from ._deployment.deployment_settings import BatchRetrySettings, OnlineRequestSettings, ProbeSettings
+from ._deployment.deployment_settings import (
+    BatchRetrySettings,
+    OnlineRequestSettings,
+    ProbeSettings,
+)
 from ._deployment.model_batch_deployment import ModelBatchDeployment
 from ._deployment.model_batch_deployment_settings import ModelBatchDeploymentSettings
 from ._deployment.online_deployment import (
@@ -96,15 +134,22 @@ from ._deployment.online_deployment import (
     ManagedOnlineDeployment,
     OnlineDeployment,
 )
-from ._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
+from ._deployment.pipeline_component_batch_deployment import (
+    PipelineComponentBatchDeployment,
+)
 from ._deployment.request_logging import RequestLogging
 from ._deployment.resource_requirements_settings import ResourceRequirementsSettings
-from ._deployment.scale_settings import DefaultScaleSettings, OnlineScaleSettings, TargetUtilizationScaleSettings
+from ._deployment.scale_settings import (
+    DefaultScaleSettings,
+    OnlineScaleSettings,
+    TargetUtilizationScaleSettings,
+)
 from ._endpoint.batch_endpoint import BatchEndpoint
 from ._endpoint.endpoint import Endpoint
 from ._endpoint.online_endpoint import (
     EndpointAuthKeys,
     EndpointAuthToken,
+    EndpointAadToken,
     KubernetesOnlineEndpoint,
     ManagedOnlineEndpoint,
     OnlineEndpoint,
@@ -113,10 +158,14 @@ from ._feature_set.data_availability_status import DataAvailabilityStatus
 from ._feature_set.feature import Feature
 from ._feature_set.feature_set_backfill_metadata import FeatureSetBackfillMetadata
 from ._feature_set.feature_set_backfill_request import FeatureSetBackfillRequest
-from ._feature_set.feature_set_materialization_metadata import FeatureSetMaterializationMetadata
+from ._feature_set.feature_set_materialization_metadata import (
+    FeatureSetMaterializationMetadata,
+)
 from ._feature_set.feature_set_specification import FeatureSetSpecification
 from ._feature_set.feature_window import FeatureWindow
-from ._feature_set.materialization_compute_resource import MaterializationComputeResource
+from ._feature_set.materialization_compute_resource import (
+    MaterializationComputeResource,
+)
 from ._feature_set.materialization_settings import MaterializationSettings
 from ._feature_set.materialization_type import MaterializationType
 from ._feature_store.feature_store import FeatureStore
@@ -130,7 +179,13 @@ from ._job.input_port import InputPort
 from ._job.job import Job
 from ._job.job_limits import CommandJobLimits
 from ._job.job_resource_configuration import JobResourceConfiguration
-from ._job.job_service import JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService
+from ._job.job_service import (
+    JobService,
+    JupyterLabJobService,
+    SshJobService,
+    TensorBoardJobService,
+    VsCodeJobService,
+)
 from ._job.parallel.parallel_task import ParallelTask
 from ._job.parallel.retry_settings import RetrySettings
 from ._job.parameterized_command import ParameterizedCommand
@@ -146,7 +201,12 @@ from ._job.spark_resource_configuration import SparkResourceConfiguration
 from ._monitoring.alert_notification import AlertNotification
 from ._monitoring.compute import ServerlessSparkCompute
 from ._monitoring.definition import MonitorDefinition
-from ._monitoring.input_data import FixedInputData, MonitorInputData, StaticInputData, TrailingInputData
+from ._monitoring.input_data import (
+    FixedInputData,
+    MonitorInputData,
+    StaticInputData,
+    TrailingInputData,
+)
 from ._monitoring.schedule import MonitorSchedule
 from ._monitoring.signals import (
     BaselineDataRange,
@@ -157,6 +217,7 @@ from ._monitoring.signals import (
     FADProductionData,
     FeatureAttributionDriftSignal,
     GenerationSafetyQualitySignal,
+    GenerationTokenStatisticsSignal,
     LlmData,
     ModelPerformanceSignal,
     MonitorFeatureFilter,
@@ -174,6 +235,7 @@ from ._monitoring.thresholds import (
     DataQualityMetricThreshold,
     FeatureAttributionDriftMetricThreshold,
     GenerationSafetyQualityMonitoringMetricThreshold,
+    GenerationTokenStatisticsMonitorMetricThreshold,
     ModelPerformanceClassificationThresholds,
     ModelPerformanceMetricThreshold,
     ModelPerformanceRegressionThresholds,
@@ -193,13 +255,21 @@ from ._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
 from ._system_data import SystemData
 from ._validation import ValidationResult
 from ._workspace.compute_runtime import ComputeRuntime
-from ._workspace.connections.workspace_connection import WorkspaceConnection
-from ._workspace.connections.workspace_connection_subtypes import (
-    AzureAISearchWorkspaceConnection,
-    AzureAIServiceWorkspaceConnection,
-    AzureBlobStoreWorkspaceConnection,
-    AzureOpenAIWorkspaceConnection,
+from ._workspace.connections.connection import Connection
+from ._workspace.connections.connection_subtypes import (
+    AzureBlobStoreConnection,
+    MicrosoftOneLakeConnection,
+    AzureOpenAIConnection,
+    AzureAIServicesConnection,
+    AzureAISearchConnection,
+    AzureContentSafetyConnection,
+    AzureSpeechServicesConnection,
+    APIKeyConnection,
+    OpenAIConnection,
+    SerpConnection,
+    ServerlessConnection,
 )
+from ._workspace.connections.one_lake_artifacts import OneLakeConnectionArtifact
 from ._workspace.customer_managed_key import CustomerManagedKey
 from ._workspace.diagnose import (
     DiagnoseRequestProperties,
@@ -223,7 +293,11 @@ from ._workspace.serverless_compute import ServerlessComputeSettings
 from ._workspace.workspace import Workspace
 from ._workspace._ai_workspaces.hub import Hub
 from ._workspace._ai_workspaces.project import Project
-from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
+from ._workspace.workspace_keys import (
+    ContainerRegistryCredential,
+    NotebookAccessKeys,
+    WorkspaceKeys,
+)
 
 __all__ = [
     "Resource",
@@ -278,11 +352,18 @@ __all__ = [
     "ModelBatchDeploymentSettings",
     "Workspace",
     "WorkspaceKeys",
-    "WorkspaceConnection",
-    "AzureOpenAIWorkspaceConnection",
-    "AzureBlobStoreWorkspaceConnection",
-    "AzureAISearchWorkspaceConnection",
-    "AzureAIServiceWorkspaceConnection",
+    "Connection",
+    "AzureBlobStoreConnection",
+    "MicrosoftOneLakeConnection",
+    "AzureOpenAIConnection",
+    "AzureAIServicesConnection",
+    "AzureAISearchConnection",
+    "AzureContentSafetyConnection",
+    "AzureSpeechServicesConnection",
+    "APIKeyConnection",
+    "OpenAIConnection",
+    "SerpConnection",
+    "ServerlessConnection",
     "DiagnoseRequestProperties",
     "DiagnoseResult",
     "DiagnoseResponseResult",
@@ -306,6 +387,7 @@ __all__ = [
     "AzureFileDatastore",
     "OneLakeDatastore",
     "OneLakeArtifact",
+    "OneLakeConnectionArtifact",
     "Compute",
     "VirtualMachineCompute",
     "AmlCompute",
@@ -400,6 +482,7 @@ __all__ = [
     "ContainerRegistryCredential",
     "EndpointAuthKeys",
     "EndpointAuthToken",
+    "EndpointAadToken",
     "ModelPackage",
     "ModelPackageInput",
     "AzureMLOnlineInferencingServer",
@@ -425,6 +508,7 @@ __all__ = [
     "FeatureAttributionDriftSignal",
     "CustomMonitoringSignal",
     "GenerationSafetyQualitySignal",
+    "GenerationTokenStatisticsSignal",
     "ModelPerformanceSignal",
     "MonitorFeatureFilter",
     "DataSegment",
@@ -443,6 +527,7 @@ __all__ = [
     "FeatureAttributionDriftMetricThreshold",
     "CustomMonitoringMetricThreshold",
     "GenerationSafetyQualityMonitoringMetricThreshold",
+    "GenerationTokenStatisticsMonitorMetricThreshold",
     "CategoricalDriftMetrics",
     "NumericalDriftMetrics",
     "DataQualityMetricsNumerical",
@@ -456,7 +541,13 @@ __all__ = [
     "DeploymentCollection",
     "RequestLogging",
     "NoneCredentialConfiguration",
+    "MarketplacePlan",
+    "MarketplaceSubscription",
+    "ServerlessEndpoint",
+    "AccountKeyConfiguration",
+    "AadCredentialConfiguration",
     "Index",
+    "AzureOpenAIDeployment",
 ]
 
 # Allow importing these types for backwards compatibility

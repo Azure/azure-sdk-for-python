@@ -28,13 +28,15 @@ from .entities._load_functions import (
     load_feature_store,
     load_feature_store_entity,
     load_job,
+    load_marketplace_subscription,
     load_model,
     load_model_package,
     load_online_deployment,
     load_online_endpoint,
+    load_serverless_endpoint,
     load_registry,
     load_workspace,
-    load_workspace_connection,
+    load_connection,
 )
 
 module_logger = logging.getLogger(__name__)
@@ -67,8 +69,10 @@ __all__ = [
     "load_online_endpoint",
     "load_workspace",
     "load_registry",
-    "load_workspace_connection",
+    "load_connection",
     "load_model_package",
+    "load_marketplace_subscription",
+    "load_serverless_endpoint",
 ]
 
 __version__ = VERSION

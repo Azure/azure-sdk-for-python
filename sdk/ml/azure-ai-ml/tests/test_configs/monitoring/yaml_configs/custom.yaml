@@ -29,7 +29,7 @@ create_monitor:
       type: custom
       component_id: azureml:fake_component:1
       alert_enabled: true
-      workspace_connection:
+      connection:
         environment_variables:
           ENV_VAR_1: value1
           ENV_VAR_2: value2

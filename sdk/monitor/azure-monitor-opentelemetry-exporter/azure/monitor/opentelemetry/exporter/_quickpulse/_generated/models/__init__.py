@@ -26,11 +26,11 @@ from ._models import Request
 from ._models import ServiceError
 from ._models import Trace
 
+from ._enums import AggregationType
 from ._enums import CollectionConfigurationErrorType
-from ._enums import DerivedMetricInfoAggregation
-from ._enums import DocumentFilterConjunctionGroupInfoTelemetryType
-from ._enums import DocumentIngressDocumentType
-from ._enums import FilterInfoPredicate
+from ._enums import DocumentType
+from ._enums import PredicateType
+from ._enums import TelemetryType
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -55,11 +55,11 @@ __all__ = [
     "Request",
     "ServiceError",
     "Trace",
+    "AggregationType",
     "CollectionConfigurationErrorType",
-    "DerivedMetricInfoAggregation",
-    "DocumentFilterConjunctionGroupInfoTelemetryType",
-    "DocumentIngressDocumentType",
-    "FilterInfoPredicate",
+    "DocumentType",
+    "PredicateType",
+    "TelemetryType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

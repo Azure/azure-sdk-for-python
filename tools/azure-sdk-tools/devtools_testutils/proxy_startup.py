@@ -391,21 +391,22 @@ def set_common_sanitizers() -> None:
 
     # Body regex sanitizers for sensitive patterns in request/response bodies
     batch_sanitizers[Sanitizer.BODY_REGEX] = [
-        {"regex": "(client_id=)[^&]+", "value": "$1sanitized"},
-        {"regex": "(client_secret=)[^&]+", "value": "$1sanitized"},
-        {"regex": "(client_assertion=)[^&]+", "value": "$1sanitized"},
-        {"regex": "(?:[\\?&](sv|sig|se|srt|ss|sp)=)(?<secret>(([^&\\s]*)))", "value": SANITIZED},
+        {"regex": "(client_id=)(?<secret>[^&\\\"]+)", "group_for_replace": "secret", "value": SANITIZED},
+        {"regex": "client_secret=(?<secret>[^&\\\"]+)", "group_for_replace": "secret", "value": SANITIZED},
+        {"regex": "client_assertion=(?<secret>[^&\\\"]+)", "group_for_replace": "secret", "value": SANITIZED},
+        {"regex": "(?:[\\?&](sv|sig|se|srt|ss|st|sp)=)(?<secret>[^&\\\"\\s]*)",
+         "group_for_replace": "secret", "value": SANITIZED},
         {"regex": "refresh_token=(?<group>.*?)(?=&|$)", "group_for_replace": "group", "value": SANITIZED},
         {"regex": "access_token=(?<group>.*?)(?=&|$)", "group_for_replace": "group", "value": SANITIZED},
-        {"regex": "token=(?<token>[^\\u0026]+)($|\\u0026)", "group_for_replace": "token", "value": SANITIZED},
-        {"regex": "-----BEGIN PRIVATE KEY-----\\n(.+\\n)*-----END PRIVATE KEY-----\\n", "value": SANITIZED},
-        {"regex": "(?<=<UserDelegationKey>).*?(?:<SignedTid>)(.*)(?:</SignedTid>)", "value": SANITIZED},
-        {"regex": "(?<=<UserDelegationKey>).*?(?:<SignedOid>)(.*)(?:</SignedOid>)", "value": SANITIZED},
-        {"regex": "(?<=<UserDelegationKey>).*?(?:<Value>)(.*)(?:</Value>)", "value": SANITIZED},
-        {"regex": "(?:Password=)(.*?)(?:;)", "value": SANITIZED},
-        {"regex": "(?:User ID=)(.*?)(?:;)", "value": SANITIZED},
-        {"regex": "(?:<PrimaryKey>)(.*)(?:</PrimaryKey>)", "value": SANITIZED},
-        {"regex": "(?:<SecondaryKey>)(.*)(?:</SecondaryKey>)", "value": SANITIZED},
+        {"regex": "token=(?<token>[^&\\\"]+)($|&)", "group_for_replace": "token", "value": SANITIZED},
+        {"regex": "-----BEGIN PRIVATE KEY-----\\n(?<cert>.+\\n)*-----END PRIVATE KEY-----\\n", "group_for_replace": "cert", "value": SANITIZED},
+        {"regex": "(?<=<UserDelegationKey>).*?(?:<Value>)(?<group>.*)(?:</Value>)", "group_for_replace": "group", "value": SANITIZED},
+        {"regex": "(?<=<UserDelegationKey>).*?(?:<SignedTid>)(?<group>.*)(?:</SignedTid>)", "group_for_replace": "group", "value": SANITIZED},
+        {"regex": "(?<=<UserDelegationKey>).*?(?:<SignedOid>)(?<group>.*)(?:</SignedOid>)", "group_for_replace": "group", "value": SANITIZED},
+        {"regex": "(?:Password=)(?<pwd>.*?)(?:;)", "group_for_replace": "pwd", "value": SANITIZED},
+        {"regex": "(?:User ID=)(?<id>.*?)(?:;)", "group_for_replace": "id", "value": SANITIZED},
+        {"regex": "(?:<PrimaryKey>)(?<key>.*)(?:</PrimaryKey>)", "group_for_replace": "key", "value": SANITIZED},
+        {"regex": "(?:<SecondaryKey>)(?<key>.*)(?:</SecondaryKey>)", "group_for_replace": "key", "value": SANITIZED},
     ]
 
     # General regex sanitizers for sensitive patterns throughout interactions
