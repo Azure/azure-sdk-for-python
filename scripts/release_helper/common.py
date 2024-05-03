@@ -219,7 +219,7 @@ class IssueProcess:
                 break
 
     def auto_parse(self) -> None:
-        if self.has_label(AUTO_ASSIGN_LABEL):
+        if self.has_label(AUTO_PARSE_LABEL):
             self.get_package_name()
             return
 
@@ -266,7 +266,7 @@ class IssueProcess:
         return assignees[random_idx]
 
     def auto_assign(self) -> None:
-        if self.has_label(AUTO_PARSE_LABEL):
+        if self.has_label(AUTO_ASSIGN_LABEL):
             self.update_issue_instance()
             return
         # assign averagely

@@ -7,6 +7,7 @@ import functools
 import logging
 import os
 import os.path
+import re
 import six
 import sys
 import time
@@ -33,6 +34,11 @@ load_dotenv(find_dotenv())
 
 def _sanitize_token(token, fake_token):
     add_general_string_sanitizer(value=fake_token, target=token)
+
+    # By this point, the token sig value should've been sanitized.
+    token = re.sub(r"(?<=sig=)[^&]*", SANITIZED, token)
+    add_general_string_sanitizer(value=fake_token, target=token)
+
     url_safe_token = token.replace("/", "%2F")
     add_general_string_sanitizer(value=fake_token, target=url_safe_token)
     async_token = token.replace("%3A", ":")

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -32,11 +32,13 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._managed_ccf_operations import (
+    build_backup_request,
     build_create_request,
     build_delete_request,
     build_get_request,
     build_list_by_resource_group_request,
     build_list_by_subscription_request,
+    build_restore_request,
     build_update_request,
 )
 from .._vendor import ConfidentialLedgerMixinABC
@@ -75,7 +77,6 @@ class ManagedCCFOperations:
         :type resource_group_name: str
         :param app_name: Name of the Managed CCF. Required.
         :type app_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedCCF or the result of cls(response)
         :rtype: ~azure.mgmt.confidentialledger.models.ManagedCCF
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -94,21 +95,20 @@ class ManagedCCFOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ManagedCCF] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             app_name=app_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -121,13 +121,9 @@ class ManagedCCFOperations:
         deserialized = self._deserialize("ManagedCCF", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/managedCCFs/{appName}"
-    }
+        return deserialized  # type: ignore
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, app_name: str, **kwargs: Any
@@ -146,21 +142,20 @@ class ManagedCCFOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             app_name=app_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -171,11 +166,7 @@ class ManagedCCFOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/managedCCFs/{appName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(self, resource_group_name: str, app_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -188,14 +179,6 @@ class ManagedCCFOperations:
         :type resource_group_name: str
         :param app_name: Name of the Managed CCF. Required.
         :type app_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -222,7 +205,7 @@ class ManagedCCFOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -231,20 +214,16 @@ class ManagedCCFOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/managedCCFs/{appName}"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _create_initial(
-        self, resource_group_name: str, app_name: str, managed_ccf: Union[_models.ManagedCCF, IO], **kwargs: Any
+        self, resource_group_name: str, app_name: str, managed_ccf: Union[_models.ManagedCCF, IO[bytes]], **kwargs: Any
     ) -> Optional[_models.ManagedCCF]:
         error_map = {
             401: ClientAuthenticationError,
@@ -269,7 +248,7 @@ class ManagedCCFOperations:
         else:
             _json = self._serialize.body(managed_ccf, "ManagedCCF")
 
-        request = build_create_request(
+        _request = build_create_request(
             resource_group_name=resource_group_name,
             app_name=app_name,
             subscription_id=self._config.subscription_id,
@@ -277,16 +256,15 @@ class ManagedCCFOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -301,13 +279,9 @@ class ManagedCCFOperations:
             deserialized = self._deserialize("ManagedCCF", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _create_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/managedCCFs/{appName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def begin_create(
@@ -333,14 +307,6 @@ class ManagedCCFOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ManagedCCF or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confidentialledger.models.ManagedCCF]
@@ -352,7 +318,7 @@ class ManagedCCFOperations:
         self,
         resource_group_name: str,
         app_name: str,
-        managed_ccf: IO,
+        managed_ccf: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -367,18 +333,10 @@ class ManagedCCFOperations:
         :param app_name: Name of the Managed CCF. Required.
         :type app_name: str
         :param managed_ccf: Managed CCF Create Request Body. Required.
-        :type managed_ccf: IO
+        :type managed_ccf: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ManagedCCF or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confidentialledger.models.ManagedCCF]
@@ -387,7 +345,7 @@ class ManagedCCFOperations:
 
     @distributed_trace_async
     async def begin_create(
-        self, resource_group_name: str, app_name: str, managed_ccf: Union[_models.ManagedCCF, IO], **kwargs: Any
+        self, resource_group_name: str, app_name: str, managed_ccf: Union[_models.ManagedCCF, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedCCF]:
         """Creates a Managed CCF.
 
@@ -398,20 +356,9 @@ class ManagedCCFOperations:
         :type resource_group_name: str
         :param app_name: Name of the Managed CCF. Required.
         :type app_name: str
-        :param managed_ccf: Managed CCF Create Request Body. Is either a ManagedCCF type or a IO type.
-         Required.
-        :type managed_ccf: ~azure.mgmt.confidentialledger.models.ManagedCCF or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param managed_ccf: Managed CCF Create Request Body. Is either a ManagedCCF type or a IO[bytes]
+         type. Required.
+        :type managed_ccf: ~azure.mgmt.confidentialledger.models.ManagedCCF or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either ManagedCCF or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confidentialledger.models.ManagedCCF]
@@ -443,7 +390,7 @@ class ManagedCCFOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("ManagedCCF", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -456,21 +403,19 @@ class ManagedCCFOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.ManagedCCF].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[_models.ManagedCCF](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
-    begin_create.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/managedCCFs/{appName}"
-    }
-
-    async def _update_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, app_name: str, managed_ccf: Union[_models.ManagedCCF, IO], **kwargs: Any
-    ) -> None:
+    async def _update_initial(
+        self, resource_group_name: str, app_name: str, managed_ccf: Union[_models.ManagedCCF, IO[bytes]], **kwargs: Any
+    ) -> Optional[_models.ManagedCCF]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -484,7 +429,7 @@ class ManagedCCFOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.ManagedCCF]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -494,7 +439,7 @@ class ManagedCCFOperations:
         else:
             _json = self._serialize.body(managed_ccf, "ManagedCCF")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             app_name=app_name,
             subscription_id=self._config.subscription_id,
@@ -502,16 +447,15 @@ class ManagedCCFOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -521,12 +465,14 @@ class ManagedCCFOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if cls:
-            return cls(pipeline_response, None, {})
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize("ManagedCCF", pipeline_response)
 
-    _update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/managedCCFs/{appName}"
-    }
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def begin_update(
@@ -537,7 +483,7 @@ class ManagedCCFOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.ManagedCCF]:
         """Update Managed CCF properties.
 
         Updates properties of Managed CCF.
@@ -552,16 +498,9 @@ class ManagedCCFOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns either ManagedCCF or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confidentialledger.models.ManagedCCF]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -570,11 +509,11 @@ class ManagedCCFOperations:
         self,
         resource_group_name: str,
         app_name: str,
-        managed_ccf: IO,
+        managed_ccf: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.ManagedCCF]:
         """Update Managed CCF properties.
 
         Updates properties of Managed CCF.
@@ -585,27 +524,20 @@ class ManagedCCFOperations:
         :param app_name: Name of the Managed CCF. Required.
         :type app_name: str
         :param managed_ccf: Request body for Updating Managed CCF App. Required.
-        :type managed_ccf: IO
+        :type managed_ccf: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns either ManagedCCF or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confidentialledger.models.ManagedCCF]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def begin_update(
-        self, resource_group_name: str, app_name: str, managed_ccf: Union[_models.ManagedCCF, IO], **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+        self, resource_group_name: str, app_name: str, managed_ccf: Union[_models.ManagedCCF, IO[bytes]], **kwargs: Any
+    ) -> AsyncLROPoller[_models.ManagedCCF]:
         """Update Managed CCF properties.
 
         Updates properties of Managed CCF.
@@ -616,21 +548,11 @@ class ManagedCCFOperations:
         :param app_name: Name of the Managed CCF. Required.
         :type app_name: str
         :param managed_ccf: Request body for Updating Managed CCF App. Is either a ManagedCCF type or a
-         IO type. Required.
-        :type managed_ccf: ~azure.mgmt.confidentialledger.models.ManagedCCF or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+         IO[bytes] type. Required.
+        :type managed_ccf: ~azure.mgmt.confidentialledger.models.ManagedCCF or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either ManagedCCF or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confidentialledger.models.ManagedCCF]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -638,12 +560,12 @@ class ManagedCCFOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ManagedCCF] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._update_initial(  # type: ignore
+            raw_result = await self._update_initial(
                 resource_group_name=resource_group_name,
                 app_name=app_name,
                 managed_ccf=managed_ccf,
@@ -656,9 +578,11 @@ class ManagedCCFOperations:
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("ManagedCCF", pipeline_response)
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -667,17 +591,15 @@ class ManagedCCFOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.ManagedCCF].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/managedCCFs/{appName}"
-    }
+        return AsyncLROPoller[_models.ManagedCCF](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def list_by_resource_group(
@@ -694,7 +616,6 @@ class ManagedCCFOperations:
         :param filter: The filter to apply on the list operation. eg. $filter=ledgerType eq 'Public'.
          Default value is None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagedCCF or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.confidentialledger.models.ManagedCCF]
@@ -717,17 +638,16 @@ class ManagedCCFOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_request(
+                _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -739,13 +659,13 @@ class ManagedCCFOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("ManagedCCFList", pipeline_response)
@@ -755,11 +675,11 @@ class ManagedCCFOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -771,10 +691,6 @@ class ManagedCCFOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/managedCCFs"
-    }
 
     @distributed_trace
     def list_by_subscription(self, filter: Optional[str] = None, **kwargs: Any) -> AsyncIterable["_models.ManagedCCF"]:
@@ -785,7 +701,6 @@ class ManagedCCFOperations:
         :param filter: The filter to apply on the list operation. eg. $filter=ledgerType eq 'Public'.
          Default value is None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagedCCF or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.confidentialledger.models.ManagedCCF]
@@ -808,16 +723,15 @@ class ManagedCCFOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_subscription_request(
+                _request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     api_version=api_version,
-                    template_url=self.list_by_subscription.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -829,13 +743,13 @@ class ManagedCCFOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("ManagedCCFList", pipeline_response)
@@ -845,11 +759,11 @@ class ManagedCCFOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -862,6 +776,400 @@ class ManagedCCFOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_subscription.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.ConfidentialLedger/managedCCFs/"
-    }
+    async def _backup_initial(
+        self,
+        resource_group_name: str,
+        app_name: str,
+        managed_ccf: Union[_models.ManagedCCFBackup, IO[bytes]],
+        **kwargs: Any
+    ) -> Optional[_models.ManagedCCFBackupResponse]:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.ManagedCCFBackupResponse]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(managed_ccf, (IOBase, bytes)):
+            _content = managed_ccf
+        else:
+            _json = self._serialize.body(managed_ccf, "ManagedCCFBackup")
+
+        _request = build_backup_request(
+            resource_group_name=resource_group_name,
+            app_name=app_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize("ManagedCCFBackupResponse", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_backup(
+        self,
+        resource_group_name: str,
+        app_name: str,
+        managed_ccf: _models.ManagedCCFBackup,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ManagedCCFBackupResponse]:
+        """Performs the backup operation on a Managed CCF Resource.
+
+        Backs up a Managed CCF Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param app_name: Name of the Managed CCF. Required.
+        :type app_name: str
+        :param managed_ccf: Managed CCF Backup Request Body. Required.
+        :type managed_ccf: ~azure.mgmt.confidentialledger.models.ManagedCCFBackup
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either ManagedCCFBackupResponse or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confidentialledger.models.ManagedCCFBackupResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_backup(
+        self,
+        resource_group_name: str,
+        app_name: str,
+        managed_ccf: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ManagedCCFBackupResponse]:
+        """Performs the backup operation on a Managed CCF Resource.
+
+        Backs up a Managed CCF Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param app_name: Name of the Managed CCF. Required.
+        :type app_name: str
+        :param managed_ccf: Managed CCF Backup Request Body. Required.
+        :type managed_ccf: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either ManagedCCFBackupResponse or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confidentialledger.models.ManagedCCFBackupResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_backup(
+        self,
+        resource_group_name: str,
+        app_name: str,
+        managed_ccf: Union[_models.ManagedCCFBackup, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ManagedCCFBackupResponse]:
+        """Performs the backup operation on a Managed CCF Resource.
+
+        Backs up a Managed CCF Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param app_name: Name of the Managed CCF. Required.
+        :type app_name: str
+        :param managed_ccf: Managed CCF Backup Request Body. Is either a ManagedCCFBackup type or a
+         IO[bytes] type. Required.
+        :type managed_ccf: ~azure.mgmt.confidentialledger.models.ManagedCCFBackup or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either ManagedCCFBackupResponse or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confidentialledger.models.ManagedCCFBackupResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ManagedCCFBackupResponse] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._backup_initial(
+                resource_group_name=resource_group_name,
+                app_name=app_name,
+                managed_ccf=managed_ccf,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("ManagedCCFBackupResponse", pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ManagedCCFBackupResponse].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ManagedCCFBackupResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    async def _restore_initial(
+        self,
+        resource_group_name: str,
+        app_name: str,
+        managed_ccf: Union[_models.ManagedCCFRestore, IO[bytes]],
+        **kwargs: Any
+    ) -> Optional[_models.ManagedCCFRestoreResponse]:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.ManagedCCFRestoreResponse]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(managed_ccf, (IOBase, bytes)):
+            _content = managed_ccf
+        else:
+            _json = self._serialize.body(managed_ccf, "ManagedCCFRestore")
+
+        _request = build_restore_request(
+            resource_group_name=resource_group_name,
+            app_name=app_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize("ManagedCCFRestoreResponse", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_restore(
+        self,
+        resource_group_name: str,
+        app_name: str,
+        managed_ccf: _models.ManagedCCFRestore,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ManagedCCFRestoreResponse]:
+        """Performs the restore operation to spin up a newly restored Managed CCF Resource.
+
+        Restores a Managed CCF Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param app_name: Name of the Managed CCF. Required.
+        :type app_name: str
+        :param managed_ccf: Managed CCF Restore Request Body. Required.
+        :type managed_ccf: ~azure.mgmt.confidentialledger.models.ManagedCCFRestore
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either ManagedCCFRestoreResponse or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confidentialledger.models.ManagedCCFRestoreResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_restore(
+        self,
+        resource_group_name: str,
+        app_name: str,
+        managed_ccf: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ManagedCCFRestoreResponse]:
+        """Performs the restore operation to spin up a newly restored Managed CCF Resource.
+
+        Restores a Managed CCF Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param app_name: Name of the Managed CCF. Required.
+        :type app_name: str
+        :param managed_ccf: Managed CCF Restore Request Body. Required.
+        :type managed_ccf: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either ManagedCCFRestoreResponse or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confidentialledger.models.ManagedCCFRestoreResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_restore(
+        self,
+        resource_group_name: str,
+        app_name: str,
+        managed_ccf: Union[_models.ManagedCCFRestore, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ManagedCCFRestoreResponse]:
+        """Performs the restore operation to spin up a newly restored Managed CCF Resource.
+
+        Restores a Managed CCF Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param app_name: Name of the Managed CCF. Required.
+        :type app_name: str
+        :param managed_ccf: Managed CCF Restore Request Body. Is either a ManagedCCFRestore type or a
+         IO[bytes] type. Required.
+        :type managed_ccf: ~azure.mgmt.confidentialledger.models.ManagedCCFRestore or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either ManagedCCFRestoreResponse or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confidentialledger.models.ManagedCCFRestoreResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ManagedCCFRestoreResponse] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._restore_initial(
+                resource_group_name=resource_group_name,
+                app_name=app_name,
+                managed_ccf=managed_ccf,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("ManagedCCFRestoreResponse", pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ManagedCCFRestoreResponse].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ManagedCCFRestoreResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )

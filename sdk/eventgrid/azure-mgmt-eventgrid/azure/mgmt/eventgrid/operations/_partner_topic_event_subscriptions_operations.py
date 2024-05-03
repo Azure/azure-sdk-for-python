@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -45,7 +45,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -77,7 +77,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -111,7 +111,7 @@ def build_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -138,7 +138,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -173,7 +173,7 @@ def build_get_full_url_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -211,7 +211,7 @@ def build_list_by_partner_topic_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -246,7 +246,7 @@ def build_get_delivery_attributes_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -304,11 +304,8 @@ class PartnerTopicEventSubscriptionsOperations:
         :type resource_group_name: str
         :param partner_topic_name: Name of the partner topic. Required.
         :type partner_topic_name: str
-        :param event_subscription_name: Name of the event subscription to be found. Event subscription
-         names must be between 3 and 100 characters in length and use alphanumeric letters only.
-         Required.
+        :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EventSubscription or the result of cls(response)
         :rtype: ~azure.mgmt.eventgrid.models.EventSubscription
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -327,22 +324,21 @@ class PartnerTopicEventSubscriptionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.EventSubscription] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             partner_topic_name=partner_topic_name,
             event_subscription_name=event_subscription_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -354,20 +350,16 @@ class PartnerTopicEventSubscriptionsOperations:
         deserialized = self._deserialize("EventSubscription", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerTopics/{partnerTopicName}/eventSubscriptions/{eventSubscriptionName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         partner_topic_name: str,
         event_subscription_name: str,
-        event_subscription_info: Union[_models.EventSubscription, IO],
+        event_subscription_info: Union[_models.EventSubscription, IO[bytes]],
         **kwargs: Any
     ) -> _models.EventSubscription:
         error_map = {
@@ -393,7 +385,7 @@ class PartnerTopicEventSubscriptionsOperations:
         else:
             _json = self._serialize.body(event_subscription_info, "EventSubscription")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             partner_topic_name=partner_topic_name,
             event_subscription_name=event_subscription_name,
@@ -402,16 +394,15 @@ class PartnerTopicEventSubscriptionsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -430,10 +421,6 @@ class PartnerTopicEventSubscriptionsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerTopics/{partnerTopicName}/eventSubscriptions/{eventSubscriptionName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -457,7 +444,7 @@ class PartnerTopicEventSubscriptionsOperations:
         :param partner_topic_name: Name of the partner topic. Required.
         :type partner_topic_name: str
         :param event_subscription_name: Name of the event subscription to be created. Event
-         subscription names must be between 3 and 100 characters in length and use alphanumeric letters
+         subscription names must be between 3 and 64 characters in length and use alphanumeric letters
          only. Required.
         :type event_subscription_name: str
         :param event_subscription_info: Event subscription properties containing the destination and
@@ -466,14 +453,6 @@ class PartnerTopicEventSubscriptionsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either EventSubscription or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
@@ -486,7 +465,7 @@ class PartnerTopicEventSubscriptionsOperations:
         resource_group_name: str,
         partner_topic_name: str,
         event_subscription_name: str,
-        event_subscription_info: IO,
+        event_subscription_info: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -502,23 +481,15 @@ class PartnerTopicEventSubscriptionsOperations:
         :param partner_topic_name: Name of the partner topic. Required.
         :type partner_topic_name: str
         :param event_subscription_name: Name of the event subscription to be created. Event
-         subscription names must be between 3 and 100 characters in length and use alphanumeric letters
+         subscription names must be between 3 and 64 characters in length and use alphanumeric letters
          only. Required.
         :type event_subscription_name: str
         :param event_subscription_info: Event subscription properties containing the destination and
          filter information. Required.
-        :type event_subscription_info: IO
+        :type event_subscription_info: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either EventSubscription or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
@@ -531,7 +502,7 @@ class PartnerTopicEventSubscriptionsOperations:
         resource_group_name: str,
         partner_topic_name: str,
         event_subscription_name: str,
-        event_subscription_info: Union[_models.EventSubscription, IO],
+        event_subscription_info: Union[_models.EventSubscription, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.EventSubscription]:
         """Create or update an event subscription of a partner topic.
@@ -545,23 +516,12 @@ class PartnerTopicEventSubscriptionsOperations:
         :param partner_topic_name: Name of the partner topic. Required.
         :type partner_topic_name: str
         :param event_subscription_name: Name of the event subscription to be created. Event
-         subscription names must be between 3 and 100 characters in length and use alphanumeric letters
+         subscription names must be between 3 and 64 characters in length and use alphanumeric letters
          only. Required.
         :type event_subscription_name: str
         :param event_subscription_info: Event subscription properties containing the destination and
-         filter information. Is either a EventSubscription type or a IO type. Required.
-        :type event_subscription_info: ~azure.mgmt.eventgrid.models.EventSubscription or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         filter information. Is either a EventSubscription type or a IO[bytes] type. Required.
+        :type event_subscription_info: ~azure.mgmt.eventgrid.models.EventSubscription or IO[bytes]
         :return: An instance of LROPoller that returns either EventSubscription or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
@@ -594,7 +554,7 @@ class PartnerTopicEventSubscriptionsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("EventSubscription", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -604,17 +564,15 @@ class PartnerTopicEventSubscriptionsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.EventSubscription].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerTopics/{partnerTopicName}/eventSubscriptions/{eventSubscriptionName}"
-    }
+        return LROPoller[_models.EventSubscription](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, partner_topic_name: str, event_subscription_name: str, **kwargs: Any
@@ -633,22 +591,21 @@ class PartnerTopicEventSubscriptionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             partner_topic_name=partner_topic_name,
             event_subscription_name=event_subscription_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -662,11 +619,7 @@ class PartnerTopicEventSubscriptionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerTopics/{partnerTopicName}/eventSubscriptions/{eventSubscriptionName}"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def begin_delete(
@@ -681,18 +634,8 @@ class PartnerTopicEventSubscriptionsOperations:
         :type resource_group_name: str
         :param partner_topic_name: Name of the partner topic. Required.
         :type partner_topic_name: str
-        :param event_subscription_name: Name of the event subscription to be created. Event
-         subscription names must be between 3 and 100 characters in length and use alphanumeric letters
-         only. Required.
+        :param event_subscription_name: Name of the event subscription to be deleted. Required.
         :type event_subscription_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -720,7 +663,7 @@ class PartnerTopicEventSubscriptionsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -729,24 +672,20 @@ class PartnerTopicEventSubscriptionsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerTopics/{partnerTopicName}/eventSubscriptions/{eventSubscriptionName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _update_initial(
         self,
         resource_group_name: str,
         partner_topic_name: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: Union[_models.EventSubscriptionUpdateParameters, IO],
+        event_subscription_update_parameters: Union[_models.EventSubscriptionUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.EventSubscription:
         error_map = {
@@ -772,7 +711,7 @@ class PartnerTopicEventSubscriptionsOperations:
         else:
             _json = self._serialize.body(event_subscription_update_parameters, "EventSubscriptionUpdateParameters")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             partner_topic_name=partner_topic_name,
             event_subscription_name=event_subscription_name,
@@ -781,16 +720,15 @@ class PartnerTopicEventSubscriptionsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -802,13 +740,9 @@ class PartnerTopicEventSubscriptionsOperations:
         deserialized = self._deserialize("EventSubscription", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerTopics/{partnerTopicName}/eventSubscriptions/{eventSubscriptionName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_update(
@@ -830,9 +764,7 @@ class PartnerTopicEventSubscriptionsOperations:
         :type resource_group_name: str
         :param partner_topic_name: Name of the partner topic. Required.
         :type partner_topic_name: str
-        :param event_subscription_name: Name of the event subscription to be created. Event
-         subscription names must be between 3 and 100 characters in length and use alphanumeric letters
-         only. Required.
+        :param event_subscription_name: Name of the event subscription to be updated. Required.
         :type event_subscription_name: str
         :param event_subscription_update_parameters: Updated event subscription information. Required.
         :type event_subscription_update_parameters:
@@ -840,14 +772,6 @@ class PartnerTopicEventSubscriptionsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either EventSubscription or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
@@ -860,7 +784,7 @@ class PartnerTopicEventSubscriptionsOperations:
         resource_group_name: str,
         partner_topic_name: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: IO,
+        event_subscription_update_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -874,23 +798,13 @@ class PartnerTopicEventSubscriptionsOperations:
         :type resource_group_name: str
         :param partner_topic_name: Name of the partner topic. Required.
         :type partner_topic_name: str
-        :param event_subscription_name: Name of the event subscription to be created. Event
-         subscription names must be between 3 and 100 characters in length and use alphanumeric letters
-         only. Required.
+        :param event_subscription_name: Name of the event subscription to be updated. Required.
         :type event_subscription_name: str
         :param event_subscription_update_parameters: Updated event subscription information. Required.
-        :type event_subscription_update_parameters: IO
+        :type event_subscription_update_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either EventSubscription or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
@@ -903,7 +817,7 @@ class PartnerTopicEventSubscriptionsOperations:
         resource_group_name: str,
         partner_topic_name: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: Union[_models.EventSubscriptionUpdateParameters, IO],
+        event_subscription_update_parameters: Union[_models.EventSubscriptionUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.EventSubscription]:
         """Update event subscription of a partner topic.
@@ -915,25 +829,12 @@ class PartnerTopicEventSubscriptionsOperations:
         :type resource_group_name: str
         :param partner_topic_name: Name of the partner topic. Required.
         :type partner_topic_name: str
-        :param event_subscription_name: Name of the event subscription to be created. Event
-         subscription names must be between 3 and 100 characters in length and use alphanumeric letters
-         only. Required.
+        :param event_subscription_name: Name of the event subscription to be updated. Required.
         :type event_subscription_name: str
         :param event_subscription_update_parameters: Updated event subscription information. Is either
-         a EventSubscriptionUpdateParameters type or a IO type. Required.
+         a EventSubscriptionUpdateParameters type or a IO[bytes] type. Required.
         :type event_subscription_update_parameters:
-         ~azure.mgmt.eventgrid.models.EventSubscriptionUpdateParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ~azure.mgmt.eventgrid.models.EventSubscriptionUpdateParameters or IO[bytes]
         :return: An instance of LROPoller that returns either EventSubscription or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
@@ -966,7 +867,7 @@ class PartnerTopicEventSubscriptionsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("EventSubscription", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -976,17 +877,15 @@ class PartnerTopicEventSubscriptionsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.EventSubscription].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerTopics/{partnerTopicName}/eventSubscriptions/{eventSubscriptionName}"
-    }
+        return LROPoller[_models.EventSubscription](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def get_full_url(
@@ -1001,11 +900,8 @@ class PartnerTopicEventSubscriptionsOperations:
         :type resource_group_name: str
         :param partner_topic_name: Name of the partner topic. Required.
         :type partner_topic_name: str
-        :param event_subscription_name: Name of the event subscription to be created. Event
-         subscription names must be between 3 and 100 characters in length and use alphanumeric letters
-         only. Required.
+        :param event_subscription_name: Name of the event subscription. Required.
         :type event_subscription_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EventSubscriptionFullUrl or the result of cls(response)
         :rtype: ~azure.mgmt.eventgrid.models.EventSubscriptionFullUrl
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1024,22 +920,21 @@ class PartnerTopicEventSubscriptionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.EventSubscriptionFullUrl] = kwargs.pop("cls", None)
 
-        request = build_get_full_url_request(
+        _request = build_get_full_url_request(
             resource_group_name=resource_group_name,
             partner_topic_name=partner_topic_name,
             event_subscription_name=event_subscription_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_full_url.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1051,13 +946,9 @@ class PartnerTopicEventSubscriptionsOperations:
         deserialized = self._deserialize("EventSubscriptionFullUrl", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_full_url.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerTopics/{partnerTopicName}/eventSubscriptions/{eventSubscriptionName}/getFullUrl"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_by_partner_topic(
@@ -1089,7 +980,6 @@ class PartnerTopicEventSubscriptionsOperations:
          top parameter is 1 to 100. If not specified, the default number of results to be returned is 20
          items per page. Default value is None.
         :type top: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either EventSubscription or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.EventSubscription]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1111,19 +1001,18 @@ class PartnerTopicEventSubscriptionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_partner_topic_request(
+                _request = build_list_by_partner_topic_request(
                     resource_group_name=resource_group_name,
                     partner_topic_name=partner_topic_name,
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     top=top,
                     api_version=api_version,
-                    template_url=self.list_by_partner_topic.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1135,13 +1024,13 @@ class PartnerTopicEventSubscriptionsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("EventSubscriptionsListResult", pipeline_response)
@@ -1151,11 +1040,11 @@ class PartnerTopicEventSubscriptionsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1166,10 +1055,6 @@ class PartnerTopicEventSubscriptionsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_partner_topic.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerTopics/{partnerTopicName}/eventSubscriptions"
-    }
 
     @distributed_trace
     def get_delivery_attributes(
@@ -1184,11 +1069,8 @@ class PartnerTopicEventSubscriptionsOperations:
         :type resource_group_name: str
         :param partner_topic_name: Name of the partner topic. Required.
         :type partner_topic_name: str
-        :param event_subscription_name: Name of the event subscription to be created. Event
-         subscription names must be between 3 and 100 characters in length and use alphanumeric letters
-         only. Required.
+        :param event_subscription_name: Name of the event subscription. Required.
         :type event_subscription_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeliveryAttributeListResult or the result of cls(response)
         :rtype: ~azure.mgmt.eventgrid.models.DeliveryAttributeListResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1207,22 +1089,21 @@ class PartnerTopicEventSubscriptionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.DeliveryAttributeListResult] = kwargs.pop("cls", None)
 
-        request = build_get_delivery_attributes_request(
+        _request = build_get_delivery_attributes_request(
             resource_group_name=resource_group_name,
             partner_topic_name=partner_topic_name,
             event_subscription_name=event_subscription_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_delivery_attributes.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1234,10 +1115,6 @@ class PartnerTopicEventSubscriptionsOperations:
         deserialized = self._deserialize("DeliveryAttributeListResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_delivery_attributes.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerTopics/{partnerTopicName}/eventSubscriptions/{eventSubscriptionName}/getDeliveryAttributes"
-    }
+        return deserialized  # type: ignore

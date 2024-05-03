@@ -187,7 +187,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
                     configs = yaml.safe_load(file_content)
                     if isinstance(configs, dict):
                         return configs.get(_ADDITIONAL_INCLUDES_CONFIG_KEY, [])
-                except Exception:  # pylint: disable=broad-except
+                except Exception:  # pylint: disable=W0718
                     # TODO: check if we should catch yaml.YamlError instead here
                     pass
                 return [line.strip() for line in file_content.splitlines(keepends=False) if len(line.strip()) > 0]
@@ -342,7 +342,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
                 tmp_code_dir,
                 additional_includes_file_name=Path(self._source_path)
                 .with_suffix(_ADDITIONAL_INCLUDES_SUFFIX)
-                .name  # type: ignore[arg-type]
+                .name,  # type: ignore[arg-type]
                 # TODO: Bug 2881943
             )
 
