@@ -572,8 +572,7 @@ def _build_pipeline_parameter(
         )
 
     def all_params(parameters: Any) -> Generator:
-        for value in parameters.values():
-            yield value
+        yield from parameters.values()
 
     if func is None:
         return transformed_kwargs

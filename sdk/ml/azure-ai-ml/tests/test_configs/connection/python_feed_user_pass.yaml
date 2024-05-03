@@ -1,0 +1,7 @@
+name: test_ws_conn_python_user_pass
+type: python_feed
+target: https://test-feed.com2
+credentials:
+  type: username_password
+  username: john
+  password: halo
