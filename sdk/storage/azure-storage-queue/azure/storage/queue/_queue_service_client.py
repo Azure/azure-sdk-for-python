@@ -47,7 +47,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     For more optional configuration, please click
     `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
-    #optional-configuration>`_.
+    #optional-configuration>`__.
 
     :param str account_url:
         The URL to the queue service endpoint. Any other entities included
@@ -130,7 +130,8 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        :type credential:
+            Optional[Union[str, dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]]
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.queue.core.windows.net.
@@ -290,7 +291,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
-            #other-client--per-operation-configuration>`_. This function may make multiple
+            #other-client--per-operation-configuration>`__. This function may make multiple
             calls to the service in which case the timeout value specified will be
             applied to each individual call.
         :returns: An iterable (auto-paging) of QueueProperties.

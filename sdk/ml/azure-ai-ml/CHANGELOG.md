@@ -1,6 +1,6 @@
 # Release History
 
-## 1.15.0 (unreleased)
+## 1.16.0 (unreleased)
 
 ### Features Added
 - Added support for Promptflow evaluators with `experimental` tag.
@@ -8,6 +8,10 @@
 ### Bugs Fixed
 
 ### Breaking Changes
+
+### Other Changes
+
+## 1.15.0 (2024-03-26)
 
 ### Other Changes
 

@@ -128,6 +128,34 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
   }
 }
 
+# This is the GetDocsMsDevLanguageSpecificPackageInfoFn implementation
+function Get-python-DocsMsDevLanguageSpecificPackageInfo($packageInfo, $packageSourceOverride) {
+  # If the default namespace isn't in the package info then it needs to be added
+  # Can't check if (!$packageInfo.Namespaces) in strict mode because Namespaces won't exist
+  # at all.
+  if (!($packageInfo | Get-Member Namespaces)) {
+    # If the Version is INGORE that means it's a source install and those
+    # ones need to be done by hand
+    if ($packageInfo.Version -ine "IGNORE") {
+      $version = $packageInfo.Version
+      # If the dev version is set, use that
+      if ($packageInfo.DevVersion) {
+        $version = $packageInfo.DevVersion
+      }
+      $namespaces = Get-NamespacesFromWhlFile $packageInfo.Name $version $packageSourceOverride
+      if ($namespaces.Count -gt 0) {
+        $packageInfo | Add-Member -Type NoteProperty -Name "Namespaces" -Value $namespaces
+      } else {
+        LogWarning "Unable to find namespaces for $($packageInfo.Name):$version, using the package name."
+        $tempNamespaces = @()
+        $tempNamespaces += $packageInfo.Name
+        $packageInfo | Add-Member -Type NoteProperty -Name "Namespaces" -Value $tempNamespaces
+      }
+    }
+  }
+  return $packageInfo
+}
+
 # Stage and Upload Docs to blob Storage
 function Publish-python-GithubIODocs ($DocLocation, $PublicArtifactLocation)
 {
@@ -523,7 +551,8 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
     return $null
   }
 
-  $whlDirectory = (Join-Path -Path $artifactDir -ChildPath $artifactName.Replace("_","-"))
+  $packageName = $artifactName.Replace("_","-")
+  $whlDirectory = (Join-Path -Path $artifactDir -ChildPath $packageName)
 
   Write-Host "Searching for $($artifactName) wheel in artifact path $($whlDirectory)"
   $files = @(Get-ChildItem $whlDirectory | ? {$_.Name.EndsWith(".whl")})
@@ -537,6 +566,19 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
     Write-Host "$whlDirectory should contain only one published wheel package for $($artifactName)"
     Write-Host "No of Packages $($files.Count)"
     return $null
+  }
+
+  # Python requires pregenerated token file in addition to wheel to generate API review.
+  # Make sure that token file exists in same path as wheel file.
+  $tokenFile = Join-Path -Path $whlDirectory -ChildPath "${packageName}_${Language}.json"
+  if (!(Test-Path $tokenFile))
+  {
+    Write-Host "API review token file for $($tokenFile) does not exist in path $($whlDirectory). Skipping API review for $packageName"
+    return $null
+  }
+  else
+  {
+    Write-Host "Found API review token file for $($tokenFile)"
   }
 
   $packages = @{
@@ -573,6 +615,8 @@ function GetExistingPackageVersions ($PackageName, $GroupId=$null)
   }
 }
 
+# Defined in common.ps1 as:
+# GetDocsMsMetadataForPackageFn = Get-${Language}-DocsMsMetadataForPackage
 function Get-python-DocsMsMetadataForPackage($PackageInfo) {
   $readmeName = $PackageInfo.Name.ToLower()
   Write-Host "Docs.ms Readme name: $($readmeName)"
@@ -618,8 +662,8 @@ function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSou
 
   $allSucceeded = $true
   foreach ($item in $PackageInfos) {
-    # Some packages 
-    if ($item.Version -eq 'IGNORE') { 
+    # If the Version is IGNORE that means it's a source install and those aren't run through ValidatePackage
+    if ($item.Version -eq 'IGNORE') {
       continue
     }
 
@@ -656,7 +700,7 @@ function Get-python-DirectoriesForGeneration () {
 
 function Update-python-GeneratedSdks([string]$PackageDirectoriesFile) {
   $packageDirectories = Get-Content $PackageDirectoriesFile | ConvertFrom-Json
-  
+
   $directoriesWithErrors = @()
 
   foreach ($directory in $packageDirectories) {

@@ -56,6 +56,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     IoTHubDeviceCreatedEventName = 'Microsoft.Devices.DeviceCreated'
 
     # Aliases end here
+    AcsAdvancedMessageDeliveryStatusUpdatedEventName = 'Microsoft.Communication.AdvancedMessageDeliveryStatusUpdated'
+
+    AcsAdvancedMessageReceivedEventName = 'Microsoft.Communication.AdvancedMessageReceived'
+
     AcsChatMessageDeletedEventName = 'Microsoft.Communication.ChatMessageDeleted'
 
     AcsChatMessageDeletedInThreadEventName = 'Microsoft.Communication.ChatMessageDeletedInThread'
@@ -137,6 +141,8 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AcsRouterWorkerOfferRevokedEventName = 'Microsoft.Communication.RouterWorkerOfferRevoked'
 
     AcsRouterWorkerRegisteredEventName = 'Microsoft.Communication.RouterWorkerRegistered'
+
+    AcsRouterWorkerUpdatedEventName = 'Microsoft.Communication.RouterWorkerUpdated'
 
     AcsSmsDeliveryReportReceivedEventName = 'Microsoft.Communication.SMSDeliveryReportReceived'
 

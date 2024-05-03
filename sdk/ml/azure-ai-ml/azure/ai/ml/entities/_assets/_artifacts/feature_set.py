@@ -101,9 +101,9 @@ class FeatureSet(Artifact):
             properties=self.properties,
             tags=self.tags,
             entities=self.entities,
-            materialization_settings=self.materialization_settings._to_rest_object()
-            if self.materialization_settings
-            else None,
+            materialization_settings=(
+                self.materialization_settings._to_rest_object() if self.materialization_settings else None
+            ),
             specification=self.specification._to_rest_object() if self.specification is not None else None,
             stage=self.stage,
         )

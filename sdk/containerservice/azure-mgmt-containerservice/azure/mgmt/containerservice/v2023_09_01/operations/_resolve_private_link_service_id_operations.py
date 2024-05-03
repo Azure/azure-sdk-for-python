@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -122,7 +122,6 @@ class ResolvePrivateLinkServiceIdOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateLinkResource or the result of cls(response)
         :rtype: ~azure.mgmt.containerservice.v2023_09_01.models.PrivateLinkResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -133,7 +132,7 @@ class ResolvePrivateLinkServiceIdOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -148,11 +147,10 @@ class ResolvePrivateLinkServiceIdOperations:
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
         :param parameters: Parameters required in order to resolve a private link service ID. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateLinkResource or the result of cls(response)
         :rtype: ~azure.mgmt.containerservice.v2023_09_01.models.PrivateLinkResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -163,7 +161,7 @@ class ResolvePrivateLinkServiceIdOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: Union[_models.PrivateLinkResource, IO],
+        parameters: Union[_models.PrivateLinkResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.PrivateLinkResource:
         """Gets the private link service ID for the specified managed cluster.
@@ -176,12 +174,9 @@ class ResolvePrivateLinkServiceIdOperations:
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
         :param parameters: Parameters required in order to resolve a private link service ID. Is either
-         a PrivateLinkResource type or a IO type. Required.
-        :type parameters: ~azure.mgmt.containerservice.v2023_09_01.models.PrivateLinkResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         a PrivateLinkResource type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.containerservice.v2023_09_01.models.PrivateLinkResource or
+         IO[bytes]
         :return: PrivateLinkResource or the result of cls(response)
         :rtype: ~azure.mgmt.containerservice.v2023_09_01.models.PrivateLinkResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -209,7 +204,7 @@ class ResolvePrivateLinkServiceIdOperations:
         else:
             _json = self._serialize.body(parameters, "PrivateLinkResource")
 
-        request = build_post_request(
+        _request = build_post_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
@@ -217,16 +212,15 @@ class ResolvePrivateLinkServiceIdOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.post.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -238,10 +232,6 @@ class ResolvePrivateLinkServiceIdOperations:
         deserialized = self._deserialize("PrivateLinkResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    post.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/resolvePrivateLinkServiceId"
-    }
+        return deserialized  # type: ignore

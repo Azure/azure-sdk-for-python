@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -32,7 +32,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class LocationBasedRecommendedActionSessionsOperationStatusOperations:
+class LocationBasedRecommendedActionSessionsOperationStatusOperations:  # pylint: disable=name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -61,7 +61,6 @@ class LocationBasedRecommendedActionSessionsOperationStatusOperations:
         :type location_name: str
         :param operation_id: The operation identifier. Required.
         :type operation_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RecommendedActionSessionsOperationStatus or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.mysql.models.RecommendedActionSessionsOperationStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -80,21 +79,20 @@ class LocationBasedRecommendedActionSessionsOperationStatusOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
         cls: ClsType[_models.RecommendedActionSessionsOperationStatus] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             location_name=location_name,
             operation_id=operation_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -106,10 +104,6 @@ class LocationBasedRecommendedActionSessionsOperationStatusOperations:
         deserialized = self._deserialize("RecommendedActionSessionsOperationStatus", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/locations/{locationName}/recommendedActionSessionsAzureAsyncOperation/{operationId}"
-    }
+        return deserialized  # type: ignore

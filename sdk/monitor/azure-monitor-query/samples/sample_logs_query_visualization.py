@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+# cspell:ignore xtitle, ytitle, ymax
 """
 FILE: sample_logs_query_visualization.py
 DESCRIPTION:
@@ -46,13 +47,12 @@ try:
     response = client.query_workspace(
         os.environ["LOGS_WORKSPACE_ID"], query, timespan=timedelta(days=1), include_visualization=True
     )
-    if response.status == LogsQueryStatus.PARTIAL:
-        error = response.partial_error
-        data = response.partial_data
-        print(error)
-        print(data)
-    elif response.status == LogsQueryStatus.SUCCESS:
+    if response.status == LogsQueryStatus.SUCCESS:
         viz = response.visualization
+
+        if not viz:
+            print("No visualization data returned.")
+            exit()
 
         # Examine the structure of the visualization data to see what information is provided.
         # Generally, it reflects properties set using the "render" operator in the query.
@@ -75,6 +75,11 @@ try:
             fig.write_html("query-visualization.html")
             # To open in a browser, use:
             # fig.show()
+    else:
+        error = response.partial_error
+        data = response.partial_data
+        print(error)
+        print(data)
 
 except HttpResponseError as err:
     print("something fatal happened")
