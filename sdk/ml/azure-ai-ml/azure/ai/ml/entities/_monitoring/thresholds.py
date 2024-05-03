@@ -16,6 +16,7 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     DataQualityMetricThresholdBase,
     FeatureAttributionMetricThreshold,
     GenerationSafetyQualityMetricThreshold,
+    GenerationTokenStatisticsMetricThreshold,
     ModelPerformanceMetricThresholdBase,
     MonitoringThreshold,
     NumericalDataDriftMetricThreshold,
@@ -891,3 +892,63 @@ class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):  
             fluency=fluency if fluency else None,
             similarity=similarity if similarity else None,
         )
+
+
+@experimental
+class GenerationTokenStatisticsMonitorMetricThreshold(RestTranslatableMixin):  # pylint: disable=name-too-long
+    """Generation token statistics metric threshold definition.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar metric: Required. [Required] Gets or sets the feature attribution metric to calculate.
+     Possible values include: "TotalTokenCount", "TotalTokenCountPerGroup".
+    :vartype metric: str or
+     ~azure.mgmt.machinelearningservices.models.GenerationTokenStatisticsMetric
+    :ivar threshold: Gets or sets the threshold value.
+     If null, a default value will be set depending on the selected metric.
+    :vartype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
+    """
+
+    def __init__(
+        self,
+        *,
+        totaltoken: Optional[Dict[str, float]] = None,
+    ):
+        self.totaltoken = totaltoken
+
+    def _to_rest_object(self) -> GenerationSafetyQualityMetricThreshold:
+        metric_thresholds = []
+        if self.totaltoken:
+            if "total_token_count" in self.totaltoken:
+                acceptable_threshold = MonitoringThreshold(value=self.totaltoken["total_token_count"])
+            else:
+                acceptable_threshold = MonitoringThreshold(value=3)
+            metric_thresholds.append(
+                GenerationTokenStatisticsMetricThreshold(metric="TotalTokenCount", threshold=acceptable_threshold)
+            )
+            acceptable_threshold_per_group = MonitoringThreshold(value=self.totaltoken["total_token_count_per_group"])
+            metric_thresholds.append(
+                GenerationSafetyQualityMetricThreshold(
+                    metric="TotalTokenCountPerGroup", threshold=acceptable_threshold_per_group
+                )
+            )
+        return metric_thresholds
+
+    @classmethod
+    def _from_rest_object(
+        cls, obj: GenerationTokenStatisticsMetricThreshold
+    ) -> "GenerationTokenStatisticsMonitorMetricThreshold":
+        totaltoken = {}
+        for threshold in obj:
+            if threshold.metric == "TotalTokenCount":
+                totaltoken["total_token_count"] = threshold.threshold.value
+            if threshold.metric == "TotalTokenCountPerGroup":
+                totaltoken["total_token_count_per_group"] = threshold.threshold.value
+
+        return cls(
+            totaltoken=totaltoken if totaltoken else None,
+        )
+
+    @classmethod
+    def _get_default_thresholds(cls) -> "GenerationTokenStatisticsMonitorMetricThreshold":
+        return cls(totaltoken={"total_token_count": 0, "total_token_count_per_group": 0})

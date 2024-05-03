@@ -48,7 +48,7 @@ def _load_flow(name: str, version: str = "42", **kwargs) -> Model:
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.production_experiences_test
-class TestModel(AzureRecordedTestCase):
+class TestEvaluator(AzureRecordedTestCase):
     def test_crud_file(self, client: MLClient, randstr: Callable[[], str]) -> None:
         model_name = randstr("model_name")
 
@@ -81,7 +81,7 @@ class TestModel(AzureRecordedTestCase):
         # test_model = next(iter(models), None)
         # assert isinstance(test_model, Model)
 
-    def test_crud_model_with_stage(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_crud_evaluator_with_stage(self, client: MLClient, randstr: Callable[[], str]) -> None:
         model_name = randstr("model_prod_name")
         model = _load_flow(model_name, stage="Production", version="3")
 
@@ -103,14 +103,14 @@ class TestModel(AzureRecordedTestCase):
         model_stage_list = [m.stage for m in model_list if m is not None]
         assert model.stage in model_stage_list
 
-    def test_models_get_latest_label(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_evaluators_get_latest_label(self, client: MLClient, randstr: Callable[[], str]) -> None:
         model_name = f"model_{randstr('name')}"
         for version in ["1", "2", "3", "4"]:
             model = _load_flow(model_name, version=version)
             client.evaluators.create_or_update(model)
             assert client.evaluators.get(model_name, label="latest").version == version
 
-    def test_model_archive_restore_version(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_evaluator_archive_restore_version(self, client: MLClient, randstr: Callable[[], str]) -> None:
         model_name = f"model_{randstr('name')}"
 
         versions = ["1", "2"]
@@ -119,43 +119,44 @@ class TestModel(AzureRecordedTestCase):
             model = _load_flow(model_name, version=version)
             client.evaluators.create_or_update(model)
 
-        def get_model_list():
+        def get_evaluator_list():
             # Wait for list index to update before calling list command
             sleep_if_live(30)
             model_list = client.evaluators.list(name=model_name, list_view_type=ListViewType.ACTIVE_ONLY)
             return [m.version for m in model_list if m is not None]
 
-        assert version_archived in get_model_list()
+        assert version_archived in get_evaluator_list()
         client.evaluators.archive(name=model_name, version=version_archived)
-        assert version_archived not in get_model_list()
+        assert version_archived not in get_evaluator_list()
         client.evaluators.restore(name=model_name, version=version_archived)
-        assert version_archived in get_model_list()
+        assert version_archived in get_evaluator_list()
 
     @pytest.mark.skip(reason="Task 1791832: Inefficient, possibly causing testing pipeline to time out.")
-    def test_model_archive_restore_container(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_evaluator_archive_restore_container(self, client: MLClient, randstr: Callable[[], str]) -> None:
         model_name = f"model_{randstr('name')}"
         version = "1"
         model = _load_flow(model_name, version=version)
 
         client.evaluators.create_or_update(model)
 
-        def get_model_list():
+        def get_evaluator_list():
             # Wait for list index to update before calling list command
             sleep_if_live(30)
             model_list = client.evaluators.list(list_view_type=ListViewType.ACTIVE_ONLY)
             return [m.name for m in model_list if m is not None]
 
-        assert model_name in get_model_list()
+        assert model_name in get_evaluator_list()
         client.evaluators.archive(name=model_name)
-        assert model_name not in get_model_list()
+        assert model_name not in get_evaluator_list()
         client.evaluators.restore(name=model_name)
-        assert model_name in get_model_list()
+        assert model_name in get_evaluator_list()
 
     @pytest.mark.skipif(
         condition=not is_live(),
         reason="Registry uploads do not record well. Investigate later",
     )
-    def test_create_get_download_model_registry(self, registry_client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_create_get_download_evaluator_registry(
+            self, registry_client: MLClient, randstr: Callable[[], str]) -> None:
         model_name = randstr("model_name")
         model_version = "2"
 
@@ -183,7 +184,7 @@ class TestModel(AzureRecordedTestCase):
         condition=not is_live(),
         reason="Registry uploads do not record well. Investigate later",
     )
-    def test_list_model(
+    def test_list_evaluator(
         self,
         registry_client: MLClient,
         client: MLClient,
