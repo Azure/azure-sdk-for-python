@@ -10,6 +10,7 @@ from ._client import ChatCompletionsClient
 from ._client import EmbeddingsClient
 from ._client import ImageGenerationClient
 from ._version import VERSION
+from ._configuration import legacy_versioning
 
 __version__ = VERSION
 

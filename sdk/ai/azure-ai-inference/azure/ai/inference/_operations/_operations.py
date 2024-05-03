@@ -28,6 +28,7 @@ from .. import models as _models
 from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Serializer
 from .._vendor import ChatCompletionsClientMixinABC, EmbeddingsClientMixinABC, ImageGenerationClientMixinABC
+from .. import legacy_versioning
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -51,7 +52,9 @@ def build_chat_completions_create_request(*, model_deployment: Optional[str] = N
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/v1/chat/completions"
+    _url = "/chat/completions"
+    if legacy_versioning:
+      _url = "/v1" + _url
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -94,7 +97,9 @@ def build_embeddings_create_request(*, model_deployment: Optional[str] = None, *
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/v1/embeddings"
+    _url = "/embeddings"
+    if legacy_versioning:
+      _url = "/v1" + _url
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
