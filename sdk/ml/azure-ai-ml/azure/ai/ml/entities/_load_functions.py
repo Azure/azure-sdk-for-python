@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=too-many-lines
+
 import logging
 import warnings
 from os import PathLike
@@ -800,6 +802,36 @@ def load_connection(
 
     """
     return cast(Connection, load_common(Connection, source, relative_origin, params_override, **kwargs))
+
+
+# Unlike other aspects of connections, this wasn't made experimental, and thus couldn't just be replaced
+# During the renaming from 'workspace connection' to just 'connection'.
+def load_workspace_connection(
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
+    relative_origin: Optional[str] = None,
+    **kwargs: Any,
+) -> Connection:
+    """Construct a connection object from yaml file.
+
+    :param source: The local yaml source of a connection object. Must be either a
+        path to a local file, or an already-open file.
+        If the source is a path, it will be open and read.
+        An exception is raised if the file does not exist.
+        If the source is an open file, the file will be read directly,
+        and an exception is raised if the file is not readable.
+    :type source: Union[PathLike, str, io.TextIOWrapper]
+    :keyword relative_origin: The origin to be used when deducing
+        the relative locations of files referenced in the parsed yaml.
+        Defaults to the inputted source's directory if it is a file or file path input.
+        Defaults to "./" if the source is a stream input with no name value.
+    :paramtype relative_origin: str
+
+    :return: Constructed connection object.
+    :rtype: Connection
+
+    """
+    return load_workspace_connection(source, relative_origin=relative_origin, **kwargs)
 
 
 def load_schedule(
