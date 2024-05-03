@@ -831,7 +831,7 @@ def load_workspace_connection(
     :return: Constructed connection object.
     :rtype: Connection
 
-    """    
+    """
     warnings.warn(
         "the 'load_workspace_connection' function is deprecated. Use 'load_connection' instead.", DeprecationWarning
     )
