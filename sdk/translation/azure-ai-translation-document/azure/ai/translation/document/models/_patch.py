@@ -15,7 +15,7 @@ from ._models import (
     SourceInput as _SourceInput,
     DocumentFilter as _DocumentFilter,
     TargetInput as _TargetInput,
-    Glossary as _Glossary
+    Glossary as _Glossary,
 )
 from ._enums import StorageInputType
 
@@ -166,9 +166,11 @@ class TranslationTarget:
             category=self.category_id,
             language=self.language,
             storage_source=self.storage_source,
-            glossaries=TranslationGlossary._to_generated_list(self.glossaries)  # pylint: disable=protected-access
-            if self.glossaries
-            else None,
+            glossaries=(
+                TranslationGlossary._to_generated_list(self.glossaries)  # pylint: disable=protected-access
+                if self.glossaries
+                else None
+            ),
         )
 
     @staticmethod
@@ -355,11 +357,11 @@ class TranslationStatus:  # pylint: disable=too-many-instance-attributes
             created_on=batch_status_details.created_date_time_utc,
             last_updated_on=batch_status_details.last_action_date_time_utc,
             status=convert_status(batch_status_details.status),
-            error=DocumentTranslationError._from_generated(  # pylint: disable=protected-access
-                batch_status_details.error
-            )
-            if batch_status_details.error
-            else None,
+            error=(
+                DocumentTranslationError._from_generated(batch_status_details.error)  # pylint: disable=protected-access
+                if batch_status_details.error
+                else None
+            ),
             documents_total_count=batch_status_details.summary.total,
             documents_failed_count=batch_status_details.summary.failed,
             documents_succeeded_count=batch_status_details.summary.success,
@@ -449,9 +451,11 @@ class DocumentStatus:
             last_updated_on=doc_status.last_action_date_time_utc,
             status=convert_status(doc_status.status),
             translated_to=doc_status.to,
-            error=DocumentTranslationError._from_generated(doc_status.error)  # pylint: disable=protected-access
-            if doc_status.error
-            else None,
+            error=(
+                DocumentTranslationError._from_generated(doc_status.error)  # pylint: disable=protected-access
+                if doc_status.error
+                else None
+            ),
             translation_progress=doc_status.progress,
             id=doc_status.id,
             characters_charged=doc_status.character_charged,

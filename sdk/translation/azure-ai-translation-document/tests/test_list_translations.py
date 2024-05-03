@@ -41,7 +41,9 @@ class TestListTranslations(DocumentTranslationTest):
             self._validate_translations(translation)
         return variables
 
-    @pytest.mark.skip(reason="The max number of batch requests returned is limited to 50 and hence this test is no longer valid")
+    @pytest.mark.skip(
+        reason="The max number of batch requests returned is limited to 50 and hence this test is no longer valid"
+    )
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
@@ -191,7 +193,7 @@ class TestListTranslations(DocumentTranslationTest):
         )
 
         # list translations
-        submitted_translations = list(client.list_translation_statuses(order_by=["created_on asc"]))
+        submitted_translations = list(client.list_translation_statuses(orderby=["created_on asc"]))
         assert submitted_translations is not None
 
         # check statuses
@@ -216,7 +218,7 @@ class TestListTranslations(DocumentTranslationTest):
         )
 
         # list translations
-        submitted_translations = list(client.list_translation_statuses(order_by=["created_on desc"]))
+        submitted_translations = list(client.list_translation_statuses(orderby=["created_on desc"]))
         assert submitted_translations is not None
 
         # check statuses
@@ -251,7 +253,7 @@ class TestListTranslations(DocumentTranslationTest):
             created_after=start,
             created_before=end,
             # ordering
-            order_by=["created_on asc"],
+            orderby=["created_on asc"],
             # paging
             skip=skip,
         ).by_page()

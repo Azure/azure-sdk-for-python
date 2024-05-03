@@ -47,8 +47,7 @@ class BatchRequest(_model_base.Model):
         source: "_models.SourceInput",
         targets: List["_models.TargetInput"],
         storage_type: Optional[Union[str, "_models.StorageInputType"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -91,8 +90,7 @@ class DocumentFilter(_model_base.Model):
         *,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -127,8 +125,7 @@ class DocumentsStatus(_model_base.Model):
         *,
         value: List["_models.DocumentStatus"],
         next_link: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -210,8 +207,7 @@ class DocumentStatus(_model_base.Model):
         path: Optional[str] = None,
         error: Optional["_models.TranslationError"] = None,
         character_charged: Optional[int] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -246,8 +242,7 @@ class DocumentTranslateContent(_model_base.Model):
         *,
         document: FileType,
         glossary: Optional[List[FileType]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -275,6 +270,8 @@ class FileFormat(_model_base.Model):
     :vartype default_version: str
     :ivar versions: Supported Version.
     :vartype versions: list[str]
+    :ivar type: Supported Type for this format.
+    :vartype type: str
     """
 
     format: str = rest_field()
@@ -287,6 +284,8 @@ class FileFormat(_model_base.Model):
     """Default version if none is specified."""
     versions: Optional[List[str]] = rest_field()
     """Supported Version."""
+    type: Optional[str] = rest_field()
+    """Supported Type for this format."""
 
     @overload
     def __init__(
@@ -297,8 +296,8 @@ class FileFormat(_model_base.Model):
         content_types: List[str],
         default_version: Optional[str] = None,
         versions: Optional[List[str]] = None,
-    ):
-        ...
+        type: Optional[str] = None,
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -353,8 +352,7 @@ class Glossary(_model_base.Model):
         format: str,
         version: Optional[str] = None,
         storage_source: Optional[Union[str, "_models.StorageSource"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -419,8 +417,7 @@ class InnerTranslationError(_model_base.Model):
         code: str,
         message: str,
         inner_error: Optional["_models.InnerTranslationError"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -468,8 +465,7 @@ class SourceInput(_model_base.Model):
         filter: Optional["_models.DocumentFilter"] = None,  # pylint: disable=redefined-builtin
         language: Optional[str] = None,
         storage_source: Optional[Union[str, "_models.StorageSource"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -499,8 +495,7 @@ class StartTranslationDetails(_model_base.Model):
         self,
         *,
         inputs: List["_models.BatchRequest"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -560,8 +555,7 @@ class StatusSummary(_model_base.Model):
         not_yet_started: int,
         cancelled: int,
         total_character_charged: int,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -591,8 +585,7 @@ class SupportedFileFormats(_model_base.Model):
         self,
         *,
         value: List["_models.FileFormat"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -642,8 +635,7 @@ class TargetInput(_model_base.Model):
         category: Optional[str] = None,
         glossaries: Optional[List["_models.Glossary"]] = None,
         storage_source: Optional[Union[str, "_models.StorageSource"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -708,8 +700,7 @@ class TranslationError(_model_base.Model):
         code: Union[str, "_models.TranslationErrorCode"],
         message: str,
         inner_error: Optional["_models.InnerTranslationError"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -744,8 +735,7 @@ class TranslationsStatus(_model_base.Model):
         *,
         value: List["_models.TranslationStatus"],
         next_link: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -807,8 +797,7 @@ class TranslationStatus(_model_base.Model):
         status: Union[str, "_models.Status"],
         summary: "_models.StatusSummary",
         error: Optional["_models.TranslationError"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):

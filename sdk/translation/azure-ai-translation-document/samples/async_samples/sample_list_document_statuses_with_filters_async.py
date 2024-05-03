@@ -53,7 +53,7 @@ async def sample_list_document_statuses_with_filters_async():
     start = datetime(2021, 4, 12)
     end = datetime(2021, 4, 14)
     statuses = ["Canceled", "Failed"]
-    order_by = ["created_on desc"]
+    orderby = ["created_on desc"]
     skip = 3
 
     async with client:
@@ -64,7 +64,7 @@ async def sample_list_document_statuses_with_filters_async():
             created_after=start,
             created_before=end,
             # ordering
-            order_by=order_by,
+            orderby=orderby,
             # paging
             skip=skip,
         ).by_page()

@@ -16,12 +16,13 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from ..models import StartTranslationDetails
+
 POLLING_INTERVAL = 1
 from ...document._patch import (
     get_http_logging_policy,
     get_translation_input,
     convert_datetime,
-    convert_order_by,    
+    convert_order_by,
 )
 from ..models._patch import convert_status
 from ..models import (
@@ -40,6 +41,7 @@ from ..models._models import (
 )
 from ..models._enums import StorageInputType
 from azure.ai.translation.document._patch import TranslationPolling
+
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
@@ -52,8 +54,8 @@ from azure.core.polling.base_polling import (
 )
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
-#from .._generated.models import TranslationStatus as _TranslationStatus
-#from .._models import TranslationStatus
+# from .._generated.models import TranslationStatus as _TranslationStatus
+# from .._models import TranslationStatus
 from ..models._models import (
     TranslationStatus as _TranslationStatus,
     DocumentStatus as _DocumentStatus,
@@ -76,9 +78,9 @@ class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType_co]):
         :return: The str ID for the translation operation.
         :rtype: str
         """
-        if self._polling_method._current_body:   # pylint: disable=protected-access
-            return self._polling_method._current_body.id   # pylint: disable=protected-access
-        return self._polling_method._get_id_from_headers()   # pylint: disable=protected-access
+        if self._polling_method._current_body:  # pylint: disable=protected-access
+            return self._polling_method._current_body.id  # pylint: disable=protected-access
+        return self._polling_method._get_id_from_headers()  # pylint: disable=protected-access
 
     @property
     def details(self) -> TranslationStatus:
@@ -87,11 +89,11 @@ class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType_co]):
         :return: The details for the translation operation.
         :rtype: ~azure.ai.translation.document.TranslationStatus
         """
-        if self._polling_method._current_body:   # pylint: disable=protected-access
+        if self._polling_method._current_body:  # pylint: disable=protected-access
             return TranslationStatus._from_generated(  # pylint: disable=protected-access
-                self._polling_method._current_body   # pylint: disable=protected-access
+                self._polling_method._current_body  # pylint: disable=protected-access
             )
-        return TranslationStatus(id=self._polling_method._get_id_from_headers())   # pylint: disable=protected-access
+        return TranslationStatus(id=self._polling_method._get_id_from_headers())  # pylint: disable=protected-access
 
     @classmethod
     def from_continuation_token(  # pylint: disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype
@@ -108,6 +110,7 @@ class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType_co]):
 
         return cls(client, initial_response, deserialization_callback, polling_method)
 
+
 class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
     """A custom polling method implementation for Document Translation."""
 
@@ -117,15 +120,19 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
 
     @property
     def _current_body(self) -> _TranslationStatus:
-        #return _TranslationStatus.deserialize(self._pipeline_response)
+        # return _TranslationStatus.deserialize(self._pipeline_response)
         try:
             return _TranslationStatus(self._pipeline_response.http_response.json())
         except json.decoder.JSONDecodeError:
             return _TranslationStatus()
 
     def _get_id_from_headers(self) -> str:
-        #return self._initial_response.http_response.headers["Operation-Location"].split("/batches/")[1]  
-        return self._initial_response.http_response.headers["Operation-Location"].split("/batches/")[1].split("?api-version")[0]
+        # return self._initial_response.http_response.headers["Operation-Location"].split("/batches/")[1]
+        return (
+            self._initial_response.http_response.headers["Operation-Location"]
+            .split("/batches/")[1]
+            .split("?api-version")[0]
+        )
 
     def finished(self) -> bool:
         """Is this polling finished?
@@ -153,7 +160,7 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
         return self._get_id_from_headers()
 
     # pylint: disable=arguments-differ
-    def from_continuation_token(self, continuation_token: str, **kwargs: Any) -> Tuple:  
+    def from_continuation_token(self, continuation_token: str, **kwargs: Any) -> Tuple:
         try:
             client = kwargs["client"]
         except KeyError as exc:
@@ -183,10 +190,11 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
         if self._failed(self.status()):
             raise OperationFailed("Operation failed or canceled")
 
-        final_get_url = self._operation.get_final_get_url(self._pipeline_response)  
+        final_get_url = self._operation.get_final_get_url(self._pipeline_response)
         if final_get_url:
             self._pipeline_response = await self.request_status(final_get_url)
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
+
 
 class DocumentTranslationClient:
     def __init__(
@@ -233,13 +241,14 @@ class DocumentTranslationClient:
         # TODO how to support API version - v1.0 vs date-based?
         # if hasattr(self._api_version, "value"):
         #     self._api_version = cast(DocumentTranslationApiVersion, self._api_version)
-        #     self._api_version = self._api_version.value  
+        #     self._api_version = self._api_version.value
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         from ._client import DocumentTranslationClient as _BatchDocumentTranslationClient
+
         self._client = _BatchDocumentTranslationClient(
             endpoint=self._endpoint,
-            credential=credential,  
-            #api_version=self._api_version,            
+            credential=credential,
+            # api_version=self._api_version,
             http_logging_policy=kwargs.pop("http_logging_policy", get_http_logging_policy()),
             polling_interval=polling_interval,
             **kwargs
@@ -450,10 +459,11 @@ class DocumentTranslationClient:
         :rtype: ~azure.ai.translation.document.TranslationStatus
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
-        
+
         translation_status = await self._client.get_translation_status(translation_id, **kwargs)
         return TranslationStatus._from_generated(  # pylint: disable=protected-access
-            _TranslationStatus(translation_status))
+            _TranslationStatus(translation_status)
+        )
 
     @distributed_trace_async
     async def cancel_translation(self, translation_id: str, **kwargs: Any) -> None:
@@ -481,7 +491,7 @@ class DocumentTranslationClient:
         statuses: Optional[List[str]] = None,
         created_after: Optional[Union[str, datetime.datetime]] = None,
         created_before: Optional[Union[str, datetime.datetime]] = None,
-        order_by: Optional[List[str]] = None,
+        orderby: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[TranslationStatus]:
         """List all the submitted translation operations under the Document Translation resource.
@@ -497,7 +507,7 @@ class DocumentTranslationClient:
         :paramtype created_after: str or ~datetime.datetime
         :keyword created_before: Get operations created before a certain datetime.
         :paramtype created_before: str or ~datetime.datetime
-        :keyword list[str] order_by: The sorting query for the operations returned. Currently only
+        :keyword list[str] orderby: The sorting query for the operations returned. Currently only
             'created_on' supported.
             format: ["param1 asc/desc", "param2 asc/desc", ...]
             (ex: 'created_on asc', 'created_on desc').
@@ -517,7 +527,7 @@ class DocumentTranslationClient:
 
         if statuses:
             statuses = [convert_status(status, ll=True) for status in statuses]
-        order_by = convert_order_by(order_by)
+        orderby = convert_order_by(orderby)
         created_after = convert_datetime(created_after) if created_after else None
         created_before = convert_datetime(created_before) if created_before else None
 
@@ -537,10 +547,10 @@ class DocumentTranslationClient:
                 created_date_time_utc_start=created_after,
                 created_date_time_utc_end=created_before,
                 ids=translation_ids,
-                order_by=order_by,
+                orderby=orderby,
                 statuses=statuses,
                 top=top,
-                skip=skip,  
+                skip=skip,
                 **kwargs
             ),
         )
@@ -556,7 +566,7 @@ class DocumentTranslationClient:
         statuses: Optional[List[str]] = None,
         created_after: Optional[Union[str, datetime.datetime]] = None,
         created_before: Optional[Union[str, datetime.datetime]] = None,
-        order_by: Optional[List[str]] = None,
+        orderby: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[DocumentStatus]:
         """List all the document statuses for a given translation operation.
@@ -573,7 +583,7 @@ class DocumentTranslationClient:
         :paramtype created_after: str or ~datetime.datetime
         :keyword created_before: Get documents created before a certain datetime.
         :paramtype created_before: str or ~datetime.datetime
-        :keyword list[str] order_by: The sorting query for the documents. Currently only
+        :keyword list[str] orderby: The sorting query for the documents. Currently only
             'created_on' is supported.
             format: ["param1 asc/desc", "param2 asc/desc", ...]
             (ex: 'created_on asc', 'created_on desc').
@@ -593,7 +603,7 @@ class DocumentTranslationClient:
 
         if statuses:
             statuses = [convert_status(status, ll=True) for status in statuses]
-        order_by = convert_order_by(order_by)
+        orderby = convert_order_by(orderby)
         created_after = convert_datetime(created_after) if created_after else None
         created_before = convert_datetime(created_before) if created_before else None
 
@@ -614,10 +624,10 @@ class DocumentTranslationClient:
                 created_date_time_utc_start=created_after,
                 created_date_time_utc_end=created_before,
                 ids=document_ids,
-                order_by=order_by,
+                orderby=orderby,
                 statuses=statuses,
                 top=top,
-                skip=skip,  
+                skip=skip,
                 **kwargs
             ),
         )
@@ -632,9 +642,7 @@ class DocumentTranslationClient:
         :rtype: ~azure.ai.translation.document.DocumentStatus
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
-        document_status = await self._client.get_document_status(
-            translation_id, document_id, **kwargs
-        )
+        document_status = await self._client.get_document_status(translation_id, document_id, **kwargs)
         # pylint: disable=protected-access
         return DocumentStatus._from_generated(_DocumentStatus(document_status))
 
@@ -646,12 +654,7 @@ class DocumentTranslationClient:
         :rtype: List[DocumentTranslationFileFormat]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        glossary_formats = (
-            await self._client.get_supported_formats(
-                type="glossary",
-                **kwargs
-            )
-        )
+        glossary_formats = await self._client.get_supported_formats(type="glossary", **kwargs)
         # pylint: disable=protected-access
         return DocumentTranslationFileFormat._from_generated_list(glossary_formats.value)
 
@@ -663,12 +666,7 @@ class DocumentTranslationClient:
         :rtype: List[DocumentTranslationFileFormat]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        document_formats = (
-            await self._client.get_supported_formats(
-                type="document",
-                **kwargs
-            )
-        )
+        document_formats = await self._client.get_supported_formats(type="document", **kwargs)
         # pylint: disable=protected-access
         return DocumentTranslationFileFormat._from_generated_list(document_formats.value)
 
@@ -684,7 +682,7 @@ __all__: List[str] = [
     "DocumentStatus",
     "DocumentTranslationError",
     "DocumentTranslationFileFormat",
-    ]  # Add all objects you want publicly available to users at this package level
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

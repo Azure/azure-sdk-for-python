@@ -11,6 +11,7 @@ from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher
 from azure.storage.blob import generate_container_sas, ContainerClient
 from azure.ai.translation.document.models import DocumentTranslationInput, TranslationTarget
 
+
 class Document:
     """Represents a document to be uploaded to source/target container"""
 

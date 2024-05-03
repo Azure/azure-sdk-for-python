@@ -47,7 +47,7 @@ def sample_list_translations_with_filters():
     start = datetime(2021, 4, 12)
     end = datetime(2021, 4, 14)
     statuses = ["Canceled", "Failed"]
-    order_by = ["created_on desc"]
+    orderby = ["created_on desc"]
     skip = 3
 
     # list translation operations
@@ -57,7 +57,7 @@ def sample_list_translations_with_filters():
         created_after=start,
         created_before=end,
         # ordering
-        order_by=order_by,
+        orderby=orderby,
         # paging
         skip=skip,
     ).by_page()

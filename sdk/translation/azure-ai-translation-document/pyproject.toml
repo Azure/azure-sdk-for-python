@@ -1,6 +1,3 @@
 [tool.azure-sdk-build]
 pyright = false
 strict_sphinx = true
-
-[tool.generate]
-autorest-post-process = true

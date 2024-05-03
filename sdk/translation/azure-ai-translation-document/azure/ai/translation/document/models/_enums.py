@@ -10,11 +10,13 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class FormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class FileFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Format types."""
 
     DOCUMENT = "document"
+    """Document type file format"""
     GLOSSARY = "glossary"
+    """Glossary type file format"""
 
 
 class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -40,16 +42,16 @@ class StorageInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Storage type of the input documents source string."""
 
     FOLDER = "Folder"
-    """Folder"""
+    """Folder storage input type"""
     FILE = "File"
-    """File"""
+    """File storage input type"""
 
 
 class StorageSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Storage Source."""
 
     AZURE_BLOB = "AzureBlob"
-    """Azure Blob"""
+    """Azure blob storage source"""
 
 
 class TranslationErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

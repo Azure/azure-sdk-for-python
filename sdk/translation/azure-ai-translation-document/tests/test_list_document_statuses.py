@@ -135,7 +135,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
         # check doc statuses
         doc_statuses = list(
-            client.list_document_statuses(poller.id, order_by=["created_on asc"])
+            client.list_document_statuses(poller.id, orderby=["created_on asc"])
         )  # convert from generic iterator to list
         assert len(doc_statuses) == docs_count
 
@@ -162,7 +162,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
         # check doc statuses
         doc_statuses = list(
-            client.list_document_statuses(poller.id, order_by=["created_on desc"])
+            client.list_document_statuses(poller.id, orderby=["created_on desc"])
         )  # convert from generic iterator to list
         assert len(doc_statuses) == docs_count
 
@@ -202,7 +202,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
             document_ids=ids,
             statuses=statuses,
             # ordering
-            order_by=["created_on asc"],
+            orderby=["created_on asc"],
             # paging
             skip=skip,
         ).by_page()

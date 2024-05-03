@@ -23,7 +23,7 @@ from ._models import TranslationError
 from ._models import TranslationStatus
 from ._models import TranslationsStatus
 
-from ._enums import FormatType
+from ._enums import FileFormatType
 from ._enums import Status
 from ._enums import StorageInputType
 from ._enums import StorageSource
@@ -49,7 +49,7 @@ __all__ = [
     "TranslationError",
     "TranslationStatus",
     "TranslationsStatus",
-    "FormatType",
+    "FileFormatType",
     "Status",
     "StorageInputType",
     "StorageSource",

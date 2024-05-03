@@ -62,13 +62,14 @@ from .._vendor import DocumentTranslationClientMixinABC, SingleDocumentTranslati
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping    # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
 class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC):
+
     async def _start_translation_initial(  # pylint: disable=inconsistent-return-statements
         self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
@@ -91,7 +92,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_document_translation_start_translation_request(
             content_type=content_type,
@@ -106,7 +107,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -122,12 +123,12 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)  
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
     async def begin_start_translation(
         self, body: _models.StartTranslationDetails, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[_models.TranslationStatus]:
+    ) -> AsyncLROPoller[None]:
         # pylint: disable=line-too-long
         """Submit a document translation request to the Document Translation service.
 
@@ -156,10 +157,8 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns TranslationStatus. The TranslationStatus is
-         compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.translation.document.models.TranslationStatus]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -219,52 +218,12 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
                         }
                     ]
                 }
-
-                # response body for status code(s): 202
-                response == {
-                    "createdDateTimeUtc": "2020-02-20 00:00:00",  # Operation created date time.
-                      Required.
-                    "id": "str",  # Id of the operation. Required.
-                    "lastActionDateTimeUtc": "2020-02-20 00:00:00",  # Date time in which the
-                      operation's status has been updated. Required.
-                    "status": "str",  # List of possible statuses for job or document. Required.
-                      Known values are: "NotStarted", "Running", "Succeeded", "Failed", "Cancelled",
-                      "Cancelling", and "ValidationFailed".
-                    "summary": {
-                        "cancelled": 0,  # Number of cancelled. Required.
-                        "failed": 0,  # Failed count. Required.
-                        "inProgress": 0,  # Number of in progress. Required.
-                        "notYetStarted": 0,  # Count of not yet started. Required.
-                        "success": 0,  # Number of Success. Required.
-                        "total": 0,  # Total count. Required.
-                        "totalCharacterCharged": 0  # Total characters charged by the API.
-                          Required.
-                    },
-                    "error": {
-                        "code": "str",  # Enums containing high level error codes. Required.
-                          Known values are: "InvalidRequest", "InvalidArgument", "InternalServerError",
-                          "ServiceUnavailable", "ResourceNotFound", "Unauthorized", and
-                          "RequestRateTooHigh".
-                        "message": "str",  # Gets high level error message. Required.
-                        "innerError": {
-                            "code": "str",  # Gets code error string. Required.
-                            "message": "str",  # Gets high level error message. Required.
-                            "innerError": ...,
-                            "target": "str"  # Optional. Gets the source of the error.
-                              For example it would be "documents" or "document id" in case of invalid
-                              document.
-                        },
-                        "target": "str"  # Optional. Gets the source of the error.  For
-                          example it would be "documents" or "document id" in case of invalid document.
-                    }
-                }
         """
 
     @overload
     async def begin_start_translation(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[_models.TranslationStatus]:
-        # pylint: disable=line-too-long
+    ) -> AsyncLROPoller[None]:
         """Submit a document translation request to the Document Translation service.
 
         Use this API to submit a bulk (batch) translation request to the Document
@@ -292,60 +251,15 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns TranslationStatus. The TranslationStatus is
-         compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.translation.document.models.TranslationStatus]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 202
-                response == {
-                    "createdDateTimeUtc": "2020-02-20 00:00:00",  # Operation created date time.
-                      Required.
-                    "id": "str",  # Id of the operation. Required.
-                    "lastActionDateTimeUtc": "2020-02-20 00:00:00",  # Date time in which the
-                      operation's status has been updated. Required.
-                    "status": "str",  # List of possible statuses for job or document. Required.
-                      Known values are: "NotStarted", "Running", "Succeeded", "Failed", "Cancelled",
-                      "Cancelling", and "ValidationFailed".
-                    "summary": {
-                        "cancelled": 0,  # Number of cancelled. Required.
-                        "failed": 0,  # Failed count. Required.
-                        "inProgress": 0,  # Number of in progress. Required.
-                        "notYetStarted": 0,  # Count of not yet started. Required.
-                        "success": 0,  # Number of Success. Required.
-                        "total": 0,  # Total count. Required.
-                        "totalCharacterCharged": 0  # Total characters charged by the API.
-                          Required.
-                    },
-                    "error": {
-                        "code": "str",  # Enums containing high level error codes. Required.
-                          Known values are: "InvalidRequest", "InvalidArgument", "InternalServerError",
-                          "ServiceUnavailable", "ResourceNotFound", "Unauthorized", and
-                          "RequestRateTooHigh".
-                        "message": "str",  # Gets high level error message. Required.
-                        "innerError": {
-                            "code": "str",  # Gets code error string. Required.
-                            "message": "str",  # Gets high level error message. Required.
-                            "innerError": ...,
-                            "target": "str"  # Optional. Gets the source of the error.
-                              For example it would be "documents" or "document id" in case of invalid
-                              document.
-                        },
-                        "target": "str"  # Optional. Gets the source of the error.  For
-                          example it would be "documents" or "document id" in case of invalid document.
-                    }
-                }
         """
 
     @overload
     async def begin_start_translation(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[_models.TranslationStatus]:
-        # pylint: disable=line-too-long
+    ) -> AsyncLROPoller[None]:
         """Submit a document translation request to the Document Translation service.
 
         Use this API to submit a bulk (batch) translation request to the Document
@@ -373,59 +287,15 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns TranslationStatus. The TranslationStatus is
-         compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.translation.document.models.TranslationStatus]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 202
-                response == {
-                    "createdDateTimeUtc": "2020-02-20 00:00:00",  # Operation created date time.
-                      Required.
-                    "id": "str",  # Id of the operation. Required.
-                    "lastActionDateTimeUtc": "2020-02-20 00:00:00",  # Date time in which the
-                      operation's status has been updated. Required.
-                    "status": "str",  # List of possible statuses for job or document. Required.
-                      Known values are: "NotStarted", "Running", "Succeeded", "Failed", "Cancelled",
-                      "Cancelling", and "ValidationFailed".
-                    "summary": {
-                        "cancelled": 0,  # Number of cancelled. Required.
-                        "failed": 0,  # Failed count. Required.
-                        "inProgress": 0,  # Number of in progress. Required.
-                        "notYetStarted": 0,  # Count of not yet started. Required.
-                        "success": 0,  # Number of Success. Required.
-                        "total": 0,  # Total count. Required.
-                        "totalCharacterCharged": 0  # Total characters charged by the API.
-                          Required.
-                    },
-                    "error": {
-                        "code": "str",  # Enums containing high level error codes. Required.
-                          Known values are: "InvalidRequest", "InvalidArgument", "InternalServerError",
-                          "ServiceUnavailable", "ResourceNotFound", "Unauthorized", and
-                          "RequestRateTooHigh".
-                        "message": "str",  # Gets high level error message. Required.
-                        "innerError": {
-                            "code": "str",  # Gets code error string. Required.
-                            "message": "str",  # Gets high level error message. Required.
-                            "innerError": ...,
-                            "target": "str"  # Optional. Gets the source of the error.
-                              For example it would be "documents" or "document id" in case of invalid
-                              document.
-                        },
-                        "target": "str"  # Optional. Gets the source of the error.  For
-                          example it would be "documents" or "document id" in case of invalid document.
-                    }
-                }
         """
 
     @distributed_trace_async
     async def begin_start_translation(
         self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
-    ) -> AsyncLROPoller[_models.TranslationStatus]:
+    ) -> AsyncLROPoller[None]:
         # pylint: disable=line-too-long
         """Submit a document translation request to the Document Translation service.
 
@@ -451,10 +321,8 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
 
         :param body: Is one of the following types: StartTranslationDetails, JSON, IO[bytes] Required.
         :type body: ~azure.ai.translation.document.models.StartTranslationDetails or JSON or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns TranslationStatus. The TranslationStatus is
-         compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.translation.document.models.TranslationStatus]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -514,71 +382,24 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
                         }
                     ]
                 }
-
-                # response body for status code(s): 202
-                response == {
-                    "createdDateTimeUtc": "2020-02-20 00:00:00",  # Operation created date time.
-                      Required.
-                    "id": "str",  # Id of the operation. Required.
-                    "lastActionDateTimeUtc": "2020-02-20 00:00:00",  # Date time in which the
-                      operation's status has been updated. Required.
-                    "status": "str",  # List of possible statuses for job or document. Required.
-                      Known values are: "NotStarted", "Running", "Succeeded", "Failed", "Cancelled",
-                      "Cancelling", and "ValidationFailed".
-                    "summary": {
-                        "cancelled": 0,  # Number of cancelled. Required.
-                        "failed": 0,  # Failed count. Required.
-                        "inProgress": 0,  # Number of in progress. Required.
-                        "notYetStarted": 0,  # Count of not yet started. Required.
-                        "success": 0,  # Number of Success. Required.
-                        "total": 0,  # Total count. Required.
-                        "totalCharacterCharged": 0  # Total characters charged by the API.
-                          Required.
-                    },
-                    "error": {
-                        "code": "str",  # Enums containing high level error codes. Required.
-                          Known values are: "InvalidRequest", "InvalidArgument", "InternalServerError",
-                          "ServiceUnavailable", "ResourceNotFound", "Unauthorized", and
-                          "RequestRateTooHigh".
-                        "message": "str",  # Gets high level error message. Required.
-                        "innerError": {
-                            "code": "str",  # Gets code error string. Required.
-                            "message": "str",  # Gets high level error message. Required.
-                            "innerError": ...,
-                            "target": "str"  # Optional. Gets the source of the error.
-                              For example it would be "documents" or "document id" in case of invalid
-                              document.
-                        },
-                        "target": "str"  # Optional. Gets the source of the error.  For
-                          example it would be "documents" or "document id" in case of invalid document.
-                    }
-                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.TranslationStatus] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._start_translation_initial(  
+            raw_result = await self._start_translation_initial(  # type: ignore
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
-
-            deserialized = _deserialize(_models.TranslationStatus, response.json())
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  
-            return deserialized
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -594,15 +415,13 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.TranslationStatus].from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.TranslationStatus](
-            self._client, raw_result, get_long_running_output, polling_method  
-        )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get_translations_status(
@@ -614,7 +433,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         statuses: Optional[List[str]] = None,
         created_date_time_utc_start: Optional[datetime.datetime] = None,
         created_date_time_utc_end: Optional[datetime.datetime] = None,
-        order_by: Optional[List[str]] = None,
+        orderby: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.TranslationStatus"]:
         # pylint: disable=line-too-long
@@ -631,22 +450,22 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         The absence of a continuation
         token means that no additional pages are available.
 
-        $top, $skip
-        and $maxpagesize query parameters can be used to specify a number of results to
+        top, skip
+        and maxpagesize query parameters can be used to specify a number of results to
         return and an offset for the collection.
 
-        $top indicates the total
+        top indicates the total
         number of records the user wants to be returned across all pages.
-        $skip
+        skip
         indicates the number of records to skip from the list of batches based on the
         sorting method specified.  By default, we sort by descending start
         time.
-        $maxpagesize is the maximum items returned in a page.  If more items are
-        requested via $top (or $top is not specified and there are more items to be
+        maxpagesize is the maximum items returned in a page.  If more items are
+        requested via top (or top is not specified and there are more items to be
         returned), @nextLink will contain the link to the next page.
 
-        $orderBy query parameter can be used to sort the returned list (ex
-        "$orderBy=createdDateTimeUtc asc" or "$orderBy=createdDateTimeUtc
+        orderby query parameter can be used to sort the returned list (ex
+        "orderby=createdDateTimeUtc asc" or "orderby=createdDateTimeUtc
         desc").
         The default sorting is descending by createdDateTimeUtc.
         Some query
@@ -663,39 +482,39 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         the values specified by the client. However, clients must be prepared to handle
         responses that contain a different page size or contain a continuation token.
 
-        When both $top and $skip are included, the server should first apply
-        $skip and then $top on the collection.
-        Note: If the server can't honor $top
-        and/or $skip, the server must return an error to the client informing about it
+        When both top and skip are included, the server should first apply
+        skip and then top on the collection.
+        Note: If the server can't honor top
+        and/or skip, the server must return an error to the client informing about it
         instead of just ignoring the query options.
         This reduces the risk of the client
         making assumptions about the data returned.
 
-        :keyword top: $top indicates the total number of records the user wants to be returned across
+        :keyword top: top indicates the total number of records the user wants to be returned across
          all pages.
 
-         Clients MAY use $top and $skip query parameters to
+         Clients MAY use top and skip query parameters to
          specify a number of results to return and an offset into the collection.
          When
-         both $top and $skip are given by a client, the server SHOULD first apply $skip
-         and then $top on the collection.
+         both top and skip are given by a client, the server SHOULD first apply skip
+         and then top on the collection.
 
          Note: If the server can't honor
-         $top and/or $skip, the server MUST return an error to the client informing
+         top and/or skip, the server MUST return an error to the client informing
          about it instead of just ignoring the query options. Default value is None.
         :paramtype top: int
-        :keyword skip: $skip indicates the number of records to skip from the list of records held by
+        :keyword skip: skip indicates the number of records to skip from the list of records held by
          the server based on the sorting method specified.  By default, we sort by
          descending start time.
 
-         Clients MAY use $top and $skip query
+         Clients MAY use top and skip query
          parameters to specify a number of results to return and an offset into the
          collection.
-         When both $top and $skip are given by a client, the server SHOULD
-         first apply $skip and then $top on the collection.
+         When both top and skip are given by a client, the server SHOULD
+         first apply skip and then top on the collection.
 
          Note: If the
-         server can't honor $top and/or $skip, the server MUST return an error to the
+         server can't honor top and/or skip, the server MUST return an error to the
          client informing about it instead of just ignoring the query options. Default value is None.
         :paramtype skip: int
         :keyword ids: Ids to use in filtering. Default value is None.
@@ -708,9 +527,9 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         :keyword created_date_time_utc_end: the end datetime to get items before. Default value is
          None.
         :paramtype created_date_time_utc_end: ~datetime.datetime
-        :keyword order_by: the sorting query for the collection (ex: 'CreatedDateTimeUtc
+        :keyword orderby: the sorting query for the collection (ex: 'CreatedDateTimeUtc
          asc','CreatedDateTimeUtc desc'). Default value is None.
-        :paramtype order_by: list[str]
+        :paramtype orderby: list[str]
         :return: An iterator like instance of TranslationStatus
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.ai.translation.document.models.TranslationStatus]
@@ -783,13 +602,15 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
                     statuses=statuses,
                     created_date_time_utc_start=created_date_time_utc_start,
                     created_date_time_utc_end=created_date_time_utc_end,
-                    order_by=order_by,
+                    orderby=orderby,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -807,7 +628,9 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -817,14 +640,14 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.TranslationStatus], deserialized["value"])
             if cls:
-                list_of_elem = cls(list_of_elem)  
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -918,7 +741,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -936,9 +759,9 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
             deserialized = _deserialize(_models.DocumentStatus, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized  
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_translation_status(self, id: str, **kwargs: Any) -> _models.TranslationStatus:
@@ -1023,7 +846,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1041,9 +864,9 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
             deserialized = _deserialize(_models.TranslationStatus, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized  
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def cancel_translation(self, id: str, **kwargs: Any) -> _models.TranslationStatus:
@@ -1132,7 +955,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1150,9 +973,9 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
             deserialized = _deserialize(_models.TranslationStatus, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized  
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_documents_status(
@@ -1165,7 +988,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         statuses: Optional[List[str]] = None,
         created_date_time_utc_start: Optional[datetime.datetime] = None,
         created_date_time_utc_end: Optional[datetime.datetime] = None,
-        order_by: Optional[List[str]] = None,
+        orderby: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.DocumentStatus"]:
         # pylint: disable=line-too-long
@@ -1179,22 +1002,22 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         include a continuation token in the response. The absence of a continuation
         token means that no additional pages are available.
 
-        $top, $skip
-        and $maxpagesize query parameters can be used to specify a number of results to
+        top, skip
+        and maxpagesize query parameters can be used to specify a number of results to
         return and an offset for the collection.
 
-        $top indicates the total
+        top indicates the total
         number of records the user wants to be returned across all pages.
-        $skip
+        skip
         indicates the number of records to skip from the list of document status held
         by the server based on the sorting method specified.  By default, we sort by
         descending start time.
-        $maxpagesize is the maximum items returned in a page.
-        If more items are requested via $top (or $top is not specified and there are
+        maxpagesize is the maximum items returned in a page.
+        If more items are requested via top (or top is not specified and there are
         more items to be returned), @nextLink will contain the link to the next page.
 
-        $orderBy query parameter can be used to sort the returned list (ex
-        "$orderBy=createdDateTimeUtc asc" or "$orderBy=createdDateTimeUtc
+        orderby query parameter can be used to sort the returned list (ex
+        "orderby=createdDateTimeUtc asc" or "orderby=createdDateTimeUtc
         desc").
         The default sorting is descending by createdDateTimeUtc.
         Some query
@@ -1207,10 +1030,10 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         The supported filtering query parameters are (status, ids,
         createdDateTimeUtcStart, createdDateTimeUtcEnd).
 
-        When both $top
-        and $skip are included, the server should first apply $skip and then $top on
+        When both top
+        and skip are included, the server should first apply skip and then top on
         the collection.
-        Note: If the server can't honor $top and/or $skip, the server
+        Note: If the server can't honor top and/or skip, the server
         must return an error to the client informing about it instead of just ignoring
         the query options.
         This reduces the risk of the client making assumptions about
@@ -1218,31 +1041,31 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
 
         :param id: Format - uuid.  The operation id. Required.
         :type id: str
-        :keyword top: $top indicates the total number of records the user wants to be returned across
+        :keyword top: top indicates the total number of records the user wants to be returned across
          all pages.
 
-         Clients MAY use $top and $skip query parameters to
+         Clients MAY use top and skip query parameters to
          specify a number of results to return and an offset into the collection.
          When
-         both $top and $skip are given by a client, the server SHOULD first apply $skip
-         and then $top on the collection.
+         both top and skip are given by a client, the server SHOULD first apply skip
+         and then top on the collection.
 
          Note: If the server can't honor
-         $top and/or $skip, the server MUST return an error to the client informing
+         top and/or skip, the server MUST return an error to the client informing
          about it instead of just ignoring the query options. Default value is None.
         :paramtype top: int
-        :keyword skip: $skip indicates the number of records to skip from the list of records held by
+        :keyword skip: skip indicates the number of records to skip from the list of records held by
          the server based on the sorting method specified.  By default, we sort by
          descending start time.
 
-         Clients MAY use $top and $skip query
+         Clients MAY use top and skip query
          parameters to specify a number of results to return and an offset into the
          collection.
-         When both $top and $skip are given by a client, the server SHOULD
-         first apply $skip and then $top on the collection.
+         When both top and skip are given by a client, the server SHOULD
+         first apply skip and then top on the collection.
 
          Note: If the
-         server can't honor $top and/or $skip, the server MUST return an error to the
+         server can't honor top and/or skip, the server MUST return an error to the
          client informing about it instead of just ignoring the query options. Default value is None.
         :paramtype skip: int
         :keyword ids: Ids to use in filtering. Default value is None.
@@ -1255,9 +1078,9 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         :keyword created_date_time_utc_end: the end datetime to get items before. Default value is
          None.
         :paramtype created_date_time_utc_end: ~datetime.datetime
-        :keyword order_by: the sorting query for the collection (ex: 'CreatedDateTimeUtc
+        :keyword orderby: the sorting query for the collection (ex: 'CreatedDateTimeUtc
          asc','CreatedDateTimeUtc desc'). Default value is None.
-        :paramtype order_by: list[str]
+        :paramtype orderby: list[str]
         :return: An iterator like instance of DocumentStatus
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.ai.translation.document.models.DocumentStatus]
@@ -1326,13 +1149,15 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
                     statuses=statuses,
                     created_date_time_utc_start=created_date_time_utc_start,
                     created_date_time_utc_end=created_date_time_utc_end,
-                    order_by=order_by,
+                    orderby=orderby,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1350,7 +1175,9 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1360,14 +1187,14 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.DocumentStatus], deserialized["value"])
             if cls:
-                list_of_elem = cls(list_of_elem)  
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -1384,7 +1211,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
 
     @distributed_trace_async
     async def get_supported_formats(
-        self, *, type: Union[str, _models.FormatType], **kwargs: Any
+        self, *, type: Optional[Union[str, _models.FileFormatType]] = None, **kwargs: Any
     ) -> _models.SupportedFileFormats:
         """Returns a list of supported document formats.
 
@@ -1394,8 +1221,8 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         content-type if using the upload API.
 
         :keyword type: the type of format like document or glossary. Known values are: "document" and
-         "glossary". Required.
-        :paramtype type: str or ~azure.ai.translation.document.models.FormatType
+         "glossary". Default value is None.
+        :paramtype type: str or ~azure.ai.translation.document.models.FileFormatType
         :return: SupportedFileFormats. The SupportedFileFormats is compatible with MutableMapping
         :rtype: ~azure.ai.translation.document.models.SupportedFileFormats
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1418,6 +1245,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
                             "format": "str",  # Name of the format. Required.
                             "defaultVersion": "str",  # Optional. Default version if none
                               is specified.
+                            "type": "str",  # Optional. Supported Type for this format.
                             "versions": [
                                 "str"  # Optional. Supported Version.
                             ]
@@ -1450,7 +1278,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1468,14 +1296,15 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
             deserialized = _deserialize(_models.SupportedFileFormats, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized  
+        return deserialized  # type: ignore
 
 
 class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-too-long
     SingleDocumentTranslationClientMixinABC
 ):
+
     @overload
     async def document_translate(
         self,
@@ -1660,7 +1489,7 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1680,7 +1509,6 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
         deserialized = response.iter_bytes()
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        #return deserialized  
-        return await response.read()
+        return deserialized  # type: ignore

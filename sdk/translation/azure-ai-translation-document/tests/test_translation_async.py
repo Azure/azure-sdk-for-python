@@ -456,7 +456,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
         target_container_sas_url = self.create_target_container(variables=variables)
 
         def callback(request):
-            req = _StartTranslationDetails._deserialize(json.loads(request.http_request.body),[])
+            req = _StartTranslationDetails._deserialize(json.loads(request.http_request.body), [])
             input = req.inputs[0]
             assert input.source.source_url == source_container_sas_url
             assert input.source.language == "en"

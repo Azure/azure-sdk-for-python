@@ -78,9 +78,9 @@ class DocumentTranslationLROPoller(LROPoller[PollingReturnType_co]):
         :return: The str ID for the translation operation.
         :rtype: str
         """
-        if self._polling_method._current_body:   # pylint: disable=protected-access
-            return self._polling_method._current_body.id   # pylint: disable=protected-access
-        return self._polling_method._get_id_from_headers()   # pylint: disable=protected-access
+        if self._polling_method._current_body:  # pylint: disable=protected-access
+            return self._polling_method._current_body.id  # pylint: disable=protected-access
+        return self._polling_method._get_id_from_headers()  # pylint: disable=protected-access
 
     @property
     def details(self) -> TranslationStatus:
@@ -89,11 +89,11 @@ class DocumentTranslationLROPoller(LROPoller[PollingReturnType_co]):
         :return: The details for the translation operation.
         :rtype: ~azure.ai.translation.document.TranslationStatus
         """
-        if self._polling_method._current_body:   # pylint: disable=protected-access
+        if self._polling_method._current_body:  # pylint: disable=protected-access
             return TranslationStatus._from_generated(  # pylint: disable=protected-access
-                self._polling_method._current_body   # pylint: disable=protected-access
+                self._polling_method._current_body  # pylint: disable=protected-access
             )
-        return TranslationStatus(id=self._polling_method._get_id_from_headers())   # pylint: disable=protected-access
+        return TranslationStatus(id=self._polling_method._get_id_from_headers())  # pylint: disable=protected-access
 
     @classmethod
     def from_continuation_token(  # pylint: disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype
@@ -126,7 +126,11 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
             return _TranslationStatus()
 
     def _get_id_from_headers(self) -> str:
-        return self._initial_response.http_response.headers["Operation-Location"].split("/batches/")[1].split("?api-version")[0]
+        return (
+            self._initial_response.http_response.headers["Operation-Location"]
+            .split("/batches/")[1]
+            .split("?api-version")[0]
+        )
 
     def finished(self) -> bool:
         """Is this polling finished?
@@ -154,7 +158,7 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
         return self._get_id_from_headers()
 
     # pylint: disable=arguments-differ
-    def from_continuation_token(self, continuation_token: str, **kwargs: Any) -> Tuple:  
+    def from_continuation_token(self, continuation_token: str, **kwargs: Any) -> Tuple:
         try:
             client = kwargs["client"]
         except KeyError as exc:
@@ -185,7 +189,7 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
         if self._failed(self.status()):
             raise OperationFailed("Operation failed or canceled")
 
-        final_get_url = self._operation.get_final_get_url(self._pipeline_response)  
+        final_get_url = self._operation.get_final_get_url(self._pipeline_response)
         if final_get_url:
             self._pipeline_response = self.request_status(final_get_url)
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
@@ -284,7 +288,6 @@ def validate_api_version(api_version: str) -> None:
         ) from exc
 
 
-
 def get_translation_input(args, kwargs, continuation_token):
     try:
         inputs = kwargs.pop("inputs", None)
@@ -326,9 +329,11 @@ def get_translation_input(args, kwargs, continuation_token):
                         _TargetInput(
                             target_url=target_url,
                             language=target_language,
-                            glossaries=[g._to_generated() for g in glossaries]  # pylint: disable=protected-access
-                            if glossaries
-                            else None,
+                            glossaries=(
+                                [g._to_generated() for g in glossaries]  # pylint: disable=protected-access
+                                if glossaries
+                                else None
+                            ),
                             category=category_id,
                         )
                     ],
@@ -361,14 +366,14 @@ def get_http_logging_policy(**kwargs):
     )
     http_logging_policy.allowed_query_params.update(
         {
-            "$top",
-            "$skip",
-            "$maxpagesize",
+            "top",
+            "skip",
+            "maxpagesize",
             "ids",
             "statuses",
             "createdDateTimeUtcStart",
             "createdDateTimeUtcEnd",
-            "$orderBy",
+            "orderby",
         }
     )
     return http_logging_policy
@@ -388,20 +393,14 @@ def convert_datetime(date_time: Union[str, datetime.datetime]) -> datetime.datet
     raise TypeError("Bad datetime type")
 
 
-def convert_order_by(order_by: Optional[List[str]]) -> Optional[List[str]]:
-    if order_by:
-        order_by = [order.replace("created_on", "createdDateTimeUtc") for order in order_by]
-    return order_by
-
+def convert_order_by(orderby: Optional[List[str]]) -> Optional[List[str]]:
+    if orderby:
+        orderby = [order.replace("created_on", "createdDateTimeUtc") for order in orderby]
+    return orderby
 
 
 class DocumentTranslationClient:
-    def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AzureKeyCredential, TokenCredential],
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
         """DocumentTranslationClient is your interface to the Document Translation service.
         Use the client to translate whole documents while preserving source document
         structure and text formatting.
@@ -445,8 +444,9 @@ class DocumentTranslationClient:
         #     self._api_version = cast(DocumentTranslationApiVersion, self._api_version)
         #     self._api_version = self._api_version.value
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
-        
+
         from ._client import DocumentTranslationClient as _BatchDocumentTranslationClient
+
         self._client = _BatchDocumentTranslationClient(
             endpoint=self._endpoint,
             credential=credential,
@@ -616,9 +616,7 @@ class DocumentTranslationClient:
 
         inputs = get_translation_input(args, kwargs, continuation_token)
 
-        def deserialization_callback(
-            raw_response, _, headers
-        ):  # pylint: disable=unused-argument
+        def deserialization_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             translation_status = json.loads(raw_response.http_response.text())
             return self.list_document_statuses(translation_status["id"])
 
@@ -635,7 +633,8 @@ class DocumentTranslationClient:
             )
 
         callback = kwargs.pop("cls", deserialization_callback)
-        return cast(DocumentTranslationLROPoller[ItemPaged[DocumentStatus]],
+        return cast(
+            DocumentTranslationLROPoller[ItemPaged[DocumentStatus]],
             self._client.begin_start_translation(
                 body=_StartTranslationDetails(inputs=inputs),
                 polling=DocumentTranslationLROPollingMethod(
@@ -647,7 +646,7 @@ class DocumentTranslationClient:
                 cls=callback,
                 continuation_token=continuation_token,
                 **kwargs
-            )
+            ),
         )
 
     @distributed_trace
@@ -663,9 +662,7 @@ class DocumentTranslationClient:
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
 
-        translation_status = self._client.get_translation_status(
-            translation_id, **kwargs
-        )
+        translation_status = self._client.get_translation_status(translation_id, **kwargs)
         return TranslationStatus._from_generated(  # pylint: disable=protected-access
             _TranslationStatus(translation_status)
         )
@@ -696,7 +693,7 @@ class DocumentTranslationClient:
         statuses: Optional[List[str]] = None,
         created_after: Optional[Union[str, datetime.datetime]] = None,
         created_before: Optional[Union[str, datetime.datetime]] = None,
-        order_by: Optional[List[str]] = None,
+        orderby: Optional[List[str]] = None,
         **kwargs: Any
     ) -> ItemPaged[TranslationStatus]:
         """List all the submitted translation operations under the Document Translation resource.
@@ -712,7 +709,7 @@ class DocumentTranslationClient:
         :paramtype created_after: str or ~datetime.datetime
         :keyword created_before: Get operations created before a certain datetime.
         :paramtype created_before: str or ~datetime.datetime
-        :keyword list[str] order_by: The sorting query for the operations returned. Currently only
+        :keyword list[str] orderby: The sorting query for the operations returned. Currently only
             'created_on' supported.
             format: ["param1 asc/desc", "param2 asc/desc", ...]
             (ex: 'created_on asc', 'created_on desc').
@@ -732,7 +729,7 @@ class DocumentTranslationClient:
 
         if statuses:
             statuses = [convert_status(status, ll=True) for status in statuses]
-        order_by = convert_order_by(order_by)
+        orderby = convert_order_by(orderby)
         created_after = convert_datetime(created_after) if created_after else None
         created_before = convert_datetime(created_before) if created_before else None
 
@@ -745,23 +742,22 @@ class DocumentTranslationClient:
 
         model_conversion_function = kwargs.pop(
             "cls",
-            lambda translation_statuses: [
-                _convert_from_generated_model(status) for status in translation_statuses
-            ],
+            lambda translation_statuses: [_convert_from_generated_model(status) for status in translation_statuses],
         )
 
-        return cast(ItemPaged[TranslationStatus],
+        return cast(
+            ItemPaged[TranslationStatus],
             self._client.get_translations_status(
                 cls=model_conversion_function,
                 created_date_time_utc_start=created_after,
                 created_date_time_utc_end=created_before,
                 ids=translation_ids,
-                order_by=order_by,
+                orderby=orderby,
                 statuses=statuses,
                 top=top,
-                skip=skip,  
+                skip=skip,
                 **kwargs
-            )
+            ),
         )
 
     @distributed_trace
@@ -775,7 +771,7 @@ class DocumentTranslationClient:
         statuses: Optional[List[str]] = None,
         created_after: Optional[Union[str, datetime.datetime]] = None,
         created_before: Optional[Union[str, datetime.datetime]] = None,
-        order_by: Optional[List[str]] = None,
+        orderby: Optional[List[str]] = None,
         **kwargs: Any
     ) -> ItemPaged[DocumentStatus]:
         """List all the document statuses for a given translation operation.
@@ -792,7 +788,7 @@ class DocumentTranslationClient:
         :paramtype created_after: str or ~datetime.datetime
         :keyword created_before: Get documents created before a certain datetime.
         :paramtype created_before: str or ~datetime.datetime
-        :keyword list[str] order_by: The sorting query for the documents. Currently only
+        :keyword list[str] orderby: The sorting query for the documents. Currently only
             'created_on' is supported.
             format: ["param1 asc/desc", "param2 asc/desc", ...]
             (ex: 'created_on asc', 'created_on desc').
@@ -812,39 +808,32 @@ class DocumentTranslationClient:
 
         if statuses:
             statuses = [convert_status(status, ll=True) for status in statuses]
-        order_by = convert_order_by(order_by)
-        created_after = (
-            convert_datetime(created_after) if created_after else None
-        )
-        created_before = (
-            convert_datetime(created_before) if created_before else None
-        )
+        orderby = convert_order_by(orderby)
+        created_after = convert_datetime(created_after) if created_after else None
+        created_before = convert_datetime(created_before) if created_before else None
 
         def _convert_from_generated_model(generated_model):
-            return DocumentStatus._from_generated(  # pylint: disable=protected-access
-                _DocumentStatus(generated_model)
-            )
+            return DocumentStatus._from_generated(_DocumentStatus(generated_model))  # pylint: disable=protected-access
 
         model_conversion_function = kwargs.pop(
             "cls",
-            lambda doc_statuses: [
-                _convert_from_generated_model(doc_status) for doc_status in doc_statuses
-            ],
+            lambda doc_statuses: [_convert_from_generated_model(doc_status) for doc_status in doc_statuses],
         )
 
-        return cast(ItemPaged[DocumentStatus],
+        return cast(
+            ItemPaged[DocumentStatus],
             self._client.get_documents_status(
                 id=translation_id,
                 cls=model_conversion_function,
                 created_date_time_utc_start=created_after,
                 created_date_time_utc_end=created_before,
                 ids=document_ids,
-                order_by=order_by,
+                orderby=orderby,
                 statuses=statuses,
                 top=top,
                 skip=skip,
                 **kwargs
-            )
+            ),
         )
 
     @distributed_trace
@@ -858,12 +847,8 @@ class DocumentTranslationClient:
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
 
-        document_status = self._client.get_document_status(
-            translation_id, document_id, **kwargs
-        )
-        return DocumentStatus._from_generated(  # pylint: disable=protected-access
-            _DocumentStatus(document_status)
-        )
+        document_status = self._client.get_document_status(translation_id, document_id, **kwargs)
+        return DocumentStatus._from_generated(_DocumentStatus(document_status))  # pylint: disable=protected-access
 
     @distributed_trace
     def get_supported_glossary_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:
@@ -874,12 +859,7 @@ class DocumentTranslationClient:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        glossary_formats = (
-            self._client.get_supported_formats(
-                type="glossary",
-                **kwargs
-            )
-        )
+        glossary_formats = self._client.get_supported_formats(type="glossary", **kwargs)
         return DocumentTranslationFileFormat._from_generated_list(  # pylint: disable=protected-access
             glossary_formats.value
         )
@@ -893,15 +873,11 @@ class DocumentTranslationClient:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        document_formats = (
-            self._client.get_supported_formats(
-                type="document",
-                **kwargs
-            )
-        )
+        document_formats = self._client.get_supported_formats(type="document", **kwargs)
         return DocumentTranslationFileFormat._from_generated_list(  # pylint: disable=protected-access
             document_formats.value
         )
+
 
 __all__: List[str] = [
     "DocumentTranslationClient",

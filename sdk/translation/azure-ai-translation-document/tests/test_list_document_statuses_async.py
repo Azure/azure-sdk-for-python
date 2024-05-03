@@ -152,7 +152,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         )
 
         # check doc statuses
-        doc_statuses = client.list_document_statuses(poller.id, order_by=["created_on asc"])
+        doc_statuses = client.list_document_statuses(poller.id, orderby=["created_on asc"])
 
         current = None
         docs = []
@@ -180,7 +180,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         )
 
         # check doc statuses
-        doc_statuses = client.list_document_statuses(poller.id, order_by=["created_on desc"])
+        doc_statuses = client.list_document_statuses(poller.id, orderby=["created_on desc"])
 
         current = None
         docs = []
@@ -221,7 +221,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
             document_ids=ids,
             statuses=statuses,
             # ordering
-            order_by=["created_on asc"],
+            orderby=["created_on asc"],
             # paging
             skip=skip,
         ).by_page()
