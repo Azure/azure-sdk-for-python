@@ -846,7 +846,6 @@ class FaceSessionClient(FaceSessionClientGenerated):
     :paramtype api_version: str or ~azure.ai.vision.face.models.Versions
     """
 
-    # TODO
     @distributed_trace_async
     async def create_liveness_with_verify_session(
         self,
@@ -939,7 +938,6 @@ class FaceSessionClient(FaceSessionClientGenerated):
                       corresponding Session DELETE operation. Required.
                 }
         """
-        # TODO
         if verify_image is not None:
             request_body = _models._models.CreateLivenessWithVerifySessionContent(
                 parameters=cast(_models._models.CreateLivenessSessionContentForMultipart, body),
