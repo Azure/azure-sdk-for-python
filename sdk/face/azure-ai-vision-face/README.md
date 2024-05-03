@@ -2,7 +2,7 @@
 
 The Azure AI Face service provides AI algorithms that detect, recognize, and analyze human faces in images. It includes the following main features:
 
-- Face detection and analyzsis
+- Face detection and analysis
 - Liveness detection
 - Face recognition
   - Face verification ("one-to-one" matching)
@@ -12,7 +12,6 @@ The Azure AI Face service provides AI algorithms that detect, recognize, and ana
 
 [Source code][source_code]
 | [Package (PyPI)][face_pypi]
-| [Package (Conda)](https://anaconda.org/microsoft/azure-ai-vision-face/)
 | [API reference documentation][face_ref_docs]
 | [Product documentation][face_product_docs]
 | [Samples][face_samples]
@@ -117,7 +116,7 @@ face_client = FaceClient(endpoint, credential)
 `FaceClient` provides operations for:
 
  - Face detection and analysis: Detect human faces in an image and return the rectangle coordinates of their locations,
-   and optinally with landmarks, and face-related attributes. This operation is required as a first step in all the
+   and optionally with landmarks, and face-related attributes. This operation is required as a first step in all the
    other face recognition scenarios.
  - Face recognition: Confirm that a user is who they claim to be based on how closely their face data matches the target face.
    It includes Face verification ("one-to-one" matching) and Face identification ("one-to-many" matching).
@@ -160,7 +159,7 @@ Sample code snippets are provided to illustrate using long-running operations [b
 The following section provides several code snippets covering some of the most common Face tasks, including:
 
 * [Detecting faces in an image](#face-detection "Face Detection")
-* [Identifing the specific face from a LargePersonGroup](#face-recognition-from-largepersongroup "Face Recognition from LargePersonGroup")
+* [Identifying the specific face from a LargePersonGroup](#face-recognition-from-largepersongroup "Face Recognition from LargePersonGroup")
 * [Determining if a face in an video is real (live) or fake (spoof)](#liveness-detection "Liveness Detection")
 
 ### Face Detection
@@ -182,9 +181,9 @@ with FaceClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as face_c
 
     result = face_client.detect(
         file_content,
-        FaceDetectionModel.DETECTION_03,
-        FaceRecognitionModel.RECOGNITION_04,
-        True,  # return_face_id
+        detection_model=FaceDetectionModel.DETECTION_03,
+        recognition_model=FaceRecognitionModel.RECOGNITION_04,
+        return_face_id=True,
         return_face_attributes=[
             FaceAttributeTypeDetection03.HEAD_POSE,
             FaceAttributeTypeDetection03.MASK,
@@ -202,8 +201,8 @@ with FaceClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as face_c
 ### Face Recognition from LargePersonGroup
 Identify a face against a defined LargePersonGroup.
 
-First, we have to use `FaceAdministrationClient` to create a LargePersonGroup, add a few Person to it,
-and then register faces with these Person.
+First, we have to use `FaceAdministrationClient` to create a `LargePersonGroup`, add a few `Person` to it,
+and then register faces with these `Person`.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -211,7 +210,7 @@ from azure.ai.vision.face import FaceAdministrationClient, FaceClient
 from azure.ai.vision.face.models import (FaceDetectionModel, FaceRecognitionModel)
 
 
-def _read_file_content(file_path: str):
+def read_file_content(file_path: str):
     with open(file_path, "rb") as fd:
         file_content = fd.read()
 
@@ -235,7 +234,7 @@ with FaceAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(k
     face_admin_client.add_large_person_group_person_face(
         large_person_group_id,
         bill_person_id,
-        _read_file_content(bill_image_file_path),
+        read_file_content(bill_image_file_path),
         detection_model=FaceDetectionModel.DETECTION_03,
         user_data="Dad-0001")
 
@@ -246,7 +245,7 @@ with FaceAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(k
     face_admin_client.add_large_person_group_person_face(
         large_person_group_id,
         clare_person_id,
-        _read_file_content(clare_image_file_path),
+        read_file_content(clare_image_file_path),
         detection_model=FaceDetectionModel.DETECTION_03,
         user_data="Mom-0001")
 ```
@@ -268,7 +267,7 @@ with FaceClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as face_c
     # Detect the face from the target image.
     target_image_file_path = "./samples/images/identification1.jpg"
     detect_result = face_client.detect(
-        _read_file_content(target_image_file_path),
+        read_file_content(target_image_file_path),
         detection_model=FaceDetectionModel.DETECTION_03,
         recognition_model=FaceRecognitionModel.RECOGNITION_04,
         return_face_id=True)
@@ -297,7 +296,7 @@ the time of authentication. The whole process of authentication is called a sess
 There're two different components in the authentication: a mobile application and an app server/orchestrator.
 Before uploading the video stream, the app server has to create a session, and then the mobile client could upload
 the payload with a `session authorization token` to call the liveness detection. The app server can query for the
-liveness detection result and audit logs anytime untill the session is deleted.
+liveness detection result and audit logs anytime until the session is deleted.
 
 The Liveness detection operation can not only confirm if the input is live or spoof, but also verify whether the input
 belongs to the expected person's face, which is called **liveness detection with face verification**. For the detail
@@ -308,9 +307,11 @@ liveness detection, please see the sample of [mobile applications][integrate_liv
 
 Here is an example to create and get the liveness detection result of a session.
 ```python
+import uuid
+
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.vision.face import FaceSessionClient
-from azure.ai.vision.face.models import LivenessSessionCreationContent, LivenessOperationMode
+from azure.ai.vision.face.models import CreateLivenessSessionContent, LivenessOperationMode
 
 endpoint = "<your endpoint>"
 key = "<your api key>"
@@ -319,10 +320,11 @@ with FaceSessionClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as
     # Create a session.
     print("Create a new liveness session.")
     created_session = face_session_client.create_liveness_session(
-        LivenessSessionCreationContent(
+        CreateLivenessSessionContent(
             liveness_operation_mode=LivenessOperationMode.PASSIVE,
             device_correlation_id=str(uuid.uuid4()),
-            send_results_to_client=False))
+            send_results_to_client=False,
+            auth_token_time_to_live_in_seconds=60))
     print(f"Result: {created_session}")
 
     # Get the liveness detection result.
@@ -333,9 +335,11 @@ with FaceSessionClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as
 
 Here is another example for the liveness detection with face verification.
 ```python
+import uuid
+
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.vision.face import FaceSessionClient
-from azure.ai.vision.face.models import LivenessOperationMode, LivenessSessionCreationContent
+from azure.ai.vision.face.models import CreateLivenessSessionContent, LivenessOperationMode
 
 endpoint = "<your endpoint>"
 key = "<your api key>"
@@ -349,10 +353,11 @@ with FaceSessionClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as
     print("Create a new liveness with verify session with verify image.")
 
     created_session = face_session_client.create_liveness_with_verify_session(
-        LivenessSessionCreationContent(
+        CreateLivenessSessionContent(
             liveness_operation_mode=LivenessOperationMode.PASSIVE,
             device_correlation_id=str(uuid.uuid4()),
-            send_results_to_client=False),
+            send_results_to_client=False,
+            auth_token_time_to_live_in_seconds=60),
         verify_image=file_content)
     print(f"Result: {created_session}")
 
@@ -440,6 +445,7 @@ additional questions or comments.
 [azure_sub]: https://azure.microsoft.com/free/
 [azure_portal_list_face_account]: https://portal.azure.com/#blade/Microsoft_Azure_ProjectOxford/CognitiveServicesHub/Face
 [azure_portal_list_cognitive_service_account]: https://portal.azure.com/#view/Microsoft_Azure_ProjectOxford/CognitiveServicesHub/~/AllInOne
+[azure_cognitive_service_account]: https://learn.microsoft.com/en-us/azure/ai-services/multi-service-resource?tabs=windows&pivots=azportal#supported-services-with-a-multi-service-resource
 [azure_portal_create_face_account]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesFace
 [quick_start_create_account_via_azure_cli]: https://learn.microsoft.com/en-us/azure/ai-services/multi-service-resource?tabs=windows&pivots=azcli
 [quick_start_create_account_via_azure_powershell]: https://learn.microsoft.com/en-us/azure/ai-services/multi-service-resource?tabs=windows&pivots=azpowershell
