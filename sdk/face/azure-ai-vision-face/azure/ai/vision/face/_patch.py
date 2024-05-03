@@ -36,7 +36,7 @@ class FaceClient(FaceClientGenerated):
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        url: str,
+        url: str = _Unset,
         detection_model: Union[str, _models.FaceDetectionModel],
         recognition_model: Union[str, _models.FaceRecognitionModel],
         return_face_id: bool,
