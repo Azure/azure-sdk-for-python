@@ -25,6 +25,7 @@ These sample programs show common scenarios for the Document Translation client'
 |[sample_translation_with_glossaries.py][begin_translation_with_glossaries] and [sample_translation_with_glossaries_async.py][begin_translation_with_glossaries_async]|Translate your documents using custom glossaries|
 |[sample_check_document_statuses.py][check_document_statuses] and [sample_check_document_statuses_async.py][check_document_statuses_async]|Check status of submitted documents|
 |[sample_list_translations.py][list_translations] and [sample_list_translations_async.py][list_translations_async]|Check status of all submitted translation operations|
+|[sample_synchronous_document_translation.py][document_translation] and [sample_begin_translation_async.py][document_translation_async]|Translate your documents|
 
 
 ## Prerequisites
@@ -93,3 +94,5 @@ what you can do with the Azure Document Translation client library.
 [azure_document_translation_account]: https://learn.microsoft.com/azure/ai-services/translator/document-translation/overview
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
 [api_reference_documentation]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
+[document_translation]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-document/samples/sample_synchronous_document_translation.py
+[document_translation_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_synchronous_document_translation_async.py

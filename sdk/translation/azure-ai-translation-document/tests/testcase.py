@@ -214,19 +214,24 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         assert format.content_types is not None
 
     # client helpers
-    def _begin_and_validate_translation(self, client, translation_inputs, total_docs_count, language=None):
+    def _begin_and_validate_translation(self, client, translation_inputs, total_docs_count, language=None, **kwargs):
+        wait_for_operation = kwargs.pop("wait", True)
         # submit job
         poller = client.begin_translation(translation_inputs)
         assert poller.id is not None
-        assert poller.details.id is not None
         # wait for result
-        result = poller.result()
+        if wait_for_operation:
+            result = poller.result()
+            for doc in result:
+                self._validate_doc_status(doc, language)
+        
+        assert poller.details.id is not None
+        
         # validate
         self._validate_translation_metadata(
             poller=poller, status="Succeeded", total=total_docs_count, succeeded=total_docs_count
         )
-        for doc in result:
-            self._validate_doc_status(doc, language)
+       
         return poller.id
 
     def _begin_multiple_translations(self, client, operations_count, **kwargs):
