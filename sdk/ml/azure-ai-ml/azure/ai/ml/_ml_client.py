@@ -1079,6 +1079,7 @@ class MLClient:
         return self._marketplace_subscriptions
 
     @property
+    @experimental
     def indexes(self) -> IndexOperations:
         """A collection of index related operations.
 
