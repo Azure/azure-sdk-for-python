@@ -60,7 +60,7 @@ def download_blob_to_local(blob_sas_url, local_folder):
 # sample parameters
 # modelAssetId = "azureml://registries/testFeed/models/testModel/versions/13"
 # localDestinationPath = "C:\\PythonVirtualEnv\\venv1\\BlobDownLoad"
-# gitHubAuthToken = "ghu_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+# gitHubAuthToken = "ghu_xxxxxxxxxxxxx"
 def download_model(model_asset_id, github_auth_token, local_destination_path):
     model_entity, blob_sas_uri = get_registry_model_details(model_asset_id, github_auth_token)
     if model_entity and blob_sas_uri:
