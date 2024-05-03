@@ -315,18 +315,15 @@ def set_common_sanitizers() -> None:
 
     # General regex sanitizers for sensitive patterns throughout interactions
     batch_sanitizers[Sanitizer.GENERAL_REGEX] = [
-        {"regex": "(?:[\\?&](sv|sig|se|srt|ss|st|sp)=)(?<secret>[^&\\\"\\s]*)",
-         "group_for_replace": "secret", "value": SANITIZED},
-
+        {"regex": "(?:[\\?&](sig|se|st)=)(?<secret>[^&\\\"\\s]*)", "group_for_replace": "secret", "value": SANITIZED},
+        {"regex": "token=(?<secret>[^&\\\"]+)", "group_for_replace": "secret", "value": SANITIZED},
     ]
 
     # Header regex sanitizers for sensitive patterns in request/response headers
     batch_sanitizers[Sanitizer.HEADER_REGEX] = []
 
     # URI regex sanitizers for sensitive patterns in request/response URLs
-    batch_sanitizers[Sanitizer.URI_REGEX] = [
-        {"regex": "token=(?<secret>[^&\\\"]+)", "group_for_replace": "secret", "value": SANITIZED}
-    ]
+    batch_sanitizers[Sanitizer.URI_REGEX] = []
 
     # Send all the above sanitizers to the test proxy in a single, batch request
     add_batch_sanitizers(sanitizers=batch_sanitizers)
