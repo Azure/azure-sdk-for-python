@@ -692,6 +692,9 @@ The operation will fail if you pass new vector indexes to your indexing policy b
 database.create_container(id=container_id, partition_key=PartitionKey(path="/id"),
                           indexing_policy=indexing_policy, vector_embedding_policy=vector_embedding_policy)
 ```
+Attempting to create a container with vector capabilities that use wrong data types, dimensions, distance functions,
+or trying to only create vector indexes without a vector embedding policy will all see errors returning from the service.
+
 ***Note: vector embeddings and vector indexes CANNOT be edited by container replace operations. They are only available directly through creation.***
 
 ## Troubleshooting
