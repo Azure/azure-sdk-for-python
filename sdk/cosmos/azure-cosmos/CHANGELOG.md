@@ -4,7 +4,7 @@
 
 #### Features Added
 * Adds vector embedding policy and vector indexing policy. See [PR 34882](https://github.com/Azure/azure-sdk-for-python/pull/34882).
-* Adds support for vector search non-streaming order by queries. See [PR 10101](https://github.com/Azure/azure-sdk-for-python/pull/10101).
+* Adds support for vector search non-streaming order by queries. See [PR 35468](https://github.com/Azure/azure-sdk-for-python/pull/35468).
 * Added support for using the start time option for change feed query API. See [PR 35090](https://github.com/Azure/azure-sdk-for-python/pull/35090)
 
 #### Breaking Changes
