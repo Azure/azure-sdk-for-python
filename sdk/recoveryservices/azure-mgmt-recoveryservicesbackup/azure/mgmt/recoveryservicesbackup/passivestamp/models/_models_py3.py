@@ -198,7 +198,7 @@ class ProtectedItem(_serialization.Model):  # pylint: disable=too-many-instance-
     AzureFileshareProtectedItem, AzureIaaSVMProtectedItem, AzureVmWorkloadProtectedItem,
     DPMProtectedItem, GenericProtectedItem, MabFileFolderProtectedItem, AzureSqlProtectedItem
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -364,7 +364,7 @@ class ProtectedItem(_serialization.Model):  # pylint: disable=too-many-instance-
 class AzureFileshareProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
     """Azure File Share workload-specific backup item.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -650,7 +650,7 @@ class RecoveryPoint(_serialization.Model):
     AzureFileShareRecoveryPoint, AzureWorkloadRecoveryPoint, GenericRecoveryPoint,
     IaasVMRecoveryPoint
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -685,7 +685,7 @@ class AzureFileShareRecoveryPoint(RecoveryPoint):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -733,7 +733,7 @@ class RestoreRequest(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureFileShareRestoreRequest, AzureWorkloadRestoreRequest, IaasVMRestoreRequest
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -765,7 +765,7 @@ class RestoreRequest(_serialization.Model):
 class AzureFileShareRestoreRequest(RestoreRequest):
     """AzureFileShare Restore Request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -857,7 +857,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):  # pylint: disable=too-many-insta
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureIaaSClassicComputeVMProtectedItem, AzureIaaSComputeVMProtectedItem
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -1122,7 +1122,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):  # pylint: disable=too-many-insta
 class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disable=too-many-instance-attributes
     """IaaS VM workload-specific backup item representing the Classic Compute VM.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -1380,7 +1380,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylin
 class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disable=too-many-instance-attributes
     """IaaS VM workload-specific backup item representing the Azure Resource Manager VM.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -1726,24 +1726,6 @@ class AzureIaaSVMHealthDetails(ResourceHealthDetails):
     :vartype recommendations: list[str]
     """
 
-    _validation = {
-        "code": {"readonly": True},
-        "title": {"readonly": True},
-        "message": {"readonly": True},
-        "recommendations": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "int"},
-        "title": {"key": "title", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "recommendations": {"key": "recommendations", "type": "[str]"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
 
 class Job(_serialization.Model):
     """Defines workload agnostic properties for a job.
@@ -1751,7 +1733,7 @@ class Job(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureIaaSVMJob, AzureStorageJob, AzureWorkloadJob, DpmJob, MabJob
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar entity_friendly_name: Friendly name of the entity on which the current job is executing.
     :vartype entity_friendly_name: str
@@ -1846,7 +1828,7 @@ class Job(_serialization.Model):
 class AzureIaaSVMJob(Job):  # pylint: disable=too-many-instance-attributes
     """Azure IaaS VM workload-specific job object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar entity_friendly_name: Friendly name of the entity on which the current job is executing.
     :vartype entity_friendly_name: str
@@ -2157,7 +2139,7 @@ class AzureIaaSVMProtectedItemExtendedInfo(_serialization.Model):
 class AzureSqlProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
     """Azure SQL workload-specific backup item.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -2421,7 +2403,7 @@ class AzureStorageErrorInfo(_serialization.Model):
 class AzureStorageJob(Job):  # pylint: disable=too-many-instance-attributes
     """Azure storage specific job.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar entity_friendly_name: Friendly name of the entity on which the current job is executing.
     :vartype entity_friendly_name: str
@@ -2629,7 +2611,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-i
     AzureVmWorkloadSAPAseDatabaseProtectedItem, AzureVmWorkloadSAPHanaDatabaseProtectedItem,
     AzureVmWorkloadSQLDatabaseProtectedItem
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -2946,10 +2928,10 @@ class AzureVmWorkloadProtectedItemExtendedInfo(_serialization.Model):
 
 class AzureVmWorkloadSAPAseDatabaseProtectedItem(
     AzureVmWorkloadProtectedItem
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Azure VM workload-specific protected item representing SAP ASE Database.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -3217,10 +3199,10 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
 
 class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
     AzureVmWorkloadProtectedItem
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Azure VM workload-specific protected item representing SAP HANA Database.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -3491,7 +3473,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
 ):  # pylint: disable=too-many-instance-attributes
     """Azure VM workload-specific protected item representing SQL Database.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -3813,7 +3795,7 @@ class AzureWorkloadErrorInfo(_serialization.Model):
 class AzureWorkloadJob(Job):  # pylint: disable=too-many-instance-attributes
     """Azure storage specific job.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar entity_friendly_name: Friendly name of the entity on which the current job is executing.
     :vartype entity_friendly_name: str
@@ -4014,7 +3996,7 @@ class AzureWorkloadRecoveryPoint(RecoveryPoint):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -4088,7 +4070,7 @@ class AzureWorkloadPointInTimeRecoveryPoint(AzureWorkloadRecoveryPoint):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -4166,7 +4148,7 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
     AzureWorkloadPointInTimeRestoreRequest, AzureWorkloadSAPHanaRestoreRequest,
     AzureWorkloadSQLRestoreRequest
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -4260,7 +4242,7 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
 class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
     """AzureWorkload SAP Hana -specific restore. Specifically for PointInTime/Log restore.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -4352,12 +4334,14 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
         self.point_in_time = point_in_time
 
 
-class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadPointInTimeRecoveryPoint):
+class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(
+    AzureWorkloadPointInTimeRecoveryPoint
+):  # pylint: disable=name-too-long
     """Recovery point specific to PointInTime in SAPHana.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -4430,7 +4414,7 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureWorkloadSAPHanaPointInTimeRestoreRequest
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -4521,10 +4505,12 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
         self.object_type: str = "AzureWorkloadSAPHanaRestoreRequest"
 
 
-class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreRequest):
+class AzureWorkloadSAPHanaPointInTimeRestoreRequest(
+    AzureWorkloadSAPHanaRestoreRequest
+):  # pylint: disable=name-too-long
     """AzureWorkload SAP Hana -specific restore. Specifically for PointInTime/Log restore.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -4621,7 +4607,7 @@ class AzureWorkloadSAPHanaRecoveryPoint(AzureWorkloadRecoveryPoint):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -4688,7 +4674,7 @@ class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -4770,7 +4756,7 @@ class AzureWorkloadSQLPointInTimeRecoveryPoint(AzureWorkloadSQLRecoveryPoint):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -4858,7 +4844,7 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureWorkloadSQLPointInTimeRestoreRequest
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -4976,10 +4962,10 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
 
 class AzureWorkloadSQLPointInTimeRestoreRequest(
     AzureWorkloadSQLRestoreRequest
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """AzureWorkload SQL -specific restore. Specifically for PointInTime/Log restore.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -5098,7 +5084,7 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(
         self.point_in_time = point_in_time
 
 
-class AzureWorkloadSQLRecoveryPointExtendedInfo(_serialization.Model):
+class AzureWorkloadSQLRecoveryPointExtendedInfo(_serialization.Model):  # pylint: disable=name-too-long
     """Extended info class details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5648,7 +5634,7 @@ class CrrAccessToken(_serialization.Model):  # pylint: disable=too-many-instance
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     WorkloadCrrAccessToken
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -6092,7 +6078,7 @@ class DpmErrorInfo(_serialization.Model):
 class DpmJob(Job):  # pylint: disable=too-many-instance-attributes
     """DPM workload-specific job object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar entity_friendly_name: Friendly name of the entity on which the current job is executing.
     :vartype entity_friendly_name: str
@@ -6335,7 +6321,7 @@ class DpmJobTaskDetails(_serialization.Model):
 class DPMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
     """Additional information on Backup engine specific backup item.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -6781,7 +6767,7 @@ class ExtendedProperties(_serialization.Model):
 class GenericProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
     """Base class for backup items.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -6987,7 +6973,7 @@ class GenericProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-
 class GenericRecoveryPoint(RecoveryPoint):
     """Generic backup copy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -7047,7 +7033,7 @@ class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-a
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -7192,7 +7178,7 @@ class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-a
 class IaasVMRestoreRequest(RestoreRequest):  # pylint: disable=too-many-instance-attributes
     """IaaS VM workload-specific restore.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -7836,7 +7822,7 @@ class MabErrorInfo(_serialization.Model):
 class MabFileFolderProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
     """MAB workload-specific backup item.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
@@ -8082,7 +8068,7 @@ class MabFileFolderProtectedItemExtendedInfo(_serialization.Model):
 class MabJob(Job):  # pylint: disable=too-many-instance-attributes
     """MAB workload-specific job.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar entity_friendly_name: Friendly name of the entity on which the current job is executing.
     :vartype entity_friendly_name: str
@@ -8527,7 +8513,7 @@ class OperationStatusExtendedInfo(_serialization.Model):
     OperationStatusJobExtendedInfo, OperationStatusJobsExtendedInfo,
     OperationStatusProvisionILRExtendedInfo, OperationStatusRecoveryPointExtendedInfo
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -8560,7 +8546,7 @@ class OperationStatusExtendedInfo(_serialization.Model):
 class OperationStatusJobExtendedInfo(OperationStatusExtendedInfo):
     """Operation status job extended info.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -8591,7 +8577,7 @@ class OperationStatusJobExtendedInfo(OperationStatusExtendedInfo):
 class OperationStatusJobsExtendedInfo(OperationStatusExtendedInfo):
     """Operation status extended info for list of jobs.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -8631,7 +8617,7 @@ class OperationStatusJobsExtendedInfo(OperationStatusExtendedInfo):
 class OperationStatusProvisionILRExtendedInfo(OperationStatusExtendedInfo):
     """Operation status extended info for ILR provision action.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -8664,7 +8650,7 @@ class OperationStatusProvisionILRExtendedInfo(OperationStatusExtendedInfo):
 class OperationStatusRecoveryPointExtendedInfo(OperationStatusExtendedInfo):
     """Operation status extended info for Updated Recovery Point.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -9367,7 +9353,7 @@ class TargetRestoreInfo(_serialization.Model):
 class WorkloadCrrAccessToken(CrrAccessToken):  # pylint: disable=too-many-instance-attributes
     """WorkloadCrrAccessToken.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str

@@ -239,9 +239,9 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             jars=self.jars,
             files=self.files,
             archives=self.archives,
-            identity=self.identity._to_job_rest_object()
-            if self.identity and not isinstance(self.identity, dict)
-            else None,
+            identity=(
+                self.identity._to_job_rest_object() if self.identity and not isinstance(self.identity, dict) else None
+            ),
             conf=conf,
             properties=self.properties_sparkJob,
             environment_id=self.environment,
@@ -249,9 +249,9 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             outputs=to_rest_data_outputs(self.outputs),
             args=self.args,
             compute_id=self.compute,
-            resources=self.resources._to_rest_object()
-            if self.resources and not isinstance(self.resources, Dict)
-            else None,
+            resources=(
+                self.resources._to_rest_object() if self.resources and not isinstance(self.resources, Dict) else None
+            ),
         )
         result = JobBase(properties=properties)
         result.name = self.name
@@ -281,9 +281,11 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             code=rest_spark_job.code_id,
             compute=rest_spark_job.compute_id,
             environment=rest_spark_job.environment_id,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(rest_spark_job.identity)
-            if rest_spark_job.identity
-            else None,
+            identity=(
+                _BaseJobIdentityConfiguration._from_rest_object(rest_spark_job.identity)
+                if rest_spark_job.identity
+                else None
+            ),
             args=rest_spark_job.args,
             conf=rest_spark_conf,
             driver_cores=rest_spark_conf.get(
@@ -307,7 +309,6 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
 
         :param context: Context of spark job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
         :return: Translated spark component.
         :rtype: SparkComponent
         """
@@ -349,7 +350,6 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
 
         :param context: Context of spark job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
         :return: Translated spark component.
         :rtype: Spark
         """

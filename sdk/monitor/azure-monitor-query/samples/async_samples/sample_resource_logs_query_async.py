@@ -39,12 +39,14 @@ async def resource_logs_query():
     async with client:
         try:
             response = await client.query_resource(os.environ["LOGS_RESOURCE_ID"], query, timespan=timedelta(days=1))
-            if response.status == LogsQueryStatus.PARTIAL:
+            if response.status == LogsQueryStatus.SUCCESS:
+                data = response.tables
+            else:
+                # LogsQueryPartialResult - handle error here
                 error = response.partial_error
                 data = response.partial_data
                 print(error)
-            elif response.status == LogsQueryStatus.SUCCESS:
-                data = response.tables
+
             for table in data:
                 df = pd.DataFrame(data=table.rows, columns=table.columns)
                 print(df)

@@ -22,8 +22,8 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -63,8 +63,8 @@ class AllowedEnvironmentType(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -141,8 +141,8 @@ class AttachedNetworkConnection(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -267,8 +267,8 @@ class Catalog(Resource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -285,6 +285,8 @@ class Catalog(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar sync_type: Indicates the type of sync that is configured for the catalog. Known values
      are: "Manual" and "Scheduled".
     :vartype sync_type: str or ~azure.mgmt.devcenter.models.CatalogSyncType
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     :ivar provisioning_state: The provisioning state of the resource. Known values are:
      "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
      "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
@@ -325,6 +327,7 @@ class Catalog(Resource):  # pylint: disable=too-many-instance-attributes
         "git_hub": {"key": "properties.gitHub", "type": "GitCatalog"},
         "ado_git": {"key": "properties.adoGit", "type": "GitCatalog"},
         "sync_type": {"key": "properties.syncType", "type": "str"},
+        "tags": {"key": "properties.tags", "type": "{str}"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "sync_state": {"key": "properties.syncState", "type": "str"},
         "last_sync_stats": {"key": "properties.lastSyncStats", "type": "SyncStats"},
@@ -339,6 +342,7 @@ class Catalog(Resource):  # pylint: disable=too-many-instance-attributes
         git_hub: Optional["_models.GitCatalog"] = None,
         ado_git: Optional["_models.GitCatalog"] = None,
         sync_type: Optional[Union[str, "_models.CatalogSyncType"]] = None,
+        tags: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -349,11 +353,14 @@ class Catalog(Resource):  # pylint: disable=too-many-instance-attributes
         :keyword sync_type: Indicates the type of sync that is configured for the catalog. Known values
          are: "Manual" and "Scheduled".
         :paramtype sync_type: str or ~azure.mgmt.devcenter.models.CatalogSyncType
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
         self.git_hub = git_hub
         self.ado_git = ado_git
         self.sync_type = sync_type
+        self.tags = tags
         self.provisioning_state = None
         self.sync_state = None
         self.last_sync_stats = None
@@ -454,12 +461,15 @@ class CatalogUpdateProperties(_serialization.Model):
     :ivar sync_type: Indicates the type of sync that is configured for the catalog. Known values
      are: "Manual" and "Scheduled".
     :vartype sync_type: str or ~azure.mgmt.devcenter.models.CatalogSyncType
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
         "git_hub": {"key": "gitHub", "type": "GitCatalog"},
         "ado_git": {"key": "adoGit", "type": "GitCatalog"},
         "sync_type": {"key": "syncType", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
@@ -468,6 +478,7 @@ class CatalogUpdateProperties(_serialization.Model):
         git_hub: Optional["_models.GitCatalog"] = None,
         ado_git: Optional["_models.GitCatalog"] = None,
         sync_type: Optional[Union[str, "_models.CatalogSyncType"]] = None,
+        tags: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -478,11 +489,14 @@ class CatalogUpdateProperties(_serialization.Model):
         :keyword sync_type: Indicates the type of sync that is configured for the catalog. Known values
          are: "Manual" and "Scheduled".
         :paramtype sync_type: str or ~azure.mgmt.devcenter.models.CatalogSyncType
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
         self.git_hub = git_hub
         self.ado_git = ado_git
         self.sync_type = sync_type
+        self.tags = tags
 
 
 class CatalogProperties(CatalogUpdateProperties):
@@ -497,6 +511,8 @@ class CatalogProperties(CatalogUpdateProperties):
     :ivar sync_type: Indicates the type of sync that is configured for the catalog. Known values
      are: "Manual" and "Scheduled".
     :vartype sync_type: str or ~azure.mgmt.devcenter.models.CatalogSyncType
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     :ivar provisioning_state: The provisioning state of the resource. Known values are:
      "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
      "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
@@ -529,6 +545,7 @@ class CatalogProperties(CatalogUpdateProperties):
         "git_hub": {"key": "gitHub", "type": "GitCatalog"},
         "ado_git": {"key": "adoGit", "type": "GitCatalog"},
         "sync_type": {"key": "syncType", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "sync_state": {"key": "syncState", "type": "str"},
         "last_sync_stats": {"key": "lastSyncStats", "type": "SyncStats"},
@@ -543,6 +560,7 @@ class CatalogProperties(CatalogUpdateProperties):
         git_hub: Optional["_models.GitCatalog"] = None,
         ado_git: Optional["_models.GitCatalog"] = None,
         sync_type: Optional[Union[str, "_models.CatalogSyncType"]] = None,
+        tags: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -553,8 +571,10 @@ class CatalogProperties(CatalogUpdateProperties):
         :keyword sync_type: Indicates the type of sync that is configured for the catalog. Known values
          are: "Manual" and "Scheduled".
         :paramtype sync_type: str or ~azure.mgmt.devcenter.models.CatalogSyncType
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
         """
-        super().__init__(git_hub=git_hub, ado_git=ado_git, sync_type=sync_type, **kwargs)
+        super().__init__(git_hub=git_hub, ado_git=ado_git, sync_type=sync_type, tags=tags, **kwargs)
         self.provisioning_state = None
         self.sync_state = None
         self.last_sync_stats = None
@@ -619,8 +639,6 @@ class CatalogUpdate(_serialization.Model):
     """The catalog's properties for partial update. Properties not provided in the update request will
     not be changed.
 
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
     :ivar git_hub: Properties for a GitHub catalog type.
     :vartype git_hub: ~azure.mgmt.devcenter.models.GitCatalog
     :ivar ado_git: Properties for an Azure DevOps catalog type.
@@ -628,27 +646,27 @@ class CatalogUpdate(_serialization.Model):
     :ivar sync_type: Indicates the type of sync that is configured for the catalog. Known values
      are: "Manual" and "Scheduled".
     :vartype sync_type: str or ~azure.mgmt.devcenter.models.CatalogSyncType
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
         "git_hub": {"key": "properties.gitHub", "type": "GitCatalog"},
         "ado_git": {"key": "properties.adoGit", "type": "GitCatalog"},
         "sync_type": {"key": "properties.syncType", "type": "str"},
+        "tags": {"key": "properties.tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
         git_hub: Optional["_models.GitCatalog"] = None,
         ado_git: Optional["_models.GitCatalog"] = None,
         sync_type: Optional[Union[str, "_models.CatalogSyncType"]] = None,
+        tags: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
         :keyword git_hub: Properties for a GitHub catalog type.
         :paramtype git_hub: ~azure.mgmt.devcenter.models.GitCatalog
         :keyword ado_git: Properties for an Azure DevOps catalog type.
@@ -656,12 +674,14 @@ class CatalogUpdate(_serialization.Model):
         :keyword sync_type: Indicates the type of sync that is configured for the catalog. Known values
          are: "Manual" and "Scheduled".
         :paramtype sync_type: str or ~azure.mgmt.devcenter.models.CatalogSyncType
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.tags = tags
         self.git_hub = git_hub
         self.ado_git = ado_git
         self.sync_type = sync_type
+        self.tags = tags
 
 
 class CheckNameAvailabilityRequest(_serialization.Model):
@@ -731,63 +751,38 @@ class CheckNameAvailabilityResponse(_serialization.Model):
         self.message = message
 
 
-class CloudErrorBody(_serialization.Model):
-    """An error response from the DevCenter service.
+class CheckScopedNameAvailabilityRequest(_serialization.Model):
+    """The scoped name check availability request body.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
-     programmatically. Required.
-    :vartype code: str
-    :ivar message: A message describing the error, intended to be suitable for display in a user
-     interface. Required.
-    :vartype message: str
-    :ivar target: The target of the particular error. For example, the name of the property in
-     error.
-    :vartype target: str
-    :ivar details: A list of additional details about the error.
-    :vartype details: list[~azure.mgmt.devcenter.models.CloudErrorBody]
+    :ivar name: The name of the resource for which availability needs to be checked.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar scope: The resource id to scope the name check.
+    :vartype scope: str
     """
 
-    _validation = {
-        "code": {"required": True},
-        "message": {"required": True},
-    }
-
     _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[CloudErrorBody]"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "scope": {"key": "scope", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-        target: Optional[str] = None,
-        details: Optional[List["_models.CloudErrorBody"]] = None,
-        **kwargs: Any
+        self, *, name: Optional[str] = None, type: Optional[str] = None, scope: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
-         programmatically. Required.
-        :paramtype code: str
-        :keyword message: A message describing the error, intended to be suitable for display in a user
-         interface. Required.
-        :paramtype message: str
-        :keyword target: The target of the particular error. For example, the name of the property in
-         error.
-        :paramtype target: str
-        :keyword details: A list of additional details about the error.
-        :paramtype details: list[~azure.mgmt.devcenter.models.CloudErrorBody]
+        :keyword name: The name of the resource for which availability needs to be checked.
+        :paramtype name: str
+        :keyword type: The resource type.
+        :paramtype type: str
+        :keyword scope: The resource id to scope the name check.
+        :paramtype scope: str
         """
         super().__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.target = target
-        self.details = details
+        self.name = name
+        self.type = type
+        self.scope = scope
 
 
 class CustomerManagedKeyEncryption(_serialization.Model):
@@ -890,168 +885,16 @@ class CustomerManagedKeyEncryptionKeyIdentity(_serialization.Model):
         self.delegated_identity_client_id = delegated_identity_client_id
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.devcenter.models.SystemData
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
-
-class CustomizationTask(ProxyResource):
-    """Represents a Task to be used in customizing a Dev Box.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.devcenter.models.SystemData
-    :ivar inputs: Inputs to the task.
-    :vartype inputs: dict[str, ~azure.mgmt.devcenter.models.CustomizationTaskInput]
-    :ivar timeout: The default timeout for the task.
-    :vartype timeout: int
-    :ivar validation_status: Validation status for the Task. Known values are: "Unknown",
-     "Pending", "Succeeded", and "Failed".
-    :vartype validation_status: str or ~azure.mgmt.devcenter.models.CatalogResourceValidationStatus
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "inputs": {"readonly": True},
-        "timeout": {"readonly": True},
-        "validation_status": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "inputs": {"key": "properties.inputs", "type": "{CustomizationTaskInput}"},
-        "timeout": {"key": "properties.timeout", "type": "int"},
-        "validation_status": {"key": "properties.validationStatus", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.inputs = None
-        self.timeout = None
-        self.validation_status = None
-
-
-class CustomizationTaskInput(_serialization.Model):
-    """Input for a Task.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar description: Description of the input.
-    :vartype description: str
-    :ivar type: Type of the input. Known values are: "string", "number", and "boolean".
-    :vartype type: str or ~azure.mgmt.devcenter.models.CustomizationTaskInputType
-    :ivar required: Whether or not the input is required.
-    :vartype required: bool
-    """
-
-    _validation = {
-        "description": {"readonly": True},
-        "type": {"readonly": True},
-        "required": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "description": {"key": "description", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "required": {"key": "required", "type": "bool"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.description = None
-        self.type = None
-        self.required = None
-
-
-class CustomizationTaskListResult(_serialization.Model):
-    """Results of the Task list operation.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: Current page of results.
-    :vartype value: list[~azure.mgmt.devcenter.models.CustomizationTask]
-    :ivar next_link: URL to get the next set of results if there are any.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[CustomizationTask]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
-
-
 class TrackedResource(Resource):
     """The resource model definition for an Azure Resource Manager tracked top level resource which
     has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1101,10 +944,10 @@ class DevBoxDefinition(TrackedResource):  # pylint: disable=too-many-instance-at
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1491,10 +1334,10 @@ class DevCenter(TrackedResource):  # pylint: disable=too-many-instance-attribute
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1515,6 +1358,9 @@ class DevCenter(TrackedResource):  # pylint: disable=too-many-instance-attribute
     :vartype encryption: ~azure.mgmt.devcenter.models.Encryption
     :ivar display_name: The display name of the devcenter.
     :vartype display_name: str
+    :ivar project_catalog_settings: Dev Center settings to be used when associating a project with
+     a catalog.
+    :vartype project_catalog_settings: ~azure.mgmt.devcenter.models.DevCenterProjectCatalogSettings
     :ivar provisioning_state: The provisioning state of the resource. Known values are:
      "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
      "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
@@ -1544,6 +1390,10 @@ class DevCenter(TrackedResource):  # pylint: disable=too-many-instance-attribute
         "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "encryption": {"key": "properties.encryption", "type": "Encryption"},
         "display_name": {"key": "properties.displayName", "type": "str"},
+        "project_catalog_settings": {
+            "key": "properties.projectCatalogSettings",
+            "type": "DevCenterProjectCatalogSettings",
+        },
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "dev_center_uri": {"key": "properties.devCenterUri", "type": "str"},
     }
@@ -1556,6 +1406,7 @@ class DevCenter(TrackedResource):  # pylint: disable=too-many-instance-attribute
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         encryption: Optional["_models.Encryption"] = None,
         display_name: Optional[str] = None,
+        project_catalog_settings: Optional["_models.DevCenterProjectCatalogSettings"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1570,11 +1421,16 @@ class DevCenter(TrackedResource):  # pylint: disable=too-many-instance-attribute
         :paramtype encryption: ~azure.mgmt.devcenter.models.Encryption
         :keyword display_name: The display name of the devcenter.
         :paramtype display_name: str
+        :keyword project_catalog_settings: Dev Center settings to be used when associating a project
+         with a catalog.
+        :paramtype project_catalog_settings:
+         ~azure.mgmt.devcenter.models.DevCenterProjectCatalogSettings
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.encryption = encryption
         self.display_name = display_name
+        self.project_catalog_settings = project_catalog_settings
         self.provisioning_state = None
         self.dev_center_uri = None
 
@@ -1607,6 +1463,37 @@ class DevCenterListResult(_serialization.Model):
         self.next_link = None
 
 
+class DevCenterProjectCatalogSettings(_serialization.Model):
+    """Project catalog settings for project catalogs under a project associated to this dev center.
+
+    :ivar catalog_item_sync_enable_status: Whether project catalogs associated with projects in
+     this dev center can be configured to sync catalog items. Known values are: "Enabled" and
+     "Disabled".
+    :vartype catalog_item_sync_enable_status: str or
+     ~azure.mgmt.devcenter.models.CatalogItemSyncEnableStatus
+    """
+
+    _attribute_map = {
+        "catalog_item_sync_enable_status": {"key": "catalogItemSyncEnableStatus", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        catalog_item_sync_enable_status: Optional[Union[str, "_models.CatalogItemSyncEnableStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword catalog_item_sync_enable_status: Whether project catalogs associated with projects in
+         this dev center can be configured to sync catalog items. Known values are: "Enabled" and
+         "Disabled".
+        :paramtype catalog_item_sync_enable_status: str or
+         ~azure.mgmt.devcenter.models.CatalogItemSyncEnableStatus
+        """
+        super().__init__(**kwargs)
+        self.catalog_item_sync_enable_status = catalog_item_sync_enable_status
+
+
 class DevCenterUpdateProperties(_serialization.Model):
     """Properties of the devcenter. These properties can be updated after the resource has been
     created.
@@ -1616,15 +1503,24 @@ class DevCenterUpdateProperties(_serialization.Model):
     :vartype encryption: ~azure.mgmt.devcenter.models.Encryption
     :ivar display_name: The display name of the devcenter.
     :vartype display_name: str
+    :ivar project_catalog_settings: Dev Center settings to be used when associating a project with
+     a catalog.
+    :vartype project_catalog_settings: ~azure.mgmt.devcenter.models.DevCenterProjectCatalogSettings
     """
 
     _attribute_map = {
         "encryption": {"key": "encryption", "type": "Encryption"},
         "display_name": {"key": "displayName", "type": "str"},
+        "project_catalog_settings": {"key": "projectCatalogSettings", "type": "DevCenterProjectCatalogSettings"},
     }
 
     def __init__(
-        self, *, encryption: Optional["_models.Encryption"] = None, display_name: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        encryption: Optional["_models.Encryption"] = None,
+        display_name: Optional[str] = None,
+        project_catalog_settings: Optional["_models.DevCenterProjectCatalogSettings"] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword encryption: Encryption settings to be used for server-side encryption for proprietary
@@ -1632,10 +1528,15 @@ class DevCenterUpdateProperties(_serialization.Model):
         :paramtype encryption: ~azure.mgmt.devcenter.models.Encryption
         :keyword display_name: The display name of the devcenter.
         :paramtype display_name: str
+        :keyword project_catalog_settings: Dev Center settings to be used when associating a project
+         with a catalog.
+        :paramtype project_catalog_settings:
+         ~azure.mgmt.devcenter.models.DevCenterProjectCatalogSettings
         """
         super().__init__(**kwargs)
         self.encryption = encryption
         self.display_name = display_name
+        self.project_catalog_settings = project_catalog_settings
 
 
 class DevCenterProperties(DevCenterUpdateProperties):
@@ -1648,6 +1549,9 @@ class DevCenterProperties(DevCenterUpdateProperties):
     :vartype encryption: ~azure.mgmt.devcenter.models.Encryption
     :ivar display_name: The display name of the devcenter.
     :vartype display_name: str
+    :ivar project_catalog_settings: Dev Center settings to be used when associating a project with
+     a catalog.
+    :vartype project_catalog_settings: ~azure.mgmt.devcenter.models.DevCenterProjectCatalogSettings
     :ivar provisioning_state: The provisioning state of the resource. Known values are:
      "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
      "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
@@ -1665,12 +1569,18 @@ class DevCenterProperties(DevCenterUpdateProperties):
     _attribute_map = {
         "encryption": {"key": "encryption", "type": "Encryption"},
         "display_name": {"key": "displayName", "type": "str"},
+        "project_catalog_settings": {"key": "projectCatalogSettings", "type": "DevCenterProjectCatalogSettings"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "dev_center_uri": {"key": "devCenterUri", "type": "str"},
     }
 
     def __init__(
-        self, *, encryption: Optional["_models.Encryption"] = None, display_name: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        encryption: Optional["_models.Encryption"] = None,
+        display_name: Optional[str] = None,
+        project_catalog_settings: Optional["_models.DevCenterProjectCatalogSettings"] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword encryption: Encryption settings to be used for server-side encryption for proprietary
@@ -1678,8 +1588,17 @@ class DevCenterProperties(DevCenterUpdateProperties):
         :paramtype encryption: ~azure.mgmt.devcenter.models.Encryption
         :keyword display_name: The display name of the devcenter.
         :paramtype display_name: str
+        :keyword project_catalog_settings: Dev Center settings to be used when associating a project
+         with a catalog.
+        :paramtype project_catalog_settings:
+         ~azure.mgmt.devcenter.models.DevCenterProjectCatalogSettings
         """
-        super().__init__(encryption=encryption, display_name=display_name, **kwargs)
+        super().__init__(
+            encryption=encryption,
+            display_name=display_name,
+            project_catalog_settings=project_catalog_settings,
+            **kwargs
+        )
         self.provisioning_state = None
         self.dev_center_uri = None
 
@@ -1687,7 +1606,7 @@ class DevCenterProperties(DevCenterUpdateProperties):
 class Sku(_serialization.Model):
     """The resource model definition representing SKU.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
     :vartype name: str
@@ -1758,7 +1677,7 @@ class DevCenterSku(Sku):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
     :vartype name: str
@@ -1849,6 +1768,9 @@ class DevCenterUpdate(TrackedResourceUpdate):
     :vartype encryption: ~azure.mgmt.devcenter.models.Encryption
     :ivar display_name: The display name of the devcenter.
     :vartype display_name: str
+    :ivar project_catalog_settings: Dev Center settings to be used when associating a project with
+     a catalog.
+    :vartype project_catalog_settings: ~azure.mgmt.devcenter.models.DevCenterProjectCatalogSettings
     """
 
     _attribute_map = {
@@ -1857,6 +1779,10 @@ class DevCenterUpdate(TrackedResourceUpdate):
         "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "encryption": {"key": "properties.encryption", "type": "Encryption"},
         "display_name": {"key": "properties.displayName", "type": "str"},
+        "project_catalog_settings": {
+            "key": "properties.projectCatalogSettings",
+            "type": "DevCenterProjectCatalogSettings",
+        },
     }
 
     def __init__(
@@ -1867,6 +1793,7 @@ class DevCenterUpdate(TrackedResourceUpdate):
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         encryption: Optional["_models.Encryption"] = None,
         display_name: Optional[str] = None,
+        project_catalog_settings: Optional["_models.DevCenterProjectCatalogSettings"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1881,11 +1808,16 @@ class DevCenterUpdate(TrackedResourceUpdate):
         :paramtype encryption: ~azure.mgmt.devcenter.models.Encryption
         :keyword display_name: The display name of the devcenter.
         :paramtype display_name: str
+        :keyword project_catalog_settings: Dev Center settings to be used when associating a project
+         with a catalog.
+        :paramtype project_catalog_settings:
+         ~azure.mgmt.devcenter.models.DevCenterProjectCatalogSettings
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.encryption = encryption
         self.display_name = display_name
+        self.project_catalog_settings = project_catalog_settings
 
 
 class Encryption(_serialization.Model):
@@ -1975,13 +1907,33 @@ class EndpointDetail(_serialization.Model):
         self.port = None
 
 
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.devcenter.models.SystemData
+    """
+
+
 class EnvironmentDefinition(ProxyResource):
     """Represents an environment definition catalog item.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2145,8 +2097,8 @@ class EnvironmentType(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2407,8 +2359,8 @@ class Gallery(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2589,8 +2541,8 @@ class HealthCheckStatusDetails(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2698,8 +2650,8 @@ class Image(ProxyResource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2867,8 +2819,8 @@ class ImageVersion(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2989,7 +2941,7 @@ class ManagedServiceIdentity(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
      will only be provided for a system assigned identity.
@@ -3003,7 +2955,7 @@ class ManagedServiceIdentity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.devcenter.models.ManagedServiceIdentityType
     :ivar user_assigned_identities: The set of user assigned identities associated with the
      resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.  # pylint: disable=line-too-long
      The dictionary values can be empty objects ({}) in requests.
     :vartype user_assigned_identities: dict[str, ~azure.mgmt.devcenter.models.UserAssignedIdentity]
     """
@@ -3035,7 +2987,7 @@ class ManagedServiceIdentity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.devcenter.models.ManagedServiceIdentityType
         :keyword user_assigned_identities: The set of user assigned identities associated with the
          resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.  # pylint: disable=line-too-long
          The dictionary values can be empty objects ({}) in requests.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.devcenter.models.UserAssignedIdentity]
@@ -3052,10 +3004,10 @@ class NetworkConnection(TrackedResource):  # pylint: disable=too-many-instance-a
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3334,7 +3286,7 @@ class NetworkProperties(NetworkConnectionUpdateProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar subnet_id: The subnet to attach Virtual Machines to.
     :vartype subnet_id: str
@@ -3551,10 +3503,15 @@ class OperationListResult(_serialization.Model):
 class OperationStatusResult(_serialization.Model):
     """The current status of an async operation.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified ID for the async operation.
     :vartype id: str
+    :ivar resource_id: Fully qualified ID of the resource against which the original async
+     operation was started.
+    :vartype resource_id: str
     :ivar name: Name of the async operation.
     :vartype name: str
     :ivar status: Operation status. Required.
@@ -3572,12 +3529,14 @@ class OperationStatusResult(_serialization.Model):
     """
 
     _validation = {
+        "resource_id": {"readonly": True},
         "status": {"required": True},
         "percent_complete": {"maximum": 100, "minimum": 0},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "status": {"key": "status", "type": "str"},
         "percent_complete": {"key": "percentComplete", "type": "float"},
@@ -3620,6 +3579,7 @@ class OperationStatusResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.id = id
+        self.resource_id = None
         self.name = name
         self.status = status
         self.percent_complete = percent_complete
@@ -3634,10 +3594,13 @@ class OperationStatus(OperationStatusResult):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified ID for the async operation.
     :vartype id: str
+    :ivar resource_id: Fully qualified ID of the resource against which the original async
+     operation was started.
+    :vartype resource_id: str
     :ivar name: Name of the async operation.
     :vartype name: str
     :ivar status: Operation status. Required.
@@ -3652,21 +3615,20 @@ class OperationStatus(OperationStatusResult):
     :vartype operations: list[~azure.mgmt.devcenter.models.OperationStatusResult]
     :ivar error: If present, details of the operation error.
     :vartype error: ~azure.mgmt.devcenter.models.ErrorDetail
-    :ivar resource_id: The id of the resource.
-    :vartype resource_id: str
     :ivar properties: Custom operation properties, populated only for a successful operation.
     :vartype properties: JSON
     """
 
     _validation = {
+        "resource_id": {"readonly": True},
         "status": {"required": True},
         "percent_complete": {"maximum": 100, "minimum": 0},
-        "resource_id": {"readonly": True},
         "properties": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "status": {"key": "status", "type": "str"},
         "percent_complete": {"key": "percentComplete", "type": "float"},
@@ -3674,7 +3636,6 @@ class OperationStatus(OperationStatusResult):
         "end_time": {"key": "endTime", "type": "iso-8601"},
         "operations": {"key": "operations", "type": "[OperationStatusResult]"},
         "error": {"key": "error", "type": "ErrorDetail"},
-        "resource_id": {"key": "resourceId", "type": "str"},
         "properties": {"key": "properties", "type": "object"},
     }
 
@@ -3720,7 +3681,6 @@ class OperationStatus(OperationStatusResult):
             error=error,
             **kwargs
         )
-        self.resource_id = None
         self.properties = None
 
 
@@ -3789,10 +3749,10 @@ class Pool(TrackedResource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4308,10 +4268,10 @@ class Project(TrackedResource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4325,6 +4285,8 @@ class Project(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
+    :ivar identity: Managed identity properties.
+    :vartype identity: ~azure.mgmt.devcenter.models.ManagedServiceIdentity
     :ivar dev_center_id: Resource Id of an associated DevCenter.
     :vartype dev_center_id: str
     :ivar description: Description of the project.
@@ -4335,6 +4297,8 @@ class Project(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype max_dev_boxes_per_user: int
     :ivar display_name: The display name of the project.
     :vartype display_name: str
+    :ivar catalog_settings: Settings to be used when associating a project with a catalog.
+    :vartype catalog_settings: ~azure.mgmt.devcenter.models.ProjectCatalogSettings
     :ivar provisioning_state: The provisioning state of the resource. Known values are:
      "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
      "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
@@ -4362,10 +4326,12 @@ class Project(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "dev_center_id": {"key": "properties.devCenterId", "type": "str"},
         "description": {"key": "properties.description", "type": "str"},
         "max_dev_boxes_per_user": {"key": "properties.maxDevBoxesPerUser", "type": "int"},
         "display_name": {"key": "properties.displayName", "type": "str"},
+        "catalog_settings": {"key": "properties.catalogSettings", "type": "ProjectCatalogSettings"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "dev_center_uri": {"key": "properties.devCenterUri", "type": "str"},
     }
@@ -4375,10 +4341,12 @@ class Project(TrackedResource):  # pylint: disable=too-many-instance-attributes
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         dev_center_id: Optional[str] = None,
         description: Optional[str] = None,
         max_dev_boxes_per_user: Optional[int] = None,
         display_name: Optional[str] = None,
+        catalog_settings: Optional["_models.ProjectCatalogSettings"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4386,6 +4354,8 @@ class Project(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
+        :keyword identity: Managed identity properties.
+        :paramtype identity: ~azure.mgmt.devcenter.models.ManagedServiceIdentity
         :keyword dev_center_id: Resource Id of an associated DevCenter.
         :paramtype dev_center_id: str
         :keyword description: Description of the project.
@@ -4396,14 +4366,40 @@ class Project(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype max_dev_boxes_per_user: int
         :keyword display_name: The display name of the project.
         :paramtype display_name: str
+        :keyword catalog_settings: Settings to be used when associating a project with a catalog.
+        :paramtype catalog_settings: ~azure.mgmt.devcenter.models.ProjectCatalogSettings
         """
         super().__init__(tags=tags, location=location, **kwargs)
+        self.identity = identity
         self.dev_center_id = dev_center_id
         self.description = description
         self.max_dev_boxes_per_user = max_dev_boxes_per_user
         self.display_name = display_name
+        self.catalog_settings = catalog_settings
         self.provisioning_state = None
         self.dev_center_uri = None
+
+
+class ProjectCatalogSettings(_serialization.Model):
+    """Settings to be used when associating a project with a catalog.
+
+    :ivar catalog_item_sync_types: Indicates catalog item types that can be synced.
+    :vartype catalog_item_sync_types: list[str or ~azure.mgmt.devcenter.models.CatalogItemType]
+    """
+
+    _attribute_map = {
+        "catalog_item_sync_types": {"key": "catalogItemSyncTypes", "type": "[str]"},
+    }
+
+    def __init__(
+        self, *, catalog_item_sync_types: Optional[List[Union[str, "_models.CatalogItemType"]]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword catalog_item_sync_types: Indicates catalog item types that can be synced.
+        :paramtype catalog_item_sync_types: list[str or ~azure.mgmt.devcenter.models.CatalogItemType]
+        """
+        super().__init__(**kwargs)
+        self.catalog_item_sync_types = catalog_item_sync_types
 
 
 class ProjectEnvironmentType(Resource):  # pylint: disable=too-many-instance-attributes
@@ -4411,8 +4407,8 @@ class ProjectEnvironmentType(Resource):  # pylint: disable=too-many-instance-att
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4431,6 +4427,8 @@ class ProjectEnvironmentType(Resource):  # pylint: disable=too-many-instance-att
     :ivar deployment_target_id: Id of a subscription that the environment type will be mapped to.
      The environment's resources will be deployed into this subscription.
     :vartype deployment_target_id: str
+    :ivar display_name: The display name of the project environment type.
+    :vartype display_name: str
     :ivar status: Defines whether this Environment Type can be used in this Project. Known values
      are: "Enabled" and "Disabled".
     :vartype status: str or ~azure.mgmt.devcenter.models.EnvironmentTypeEnableStatus
@@ -4446,8 +4444,6 @@ class ProjectEnvironmentType(Resource):  # pylint: disable=too-many-instance-att
      "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
      "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
     :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
-    :ivar display_name: The display name of the project environment type.
-    :vartype display_name: str
     :ivar environment_count: The number of environments of this type.
     :vartype environment_count: int
     """
@@ -4470,6 +4466,7 @@ class ProjectEnvironmentType(Resource):  # pylint: disable=too-many-instance-att
         "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "location": {"key": "location", "type": "str"},
         "deployment_target_id": {"key": "properties.deploymentTargetId", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
         "status": {"key": "properties.status", "type": "str"},
         "creator_role_assignment": {
             "key": "properties.creatorRoleAssignment",
@@ -4477,7 +4474,6 @@ class ProjectEnvironmentType(Resource):  # pylint: disable=too-many-instance-att
         },
         "user_role_assignments": {"key": "properties.userRoleAssignments", "type": "{UserRoleAssignmentValue}"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "display_name": {"key": "properties.displayName", "type": "str"},
         "environment_count": {"key": "properties.environmentCount", "type": "int"},
     }
 
@@ -4488,10 +4484,10 @@ class ProjectEnvironmentType(Resource):  # pylint: disable=too-many-instance-att
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         location: Optional[str] = None,
         deployment_target_id: Optional[str] = None,
+        display_name: Optional[str] = None,
         status: Optional[Union[str, "_models.EnvironmentTypeEnableStatus"]] = None,
         creator_role_assignment: Optional["_models.ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment"] = None,
         user_role_assignments: Optional[Dict[str, "_models.UserRoleAssignmentValue"]] = None,
-        display_name: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4504,6 +4500,8 @@ class ProjectEnvironmentType(Resource):  # pylint: disable=too-many-instance-att
         :keyword deployment_target_id: Id of a subscription that the environment type will be mapped
          to. The environment's resources will be deployed into this subscription.
         :paramtype deployment_target_id: str
+        :keyword display_name: The display name of the project environment type.
+        :paramtype display_name: str
         :keyword status: Defines whether this Environment Type can be used in this Project. Known
          values are: "Enabled" and "Disabled".
         :paramtype status: str or ~azure.mgmt.devcenter.models.EnvironmentTypeEnableStatus
@@ -4515,19 +4513,17 @@ class ProjectEnvironmentType(Resource):  # pylint: disable=too-many-instance-att
          is a mapping from a user object ID to an object of role definition IDs.
         :paramtype user_role_assignments: dict[str,
          ~azure.mgmt.devcenter.models.UserRoleAssignmentValue]
-        :keyword display_name: The display name of the project environment type.
-        :paramtype display_name: str
         """
         super().__init__(**kwargs)
         self.tags = tags
         self.identity = identity
         self.location = location
         self.deployment_target_id = deployment_target_id
+        self.display_name = display_name
         self.status = status
         self.creator_role_assignment = creator_role_assignment
         self.user_role_assignments = user_role_assignments
         self.provisioning_state = None
-        self.display_name = display_name
         self.environment_count = None
 
 
@@ -4566,6 +4562,8 @@ class ProjectEnvironmentTypeUpdateProperties(_serialization.Model):
     :ivar deployment_target_id: Id of a subscription that the environment type will be mapped to.
      The environment's resources will be deployed into this subscription.
     :vartype deployment_target_id: str
+    :ivar display_name: The display name of the project environment type.
+    :vartype display_name: str
     :ivar status: Defines whether this Environment Type can be used in this Project. Known values
      are: "Enabled" and "Disabled".
     :vartype status: str or ~azure.mgmt.devcenter.models.EnvironmentTypeEnableStatus
@@ -4580,6 +4578,7 @@ class ProjectEnvironmentTypeUpdateProperties(_serialization.Model):
 
     _attribute_map = {
         "deployment_target_id": {"key": "deploymentTargetId", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
         "status": {"key": "status", "type": "str"},
         "creator_role_assignment": {
             "key": "creatorRoleAssignment",
@@ -4592,6 +4591,7 @@ class ProjectEnvironmentTypeUpdateProperties(_serialization.Model):
         self,
         *,
         deployment_target_id: Optional[str] = None,
+        display_name: Optional[str] = None,
         status: Optional[Union[str, "_models.EnvironmentTypeEnableStatus"]] = None,
         creator_role_assignment: Optional["_models.ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment"] = None,
         user_role_assignments: Optional[Dict[str, "_models.UserRoleAssignmentValue"]] = None,
@@ -4601,6 +4601,8 @@ class ProjectEnvironmentTypeUpdateProperties(_serialization.Model):
         :keyword deployment_target_id: Id of a subscription that the environment type will be mapped
          to. The environment's resources will be deployed into this subscription.
         :paramtype deployment_target_id: str
+        :keyword display_name: The display name of the project environment type.
+        :paramtype display_name: str
         :keyword status: Defines whether this Environment Type can be used in this Project. Known
          values are: "Enabled" and "Disabled".
         :paramtype status: str or ~azure.mgmt.devcenter.models.EnvironmentTypeEnableStatus
@@ -4615,6 +4617,7 @@ class ProjectEnvironmentTypeUpdateProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.deployment_target_id = deployment_target_id
+        self.display_name = display_name
         self.status = status
         self.creator_role_assignment = creator_role_assignment
         self.user_role_assignments = user_role_assignments
@@ -4628,6 +4631,8 @@ class ProjectEnvironmentTypeProperties(ProjectEnvironmentTypeUpdateProperties):
     :ivar deployment_target_id: Id of a subscription that the environment type will be mapped to.
      The environment's resources will be deployed into this subscription.
     :vartype deployment_target_id: str
+    :ivar display_name: The display name of the project environment type.
+    :vartype display_name: str
     :ivar status: Defines whether this Environment Type can be used in this Project. Known values
      are: "Enabled" and "Disabled".
     :vartype status: str or ~azure.mgmt.devcenter.models.EnvironmentTypeEnableStatus
@@ -4643,8 +4648,6 @@ class ProjectEnvironmentTypeProperties(ProjectEnvironmentTypeUpdateProperties):
      "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
      "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
     :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
-    :ivar display_name: The display name of the project environment type.
-    :vartype display_name: str
     :ivar environment_count: The number of environments of this type.
     :vartype environment_count: int
     """
@@ -4656,6 +4659,7 @@ class ProjectEnvironmentTypeProperties(ProjectEnvironmentTypeUpdateProperties):
 
     _attribute_map = {
         "deployment_target_id": {"key": "deploymentTargetId", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
         "status": {"key": "status", "type": "str"},
         "creator_role_assignment": {
             "key": "creatorRoleAssignment",
@@ -4663,7 +4667,6 @@ class ProjectEnvironmentTypeProperties(ProjectEnvironmentTypeUpdateProperties):
         },
         "user_role_assignments": {"key": "userRoleAssignments", "type": "{UserRoleAssignmentValue}"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
-        "display_name": {"key": "displayName", "type": "str"},
         "environment_count": {"key": "environmentCount", "type": "int"},
     }
 
@@ -4671,16 +4674,18 @@ class ProjectEnvironmentTypeProperties(ProjectEnvironmentTypeUpdateProperties):
         self,
         *,
         deployment_target_id: Optional[str] = None,
+        display_name: Optional[str] = None,
         status: Optional[Union[str, "_models.EnvironmentTypeEnableStatus"]] = None,
         creator_role_assignment: Optional["_models.ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment"] = None,
         user_role_assignments: Optional[Dict[str, "_models.UserRoleAssignmentValue"]] = None,
-        display_name: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword deployment_target_id: Id of a subscription that the environment type will be mapped
          to. The environment's resources will be deployed into this subscription.
         :paramtype deployment_target_id: str
+        :keyword display_name: The display name of the project environment type.
+        :paramtype display_name: str
         :keyword status: Defines whether this Environment Type can be used in this Project. Known
          values are: "Enabled" and "Disabled".
         :paramtype status: str or ~azure.mgmt.devcenter.models.EnvironmentTypeEnableStatus
@@ -4692,18 +4697,16 @@ class ProjectEnvironmentTypeProperties(ProjectEnvironmentTypeUpdateProperties):
          is a mapping from a user object ID to an object of role definition IDs.
         :paramtype user_role_assignments: dict[str,
          ~azure.mgmt.devcenter.models.UserRoleAssignmentValue]
-        :keyword display_name: The display name of the project environment type.
-        :paramtype display_name: str
         """
         super().__init__(
             deployment_target_id=deployment_target_id,
+            display_name=display_name,
             status=status,
             creator_role_assignment=creator_role_assignment,
             user_role_assignments=user_role_assignments,
             **kwargs
         )
         self.provisioning_state = None
-        self.display_name = display_name
         self.environment_count = None
 
 
@@ -4718,6 +4721,8 @@ class ProjectEnvironmentTypeUpdate(_serialization.Model):
     :ivar deployment_target_id: Id of a subscription that the environment type will be mapped to.
      The environment's resources will be deployed into this subscription.
     :vartype deployment_target_id: str
+    :ivar display_name: The display name of the project environment type.
+    :vartype display_name: str
     :ivar status: Defines whether this Environment Type can be used in this Project. Known values
      are: "Enabled" and "Disabled".
     :vartype status: str or ~azure.mgmt.devcenter.models.EnvironmentTypeEnableStatus
@@ -4734,6 +4739,7 @@ class ProjectEnvironmentTypeUpdate(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
         "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "deployment_target_id": {"key": "properties.deploymentTargetId", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
         "status": {"key": "properties.status", "type": "str"},
         "creator_role_assignment": {
             "key": "properties.creatorRoleAssignment",
@@ -4748,6 +4754,7 @@ class ProjectEnvironmentTypeUpdate(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         deployment_target_id: Optional[str] = None,
+        display_name: Optional[str] = None,
         status: Optional[Union[str, "_models.EnvironmentTypeEnableStatus"]] = None,
         creator_role_assignment: Optional["_models.ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment"] = None,
         user_role_assignments: Optional[Dict[str, "_models.UserRoleAssignmentValue"]] = None,
@@ -4761,6 +4768,8 @@ class ProjectEnvironmentTypeUpdate(_serialization.Model):
         :keyword deployment_target_id: Id of a subscription that the environment type will be mapped
          to. The environment's resources will be deployed into this subscription.
         :paramtype deployment_target_id: str
+        :keyword display_name: The display name of the project environment type.
+        :paramtype display_name: str
         :keyword status: Defines whether this Environment Type can be used in this Project. Known
          values are: "Enabled" and "Disabled".
         :paramtype status: str or ~azure.mgmt.devcenter.models.EnvironmentTypeEnableStatus
@@ -4777,12 +4786,15 @@ class ProjectEnvironmentTypeUpdate(_serialization.Model):
         self.tags = tags
         self.identity = identity
         self.deployment_target_id = deployment_target_id
+        self.display_name = display_name
         self.status = status
         self.creator_role_assignment = creator_role_assignment
         self.user_role_assignments = user_role_assignments
 
 
-class ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment(_serialization.Model):
+class ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """The role definition assigned to the environment creator on backing resources.
 
     :ivar roles: A map of roles to assign to the environment creator.
@@ -4843,6 +4855,8 @@ class ProjectUpdateProperties(_serialization.Model):
     :vartype max_dev_boxes_per_user: int
     :ivar display_name: The display name of the project.
     :vartype display_name: str
+    :ivar catalog_settings: Settings to be used when associating a project with a catalog.
+    :vartype catalog_settings: ~azure.mgmt.devcenter.models.ProjectCatalogSettings
     """
 
     _validation = {
@@ -4854,6 +4868,7 @@ class ProjectUpdateProperties(_serialization.Model):
         "description": {"key": "description", "type": "str"},
         "max_dev_boxes_per_user": {"key": "maxDevBoxesPerUser", "type": "int"},
         "display_name": {"key": "displayName", "type": "str"},
+        "catalog_settings": {"key": "catalogSettings", "type": "ProjectCatalogSettings"},
     }
 
     def __init__(
@@ -4863,6 +4878,7 @@ class ProjectUpdateProperties(_serialization.Model):
         description: Optional[str] = None,
         max_dev_boxes_per_user: Optional[int] = None,
         display_name: Optional[str] = None,
+        catalog_settings: Optional["_models.ProjectCatalogSettings"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4876,12 +4892,15 @@ class ProjectUpdateProperties(_serialization.Model):
         :paramtype max_dev_boxes_per_user: int
         :keyword display_name: The display name of the project.
         :paramtype display_name: str
+        :keyword catalog_settings: Settings to be used when associating a project with a catalog.
+        :paramtype catalog_settings: ~azure.mgmt.devcenter.models.ProjectCatalogSettings
         """
         super().__init__(**kwargs)
         self.dev_center_id = dev_center_id
         self.description = description
         self.max_dev_boxes_per_user = max_dev_boxes_per_user
         self.display_name = display_name
+        self.catalog_settings = catalog_settings
 
 
 class ProjectProperties(ProjectUpdateProperties):
@@ -4899,6 +4918,8 @@ class ProjectProperties(ProjectUpdateProperties):
     :vartype max_dev_boxes_per_user: int
     :ivar display_name: The display name of the project.
     :vartype display_name: str
+    :ivar catalog_settings: Settings to be used when associating a project with a catalog.
+    :vartype catalog_settings: ~azure.mgmt.devcenter.models.ProjectCatalogSettings
     :ivar provisioning_state: The provisioning state of the resource. Known values are:
      "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
      "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
@@ -4919,6 +4940,7 @@ class ProjectProperties(ProjectUpdateProperties):
         "description": {"key": "description", "type": "str"},
         "max_dev_boxes_per_user": {"key": "maxDevBoxesPerUser", "type": "int"},
         "display_name": {"key": "displayName", "type": "str"},
+        "catalog_settings": {"key": "catalogSettings", "type": "ProjectCatalogSettings"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "dev_center_uri": {"key": "devCenterUri", "type": "str"},
     }
@@ -4930,6 +4952,7 @@ class ProjectProperties(ProjectUpdateProperties):
         description: Optional[str] = None,
         max_dev_boxes_per_user: Optional[int] = None,
         display_name: Optional[str] = None,
+        catalog_settings: Optional["_models.ProjectCatalogSettings"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4943,12 +4966,15 @@ class ProjectProperties(ProjectUpdateProperties):
         :paramtype max_dev_boxes_per_user: int
         :keyword display_name: The display name of the project.
         :paramtype display_name: str
+        :keyword catalog_settings: Settings to be used when associating a project with a catalog.
+        :paramtype catalog_settings: ~azure.mgmt.devcenter.models.ProjectCatalogSettings
         """
         super().__init__(
             dev_center_id=dev_center_id,
             description=description,
             max_dev_boxes_per_user=max_dev_boxes_per_user,
             display_name=display_name,
+            catalog_settings=catalog_settings,
             **kwargs
         )
         self.provisioning_state = None
@@ -4963,6 +4989,8 @@ class ProjectUpdate(TrackedResourceUpdate):
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives.
     :vartype location: str
+    :ivar identity: Managed identity properties.
+    :vartype identity: ~azure.mgmt.devcenter.models.ManagedServiceIdentity
     :ivar dev_center_id: Resource Id of an associated DevCenter.
     :vartype dev_center_id: str
     :ivar description: Description of the project.
@@ -4973,6 +5001,8 @@ class ProjectUpdate(TrackedResourceUpdate):
     :vartype max_dev_boxes_per_user: int
     :ivar display_name: The display name of the project.
     :vartype display_name: str
+    :ivar catalog_settings: Settings to be used when associating a project with a catalog.
+    :vartype catalog_settings: ~azure.mgmt.devcenter.models.ProjectCatalogSettings
     """
 
     _validation = {
@@ -4982,10 +5012,12 @@ class ProjectUpdate(TrackedResourceUpdate):
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "dev_center_id": {"key": "properties.devCenterId", "type": "str"},
         "description": {"key": "properties.description", "type": "str"},
         "max_dev_boxes_per_user": {"key": "properties.maxDevBoxesPerUser", "type": "int"},
         "display_name": {"key": "properties.displayName", "type": "str"},
+        "catalog_settings": {"key": "properties.catalogSettings", "type": "ProjectCatalogSettings"},
     }
 
     def __init__(
@@ -4993,10 +5025,12 @@ class ProjectUpdate(TrackedResourceUpdate):
         *,
         tags: Optional[Dict[str, str]] = None,
         location: Optional[str] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         dev_center_id: Optional[str] = None,
         description: Optional[str] = None,
         max_dev_boxes_per_user: Optional[int] = None,
         display_name: Optional[str] = None,
+        catalog_settings: Optional["_models.ProjectCatalogSettings"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5004,6 +5038,8 @@ class ProjectUpdate(TrackedResourceUpdate):
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives.
         :paramtype location: str
+        :keyword identity: Managed identity properties.
+        :paramtype identity: ~azure.mgmt.devcenter.models.ManagedServiceIdentity
         :keyword dev_center_id: Resource Id of an associated DevCenter.
         :paramtype dev_center_id: str
         :keyword description: Description of the project.
@@ -5014,12 +5050,16 @@ class ProjectUpdate(TrackedResourceUpdate):
         :paramtype max_dev_boxes_per_user: int
         :keyword display_name: The display name of the project.
         :paramtype display_name: str
+        :keyword catalog_settings: Settings to be used when associating a project with a catalog.
+        :paramtype catalog_settings: ~azure.mgmt.devcenter.models.ProjectCatalogSettings
         """
         super().__init__(tags=tags, location=location, **kwargs)
+        self.identity = identity
         self.dev_center_id = dev_center_id
         self.description = description
         self.max_dev_boxes_per_user = max_dev_boxes_per_user
         self.display_name = display_name
+        self.catalog_settings = catalog_settings
 
 
 class RecommendedMachineConfiguration(_serialization.Model):
@@ -5078,13 +5118,13 @@ class ResourceRange(_serialization.Model):
         self.max = None
 
 
-class Schedule(Resource):
+class Schedule(Resource):  # pylint: disable=too-many-instance-attributes
     """Represents a Schedule to execute a task.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -5094,6 +5134,10 @@ class Schedule(Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.devcenter.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
     :ivar type_properties_type: Supported type this scheduled task represents. "StopDevBox"
     :vartype type_properties_type: str or ~azure.mgmt.devcenter.models.ScheduledType
     :ivar frequency: The frequency of this scheduled task. "Daily"
@@ -5125,6 +5169,8 @@ class Schedule(Resource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "properties.tags", "type": "{str}"},
+        "location": {"key": "properties.location", "type": "str"},
         "type_properties_type": {"key": "properties.type", "type": "str"},
         "frequency": {"key": "properties.frequency", "type": "str"},
         "time": {"key": "properties.time", "type": "str"},
@@ -5136,6 +5182,8 @@ class Schedule(Resource):
     def __init__(
         self,
         *,
+        tags: Optional[Dict[str, str]] = None,
+        location: Optional[str] = None,
         type_properties_type: Optional[Union[str, "_models.ScheduledType"]] = None,
         frequency: Optional[Union[str, "_models.ScheduledFrequency"]] = None,
         time: Optional[str] = None,
@@ -5144,6 +5192,10 @@ class Schedule(Resource):
         **kwargs: Any
     ) -> None:
         """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives.
+        :paramtype location: str
         :keyword type_properties_type: Supported type this scheduled task represents. "StopDevBox"
         :paramtype type_properties_type: str or ~azure.mgmt.devcenter.models.ScheduledType
         :keyword frequency: The frequency of this scheduled task. "Daily"
@@ -5157,6 +5209,8 @@ class Schedule(Resource):
         :paramtype state: str or ~azure.mgmt.devcenter.models.ScheduleEnableStatus
         """
         super().__init__(**kwargs)
+        self.tags = tags
+        self.location = location
         self.type_properties_type = type_properties_type
         self.frequency = frequency
         self.time = time
@@ -5193,9 +5247,13 @@ class ScheduleListResult(_serialization.Model):
         self.next_link = None
 
 
-class ScheduleUpdateProperties(_serialization.Model):
+class ScheduleUpdateProperties(TrackedResourceUpdate):
     """Updatable properties of a Schedule.
 
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
     :ivar type: Supported type this scheduled task represents. "StopDevBox"
     :vartype type: str or ~azure.mgmt.devcenter.models.ScheduledType
     :ivar frequency: The frequency of this scheduled task. "Daily"
@@ -5210,6 +5268,8 @@ class ScheduleUpdateProperties(_serialization.Model):
     """
 
     _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "frequency": {"key": "frequency", "type": "str"},
         "time": {"key": "time", "type": "str"},
@@ -5220,6 +5280,8 @@ class ScheduleUpdateProperties(_serialization.Model):
     def __init__(
         self,
         *,
+        tags: Optional[Dict[str, str]] = None,
+        location: Optional[str] = None,
         type: Optional[Union[str, "_models.ScheduledType"]] = None,
         frequency: Optional[Union[str, "_models.ScheduledFrequency"]] = None,
         time: Optional[str] = None,
@@ -5228,6 +5290,10 @@ class ScheduleUpdateProperties(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives.
+        :paramtype location: str
         :keyword type: Supported type this scheduled task represents. "StopDevBox"
         :paramtype type: str or ~azure.mgmt.devcenter.models.ScheduledType
         :keyword frequency: The frequency of this scheduled task. "Daily"
@@ -5240,7 +5306,7 @@ class ScheduleUpdateProperties(_serialization.Model):
          "Enabled" and "Disabled".
         :paramtype state: str or ~azure.mgmt.devcenter.models.ScheduleEnableStatus
         """
-        super().__init__(**kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.type = type
         self.frequency = frequency
         self.time = time
@@ -5253,6 +5319,10 @@ class ScheduleProperties(ScheduleUpdateProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
     :ivar type: Supported type this scheduled task represents. "StopDevBox"
     :vartype type: str or ~azure.mgmt.devcenter.models.ScheduledType
     :ivar frequency: The frequency of this scheduled task. "Daily"
@@ -5276,6 +5346,8 @@ class ScheduleProperties(ScheduleUpdateProperties):
     }
 
     _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "frequency": {"key": "frequency", "type": "str"},
         "time": {"key": "time", "type": "str"},
@@ -5287,6 +5359,8 @@ class ScheduleProperties(ScheduleUpdateProperties):
     def __init__(
         self,
         *,
+        tags: Optional[Dict[str, str]] = None,
+        location: Optional[str] = None,
         type: Optional[Union[str, "_models.ScheduledType"]] = None,
         frequency: Optional[Union[str, "_models.ScheduledFrequency"]] = None,
         time: Optional[str] = None,
@@ -5295,6 +5369,10 @@ class ScheduleProperties(ScheduleUpdateProperties):
         **kwargs: Any
     ) -> None:
         """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives.
+        :paramtype location: str
         :keyword type: Supported type this scheduled task represents. "StopDevBox"
         :paramtype type: str or ~azure.mgmt.devcenter.models.ScheduledType
         :keyword frequency: The frequency of this scheduled task. "Daily"
@@ -5307,11 +5385,20 @@ class ScheduleProperties(ScheduleUpdateProperties):
          "Enabled" and "Disabled".
         :paramtype state: str or ~azure.mgmt.devcenter.models.ScheduleEnableStatus
         """
-        super().__init__(type=type, frequency=frequency, time=time, time_zone=time_zone, state=state, **kwargs)
+        super().__init__(
+            tags=tags,
+            location=location,
+            type=type,
+            frequency=frequency,
+            time=time,
+            time_zone=time_zone,
+            state=state,
+            **kwargs
+        )
         self.provisioning_state = None
 
 
-class ScheduleUpdate(TrackedResourceUpdate):
+class ScheduleUpdate(_serialization.Model):
     """The schedule properties for partial update. Properties not provided in the update request will
     not be changed.
 
@@ -5333,8 +5420,8 @@ class ScheduleUpdate(TrackedResourceUpdate):
     """
 
     _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "properties.tags", "type": "{str}"},
+        "location": {"key": "properties.location", "type": "str"},
         "type": {"key": "properties.type", "type": "str"},
         "frequency": {"key": "properties.frequency", "type": "str"},
         "time": {"key": "properties.time", "type": "str"},
@@ -5371,7 +5458,9 @@ class ScheduleUpdate(TrackedResourceUpdate):
          "Enabled" and "Disabled".
         :paramtype state: str or ~azure.mgmt.devcenter.models.ScheduleEnableStatus
         """
-        super().__init__(tags=tags, location=location, **kwargs)
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.location = location
         self.type = type
         self.frequency = frequency
         self.time = time
@@ -5495,6 +5584,8 @@ class SyncStats(_serialization.Model):
     :ivar synchronization_errors: Count of synchronization errors that occured during
      synchronization.
     :vartype synchronization_errors: int
+    :ivar synced_catalog_item_types: Indicates catalog item types that were synced.
+    :vartype synced_catalog_item_types: list[str or ~azure.mgmt.devcenter.models.CatalogItemType]
     """
 
     _validation = {
@@ -5513,10 +5604,16 @@ class SyncStats(_serialization.Model):
         "removed": {"key": "removed", "type": "int"},
         "validation_errors": {"key": "validationErrors", "type": "int"},
         "synchronization_errors": {"key": "synchronizationErrors", "type": "int"},
+        "synced_catalog_item_types": {"key": "syncedCatalogItemTypes", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(
+        self, *, synced_catalog_item_types: Optional[List[Union[str, "_models.CatalogItemType"]]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword synced_catalog_item_types: Indicates catalog item types that were synced.
+        :paramtype synced_catalog_item_types: list[str or ~azure.mgmt.devcenter.models.CatalogItemType]
+        """
         super().__init__(**kwargs)
         self.added = None
         self.updated = None
@@ -5524,6 +5621,7 @@ class SyncStats(_serialization.Model):
         self.removed = None
         self.validation_errors = None
         self.synchronization_errors = None
+        self.synced_catalog_item_types = synced_catalog_item_types
 
 
 class SystemData(_serialization.Model):

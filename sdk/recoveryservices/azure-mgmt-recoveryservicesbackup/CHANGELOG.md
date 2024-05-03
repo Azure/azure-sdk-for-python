@@ -1,5 +1,22 @@
 # Release History
 
+## 9.1.0 (2024-04-22)
+
+### Features Added
+
+  - Model AzureIaaSVMProtectionPolicy has a new parameter snapshot_consistency_type
+  - Model AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest has a new parameter resource_guard_operation_requests
+  - Model AzureWorkloadSAPHanaRestoreWithRehydrateRequest has a new parameter resource_guard_operation_requests
+  - Model AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest has a new parameter resource_guard_operation_requests
+  - Model AzureWorkloadSQLRestoreWithRehydrateRequest has a new parameter resource_guard_operation_requests
+  - Model IaasVMRestoreWithRehydrationRequest has a new parameter resource_guard_operation_requests
+  - Operation BackupResourceVaultConfigsOperations.put has a new optional parameter x_ms_authorization_auxiliary
+  - Operation BackupResourceVaultConfigsOperations.update has a new optional parameter x_ms_authorization_auxiliary
+  - Operation ProtectedItemsOperations.create_or_update has a new optional parameter x_ms_authorization_auxiliary
+  - Operation ProtectionPoliciesOperations.create_or_update has a new optional parameter x_ms_authorization_auxiliary
+  - Operation RestoresOperations.begin_trigger has a new optional parameter x_ms_authorization_auxiliary
+  - Operation SecurityPINsOperations.get has a new optional parameter x_ms_authorization_auxiliary
+
 ## 9.0.0 (2024-01-24)
 
 ### Features Added

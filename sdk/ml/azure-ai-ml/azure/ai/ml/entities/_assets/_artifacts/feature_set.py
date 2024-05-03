@@ -101,9 +101,9 @@ class FeatureSet(Artifact):
             properties=self.properties,
             tags=self.tags,
             entities=self.entities,
-            materialization_settings=self.materialization_settings._to_rest_object()
-            if self.materialization_settings
-            else None,
+            materialization_settings=(
+                self.materialization_settings._to_rest_object() if self.materialization_settings else None
+            ),
             specification=self.specification._to_rest_object() if self.specification is not None else None,
             stage=self.stage,
         )
@@ -193,8 +193,6 @@ class FeatureSet(Artifact):
             If dest is a file path, a new file will be created.
             If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
-        :keyword kwargs: Additional arguments to pass to the YAML serializer.
-        :paramtype kwargs: dict
         :raises FileExistsError: Raised if dest is a file path and the file already exists.
         :raises IOError: Raised if dest is an open file and the file is not writable.
         """

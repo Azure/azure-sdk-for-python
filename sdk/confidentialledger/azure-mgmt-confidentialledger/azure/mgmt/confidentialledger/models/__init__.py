@@ -12,15 +12,23 @@ from ._models_py3 import CertificateTags
 from ._models_py3 import CheckNameAvailabilityRequest
 from ._models_py3 import CheckNameAvailabilityResponse
 from ._models_py3 import ConfidentialLedger
+from ._models_py3 import ConfidentialLedgerBackup
+from ._models_py3 import ConfidentialLedgerBackupResponse
 from ._models_py3 import ConfidentialLedgerList
+from ._models_py3 import ConfidentialLedgerRestore
+from ._models_py3 import ConfidentialLedgerRestoreResponse
 from ._models_py3 import DeploymentType
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import LedgerProperties
 from ._models_py3 import ManagedCCF
+from ._models_py3 import ManagedCCFBackup
+from ._models_py3 import ManagedCCFBackupResponse
 from ._models_py3 import ManagedCCFList
 from ._models_py3 import ManagedCCFProperties
+from ._models_py3 import ManagedCCFRestore
+from ._models_py3 import ManagedCCFRestoreResponse
 from ._models_py3 import MemberIdentityCertificate
 from ._models_py3 import Resource
 from ._models_py3 import ResourceProviderOperationDefinition
@@ -33,6 +41,7 @@ from ._confidential_ledger_enums import CheckNameAvailabilityReason
 from ._confidential_ledger_enums import CreatedByType
 from ._confidential_ledger_enums import LanguageRuntime
 from ._confidential_ledger_enums import LedgerRoleName
+from ._confidential_ledger_enums import LedgerSku
 from ._confidential_ledger_enums import LedgerType
 from ._confidential_ledger_enums import ProvisioningState
 from ._confidential_ledger_enums import RunningState
@@ -47,15 +56,23 @@ __all__ = [
     "CheckNameAvailabilityRequest",
     "CheckNameAvailabilityResponse",
     "ConfidentialLedger",
+    "ConfidentialLedgerBackup",
+    "ConfidentialLedgerBackupResponse",
     "ConfidentialLedgerList",
+    "ConfidentialLedgerRestore",
+    "ConfidentialLedgerRestoreResponse",
     "DeploymentType",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
     "LedgerProperties",
     "ManagedCCF",
+    "ManagedCCFBackup",
+    "ManagedCCFBackupResponse",
     "ManagedCCFList",
     "ManagedCCFProperties",
+    "ManagedCCFRestore",
+    "ManagedCCFRestoreResponse",
     "MemberIdentityCertificate",
     "Resource",
     "ResourceProviderOperationDefinition",
@@ -67,6 +84,7 @@ __all__ = [
     "CreatedByType",
     "LanguageRuntime",
     "LedgerRoleName",
+    "LedgerSku",
     "LedgerType",
     "ProvisioningState",
     "RunningState",

@@ -58,6 +58,11 @@ def main():
                     "adminUsername": "{your-username}",
                     "computerName": "myVM",
                 },
+                "scheduledEventsPolicy": {
+                    "scheduledEventsAdditionalPublishingTargets": {"eventGridAndResourceGraph": {"enable": True}},
+                    "userInitiatedReboot": {"automaticallyApprove": True},
+                    "userInitiatedRedeploy": {"automaticallyApprove": True},
+                },
                 "scheduledEventsProfile": {
                     "osImageNotificationProfile": {"enable": True, "notBeforeTimeout": "PT15M"},
                     "terminateNotificationProfile": {"enable": True, "notBeforeTimeout": "PT10M"},
@@ -82,6 +87,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2023-09-01/examples/virtualMachineExamples/VirtualMachine_Create_WithScheduledEventsProfile.json
+# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2024-03-01/examples/virtualMachineExamples/VirtualMachine_Create_WithScheduledEventsProfile.json
 if __name__ == "__main__":
     main()
