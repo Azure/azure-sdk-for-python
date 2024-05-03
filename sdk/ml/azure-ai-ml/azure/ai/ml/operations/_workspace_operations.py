@@ -284,7 +284,8 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             # ai_services set - try to wait for workspace operation to complete, then make connection.
             if ai_services is not None:
                 try:
-                    print(
+                    
+                    module_logger.info(
                         "Creating connection to AI Services resource. "
                         + "This requires waiting for the workspace operation to complete..."
                     )
@@ -305,8 +306,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
                     )
                     sub_client.connections.create_or_update(connection=conn)
                 except HttpResponseError as e:
-                    print(e)
-                    print("Failed to create connection to AI Services resource. Workspace creation still completed.")
+                    module_logger.warn(f"Failed to create connection to AI Services resource. Workspace creation still completed. Error: {error.message}")
             return poller
         except HttpResponseError as error:
             if error.status_code == 403 and workspace._kind == WorkspaceKind.PROJECT:

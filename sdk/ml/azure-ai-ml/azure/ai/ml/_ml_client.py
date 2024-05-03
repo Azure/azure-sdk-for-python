@@ -923,15 +923,6 @@ class MLClient:
         return self._connections
 
     @property
-    def workspace_connections(self) -> ConnectionsOperations:
-        """A collection of connection related operations.
-
-        :return: Connections operations
-        :rtype: ~azure.ai.ml.operations.ConnectionsOperations
-        """
-        return self._connections
-
-    @property
     def jobs(self) -> JobOperations:
         """A collection of job related operations.
 
