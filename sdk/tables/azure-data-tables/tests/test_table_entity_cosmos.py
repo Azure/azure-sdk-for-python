@@ -406,12 +406,16 @@ class TestTableEntityCosmos(AzureRecordedTestCase, TableTestCase):
             dict32["large"] = EntityProperty(2**31, EdmType.INT32)
 
             # Assert
-            with pytest.raises(TypeError):
+            with pytest.raises(HttpResponseError) as error:
                 self.table.create_entity(entity=dict32)
+            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
+            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
 
             dict32["large"] = EntityProperty(-(2**31 + 1), EdmType.INT32)
-            with pytest.raises(TypeError):
+            with pytest.raises(HttpResponseError) as error:
                 self.table.create_entity(entity=dict32)
+            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
+            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
         finally:
             self._tear_down()
 
@@ -428,12 +432,16 @@ class TestTableEntityCosmos(AzureRecordedTestCase, TableTestCase):
             dict64["large"] = EntityProperty(2**63, EdmType.INT64)
 
             # Assert
-            with pytest.raises(TypeError):
+            with pytest.raises(HttpResponseError) as error:
                 self.table.create_entity(entity=dict64)
+            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
+            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
 
             dict64["large"] = EntityProperty(-(2**63 + 1), EdmType.INT64)
-            with pytest.raises(TypeError):
+            with pytest.raises(HttpResponseError) as error:
                 self.table.create_entity(entity=dict64)
+            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
+            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
         finally:
             self._tear_down()
 

@@ -653,9 +653,9 @@ class TableClient(TablesBaseClient):
         :keyword results_per_page: Number of entities returned per service request.
         :paramtype results_per_page: int or None
         :keyword select: Specify desired properties of an entity to return.
-        :paramtype select: str or list[str]
+        :paramtype select: str or list[str] or None
         :keyword parameters: Dictionary for formatting query with additional, user defined parameters.
-        :paramtype parameters: dict[str, Any]
+        :paramtype parameters: dict[str, Any] or None
         :return: An iterator of :class:`~azure.data.tables.TableEntity`
         :rtype: ~azure.core.paging.ItemPaged[~azure.data.tables.TableEntity]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
