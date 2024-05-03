@@ -427,7 +427,6 @@ These code samples show common champion scenario operations with the Azure Event
 
 * Authenticate the client: [sample_authentication.py][python-eg-auth] 
 * Sample of all operations: [sample_all_operations.py][python-eg-client-all-ops-sample]
-* Publish cloud event in binary mode: [sample_binary_mode_operation.py][python-eg-client-binary-mode-sample]
 
 #### Basic EventGrid Scenarios
 
@@ -508,8 +507,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 
 [python-eg-client-all-ops-sample]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_all_operations.py
-
-[python-eg-client-binary-mode-sample]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_binary_mode.py
 
 
 [cla]: https://cla.microsoft.com

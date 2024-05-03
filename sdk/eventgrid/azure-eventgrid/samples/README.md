@@ -15,7 +15,6 @@ These code samples show common champion scenario operations with the Azure Event
 
 * Authenticate the client: [sample_authentication.py][python-eg-auth]
 * Publish events to a namespace topic:[sample_publish_operation.py][python-eg-client-publish-sample]
-* Publish events in binary mode to a namespace topic: [sample_binary_mode.py][python-eg-client-binary-mode-sample]
 * Receive events from a namespace topic: [sample_receive_operation.py][python-eg-client-receive-sample]
 * Acknowledge events from a namespace topic: [sample_acknowledge_operation.py][python-eg-client-ack-sample]
 * Release events from a namespace topic: [sample_release_operation.py][python-eg-client-release-sample]
@@ -25,7 +24,6 @@ These code samples show common champion scenario operations with the Azure Event
 ## Namespace Async samples
 
 * Publish events to a namespace topic:[sample_publish_operation_async.py][python-eg-client-publish-sample-async]
-* Publish events in binary mode to a namespace topic: [sample_binary_mode_async.py][python-eg-client-binary-mode-sample-async]
 * Receive events from a namespace topic: [sample_receive_operation_async.py][python-eg-client-receive-sample-async]
 * Acknowledge events from a namespace topic: [sample_acknowledge_operation_async.py][python-eg-client-ack-sample-async]
 * Release events from a namespace topic: [sample_release_operation_async.py][python-eg-client-release-sample-async]
@@ -105,8 +103,6 @@ To publish events, dict representation of the models could also be used as follo
 
 [python-eg-client-all-ops-sample]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_all_operations.py
 
-[python-eg-client-binary-mode-sample]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_binary_mode.py
-
 [python-eg-client-publish-sample]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_publish_operation.py
 
 [python-eg-client-receive-renew-sample]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_publish_receive_renew.py
@@ -126,8 +122,6 @@ To publish events, dict representation of the models could also be used as follo
 [python-eg-client-ack-sample-async]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/async_samples/eventgrid_client_samples/sample_acknowledge_operation_async.py
 
 [python-eg-client-all-ops-sample-async]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/async_samples/eventgrid_client_samples/sample_all_operations_async.py
-
-[python-eg-client-binary-mode-sample-async]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/async_samples/eventgrid_client_samples/sample_binary_mode_async.py
 
 [python-eg-client-publish-sample-async]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/async_samples/eventgrid_client_samples/sample_publish_operation_async.py
 
