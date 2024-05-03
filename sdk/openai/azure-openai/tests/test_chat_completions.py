@@ -11,9 +11,8 @@ from devtools_testutils import AzureRecordedTestCase
 from conftest import (
     AZURE,
     OPENAI,
-    AZURE_AD,
+    AZURE_KEY,
     GPT_4_AZURE,
-    GPT_4_AZURE_AD,
     GPT_4_OPENAI,
     configure,
     GA,
@@ -29,9 +28,34 @@ class TestChatCompletions(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(AZURE, GA), (AZURE, PREVIEW), (AZURE_AD, GA), (AZURE_AD, PREVIEW), (OPENAI, "v1")]
+        [(AZURE_KEY, GA), (AZURE_KEY, PREVIEW)]
     )
-    def test_chat_completion(self, client, api_type, api_version, **kwargs):
+    def test_azure_api_key(self, client, api_type, api_version, **kwargs):
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "Who won the world series in 2020?"}
+        ]
+
+        completion = client.chat.completions.create(messages=messages, **kwargs)
+        assert completion.id
+        assert completion.object == "chat.completion"
+        assert completion.model
+        assert completion.created
+        assert completion.usage.completion_tokens is not None
+        assert completion.usage.prompt_tokens is not None
+        assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+        assert len(completion.choices) == 1
+        assert completion.choices[0].finish_reason
+        assert completion.choices[0].index is not None
+        assert completion.choices[0].message.content is not None
+        assert completion.choices[0].message.role
+
+    @configure
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    def test_chat_completiona(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}
@@ -698,7 +722,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert content_filter_result["violence"]["severity"] is not None
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW), (GPT_4_AZURE_AD, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW)])
     def test_chat_completion_byod(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
