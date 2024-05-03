@@ -22,7 +22,7 @@ import os
 
 from dotenv import find_dotenv, load_dotenv
 
-from _shared.constants import (
+from shared.constants import (
     CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY,
     CONFIGURATION_NAME_FACE_API_ENDPOINT,
     DEFAULT_FACE_API_ACCOUNT_KEY,
@@ -35,7 +35,7 @@ from _shared.constants import (
     IMAGE_FINDSIMILAR,
     IMAGE_NINE_FACES,
 )
-from _shared.helpers import beautify_json, get_logger
+from shared.helpers import beautify_json, get_logger
 
 
 def _read_file_content(file_path: str):

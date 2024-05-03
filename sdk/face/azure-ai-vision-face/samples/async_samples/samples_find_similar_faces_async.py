@@ -24,10 +24,10 @@ import sys
 
 from dotenv import find_dotenv, load_dotenv
 
-# To import utility files in ../_shared folder
+# To import utility files in ../shared folder
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
-from _shared.constants import (  # noqa: E402
+from shared.constants import (  # noqa: E402
     CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY,
     CONFIGURATION_NAME_FACE_API_ENDPOINT,
     DEFAULT_FACE_API_ACCOUNT_KEY,
@@ -40,7 +40,7 @@ from _shared.constants import (  # noqa: E402
     IMAGE_FINDSIMILAR,
     IMAGE_NINE_FACES,
 )
-from _shared.helpers import beautify_json, get_logger  # noqa: E402
+from shared.helpers import beautify_json, get_logger  # noqa: E402
 
 
 def _read_file_content(file_path: str):
