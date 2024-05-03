@@ -44,7 +44,6 @@ ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-@experimental
 class EvaluatorOperations(_ScopeDependentOperations):
     """EvaluatorOperations.
 
@@ -302,7 +301,6 @@ class EvaluatorOperations(_ScopeDependentOperations):
         # )
 
     @monitor_with_activity(ops_logger, "Evaluator.Share", ActivityType.PUBLICAPI)
-    @experimental
     def share(
         self,
         name: str,
