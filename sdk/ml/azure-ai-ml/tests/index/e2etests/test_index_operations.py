@@ -4,7 +4,8 @@ from pathlib import Path
 from typing import Callable, List
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, add_uri_regex_sanitizer
+from devtools_testutils.fake_credentials import SANITIZED
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import LONG_URI_REGEX_FORMAT
@@ -29,6 +30,21 @@ def is_datastore_uri(s: str) -> bool:
     Should match the format azureml://subscriptions/{}/resourcegroups/{}/workspaces/{}/datastores/{}/paths/{}
     """
     return bool(re.match(LONG_URI_REGEX_FORMAT, s))
+
+
+@pytest.fixture()
+def storage_account_uri_sanitizer():
+    """Sanitizes URIs of the form NAME.blob.core.windows.net to sanitized.blob.core.windows.net
+
+
+    This fixture is a stop gap to deal with https://github.com/Azure/azure-sdk-for-python/issues/35447
+    """
+    add_uri_regex_sanitizer(
+        regex=r"https://(?<storage_account_name>[^\.]+).blob\.core\.windows\.net",
+        group_for_replace="storage_account_name",
+        value=SANITIZED,
+        function_scoped=True,
+    )
 
 
 @pytest.fixture()
@@ -61,7 +77,7 @@ def index_with_multiple_versions(client: MLClient) -> IndexesVersionInfo:
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
+@pytest.mark.usefixtures("recorded_test", "storage_account_uri_sanitizer")
 class TestIndex(AzureRecordedTestCase):
     def test_create(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         """Validate that we can create an index."""
