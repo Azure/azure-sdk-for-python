@@ -66,7 +66,7 @@ class FindSimilarFaces():
             # Detect faces from 'IMAGE_NINE_FACES'
             nine_faces_file_path = _get_full_file_path(IMAGE_NINE_FACES)
             detect_result1 = face_client.detect(
-                image_content=_read_file_content(nine_faces_file_path),
+                _read_file_content(nine_faces_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
                 return_face_id=True)
@@ -77,7 +77,7 @@ class FindSimilarFaces():
             # Detect face from 'IMAGE_FINDSIMILAR'
             find_similar_file_path = _get_full_file_path(IMAGE_FINDSIMILAR)
             detect_result2 = face_client.detect(
-                image_content=_read_file_content(find_similar_file_path),
+                _read_file_content(find_similar_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
                 return_face_id=True)
@@ -135,7 +135,7 @@ class FindSimilarFaces():
             # Detect face from 'IMAGE_FINDSIMILAR'
             find_similar_file_path = _get_full_file_path(IMAGE_FINDSIMILAR)
             detect_result = face_client.detect(
-                image_content=_read_file_content(find_similar_file_path),
+                _read_file_content(find_similar_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
                 return_face_id=True)

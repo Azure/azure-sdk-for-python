@@ -7,23 +7,13 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import Any, IO, List, Optional, Union, cast
-import sys
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .. import models as _models
 from ._client import FaceClient as FaceClientGenerated
 from ._client import FaceSessionClient as FaceSessionClientGenerated
-from ._operations._operations import (
-    FaceClientOperationsMixin,
-    FaceSessionClientOperationsMixin,
-)
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+from ._operations._operations import JSON, _Unset
 
 
 class FaceClient(FaceClientGenerated):
@@ -44,11 +34,12 @@ class FaceClient(FaceClientGenerated):
     @distributed_trace_async
     async def detect_from_url(
         self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
         url: str,
         detection_model: Union[str, _models.FaceDetectionModel],
         recognition_model: Union[str, _models.FaceRecognitionModel],
         return_face_id: bool,
-        *,
         return_face_attributes: Optional[List[Union[str, _models.FaceAttributeType]]] = None,
         return_face_landmarks: Optional[bool] = None,
         return_recognition_model: Optional[bool] = None,
@@ -105,23 +96,25 @@ class FaceClient(FaceClientGenerated):
         refer to
         https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-recognition-model.
 
-        :param url: URL of input image. Required.
-        :type url: str
-        :param detection_model: The 'detectionModel' associated with the detected faceIds. Supported
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword url: URL of input image. Required when body is not set.
+        :paramtype url: str
+        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
          'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
          value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
          Required.
-        :type detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
-        :param recognition_model: The 'recognitionModel' associated with the detected faceIds.
+        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
+        :keyword recognition_model: The 'recognitionModel' associated with the detected faceIds.
          Supported 'recognitionModel' values include 'recognition_01', 'recognition_02',
          'recognition_03' or 'recognition_04'. The default value is 'recognition_01'. 'recognition_04'
          is recommended since its accuracy is improved on faces wearing masks compared with
          'recognition_03', and its overall accuracy is improved compared with 'recognition_01' and
          'recognition_02'. Known values are: "recognition_01", "recognition_02", "recognition_03", and
          "recognition_04". Required.
-        :type recognition_model: str or ~azure.ai.vision.face.models.FaceRecognitionModel
-        :param return_face_id: Return faceIds of the detected faces or not. Required.
-        :type return_face_id: bool
+        :paramtype recognition_model: str or ~azure.ai.vision.face.models.FaceRecognitionModel
+        :keyword return_face_id: Return faceIds of the detected faces or not. Required.
+        :paramtype return_face_id: bool
         :keyword return_face_attributes: Analyze and return the one or more specified face attributes
          in the comma-separated string like 'returnFaceAttributes=headPose,glasses'. Face attribute
          analysis has additional computational and time cost. Default value is None.
@@ -430,15 +423,15 @@ class FaceClient(FaceClientGenerated):
         if return_face_id is not True:
             return_face_id = False
 
-        return await FaceClientOperationsMixin._detect_from_url(
-            self,
+        return await super()._detect_from_url(
+            body,
             url=url,
-            return_face_id=return_face_id,
-            return_face_landmarks=return_face_landmarks,
-            return_face_attributes=return_face_attributes,
-            recognition_model=recognition_model,
-            return_recognition_model=return_recognition_model,
             detection_model=detection_model,
+            recognition_model=recognition_model,
+            return_face_id=return_face_id,
+            return_face_attributes=return_face_attributes,
+            return_face_landmarks=return_face_landmarks,
+            return_recognition_model=return_recognition_model,
             face_id_time_to_live=face_id_time_to_live,
             **kwargs)
 
@@ -508,21 +501,21 @@ class FaceClient(FaceClientGenerated):
 
         :param image_content: The input image binary. Required.
         :type image_content: bytes
-        :param detection_model: The 'detectionModel' associated with the detected faceIds. Supported
+        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
          'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
          value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
          Required.
-        :type detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
-        :param recognition_model: The 'recognitionModel' associated with the detected faceIds.
+        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
+        :keyword recognition_model: The 'recognitionModel' associated with the detected faceIds.
          Supported 'recognitionModel' values include 'recognition_01', 'recognition_02',
          'recognition_03' or 'recognition_04'. The default value is 'recognition_01'. 'recognition_04'
          is recommended since its accuracy is improved on faces wearing masks compared with
          'recognition_03', and its overall accuracy is improved compared with 'recognition_01' and
          'recognition_02'. Known values are: "recognition_01", "recognition_02", "recognition_03", and
          "recognition_04". Required.
-        :type recognition_model: str or ~azure.ai.vision.face.models.FaceRecognitionModel
-        :param return_face_id: Return faceIds of the detected faces or not. Required.
-        :type return_face_id: bool
+        :paramtype recognition_model: str or ~azure.ai.vision.face.models.FaceRecognitionModel
+        :keyword return_face_id: Return faceIds of the detected faces or not. Required.
+        :paramtype return_face_id: bool
         :keyword return_face_attributes: Analyze and return the one or more specified face attributes
          in the comma-separated string like 'returnFaceAttributes=headPose,glasses'. Face attribute
          analysis has additional computational and time cost. Default value is None.
@@ -826,15 +819,14 @@ class FaceClient(FaceClientGenerated):
         if return_face_id is not True:
             return_face_id = False
 
-        return await FaceClientOperationsMixin._detect(
-            self,
-            image_content=image_content,
-            return_face_id=return_face_id,
-            return_face_landmarks=return_face_landmarks,
-            return_face_attributes=return_face_attributes,
-            recognition_model=recognition_model,
-            return_recognition_model=return_recognition_model,
+        return await super()._detect(
+            image_content,
             detection_model=detection_model,
+            recognition_model=recognition_model,
+            return_face_id=return_face_id,
+            return_face_attributes=return_face_attributes,
+            return_face_landmarks=return_face_landmarks,
+            return_recognition_model=return_recognition_model,
             face_id_time_to_live=face_id_time_to_live,
             **kwargs)
 
@@ -953,11 +945,11 @@ class FaceSessionClient(FaceSessionClientGenerated):
                 parameters=cast(_models._models.CreateLivenessSessionContentForMultipart, body),
                 verify_image=("verify-image", verify_image)
             )
-            return await FaceSessionClientOperationsMixin._create_liveness_with_verify_session_with_verify_image(
-                self, request_body, **kwargs)
+            return await super()._create_liveness_with_verify_session_with_verify_image(
+                request_body, **kwargs)
 
-        return await FaceSessionClientOperationsMixin._create_liveness_with_verify_session(
-            self, body, **kwargs)
+        return await super()._create_liveness_with_verify_session(
+            body, **kwargs)
 
 
 __all__: List[str] = [

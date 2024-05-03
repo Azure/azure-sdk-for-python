@@ -57,7 +57,7 @@ class GroupFaces():
                 file_content = fd.read()
 
             detect_result = await face_client.detect(
-                image_content=file_content,
+                file_content,
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
                 return_face_id=True)

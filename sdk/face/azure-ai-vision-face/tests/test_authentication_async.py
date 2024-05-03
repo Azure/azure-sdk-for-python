@@ -29,9 +29,9 @@ class TestAuthenticationAsync(AzureRecordedTestCase):
 
         result = await client.detect(
             file_content,
-            FaceDetectionModel.DETECTION_03,
-            FaceRecognitionModel.RECOGNITION_04,
-            False,  # return_face_id
+            detection_model=FaceDetectionModel.DETECTION_03,
+            recognition_model=FaceRecognitionModel.RECOGNITION_04,
+            return_face_id=False,
             return_face_attributes=[
                 FaceAttributeTypeDetection03.HEAD_POSE,
                 FaceAttributeTypeDetection03.MASK,

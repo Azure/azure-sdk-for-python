@@ -55,9 +55,9 @@ class DetectFaces():
 
             result = face_client.detect(
                 file_content,
-                FaceDetectionModel.DETECTION_03,
-                FaceRecognitionModel.RECOGNITION_04,
-                True,  # return_face_id
+                detection_model=FaceDetectionModel.DETECTION_03,
+                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                return_face_id=True,
                 return_face_attributes=[
                     FaceAttributeTypeDetection03.HEAD_POSE,
                     FaceAttributeTypeDetection03.MASK,
@@ -80,10 +80,10 @@ class DetectFaces():
         with FaceClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as face_client:
             sample_url = DEFAULT_IMAGE_URL
             result = face_client.detect_from_url(
-                sample_url,
-                FaceDetectionModel.DETECTION_01,
-                FaceRecognitionModel.RECOGNITION_04,
-                False,  # return_face_id
+                url=sample_url,
+                detection_model=FaceDetectionModel.DETECTION_01,
+                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                return_face_id=False,
                 return_face_attributes=[
                     FaceAttributeTypeDetection01.ACCESSORIES,
                     FaceAttributeTypeDetection01.EXPOSURE,

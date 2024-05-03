@@ -67,9 +67,9 @@ class FaceAuthentication():
 
             result = await face_client.detect(
                 file_content,
-                FaceDetectionModel.DETECTION_03,
-                FaceRecognitionModel.RECOGNITION_04,
-                False)  # return_face_id = False
+                detection_model=FaceDetectionModel.DETECTION_03,
+                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                return_face_id=False)
 
             self.logger.info(f"Detect faces from the file: {sample_file_path}")
             for idx, face in enumerate(result):
@@ -93,9 +93,9 @@ class FaceAuthentication():
 
             result = await face_client.detect(
                 file_content,
-                FaceDetectionModel.DETECTION_03,
-                FaceRecognitionModel.RECOGNITION_04,
-                False)  # return_face_id = False
+                detection_model=FaceDetectionModel.DETECTION_03,
+                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                return_face_id=False)
 
             self.logger.info(f"Detect faces from the file: {sample_file_path}")
             for idx, face in enumerate(result):
