@@ -52,7 +52,7 @@ def generate_segment_header(number: int, size: int) -> bytes:
             size.to_bytes(8, 'little'))
 
 
-class StructuredMessageEncodeStream(IOBase):  # pylint: too-many-instance-attributes
+class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instance-attributes
     message_version: int
     content_length: int
     message_length: int
@@ -373,7 +373,7 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: too-many-instance-attrib
             self._segment_crc64s.setdefault(self._current_segment_number, 0)
 
 
-class StructuredMessageDecodeStream:  # pylint: too-many-instance-attributes
+class StructuredMessageDecodeStream:  # pylint: disable=too-many-instance-attributes
 
     message_version: int
     """The version of the structured message."""
