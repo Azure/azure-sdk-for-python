@@ -66,7 +66,7 @@ class _QueryExecutionNonStreamingEndpointComponent(_QueryExecutionEndpointCompon
     For each processed orderby result it returns the item result.
     """
     def __next__(self):
-        return next(self._execution_context)._item_result["payload"]
+        return next(self._execution_context)._item_result["payload"]  # pylint:disable=protected-access
 
 
 class _QueryExecutionTopEndpointComponent(_QueryExecutionEndpointComponent):

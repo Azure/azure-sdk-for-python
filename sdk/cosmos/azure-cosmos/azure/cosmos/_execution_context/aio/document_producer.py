@@ -313,6 +313,6 @@ class _NonStreamingOrderByComparator(object):
         :rtype: int
         """
         # TODO: this is not fully safe - doesn't deal with scenario of having orderByItems of [{}]
-        rank1 = doc_producer1._item_result["orderByItems"][0]
-        rank2 = doc_producer2._item_result["orderByItems"][0]
+        rank1 = doc_producer1._item_result["orderByItems"][0]  # pylint:disable=protected-access
+        rank2 = doc_producer2._item_result["orderByItems"][0]  # pylint:disable=protected-access
         return await _OrderByHelper.compare(rank1, rank2)

@@ -53,6 +53,8 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
         self._query = query
         self._partitioned_query_ex_info = partitioned_query_ex_info
         self._sort_orders = partitioned_query_ex_info.get_order_by()
+        self._doc_producers = []
+        self._document_producer_comparator = document_producer._NonStreamingOrderByComparator(self._sort_orders)
 
         pq_size = partitioned_query_ex_info.get_top() or partitioned_query_ex_info.get_limit()
         self._orderByPQ = FixedSizePriorityQueue(pq_size)
@@ -133,8 +135,6 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
         # will be a list of (partition_min, partition_max) tuples
         targetPartitionRanges = await self._get_target_partition_key_range()
 
-        self._document_producer_comparator = document_producer._NonStreamingOrderByComparator(self._sort_orders)
-
         targetPartitionQueryExecutionContextList = []
         for partitionTargetRange in targetPartitionRanges:
             # create and add the child execution context for the target range
@@ -142,7 +142,6 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
                 self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
             )
 
-        self._doc_producers = []
         for targetQueryExContext in targetPartitionQueryExecutionContextList:
             try:
                 await targetQueryExContext.peek()
