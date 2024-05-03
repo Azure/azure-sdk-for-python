@@ -969,6 +969,7 @@ class MLClient:
         return self._models
 
     @property
+    @experimental
     def evaluators(self) -> EvaluatorOperations:
         """A collection of model related operations.
 
