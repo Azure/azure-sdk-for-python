@@ -17,9 +17,9 @@ USAGE:
     python sample_authentication.py
 
     Set the environment variables with your own values before running this sample:
-    1) FACE_ENDPOINT - the endpoint to your Face resource.
+    1) AZURE_FACE_API_ENDPOINT - the endpoint to your Face resource.
     The environment variable below is used for api key authentication.
-    2) FACE_KEY - your Face API key.
+    2) AZURE_FACE_API_ACCOUNT_KEY - your Face API key.
     The following environment variables are required for using azure-identity's DefaultAzureCredential.
     For more information, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
     3) AZURE_TENANT_ID - the tenant ID in Azure Active Directory

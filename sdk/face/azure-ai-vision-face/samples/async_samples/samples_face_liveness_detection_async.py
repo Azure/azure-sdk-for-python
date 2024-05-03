@@ -18,8 +18,8 @@ USAGE:
     python sample_face_liveness_detection_async.py
 
     Set the environment variables with your own values before running this sample:
-    1) FACE_ENDPOINT - the endpoint to your Face resource.
-    2) FACE_KEY - your Face API key.
+    1) AZURE_FACE_API_ENDPOINT - the endpoint to your Face resource.
+    2) AZURE_FACE_API_ACCOUNT_KEY - your Face API key.
 """
 import asyncio
 import os

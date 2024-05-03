@@ -6,17 +6,17 @@
 # license information.
 # --------------------------------------------------------------------------
 """
-FILE: sample_findsimilar_faces_async.py
+FILE: sample_find_similar_faces_async.py
 
 DESCRIPTION:
     This sample demonstrates how to find similar faces from a specified list of face ids or a largeFaceList.
 
 USAGE:
-    python sample_findsimilar_faces_async.py
+    python sample_find_similar_faces_async.py
 
     Set the environment variables with your own values before running this sample:
-    1) FACE_ENDPOINT - the endpoint to your Face resource.
-    2) FACE_KEY - your Face API key.
+    1) AZURE_FACE_API_ENDPOINT - the endpoint to your Face resource.
+    2) AZURE_FACE_API_ACCOUNT_KEY - your Face API key.
 """
 import asyncio
 import os
