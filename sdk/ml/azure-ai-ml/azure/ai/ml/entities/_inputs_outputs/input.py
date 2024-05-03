@@ -41,7 +41,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         * 'direct': Pass in the URI as a string to be accessed at runtime
     :paramtype mode: Optional[str]
     :keyword path_on_compute: The access path of the data input for compute
-    :paramtype mode: Optional[str]
+    :paramtype path_on_compute: Optional[str]
     :keyword default: The default value of the input. If a default is set, the input data will be optional.
     :paramtype default: Union[str, int, float, bool]
     :keyword min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job

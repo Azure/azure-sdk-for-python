@@ -49,10 +49,27 @@ steps:
     inputs:
       versionSpec: $(PythonVersion)
 
-  - script: |
-      python -m pip install setuptools==58.3.0
-      python -m pip install -r eng/ci_tools.txt
-    displayName: 'Prep Environment'
+  - bash: |
+      python -m venv $(Build.SourcesDirectory)/venv
+      source $(Build.SourcesDirectory)/venv/bin/activate
+      which python
+      python -m pip install --force -r eng/ci_tools.txt
+      python -m pip freeze --all
+      echo "##vso[task.setvariable variable=PATH]$PATH"
+    displayName: 'Prep Environment Linux/Mac'
+    condition: and(succeeded(), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
+
+  - pwsh: |
+      python -m venv $(Build.SourcesDirectory)/venv
+      ./venv/Scripts/Activate.ps1
+      which python
+      python -m pip install --force -r eng\ci_tools.txt
+      python -m pip freeze --all
+
+      $path = $env:PATH
+      Write-Host "##vso[task.setvariable variable=PATH]$path"
+    displayName: 'Prep Environment Windows'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
 
   - template: set-dev-build.yml@self
     parameters:
@@ -77,10 +94,22 @@ steps:
     displayName: 'Install QEMU Dependencies'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
-  - pwsh: |
+  - bash: |
+      source $(Build.SourcesDirectory)/venv/bin/activate
+      which python
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
-    displayName: 'Generate Packages'
-    condition: succeededOrFailed()
+    displayName: 'Generate Packages Linux/Mac'
+    condition: and(succeeded(), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
+    timeoutInMinutes: 80
+    env:
+      CIBW_BUILD_VERBOSITY: 3
+
+  - pwsh: |
+      ./venv/Scripts/Activate.ps1
+      which python
+      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
+    displayName: 'Generate Packages Windows'
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'))
     timeoutInMinutes: 80
     env:
       CIBW_BUILD_VERBOSITY: 3
@@ -90,6 +119,7 @@ steps:
       twine check $(Build.ArtifactStagingDirectory)/**/*.whl
       twine check $(Build.ArtifactStagingDirectory)/**/*.tar.gz
     displayName: 'Verify Readme'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
   - ${{ parameters.BeforePublishSteps }}
 
