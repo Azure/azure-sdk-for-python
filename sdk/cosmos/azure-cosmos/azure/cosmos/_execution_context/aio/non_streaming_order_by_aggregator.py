@@ -4,14 +4,13 @@
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
 
-import heapq
-from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
-from azure.cosmos._execution_context import document_producer
+from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
+from azure.cosmos._execution_context.aio import document_producer, _queue_async_helper
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
 
-
 # pylint: disable=protected-access
+
 
 class FixedSizePriorityQueue:
     """Provides a Fixed Size Priority Queue abstraction data structure"""
@@ -20,21 +19,19 @@ class FixedSizePriorityQueue:
         self._heap = []
         self.max_size = max_size
 
-    def pop(self):
-        return heapq.heappop(self._heap)
+    async def pop_async(self, document_producer_comparator):
+        return await _queue_async_helper.heap_pop(self._heap, document_producer_comparator)
 
-    def push(self, item):
-        if len(self._heap) < self.max_size:
-            heapq.heappush(self._heap, item)
-        else:
-            heapq.heappushpop(self._heap, item)
+    async def push_async(self, item, document_producer_comparator):
+        await _queue_async_helper.heap_push(self._heap, item, document_producer_comparator)
+        if len(self._heap) > self.max_size:
+            await _queue_async_helper.heap_pop(self._heap, document_producer_comparator)
 
     def peek(self):
         return self._heap[0]
 
     def size(self):
         return len(self._heap)
-
 
 class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
     """This class is a subclass of the query execution context base and serves for
@@ -57,61 +54,26 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
         self._partitioned_query_ex_info = partitioned_query_ex_info
         self._sort_orders = partitioned_query_ex_info.get_order_by()
 
-        # will be a list of (partition_min, partition_max) tuples
-        targetPartitionRanges = self._get_target_partition_key_range()
-
-        self._document_producer_comparator = document_producer._NonStreamingOrderByComparator(self._sort_orders)
-
-        targetPartitionQueryExecutionContextList = []
-        for partitionTargetRange in targetPartitionRanges:
-            # create a document producer for each partition key range
-            targetPartitionQueryExecutionContextList.append(
-                self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
-            )
-
-        self._doc_producers = []
-        # verify all document producers have items/ no splits
-        for targetQueryExContext in targetPartitionQueryExecutionContextList:
-            try:
-                targetQueryExContext.peek()
-                self._doc_producers.append(targetQueryExContext)
-            except exceptions.CosmosHttpResponseError as e:
-                if exceptions._partition_range_is_gone(e):
-                    # repairing document producer context on partition split
-                    self._repair_document_producer()
-                else:
-                    raise
-            except StopIteration:
-                continue
-
         pq_size = partitioned_query_ex_info.get_top() or partitioned_query_ex_info.get_limit()
         self._orderByPQ = FixedSizePriorityQueue(pq_size)
-        for doc_producer in self._doc_producers:
-            while True:
-                try:
-                    result = doc_producer.peek()
-                    item_result = document_producer._NonStreamingDocumentProducer(result, self._sort_orders)
-                    self._orderByPQ.push(item_result)
-                    next(doc_producer)
-                except StopIteration:
-                    break
 
-    def __next__(self):
-        """Returns the next item result.
+    async def __anext__(self):
+        """Returns the next result
 
         :return: The next result.
         :rtype: dict
-        :raises StopIteration: If no more results are left.
+        :raises StopIteration: If no more result is left.
         """
         if self._orderByPQ.size() > 0:
-            res = self._orderByPQ.pop()
+            res = await self._orderByPQ.pop_async(self._document_producer_comparator)
             return res
-        raise StopIteration
+        raise StopAsyncIteration
 
-    def fetch_next_block(self):
+    async def fetch_next_block(self):
+
         raise NotImplementedError("You should use pipeline's fetch_next_block.")
 
-    def _repair_document_producer(self):
+    async def _repair_document_producer(self):
         """Repairs the document producer context by using the re-initialized routing map provider in the client,
         which loads in a refreshed partition key range cache to re-create the partition key ranges.
         After loading this new cache, the document producers get re-created with the new valid ranges.
@@ -119,7 +81,7 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
         # refresh the routing provider to get the newly initialized one post-refresh
         self._routing_provider = self._client._routing_map_provider
         # will be a list of (partition_min, partition_max) tuples
-        targetPartitionRanges = self._get_target_partition_key_range()
+        targetPartitionRanges = await self._get_target_partition_key_range()
 
         targetPartitionQueryExecutionContextList = []
         for partitionTargetRange in targetPartitionRanges:
@@ -131,11 +93,11 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
         self._doc_producers = []
         for targetQueryExContext in targetPartitionQueryExecutionContextList:
             try:
-                targetQueryExContext.peek()
+                await targetQueryExContext.peek()
                 # if there are matching results in the target ex range add it to the priority queue
                 self._doc_producers.append(targetQueryExContext)
 
-            except StopIteration:
+            except StopAsyncIteration:
                 continue
 
     def _createTargetPartitionQueryExecutionContext(self, partition_key_target_range):
@@ -160,8 +122,49 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
             self._options,
         )
 
-    def _get_target_partition_key_range(self):
+    async def _get_target_partition_key_range(self):
+
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()
-        return self._routing_provider.get_overlapping_ranges(
+        return await self._routing_provider.get_overlapping_ranges(
             self._resource_link, [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges]
         )
+
+    async def _configure_partition_ranges(self):
+        # will be a list of (partition_min, partition_max) tuples
+        targetPartitionRanges = await self._get_target_partition_key_range()
+
+        self._document_producer_comparator = document_producer._NonStreamingOrderByComparator(self._sort_orders)
+
+        targetPartitionQueryExecutionContextList = []
+        for partitionTargetRange in targetPartitionRanges:
+            # create and add the child execution context for the target range
+            targetPartitionQueryExecutionContextList.append(
+                self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
+            )
+
+        self._doc_producers = []
+        for targetQueryExContext in targetPartitionQueryExecutionContextList:
+            try:
+                await targetQueryExContext.peek()
+                self._doc_producers.append(targetQueryExContext)
+            except exceptions.CosmosHttpResponseError as e:
+                if exceptions._partition_range_is_gone(e):
+                    # repairing document producer context on partition split
+                    await self._repair_document_producer()
+                else:
+                    raise
+
+            except StopAsyncIteration:
+                continue
+
+        pq_size = self._partitioned_query_ex_info.get_top() or self._partitioned_query_ex_info.get_limit()
+        self._orderByPQ = FixedSizePriorityQueue(pq_size)
+        for doc_producer in self._doc_producers:
+            while True:
+                try:
+                    result = await doc_producer.peek()
+                    item_result = document_producer._NonStreamingDocumentProducer(result, self._sort_orders)
+                    await self._orderByPQ.push_async(item_result, self._document_producer_comparator)
+                    await doc_producer.__anext__()
+                except StopAsyncIteration:
+                    break
