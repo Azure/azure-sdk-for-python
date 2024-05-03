@@ -464,8 +464,12 @@ T = TypeVar("T", bound=Artifact)
 def _check_and_upload_path(
     artifact: T,
     asset_operations: Union[
-        "DataOperations", "ModelOperations", "EvaluatorOperations", "CodeOperations",
-        "FeatureSetOperations", "IndexOperations"
+        "DataOperations",
+        "ModelOperations",
+        "EvaluatorOperations",
+        "CodeOperations",
+        "FeatureSetOperations",
+        "IndexOperations",
     ],
     artifact_type: str,
     datastore_name: Optional[str] = None,

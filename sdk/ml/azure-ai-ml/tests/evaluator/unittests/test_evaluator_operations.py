@@ -128,7 +128,10 @@ class TestModelOperations:
         assert model._auto_increment_version
         model.version = None
 
-        with patch("azure.ai.ml.operations._model_operations.Model._from_rest_object", return_value=None,), patch(
+        with patch(
+            "azure.ai.ml.operations._model_operations.Model._from_rest_object",
+            return_value=None,
+        ), patch(
             "azure.ai.ml.operations._model_operations._get_next_version_from_container",
             return_value="version",
         ) as mock_nextver, patch(

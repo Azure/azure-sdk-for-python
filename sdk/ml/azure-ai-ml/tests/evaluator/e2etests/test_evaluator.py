@@ -156,7 +156,8 @@ class TestEvaluator(AzureRecordedTestCase):
         reason="Registry uploads do not record well. Investigate later",
     )
     def test_create_get_download_evaluator_registry(
-            self, registry_client: MLClient, randstr: Callable[[], str]) -> None:
+        self, registry_client: MLClient, randstr: Callable[[], str]
+    ) -> None:
         model_name = randstr("model_name")
         model_version = "2"
 
