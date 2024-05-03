@@ -99,17 +99,17 @@ class BreakSentenceItem(_model_base.Model):
     :ivar detected_language: The detectedLanguage property is only present in the result object
      when language auto-detection is requested.
     :vartype detected_language: ~azure.ai.translation.text.models.DetectedLanguage
-    :ivar lengths_of_sentences: An integer array representing the lengths of the sentences in the
+    :ivar sentences_lengths: An integer array representing the lengths of the sentences in the
      input text.
      The length of the array is the number of sentences, and the values are the length of each
      sentence. Required.
-    :vartype lengths_of_sentences: list[int]
+    :vartype sentences_lengths: list[int]
     """
 
     detected_language: Optional["_models.DetectedLanguage"] = rest_field(name="detectedLanguage")
     """The detectedLanguage property is only present in the result object when language auto-detection
      is requested."""
-    lengths_of_sentences: List[int] = rest_field(name="sentLen")
+    sentences_lengths: List[int] = rest_field(name="sentLen")
     """An integer array representing the lengths of the sentences in the input text.
      The length of the array is the number of sentences, and the values are the length of each
      sentence. Required."""
@@ -118,7 +118,7 @@ class BreakSentenceItem(_model_base.Model):
     def __init__(
         self,
         *,
-        lengths_of_sentences: List[int],
+        sentences_lengths: List[int],
         detected_language: Optional["_models.DetectedLanguage"] = None,
     ): ...
 

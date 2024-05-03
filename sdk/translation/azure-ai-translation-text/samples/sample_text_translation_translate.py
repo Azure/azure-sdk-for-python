@@ -335,10 +335,10 @@ def get_text_translation_sentence_length():
                 )
             for translated_text in translation.translations:
                 print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
-                if translated_text.lengths_of_sentences:
-                    print(f"Source Sentence length: {translated_text.lengths_of_sentences.src_lengths_of_sentences}")
+                if translated_text.sentences_lengths:
+                    print(f"Source Sentence length: {translated_text.sentences_lengths.src_sentences_lengths}")
                     print(
-                        f"Translated Sentence length: {translated_text.lengths_of_sentences.trans_lengths_of_sentences}"
+                        f"Translated Sentence length: {translated_text.sentences_lengths.trans_sentences_lengths}"
                     )
 
     except HttpResponseError as exception:

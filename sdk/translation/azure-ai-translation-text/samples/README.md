@@ -565,10 +565,10 @@ try:
             )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
-            if translated_text.lengths_of_sentences:
-                print(f"Source Sentence length: {translated_text.lengths_of_sentences.src_lengths_of_sentences}")
+            if translated_text.sentences_lengths:
+                print(f"Source Sentence length: {translated_text.sentences_lengths.src_sentences_lengths}")
                 print(
-                    f"Translated Sentence length: {translated_text.lengths_of_sentences.trans_lengths_of_sentences}"
+                    f"Translated Sentence length: {translated_text.sentences_lengths.trans_sentences_lengths}"
                 )
 
 except HttpResponseError as exception:
@@ -631,7 +631,10 @@ try:
     input_text_elements = ["这是个测试。"]
 
     response = text_translator.transliterate(
-        request_body=input_text_elements, language=language, source_language_script=source_language_script, target_language_script=target_language_script
+        request_body=input_text_elements,
+        language=language,
+        source_language_script=source_language_script,
+        target_language_script=target_language_script,
     )
     transliteration = response[0] if response else None
 
@@ -675,7 +678,7 @@ try:
                 f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
             )
         print(f"The detected sentence boundaries:")
-        for boundary in sentence_boundaries.lengths_of_sentences:
+        for boundary in sentence_boundaries.sentences_lengths:
             print(boundary)
 
 except HttpResponseError as exception:
@@ -707,7 +710,7 @@ try:
                 f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
             )
         print(f"The detected sentence boundaries:")
-        for boundary in sentence_boundaries.lengths_of_sentences:
+        for boundary in sentence_boundaries.sentences_lengths:
             print(boundary)
 
 except HttpResponseError as exception:
