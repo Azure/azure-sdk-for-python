@@ -23,6 +23,7 @@ class AzureOpenAIDeploymentOperations(_ScopeDependentOperations):
     create an MLClient instance that instantiates it for you and
     attaches it as an attribute.
     """
+
     def __init__(
         self,
         operation_scope: OperationScope,
@@ -36,7 +37,7 @@ class AzureOpenAIDeploymentOperations(_ScopeDependentOperations):
 
     def list(self, connection_name: str, **kwargs) -> Iterable[AzureOpenAIDeployment]:
         """List Azure OpenAI deployments of the workspace.
-        
+
         :param connection_name: Name of the connection from which to list deployments
         :return: A list of Azure OpenAI deployments
         :rtype: ~typing.Iterable[~azure.ai.ml.entities.AzureOpenAIDeployment]

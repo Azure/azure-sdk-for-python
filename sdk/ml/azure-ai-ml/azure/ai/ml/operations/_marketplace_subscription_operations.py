@@ -30,6 +30,7 @@ class MarketplaceSubscriptionOperations(_ScopeDependentOperations):
     create an MLClient instance that instantiates it for you and
     attaches it as an attribute.
     """
+
     def __init__(
         self,
         operation_scope: OperationScope,
@@ -46,8 +47,8 @@ class MarketplaceSubscriptionOperations(_ScopeDependentOperations):
     ) -> LROPoller[MarketplaceSubscription]:
         """Create or update a Marketplace Subscription.
 
-        :param endpoint: The marketplace subscription entity.
-        :type endpoint: ~azure.ai.ml.entities.MarketplaceSubscription
+        :param marketplace_subscription: The marketplace subscription entity.
+        :type marketplace_subscription: ~azure.ai.ml.entities.MarketplaceSubscription
         :return: A poller to track the operation status
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.MarketplaceSubscription]
         """

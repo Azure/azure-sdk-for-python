@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Iterable
+from typing import Iterable, Optional
 import re
 
 from azure.ai.ml.exceptions import ValidationException, ErrorTarget, ErrorCategory, ValidationErrorType
@@ -37,6 +37,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
     create an MLClient instance that instantiates it for you and
     attaches it as an attribute.
     """
+
     def __init__(
         self,
         operation_scope: OperationScope,
@@ -79,7 +80,6 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
                 target=ErrorTarget.SERVERLESS_ENDPOINT,
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
-
             )
         return self._service_client.begin_create_or_update(
             self._resource_group_name,
@@ -164,13 +164,13 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
         self,
         name: str,
         *,
-        key_type: str = EndpointKeyType.PRIMARY_KEY_TYPE,
+        key_type: Optional[str] = EndpointKeyType.PRIMARY_KEY_TYPE,
         **kwargs,
     ) -> LROPoller[EndpointAuthKeys]:
         """Regenerate keys for a serverless endpoint.
 
         :param name: The endpoint name.
-        :type name: The endpoint type. Defaults to ONLINE_ENDPOINT_TYPE.
+        :type name: str
         :keyword key_type: One of "primary", "secondary". Defaults to "primary".
         :paramtype key_type: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if key_type is not "primary"

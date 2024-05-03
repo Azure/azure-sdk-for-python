@@ -136,7 +136,7 @@ class ServerlessEndpoint(_ServerlessEndpoint, ValidationMixin):
             properties=RestServerlessEndpointProperties(
                 model_settings=RestModelSettings(model_id=self.model_id),
             ),
-            auth_mode="key", # only key is supported for now
+            auth_mode="key",  # only key is supported for now
             tags=self.tags,
             sku=RestSku(name="Consumption"),
             location=self.location,
