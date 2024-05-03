@@ -99,7 +99,7 @@ class MarketplaceSubscriptionOperations(_ScopeDependentOperations):
     def begin_delete(self, name: str, **kwargs) -> LROPoller[None]:
         """Delete a Marketplace Subscription.
 
-        :param name: Name of the marketplace subcription.
+        :param name: Name of the marketplace subscription.
         :type name: str
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
