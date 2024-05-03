@@ -17,6 +17,7 @@ steps:
   - script: |
       python -m pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
+    condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
 
   - task: PythonScript@0
     condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
