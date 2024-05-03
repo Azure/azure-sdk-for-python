@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -209,7 +209,6 @@ class TriggerRunsOperations:
         :type trigger_name: str
         :param run_id: The pipeline run identifier. Required.
         :type run_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -228,23 +227,22 @@ class TriggerRunsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_rerun_request(
+        _request = build_rerun_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
             trigger_name=trigger_name,
             run_id=run_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.rerun.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -254,11 +252,7 @@ class TriggerRunsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    rerun.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/triggers/{triggerName}/triggerRuns/{runId}/rerun"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def cancel(  # pylint: disable=inconsistent-return-statements
@@ -274,7 +268,6 @@ class TriggerRunsOperations:
         :type trigger_name: str
         :param run_id: The pipeline run identifier. Required.
         :type run_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -293,23 +286,22 @@ class TriggerRunsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_cancel_request(
+        _request = build_cancel_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
             trigger_name=trigger_name,
             run_id=run_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.cancel.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -319,11 +311,7 @@ class TriggerRunsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    cancel.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/triggers/{triggerName}/triggerRuns/{runId}/cancel"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def query_by_factory(
@@ -346,7 +334,6 @@ class TriggerRunsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TriggerRunsQueryResponse or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.TriggerRunsQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -357,7 +344,7 @@ class TriggerRunsOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        filter_parameters: IO,
+        filter_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -369,11 +356,10 @@ class TriggerRunsOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param filter_parameters: Parameters to filter the pipeline run. Required.
-        :type filter_parameters: IO
+        :type filter_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TriggerRunsQueryResponse or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.TriggerRunsQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -384,7 +370,7 @@ class TriggerRunsOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        filter_parameters: Union[_models.RunFilterParameters, IO],
+        filter_parameters: Union[_models.RunFilterParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.TriggerRunsQueryResponse:
         """Query trigger runs.
@@ -394,12 +380,8 @@ class TriggerRunsOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param filter_parameters: Parameters to filter the pipeline run. Is either a
-         RunFilterParameters type or a IO type. Required.
-        :type filter_parameters: ~azure.mgmt.datafactory.models.RunFilterParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         RunFilterParameters type or a IO[bytes] type. Required.
+        :type filter_parameters: ~azure.mgmt.datafactory.models.RunFilterParameters or IO[bytes]
         :return: TriggerRunsQueryResponse or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.TriggerRunsQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -427,7 +409,7 @@ class TriggerRunsOperations:
         else:
             _json = self._serialize.body(filter_parameters, "RunFilterParameters")
 
-        request = build_query_by_factory_request(
+        _request = build_query_by_factory_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
             subscription_id=self._config.subscription_id,
@@ -435,16 +417,15 @@ class TriggerRunsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.query_by_factory.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -456,10 +437,6 @@ class TriggerRunsOperations:
         deserialized = self._deserialize("TriggerRunsQueryResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    query_by_factory.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/queryTriggerRuns"
-    }
+        return deserialized  # type: ignore

@@ -1,0 +1,12 @@
+name: one_lake_with_name
+type: azure_one_lake
+endpoint: www.endpoint.com
+one_lake_workspace_name: the_workspace_name
+artifact:
+  name: my_lake_name
+  type: lake_house
+credentials:
+  type: service_principal
+  tenant_id: "1234"
+  client_id: "12345"
+  client_secret: "123456"

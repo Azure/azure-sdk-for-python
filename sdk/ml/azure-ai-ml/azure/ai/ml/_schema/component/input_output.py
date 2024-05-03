@@ -102,7 +102,11 @@ class PrimitiveOutputSchema(OutputPortSchema):
 
     # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def _serialize(self, obj, *, many: bool = False):
-        """Override to add private preview hidden fields"""
+        """Override to add private preview hidden fields
+
+        :keyword many: Whether obj is a collection of objects.
+        :paramtype many: bool
+        """
         from azure.ai.ml.entities._job.pipeline._attr_dict import has_attr_safe  # pylint: disable=protected-access
 
         ret = super()._serialize(obj, many=many)  # pylint: disable=no-member

@@ -62,9 +62,9 @@ class DataCollector:
         return DataCollector(
             collections=collections,
             rolling_rate=rest_obj.rolling_rate,
-            request_logging=RequestLogging._from_rest_object(rest_obj.request_logging)
-            if rest_obj.request_logging
-            else None,
+            request_logging=(
+                RequestLogging._from_rest_object(rest_obj.request_logging) if rest_obj.request_logging else None
+            ),
             sampling_rate=sampling_rate,
         )
 

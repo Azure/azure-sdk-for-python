@@ -342,7 +342,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     ):
         """
         :param message: The message to send in the management request.
-        :paramtype message: Any
+        :type message: Any
         :param Dict[bytes, str] application_properties: App props.
         :param ~azure.servicebus._common._configuration.Configuration config: Configuration.
         :param str reply_to: Reply to.
