@@ -5,7 +5,7 @@
 
 import time
 import logging
-from typing import Optional, Union, Any, Tuple, TYPE_CHECKING
+from typing import Callable, Dict, List, Optional, Union, Any, Tuple, TYPE_CHECKING
 
 try:
     from uamqp import (
@@ -280,18 +280,31 @@ if uamqp_installed:
             return {types.AMQPSymbol(symbol): types.AMQPLong(value) for (symbol, value) in link_properties.items()}
 
         @staticmethod
-        def create_connection(**kwargs):
+        def create_connection(# pylint:disable=unused-argument
+            *,
+            endpoint: str,
+            auth: authentication.JWTTokenAuth,
+            container_id: Optional[str] = None,
+            max_frame_size: int,
+            channel_max: int,
+            idle_timeout: float,
+            properties: Optional[Dict[str, Any]],
+            remote_idle_timeout_empty_frame_send_ratio: float,
+            error_policy: Any,
+            debug: bool,
+            encoding: str,
+            **kwargs: Any
+        ) -> Connection:
             """
             Creates and returns the uamqp Connection object.
-            :keyword str host: The hostname, used by uamqp.
-            :keyword ~uamqp.authentication.JWTTokenAuth auth: The auth, used by uamqp.
             :keyword str endpoint: The endpoint, used by pyamqp.
+            :keyword ~uamqp.authentication.JWTTokenAuth auth: The auth, used by uamqp.
             :keyword str container_id: Required.
             :keyword int max_frame_size: Required.
             :keyword int channel_max: Required.
-            :keyword int idle_timeout: Required.
-            :keyword Dict properties: Required.
-            :keyword int remote_idle_timeout_empty_frame_send_ratio: Required.
+            :keyword float idle_timeout: Required.
+            :keyword dict[str, Any] or None properties: Required.
+            :keyword float remote_idle_timeout_empty_frame_send_ratio: Required.
             :keyword error_policy: Required.
             :keyword bool debug: Required.
             :keyword str encoding: Required.
@@ -300,13 +313,17 @@ if uamqp_installed:
             :rtype: uamqp.Connection
 
             """
-            endpoint = kwargs.pop("endpoint") # pylint:disable=unused-variable
-            custom_endpoint_address = kwargs.pop("custom_endpoint_address") # pylint:disable=unused-variable
-            host = kwargs.pop("host")
-            auth = kwargs.pop("auth")
             return Connection(
-                host,
+                endpoint,
                 auth,
+                container_id=container_id,
+                max_frame_size=max_frame_size,
+                channel_max=channel_max,
+                idle_timeout=idle_timeout,
+                properties=properties,
+                remote_idle_timeout_empty_frame_send_ratio=remote_idle_timeout_empty_frame_send_ratio,
+                encoding=encoding,
+                debug=debug,
                 **kwargs
             )
 
@@ -332,7 +349,20 @@ if uamqp_installed:
             return connection._state    # pylint:disable=protected-access
 
         @staticmethod
-        def create_send_client(*, config, **kwargs): # pylint:disable=unused-argument
+        def create_send_client(# pylint: disable=unused-argument
+            *,
+            config,
+            target: str,
+            auth: authentication.JWTTokenAuth,
+            idle_timeout: int,
+            network_trace: bool,
+            retry_policy: Any,
+            keep_alive_interval: int,
+            client_name: str,
+            link_properties: Optional[Dict[str, Any]] = None,
+            properties: Optional[Dict[str, Any]] = None,
+            **kwargs: Any
+        ):
             """
             Creates and returns the uamqp SendClient.
             :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -345,19 +375,21 @@ if uamqp_installed:
             :keyword keep_alive_interval: Required.
             :keyword str client_name: Required.
             :keyword dict link_properties: Required.
-            :keyword properties: Required.
+            :keyword dict[str, Any] or None properties: Required.
 
             :return: The send client.
             :rtype: uamqp.SendClient
             """
-            target = kwargs.pop("target")
-            retry_policy = kwargs.pop("retry_policy")
-            network_trace = kwargs.pop("network_trace")
-
             return SendClient(
                 target,
                 debug=network_trace,
                 error_policy=retry_policy,
+                keep_alive_interval=keep_alive_interval,
+                client_name=client_name,
+                properties=properties,
+                link_properties=link_properties,
+                idle_timeout=idle_timeout,
+                auth=auth,
                 **kwargs
             )
 
@@ -455,24 +487,40 @@ if uamqp_installed:
             return source
 
         @staticmethod
-        def create_receive_client(*, config, **kwargs): # pylint: disable=unused-argument
+        def create_receive_client( # pylint: disable=unused-argument
+            *,
+            config,
+            source: Source,
+            auth: authentication.JWTTokenAuth,
+            idle_timeout: int,
+            network_trace: bool,
+            retry_policy: Any,
+            client_name: str,
+            link_properties: Dict[bytes, Any],
+            properties: Optional[Dict[str, Any]] = None,
+            link_credit: int,
+            keep_alive_interval: int,
+            desired_capabilities: Optional[List[bytes]] = None,
+            streaming_receive: bool,
+            message_received_callback: Callable,
+            timeout: float,
+            **kwargs
+        ):
             """
             Creates and returns the receive client.
             :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
-            :keyword str source: Required. The source.
-            :keyword str offset: Required.
-            :keyword str offset_inclusive: Required.
+            :keyword Source source: Required. The source.
             :keyword ~uamqp.authentication.JWTTokenAuth auth: Required.
             :keyword int idle_timeout: Required.
             :keyword network_trace: Required.
             :keyword retry_policy: Required.
             :keyword str client_name: Required.
             :keyword dict link_properties: Required.
-            :keyword properties: Required.
+            :keyword dict[str, Any] or None properties: Required.
             :keyword link_credit: Required. The prefetch.
             :keyword keep_alive_interval: Required.
-            :keyword desired_capabilities: Required.
+            :keyword list[bytes] or None desired_capabilities: Required.
             :keyword streaming_receive: Required.
             :keyword message_received_callback: Required.
             :keyword timeout: Required.
@@ -480,18 +528,11 @@ if uamqp_installed:
             :returns: The receive client.
             :rtype: uamqp.ReceiveClient
             """
-
-            source = kwargs.pop("source")
-            symbol_array = kwargs.pop("desired_capabilities")
+            symbol_array = desired_capabilities
             desired_capabilities = None
             if symbol_array:
                 symbol_array = [types.AMQPSymbol(symbol) for symbol in symbol_array]
                 desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
-            retry_policy = kwargs.pop("retry_policy")
-            network_trace = kwargs.pop("network_trace")
-            link_credit = kwargs.pop("link_credit")
-            streaming_receive = kwargs.pop("streaming_receive")
-            message_received_callback = kwargs.pop("message_received_callback")
 
             client = ReceiveClient(
                 source,
@@ -501,11 +542,18 @@ if uamqp_installed:
                 prefetch=link_credit,
                 receive_settle_mode=constants.ReceiverSettleMode.ReceiveAndDelete,
                 auto_complete=False,
+                keep_alive_interval=keep_alive_interval,
+                client_name=client_name,
+                properties=properties,
+                link_properties=link_properties,
+                idle_timeout=idle_timeout,
+                auth=auth,
+                timeout=timeout,
                 **kwargs
             )
             # pylint:disable=protected-access
             client._streaming_receive = streaming_receive
-            client._message_received_callback = (message_received_callback)
+            client._message_received_callback = message_received_callback
             return client
 
         @staticmethod
@@ -535,7 +583,14 @@ if uamqp_installed:
                 raise consumer._handle_exception(exception)  # pylint: disable=protected-access
 
         @staticmethod
-        def create_token_auth(auth_uri, get_token, token_type, config, **kwargs):
+        def create_token_auth(
+            auth_uri: str,
+            get_token: Callable,
+            token_type: bytes,
+            config,
+            *,
+            update_token: bool,
+        ):
             """
             Creates the JWTTokenAuth.
             :param str auth_uri: The auth uri to pass to JWTTokenAuth.
@@ -551,7 +606,6 @@ if uamqp_installed:
             :rtype: ~uamqp.authentication.JWTTokenAuth
 
             """
-            update_token = kwargs.pop("update_token")
             refresh_window = 300
             if update_token:
                 refresh_window = 0
@@ -614,7 +668,16 @@ if uamqp_installed:
             return mgmt_auth.token
 
         @staticmethod
-        def mgmt_client_request(mgmt_client: AMQPClient, mgmt_msg: str, **kwargs: Any):
+        def mgmt_client_request(
+            mgmt_client: AMQPClient,
+            mgmt_msg: str,
+            *,
+            operation: bytes,
+            operation_type: bytes,
+            status_code_field: bytes,
+            description_fields: bytes,
+            **kwargs: Any
+        ):
             """
             Send mgmt request.
             :param uamqp.AMQPClient mgmt_client: Client to send request with.
@@ -626,17 +689,17 @@ if uamqp_installed:
             :return: Status code, description, and response.
             :rtype: tuple[str, str, uamqp.Message]
             """
-            operation_type = kwargs.pop("operation_type")
-            operation = kwargs.pop("operation")
             response = mgmt_client.mgmt_request(
                 mgmt_msg,
                 operation,
                 op_type=operation_type,
+                status_code_field=status_code_field,
+                description_fields=description_fields,
                 **kwargs
             )
-            status_code = response.application_properties[kwargs.get("status_code_field")]
+            status_code = response.application_properties[status_code_field]
             description: Optional[Union[str, bytes]] = response.application_properties.get(
-                kwargs.get("description_fields")
+                description_fields
             )
             return status_code, description, response
 

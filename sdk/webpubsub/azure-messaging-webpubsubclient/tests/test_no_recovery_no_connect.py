@@ -57,7 +57,7 @@ class TestWebpubsubClientNoRecoveryNoReconnect(WebpubsubClientTest):
         )
 
         with client:
-            group_name = "test"
+            group_name = "test_disable_recovery_and_autoconnect_send_concurrently"
             client.join_group(group_name)
 
             def send(idx):

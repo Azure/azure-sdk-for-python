@@ -2,6 +2,6 @@
 package_name = "azure-mgmt-frontdoor"
 package_pprint_name = "Front Door Service"
 package_doc_id = ""
-is_stable = false
+is_stable = true
 is_arm = true
 title = "FrontDoorManagementClient"

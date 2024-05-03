@@ -40,7 +40,7 @@ from ...constants._common import (
     DefaultOpenEncoding,
 )
 from ...entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr
-from ...exceptions import ValidationException
+from ...exceptions import MlException, ValidationException
 from ..core.schema import PathAwareSchema
 
 module_logger = logging.getLogger(__name__)
@@ -648,7 +648,7 @@ class TypeSensitiveUnionField(UnionField):
                 self.context[BASE_PATH_CONTEXT_KEY] = target_path.parent
                 with target_path.open(encoding=DefaultOpenEncoding.READ) as f:
                     return yaml.safe_load(f)
-        except Exception:  # pylint: disable=broad-except
+        except Exception:  # pylint: disable=W0718
             pass
         return value
 
@@ -663,8 +663,6 @@ class TypeSensitiveUnionField(UnionField):
 
 def ComputeField(**kwargs) -> Field:
     """
-    :keyword required: if set to True, it is not possible to pass None
-    :paramtype required: bool
     :return: The compute field
     :rtype: Field
     """
@@ -682,8 +680,6 @@ def ComputeField(**kwargs) -> Field:
 
 def CodeField(**kwargs) -> Field:
     """
-    :keyword required: if set to True, it is not possible to pass None
-    :paramtype required: bool
     :return: The code field
     :rtype: Field
     """
@@ -705,7 +701,7 @@ def CodeField(**kwargs) -> Field:
 def EnvironmentField(*, extra_fields: List[Field] = None, **kwargs):
     """Function to return a union field for environment.
 
-    :param extra_fields: extra fields to be added to the union field
+    :keyword extra_fields: Extra fields to be added to the union field
     :paramtype extra_fields: List[Field]
     :return: The environment field
     :rtype: Field
@@ -796,7 +792,8 @@ class VersionField(Field):
             return value
         if isinstance(value, (int, float)):
             return str(value)
-        raise Exception(f"Type {type(value)} is not supported for version.")
+        msg = f"Type {type(value)} is not supported for version."
+        raise MlException(message=msg, no_personal_data_message=msg)
 
 
 class NumberVersionField(VersionField):

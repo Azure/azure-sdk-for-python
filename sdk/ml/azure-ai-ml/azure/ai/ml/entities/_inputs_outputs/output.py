@@ -29,8 +29,7 @@ class Output(_InputOutputBase):
         mode: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs: Any,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(
@@ -83,7 +82,7 @@ class Output(_InputOutputBase):
             * 'direct': Pass in the URI as a string
         :paramtype mode: Optional[str]
         :keyword path_on_compute: The access path of the data output for compute
-        :paramtype mode: Optional[str]
+        :paramtype path_on_compute: Optional[str]
         :keyword description: The description of the output.
         :paramtype description: Optional[str]
         :keyword name: The name to be used to register the output as a Data or Model asset. A name can be set without

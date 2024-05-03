@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -43,7 +43,7 @@ def build_trigger_ltr_pre_backup_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -81,7 +81,7 @@ def build_start_ltr_backup_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -155,7 +155,6 @@ class FlexibleServerOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LtrPreBackupResponse or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.LtrPreBackupResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -166,7 +165,7 @@ class FlexibleServerOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -180,11 +179,10 @@ class FlexibleServerOperations:
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LtrPreBackupResponse or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.LtrPreBackupResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -195,7 +193,7 @@ class FlexibleServerOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.LtrPreBackupRequest, IO],
+        parameters: Union[_models.LtrPreBackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.LtrPreBackupResponse:
         """PreBackup operation performs all the checks that are needed for the subsequent long term
@@ -206,13 +204,10 @@ class FlexibleServerOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: Request body for operation. Is either a LtrPreBackupRequest type or a IO
-         type. Required.
-        :type parameters: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.LtrPreBackupRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param parameters: Request body for operation. Is either a LtrPreBackupRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.LtrPreBackupRequest or
+         IO[bytes]
         :return: LtrPreBackupResponse or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.LtrPreBackupResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -240,7 +235,7 @@ class FlexibleServerOperations:
         else:
             _json = self._serialize.body(parameters, "LtrPreBackupRequest")
 
-        request = build_trigger_ltr_pre_backup_request(
+        _request = build_trigger_ltr_pre_backup_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             subscription_id=self._config.subscription_id,
@@ -248,16 +243,15 @@ class FlexibleServerOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.trigger_ltr_pre_backup.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -273,16 +267,16 @@ class FlexibleServerOperations:
         deserialized = self._deserialize("LtrPreBackupResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    trigger_ltr_pre_backup.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/ltrPreBackup"
-    }
+        return deserialized  # type: ignore
 
     def _start_ltr_backup_initial(
-        self, resource_group_name: str, server_name: str, parameters: Union[_models.LtrBackupRequest, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        server_name: str,
+        parameters: Union[_models.LtrBackupRequest, IO[bytes]],
+        **kwargs: Any
     ) -> Optional[_models.LtrBackupResponse]:
         error_map = {
             401: ClientAuthenticationError,
@@ -307,7 +301,7 @@ class FlexibleServerOperations:
         else:
             _json = self._serialize.body(parameters, "LtrBackupRequest")
 
-        request = build_start_ltr_backup_request(
+        _request = build_start_ltr_backup_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             subscription_id=self._config.subscription_id,
@@ -315,16 +309,15 @@ class FlexibleServerOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._start_ltr_backup_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -350,13 +343,9 @@ class FlexibleServerOperations:
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _start_ltr_backup_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/startLtrBackup"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_start_ltr_backup(
@@ -380,14 +369,6 @@ class FlexibleServerOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either LtrBackupResponse or the result of
          cls(response)
         :rtype:
@@ -400,7 +381,7 @@ class FlexibleServerOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -413,18 +394,10 @@ class FlexibleServerOperations:
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either LtrBackupResponse or the result of
          cls(response)
         :rtype:
@@ -434,7 +407,11 @@ class FlexibleServerOperations:
 
     @distributed_trace
     def begin_start_ltr_backup(
-        self, resource_group_name: str, server_name: str, parameters: Union[_models.LtrBackupRequest, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        server_name: str,
+        parameters: Union[_models.LtrBackupRequest, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.LtrBackupResponse]:
         """Start the Long Term Retention Backup operation.
 
@@ -443,20 +420,10 @@ class FlexibleServerOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: Request body for operation. Is either a LtrBackupRequest type or a IO type.
-         Required.
-        :type parameters: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.LtrBackupRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param parameters: Request body for operation. Is either a LtrBackupRequest type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.LtrBackupRequest or
+         IO[bytes]
         :return: An instance of LROPoller that returns either LtrBackupResponse or the result of
          cls(response)
         :rtype:
@@ -493,7 +460,7 @@ class FlexibleServerOperations:
 
             deserialized = self._deserialize("LtrBackupResponse", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
         if polling is True:
@@ -505,14 +472,12 @@ class FlexibleServerOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.LtrBackupResponse].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_start_ltr_backup.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/startLtrBackup"
-    }
+        return LROPoller[_models.LtrBackupResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )

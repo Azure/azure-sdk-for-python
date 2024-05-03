@@ -1,0 +1,8 @@
+name: test_project
+kind: project
+description: "A test project for unit tests"
+location: "this must match the parent's hub (unless we want to add the ability for projects to derive the hubs parent with an extra API call)"
+resource_group: "my-test-rg-which-can-be-different-from-the-hubs-rg"
+tags:
+  extra_data: "some value"
+hub_id: /subscriptions/abc-123-drm-abc/resourceGroups/my-test-rg/providers/Microsoft.MachineLearningServices/workspaces/my-test-hub

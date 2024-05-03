@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.hdinsightcontainers import HDInsightContainersMgmtClient
 
 """
@@ -71,24 +74,29 @@ def main():
                             "timeZone": "Cen. Australia Standard Time",
                         },
                     },
-                    "clusterVersion": "1.0.1",
+                    "clusterVersion": "1.0.6",
                     "identityProfile": {
                         "msiClientId": "de91f1d8-767f-460a-ac11-3cf103f74b34",
                         "msiObjectId": "40491351-c240-4042-91e0-f644a1d2b441",
                         "msiResourceId": "/subscriptions/subid/resourceGroups/hiloResourcegroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-msi",
                     },
-                    "kafkaProfile": {},
-                    "ossVersion": "2.4.1",
+                    "ossVersion": "0.410.0",
                     "sshProfile": {"count": 2},
+                    "trinoProfile": {},
                 },
-                "clusterType": "kafka",
-                "computeProfile": {"nodes": [{"count": 4, "type": "worker", "vmSize": "Standard_D3_v2"}]},
+                "clusterType": "Trino",
+                "computeProfile": {
+                    "nodes": [
+                        {"count": 2, "type": "Head", "vmSize": "Standard_E8as_v5"},
+                        {"count": 3, "type": "Worker", "vmSize": "Standard_E8as_v5"},
+                    ]
+                },
             },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2023-06-01-preview/examples/CreateAutoscaleCluster.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2023-11-01-preview/examples/CreateAutoscaleCluster.json
 if __name__ == "__main__":
     main()
