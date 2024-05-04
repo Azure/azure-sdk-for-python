@@ -99,6 +99,7 @@ DATASTORE_SHORT_URI = "azureml://datastores/"
 MLFLOW_URI_FORMAT = "runs:/{}/{}"
 JOB_URI_FORMAT = "azureml://jobs/{}/outputs/{}/paths/{}"
 LONG_URI_FORMAT = "azureml://subscriptions/{}/resourcegroups/{}/workspaces/{}/datastores/{}/paths/{}"
+LONG_URI_FORMAT_TEMPLATE = LONG_URI_FORMAT.format(".*", ".*", ".*", ".*", ".*")
 SHORT_URI_REGEX_FORMAT = "azureml://datastores/([^/]+)/paths/(.+)"
 MLFLOW_URI_REGEX_FORMAT = "runs:/([^/?]+)/(.+)"
 AZUREML_REGEX_FORMAT = "azureml:([^/]+):(.+)"
@@ -951,6 +952,8 @@ class DataIndexTypes:
 
     ACS = "acs"
     """Azure Cognitive Search index type."""
+    PINECONE = "pinecone"
+    """Pinecone index type."""
     FAISS = "faiss"
     """Faiss index type."""
 

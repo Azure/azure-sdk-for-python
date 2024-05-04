@@ -255,9 +255,7 @@ class IndexOperations(_ScopeDependentOperations):
         :raises ValueError: If the `source_input` is not type ~typing.Str or
             ~azure.ai.ml.entities._indexes.LocalSource.
         """
-        # pylint: disable = no-name-in-module, import-error
-        from azureml.rag.embeddings import EmbeddingsContainer
-        from azureml.rag.dataindex import (
+        from azure.ai.ml.entities._indexes.entities.data_index import (
             CitationRegex,
             Data,
             DataIndex,
@@ -266,64 +264,6 @@ class IndexOperations(_ScopeDependentOperations):
             IndexStore,
         )
         from azure.ai.ml.entities._indexes.utils._open_ai_utils import build_open_ai_protocol, build_connection_id
-
-        if isinstance(input_source, AISearchSource):
-            # pylint: disable = no-name-in-module, import-error
-            from azureml.rag.utils.connections import get_connection_by_id_v2, get_target_from_connection
-
-            # Construct MLIndex object
-            mlindex_config = {}
-            connection_args = {
-                "connection_type": "workspace_connection", 
-                "connection": {
-                    "id": build_connection_id(
-                        embeddings_model_config.connection_name,
-                        self._operation_scope
-                    )}
-            }
-            if embeddings_model_config.connection_type == "serverless":
-                mlindex_config["embeddings"] = EmbeddingsContainer.from_uri(
-                    model_uri=None, credential=None, **connection_args
-                ).get_metadata()
-            else:
-                mlindex_config["embeddings"] = EmbeddingsContainer.from_uri(  # type: ignore[attr-defined]
-                    build_open_ai_protocol(
-                        model=embeddings_model_config.model_name,
-                        deployment=embeddings_model_config.deployment_name
-                    ),
-                    **connection_args
-                ).get_metadata()  # Bug 2922096
-            mlindex_config["index"] = {
-                "kind": "acs",
-                "connection_type": "workspace_connection",
-                "connection": {"id": input_source.ai_search_index_connection_id},
-                "index": input_source.ai_search_index_name,
-                "endpoint": get_target_from_connection(
-                    get_connection_by_id_v2(
-                        input_source.ai_search_index_connection_id,
-                        credential=self._credential
-                    ) # TODO: test
-                ),
-                "engine": "azure-sdk",
-                "field_mapping": {
-                    "content": input_source.ai_search_index_content_key,
-                    # "url": input_source., # TODO: Add to AISearchSource
-                    # "filename": input_source., # TODO: Add to AISearchSource
-                    "title": input_source.ai_search_index_title_key,
-                    "metadata": input_source.ai_search_index_metadata_key,
-                },
-            }
-            if input_source.ai_search_index_embedding_key is not None:
-                mlindex_config["index"]["embedding"] = input_source.ai_search_index_embedding_key
-
-            with tempfile.TemporaryDirectory() as temp_dir:
-                temp_file = os.path.join(temp_dir, "MLIndex")
-                with open(temp_file, "w") as f:  # pylint: disable=unspecified-encoding
-                    yaml.dump(mlindex_config, f)
-
-                mlindex = Index(name=name, path=temp_dir, stage="Development", version="1")
-                # Register it
-                return self.create_or_update(mlindex)
 
         if document_path_replacement_regex:
             document_path_replacement_regex = json.loads(document_path_replacement_regex)
@@ -363,11 +303,26 @@ class IndexOperations(_ScopeDependentOperations):
             path=f"azureml://datastores/workspaceblobstore/paths/indexes/{name}/{{name}}",
         )
 
+        if isinstance(input_source, LocalSource):
+            data_index.source.input_data = Data(
+                type="uri_folder",
+                path=input_source.input_data.path,
+            )
+
+            return self.index_data(data_index=data_index, identity=input_source_credential)
+
+        if isinstance(input_source, str):
+            data_index.source.input_data = Data(
+                type="uri_folder",
+                path=input_source,
+            )
+
+            return self.index_data(data_index=data_index, identity=input_source_credential)
+
         if isinstance(input_source, GitSource):
             from azure.ai.ml.dsl import pipeline
             from azure.ai.ml import MLClient
-            # pylint: disable = no-name-in-module, import-error
-            from azureml.rag.dataindex import index_data as index_data_func
+            from azure.ai.ml.entities._indexes.data_index_func import index_data as index_data_func
 
             ml_registry = MLClient(credential=self._credential, registry_name="azureml")
             git_clone_component = ml_registry.components.get("llm_rag_git_clone", label="latest")
@@ -406,22 +361,6 @@ class IndexOperations(_ScopeDependentOperations):
 
             # Submit the DataIndex Job
             return self._all_operations.all_operations[AzureMLResourceType.JOB].create_or_update(git_index_job)
-
-        if isinstance(input_source, LocalSource):
-            data_index.source.input_data = Data(
-                type="uri_folder",
-                path=input_source.input_data.path,
-            )
-
-            return self.index_data(data_index=data_index, identity=input_source_credential)
-
-        if isinstance(input_source, str):
-            data_index.source.input_data = Data(
-                type="uri_folder",
-                path=input_source,
-            )
-
-            return self.index_data(data_index=data_index, identity=input_source_credential)
         raise ValueError(f"Unsupported input source type {type(input_source)}")
 
     def index_data(
@@ -460,7 +399,7 @@ class IndexOperations(_ScopeDependentOperations):
             _validate_workspace_managed_datastore,
         )
         # pylint: disable = no-name-in-module, import-error
-        from azureml.rag.dataindex import index_data as index_data_func
+        from azure.ai.ml.entities._indexes.data_index_func import index_data as index_data_func
 
         default_name = "data_index_" + data_index.name
         experiment_name = kwargs.pop("experiment_name", None) or default_name
@@ -472,7 +411,6 @@ class IndexOperations(_ScopeDependentOperations):
         # block customer specified path on managed datastore
         data_index.path = _validate_workspace_managed_datastore(data_index.path)
 
-        # TODO: This is import_data behavior, not sure if it should be default for index_data, or just be documented?
         if "${{name}}" not in data_index.path and "{name}" not in data_index.path:
             data_index.path = data_index.path.rstrip("/") + "/${{name}}"
 

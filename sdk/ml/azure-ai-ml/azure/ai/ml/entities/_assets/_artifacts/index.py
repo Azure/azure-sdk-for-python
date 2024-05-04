@@ -8,6 +8,7 @@ from typing import Any, Dict, Optional, Union
 from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401.models import Index as RestIndex
 from azure.ai.ml._utils._arm_id_utils import AMLAssetId
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.constants._common import LONG_URI_FORMAT_TEMPLATE
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.entities._system_data import RestSystemData, SystemData
@@ -122,9 +123,10 @@ class Index(Artifact):
     def as_langchain_retriever(self):
         if not self.path:
             raise ValueError("Index.path should not be none")
-        try:
-            from azureml.rag.mlindex import MLIndex as InternalMLIndex
-        except ImportError as e:
-            print("Cannot import MLIndex")
-            raise e
-        return InternalMLIndex(str(self.path)).as_langchain_retriever()
+        
+        import re
+        if not re.match(LONG_URI_FORMAT_TEMPLATE, self.path):
+            raise ValueError("Index path doesn't have a supported format")
+            
+        from azure.ai.ml.entities._indexes._mlindex import MLIndex
+        return MLIndex(str(self.path)).as_langchain_retriever()
