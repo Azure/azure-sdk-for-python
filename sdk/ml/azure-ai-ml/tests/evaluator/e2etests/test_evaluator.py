@@ -110,6 +110,9 @@ class TestEvaluator(AzureRecordedTestCase):
             client.evaluators.create_or_update(model)
             assert client.evaluators.get(model_name, label="latest").version == version
 
+    @pytest.mark.skip('Skiping test for archive and restore as we have removed it from interface. '
+                      'These test will be available when the appropriate API will be enabled at '
+                      'GenericAssetService.')
     def test_evaluator_archive_restore_version(self, client: MLClient, randstr: Callable[[], str]) -> None:
         model_name = f"model_{randstr('name')}"
 
