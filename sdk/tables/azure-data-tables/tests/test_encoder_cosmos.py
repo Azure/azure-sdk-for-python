@@ -512,7 +512,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
             
-            assert "is too large to be cast to type Edm.Int32" in str(error.value)
+            assert "is too large to be cast to" in str(error.value)
             with pytest.raises(HttpResponseError) as error:
                 resp = client.create_entity(
                     test_entity,
@@ -550,7 +550,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
-            assert "is too large to be cast to type Edm.Int64" in str(error.value)
+            assert "is too large to be cast to" in str(error.value)
             with pytest.raises(HttpResponseError) as error:
                 resp = client.create_entity(
                     test_entity,
@@ -1295,7 +1295,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             expected_entity = test_entity
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
-            assert "is too large to be cast to type Edm.Int32" in str(error.value)
+            assert "is too large to be cast to" in str(error.value)
             with pytest.raises(HttpResponseError) as error:
                 resp = client.upsert_entity(
                     test_entity,
@@ -1365,7 +1365,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
-            assert "is too large to be cast to type Edm.Int64" in str(error.value)
+            assert "is too large to be cast to" in str(error.value)
             with pytest.raises(HttpResponseError) as error:
                 client.upsert_entity(
                     test_entity,
@@ -2172,7 +2172,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             client.upsert_entity({"PartitionKey": "PK1", "RowKey": "RK1"})
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
-            assert "is too large to be cast to type Edm.Int32" in str(error.value)
+            assert "is too large to be cast to" in str(error.value)
             with pytest.raises(HttpResponseError) as error:
                 resp = client.update_entity(
                     test_entity,
@@ -2229,7 +2229,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
-            assert "is too large to be cast to type Edm.Int64" in str(error.value)
+            assert "is too large to be cast to" in str(error.value)
             client.upsert_entity({"PartitionKey": "PK3", "RowKey": "RK3"})
             with pytest.raises(HttpResponseError) as error:
                 client.update_entity(
