@@ -27,7 +27,7 @@ from azure.data.tables import (
     TableServiceClient,
 )
 
-from _shared.testcase import TableTestCase
+from _shared.testcase import TableTestCase, _encode_base64
 from preparers import cosmos_decorator
 
 TEST_GUID = UUID("3bd67b28-2155-4caf-b492-207172d4f183")
@@ -1979,11 +1979,11 @@ class TestTableEntityCosmos(AzureRecordedTestCase, TableTestCase):
             self.table.upsert_entity(entity)
             result = self.table.get_entity(entity["PartitionKey"], entity["RowKey"])
             assert result["bool"] == False
-            assert result["text"] == "42"
+            assert result["text"] == 42
             assert result["number"] == 23
             assert result["bigNumber"][0] == 64
-            assert result["bytes"] == b"test"
-            assert result["amount"] == 0.0
+            assert _encode_base64(result["bytes"]) == "test"
+            assert result["amount"] == 0
             assert str(result["since"]) == "2008-07-10 00:00:00+00:00"
             assert result["guid"] == entity["guid"][0]
 

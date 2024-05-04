@@ -9,6 +9,7 @@ from base64 import b64encode
 from datetime import datetime, timedelta, timezone
 import uuid
 import os
+import base64
 
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.credentials import AccessToken, AzureNamedKeyCredential
@@ -44,6 +45,12 @@ SERVICE_LIVE_RESP_BODY = (
     ">live</Status><LastSyncTime>Wed, 19 Jan 2021 22:28:43 GMT</LastSyncTime></GeoReplication"
     "></StorageServiceStats> "
 )
+
+def _encode_base64(data):
+    if isinstance(data, str):
+        data = data.encode("utf-8")
+    encoded = base64.b64encode(data)
+    return encoded.decode("utf-8")
 
 
 class FakeTokenCredential(object):
