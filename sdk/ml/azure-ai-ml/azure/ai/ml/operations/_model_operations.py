@@ -799,7 +799,7 @@ class ModelOperations(_ScopeDependentOperations):
         self, name: str, version: Optional[str] = None, label: Optional[str] = None
     ) -> Optional[Dict[str, Any]]:
         """
-        Return the model propertes if the model with this name exists.
+        Return the model properties if the model with this name exists.
 
         :param name: Model name.
         :type name: str
