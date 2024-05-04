@@ -184,6 +184,11 @@ class TestModelOperations:
             mock_eval_operation.list(None)
         assert "list on evaluation operations without name provided" in cm.value.args[0]
 
+    @pytest.mark.skip(
+        "Skipping test for archive and restore as we have removed it from interface. "
+        "These test will be available when the appropriate API will be enabled at "
+        "GenericAssetService."
+    )
     def test_archive_version(self, mock_eval_operation: EvaluatorOperations) -> None:
         name = "random_string"
         model_version = Mock(ModelVersionData(properties=Mock(ModelVersionDetails())))
@@ -202,6 +207,11 @@ class TestModelOperations:
             resource_group_name=mock_eval_operation._model_op._resource_group_name,
         )
 
+    @pytest.mark.skip(
+        "Skipping test for archive and restore as we have removed it from interface. "
+        "These test will be available when the appropriate API will be enabled at "
+        "GenericAssetService."
+    )
     def test_archive_container(self, mock_eval_operation: EvaluatorOperations) -> None:
         name = "random_string"
         model_container = Mock(ModelContainerData(properties=Mock(ModelContainerDetails())))
@@ -218,6 +228,11 @@ class TestModelOperations:
             resource_group_name=mock_eval_operation._model_op._resource_group_name,
         )
 
+    @pytest.mark.skip(
+        "Skipping test for archive and restore as we have removed it from interface. "
+        "These test will be available when the appropriate API will be enabled at "
+        "GenericAssetService."
+    )
     def test_restore_version(self, mock_eval_operation: EvaluatorOperations) -> None:
         name = "random_string"
         model = Mock(ModelVersionData(properties=Mock(ModelVersionDetails())))
@@ -236,6 +251,11 @@ class TestModelOperations:
             resource_group_name=mock_eval_operation._model_op._resource_group_name,
         )
 
+    @pytest.mark.skip(
+        "Skipping test for archive and restore as we have removed it from interface. "
+        "These test will be available when the appropriate API will be enabled at "
+        "GenericAssetService."
+    )
     def test_restore_container(self, mock_eval_operation: EvaluatorOperations) -> None:
         name = "random_string"
         model_container = Mock(ModelContainerData(properties=Mock(ModelContainerDetails())))

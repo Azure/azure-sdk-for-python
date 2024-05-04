@@ -22,13 +22,12 @@ from azure.ai.ml._scope_dependent_operations import (
     _ScopeDependentOperations,
 )
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import (
     _get_evaluator_properties,
     _is_evaluator,
 )
-from azure.ai.ml.entities._assets import Environment, Model, ModelPackage
+from azure.ai.ml.entities._assets import Model
 from azure.ai.ml.entities._assets.workspace_asset_reference import (
     WorkspaceAssetReference,
 )
