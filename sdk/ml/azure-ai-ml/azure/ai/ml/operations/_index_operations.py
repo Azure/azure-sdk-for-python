@@ -123,8 +123,42 @@ class IndexOperations(_ScopeDependentOperations):
         :return: Index asset object.
         :rtype: ~azure.ai.ml.entities.Index
         """
-        if not index.version and index._auto_increment_version:
-            index.version = self._azure_ai_assets.indexes.get_next_version(index.name).next_version
+
+        if not index.name:
+            msg = "Must specify a name."
+            raise ValidationException(
+                message=msg,
+                target=ErrorTarget.INDEX,
+                no_personal_data_message=msg,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
+            )
+
+        if not index.version:
+            if not index._auto_increment_version:
+                msg = "Must specify a version."
+                raise ValidationException(
+                    message=msg,
+                    target=ErrorTarget.INDEX,
+                    no_personal_data_message=msg,
+                    error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.MISSING_FIELD,
+                )
+
+            next_version = self._azure_ai_assets.indexes.get_next_version(index.name).next_version
+
+            if next_version is None:
+                msg = "Version not specified, could not automatically increment version. Set a version to resolve."
+                raise ValidationException(
+                    message=msg,
+                    target=ErrorTarget.INDEX,
+                    no_personal_data_message=msg,
+                    error_category=ErrorCategory.SYSTEM_ERROR,
+                    error_type=ValidationErrorType.MISSING_FIELD,
+                )
+
+            index.version = str(next_version)
+
         _ = _check_and_upload_path(
             artifact=index,
             asset_operations=self,

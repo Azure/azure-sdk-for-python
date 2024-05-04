@@ -119,9 +119,9 @@
         },
         "applicationInsightsOption": {
             "type": "string",
-            "defaultValue": "new",
+            "defaultValue": "none",
             "allowedValues": [
-                "new",
+                "none",
                 "existing"
             ],
             "metadata": {
@@ -161,7 +161,6 @@
             "type": "string",
             "defaultValue": "none",
             "allowedValues": [
-                "new",
                 "existing",
                 "none"
             ],
@@ -779,52 +778,6 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('containerRegistryOption'), 'new'))]",
-            "type": "Microsoft.ContainerRegistry/registries",
-            "apiVersion": "2019-05-01",
-            "tags": "[parameters('tagValues')]",
-            "name": "[parameters('containerRegistryName')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
-            ],
-            "location": "[parameters('containerRegistryLocation')]",
-            "sku": {
-                "name": "[parameters('containerRegistrySku')]"
-            },
-            "properties": {
-                "adminUserEnabled": true,
-                "networkRuleSet": "[if(equals(parameters('containerRegistryBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]"
-            }
-        },
-        {
-            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
-            "type": "Microsoft.OperationalInsights/workspaces",
-            "tags": "[parameters('tagValues')]",
-            "apiVersion": "2020-08-01",
-            "name": "[parameters('logAnalyticsName')]",
-            "location": "[if(or(equals(toLower(parameters('applicationInsightsLocation')),'westcentralus'), equals(toLower(parameters('applicationInsightsLocation')),'eastus2euap'), equals(toLower(parameters('applicationInsightsLocation')),'centraluseuap')),'southcentralus', parameters('applicationInsightsLocation'))]",
-            "kind": "web",
-            "properties": {
-                "Application_Type": "web"
-            }
-        },
-        {
-            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
-            "type": "Microsoft.Insights/components",
-            "tags": "[parameters('tagValues')]",
-            "apiVersion": "2020-02-02-preview",
-            "name": "[parameters('applicationInsightsName')]",
-            "location": "[if(or(equals(toLower(parameters('applicationInsightsLocation')),'westcentralus'), equals(toLower(parameters('applicationInsightsLocation')),'eastus2euap'), equals(toLower(parameters('applicationInsightsLocation')),'centraluseuap')),'southcentralus', parameters('applicationInsightsLocation'))]",
-            "kind": "web",
-            "dependsOn": [
-                "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsName'))]"
-            ],
-            "properties": {
-                "Application_Type": "web",
-                "WorkspaceResourceId": "[parameters('logAnalyticsArmId')]"
-            }
-        },
-        {
             "condition": "[variables('enablePE')]",
             "type": "Microsoft.MachineLearningServices/workspaces",
             "apiVersion": "2023-08-01-preview",
@@ -834,9 +787,7 @@
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
-                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
-                "[resourceId('Microsoft.Insights/components', parameters('applicationInsightsName'))]",
-                "[resourceId('Microsoft.ContainerRegistry/registries', parameters('containerRegistryName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
             ],
             "identity": "[parameters('identity')]",
             "properties": {
@@ -846,6 +797,7 @@
                 "keyVault": "[variables('keyVault')]",
                 "applicationInsights": "[variables('applicationInsights')]",
                 "containerRegistry": "[if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null'))]",
+                "applicationInsights": "[if(not(equals(parameters('applicationInsightsOption'), 'none')), variables('containerRegistry'), json('null'))]",
                 "hbiWorkspace": "[parameters('confidential_data')]",
                 "imageBuildCompute": "[parameters('imageBuildCompute')]",
                 "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
@@ -920,48 +872,6 @@
                             "resourceid": "[variables('materializationIdentity')]"
                         }
                     }
-                },
-                {
-                    "condition": "[and(equals(parameters('endpoint_option'), 'new'), variables('isWorkspaceHub'))]",
-                    "type": "endpoints",
-                    "apiVersion": "2023-08-01-preview",
-                    "name": "Azure.OpenAI",
-                    "properties": {
-                      "name": "Azure.OpenAI",
-                      "endpointType": "Azure.OpenAI",
-                      "associatedResourceId": "[if(equals(parameters('endpoint_resource_id'), 'null'), null(), parameters('endpoint_resource_id'))]"
-                    },
-                    "dependsOn": [
-                      "[parameters('workspaceName')]"
-                    ]
-                },
-                {
-                    "condition": "[and(equals(parameters('endpoint_kind'), 'AIServices'), equals(parameters('endpoint_option'), 'new'), variables('isWorkspaceHub'))]",
-                    "type": "endpoints",
-                    "apiVersion": "2023-08-01-preview",
-                    "name": "Azure.ContentSafety",
-                    "properties": {
-                        "name": "Azure.ContentSafety",
-                        "endpointType": "Azure.ContentSafety",
-                        "associatedResourceId": "[if(equals(parameters('endpoint_resource_id'), 'null'), null(), parameters('endpoint_resource_id'))]"
-                    },
-                    "dependsOn": [
-                        "[parameters('workspaceName')]"
-                    ]
-                },
-                {
-                    "condition": "[and(equals(parameters('endpoint_kind'), 'AIServices'), equals(parameters('endpoint_option'), 'new'), variables('isWorkspaceHub'))]",
-                    "type": "endpoints",
-                    "apiVersion": "2023-08-01-preview",
-                    "name": "Azure.Speech",
-                    "properties": {
-                        "name": "Azure.Speech",
-                        "endpointType": "Azure.Speech",
-                        "associatedResourceId": "[if(equals(parameters('endpoint_resource_id'), 'null'), null(), parameters('endpoint_resource_id'))]"
-                    },
-                    "dependsOn": [
-                        "[parameters('workspaceName')]"
-                    ]
                 }
             ]
         },
