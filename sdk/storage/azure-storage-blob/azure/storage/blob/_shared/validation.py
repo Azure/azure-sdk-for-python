@@ -57,6 +57,7 @@ def parse_validation_option(validate_content: Optional[Union[bool, str]]) -> Opt
 
 def calculate_md5(data: bytes) -> bytes:
     md5 = hashlib.md5()  # nosec
+    md5.update(data)
     return md5.digest()
 
 
