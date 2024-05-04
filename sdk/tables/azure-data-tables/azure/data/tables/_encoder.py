@@ -56,40 +56,19 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
         if name:
             raise TypeError(f"Unsupported data type '{type(value)}' for entity property '{name}'.")
         raise TypeError(f"Unsupported data type '{type(value)}'.")
-    
-    def prepare_value_in_tuple(self, value_tuple: Tuple[Any, Optional[Union[str, EdmType]]]) -> Tuple[EdmType, Any]:
-        edm_type = EdmType(value_tuple[1]) # will throw ValueError when the edm type in tuple is invalid
-        value = value_tuple[0]
-        if edm_type == EdmType.BINARY:
-            value = _encode_base64(value)
-        if edm_type in [EdmType.INT64, EdmType.GUID, EdmType.STRING]:
-            value = str(value)
-        if edm_type == EdmType.INT32:
-            value = int(value)
-        if edm_type == EdmType.DOUBLE and not isinstance(value, str): # no conversion for edm_type in EdmType.Boolean and value in string
-            if isnan(value):
-                value = "NaN"
-            elif value == float("inf"):
-                value = "Infinity"
-            elif value == float("-inf"):
-                value = "-Infinity"
-        if edm_type == EdmType.DATETIME:
-            if not isinstance(value, str):
-                try:
-                    if value.tables_service_value:
-                        value = value.tables_service_value
-                except AttributeError:
-                    pass
-                value = _to_utc_datetime(value)
-        # no conversion for edm_type in EdmType.Boolean
-        return edm_type, value
 
     def encode_property(self, name: Optional[str], value: Any) -> Tuple[Optional[EdmType], Optional[Union[str, int, float, bool]]]:
         """This is a migration of the old add_entity_properties method in serialize.py, with some simplications like
         removing int validation.
         """
-        if isinstance(value, tuple):
-            return self.prepare_value_in_tuple(value)
+        try:
+            if isinstance(value, tuple):
+                if value[1] == EdmType.INT64:  # TODO: Test if this works with either string or enum input.
+                    return EdmType.INT64, str(value[0])  # TODO: Test what happens if the supplied value exceeds int64
+                edm_type, encoded_value = self.prepare_value(name, value[0])
+                return edm_type or value[1], encoded_value
+        except TypeError:
+            pass
         
         return self.prepare_value(name, value)
         
