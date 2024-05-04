@@ -35,19 +35,18 @@ from .._shared.uploads_async import (
 from ._encryption_async import GCMBlobEncryptionStream
 
 if TYPE_CHECKING:
-    from .._generated.operations import AppendBlobOperations, BlockBlobOperations, PageBlobOperations
+    from .._generated.aio.operations import AppendBlobOperations, BlockBlobOperations, PageBlobOperations
     from .._shared.models import StorageConfiguration
     BlobLeaseClient = TypeVar("BlobLeaseClient")
 
 
 async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
     client: "BlockBlobOperations",
-    data: Union[bytes, Iterable[AnyStr], IO[AnyStr]],
+    stream: IO,
     overwrite: bool,
     encryption_options: Dict[str, Any],
     blob_settings: "StorageConfiguration",
     headers: Dict[str, Any],
-    stream: IO,
     validate_content: bool,
     max_concurrency: Optional[int],
     length: Optional[int] = None,
@@ -71,21 +70,19 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
 
         # Do single put if the size is smaller than config.max_single_put_size
         if adjusted_count is not None and (adjusted_count <= blob_settings.max_single_put_size):
-            if hasattr(data, 'read'):
-                data = data.read(length)
-                if inspect.isawaitable(data):
-                    data = await data
-                if not isinstance(data, bytes):
-                    raise TypeError('Blob data should be of type bytes.')
-            else:
-                pass
+            data = stream.read(adjusted_count)
+            if inspect.isawaitable(data):
+                data = await data
+            if not isinstance(data, bytes):
+                raise TypeError('Blob data should be of type bytes.')
+
             if encryption_options.get('key'):
                 if not isinstance(data, bytes):
                     raise TypeError('Blob data should be of type bytes.')
                 encryption_data, data = encrypt_blob(data, encryption_options['key'], encryption_options['version'])
                 headers['x-ms-meta-encryptiondata'] = encryption_data
 
-            response = await cast(Awaitable[Any], client.upload(
+            response = cast(Dict[str, Any], await client.upload(
                 body=data,  # type: ignore [arg-type]
                 content_length=adjusted_count,
                 blob_http_headers=blob_headers,
@@ -104,7 +101,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
             if progress_hook:
                 await progress_hook(adjusted_count, adjusted_count)
 
-            return cast(Dict[str, Any], response)
+            return response
 
         use_original_upload_path = blob_settings.use_byte_buffer or \
             validate_content or encryption_options.get('required') or \
@@ -163,7 +160,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
 
         block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
         block_lookup.latest = block_ids
-        return await cast(Awaitable[Dict[str, Any]], client.commit_block_list(
+        return cast(Dict[str, Any], await client.commit_block_list(
             block_lookup,
             blob_http_headers=blob_headers,
             cls=return_response_headers,
@@ -190,7 +187,7 @@ async def upload_page_blob(
     encryption_options: Dict[str, Any],
     blob_settings: "StorageConfiguration",
     headers: Dict[str, Any],
-    stream=None,
+    stream: IO,
     length: Optional[int] = None,
     validate_content: Optional[bool] = None,
     max_concurrency: Optional[int] = None,
@@ -221,7 +218,7 @@ async def upload_page_blob(
         blob_tags_string = kwargs.pop('blob_tags_string', None)
         progress_hook = kwargs.pop('progress_hook', None)
 
-        response = await cast(Awaitable[Dict[str, Any]], client.create(
+        response = cast(Dict[str, Any], await client.create(
             content_length=0,
             blob_content_length=length,
             blob_sequence_number=None,  # type: ignore [arg-type]
@@ -286,12 +283,12 @@ async def upload_append_blob(  # pylint: disable=unused-argument
 
         try:
             if overwrite:
-                await cast(Awaitable[Any], client.create(
+                await client.create(
                     content_length=0,
                     blob_http_headers=blob_headers,
                     headers=headers,
                     blob_tags_string=blob_tags_string,
-                    **kwargs))
+                    **kwargs)
             return cast(Dict[str, Any], await upload_data_chunks(
                 service=client,
                 uploader_class=AppendBlobChunkUploader,
@@ -315,12 +312,12 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                 except UnsupportedOperation as exc:
                     # if body is not seekable, then retry would not work
                     raise error from exc
-            await cast(Awaitable[Any], client.create(
+            await client.create(
                 content_length=0,
                 blob_http_headers=blob_headers,
                 headers=headers,
                 blob_tags_string=blob_tags_string,
-                **kwargs))
+                **kwargs)
             return cast(Dict[str, Any], await upload_data_chunks(
                 service=client,
                 uploader_class=AppendBlobChunkUploader,

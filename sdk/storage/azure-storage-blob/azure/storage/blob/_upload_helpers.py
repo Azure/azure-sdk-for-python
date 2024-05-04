@@ -66,12 +66,11 @@ def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disab
 
 def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
     client: "BlockBlobOperations",
-    data: Union[bytes, Iterable[AnyStr], IO[AnyStr]],
+    stream: IO,
     overwrite: bool,
     encryption_options: Dict[str, Any],
     blob_settings: "StorageConfiguration",
     headers: Dict[str, Any],
-    stream: IO,
     validate_content: bool,
     max_concurrency: Optional[int],
     length: Optional[int] = None,
@@ -95,12 +94,10 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
 
         # Do single put if the size is smaller than or equal config.max_single_put_size
         if adjusted_count is not None and (adjusted_count <= blob_settings.max_single_put_size):
-            if hasattr(data, 'read'):
-                data = data.read(length)
-                if not isinstance(data, bytes):
-                    raise TypeError('Blob data should be of type bytes.')
-            else:
-                pass
+            data = stream.read(adjusted_count)
+            if not isinstance(data, bytes):
+                raise TypeError('Blob data should be of type bytes.')
+
             if encryption_options.get('key'):
                 if not isinstance(data, bytes):
                     raise TypeError('Blob data should be of type bytes.')
@@ -212,7 +209,7 @@ def upload_page_blob(
     encryption_options: Dict[str, Any],
     blob_settings: "StorageConfiguration",
     headers: Dict[str, Any],
-    stream=None,
+    stream: IO,
     length: Optional[int] = None,
     validate_content: Optional[bool] = None,
     max_concurrency: Optional[int] = None,
@@ -243,7 +240,7 @@ def upload_page_blob(
         blob_tags_string = kwargs.pop('blob_tags_string', None)
         progress_hook = kwargs.pop('progress_hook', None)
 
-        response = cast(Dict[str, Any],client.create(
+        response = cast(Dict[str, Any], client.create(
             content_length=0,
             blob_content_length=length,
             blob_sequence_number=None,  # type: ignore [arg-type]
