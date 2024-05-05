@@ -26,6 +26,33 @@ from ._operations import (
 )
 from ._serialization import Deserializer, Serializer
 
+class AutoModelForInference():
+    def __init__(self):
+        pass
+
+    def from_endpoint(endpoint, credential):
+        test_config = ChatCompletionsClientOperationsMixin(endpoint, credential)
+        try:
+            config = test_config.get_model_info()
+
+            if "model_type" in config:
+                if config["model_type"] == "embedding":
+                    return EmbeddingsClient(endpoint, credential)
+                elif config["model_type"] == "image_generation":
+                    return ImageGenerationClient(endpoint, credential)
+                elif config["model_type"] == "completion":
+                    return ChatCompletionsClient(endpoint, credential)
+                else:
+                    raise ValueError(
+                        f"Model type {config["model_type"]} is unkown by this inference client"
+                    )
+            raise ValueError(
+                f"Model type couldn't be resolved in the endpoint."
+            )
+        except Exception as ex:
+            raise ValueError(
+                        f"The endpoint {endpoint} is not serving the Azure AI Model Inference API or is not in a healthy state."
+                    ) from ex
 
 class ChatCompletionsClient(ChatCompletionsClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """ChatCompletionsClient.
