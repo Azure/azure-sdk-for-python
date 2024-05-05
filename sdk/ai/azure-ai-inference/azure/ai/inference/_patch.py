@@ -12,6 +12,7 @@ import sys
 from io import IOBase
 from typing import Any, Dict, Union, IO, List, Optional, overload
 from azure.core.pipeline import PipelineResponse
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.core.exceptions import (
@@ -27,6 +28,7 @@ from ._model_base import SdkJSONEncoder
 from ._serialization import Serializer
 from ._operations._operations import build_chat_completions_create_request
 from ._client import ChatCompletionsClient as ChatCompletionsClientGenerated
+from ._client import EmbeddingsClient, ImageGenerationClient
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -36,6 +38,34 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
+
+class AutoModelForInference():
+    def __init__(self):
+        pass
+
+    def from_endpoint(endpoint: str, credential: Union[TokenCredential, AzureKeyCredential], **kwargs: Any):
+        test_config = ChatCompletionsClient(endpoint, credential, **kwargs)
+        try:
+            config = test_config.get_model_info()
+
+            if "model_type" in config:
+                if config["model_type"] == "embedding":
+                    return EmbeddingsClient(endpoint, credential, **kwargs)
+                elif config["model_type"] == "image_generation":
+                    return ImageGenerationClient(endpoint, credential, **kwargs)
+                elif config["model_type"] == "completion":
+                    return ChatCompletionsClient(endpoint, credential, **kwargs)
+                else:
+                    raise ValueError(
+                        f"Model type {config['model_type']} is unkown by this inference client"
+                    )
+            raise ValueError(
+                f"Model type couldn't be resolved in the endpoint."
+            )
+        except Exception as ex:
+            raise ValueError(
+                        f"The endpoint {endpoint} is not serving the Azure AI Model Inference API or is not in a healthy state."
+                    ) from ex
 
 class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
@@ -379,7 +409,8 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
 
 __all__: List[str] = [
-    "ChatCompletionsClient"
+    "ChatCompletionsClient",
+    "AutoModelForInference"
 ]  # Add all objects you want publicly available to users at this package level
 
 
