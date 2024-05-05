@@ -30,21 +30,21 @@ class AutoModelForInference():
     def __init__(self):
         pass
 
-    def from_endpoint(endpoint: str, credential: Union[TokenCredential, AzureKeyCredential]):
-        test_config = ChatCompletionsClientOperationsMixin(endpoint, credential)
+    def from_endpoint(endpoint: str, credential: Union[TokenCredential, AzureKeyCredential], **kwargs: Any):
+        test_config = ChatCompletionsClient(endpoint, credential, **kwargs)
         try:
             config = test_config.get_model_info()
 
             if "model_type" in config:
                 if config["model_type"] == "embedding":
-                    return EmbeddingsClient(endpoint, credential)
+                    return EmbeddingsClient(endpoint, credential, **kwargs)
                 elif config["model_type"] == "image_generation":
-                    return ImageGenerationClient(endpoint, credential)
+                    return ImageGenerationClient(endpoint, credential, **kwargs)
                 elif config["model_type"] == "completion":
-                    return ChatCompletionsClient(endpoint, credential)
+                    return ChatCompletionsClient(endpoint, credential, **kwargs)
                 else:
                     raise ValueError(
-                        f"Model type {config["model_type"]} is unkown by this inference client"
+                        f"Model type {config['model_type']} is unkown by this inference client"
                     )
             raise ValueError(
                 f"Model type couldn't be resolved in the endpoint."

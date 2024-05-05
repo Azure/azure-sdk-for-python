@@ -55,14 +55,9 @@ class ChatCompletionsClientConfiguration:  # pylint: disable=too-many-instance-a
         self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            if isinstance(self.credential, TokenCredential):
-                self.authentication_policy = policies.BearerTokenCredentialPolicy(
-                    self.credential, "Authorization", prefix="Bearer", **kwargs
-                )
-            elif isinstance(self.credential, AzureKeyCredential):
-                self.authentication_policy = policies.AzureKeyCredentialPolicy(
-                    self.credential, name="api-key", **kwargs
-                )
+            self.authentication_policy = policies.AzureKeyCredentialPolicy(
+                self.credential, "Authorization", prefix="Bearer", **kwargs
+            )
 
 
 class EmbeddingsClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
@@ -107,14 +102,9 @@ class EmbeddingsClientConfiguration:  # pylint: disable=too-many-instance-attrib
         self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            if isinstance(self.credential, TokenCredential):
-                self.authentication_policy = policies.BearerTokenCredentialPolicy(
-                    self.credential, "Authorization", prefix="Bearer", **kwargs
-                )
-            elif isinstance(self.credential, AzureKeyCredential):
-                self.authentication_policy = policies.AzureKeyCredentialPolicy(
-                    self.credential, name="api-key", **kwargs
-                )
+            self.authentication_policy = policies.AzureKeyCredentialPolicy(
+                self.credential, "Authorization", prefix="Bearer", **kwargs
+            )
 
 
 class ImageGenerationClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
@@ -159,11 +149,6 @@ class ImageGenerationClientConfiguration:  # pylint: disable=too-many-instance-a
         self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            if isinstance(self.credential, TokenCredential):
-                self.authentication_policy = policies.BearerTokenCredentialPolicy(
-                    self.credential, "Authorization", prefix="Bearer", **kwargs
-                )
-            elif isinstance(self.credential, AzureKeyCredential):
-                self.authentication_policy = policies.AzureKeyCredentialPolicy(
-                    self.credential, name="api-key", **kwargs
-                )
+            self.authentication_policy = policies.AzureKeyCredentialPolicy(
+                self.credential, "Authorization", prefix="Bearer", **kwargs
+            )
