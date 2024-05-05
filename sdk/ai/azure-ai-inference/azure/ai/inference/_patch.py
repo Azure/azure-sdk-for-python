@@ -13,6 +13,7 @@ from io import IOBase
 from typing import Any, Dict, Union, IO, List, Optional, overload
 from azure.core.pipeline import PipelineResponse
 from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.core.exceptions import (
@@ -42,6 +43,14 @@ _SERIALIZER.client_side_validation = False
 class AutoModelForInference():
     def __init__(self):
         pass
+    
+    def from_openai_deployment(endpoint: str, credential: Union[TokenCredential, AzureKeyCredential], **kwargs: Any):
+        return ChatCompletionsClient(
+            endpoint, 
+            credential, 
+            authentication_policy=AzureKeyCredentialPolicy(credential, "api-key"),
+            **kwargs
+        )
 
     def from_endpoint(endpoint: str, credential: Union[TokenCredential, AzureKeyCredential], **kwargs: Any):
         test_config = ChatCompletionsClient(endpoint, credential, **kwargs)
