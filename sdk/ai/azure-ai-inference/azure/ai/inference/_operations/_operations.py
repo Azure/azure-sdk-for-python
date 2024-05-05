@@ -28,7 +28,8 @@ from .. import models as _models
 from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Serializer
 from .._vendor import ChatCompletionsClientMixinABC, EmbeddingsClientMixinABC, ImageGenerationClientMixinABC
-from .. import legacy_versioning
+
+legacy_versioning = False
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping

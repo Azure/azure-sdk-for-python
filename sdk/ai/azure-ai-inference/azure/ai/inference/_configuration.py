@@ -13,8 +13,6 @@ from azure.core.pipeline import policies
 
 from ._version import VERSION
 
-legacy_versioning = False
-
 class ChatCompletionsClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for ChatCompletionsClient.
 
