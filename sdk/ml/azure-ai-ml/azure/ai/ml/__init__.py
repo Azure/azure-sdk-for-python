@@ -21,6 +21,7 @@ from .entities._load_functions import (
     load_batch_endpoint,
     load_component,
     load_compute,
+    load_connection,
     load_data,
     load_datastore,
     load_environment,
@@ -34,10 +35,9 @@ from .entities._load_functions import (
     load_model_package,
     load_online_deployment,
     load_online_endpoint,
-    load_serverless_endpoint,
     load_registry,
+    load_serverless_endpoint,
     load_workspace,
-    load_connection,
 )
 
 module_logger = logging.getLogger(__name__)
