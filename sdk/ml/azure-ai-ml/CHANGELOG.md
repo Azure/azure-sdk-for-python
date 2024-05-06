@@ -3,6 +3,7 @@
 ## 1.16.0 (unreleased)
 
 ### Features Added
+- Add experimental support for working with Promptflow evaluators: `ml_client.evaluators`.
 - Many changes to the Connection entity class and its associated operations.
 - Workspace Connection `list`, `get`, and `create_or_update` operations now include an optional `populate_secrets` input, which causes the operations to try making a secondary call to fill in the returned connections' credential info if possible. Only works with api key-based credentials for now.
 - Many workspace connection subtypes added. The full list of subclasses is now:
