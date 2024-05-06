@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Iterable, Optional
+from typing import Iterable
 import re
 
 from azure.ai.ml.exceptions import ValidationException, ErrorTarget, ErrorCategory, ValidationErrorType
