@@ -51,7 +51,7 @@ async def test_iter_with_error(client):
 
     request = HttpRequest("GET", "http://doesNotExist")
     with pytest.raises(ServiceRequestError):
-        async with (await client.send_request(request, stream=True)):
+        async with await client.send_request(request, stream=True):
             raise ValueError("Should error before entering")
     assert response.is_closed
 
@@ -138,9 +138,7 @@ async def test_cannot_read_after_response_closed(port, client):
 @pytest.mark.asyncio
 async def test_decompress_plain_no_header(client):
     # thanks to Xiang Yan for this test!
-    account_name = "coretests"
-    url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
-    request = HttpRequest("GET", url)
+    request = HttpRequest("GET", "/streams/string")
     async with client:
         response = await client.send_request(request, stream=True)
         with pytest.raises(ResponseNotReadError):
@@ -152,9 +150,7 @@ async def test_decompress_plain_no_header(client):
 @pytest.mark.asyncio
 async def test_compress_plain_no_header(client):
     # thanks to Xiang Yan for this test!
-    account_name = "coretests"
-    url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
-    request = HttpRequest("GET", url)
+    request = HttpRequest("GET", "/streams/string")
     async with client:
         response = await client.send_request(request, stream=True)
         iter = response.iter_raw()

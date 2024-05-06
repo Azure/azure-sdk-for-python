@@ -32,9 +32,10 @@ class AzureMLOnBehalfOfCredential(AsyncContextManager):
 
         This method is called automatically by Azure SDK clients.
 
-        :param str scopes: desired scope for the access token. This credential allows only one scope per request.
-        :rtype: :class:`azure.core.credentials.AccessToken`
-        :return: AzureML On behalf of credentials isn't available in the hosting environment
+        :param scopes: The desired scope for the access token. This credential allows only one scope per request.
+        :type scopes: str
+        :rtype: ~azure.core.credentials.AccessToken
+        :return: The access token for temporary access token for the requested scope.
         :raises: ~azure.ai.ml.identity.CredentialUnavailableError
         """
 

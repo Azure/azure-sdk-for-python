@@ -32,9 +32,14 @@ If there is no link in the figure above, it may be folded. You can also find it 
 
 ![img.png](unreleased_package_guide_example3.png)
 
+## 5.Build private package locally (backup solution)
+
+Because of security issue, maybe there is no private link to download. Since there is still auto generated PR provided, you can build the private package locally based on the PR with [guidance](https://github.com/Azure/azure-sdk-for-python/wiki/Common-issues-about-Python-SDK#build-private-package-with-pr)
+
+![img.png](auto_gen_PR.png)
+
 # Note
 
 ## 1.private repo
 
 In private repo [Azure/azure-rest-api-specs-pr](https://github.com/Azure/azure-rest-api-specs-pr), pipeline can be triggered **only when the target branch is `main`**
-

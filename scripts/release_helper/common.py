@@ -219,7 +219,7 @@ class IssueProcess:
                 break
 
     def auto_parse(self) -> None:
-        if self.has_label(AUTO_ASSIGN_LABEL):
+        if self.has_label(AUTO_PARSE_LABEL):
             self.get_package_name()
             return
 
@@ -266,7 +266,7 @@ class IssueProcess:
         return assignees[random_idx]
 
     def auto_assign(self) -> None:
-        if self.has_label(AUTO_PARSE_LABEL):
+        if self.has_label(AUTO_ASSIGN_LABEL):
             self.update_issue_instance()
             return
         # assign averagely
@@ -342,7 +342,12 @@ class IssueProcess:
     def get_target_date(self):
         body = self.get_issue_body()
         try:
-            self.target_date = [re.compile(r"\d{4}-\d{1,2}-\d{1,2}").findall(l)[0] for l in body if 'Target release date' in l][0]
+            try:
+                self.target_date = [re.compile(r"\d{4}-\d{1,2}-\d{1,2}").findall(l)[0] for l in body if 'Target release date' in l][0]
+            except Exception:
+                self.target_date = [re.compile(r"\d{1,2}/\d{1,2}/\d{4}").findall(l)[0] for l in body if 'Target release date' in l][0]
+                self.target_date = datetime.strptime(self.target_date, "%m/%d/%Y").strftime('%Y-%m-%d')
+
             self.date_from_target = int((time.mktime(time.strptime(self.target_date, '%Y-%m-%d')) - time.time()) / 3600 / 24)
         except Exception:
             self.target_date = 'fail to get.'

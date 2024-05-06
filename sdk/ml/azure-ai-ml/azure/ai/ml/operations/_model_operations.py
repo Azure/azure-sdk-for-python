@@ -50,7 +50,7 @@ from azure.ai.ml._utils._registry_utils import (
     get_storage_details_for_registry_assets,
 )
 from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
-from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder
+from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder, _is_evaluator
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ID_FORMAT, REGISTRY_URI_FORMAT, AzureMLResourceType
 from azure.ai.ml.entities._assets import Environment, Model, ModelPackage
 from azure.ai.ml.entities._assets._artifacts.code import Code
@@ -72,6 +72,7 @@ ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
+# pylint: disable=too-many-instance-attributes
 class ModelOperations(_ScopeDependentOperations):
     """ModelOperations.
 
@@ -94,6 +95,8 @@ class ModelOperations(_ScopeDependentOperations):
     :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
     """
 
+    _IS_EVALUATOR = "__is_evaluator"
+
     # pylint: disable=unused-argument
     def __init__(
         self,
@@ -102,7 +105,7 @@ class ModelOperations(_ScopeDependentOperations):
         service_client: Union[ServiceClient082023Preview, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
         all_operations: Optional[OperationsContainer] = None,
-        **kwargs: Dict,
+        **kwargs,
     ):
         super(ModelOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
@@ -119,6 +122,7 @@ class ModelOperations(_ScopeDependentOperations):
         # Maps a label to a function which given an asset name,
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
+        self.__is_evaluator = kwargs.pop(ModelOperations._IS_EVALUATOR, False)
 
     @monitor_with_activity(ops_logger, "Model.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(  # type: ignore
@@ -136,6 +140,43 @@ class ModelOperations(_ScopeDependentOperations):
         :return: Model asset object.
         :rtype: ~azure.ai.ml.entities.Model
         """
+        # Check if we have the model with the same name and it is an
+        # evaluator. In this aces raise the exception do not create the model.
+        if not self.__is_evaluator and _is_evaluator(model.properties):
+            msg = (
+                "Unable to create the evaluator using ModelOperations. To create "
+                "evaluator, please use EvaluatorOperations by calling "
+                "ml_client.evaluators.create_or_update(model) instead."
+            )
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.MODEL,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+        if model.name is not None:
+            model_properties = self._get_model_properties(model.name)
+            if model_properties is not None and _is_evaluator(model_properties) != _is_evaluator(model.properties):
+                if _is_evaluator(model.properties):
+                    msg = (
+                        f"Unable to create the model with name {model.name} "
+                        "because this version of model was marked as promptflow evaluator, but the previous "
+                        "version is a regular model. "
+                        "Please change the model name and try again."
+                    )
+                else:
+                    msg = (
+                        f"Unable to create the model with name {model.name} "
+                        "because previous version of model was marked as promptflow evaluator, but this "
+                        "version is a regular model. "
+                        "Please change the model name and try again."
+                    )
+                raise ValidationException(
+                    message=msg,
+                    no_personal_data_message=msg,
+                    target=ErrorTarget.MODEL,
+                    error_category=ErrorCategory.USER_ERROR,
+                )
         try:
             name = model.name
             if not model.version and model._auto_increment_version:
@@ -162,7 +203,7 @@ class ModelOperations(_ScopeDependentOperations):
                             resource_group_name=self._resource_group_name,
                             registry_name=self._registry_name,
                         )
-                    except Exception as err:  # pylint: disable=broad-except
+                    except Exception as err:  # pylint: disable=W0718
                         if isinstance(err, ResourceNotFoundError):
                             pass
                         else:
@@ -230,7 +271,7 @@ class ModelOperations(_ScopeDependentOperations):
                 if not result and self._registry_name:
                     result = self._get(name=str(model.name), version=model.version)
 
-            except Exception as e:  # pylint: disable=broad-except
+            except Exception as e:  # pylint: disable=W0718
                 # service side raises an exception if we attempt to update an existing asset's path
                 if str(e) == ASSET_PATH_ERROR:
                     raise AssetPathException(
@@ -247,7 +288,7 @@ class ModelOperations(_ScopeDependentOperations):
                 _update_metadata(model.name, model.version, indicator_file, datastore_info)  # update version in storage
 
             return model
-        except Exception as ex:  # pylint: disable=broad-except
+        except Exception as ex:  # pylint: disable=W0718
             if isinstance(ex, SchemaValidationError):
                 log_and_raise_error(ex)
             else:
@@ -368,7 +409,7 @@ class ModelOperations(_ScopeDependentOperations):
             else:
                 try:
                     credential = ds.credentials.sas_token
-                except Exception as e:  # pylint: disable=broad-except
+                except Exception as e:  # pylint: disable=W0718
                     if not hasattr(ds.credentials, "sas_token"):
                         credential = self._datastore_operation._credential
                     else:
@@ -753,3 +794,24 @@ class ModelOperations(_ScopeDependentOperations):
                     package_out = environment_operation.get(name=environment_name, version=environment_version)
 
         return package_out
+
+    def _get_model_properties(
+        self, name: str, version: Optional[str] = None, label: Optional[str] = None
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Return the model properties if the model with this name exists.
+
+        :param name: Model name.
+        :type name: str
+        :param version: Model version.
+        :type version: Optional[str]
+        :param label: model label.
+        :type label: Optional[str]
+        :return: Model properties, if the model exists, or None.
+        """
+        try:
+            if version or label:
+                return self.get(name, version, label).properties
+            return self._get_latest_version(name).properties
+        except (ResourceNotFoundError, ValidationException):
+            return None

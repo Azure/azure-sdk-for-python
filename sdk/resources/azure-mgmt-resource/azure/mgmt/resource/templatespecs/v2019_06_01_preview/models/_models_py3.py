@@ -210,7 +210,7 @@ class TemplateSpec(AzureResourceBase):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: String Id used to locate any resource on Azure.
     :vartype id: str
@@ -293,7 +293,7 @@ class TemplateSpecArtifact(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     TemplateSpecTemplateArtifact
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar path: A filesystem safe relative path of the artifact. Required.
     :vartype path: str
@@ -381,7 +381,7 @@ class TemplateSpecsListResult(_serialization.Model):
 class TemplateSpecTemplateArtifact(TemplateSpecArtifact):
     """Represents a Template Spec artifact containing an embedded Azure Resource Manager template.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar path: A filesystem safe relative path of the artifact. Required.
     :vartype path: str
@@ -463,7 +463,7 @@ class TemplateSpecVersion(AzureResourceBase):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: String Id used to locate any resource on Azure.
     :vartype id: str

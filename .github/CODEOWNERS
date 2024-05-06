@@ -117,9 +117,6 @@
 # PRLabel: %Communication - Identity
 /sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @AikoBB @maximrytych-ms @mjafferi-msft
 
-# PRLabel: %Communication - NetworkTraversal
-/sdk/communication/azure-communication-networktraversal/             @ajpeacock0 @nathpete-msft
-
 # PRLabel: %Communication - Common
 /sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk @AikoBB @maximrytych-ms @mjafferi-msft
 
@@ -669,9 +666,6 @@
 # ServiceLabel: %Digital Twins %Service Attention
 #/<NotInRepo>/          @sourabhguha @inesk-vt
 
-# ServiceLabel: %Event Grid %Service Attention
-#/<NotInRepo>/          @jfggdl
-
 # ServiceLabel: %Event Hubs %Service Attention
 #/<NotInRepo>/          @kasun04
 
@@ -824,9 +818,6 @@
 
 # ServiceLabel: %Redis Cache %Service Attention
 #/<NotInRepo>/          @yegu-ms
-
-# ServiceLabel: %Relay %Service Attention
-#/<NotInRepo>/          @jfggdl
 
 # ServiceLabel: %Reservations %Service Attention
 #/<NotInRepo>/          @Rkapso
