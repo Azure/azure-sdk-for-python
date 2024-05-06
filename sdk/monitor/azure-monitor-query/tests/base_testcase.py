@@ -18,12 +18,6 @@ LOGS_ENVIRONMENT_ENDPOINT_MAP = {
     "AzureUSGovernment": "https://api.loganalytics.us/v1"
 }
 
-METRICS_CLIENT_ENVIRONMENT_AUDIENCE_MAP = {
-    "AzureCloud": "https://metrics.monitor.azure.com",
-    "AzureChinaCloud": "https://metrics.monitor.azure.cn",
-    "AzureUSGovernment": "https:/metrics.monitor.azure.us"
-}
-
 TLD_MAP = {
     "AzureCloud": "com",
     "AzureChinaCloud": "cn",
@@ -63,7 +57,6 @@ class MetricsClientTestCase(AzureRecordedTestCase):
         kwargs = {}
         tld = "com"
         if environment:
-            kwargs["audience"] = METRICS_CLIENT_ENVIRONMENT_AUDIENCE_MAP.get(environment)
             tld = TLD_MAP.get(environment, "com")
 
         if not endpoint:

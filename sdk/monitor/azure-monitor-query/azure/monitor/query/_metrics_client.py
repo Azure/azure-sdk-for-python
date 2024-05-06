@@ -7,6 +7,7 @@
 from datetime import timedelta, datetime
 from json import loads
 from typing import Any, List, MutableMapping, Sequence, Optional, Union, Tuple
+from urllib.parse import urlparse
 
 from azure.core.credentials import TokenCredential
 from azure.core.tracing.decorator import distributed_trace
@@ -28,13 +29,35 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
         resources. For global resources, the region should be 'global'. Required.
     :param credential: The credential to authenticate the client.
     :type credential: ~azure.core.credentials.TokenCredential
+    :keyword str audience: The audience to use when requesting tokens for Microsoft Entra ID. If an audience is not
+        provided, it will be inferred from the endpoint.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_authentication.py
+            :start-after: [START create_metrics_client]
+            :end-before: [END create_metrics_client]
+            :language: python
+            :dedent: 4
+            :caption: Creating the MetricsClient with a TokenCredential.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_authentication.py
+            :start-after: [START create_metrics_client_sovereign_cloud]
+            :end-before: [END create_metrics_client_sovereign_cloud]
+            :language: python
+            :dedent: 4
+            :caption: Creating the MetricsClient for use with a sovereign cloud (i.e. non-public cloud).
     """
 
     def __init__(self, endpoint: str, credential: TokenCredential, **kwargs: Any) -> None:
         self._endpoint = endpoint
         if not self._endpoint.startswith("https://") and not self._endpoint.startswith("http://"):
             self._endpoint = "https://" + self._endpoint
-        audience = kwargs.pop("audience", "https://metrics.monitor.azure.com")
+        parsed_endpoint = urlparse(endpoint)
+        region_removed_netloc = parsed_endpoint.netloc.split(".", 1)[1]
+        audience = kwargs.pop("audience", f"{parsed_endpoint.scheme}://{region_removed_netloc}")
 
         authentication_policy = kwargs.pop("authentication_policy", None) or get_authentication_policy(
             credential, audience
@@ -59,7 +82,7 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
         order_by: Optional[str] = None,
         filter: Optional[str] = None,
         roll_up_by: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[MetricsQueryResult]:
         """Lists the metric values for multiple resources.
 
@@ -154,7 +177,7 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
             orderby=order_by,
             filter=filter,
             rollupby=roll_up_by,  # cspell:ignore rollupby
-            **kwargs
+            **kwargs,
         )
 
         # In rare cases, the generated value is a JSON string instead of a dict. This potentially stems from a bug in

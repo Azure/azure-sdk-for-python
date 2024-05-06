@@ -69,17 +69,18 @@ async_metrics_client = MetricsClient("https://<regional endpoint>", credential)
 
 #### Configure client for Azure sovereign cloud
 
-By default, `LogsQueryClient` and `MetricsQueryClient` are configured to use the Azure Public Cloud. To use a sovereign cloud instead, provide the correct `endpoint` argument. For example:
+By default, `LogsQueryClient` and `MetricsQueryClient` are configured to use the Azure Public Cloud. To use a sovereign cloud instead, provide the correct `endpoint` argument. `MetricsClient` will determine the correct cloud configuration based on the provided endpoint. For example:
 
 ```python
 from azure.identity import AzureAuthorityHosts, DefaultAzureCredential
-from azure.monitor.query import LogsQueryClient, MetricsQueryClient
+from azure.monitor.query import LogsQueryClient, MetricsQueryClient, MetricsClient
 
 # Authority can also be set via the AZURE_AUTHORITY_HOST environment variable.
 credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_GOVERNMENT)
 
 logs_query_client = LogsQueryClient(credential, endpoint="https://api.loganalytics.us/v1")
 metrics_query_client = MetricsQueryClient(credential, endpoint="https://management.usgovcloudapi.net")
+metrics_client = MetricsClient("https://usgovvirginia.metrics.monitor.azure.us", credential)
 ```
 
 **Note**: Currently, `MetricsQueryClient` uses the Azure Resource Manager (ARM) endpoint for querying metrics. You need the corresponding management endpoint for your cloud when using this client. This detail is subject to change in the future.

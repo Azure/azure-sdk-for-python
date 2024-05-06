@@ -44,3 +44,11 @@ class TestMetricsClient(MetricsClientTestCase):
             assert metric.timeseries
             for t in metric.timeseries:
                 assert t.metadata_values is not None
+
+    def test_client_different_endpoint(self):
+        credential = self.get_credential(MetricsClient)
+        endpoint = "https://usgovvirginia.metrics.monitor.azure.us"
+        client = MetricsClient(endpoint, credential)
+
+        assert client._endpoint == endpoint
+        assert "https://metrics.monitor.azure.us/.default" in client._client._config.authentication_policy._scopes
