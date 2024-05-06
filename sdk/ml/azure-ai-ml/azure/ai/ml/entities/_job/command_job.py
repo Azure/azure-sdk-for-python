@@ -227,7 +227,6 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
 
         :param context: Context of command job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
         :return: Translated command component.
         :rtype: CommandComponent
         """
@@ -256,7 +255,6 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
 
         :param context: Context of command job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
         :return: Translated command component.
         :rtype: Command
         """

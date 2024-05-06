@@ -25,6 +25,7 @@ from azure.ai.ml._schema.monitoring.thresholds import (
     ModelPerformanceMetricThresholdSchema,
     CustomMonitoringMetricThresholdSchema,
     GenerationSafetyQualityMetricThresholdSchema,
+    GenerationTokenStatisticsMonitorMetricThresholdSchema,
 )
 
 
@@ -248,20 +249,20 @@ class ModelPerformanceSignalSchema(metaclass=PatchedSchemaMeta):
         return ModelPerformanceSignal(**data)
 
 
-class WorkspaceConnectionSchema(metaclass=PatchedSchemaMeta):
+class ConnectionSchema(metaclass=PatchedSchemaMeta):
     environment_variables = fields.Dict(keys=fields.Str(), values=fields.Str())
     secret_config = fields.Dict(keys=fields.Str(), values=fields.Str())
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.signals import WorkspaceConnection
+        from azure.ai.ml.entities._monitoring.signals import Connection
 
-        return WorkspaceConnection(**data)
+        return Connection(**data)
 
 
 class CustomMonitoringSignalSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(allowed_values=MonitorSignalType.CUSTOM, required=True)
-    workspace_connection = NestedField(WorkspaceConnectionSchema)
+    connection = NestedField(ConnectionSchema)
     component_id = ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT)
     metric_thresholds = fields.List(NestedField(CustomMonitoringMetricThresholdSchema))
     input_data = fields.Dict(keys=fields.Str(), values=NestedField(ReferenceDataSchema))
@@ -301,7 +302,7 @@ class LlmDataSchema(metaclass=PatchedSchemaMeta):
 class GenerationSafetyQualitySchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(allowed_values=MonitorSignalType.GENERATION_SAFETY_QUALITY, required=True)
     production_data = fields.List(NestedField(LlmDataSchema))
-    workspace_connection_id = fields.Str()
+    connection_id = fields.Str()
     metric_thresholds = NestedField(GenerationSafetyQualityMetricThresholdSchema)
     alert_enabled = fields.Bool()
     properties = fields.Dict()
@@ -321,3 +322,27 @@ class GenerationSafetyQualitySchema(metaclass=PatchedSchemaMeta):
 
         data.pop("type", None)
         return GenerationSafetyQualitySignal(**data)
+
+
+class GenerationTokenStatisticsSchema(metaclass=PatchedSchemaMeta):
+    type = StringTransformedEnum(allowed_values=MonitorSignalType.GENERATION_TOKEN_STATISTICS, required=True)
+    production_data = NestedField(LlmDataSchema)
+    metric_thresholds = NestedField(GenerationTokenStatisticsMonitorMetricThresholdSchema)
+    alert_enabled = fields.Bool()
+    properties = fields.Dict()
+    sampling_rate = fields.Float()
+
+    @pre_dump
+    def predump(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.signals import GenerationTokenStatisticsSignal
+
+        if not isinstance(data, GenerationTokenStatisticsSignal):
+            raise ValidationError("Cannot dump non-GenerationSafetyQuality object into GenerationSafetyQuality")
+        return data
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.signals import GenerationTokenStatisticsSignal
+
+        data.pop("type", None)
+        return GenerationTokenStatisticsSignal(**data)

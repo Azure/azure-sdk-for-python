@@ -4,18 +4,34 @@
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
-from .workspace_connection import WorkspaceConnectionSchema
-from .workspace_connection_subtypes import (
-    OpenAIWorkspaceConnectionSchema,
-    AzureAISearchWorkspaceConnectionSchema,
-    AzureAIServiceWorkspaceConnectionSchema,
-    AzureBlobStoreWorkspaceConnectionSchema,
+from .connection import ConnectionSchema
+from .connection_subtypes import (
+    AzureBlobStoreConnectionSchema,
+    MicrosoftOneLakeConnectionSchema,
+    AzureOpenAIConnectionSchema,
+    AzureAIServicesConnectionSchema,
+    AzureAISearchConnectionSchema,
+    AzureContentSafetyConnectionSchema,
+    AzureSpeechServicesConnectionSchema,
+    APIKeyConnectionSchema,
+    OpenAIConnectionSchema,
+    SerpConnectionSchema,
+    ServerlessConnectionSchema,
+    OneLakeArtifactSchema,
 )
 
 __all__ = [
-    "WorkspaceConnectionSchema",
-    "OpenAIWorkspaceConnectionSchema",
-    "AzureAISearchWorkspaceConnectionSchema",
-    "AzureAIServiceWorkspaceConnectionSchema",
-    "AzureBlobStoreWorkspaceConnectionSchema",
+    "ConnectionSchema",
+    "AzureBlobStoreConnectionSchema",
+    "MicrosoftOneLakeConnectionSchema",
+    "AzureOpenAIConnectionSchema",
+    "AzureAIServicesConnectionSchema",
+    "AzureAISearchConnectionSchema",
+    "AzureContentSafetyConnectionSchema",
+    "AzureSpeechServicesConnectionSchema",
+    "APIKeyConnectionSchema",
+    "OpenAIConnectionSchema",
+    "SerpConnectionSchema",
+    "ServerlessConnectionSchema",
+    "OneLakeArtifactSchema",
 ]
