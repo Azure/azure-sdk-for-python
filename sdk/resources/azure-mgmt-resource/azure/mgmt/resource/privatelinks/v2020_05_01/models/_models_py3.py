@@ -315,7 +315,7 @@ class ResourceManagementPrivateLink(_serialization.Model):
         self.location = location
 
 
-class ResourceManagementPrivateLinkEndpointConnections(_serialization.Model):
+class ResourceManagementPrivateLinkEndpointConnections(_serialization.Model):  # pylint: disable=name-too-long
     """ResourceManagementPrivateLinkEndpointConnections.
 
     :ivar private_endpoint_connections: The private endpoint connections.
