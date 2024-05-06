@@ -349,8 +349,9 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         """Creates a new Share under the account. If a share with the
         same name already exists, the operation fails.
 
-        :keyword dict[str, str] metadata:
+        :keyword metadata:
             Name-value pairs associated with the share as metadata.
+        :paramtype metadata: Optional[dict[str, str]]
         :keyword int quota:
             The quota to be allotted.
         :keyword access_tier:
@@ -428,8 +429,9 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         is taken, with a DateTime value appended to indicate the time at which the
         snapshot was taken.
 
-        :keyword dict[str, str] metadata:
+        :keyword metadata:
             Name-value pairs associated with the share as metadata.
+        :paramtype metadata: Optional[dict[str, str]]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -678,7 +680,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
 
         :param metadata:
             Name-value pairs associated with the share as metadata.
-        :type metadata: dict[str, Any]
+        :type metadata: dict[str, str]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -978,7 +980,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             The name of the directory.
         :keyword metadata:
             Name-value pairs associated with the directory as metadata.
-        :type metadata: dict[str, str]
+        :paramtype metadata: Optional[dict[str, str]]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
