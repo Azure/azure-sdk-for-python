@@ -165,9 +165,11 @@ async def analyze_custom_documents(custom_model_id):
                                         )
                                     else:
                                         row_dict[row_key] = [
+                                            row_key,
                                             rows[row_key].get(KEY_OF_CELL_CONTENT)
                                         ]
 
+                            col_names.insert(0, "")
                             print_table(col_names, list(row_dict.values()))
     print("-----------------------------------")
     # [END analyze_custom_documents]

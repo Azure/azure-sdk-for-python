@@ -590,9 +590,11 @@ if result.documents:
                                     )
                                 else:
                                     row_dict[row_key] = [
-                                        rows[row_key].get(KEY_OF_CELL_CONTENT)
+                                        row_key,
+                                        rows[row_key].get(KEY_OF_CELL_CONTENT),
                                     ]
 
+                        col_names.insert(0, "")
                         print_table(col_names, list(row_dict.values()))
 
 print("------------------------------------")
