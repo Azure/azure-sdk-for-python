@@ -45,7 +45,7 @@ class FaceClient(FaceClientGenerated):
         return_recognition_model: Optional[bool] = None,
         face_id_time_to_live: Optional[int] = None,
         **kwargs: Any,
-    ) -> List[_models._models.FaceDetectionResult]:
+    ) -> List[_models.FaceDetectionResult]:
         # pylint: disable=line-too-long
         """Detect human faces in an image, return face rectangles, and optionally with faceIds, landmarks,
         and attributes.
@@ -448,7 +448,7 @@ class FaceClient(FaceClientGenerated):
         return_recognition_model: Optional[bool] = None,
         face_id_time_to_live: Optional[int] = None,
         **kwargs: Any,
-    ) -> List[_models._models.FaceDetectionResult]:
+    ) -> List[_models.FaceDetectionResult]:
         # pylint: disable=line-too-long
         """Detect human faces in an image, return face rectangles, and optionally with faceIds, landmarks,
         and attributes.
