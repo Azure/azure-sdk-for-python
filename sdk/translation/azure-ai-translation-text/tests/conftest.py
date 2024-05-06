@@ -13,5 +13,4 @@ def add_sanitizers(test_proxy):
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3430: $..id
     #  - AZSDK3424: $..to
-    #  - AZSDK3003: Prevents ss= from being sanitized
-    remove_batch_sanitizers(["AZSDK3430", "AZSDK3424", "AZSDK3003"])
+    remove_batch_sanitizers(["AZSDK3430", "AZSDK3424"])
