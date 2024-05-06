@@ -10,6 +10,7 @@ from azure.ai.ml.constants._common import IndexInputType
 # General todo: need to determine which args are required or optional when parsed out into groups like this.
 # General todo: move these to more permanent locations?
 
+
 # Defines stuff related to supplying inputs for an index AKA the base data.
 class IndexDataSource:
     """Base class for configs that define data that will be processed into an ML index.

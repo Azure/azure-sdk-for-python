@@ -257,7 +257,7 @@ class IndexOperations(_ScopeDependentOperations):
         input_source_credential: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
     ) -> Union["MLIndex", "Job"]:  # type: ignore[name-defined]
         """Builds an index on the cloud using the Azure AI Resources service.
-        
+
         :keyword name: The name of the index to be created.
         :paramtype name: str
         :keyword embeddings_model_config: Model config for the embedding model.
@@ -308,26 +308,30 @@ class IndexOperations(_ScopeDependentOperations):
                 chunk_size=tokens_per_chunk,
                 chunk_overlap=token_overlap_across_chunks,
                 citation_url=data_source_citation_url,
-                citation_url_replacement_regex=CitationRegex(
-                    match_pattern=document_path_replacement_regex["match_pattern"],  # type: ignore[index]
-                    replacement_pattern=document_path_replacement_regex["replacement_pattern"], # type: ignore[index]
-                )
-                if document_path_replacement_regex
-                else None,
+                citation_url_replacement_regex=(
+                    CitationRegex(
+                        match_pattern=document_path_replacement_regex["match_pattern"],  # type: ignore[index]
+                        replacement_pattern=document_path_replacement_regex["replacement_pattern"],  # type: ignore[index]
+                    )
+                    if document_path_replacement_regex
+                    else None
+                ),
             ),
             embedding=Embedding(
                 model=build_open_ai_protocol(
-                    model=embeddings_model_config.model_name,
-                    deployment=embeddings_model_config.deployment_name),
+                    model=embeddings_model_config.model_name, deployment=embeddings_model_config.deployment_name
+                ),
                 connection=build_connection_id(embeddings_model_config.connection_name, self._operation_scope),
             ),
-            index=IndexStore(
-                type="acs",
-                connection=build_connection_id(index_config.ai_search_connection_id, self._operation_scope),
-                name=index_config.ai_search_index_name,
-            )
-            if index_config is not None
-            else IndexStore(type="faiss"),
+            index=(
+                IndexStore(
+                    type="acs",
+                    connection=build_connection_id(index_config.ai_search_connection_id, self._operation_scope),
+                    name=index_config.ai_search_index_name,
+                )
+                if index_config is not None
+                else IndexStore(type="faiss")
+            ),
             # name is replaced with a unique value each time the job is run
             path=f"azureml://datastores/workspaceblobstore/paths/indexes/{name}/{{name}}",
         )

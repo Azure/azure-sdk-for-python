@@ -10,7 +10,7 @@ from azure.ai.ml.entities import Connection, AzureOpenAIConnection, AadCredentia
 @dataclass
 class ModelConfiguration:
     """Configuration for a embedding model.
-    
+
     :param api_base: The base URL for the API.
     :type api_base: Optional[str]
     :param api_key: The API key.
@@ -28,6 +28,7 @@ class ModelConfiguration:
     :param model_kwargs: Additional keyword arguments for the model.
     :type model_kwargs: Dict[str, Any]
     """
+
     api_base: Optional[str]
     api_key: Optional[str]
     api_version: Optional[str]
@@ -39,13 +40,10 @@ class ModelConfiguration:
 
     @staticmethod
     def from_connection(
-        connection: Connection,
-        model_name: Optional[str] = None,
-        deployment_name: Optional[str] = None,
-        **model_kwargs
-    ) -> 'ModelConfiguration':
+        connection: Connection, model_name: Optional[str] = None, deployment_name: Optional[str] = None, **model_kwargs
+    ) -> "ModelConfiguration":
         """Create an model configuration from a Connection.
-        
+
         :param connection: The Connection object.
         :type connection: ~azure.ai.ml.entities.Connection
         :param model_name: The name of the model.
@@ -68,13 +66,9 @@ class ModelConfiguration:
             connection_type = "serverless"
             api_version = None
             if not connection.id:
-                raise TypeError(
-                    "The connection id is missing from the serverless connection object."
-                )
+                raise TypeError("The connection id is missing from the serverless connection object.")
         else:
-            raise TypeError(
-                "Connection object is not supported."
-            )
+            raise TypeError("Connection object is not supported.")
 
         if isinstance(connection.credentials, AadCredentialConfiguration):
             key = None
@@ -82,6 +76,7 @@ class ModelConfiguration:
             key = connection.credentials.get("key")  # type: ignore[union-attr]
             if key is None and connection_type == "azure_open_ai":
                 import os
+
                 if "AZURE_OPENAI_API_KEY" in os.environ:
                     key = os.getenv("AZURE_OPENAI_API_KEY")
                 else:

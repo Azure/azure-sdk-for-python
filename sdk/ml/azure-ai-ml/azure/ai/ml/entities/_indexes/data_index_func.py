@@ -168,7 +168,8 @@ def data_index_incremental_update_hosted(
     from azure.ai.ml.entities._indexes.utils import build_model_protocol, pipeline
 
     crack_and_chunk_and_embed_component = get_component_obj(
-        ml_client, LLMRAGComponentUri.LLM_RAG_CRACK_AND_CHUNK_AND_EMBED)
+        ml_client, LLMRAGComponentUri.LLM_RAG_CRACK_AND_CHUNK_AND_EMBED
+    )
 
     if data_index.index.type == DataIndexTypes.ACS:
         update_index_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_UPDATE_ACS_INDEX)
@@ -183,9 +184,9 @@ def data_index_incremental_update_hosted(
         name=name if name else f"data_index_incremental_update_{data_index.index.type}",
         description=description,
         tags=tags,
-        display_name=display_name
-            if display_name
-            else f"LLM - Data to {data_index.index.type.upper()} (Incremental Update)",
+        display_name=(
+            display_name if display_name else f"LLM - Data to {data_index.index.type.upper()} (Incremental Update)"
+        ),
         experiment_name=experiment_name,
         compute=compute,
         get_component=True,
@@ -286,8 +287,7 @@ def data_index_incremental_update_hosted(
         input_data = input_data_override
     else:
         input_data = Input(
-            type=data_index.source.input_data.type,
-            path=data_index.source.input_data.path  # type: ignore [arg-type]
+            type=data_index.source.input_data.type, path=data_index.source.input_data.path  # type: ignore [arg-type]
         )
 
     index_config = {
@@ -304,15 +304,18 @@ def data_index_incremental_update_hosted(
         chunk_size=data_index.source.chunk_size,
         chunk_overlap=data_index.source.chunk_overlap,
         citation_url=data_index.source.citation_url,
-        citation_replacement_regex=json.dumps(data_index.source.citation_url_replacement_regex._to_dict())
-        if data_index.source.citation_url_replacement_regex
-        else None,
+        citation_replacement_regex=(
+            json.dumps(data_index.source.citation_url_replacement_regex._to_dict())
+            if data_index.source.citation_url_replacement_regex
+            else None
+        ),
         embeddings_model=build_model_protocol(data_index.embedding.model),
         aoai_connection_id=_resolve_connection_id(ml_client, data_index.embedding.connection),
-        embeddings_container=Input(
-            type=AssetTypes.URI_FOLDER,
-            path=data_index.embedding.cache_path
-        ) if data_index.embedding.cache_path else None,
+        embeddings_container=(
+            Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path)
+            if data_index.embedding.cache_path
+            else None
+        ),
         index_config=json.dumps(index_config),
         index_connection_id=_resolve_connection_id(ml_client, data_index.index.connection),
     )
@@ -327,8 +330,7 @@ def data_index_incremental_update_hosted(
 
     if data_index.path:
         component.outputs.mlindex_asset_uri = Output(  # type: ignore [attr-defined]
-            type=AssetTypes.URI_FOLDER,
-            path=data_index.path
+            type=AssetTypes.URI_FOLDER, path=data_index.path
         )
 
     return component
@@ -453,14 +455,17 @@ def data_index_faiss(
         chunk_size=data_index.source.chunk_size,
         data_source_glob=data_index.source.input_glob,
         data_source_url=data_index.source.citation_url,
-        document_path_replacement_regex=json.dumps(data_index.source.citation_url_replacement_regex._to_dict())
-        if data_index.source.citation_url_replacement_regex
-        else None,
+        document_path_replacement_regex=(
+            json.dumps(data_index.source.citation_url_replacement_regex._to_dict())
+            if data_index.source.citation_url_replacement_regex
+            else None
+        ),
         aoai_connection_id=_resolve_connection_id(ml_client, data_index.embedding.connection),
-        embeddings_container=Input(
-            type=AssetTypes.URI_FOLDER,
-            path=data_index.embedding.cache_path
-        ) if data_index.embedding.cache_path else None,
+        embeddings_container=(
+            Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path)
+            if data_index.embedding.cache_path
+            else None
+        ),
     )
     # Hack until full Component classes are implemented that can annotate the optional parameters properly
     component.inputs["data_source_glob"]._meta.optional = True
@@ -627,14 +632,17 @@ def data_index_hosted(
         chunk_size=data_index.source.chunk_size,
         data_source_glob=data_index.source.input_glob,
         data_source_url=data_index.source.citation_url,
-        document_path_replacement_regex=json.dumps(data_index.source.citation_url_replacement_regex._to_dict())
-        if data_index.source.citation_url_replacement_regex
-        else None,
+        document_path_replacement_regex=(
+            json.dumps(data_index.source.citation_url_replacement_regex._to_dict())
+            if data_index.source.citation_url_replacement_regex
+            else None
+        ),
         aoai_connection_id=_resolve_connection_id(ml_client, data_index.embedding.connection),
-        embeddings_container=Input(
-            type=AssetTypes.URI_FOLDER,
-            path=data_index.embedding.cache_path
-        ) if data_index.embedding.cache_path else None,
+        embeddings_container=(
+            Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path)
+            if data_index.embedding.cache_path
+            else None
+        ),
     )
     # Hack until full Component classes are implemented that can annotate the optional parameters properly
     component.inputs["data_source_glob"]._meta.optional = True
@@ -735,7 +743,7 @@ def _resolve_connection_id(ml_client, connection: Optional[Union[str, Connection
             return ml_client.connections._operation.list_secrets(
                 connection_name=connection_name,
                 resource_group_name=ml_client.resource_group_name,
-                workspace_name=ml_client.workspace_name
+                workspace_name=ml_client.workspace_name,
             ).as_dict()["id"]
     elif hasattr(connection, "_workspace_connection"):
         # Handle azure.ai.generative Connections

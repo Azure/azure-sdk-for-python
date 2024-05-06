@@ -559,7 +559,7 @@ __all__ = [
     "IndexDataSource",
     "GitSource",
     "LocalSource",
-    "IndexModelConfiguration"
+    "IndexModelConfiguration",
 ]
 
 # Allow importing these types for backwards compatibility

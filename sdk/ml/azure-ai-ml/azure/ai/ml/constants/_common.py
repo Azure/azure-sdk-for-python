@@ -963,6 +963,7 @@ class DataIndexTypes:
 
 class IndexInputType(object):
     """An enumeration of values for the types of input data for an index."""
+
     GIT = "git"
     LOCAL = "local"
     AOAI = "aoai"

@@ -70,7 +70,9 @@ class LLMRAGComponentUri(object):
         "azureml://registries/azureml/components/llm_rag_crack_and_chunk_and_embed/labels/default"
     )
     LLM_RAG_UPDATE_ACS_INDEX = "azureml://registries/azureml/components/llm_rag_update_acs_index/labels/default"
-    LLM_RAG_UPDATE_PINECONE_INDEX = "azureml://registries/azureml/components/llm_rag_update_pinecone_index/labels/default"
+    LLM_RAG_UPDATE_PINECONE_INDEX = (
+        "azureml://registries/azureml/components/llm_rag_update_pinecone_index/labels/default"
+    )
     LLM_RAG_CREATE_FAISS_INDEX = "azureml://registries/azureml/components/llm_rag_create_faiss_index/labels/default"
     LLM_RAG_REGISTER_MLINDEX_ASSET = (
         "azureml://registries/azureml/components/llm_rag_register_mlindex_asset/labels/default"

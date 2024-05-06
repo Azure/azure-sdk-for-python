@@ -184,12 +184,7 @@ class IndexStore(DictMixin):
         :return: The dictionary representation of the class
         :rtype: Dict
         """
-        keys = [
-            "type",
-            "name",
-            "connection",
-            "config"
-        ]
+        keys = ["type", "name", "connection", "config"]
         result = {key: getattr(self, key) for key in keys}
         return _remove_empty_values(result)
 
