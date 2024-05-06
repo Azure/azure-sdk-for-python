@@ -20,6 +20,7 @@ from azure.ai.ml.entities._assets._artifacts._package.model_package import Model
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._assets._artifacts.data import Data
 from azure.ai.ml.entities._assets._artifacts.feature_set import FeatureSet
+from azure.ai.ml.entities._assets._artifacts.index import Index
 from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._assets.environment import Environment
 from azure.ai.ml.entities._autogen_entities.models import MarketplaceSubscription, ServerlessEndpoint
@@ -231,6 +232,35 @@ def load_job(
             :caption: Loading a Job from a YAML config file.
     """
     return cast(Job, load_common(Job, source, relative_origin, params_override, **kwargs))
+
+
+@experimental
+def load_index(
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
+    relative_origin: Optional[str] = None,
+    params_override: Optional[List[Dict]] = None,
+    **kwargs: Any,
+) -> Index:
+    """Constructs a Index object from a YAML file.
+
+    :param source: A path to a local YAML file or an already-open file object containing an index configuration.
+        If the source is a path, it will be opened and read. If the source is an open file, the file will be read
+        directly.
+    :type source: Union[PathLike, str, io.TextIOWrapper]
+    :keyword relative_origin: The root directory for the YAML. This directory will be used as the origin for deducing
+        the relative locations of files referenced in the parsed YAML. Defaults to the same directory as source if
+        source is a file or file path input. Defaults to "./" if the source is a stream input with no name value.
+    :paramtype relative_origin: Optional[str]
+    :keyword params_override: Fields to overwrite on top of the yaml file.
+        Format is [{"field1": "value1"}, {"field2": "value2"}]
+    :paramtype params_override: List[Dict]
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Index cannot be successfully validated.
+        Details will be provided in the error message.
+    :return: A loaded Index object.
+    :rtype: ~azure.ai.ml.entities.Index
+    """
+    return cast(Index, load_common(Index, source, relative_origin, params_override, **kwargs))
 
 
 @experimental
