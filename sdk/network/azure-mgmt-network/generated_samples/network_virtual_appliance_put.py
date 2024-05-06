@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.network import NetworkManagementClient
 
 """
@@ -53,6 +56,28 @@ def main():
                         "id": "/subscriptions/{{subscriptionId}}/resourceGroups/{{rg}}/providers/Microsoft.Network/publicIPAddresses/slbip"
                     }
                 ],
+                "networkProfile": {
+                    "networkInterfaceConfigurations": [
+                        {
+                            "properties": {
+                                "ipConfigurations": [
+                                    {"name": "publicnicipconfig", "properties": {"primary": True}},
+                                    {"name": "publicnicipconfig-2", "properties": {"primary": False}},
+                                ]
+                            },
+                            "type": "PublicNic",
+                        },
+                        {
+                            "properties": {
+                                "ipConfigurations": [
+                                    {"name": "privatenicipconfig", "properties": {"primary": True}},
+                                    {"name": "privatenicipconfig-2", "properties": {"primary": False}},
+                                ]
+                            },
+                            "type": "PrivateNic",
+                        },
+                    ]
+                },
                 "nvaSku": {"bundledScaleUnit": "1", "marketPlaceVersion": "12.1", "vendor": "Cisco SDWAN"},
                 "virtualApplianceAsn": 10000,
                 "virtualHub": {
@@ -65,6 +90,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-09-01/examples/NetworkVirtualAppliancePut.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-11-01/examples/NetworkVirtualAppliancePut.json
 if __name__ == "__main__":
     main()

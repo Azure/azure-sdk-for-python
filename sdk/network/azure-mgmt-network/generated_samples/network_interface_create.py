@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.network import NetworkManagementClient
 
 """
@@ -48,7 +51,8 @@ def main():
                                 "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/rg1-vnet/subnets/default"
                             },
                         },
-                    }
+                    },
+                    {"name": "ipconfig2", "properties": {"privateIPAddressPrefixLength": 28}},
                 ],
             },
         },
@@ -56,6 +60,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-09-01/examples/NetworkInterfaceCreate.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-11-01/examples/NetworkInterfaceCreate.json
 if __name__ == "__main__":
     main()

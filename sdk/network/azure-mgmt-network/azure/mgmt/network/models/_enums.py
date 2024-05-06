@@ -1171,6 +1171,7 @@ class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MMA_WORKSPACE_NETWORK = "MMAWorkspaceNetwork"
     AZURE_ARC_VM = "AzureArcVM"
     AZURE_VMSS = "AzureVMSS"
+    AZURE_ARC_NETWORK = "AzureArcNetwork"
 
 class ExpressRouteLinkMacSecSciState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Sci mode enabled/disabled."""
@@ -1230,7 +1231,6 @@ class LoadBalancerSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tier of a load balancer SKU."""
 
     REGIONAL = "Regional"
-    GLOBAL = "Global"
     GLOBAL_ENUM = "Global"
 
 class NetworkInterfaceNicType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1252,14 +1252,12 @@ class PublicIPAddressSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tier of a public IP address SKU."""
 
     REGIONAL = "Regional"
-    GLOBAL = "Global"
     GLOBAL_ENUM = "Global"
 
 class PublicIPPrefixSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tier of a public IP prefix SKU."""
 
     REGIONAL = "Regional"
-    GLOBAL = "Global"
     GLOBAL_ENUM = "Global"
 
 class VirtualNetworkGatewayConnectionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1686,7 +1684,7 @@ class FirewallPolicyIDPSSignatureSeverity(int, Enum, metaclass=CaseInsensitiveEn
 class Geo(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Geo for CIDR advertising. Should be an Geo code."""
 
-    GLOBAL = "GLOBAL"
+    GLOBAL_ENUM = "GLOBAL"
     AFRI = "AFRI"
     APAC = "APAC"
     EURO = "EURO"
@@ -1695,7 +1693,6 @@ class Geo(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ME = "ME"
     OCEANIA = "OCEANIA"
     AQ = "AQ"
-    GLOBAL_ENUM = "GLOBAL"
 
 class HubRoutingPreference(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The hub routing preference gateway types."""
@@ -1748,9 +1745,8 @@ class NextStep(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported next step behaviors after a rule is applied to a matched route."""
 
     UNKNOWN = "Unknown"
-    CONTINUE = "Continue"
-    TERMINATE = "Terminate"
     CONTINUE_ENUM = "Continue"
+    TERMINATE = "Terminate"
 
 class PacketCaptureTargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Target type of the resource provided."""
@@ -1876,4 +1872,40 @@ class FirewallPolicyIntrusionDetectionProfileType(str, Enum, metaclass=CaseInsen
     STANDARD = "Standard"
     ADVANCED = "Advanced"
     EXTENDED = "Extended"
+
+class ApplicationGatewaySkuFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Family of an application gateway SKU."""
+
+    GENERATION1 = "Generation_1"
+    GENERATION2 = "Generation_2"
+
+class InboundSecurityRuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Rule Type. This should be either AutoExpire or Permanent. Auto Expire Rule only creates NSG
+    rules. Permanent Rule creates NSG rule and SLB LB Rule.
+    """
+
+    AUTO_EXPIRE = "AutoExpire"
+    PERMANENT = "Permanent"
+
+class NicTypeInRequest(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """NIC type. This should be either PublicNic or PrivateNic."""
+
+    PUBLIC_NIC = "PublicNic"
+    PRIVATE_NIC = "PrivateNic"
+
+class NicTypeInResponse(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """NIC type - PublicNic, PrivateNic, or AdditionalNic."""
+
+    PUBLIC_NIC = "PublicNic"
+    PRIVATE_NIC = "PrivateNic"
+    ADDITIONAL_NIC = "AdditionalNic"
+
+class SharingScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Set this property to Tenant to allow sharing subnet with other subscriptions in your AAD
+    tenant. This property can only be set if defaultOutboundAccess is set to false, both properties
+    can only be set if subnet is empty.
+    """
+
+    TENANT = "Tenant"
+    DELEGATED_SERVICES = "DelegatedServices"
 
