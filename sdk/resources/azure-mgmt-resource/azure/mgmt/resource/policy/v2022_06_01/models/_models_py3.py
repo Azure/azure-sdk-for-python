@@ -115,7 +115,7 @@ class Identity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.resource.policy.v2022_06_01.models.ResourceIdentityType
     :ivar user_assigned_identities: The user identity associated with the policy. The user identity
      dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.resource.policy.v2022_06_01.models.UserAssignedIdentitiesValue]
     """
@@ -146,7 +146,7 @@ class Identity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.resource.policy.v2022_06_01.models.ResourceIdentityType
         :keyword user_assigned_identities: The user identity associated with the policy. The user
          identity dictionary key references will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.resource.policy.v2022_06_01.models.UserAssignedIdentitiesValue]
         """
@@ -161,7 +161,7 @@ class NonComplianceMessage(_serialization.Model):
     """A message that describes why a resource is non-compliant with the policy. This is shown in
     'deny' error messages and on resource's non-compliant compliance results.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar message: A message that describes why a resource is non-compliant with the policy. This
      is shown in 'deny' error messages and on resource's non-compliant compliance results. Required.
