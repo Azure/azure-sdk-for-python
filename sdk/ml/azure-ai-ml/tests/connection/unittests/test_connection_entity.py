@@ -41,10 +41,10 @@ from azure.ai.ml.entities import (
 @pytest.mark.core_sdk_test
 class TestWorkspaceConnectionEntity:
     def assert_connections_are_similar(self, conn1: Connection, conn2: Connection):
-        """ Helper functiom which runs a bunch of assertions to check that the two
+        """Helper functiom which runs a bunch of assertions to check that the two
         inputted connections are roughly equivalent. Does not check certain features
         that are specific to some connection subclasses.
-        
+
         :param conn1: The first connection to compare.
         :type conn1: ~azure.ai.ml.entities.Connection
         :param conn2: The second connection to compare.
@@ -76,9 +76,9 @@ class TestWorkspaceConnectionEntity:
         self.assert_connections_are_similar(conn, new_conn)
 
     def check_dict_conversion_stable(self, conn: Connection):
-        """ Helper function which converts and inputted connection to its dictionary
+        """Helper function which converts and inputted connection to its dictionary
         equivalent and back again, then checks that they're still the same.
-        
+
         :param conn: The connection to check
         :type conn: ~azure.ai.ml.entities.Connection
         """
@@ -88,9 +88,9 @@ class TestWorkspaceConnectionEntity:
         self.assert_connections_are_similar(conn, new_conn)
 
     def check_all_conversions_stable(self, conn: Connection):
-        """ Helper function which checks that a connection is stable when converting
+        """Helper function which checks that a connection is stable when converting
         to and from rest and dictionary representations.
-        
+
         :param conn: The connection to check
         :type conn: ~azure.ai.ml.entities.Connection
         """

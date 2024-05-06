@@ -4,14 +4,13 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, List, Optional, Type, Union, Dict
+from typing import Any, List, Optional, Type, Union
 import re
 
 from azure.ai.ml._restclient.v2024_04_01_preview.models import ConnectionCategory
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import (
-    BASE_PATH_CONTEXT_KEY,
     CONNECTION_API_VERSION_KEY,
     CONNECTION_API_TYPE_KEY,
     CONNECTION_KIND_KEY,
@@ -194,11 +193,11 @@ class MicrosoftOneLakeConnection(Connection):
         target = kwargs.pop("target", None)
         if target is None:
             if artifact is None:
-                raise ValueError(f"If target is unset, then artifact must be set")
+                raise ValueError("If target is unset, then artifact must be set")
             if endpoint is None:
-                raise ValueError(f"If target is unset, then endpoint must be set")
+                raise ValueError("If target is unset, then endpoint must be set")
             if one_lake_workspace_name is None:
-                raise ValueError(f"If target is unset, then one_lake_workspace_name must be set")
+                raise ValueError("If target is unset, then one_lake_workspace_name must be set")
             target = MicrosoftOneLakeConnection._construct_target(endpoint, one_lake_workspace_name, artifact)
         super().__init__(
             target=target,

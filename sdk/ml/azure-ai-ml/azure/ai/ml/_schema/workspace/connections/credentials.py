@@ -152,7 +152,6 @@ class AccountKeyConfigurationSchema(metaclass=PatchedSchemaMeta):
         return AccountKeyConfiguration(**data)
 
 
-
 class AadCredentialConfigurationSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(
         allowed_values=ConnectionAuthType.AAD,

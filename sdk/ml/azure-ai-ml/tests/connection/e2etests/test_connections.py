@@ -399,7 +399,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             {"account_name": storage_account_name},
         ]
         internal_blob_ds = load_datastore(blob_store_file, params_override=params_override)
-        
+
         created_datastore = None
         created_connection = None
         try:
@@ -415,7 +415,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
                 url=created_datastore.base_path,
                 account_name=created_datastore.account_name,
                 container_name=created_datastore.container_name,
-                credentials=AccountKeyConfiguration(account_key=created_datastore.credentials.account_key)
+                credentials=AccountKeyConfiguration(account_key=created_datastore.credentials.account_key),
             )
 
             created_connection = client.connections.create_or_update(connection=local_connection)

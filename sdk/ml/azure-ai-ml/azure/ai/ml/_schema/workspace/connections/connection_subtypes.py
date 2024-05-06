@@ -57,16 +57,14 @@ class MicrosoftOneLakeConnectionSchema(ConnectionSchema):
         allowed_values=ConnectionCategory.AZURE_ONE_LAKE, casing_transform=camel_to_snake, required=True
     )
     credentials = UnionField(
-        [
-            NestedField(ServicePrincipalConfigurationSchema), 
-            NestedField(AadCredentialConfigurationSchema)
-        ], required=False, load_default=AadCredentialConfiguration()
+        [NestedField(ServicePrincipalConfigurationSchema), NestedField(AadCredentialConfigurationSchema)],
+        required=False,
+        load_default=AadCredentialConfiguration(),
     )
     artifact = NestedField(OneLakeArtifactSchema, required=False, allow_none=True)
 
     endpoint = fields.Str(required=False)
     one_lake_workspace_name = fields.Str(required=False)
-
 
     @pre_load
     def check_for_target(self, data, **kwargs):
@@ -80,11 +78,11 @@ class MicrosoftOneLakeConnectionSchema(ConnectionSchema):
         # by dumping an extant connection.
         if target is None:
             if artifact is None:
-                raise ValidationError(f"If target is unset, then artifact must be set")
+                raise ValidationError("If target is unset, then artifact must be set")
             if endpoint is None:
-                raise ValidationError(f"If target is unset, then endpoint must be set")
+                raise ValidationError("If target is unset, then endpoint must be set")
             if one_lake_workspace_name is None:
-                raise ValidationError(f"If target is unset, then one_lake_workspace_name must be set")
+                raise ValidationError("If target is unset, then one_lake_workspace_name must be set")
         return data
 
     @post_load
