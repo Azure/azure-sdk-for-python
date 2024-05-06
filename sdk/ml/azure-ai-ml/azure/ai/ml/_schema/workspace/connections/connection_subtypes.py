@@ -5,6 +5,8 @@
 # pylint: disable=unused-argument
 
 from marshmallow import fields, post_load
+from marshmallow.exceptions import ValidationError
+from marshmallow.decorators import pre_load
 
 from azure.ai.ml._restclient.v2024_04_01_preview.models import ConnectionCategory
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
@@ -15,6 +17,7 @@ from azure.ai.ml._schema.workspace.connections.credentials import (
     SasTokenConfigurationSchema,
     ServicePrincipalConfigurationSchema,
     AccountKeyConfigurationSchema,
+    AadCredentialConfigurationSchema,
 )
 from azure.ai.ml.entities import AadCredentialConfiguration
 from .connection import ConnectionSchema
@@ -30,6 +33,7 @@ class AzureBlobStoreConnectionSchema(ConnectionSchema):
         [
             NestedField(SasTokenConfigurationSchema),
             NestedField(AccountKeyConfigurationSchema),
+            NestedField(AadCredentialConfigurationSchema),
         ],
         required=False,
         load_default=AadCredentialConfiguration(),
@@ -52,13 +56,36 @@ class MicrosoftOneLakeConnectionSchema(ConnectionSchema):
     type = StringTransformedEnum(
         allowed_values=ConnectionCategory.AZURE_ONE_LAKE, casing_transform=camel_to_snake, required=True
     )
-    credentials = NestedField(
-        ServicePrincipalConfigurationSchema, required=False, load_default=AadCredentialConfiguration()
+    credentials = UnionField(
+        [
+            NestedField(ServicePrincipalConfigurationSchema), 
+            NestedField(AadCredentialConfigurationSchema)
+        ], required=False, load_default=AadCredentialConfiguration()
     )
-    artifact = NestedField(OneLakeArtifactSchema, required=True)
+    artifact = NestedField(OneLakeArtifactSchema, required=False, allow_none=True)
 
-    endpoint = fields.Str()
-    one_lake_workspace_name = fields.Str()
+    endpoint = fields.Str(required=False)
+    one_lake_workspace_name = fields.Str(required=False)
+
+
+    @pre_load
+    def check_for_target(self, data, **kwargs):
+        target = data.get("target", None)
+        artifact = data.get("artifact", None)
+        endpoint = data.get("endpoint", None)
+        one_lake_workspace_name = data.get("one_lake_workspace_name", None)
+        # If the user is using a target, then they don't need the artifact and one lake workspace name.
+        # This is distinct from when the user set's the 'endpoint' value, which is also used to construct
+        # the target. If the target is already present, then the loaded connection YAML was probably produced
+        # by dumping an extant connection.
+        if target is None:
+            if artifact is None:
+                raise ValidationError(f"If target is unset, then artifact must be set")
+            if endpoint is None:
+                raise ValidationError(f"If target is unset, then endpoint must be set")
+            if one_lake_workspace_name is None:
+                raise ValidationError(f"If target is unset, then one_lake_workspace_name must be set")
+        return data
 
     @post_load
     def make(self, data, **kwargs):

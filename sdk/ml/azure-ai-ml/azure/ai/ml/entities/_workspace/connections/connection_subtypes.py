@@ -4,13 +4,14 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, List, Optional, Type, Union
+from typing import Any, List, Optional, Type, Union, Dict
 import re
 
 from azure.ai.ml._restclient.v2024_04_01_preview.models import ConnectionCategory
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
     CONNECTION_API_VERSION_KEY,
     CONNECTION_API_TYPE_KEY,
     CONNECTION_KIND_KEY,
@@ -162,10 +163,10 @@ class MicrosoftOneLakeConnection(Connection):
     :param endpoint: The endpoint of the connection.
     :type endpoint: str
     :param artifact: The artifact class used to further specify the connection.
-    :type artifact: ~azure.ai.ml.entities.OneLakeArtifact
+    :type artifact: Optional[~azure.ai.ml.entities.OneLakeArtifact]
     :param one_lake_workspace_name: The name, not ID, of the workspace where the One Lake
         resource lives.
-    :type one_lake_workspace_name: str
+    :type one_lake_workspace_name: Optional[str]
     :param credentials: The credentials for authenticating to the blob store. This type of
         connection accepts 3 types of credentials: account key and SAS token credentials,
         or NoneCredentialConfiguration for credential-less connections.
@@ -182,8 +183,8 @@ class MicrosoftOneLakeConnection(Connection):
         self,
         *,
         endpoint: str,
-        artifact: OneLakeConnectionArtifact,
-        one_lake_workspace_name: str,
+        artifact: Optional[OneLakeConnectionArtifact] = None,
+        one_lake_workspace_name: Optional[str] = None,
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
@@ -192,6 +193,12 @@ class MicrosoftOneLakeConnection(Connection):
         # need to worry about data-availability nonsense.
         target = kwargs.pop("target", None)
         if target is None:
+            if artifact is None:
+                raise ValueError(f"If target is unset, then artifact must be set")
+            if endpoint is None:
+                raise ValueError(f"If target is unset, then endpoint must be set")
+            if one_lake_workspace_name is None:
+                raise ValueError(f"If target is unset, then one_lake_workspace_name must be set")
             target = MicrosoftOneLakeConnection._construct_target(endpoint, one_lake_workspace_name, artifact)
         super().__init__(
             target=target,

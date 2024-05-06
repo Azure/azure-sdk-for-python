@@ -25,6 +25,8 @@ from azure.ai.ml.entities._credentials import (
     AccessKeyConfiguration,
     ApiKeyConfiguration,
     AccountKeyConfiguration,
+    AadCredentialConfiguration,
+    NoneCredentialConfiguration,
 )
 
 
@@ -148,3 +150,30 @@ class AccountKeyConfigurationSchema(metaclass=PatchedSchemaMeta):
     def make(self, data: Dict[str, str], **kwargs) -> AccountKeyConfiguration:
         data.pop("type")
         return AccountKeyConfiguration(**data)
+
+
+
+class AadCredentialConfigurationSchema(metaclass=PatchedSchemaMeta):
+    type = StringTransformedEnum(
+        allowed_values=ConnectionAuthType.AAD,
+        casing_transform=camel_to_snake,
+        required=True,
+    )
+
+    @post_load
+    def make(self, data: Dict[str, str], **kwargs) -> AadCredentialConfiguration:
+        data.pop("type")
+        return AadCredentialConfiguration(**data)
+
+
+class NoneCredentialConfigurationSchema(metaclass=PatchedSchemaMeta):
+    type = StringTransformedEnum(
+        allowed_values=ConnectionAuthType.NONE,
+        casing_transform=camel_to_snake,
+        required=True,
+    )
+
+    @post_load
+    def make(self, data: Dict[str, str], **kwargs) -> NoneCredentialConfiguration:
+        data.pop("type")
+        return NoneCredentialConfiguration(**data)
