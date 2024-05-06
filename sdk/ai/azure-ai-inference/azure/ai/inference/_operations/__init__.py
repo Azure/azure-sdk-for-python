@@ -9,7 +9,7 @@
 from ._operations import ChatCompletionsClientOperationsMixin
 from ._operations import EmbeddingsClientOperationsMixin
 from ._operations import ImageGenerationClientOperationsMixin
-from ._operations import legacy_versioning
+from ._operations import enable_legacy_versioning
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -19,7 +19,7 @@ __all__ = [
     "ChatCompletionsClientOperationsMixin",
     "EmbeddingsClientOperationsMixin",
     "ImageGenerationClientOperationsMixin",
-    "legacy_versioning",
+    "enable_legacy_versioning",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

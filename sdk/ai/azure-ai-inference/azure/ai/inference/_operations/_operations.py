@@ -31,6 +31,13 @@ from .._vendor import ChatCompletionsClientMixinABC, EmbeddingsClientMixinABC, I
 
 legacy_versioning = False
 
+def legacy_versioning_enabled():
+    return legacy_versioning
+
+def enable_legacy_versioning(enabled=True):
+    global legacy_versioning
+    legacy_versioning = enabled
+
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:

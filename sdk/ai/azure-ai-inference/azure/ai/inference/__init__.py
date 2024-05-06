@@ -10,7 +10,7 @@ from ._client import ChatCompletionsClient
 from ._client import EmbeddingsClient
 from ._client import ImageGenerationClient
 from ._version import VERSION
-from ._operations import legacy_versioning
+from ._operations import enable_legacy_versioning
 
 __version__ = VERSION
 
@@ -25,7 +25,7 @@ __all__ = [
     "ChatCompletionsClient",
     "EmbeddingsClient",
     "ImageGenerationClient",
-    "legacy_versioning",
+    "enable_legacy_versioning",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 
