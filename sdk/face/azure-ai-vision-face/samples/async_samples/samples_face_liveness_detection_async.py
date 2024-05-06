@@ -5,14 +5,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 """
 FILE: sample_face_liveness_detection_async.py
 
 DESCRIPTION:
     This sample demonstrates how to determine if a face in an input video stream is real (live) or fake (spoof).
-    There is a step during the execution of the program that requires the user to switch to mobile SDK for performing
-    the liveness detection.
+
+    The liveness solution integration involves two different components: a mobile application and
+    an app server/orchestrator, and here we demonstrate the entire process from the perspective of the server side.
+
+    For more information about liveness detection, see
+    https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/tutorials/liveness.
 
 USAGE:
     python sample_face_liveness_detection_async.py
@@ -47,14 +50,36 @@ class DetectLiveness():
         self.key = os.getenv(CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY, DEFAULT_FACE_API_ACCOUNT_KEY)
         self.logger = get_logger("sample_face_liveness_detection_async")
 
+    async def wait_for_liveness_check_request(self):
+        # The logic to wait for liveness check request from mobile application.
+        pass
+
+    async def send_auth_token_to_client(self, token):
+        # The logic to provide the session-authorization-token to the mobile application.
+        pass
+
+    async def wait_for_liveness_session_complete(self):
+        # The logic to wait the notification from mobile application.
+        self.logger.info(
+            "Please refer to https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/tutorials/liveness"
+            " and use the mobile client SDK to perform liveness detection on your mobile application.")
+        input("Press any key to continue when you complete these steps to run sample to get session results ...")
+        pass
+
     async def livenessSession(self):
+        """This example demonstrates the liveness detection from a app server-side perspective.
+        To get the full picture of the entire steps, see https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/tutorials/liveness#orchestrate-the-liveness-solution.  # noqa: E501
+        """
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.vision.face.aio import FaceSessionClient
         from azure.ai.vision.face.models import CreateLivenessSessionContent, LivenessOperationMode
 
         async with FaceSessionClient(
                 endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as face_session_client:
-            # Create a session.
+            # 1. Wait for liveness check request
+            await self.wait_for_liveness_check_request()
+
+            # 2. Create a session.
             self.logger.info("Create a new liveness session.")
             created_session = await face_session_client.create_liveness_session(
                 CreateLivenessSessionContent(
@@ -64,29 +89,37 @@ class DetectLiveness():
                     auth_token_time_to_live_in_seconds=60))
             self.logger.info(f"Result: {beautify_json(created_session.as_dict())}")
 
-            # Get the liveness detection result.
+            # 3. Provide session authorization token to mobile application.
+            token = created_session.auth_token
+            await self.send_auth_token_to_client(token)
+
+            # 4 ~ 6. The mobile application uses the session-authorization-token to perform the liveness detection.
+            # To learn how to integrate the UI and the code into your native mobile application, see
+            # https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/tutorials/liveness#integrate-liveness-into-mobile-application  # noqa: E501
+
+            # 7. Wait for session completion notification from client.
+            await self.wait_for_liveness_session_complete()
+
+            # 8. Query for the liveness detection result as the session is completed.
             self.logger.info("Get the liveness detection result.")
             liveness_result = await face_session_client.get_liveness_session_result(created_session.session_id)
             self.logger.info(f"Result: {beautify_json(liveness_result.as_dict())}")
 
-            self.logger.info(
-                "Please refer to https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/tutorials/liveness"
-                " to download client SDK to run session starts and detcet liveness call.")
-            input("Press any key to continue when you complete these steps to run sample to get session results.")
-
-            # Get the liveness detection result again.
-            self.logger.info("Get the liveness detection result again.")
-            liveness_result = await face_session_client.get_liveness_session_result(created_session.session_id)
-            self.logger.info(f"Result: {beautify_json(liveness_result.as_dict())}")
-
-            # Get audit entries
+            # Furthermore, you can query all request and response for this sessions, and list all sessions you have by
+            # calling `get_liveness_session_audit_entries` and `get_liveness_sessions`.
             self.logger.info("Get the audit entries of this session.")
             audit_entries = await face_session_client.get_liveness_session_audit_entries(created_session.session_id)
             for idx, entry in enumerate(audit_entries):
                 self.logger.info(f"----- Audit entries: #{idx+1}-----")
                 self.logger.info(f"Entry: {beautify_json(entry.as_dict())}")
 
-            # Delete the session
+            self.logger.info("List all liveness sessions.")
+            sessions = await face_session_client.get_liveness_sessions()
+            for idx, session in enumerate(sessions):
+                self.logger.info(f"----- Sessions: #{idx+1}-----")
+                self.logger.info(f"Session: {beautify_json(session.as_dict())}")
+
+            # Clean up: delete the session
             self.logger.info("Delete the session.")
             await face_session_client.delete_liveness_session(created_session.session_id)
 
