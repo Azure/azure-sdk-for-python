@@ -65,11 +65,11 @@ def calculate_crc64(data: bytes, initial_crc: int) -> int:
     # Locally import to avoid error if not installed.
     from azure.storage.extensions import crc64
 
-    return crc64.compute_crc64(data, initial_crc)
+    return crc64.compute(data, initial_crc)
 
 
 def calculate_crc64_bytes(data: bytes) -> bytes:
     # Locally import to avoid error if not installed.
     from azure.storage.extensions import crc64
 
-    return crc64.compute_crc64(data, 0).to_bytes(CRC64_LENGTH, 'little')
+    return crc64.compute(data, 0).to_bytes(CRC64_LENGTH, 'little')
