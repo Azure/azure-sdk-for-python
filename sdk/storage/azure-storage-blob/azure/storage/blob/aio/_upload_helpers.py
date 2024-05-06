@@ -6,7 +6,7 @@
 
 import inspect
 from io import SEEK_SET, UnsupportedOperation
-from typing import Any, AnyStr, Awaitable, cast, Dict, IO, Iterable, Optional, TypeVar, Union, TYPE_CHECKING
+from typing import Any, cast, Dict, IO, Optional, TypeVar, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError, ResourceModifiedError
 

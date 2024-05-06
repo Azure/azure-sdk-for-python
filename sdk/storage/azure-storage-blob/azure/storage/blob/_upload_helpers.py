@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from io import SEEK_SET, UnsupportedOperation
-from typing import Any, AnyStr, cast, Dict, IO, Iterable, Optional, TypeVar, Union, TYPE_CHECKING
+from typing import Any, cast, Dict, IO, Optional, TypeVar, TYPE_CHECKING
 
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
 
