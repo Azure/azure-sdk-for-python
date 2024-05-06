@@ -836,7 +836,7 @@ class Peers(_serialization.Model):
 class ResourceName(_serialization.Model):
     """Name and Type of the Resource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the resource. Required.
     :vartype name: str
@@ -955,7 +955,7 @@ class Subscription(_serialization.Model):
 class SubscriptionListResult(_serialization.Model):
     """Subscription list operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: An array of subscriptions.
     :vartype value: list[~azure.mgmt.resource.subscriptions.v2022_12_01.models.Subscription]
@@ -1096,7 +1096,7 @@ class TenantIdDescription(_serialization.Model):
 class TenantListResult(_serialization.Model):
     """Tenant Ids information.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: An array of tenants.
     :vartype value: list[~azure.mgmt.resource.subscriptions.v2022_12_01.models.TenantIdDescription]

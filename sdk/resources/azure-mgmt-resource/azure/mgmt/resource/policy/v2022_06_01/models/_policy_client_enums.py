@@ -46,7 +46,7 @@ class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates that a system assigned identity is associated with the resource."""
     NONE = "None"
     """Indicates that no identity is associated with the resource or that the existing identity should
-    #: be removed."""
+    be removed."""
 
 
 class SelectorKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
