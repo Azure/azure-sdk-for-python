@@ -39,7 +39,7 @@
         "value": ""
     },
     "applicationInsightsOption": {
-        "value": "new"
+        "value": "none"
     },
     "applicationInsightsName": {
         "value": ""

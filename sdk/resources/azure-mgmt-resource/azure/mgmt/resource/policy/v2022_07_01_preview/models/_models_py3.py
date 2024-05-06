@@ -102,7 +102,7 @@ class PolicyExemption(_serialization.Model):  # pylint: disable=too-many-instanc
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.

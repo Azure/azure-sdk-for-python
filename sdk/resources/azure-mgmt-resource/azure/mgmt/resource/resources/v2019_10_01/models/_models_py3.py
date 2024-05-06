@@ -273,7 +273,7 @@ class Dependency(_serialization.Model):
 class Deployment(_serialization.Model):
     """Deployment operation parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: The location to store the deployment data.
     :vartype location: str
@@ -587,7 +587,7 @@ class DeploymentOperationsListResult(_serialization.Model):
 class DeploymentProperties(_serialization.Model):
     """Deployment properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar template: The template content. You use this element when you want to pass the template
      syntax directly in the request rather than link to an existing template. It can be a JObject or
@@ -829,7 +829,7 @@ class DeploymentValidateResult(_serialization.Model):
 class DeploymentWhatIf(_serialization.Model):
     """Deployment What-if operation parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: The location to store the deployment data.
     :vartype location: str
@@ -865,7 +865,7 @@ class DeploymentWhatIf(_serialization.Model):
 class DeploymentWhatIfProperties(DeploymentProperties):
     """Deployment What-if properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar template: The template content. You use this element when you want to pass the template
      syntax directly in the request rather than link to an existing template. It can be a JObject or
@@ -1428,7 +1428,7 @@ class Identity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.resource.resources.v2019_10_01.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the resource. The
      user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.resource.resources.v2019_10_01.models.IdentityUserAssignedIdentitiesValue]
     """
@@ -1458,7 +1458,7 @@ class Identity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.resource.resources.v2019_10_01.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user identities associated with the resource.
          The user identity dictionary key references will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.resource.resources.v2019_10_01.models.IdentityUserAssignedIdentitiesValue]
         """
@@ -1681,7 +1681,7 @@ class OperationListResult(_serialization.Model):
 class ParametersLink(_serialization.Model):
     """Entity representing the reference to the deployment parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar uri: The URI of the parameters file. Required.
     :vartype uri: str
@@ -1911,7 +1911,7 @@ class ResourceGroup(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The ID of the resource group.
     :vartype id: str
@@ -2163,7 +2163,7 @@ class ResourceListResult(_serialization.Model):
         self.next_link = None
 
 
-class ResourceProviderOperationDisplayProperties(_serialization.Model):
+class ResourceProviderOperationDisplayProperties(_serialization.Model):  # pylint: disable=name-too-long
     """Resource provider operation's display properties.
 
     :ivar publisher: Operation description.
@@ -2270,7 +2270,7 @@ class ResourcesMoveInfo(_serialization.Model):
 class ScopedDeployment(_serialization.Model):
     """Deployment operation parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: The location to store the deployment data. Required.
     :vartype location: str
@@ -2316,7 +2316,7 @@ class ScopedDeployment(_serialization.Model):
 class ScopedDeploymentWhatIf(_serialization.Model):
     """Deployment What-if operation parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: The location to store the deployment data. Required.
     :vartype location: str
@@ -2595,7 +2595,7 @@ class TagsResource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The ID of the tags wrapper resource.
     :vartype id: str
@@ -2742,7 +2742,7 @@ class TemplateHashResult(_serialization.Model):
 class TemplateLink(_serialization.Model):
     """Entity representing the reference to the template.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar uri: The URI of the template to deploy. Required.
     :vartype uri: str
@@ -2774,7 +2774,7 @@ class TemplateLink(_serialization.Model):
 class WhatIfChange(_serialization.Model):
     """Information about a single resource change predicted by What-If operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar resource_id: Resource ID. Required.
     :vartype resource_id: str
@@ -2878,7 +2878,7 @@ class WhatIfOperationResult(_serialization.Model):
 class WhatIfPropertyChange(_serialization.Model):
     """The predicted change to the resource property.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar path: The path of the property. Required.
     :vartype path: str

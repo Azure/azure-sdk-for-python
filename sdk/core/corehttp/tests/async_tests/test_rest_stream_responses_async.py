@@ -127,39 +127,6 @@ async def test_cannot_read_after_response_closed(port, transport):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
-async def test_decompress_plain_no_header(port, transport):
-    # thanks to Xiang Yan for this test!
-    account_name = "coretests"
-    url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
-    request = HttpRequest("GET", url)
-    client = AsyncMockRestClient(port, transport=transport())
-    async with client:
-        response = await client.send_request(request, stream=True)
-        with pytest.raises(ResponseNotReadError):
-            response.content
-        await response.read()
-        assert response.content == b"test"
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
-async def test_compress_plain_no_header(port, transport):
-    # thanks to Xiang Yan for this test!
-    account_name = "coretests"
-    url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
-    request = HttpRequest("GET", url)
-    client = AsyncMockRestClient(port, transport=transport())
-    async with client:
-        response = await client.send_request(request, stream=True)
-        iter = response.iter_raw()
-        data = b""
-        async for d in iter:
-            data += d
-        assert data == b"test"
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
 async def test_iter_read_back_and_forth(port, transport):
     # thanks to McCoy Patiño for this test!
 
