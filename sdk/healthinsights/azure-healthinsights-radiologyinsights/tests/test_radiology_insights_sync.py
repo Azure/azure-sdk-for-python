@@ -20,7 +20,9 @@ HealthInsightsEnvPreparer = functools.partial(
 
 
 class TestRadiologyInsightsClient(AzureRecordedTestCase):
-    def create_request(self):
+    @HealthInsightsEnvPreparer()
+    @recorded_by_proxy
+    def test_sync(self, healthinsights_endpoint, healthinsights_key):
 
         doc_content1 = """CLINICAL HISTORY:   
         20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
@@ -82,18 +84,13 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
 
         data = models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
         jobdata = models.RadiologyInsightsJob(job_data=data)
-        return jobdata
-
-    @HealthInsightsEnvPreparer()
-    @recorded_by_proxy
-    def test_critical_result(self, healthinsights_endpoint, healthinsights_key):
+        
         radiology_insights_client = RadiologyInsightsClient(
             healthinsights_endpoint, AzureKeyCredential(healthinsights_key)
         )
-        jobdata = TestRadiologyInsightsClient.create_request(self)
-        request_time = datetime.datetime(2024, 2, 26, 0, 0, 0, 0, tzinfo=datetime.timezone.utc)
+        
         poller = radiology_insights_client.begin_infer_radiology_insights(
-            id="test34",
+            id="JobIDS2",
             resource=jobdata,
         )
         response = poller.result()

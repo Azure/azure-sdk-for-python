@@ -1,8 +1,9 @@
 # Release History
 
-## 1.0.0 (2024-05-01)
+## 1.0.0 (2024-05-03)
 
-- GA release for Radiology Insights package
+- GA release
+
 ## 1.0.0b1 (2024-03-01)
 
 - Initial version
