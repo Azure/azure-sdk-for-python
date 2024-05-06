@@ -100,18 +100,6 @@ setup(
         "mount": [
             "azureml-dataprep-rslex>=2.22.0",
         ],
-        # user can run `pip install azure-ai-ml[langchain]` to install the following packages along with this package
-        # so user can index.as_langchain_retriever().
-        "langchain": [
-                "azureml-fsspec",
-                "fsspec~=2023.3",
-                "openai>=0.27.8",
-                "tiktoken<0.6",
-                "cloudpickle",
-                "pyarrow"
-                "langchain>=0.0.236,<=0.1.15",
-                "langchain-community<=0.0.33"
-        ]
     },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",

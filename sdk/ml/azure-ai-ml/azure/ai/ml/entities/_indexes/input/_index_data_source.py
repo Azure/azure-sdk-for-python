@@ -45,44 +45,6 @@ class GitSource(IndexDataSource):
         super().__init__(input_type=IndexInputType.GIT)
 
 
-class AISearchSource(IndexDataSource):
-    """Config class for creating an ML index from an OpenAI <thing>.
-
-    :param ai_search_index_name: The name of the Azure AI Search index to use as the source.
-    :type ai_search_index_name: str
-    :param ai_search_index_content_key: The key for the content field in the Azure AI Search index.
-    :type ai_search_index_content_key: str
-    :param ai_search_index_embedding_key: The key for the embedding field in the Azure AI Search index.
-    :type ai_search_index_embedding_key: str
-    :param ai_search_index_title_key: The key for the title field in the Azure AI Search index.
-    :type ai_search_index_title_key: str
-    :param ai_search_index_metadata_key: The key for the metadata field in the Azure AI Search index.
-    :type ai_search_index_metadata_key: str
-    :param ai_search_index_connection_id: The connection ID for the Azure AI Search index.
-    :type ai_search_index_connection_id: str
-    :param num_docs_to_import: Number of documents to import from the existing Azure AI Search index. Defaults to 50.
-    :type num_docs_to_import: int
-    """
-
-    def __init__(self, *,
-        ai_search_index_name: str,
-        ai_search_index_content_key: str,
-        ai_search_index_embedding_key: str,
-        ai_search_index_title_key: str,
-        ai_search_index_metadata_key: str,
-        ai_search_index_connection_id: str,
-        num_docs_to_import: int = 50,
-    ):
-        self.ai_search_index_name = ai_search_index_name
-        self.ai_search_index_connection_id = ai_search_index_connection_id
-        self.ai_search_index_content_key = ai_search_index_content_key
-        self.ai_search_index_embedding_key = ai_search_index_embedding_key
-        self.ai_search_index_title_key = ai_search_index_title_key
-        self.ai_search_index_metadata_key= ai_search_index_metadata_key
-        self.num_docs_to_import = num_docs_to_import
-        super().__init__(input_type=IndexInputType.AOAI)
-
-
 class LocalSource(IndexDataSource):
     """Config class for creating an ML index from a collection of local files.
 

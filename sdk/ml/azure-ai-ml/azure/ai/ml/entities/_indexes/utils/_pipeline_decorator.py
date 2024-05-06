@@ -6,11 +6,9 @@
 
 import inspect
 import logging
-from collections import OrderedDict
 from functools import wraps
-from inspect import Parameter, signature
 from pathlib import Path
-from typing import Callable, Dict, List, Optional, TypeVar, Union, overload
+from typing import Callable, Dict, Optional, TypeVar, Union, overload
 
 from typing_extensions import ParamSpec
 
@@ -21,7 +19,6 @@ from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, _G
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.exceptions import UserErrorException
 
-from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.dsl._pipeline_component_builder import PipelineComponentBuilder, _is_inside_dsl_pipeline_func
 from azure.ai.ml.dsl._pipeline_decorator import _validate_args
 from azure.ai.ml.dsl._settings import _dsl_settings_stack
@@ -45,6 +42,8 @@ module_logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
 P = ParamSpec("P")
+
+# type: ignore [overload-overlap], [assignment], [arg-type], [return-value], [attr-defined]
 
 
 # Overload the returns a decorator when func is None

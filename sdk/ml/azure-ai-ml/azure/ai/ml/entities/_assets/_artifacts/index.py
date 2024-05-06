@@ -135,4 +135,3 @@ class Index(Artifact):
             aml_datastore_id.asset_name,
             asset_artifact.relative_path,
         )
-

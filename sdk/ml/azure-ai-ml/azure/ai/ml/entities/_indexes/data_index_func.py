@@ -7,7 +7,7 @@
 
 import json
 import re
-from typing import Any, Callable, Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import AssetTypes, LegacyAssetTypes
@@ -15,8 +15,7 @@ from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._builders.base_node import pipeline_node_decorator
 from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration, UserIdentityConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
-from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
+from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.entities import Connection
 from azure.ai.ml.constants._common import DataIndexTypes
@@ -151,6 +150,7 @@ def index_data(
     return configured_component
 
 
+# pylint: disable=too-many-statements
 def data_index_incremental_update_hosted(
     ml_client: Any,
     data_index: DataIndex,
@@ -166,7 +166,8 @@ def data_index_incremental_update_hosted(
 ):
     from azure.ai.ml.entities._indexes.utils import build_model_protocol, pipeline
 
-    crack_and_chunk_and_embed_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_CRACK_AND_CHUNK_AND_EMBED)
+    crack_and_chunk_and_embed_component = get_component_obj(
+        ml_client, LLMRAGComponentUri.LLM_RAG_CRACK_AND_CHUNK_AND_EMBED)
 
     if data_index.index.type == DataIndexTypes.ACS:
         update_index_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_UPDATE_ACS_INDEX)
@@ -181,7 +182,9 @@ def data_index_incremental_update_hosted(
         name=name if name else f"data_index_incremental_update_{data_index.index.type}",
         description=description,
         tags=tags,
-        display_name=display_name if display_name else f"LLM - Data to {data_index.index.type.upper()} (Incremental Update)",
+        display_name=display_name 
+            if display_name 
+            else f"LLM - Data to {data_index.index.type.upper()} (Incremental Update)",
         experiment_name=experiment_name,
         compute=compute,
         get_component=True,
@@ -194,13 +197,14 @@ def data_index_incremental_update_hosted(
         chunk_size: int = 768,
         chunk_overlap: int = 0,
         input_glob: str = "**/*",
-        citation_url: str = None,
-        citation_replacement_regex: str = None,
-        aoai_connection_id: str = None,
-        embeddings_container: Input = None,
+        citation_url: Optional[str] = None,
+        citation_replacement_regex: Optional[str] = None,
+        aoai_connection_id: Optional[str] = None,
+        embeddings_container: Optional[Input] = None,
     ):
         """
-        Generate embeddings for a `input_data` source and push them into a hosted index (such as Azure Cognitive Search and Pinecone).
+        Generate embeddings for a `input_data` source and
+        push them into a hosted index (such as Azure Cognitive Search and Pinecone).
 
         :param input_data: The input data to be indexed.
         :type input_data: Input
@@ -240,7 +244,7 @@ def data_index_incremental_update_hosted(
         )
         if compute is None or compute == "serverless":
             use_automatic_compute(crack_and_chunk_and_embed, instance_type=serverless_instance_type)
-        if optional_pipeline_input_provided(embeddings_container):
+        if optional_pipeline_input_provided(embeddings_container):  # type: ignore [arg-type]
             crack_and_chunk_and_embed.outputs.embeddings = Output(
                 type="uri_folder", path=f"{embeddings_container.path}/{{name}}"
             )
@@ -280,7 +284,10 @@ def data_index_incremental_update_hosted(
     if input_data_override is not None:
         input_data = input_data_override
     else:
-        input_data = Input(type=data_index.source.input_data.type, path=data_index.source.input_data.path)
+        input_data = Input(
+            type=data_index.source.input_data.type,
+            path=data_index.source.input_data.path  # type: ignore [arg-type]
+        )
 
     index_config = {
         "index_name": data_index.index.name if data_index.index.name is not None else data_index.name,
@@ -289,6 +296,7 @@ def data_index_incremental_update_hosted(
     if data_index.index.config is not None:
         index_config.update(data_index.index.config)
 
+    # type: ignore [arg-type]
     component = data_index_pipeline(
         input_data=input_data,
         input_glob=data_index.source.input_glob,
@@ -300,7 +308,10 @@ def data_index_incremental_update_hosted(
         else None,
         embeddings_model=build_model_protocol(data_index.embedding.model),
         aoai_connection_id=_resolve_connection_id(ml_client, data_index.embedding.connection),
-        embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path) if data_index.embedding.cache_path else None,
+        embeddings_container=Input(
+            type=AssetTypes.URI_FOLDER,
+            path=data_index.embedding.cache_path
+        ) if data_index.embedding.cache_path else None,
         index_config=json.dumps(index_config),
         index_connection_id=_resolve_connection_id(ml_client, data_index.index.connection),
     )
@@ -314,7 +325,10 @@ def data_index_incremental_update_hosted(
     component.inputs["embeddings_container"]._meta.optional = True
 
     if data_index.path:
-        component.outputs.mlindex_asset_uri = Output(type=AssetTypes.URI_FOLDER, path=data_index.path)
+        component.outputs.mlindex_asset_uri = Output(  # type: ignore [attr-defined]
+            type=AssetTypes.URI_FOLDER,
+            path=data_index.path
+        )
 
     return component
 
@@ -442,7 +456,10 @@ def data_index_faiss(
         if data_index.source.citation_url_replacement_regex
         else None,
         aoai_connection_id=_resolve_connection_id(ml_client, data_index.embedding.connection),
-        embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path) if data_index.embedding.cache_path else None,
+        embeddings_container=Input(
+            type=AssetTypes.URI_FOLDER,
+            path=data_index.embedding.cache_path
+        ) if data_index.embedding.cache_path else None,
     )
     # Hack until full Component classes are implemented that can annotate the optional parameters properly
     component.inputs["data_source_glob"]._meta.optional = True
@@ -456,6 +473,7 @@ def data_index_faiss(
     return component
 
 
+# pylint: disable=too-many-statements
 def data_index_hosted(
     ml_client: Any,
     data_index: DataIndex,
@@ -505,7 +523,8 @@ def data_index_hosted(
         embeddings_container: Input = None,
     ):
         """
-        Generate embeddings for a `input_data` source and push them into a hosted index (such as Azure Cognitive Search and Pinecone).
+        Generate embeddings for a `input_data` source
+        and push them into a hosted index (such as Azure Cognitive Search and Pinecone).
 
         :param input_data: The input data to be indexed.
         :type input_data: Input
@@ -611,7 +630,10 @@ def data_index_hosted(
         if data_index.source.citation_url_replacement_regex
         else None,
         aoai_connection_id=_resolve_connection_id(ml_client, data_index.embedding.connection),
-        embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path) if data_index.embedding.cache_path else None,
+        embeddings_container=Input(
+            type=AssetTypes.URI_FOLDER,
+            path=data_index.embedding.cache_path
+        ) if data_index.embedding.cache_path else None,
     )
     # Hack until full Component classes are implemented that can annotate the optional parameters properly
     component.inputs["data_source_glob"]._meta.optional = True
@@ -707,7 +729,7 @@ def _resolve_connection_id(ml_client, connection: Optional[Union[str, Connection
 
         try:
             connection = ml_client.connections.get(connection_name)
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             # Try again for Pinecone's custom connections
             return ml_client.connections._operation.list_secrets(
                 connection_name=connection_name,

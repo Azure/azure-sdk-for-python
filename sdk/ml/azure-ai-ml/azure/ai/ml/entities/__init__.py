@@ -173,6 +173,14 @@ from ._feature_store.materialization_store import MaterializationStore
 from ._feature_store_entity.data_column import DataColumn
 from ._feature_store_entity.data_column_type import DataColumnType
 from ._feature_store_entity.feature_store_entity import FeatureStoreEntity
+from ._indexes import (
+    AzureAISearchConfig,
+    IndexDataSource,
+    GitSource,
+    AISearchSource,
+    LocalSource,
+)
+from ._indexes import ModelConfiguration as IndexModelConfiguration
 from ._job.command_job import CommandJob
 from ._job.compute_configuration import ComputeConfiguration
 from ._job.input_port import InputPort
@@ -548,6 +556,11 @@ __all__ = [
     "AadCredentialConfiguration",
     "Index",
     "AzureOpenAIDeployment",
+    "AzureAISearchConfig",
+    "IndexDataSource",
+    "GitSource",
+    "LocalSource",
+    "IndexModelConfiguration"
 ]
 
 # Allow importing these types for backwards compatibility

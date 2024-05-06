@@ -12,7 +12,6 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._inputs_outputs.utils import _remove_empty_values
 from azure.ai.ml.entities._mixins import DictMixin
-from azure.ai.ml.entities._util import load_from_dict
 
 
 @experimental
@@ -30,7 +29,7 @@ class CitationRegex(DictMixin):
         *,
         match_pattern: str,
         replacement_pattern: str,
-    ) -> "CitationRegex":
+    ):
         """Initialize a CitationRegex object."""
         self.match_pattern = match_pattern
         self.replacement_pattern = replacement_pattern
@@ -78,7 +77,7 @@ class IndexSource(DictMixin):
         chunk_overlap: Optional[int] = None,
         citation_url: Optional[str] = None,
         citation_url_replacement_regex: Optional[CitationRegex] = None,
-    ) -> "IndexSource":
+    ):
         """Initialize a IndexSource object."""
         self.input_data = input_data
         self.input_glob = input_glob
@@ -127,7 +126,7 @@ class Embedding(DictMixin):
         model: str,
         connection: Optional[str] = None,
         cache_path: Optional[str] = None,
-    ) -> "Embedding":
+    ):
         """Initialize a Embedding object."""
         self.model = model
         self.connection = connection
@@ -152,12 +151,14 @@ class IndexStore(DictMixin):
     """Congifuration for the destination index to write processed data to.
     :keyword type: The type of index to write to. Currently supported types are 'acs', 'pinecone', and 'faiss'.
     :type type: str
-    :keyword name: Name of index to update/create, only needed for hosted indexes (such as Azure Cognitive Search and Pinecone).
+    :keyword name: Name of index to update/create, only needed for hosted indexes
+        (such as Azure Cognitive Search and Pinecone).
     :type name: str, optional
     :keyword connection: Connection reference to use for index information,
         only needed for hosted indexes (such as Azure Cognitive Search and Pinecone).
     :type connection: str, optional
-    :keyword config: Configuration for the index. Configuration for the index. Primary use is to configure Azure Cognitive Search and Pinecone specific settings.
+    :keyword config: Configuration for the index. Configuration for the index.
+        Primary use is to configure AI Search and Pinecone specific settings.
         Such as custom `field_mapping` for known field types.
     :type config: dict, optional
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the IndexStore object cannot be validated.
@@ -171,7 +172,7 @@ class IndexStore(DictMixin):
         name: Optional[str] = None,
         connection: Optional[str] = None,
         config: Optional[Dict] = None,
-    ) -> "IndexStore":
+    ):
         """Initialize a IndexStore object."""
         self.type = type
         self.name = name
@@ -232,7 +233,7 @@ class DataIndex(Data):
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         **kwargs,
-    ) -> "DataIndex":
+    ):
         """Initialize a DataIndex object."""
         super().__init__(
             name=name,
@@ -247,27 +248,3 @@ class DataIndex(Data):
         self.embedding = embedding
         self.index = index
         self.incremental_update = incremental_update
-
-    # @classmethod
-    # def _load(
-    #     cls,
-    #     data: Optional[Dict] = None,
-    #     yaml_path: Optional[Union[PathLike, str]] = None,
-    #     params_override: Optional[list] = None,
-    #     **kwargs,
-    # ) -> "DataIndex":
-    #     from azureml.rag.dataindex._schema._data_index import DataIndexSchema
-
-    #     data = data or {}
-    #     params_override = params_override or []
-    #     context = {
-    #         BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
-    #         PARAMS_OVERRIDE_KEY: params_override,
-    #     }
-    #     return load_from_dict(DataIndexSchema, data, context, **kwargs)
-
-    # def _to_dict(self) -> Dict:
-    #     # pylint: disable=no-member
-    #     from azureml.rag.dataindex._schema._data_index import DataIndexSchema
-
-    #     return DataIndexSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)

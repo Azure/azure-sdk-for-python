@@ -4,10 +4,7 @@
 
 # pylint: disable=protected-access
 import json
-import os
-import tempfile
 from typing import Any, Dict, Iterable, Optional, Union, Callable, List
-import yaml  # type: ignore[import-untyped]
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 
@@ -41,7 +38,6 @@ from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._indexes import (
     AzureAISearchConfig,
     IndexDataSource,
-    AISearchSource,
     LocalSource,
     GitSource,
     ModelConfiguration,
@@ -382,7 +378,7 @@ class IndexOperations(_ScopeDependentOperations):
                         credential=self._credential,
                     ),
                 )
-
+                # pylint: disable=no-member
                 return index_job.outputs
 
             git_index_job = git_to_index(
@@ -426,13 +422,13 @@ class IndexOperations(_ScopeDependentOperations):
         :return: data import job object.
         :rtype: ~azure.ai.ml.entities.PipelineJob.
         """
+        # pylint: disable=no-member
         from azure.ai.ml import MLClient
         from azure.ai.ml.constants._common import AssetTypes
         from azure.ai.ml._utils._asset_utils import (
             _validate_auto_delete_setting_in_data_output,
             _validate_workspace_managed_datastore,
         )
-        # pylint: disable = no-name-in-module, import-error
         from azure.ai.ml.entities._indexes.data_index_func import index_data as index_data_func
 
         default_name = "data_index_" + data_index.name
