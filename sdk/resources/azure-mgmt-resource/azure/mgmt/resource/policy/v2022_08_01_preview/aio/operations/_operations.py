@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -70,6 +70,7 @@ class VariablesOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace_async
     async def delete(self, variable_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
@@ -81,7 +82,6 @@ class VariablesOperations:
 
         :param variable_name: The name of the variable to operate on. Required.
         :type variable_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -97,23 +97,24 @@ class VariablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_variables_delete_request(
+        _request = build_variables_delete_request(
             variable_name=variable_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -123,11 +124,7 @@ class VariablesOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/variables/{variableName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def create_or_update(
@@ -145,7 +142,6 @@ class VariablesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Variable or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.Variable
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -153,7 +149,7 @@ class VariablesOperations:
 
     @overload
     async def create_or_update(
-        self, variable_name: str, parameters: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, variable_name: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Variable:
         """Creates or updates a variable.
 
@@ -163,11 +159,10 @@ class VariablesOperations:
         :param variable_name: The name of the variable to operate on. Required.
         :type variable_name: str
         :param parameters: Parameters for the variable. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Variable or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.Variable
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -175,7 +170,7 @@ class VariablesOperations:
 
     @distributed_trace_async
     async def create_or_update(
-        self, variable_name: str, parameters: Union[_models.Variable, IO], **kwargs: Any
+        self, variable_name: str, parameters: Union[_models.Variable, IO[bytes]], **kwargs: Any
     ) -> _models.Variable:
         """Creates or updates a variable.
 
@@ -184,13 +179,9 @@ class VariablesOperations:
 
         :param variable_name: The name of the variable to operate on. Required.
         :type variable_name: str
-        :param parameters: Parameters for the variable. Is either a Variable type or a IO type.
+        :param parameters: Parameters for the variable. Is either a Variable type or a IO[bytes] type.
          Required.
-        :type parameters: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.Variable or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :type parameters: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.Variable or IO[bytes]
         :return: Variable or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.Variable
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -206,7 +197,9 @@ class VariablesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Variable] = kwargs.pop("cls", None)
 
@@ -218,23 +211,22 @@ class VariablesOperations:
         else:
             _json = self._serialize.body(parameters, "Variable")
 
-        request = build_variables_create_or_update_request(
+        _request = build_variables_create_or_update_request(
             variable_name=variable_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -254,10 +246,6 @@ class VariablesOperations:
 
         return deserialized  # type: ignore
 
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/variables/{variableName}"
-    }
-
     @distributed_trace_async
     async def get(self, variable_name: str, **kwargs: Any) -> _models.Variable:
         """Retrieves a variable.
@@ -267,7 +255,6 @@ class VariablesOperations:
 
         :param variable_name: The name of the variable to operate on. Required.
         :type variable_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Variable or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.Variable
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -283,23 +270,24 @@ class VariablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.Variable] = kwargs.pop("cls", None)
 
-        request = build_variables_get_request(
+        _request = build_variables_get_request(
             variable_name=variable_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -311,11 +299,9 @@ class VariablesOperations:
         deserialized = self._deserialize("Variable", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/variables/{variableName}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete_at_management_group(  # pylint: disable=inconsistent-return-statements
@@ -331,7 +317,6 @@ class VariablesOperations:
         :type management_group_id: str
         :param variable_name: The name of the variable to operate on. Required.
         :type variable_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -347,23 +332,24 @@ class VariablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_variables_delete_at_management_group_request(
+        _request = build_variables_delete_at_management_group_request(
             management_group_id=management_group_id,
             variable_name=variable_name,
             api_version=api_version,
-            template_url=self.delete_at_management_group.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -373,11 +359,7 @@ class VariablesOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete_at_management_group.metadata = {
-        "url": "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Authorization/variables/{variableName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def create_or_update_at_management_group(
@@ -403,7 +385,6 @@ class VariablesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Variable or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.Variable
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -414,7 +395,7 @@ class VariablesOperations:
         self,
         management_group_id: str,
         variable_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -429,11 +410,10 @@ class VariablesOperations:
         :param variable_name: The name of the variable to operate on. Required.
         :type variable_name: str
         :param parameters: Parameters for the variable. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Variable or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.Variable
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -441,7 +421,11 @@ class VariablesOperations:
 
     @distributed_trace_async
     async def create_or_update_at_management_group(
-        self, management_group_id: str, variable_name: str, parameters: Union[_models.Variable, IO], **kwargs: Any
+        self,
+        management_group_id: str,
+        variable_name: str,
+        parameters: Union[_models.Variable, IO[bytes]],
+        **kwargs: Any
     ) -> _models.Variable:
         """Creates or updates a variable.
 
@@ -452,13 +436,9 @@ class VariablesOperations:
         :type management_group_id: str
         :param variable_name: The name of the variable to operate on. Required.
         :type variable_name: str
-        :param parameters: Parameters for the variable. Is either a Variable type or a IO type.
+        :param parameters: Parameters for the variable. Is either a Variable type or a IO[bytes] type.
          Required.
-        :type parameters: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.Variable or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :type parameters: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.Variable or IO[bytes]
         :return: Variable or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.Variable
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -474,7 +454,9 @@ class VariablesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Variable] = kwargs.pop("cls", None)
 
@@ -486,23 +468,22 @@ class VariablesOperations:
         else:
             _json = self._serialize.body(parameters, "Variable")
 
-        request = build_variables_create_or_update_at_management_group_request(
+        _request = build_variables_create_or_update_at_management_group_request(
             management_group_id=management_group_id,
             variable_name=variable_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update_at_management_group.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -522,10 +503,6 @@ class VariablesOperations:
 
         return deserialized  # type: ignore
 
-    create_or_update_at_management_group.metadata = {
-        "url": "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Authorization/variables/{variableName}"
-    }
-
     @distributed_trace_async
     async def get_at_management_group(
         self, management_group_id: str, variable_name: str, **kwargs: Any
@@ -539,7 +516,6 @@ class VariablesOperations:
         :type management_group_id: str
         :param variable_name: The name of the variable to operate on. Required.
         :type variable_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Variable or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.Variable
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -555,23 +531,24 @@ class VariablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.Variable] = kwargs.pop("cls", None)
 
-        request = build_variables_get_at_management_group_request(
+        _request = build_variables_get_at_management_group_request(
             management_group_id=management_group_id,
             variable_name=variable_name,
             api_version=api_version,
-            template_url=self.get_at_management_group.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -583,13 +560,9 @@ class VariablesOperations:
         deserialized = self._deserialize("Variable", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_at_management_group.metadata = {
-        "url": "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Authorization/variables/{variableName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list(self, **kwargs: Any) -> AsyncIterable["_models.Variable"]:
@@ -597,7 +570,6 @@ class VariablesOperations:
 
         This operation retrieves the list of all variables associated with the given subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Variable or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2022_08_01_preview.models.Variable]
@@ -606,7 +578,9 @@ class VariablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.VariableListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -620,15 +594,14 @@ class VariablesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_variables_list_request(
+                _request = build_variables_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -639,14 +612,14 @@ class VariablesOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("VariableListResult", pipeline_response)
@@ -656,11 +629,11 @@ class VariablesOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -671,8 +644,6 @@ class VariablesOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/variables"}
 
     @distributed_trace
     def list_for_management_group(self, management_group_id: str, **kwargs: Any) -> AsyncIterable["_models.Variable"]:
@@ -682,7 +653,6 @@ class VariablesOperations:
 
         :param management_group_id: The ID of the management group. Required.
         :type management_group_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Variable or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2022_08_01_preview.models.Variable]
@@ -691,7 +661,9 @@ class VariablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.VariableListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -705,15 +677,14 @@ class VariablesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_variables_list_for_management_group_request(
+                _request = build_variables_list_for_management_group_request(
                     management_group_id=management_group_id,
                     api_version=api_version,
-                    template_url=self.list_for_management_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -724,14 +695,14 @@ class VariablesOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("VariableListResult", pipeline_response)
@@ -741,11 +712,11 @@ class VariablesOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -756,10 +727,6 @@ class VariablesOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_for_management_group.metadata = {
-        "url": "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Authorization/variables"
-    }
 
 
 class VariableValuesOperations:
@@ -780,6 +747,7 @@ class VariableValuesOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -795,7 +763,6 @@ class VariableValuesOperations:
         :type variable_name: str
         :param variable_value_name: The name of the variable value to operate on. Required.
         :type variable_value_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -811,24 +778,25 @@ class VariableValuesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_variable_values_delete_request(
+        _request = build_variable_values_delete_request(
             variable_name=variable_name,
             variable_value_name=variable_value_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -838,11 +806,7 @@ class VariableValuesOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/variables/{variableName}/values/{variableValueName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def create_or_update(
@@ -868,7 +832,6 @@ class VariableValuesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VariableValue or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.VariableValue
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -879,7 +842,7 @@ class VariableValuesOperations:
         self,
         variable_name: str,
         variable_value_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -894,11 +857,10 @@ class VariableValuesOperations:
         :param variable_value_name: The name of the variable value to operate on. Required.
         :type variable_value_name: str
         :param parameters: Parameters for the variable value. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VariableValue or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.VariableValue
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -906,7 +868,11 @@ class VariableValuesOperations:
 
     @distributed_trace_async
     async def create_or_update(
-        self, variable_name: str, variable_value_name: str, parameters: Union[_models.VariableValue, IO], **kwargs: Any
+        self,
+        variable_name: str,
+        variable_value_name: str,
+        parameters: Union[_models.VariableValue, IO[bytes]],
+        **kwargs: Any
     ) -> _models.VariableValue:
         """Creates or updates a variable value.
 
@@ -917,13 +883,10 @@ class VariableValuesOperations:
         :type variable_name: str
         :param variable_value_name: The name of the variable value to operate on. Required.
         :type variable_value_name: str
-        :param parameters: Parameters for the variable value. Is either a VariableValue type or a IO
-         type. Required.
-        :type parameters: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.VariableValue or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param parameters: Parameters for the variable value. Is either a VariableValue type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.VariableValue or
+         IO[bytes]
         :return: VariableValue or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.VariableValue
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -939,7 +902,9 @@ class VariableValuesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VariableValue] = kwargs.pop("cls", None)
 
@@ -951,7 +916,7 @@ class VariableValuesOperations:
         else:
             _json = self._serialize.body(parameters, "VariableValue")
 
-        request = build_variable_values_create_or_update_request(
+        _request = build_variable_values_create_or_update_request(
             variable_name=variable_name,
             variable_value_name=variable_value_name,
             subscription_id=self._config.subscription_id,
@@ -959,16 +924,15 @@ class VariableValuesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -988,10 +952,6 @@ class VariableValuesOperations:
 
         return deserialized  # type: ignore
 
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/variables/{variableName}/values/{variableValueName}"
-    }
-
     @distributed_trace_async
     async def get(self, variable_name: str, variable_value_name: str, **kwargs: Any) -> _models.VariableValue:
         """Retrieves a variable value.
@@ -1003,7 +963,6 @@ class VariableValuesOperations:
         :type variable_name: str
         :param variable_value_name: The name of the variable value to operate on. Required.
         :type variable_value_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VariableValue or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.VariableValue
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1019,24 +978,25 @@ class VariableValuesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.VariableValue] = kwargs.pop("cls", None)
 
-        request = build_variable_values_get_request(
+        _request = build_variable_values_get_request(
             variable_name=variable_name,
             variable_value_name=variable_value_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1048,13 +1008,9 @@ class VariableValuesOperations:
         deserialized = self._deserialize("VariableValue", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/variables/{variableName}/values/{variableValueName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list(self, variable_name: str, **kwargs: Any) -> AsyncIterable["_models.VariableValue"]:
@@ -1065,7 +1021,6 @@ class VariableValuesOperations:
 
         :param variable_name: The name of the variable to operate on. Required.
         :type variable_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VariableValue or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2022_08_01_preview.models.VariableValue]
@@ -1074,7 +1029,9 @@ class VariableValuesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.VariableValueListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1088,16 +1045,15 @@ class VariableValuesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_variable_values_list_request(
+                _request = build_variable_values_list_request(
                     variable_name=variable_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1108,14 +1064,14 @@ class VariableValuesOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("VariableValueListResult", pipeline_response)
@@ -1125,11 +1081,11 @@ class VariableValuesOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1140,10 +1096,6 @@ class VariableValuesOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/variables/{variableName}/values"
-    }
 
     @distributed_trace
     def list_for_management_group(
@@ -1158,7 +1110,6 @@ class VariableValuesOperations:
         :type management_group_id: str
         :param variable_name: The name of the variable to operate on. Required.
         :type variable_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VariableValue or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2022_08_01_preview.models.VariableValue]
@@ -1167,7 +1118,9 @@ class VariableValuesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.VariableValueListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1181,16 +1134,15 @@ class VariableValuesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_variable_values_list_for_management_group_request(
+                _request = build_variable_values_list_for_management_group_request(
                     management_group_id=management_group_id,
                     variable_name=variable_name,
                     api_version=api_version,
-                    template_url=self.list_for_management_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1201,14 +1153,14 @@ class VariableValuesOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("VariableValueListResult", pipeline_response)
@@ -1218,11 +1170,11 @@ class VariableValuesOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1233,10 +1185,6 @@ class VariableValuesOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_for_management_group.metadata = {
-        "url": "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Authorization/variables/{variableName}/values"
-    }
 
     @distributed_trace_async
     async def delete_at_management_group(  # pylint: disable=inconsistent-return-statements
@@ -1254,7 +1202,6 @@ class VariableValuesOperations:
         :type variable_name: str
         :param variable_value_name: The name of the variable value to operate on. Required.
         :type variable_value_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1270,24 +1217,25 @@ class VariableValuesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_variable_values_delete_at_management_group_request(
+        _request = build_variable_values_delete_at_management_group_request(
             management_group_id=management_group_id,
             variable_name=variable_name,
             variable_value_name=variable_value_name,
             api_version=api_version,
-            template_url=self.delete_at_management_group.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1297,11 +1245,7 @@ class VariableValuesOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete_at_management_group.metadata = {
-        "url": "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Authorization/variables/{variableName}/values/{variableValueName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def create_or_update_at_management_group(
@@ -1330,7 +1274,6 @@ class VariableValuesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VariableValue or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.VariableValue
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1342,7 +1285,7 @@ class VariableValuesOperations:
         management_group_id: str,
         variable_name: str,
         variable_value_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1359,11 +1302,10 @@ class VariableValuesOperations:
         :param variable_value_name: The name of the variable value to operate on. Required.
         :type variable_value_name: str
         :param parameters: Parameters for the variable value. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VariableValue or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.VariableValue
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1375,7 +1317,7 @@ class VariableValuesOperations:
         management_group_id: str,
         variable_name: str,
         variable_value_name: str,
-        parameters: Union[_models.VariableValue, IO],
+        parameters: Union[_models.VariableValue, IO[bytes]],
         **kwargs: Any
     ) -> _models.VariableValue:
         """Creates or updates a variable value.
@@ -1389,13 +1331,10 @@ class VariableValuesOperations:
         :type variable_name: str
         :param variable_value_name: The name of the variable value to operate on. Required.
         :type variable_value_name: str
-        :param parameters: Parameters for the variable value. Is either a VariableValue type or a IO
-         type. Required.
-        :type parameters: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.VariableValue or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param parameters: Parameters for the variable value. Is either a VariableValue type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.VariableValue or
+         IO[bytes]
         :return: VariableValue or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.VariableValue
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1411,7 +1350,9 @@ class VariableValuesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VariableValue] = kwargs.pop("cls", None)
 
@@ -1423,7 +1364,7 @@ class VariableValuesOperations:
         else:
             _json = self._serialize.body(parameters, "VariableValue")
 
-        request = build_variable_values_create_or_update_at_management_group_request(
+        _request = build_variable_values_create_or_update_at_management_group_request(
             management_group_id=management_group_id,
             variable_name=variable_name,
             variable_value_name=variable_value_name,
@@ -1431,16 +1372,15 @@ class VariableValuesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update_at_management_group.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1460,10 +1400,6 @@ class VariableValuesOperations:
 
         return deserialized  # type: ignore
 
-    create_or_update_at_management_group.metadata = {
-        "url": "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Authorization/variables/{variableName}/values/{variableValueName}"
-    }
-
     @distributed_trace_async
     async def get_at_management_group(
         self, management_group_id: str, variable_name: str, variable_value_name: str, **kwargs: Any
@@ -1479,7 +1415,6 @@ class VariableValuesOperations:
         :type variable_name: str
         :param variable_value_name: The name of the variable value to operate on. Required.
         :type variable_value_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VariableValue or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2022_08_01_preview.models.VariableValue
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1495,24 +1430,25 @@ class VariableValuesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.VariableValue] = kwargs.pop("cls", None)
 
-        request = build_variable_values_get_at_management_group_request(
+        _request = build_variable_values_get_at_management_group_request(
             management_group_id=management_group_id,
             variable_name=variable_name,
             variable_value_name=variable_value_name,
             api_version=api_version,
-            template_url=self.get_at_management_group.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1524,10 +1460,6 @@ class VariableValuesOperations:
         deserialized = self._deserialize("VariableValue", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_at_management_group.metadata = {
-        "url": "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Authorization/variables/{variableName}/values/{variableValueName}"
-    }
+        return deserialized  # type: ignore
