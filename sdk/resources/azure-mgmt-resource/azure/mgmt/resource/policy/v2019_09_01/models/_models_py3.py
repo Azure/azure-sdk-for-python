@@ -505,7 +505,7 @@ class PolicyDefinition(_serialization.Model):
 class PolicyDefinitionGroup(_serialization.Model):
     """The policy definition group.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the group. Required.
     :vartype name: str
@@ -598,7 +598,7 @@ class PolicyDefinitionListResult(_serialization.Model):
 class PolicyDefinitionReference(_serialization.Model):
     """The policy definition reference.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar policy_definition_id: The ID of the policy definition or policy set definition. Required.
     :vartype policy_definition_id: str
@@ -790,7 +790,7 @@ class PolicySetDefinitionListResult(_serialization.Model):
 class PolicySku(_serialization.Model):
     """The policy sku. This property is optional, obsolete, and will be ignored.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the policy sku. Possible values are A0 and A1. Required.
     :vartype name: str

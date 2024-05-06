@@ -201,7 +201,7 @@ class TestModel(AzureRecordedTestCase):
         model_list = [m.name for m in model_list if m is not None]
         assert model.name in model_list
 
-    @pytest.mark.skipif(condition=not is_live(), reason="Registry uploads do not record well. Investigate later")
+    @pytest.mark.skip(reason="_prepare_to_copy method was removed")
     def test_promote_model(self, randstr: Callable[[], str], client: MLClient, registry_client: MLClient) -> None:
         # Create model in workspace
         model_path = Path("./tests/test_configs/model/model_full.yml")
@@ -210,7 +210,7 @@ class TestModel(AzureRecordedTestCase):
         model_entity = load_model(model_path)
         model_entity.name = model_name
         model_entity.version = model_version
-        model = client.models.create_or_update(model_entity)
+        client.models.create_or_update(model_entity)
         # Start promoting to registry
         # 1. Get registered model in workspace
         model_in_workspace = client.models.get(name=model_name, version=model_version)

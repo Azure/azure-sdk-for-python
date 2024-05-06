@@ -341,7 +341,7 @@ class PolicySetDefinitionListResult(_serialization.Model):
 class PolicySku(_serialization.Model):
     """The policy sku.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the policy sku. Possible values are A0 and A1. Required.
     :vartype name: str
