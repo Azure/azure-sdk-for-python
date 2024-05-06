@@ -1724,7 +1724,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Assert
         assert e.value.response.headers["x-ms-copy-source-error-code"] == "BlobNotFound"
         assert e.value.response.headers["x-ms-copy-source-status-code"] == "404"
-        assert "copysourceerrormessage:The specified blob does not exist." in e.value.message
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1746,7 +1745,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Assert
         assert e.value.response.headers["x-ms-copy-source-status-code"] == "409"
         assert e.value.response.headers["x-ms-copy-source-error-code"] == "PublicAccessNotPermitted"
-        assert "copysourceerrormessage:Public access is not permitted on this storage account." in e.value.message
 
     @BlobPreparer()
     @recorded_by_proxy

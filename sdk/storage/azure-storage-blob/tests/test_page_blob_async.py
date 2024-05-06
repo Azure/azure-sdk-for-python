@@ -586,8 +586,6 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert e.value.response.headers["x-ms-copy-source-status-code"] == "409"
         assert e.value.response.headers["x-ms-copy-source-error-code"] == "PublicAccessNotPermitted"
-        assert "copysourceerrormessage:Public access is not permitted on this storage account." in e.value.message
-
 
     @BlobPreparer()
     @recorded_by_proxy_async

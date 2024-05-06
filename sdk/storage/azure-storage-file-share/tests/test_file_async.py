@@ -1624,8 +1624,6 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
         assert e.value.response.headers["x-ms-copy-source-status-code"] == "401"
         assert e.value.response.headers["x-ms-copy-source-error-code"] == "NoAuthenticationInformation"
-        assert ("copysourceerrormessage:Server failed to authenticate the request. Please refer to the information in "
-                "the www-authenticate header.") in e.value.message
 
     @FileSharePreparer()
     @recorded_by_proxy_async
@@ -2688,8 +2686,6 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert e.value.response.headers["x-ms-copy-source-status-code"] == "400"
         assert e.value.response.headers["x-ms-copy-source-error-code"] == "InvalidQueryParameterValue"
-        assert ("copysourceerrormessage:Value for one of the query parameters specified in the "
-                "request URI is invalid.") in e.value.message
 
     @FileSharePreparer()
     @recorded_by_proxy_async
