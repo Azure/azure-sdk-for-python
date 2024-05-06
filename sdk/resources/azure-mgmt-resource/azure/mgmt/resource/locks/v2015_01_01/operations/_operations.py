@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -28,8 +29,12 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from ..._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -37,7 +42,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_management_locks_create_or_update_at_resource_group_level_request(
+def build_management_locks_create_or_update_at_resource_group_level_request(  # pylint: disable=name-too-long
     resource_group_name: str, lock_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -60,7 +65,7 @@ def build_management_locks_create_or_update_at_resource_group_level_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -73,7 +78,7 @@ def build_management_locks_create_or_update_at_resource_group_level_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_management_locks_delete_at_resource_group_level_request(
+def build_management_locks_delete_at_resource_group_level_request(  # pylint: disable=name-too-long
     resource_group_name: str, lock_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -92,7 +97,7 @@ def build_management_locks_delete_at_resource_group_level_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -100,7 +105,7 @@ def build_management_locks_delete_at_resource_group_level_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_management_locks_get_at_resource_group_level_request(
+def build_management_locks_get_at_resource_group_level_request(  # pylint: disable=name-too-long
     resource_group_name: str, lock_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -122,7 +127,7 @@ def build_management_locks_get_at_resource_group_level_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -133,7 +138,7 @@ def build_management_locks_get_at_resource_group_level_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_management_locks_create_or_update_at_resource_level_request(
+def build_management_locks_create_or_update_at_resource_level_request(  # pylint: disable=name-too-long
     resource_group_name: str,
     resource_provider_namespace: str,
     parent_resource_path: str,
@@ -167,7 +172,7 @@ def build_management_locks_create_or_update_at_resource_level_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -180,7 +185,7 @@ def build_management_locks_create_or_update_at_resource_level_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_management_locks_delete_at_resource_level_request(
+def build_management_locks_delete_at_resource_level_request(  # pylint: disable=name-too-long
     resource_group_name: str,
     resource_provider_namespace: str,
     parent_resource_path: str,
@@ -210,7 +215,7 @@ def build_management_locks_delete_at_resource_level_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -218,7 +223,7 @@ def build_management_locks_delete_at_resource_level_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_management_locks_create_or_update_at_subscription_level_request(
+def build_management_locks_create_or_update_at_subscription_level_request(  # pylint: disable=name-too-long
     lock_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -237,7 +242,7 @@ def build_management_locks_create_or_update_at_subscription_level_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -250,7 +255,7 @@ def build_management_locks_create_or_update_at_subscription_level_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_management_locks_delete_at_subscription_level_request(
+def build_management_locks_delete_at_subscription_level_request(  # pylint: disable=name-too-long
     lock_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -265,7 +270,7 @@ def build_management_locks_delete_at_subscription_level_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -289,7 +294,7 @@ def build_management_locks_get_request(lock_name: str, subscription_id: str, **k
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -300,7 +305,7 @@ def build_management_locks_get_request(lock_name: str, subscription_id: str, **k
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_management_locks_list_at_resource_group_level_request(
+def build_management_locks_list_at_resource_group_level_request(  # pylint: disable=name-too-long
     resource_group_name: str, subscription_id: str, *, filter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -321,7 +326,7 @@ def build_management_locks_list_at_resource_group_level_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if filter is not None:
@@ -334,7 +339,7 @@ def build_management_locks_list_at_resource_group_level_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_management_locks_list_at_resource_level_request(
+def build_management_locks_list_at_resource_level_request(  # pylint: disable=name-too-long
     resource_group_name: str,
     resource_provider_namespace: str,
     parent_resource_path: str,
@@ -367,7 +372,7 @@ def build_management_locks_list_at_resource_level_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if filter is not None:
@@ -380,7 +385,7 @@ def build_management_locks_list_at_resource_level_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_management_locks_list_at_subscription_level_request(
+def build_management_locks_list_at_subscription_level_request(  # pylint: disable=name-too-long
     subscription_id: str, *, filter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -395,7 +400,7 @@ def build_management_locks_list_at_subscription_level_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if filter is not None:
@@ -426,6 +431,7 @@ class ManagementLocksOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @overload
     def create_or_update_at_resource_group_level(
@@ -448,7 +454,6 @@ class ManagementLocksOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagementLockObject or the result of cls(response)
         :rtype: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -459,7 +464,7 @@ class ManagementLocksOperations:
         self,
         resource_group_name: str,
         lock_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -471,11 +476,10 @@ class ManagementLocksOperations:
         :param lock_name: The lock name. Required.
         :type lock_name: str
         :param parameters: The management lock parameters. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagementLockObject or the result of cls(response)
         :rtype: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -486,7 +490,7 @@ class ManagementLocksOperations:
         self,
         resource_group_name: str,
         lock_name: str,
-        parameters: Union[_models.ManagementLockObject, IO],
+        parameters: Union[_models.ManagementLockObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.ManagementLockObject:
         """Create or update a management lock at the resource group level.
@@ -496,17 +500,14 @@ class ManagementLocksOperations:
         :param lock_name: The lock name. Required.
         :type lock_name: str
         :param parameters: The management lock parameters. Is either a ManagementLockObject type or a
-         IO type. Required.
-        :type parameters: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject or
+         IO[bytes]
         :return: ManagementLockObject or the result of cls(response)
         :rtype: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -517,7 +518,7 @@ class ManagementLocksOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-01-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ManagementLockObject] = kwargs.pop("cls", None)
 
@@ -529,7 +530,7 @@ class ManagementLocksOperations:
         else:
             _json = self._serialize.body(parameters, "ManagementLockObject")
 
-        request = build_management_locks_create_or_update_at_resource_group_level_request(
+        _request = build_management_locks_create_or_update_at_resource_group_level_request(
             resource_group_name=resource_group_name,
             lock_name=lock_name,
             subscription_id=self._config.subscription_id,
@@ -537,16 +538,15 @@ class ManagementLocksOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update_at_resource_group_level.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -566,10 +566,6 @@ class ManagementLocksOperations:
 
         return deserialized  # type: ignore
 
-    create_or_update_at_resource_group_level.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks/{lockName}"
-    }
-
     @distributed_trace
     def delete_at_resource_group_level(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, lock_name: str, **kwargs: Any
@@ -580,12 +576,11 @@ class ManagementLocksOperations:
         :type resource_group_name: str
         :param lock_name: The name of lock. Required.
         :type lock_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -596,24 +591,23 @@ class ManagementLocksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-01-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_management_locks_delete_at_resource_group_level_request(
+        _request = build_management_locks_delete_at_resource_group_level_request(
             resource_group_name=resource_group_name,
             lock_name=lock_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete_at_resource_group_level.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -623,11 +617,7 @@ class ManagementLocksOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete_at_resource_group_level.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks/{lockName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def get_at_resource_group_level(
@@ -639,12 +629,11 @@ class ManagementLocksOperations:
         :type resource_group_name: str
         :param lock_name: The lock name. Required.
         :type lock_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagementLockObject or the result of cls(response)
         :rtype: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -655,24 +644,23 @@ class ManagementLocksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-01-01"))
         cls: ClsType[_models.ManagementLockObject] = kwargs.pop("cls", None)
 
-        request = build_management_locks_get_at_resource_group_level_request(
+        _request = build_management_locks_get_at_resource_group_level_request(
             resource_group_name=resource_group_name,
             lock_name=lock_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_at_resource_group_level.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -684,13 +672,9 @@ class ManagementLocksOperations:
         deserialized = self._deserialize("ManagementLockObject", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_at_resource_group_level.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks/{lockName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def create_or_update_at_resource_level(
@@ -725,7 +709,6 @@ class ManagementLocksOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagementLockObject or the result of cls(response)
         :rtype: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -740,7 +723,7 @@ class ManagementLocksOperations:
         resource_type: str,
         resource_name: str,
         lock_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -760,11 +743,10 @@ class ManagementLocksOperations:
         :param lock_name: The name of lock. Required.
         :type lock_name: str
         :param parameters: Create or update management lock parameters. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagementLockObject or the result of cls(response)
         :rtype: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -779,7 +761,7 @@ class ManagementLocksOperations:
         resource_type: str,
         resource_name: str,
         lock_name: str,
-        parameters: Union[_models.ManagementLockObject, IO],
+        parameters: Union[_models.ManagementLockObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.ManagementLockObject:
         """Create or update a management lock at the resource level or any level below resource.
@@ -797,17 +779,14 @@ class ManagementLocksOperations:
         :param lock_name: The name of lock. Required.
         :type lock_name: str
         :param parameters: Create or update management lock parameters. Is either a
-         ManagementLockObject type or a IO type. Required.
-        :type parameters: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ManagementLockObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject or
+         IO[bytes]
         :return: ManagementLockObject or the result of cls(response)
         :rtype: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -818,7 +797,7 @@ class ManagementLocksOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-01-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ManagementLockObject] = kwargs.pop("cls", None)
 
@@ -830,7 +809,7 @@ class ManagementLocksOperations:
         else:
             _json = self._serialize.body(parameters, "ManagementLockObject")
 
-        request = build_management_locks_create_or_update_at_resource_level_request(
+        _request = build_management_locks_create_or_update_at_resource_level_request(
             resource_group_name=resource_group_name,
             resource_provider_namespace=resource_provider_namespace,
             parent_resource_path=parent_resource_path,
@@ -842,16 +821,15 @@ class ManagementLocksOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update_at_resource_level.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -870,10 +848,6 @@ class ManagementLocksOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    create_or_update_at_resource_level.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks/{lockName}"
-    }
 
     @distributed_trace
     def delete_at_resource_level(  # pylint: disable=inconsistent-return-statements
@@ -900,12 +874,11 @@ class ManagementLocksOperations:
         :type resource_name: str
         :param lock_name: The name of lock. Required.
         :type lock_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -916,10 +889,10 @@ class ManagementLocksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-01-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_management_locks_delete_at_resource_level_request(
+        _request = build_management_locks_delete_at_resource_level_request(
             resource_group_name=resource_group_name,
             resource_provider_namespace=resource_provider_namespace,
             parent_resource_path=parent_resource_path,
@@ -928,16 +901,15 @@ class ManagementLocksOperations:
             lock_name=lock_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete_at_resource_level.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -947,11 +919,7 @@ class ManagementLocksOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete_at_resource_level.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks/{lockName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def create_or_update_at_subscription_level(
@@ -971,7 +939,6 @@ class ManagementLocksOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagementLockObject or the result of cls(response)
         :rtype: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -979,18 +946,17 @@ class ManagementLocksOperations:
 
     @overload
     def create_or_update_at_subscription_level(
-        self, lock_name: str, parameters: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, lock_name: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ManagementLockObject:
         """Create or update a management lock at the subscription level.
 
         :param lock_name: The name of lock. Required.
         :type lock_name: str
         :param parameters: The management lock parameters. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagementLockObject or the result of cls(response)
         :rtype: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -998,24 +964,21 @@ class ManagementLocksOperations:
 
     @distributed_trace
     def create_or_update_at_subscription_level(
-        self, lock_name: str, parameters: Union[_models.ManagementLockObject, IO], **kwargs: Any
+        self, lock_name: str, parameters: Union[_models.ManagementLockObject, IO[bytes]], **kwargs: Any
     ) -> _models.ManagementLockObject:
         """Create or update a management lock at the subscription level.
 
         :param lock_name: The name of lock. Required.
         :type lock_name: str
         :param parameters: The management lock parameters. Is either a ManagementLockObject type or a
-         IO type. Required.
-        :type parameters: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject or
+         IO[bytes]
         :return: ManagementLockObject or the result of cls(response)
         :rtype: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1026,7 +989,7 @@ class ManagementLocksOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-01-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ManagementLockObject] = kwargs.pop("cls", None)
 
@@ -1038,23 +1001,22 @@ class ManagementLocksOperations:
         else:
             _json = self._serialize.body(parameters, "ManagementLockObject")
 
-        request = build_management_locks_create_or_update_at_subscription_level_request(
+        _request = build_management_locks_create_or_update_at_subscription_level_request(
             lock_name=lock_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update_at_subscription_level.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1074,10 +1036,6 @@ class ManagementLocksOperations:
 
         return deserialized  # type: ignore
 
-    create_or_update_at_subscription_level.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks/{lockName}"
-    }
-
     @distributed_trace
     def delete_at_subscription_level(  # pylint: disable=inconsistent-return-statements
         self, lock_name: str, **kwargs: Any
@@ -1086,12 +1044,11 @@ class ManagementLocksOperations:
 
         :param lock_name: The name of lock. Required.
         :type lock_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1102,23 +1059,22 @@ class ManagementLocksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-01-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_management_locks_delete_at_subscription_level_request(
+        _request = build_management_locks_delete_at_subscription_level_request(
             lock_name=lock_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete_at_subscription_level.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1128,11 +1084,7 @@ class ManagementLocksOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete_at_subscription_level.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks/{lockName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def get(self, lock_name: str, **kwargs: Any) -> _models.ManagementLockObject:
@@ -1140,12 +1092,11 @@ class ManagementLocksOperations:
 
         :param lock_name: Name of the management lock. Required.
         :type lock_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagementLockObject or the result of cls(response)
         :rtype: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1156,23 +1107,22 @@ class ManagementLocksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-01-01"))
         cls: ClsType[_models.ManagementLockObject] = kwargs.pop("cls", None)
 
-        request = build_management_locks_get_request(
+        _request = build_management_locks_get_request(
             lock_name=lock_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1184,11 +1134,9 @@ class ManagementLocksOperations:
         deserialized = self._deserialize("ManagementLockObject", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks/{lockName}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_at_resource_group_level(
@@ -1200,7 +1148,6 @@ class ManagementLocksOperations:
         :type resource_group_name: str
         :param filter: The filter to apply on the operation. Default value is None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagementLockObject or the result of
          cls(response)
         :rtype:
@@ -1210,10 +1157,10 @@ class ManagementLocksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-01-01"))
         cls: ClsType[_models.ManagementLockListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1224,17 +1171,16 @@ class ManagementLocksOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_management_locks_list_at_resource_group_level_request(
+                _request = build_management_locks_list_at_resource_group_level_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     api_version=api_version,
-                    template_url=self.list_at_resource_group_level.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1245,14 +1191,14 @@ class ManagementLocksOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ManagementLockListResult", pipeline_response)
@@ -1262,11 +1208,11 @@ class ManagementLocksOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1277,10 +1223,6 @@ class ManagementLocksOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_at_resource_group_level.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks"
-    }
 
     @distributed_trace
     def list_at_resource_level(
@@ -1308,7 +1250,6 @@ class ManagementLocksOperations:
         :type resource_name: str
         :param filter: The filter to apply on the operation. Default value is None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagementLockObject or the result of
          cls(response)
         :rtype:
@@ -1318,10 +1259,10 @@ class ManagementLocksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-01-01"))
         cls: ClsType[_models.ManagementLockListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1332,7 +1273,7 @@ class ManagementLocksOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_management_locks_list_at_resource_level_request(
+                _request = build_management_locks_list_at_resource_level_request(
                     resource_group_name=resource_group_name,
                     resource_provider_namespace=resource_provider_namespace,
                     parent_resource_path=parent_resource_path,
@@ -1341,12 +1282,11 @@ class ManagementLocksOperations:
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     api_version=api_version,
-                    template_url=self.list_at_resource_level.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1357,14 +1297,14 @@ class ManagementLocksOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ManagementLockListResult", pipeline_response)
@@ -1374,11 +1314,11 @@ class ManagementLocksOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1389,10 +1329,6 @@ class ManagementLocksOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_at_resource_level.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks"
-    }
 
     @distributed_trace
     def list_at_subscription_level(
@@ -1402,7 +1338,6 @@ class ManagementLocksOperations:
 
         :param filter: The filter to apply on the operation. Default value is None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagementLockObject or the result of
          cls(response)
         :rtype:
@@ -1412,10 +1347,10 @@ class ManagementLocksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-01-01"))
         cls: ClsType[_models.ManagementLockListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1426,16 +1361,15 @@ class ManagementLocksOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_management_locks_list_at_subscription_level_request(
+                _request = build_management_locks_list_at_subscription_level_request(
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     api_version=api_version,
-                    template_url=self.list_at_subscription_level.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1446,14 +1380,14 @@ class ManagementLocksOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ManagementLockListResult", pipeline_response)
@@ -1463,11 +1397,11 @@ class ManagementLocksOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1478,7 +1412,3 @@ class ManagementLocksOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_at_subscription_level.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks"
-    }
