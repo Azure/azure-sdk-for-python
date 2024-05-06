@@ -158,7 +158,7 @@ class HealthInsightsSyncSamples:
                             print(f"Finding {counter}: COMPONENTS:")
                             for component in fin.component:
                                 for attribute in dir(component):
-                                    if attribute.startswith('_') or callable(getattr(component, attr)):
+                                    if attribute.startswith('_') or callable(getattr(component, attribute)):
                                         continue
                                     if attribute == "code" and component.code is not None:
                                         for code in component.code.coding:
