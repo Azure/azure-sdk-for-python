@@ -542,10 +542,10 @@ def set_function_recording_options(**kwargs) -> None:
     This must be called during test case execution, rather than at a session, module, or class level. To set recording
     options for all tests, use `set_session_recording_options` instead.
 
-    :keyword bool handle_redirects: The test proxy does not perform transparent follow directs by default. That means
+    :keyword bool handle_redirects: The test proxy performs transparent follow directs by default. That means
         that if the initial request sent through the test proxy results in a 3XX redirect status, the test proxy will
-        not follow. It will return that redirect response to the client and allow it to handle the redirect. Setting
-        `handle_redirects` to True will set the proxy to instead handle redirects itself.
+        follow. Setting `handle_redirects` to False will instead make the test proxy return that redirect response to
+        the client and allow it to handle the redirect.
     :keyword str context_directory: This changes the "root" path that the test proxy uses when loading a recording.
     :keyword certificates: A list of `PemCertificate`s. Any number of certificates is allowed.
     :type certificates: Iterable[PemCertificate]
@@ -564,10 +564,10 @@ def set_session_recording_options(**kwargs) -> None:
     This will set the specified recording options for an entire test session. To set recording options for a single test
     -- which is recommended -- use `set_function_recording_options` instead.
 
-    :keyword bool handle_redirects: The test proxy does not perform transparent follow directs by default. That means
+    :keyword bool handle_redirects: The test proxy performs transparent follow directs by default. That means
         that if the initial request sent through the test proxy results in a 3XX redirect status, the test proxy will
-        not follow. It will return that redirect response to the client and allow it to handle the redirect. Setting
-        `handle_redirects` to True will set the proxy to instead handle redirects itself.
+        follow. Setting `handle_redirects` to False will instead make the test proxy return that redirect response to
+        the client and allow it to handle the redirect.
     :keyword str context_directory: This changes the "root" path that the test proxy uses when loading a recording.
     :keyword certificates: A list of `PemCertificate`s. Any number of certificates is allowed.
     :type certificates: Iterable[PemCertificate]
