@@ -219,7 +219,7 @@ def to_rest_dataset_literal_inputs(
                     # set mode attribute manually for binding job input
                     if input_value.mode:
                         input_data.mode = INPUT_MOUNT_MAPPING_TO_REST[input_value.mode]
-                    if input_value.path_on_compute:
+                    if  getattr(input_value, "path_on_compute", None) is not None:
                         input_data.pathOnCompute = input_value.path_on_compute
                     input_data.job_input_type = JobInputType.LITERAL
                 else:
@@ -332,12 +332,16 @@ def to_rest_data_outputs(outputs: Optional[Dict]) -> Dict[str, RestJobOutput]:
 
                 output_value_type = output_value.type if output_value.type else AssetTypes.URI_FOLDER
                 if output_value_type in target_cls_dict:
+                    if getattr(output_value, "pathOnCompute", None) is not None:
+                        sourcePathOnCompute = output_value.pathOnCompute
+                    else:
+                        sourcePathOnCompute = None
                     output = target_cls_dict[output_value_type](
                         asset_name=output_value.name,
                         asset_version=output_value.version,
                         uri=output_value.path,
                         mode=OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None,
-                        pathOnCompute=output_value.path_on_compute if output_value.path_on_compute else None,
+                        pathOnCompute=sourcePathOnCompute,
                         description=output_value.description,
                     )
                 else:
