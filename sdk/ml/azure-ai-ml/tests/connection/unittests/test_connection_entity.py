@@ -40,6 +40,27 @@ from azure.ai.ml.entities import (
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
 class TestWorkspaceConnectionEntity:
+    def assert_connections_are_similar(self, conn1: Connection, conn2: Connection):
+        """Helper functiom which runs a bunch of assertions to check that the two
+        inputted connections are roughly equivalent. Does not check certain features
+        that are specific to some connection subclasses.
+
+        :param conn1: The first connection to compare.
+        :type conn1: ~azure.ai.ml.entities.Connection
+        :param conn2: The second connection to compare.
+        :type conn2: ~azure.ai.ml.entities.Connection
+        """
+
+        # Check them individually to simplify debugging.
+        assert conn1 is not None
+        assert conn2 is not None
+        assert conn1.name == conn2.name
+        assert type(conn1) == type(conn2)
+        assert conn1.type == conn2.type
+        assert conn1.target == conn2.target
+        assert conn1.tags == conn2.tags  # This helpfully compares hidden metadata for subclasses.
+        assert conn1.credentials == conn2.credentials
+
     def check_rest_conversion_stable(self, conn: Connection):
         """Helper function which converts an inputted connection to its rest
         equivalent and back again, then checks that they're still the same.
@@ -50,14 +71,32 @@ class TestWorkspaceConnectionEntity:
 
         rest_conn = conn._to_rest_object()
         new_conn = Connection._from_rest_object(rest_obj=rest_conn)
-        # Connections should be identical besides their name (which is not set by RestClient objects without API calls)
-        # Check them individually to simplify debugging.
-        assert new_conn is not None
-        assert type(conn) == type(new_conn)
-        assert conn.type == new_conn.type
-        assert conn.target == new_conn.target
-        assert conn.tags == new_conn.tags  # This helpfully compares hidden metadata for subclasses.
-        assert conn.credentials == new_conn.credentials
+        # equalize names since rest conversions don't keep it.
+        new_conn.name = conn.name
+        self.assert_connections_are_similar(conn, new_conn)
+
+    def check_dict_conversion_stable(self, conn: Connection):
+        """Helper function which converts and inputted connection to its dictionary
+        equivalent and back again, then checks that they're still the same.
+
+        :param conn: The connection to check
+        :type conn: ~azure.ai.ml.entities.Connection
+        """
+
+        conn_dictionary = conn._to_dict()
+        new_conn = Connection._load(conn_dictionary)
+        self.assert_connections_are_similar(conn, new_conn)
+
+    def check_all_conversions_stable(self, conn: Connection):
+        """Helper function which checks that a connection is stable when converting
+        to and from rest and dictionary representations.
+
+        :param conn: The connection to check
+        :type conn: ~azure.ai.ml.entities.Connection
+        """
+
+        self.check_rest_conversion_stable(conn)
+        self.check_dict_conversion_stable(conn)
 
     def test_workspace_connection_constructor(self):
         ws_connection = Connection(
@@ -103,7 +142,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.tags["four"] == "five"
         assert ws_connection.container_name == "some_container"
         assert ws_connection.account_name == "some_account"
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
         ws_connection = load_connection(source="./tests/test_configs/connection/blob_store_sas.yaml")
         assert type(ws_connection) == AzureBlobStoreConnection
@@ -111,14 +150,14 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.SAS)
         assert ws_connection.credentials.sas_token == "some_pat"
         assert ws_connection.name == "test_ws_conn_blob_store2"
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
         ws_connection = load_connection(source="./tests/test_configs/connection/blob_store_entra.yaml")
         assert type(ws_connection) == AzureBlobStoreConnection
         assert ws_connection.type == camel_to_snake(ConnectionCategory.AZURE_BLOB)
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.AAD)
         assert ws_connection.name == "test_ws_conn_blob_store3"
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
     def test_alds_gen2(self):
         ws_connection = load_connection(source="./tests/test_configs/connection/alds_gen2_sp.yaml")
@@ -132,6 +171,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.name == "test_gen2_conn1"
         assert ws_connection.target == "my_endpoint"
         assert ws_connection.tags["four"] == "five"
+        self.check_dict_conversion_stable(ws_connection)
         # Auth url doesn't get copied back by rest conversion intentionally, so black it here
         # to simplify comparison.
         ws_connection.credentials.authority_url = ""
@@ -142,10 +182,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.type == ConnectionTypes.AZURE_DATA_LAKE_GEN_2
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.AAD)
         assert ws_connection.name == "test_gen2_conn2"
-        # Auth url doesn't get copied back by rest conversion intentionally, so black it here
-        # to simplify comparison.
-        ws_connection.credentials.authority_url = ""
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
     def test_one_lake(self):
         # Note: also tests SP credential.
@@ -159,6 +196,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.credentials.authority_url == "https://login.microsoftonline.com"
         assert ws_connection.name == "one_lake_with_name"
         assert ws_connection.target == "https://www.endpoint.com/the_workspace_name/my_lake_name.Lakehouse"
+        self.check_dict_conversion_stable(ws_connection)
         # Auth url doesn't get copied back by rest conversion intentionally, so black it here
         # to simplify comparison.
         ws_connection.credentials.authority_url = ""
@@ -171,7 +209,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.AAD)
         assert ws_connection.name == "one_lake_with_id"
         assert ws_connection.target == "https://www.endpoint.com/the_workspace_name/1234567-1234-1234-1234-123456789012"
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
     def test_azure_open_ai(self):
         ws_connection = load_connection(source="./tests/test_configs/connection/azure_open_ai_api.yaml")
@@ -186,7 +224,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.tags["ApiType"] == "Azure"
         assert ws_connection.api_version == "1.0"
         assert ws_connection.open_ai_resource_id == "some id"
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
         ws_connection = load_connection(source="./tests/test_configs/connection/azure_open_ai_entra.yaml")
         assert type(ws_connection) == AzureOpenAIConnection
@@ -196,9 +234,9 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.target == "dummy"
         assert ws_connection.tags["hello"] == "world"
         assert ws_connection.tags["ApiType"] == "Azure"
-        assert ws_connection.api_version == "1.0"
+        assert ws_connection.api_version is None
         assert ws_connection.open_ai_resource_id is None
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
     def test_ai_services(self):
         ws_connection = load_connection(source="./tests/test_configs/connection/ai_services_with_key.yaml")
@@ -208,7 +246,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.name == "ai_services_conn_api"
         assert ws_connection.target == "my_endpoint"
         assert ws_connection.ai_services_resource_id == "this-needs-to-be-a-valid-ai-services-id-in-e2e-tests"
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
         ws_connection = load_connection(source="./tests/test_configs/connection/ai_services_with_entra.yaml")
         assert type(ws_connection) == AzureAIServicesConnection
@@ -217,7 +255,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.target == "my_endpoint"
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.AAD)
         assert ws_connection.ai_services_resource_id == "this-needs-to-be-a-valid-ai-services-id-in-e2e-tests"
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
     def test_content_safety(self):
         ws_connection = load_connection(source="./tests/test_configs/connection/content_safety_with_key.yaml")
@@ -227,7 +265,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.api_key == "2222"
         assert ws_connection.name == "content_safety_conn_api"
         assert ws_connection.target == "my_endpoint"
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
         ws_connection = load_connection(source="./tests/test_configs/connection/content_safety_with_entra.yaml")
         assert type(ws_connection) == AzureContentSafetyConnection
@@ -236,7 +274,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.name == "content_safety_conn_entra"
         assert ws_connection.target == "my_endpoint"
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.AAD)
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
     def test_speech(self):
         ws_connection = load_connection(source="./tests/test_configs/connection/speech_with_key.yaml")
@@ -247,7 +285,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.api_key == "2222"
         assert ws_connection.name == "speech_api"
         assert ws_connection.target == "my_endpoint"
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
         ws_connection = load_connection(source="./tests/test_configs/connection/speech_with_entra.yaml")
         assert type(ws_connection) == AzureSpeechServicesConnection
@@ -256,7 +294,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.name == "speech_entra"
         assert ws_connection.target == "my_endpoint"
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.AAD)
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
     def test_search(self):
         ws_connection = load_connection(source="./tests/test_configs/connection/search_with_key.yaml")
@@ -265,7 +303,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.api_key == "3333"
         assert ws_connection.name == "search_api"
         assert ws_connection.target == "this_is_a_target"
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
         ws_connection = load_connection(source="./tests/test_configs/connection/search_with_entra.yaml")
         assert type(ws_connection) == AzureAISearchConnection
@@ -273,7 +311,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.name == "search_entra"
         assert ws_connection.target == "this_is_a_target_too"
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.AAD)
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
     def test_api_key(self):
         ws_connection = load_connection(source="./tests/test_configs/connection/api_key_conn.yaml")
@@ -282,7 +320,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.api_key == "3232"
         assert ws_connection.name == "just_api"
         assert ws_connection.api_base == "this_is_a_target"
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
     def test_custom(self):
         ws_connection = load_connection(source="./tests/test_configs/connection/custom.yaml")
@@ -293,7 +331,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.name == "test_ws_conn_custom_keys"
         assert ws_connection.target == "my_endpoint"
         assert ws_connection.tags["one"] == "two"
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
     def test_open_ai(self):
         ws_connection = load_connection(source="./tests/test_configs/connection/not_azure_open_ai.yaml")
@@ -302,7 +340,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.api_key == "123446"
         assert ws_connection.name == "open_ai_conn"
         assert ws_connection.target is None
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
     def test_serp(self):
         ws_connection = load_connection(source="./tests/test_configs/connection/serp.yaml")
@@ -311,7 +349,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.api_key == "1234467"
         assert ws_connection.name == "serp_conn"
         assert ws_connection.target is None
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
     def test_git(self):
         ws_connection = load_connection(source="./tests/test_configs/connection/git_pat.yaml")
@@ -322,7 +360,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.credentials.pat == "dummy_pat"
         assert ws_connection.name == "test_ws_conn_git_pat"
         assert ws_connection.target == "https://test-git-feed.com"
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
         ws_connection = load_connection(source="./tests/test_configs/connection/git_no_cred.yaml")
         assert type(ws_connection) == Connection
@@ -330,7 +368,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.credentials.type == ConnectionAuthType.NONE
         assert ws_connection.name == "git_no_cred_conn"
         assert ws_connection.target == "https://test-git-feed.com2"
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
     def test_python_feed(self):
         ws_connection = load_connection(source="./tests/test_configs/connection/python_feed_pat.yaml")
@@ -340,7 +378,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.credentials.pat == "dummy_pat"
         assert ws_connection.name == "test_ws_conn_python_pat"
         assert ws_connection.target == "https://test-feed.com"
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
         ws_connection = load_connection(source="./tests/test_configs/connection/python_feed_user_pass.yaml")
         assert type(ws_connection) == Connection
@@ -350,7 +388,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.credentials.password == "halo"
         assert ws_connection.name == "test_ws_conn_python_user_pass"
         assert ws_connection.target == "https://test-feed.com2"
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
         ws_connection = load_connection(source="./tests/test_configs/connection/python_feed_no_cred.yaml")
         assert type(ws_connection) == Connection
@@ -358,7 +396,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.credentials.type == ConnectionAuthType.NONE
         assert ws_connection.name == "test_ws_conn_python_no_cred"
         assert ws_connection.target == "https://test-feed.com3"
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
     def test_container_registry(self):
         ws_connection = load_connection(
@@ -370,7 +408,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.credentials.resource_id == "resource_id"
         assert ws_connection.name == "test_ws_conn_cr_managed"
         assert ws_connection.target == "https://test-feed.com"
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
         ws_connection = load_connection(source="./tests/test_configs/connection/container_registry_user_pass.yaml")
         assert ws_connection.type == camel_to_snake(ConnectionCategory.CONTAINER_REGISTRY)
@@ -379,7 +417,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.credentials.password == "spaniel"
         assert ws_connection.name == "test_ws_conn_cr_user_pass"
         assert ws_connection.target == "https://test-feed.com2"
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
     def test_serverless(self):
         ws_connection = load_connection(source="./tests/test_configs/connection/serverless_api.yaml")
@@ -389,7 +427,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.api_key == "1029"
         assert ws_connection.name == "serverless_with_api"
         assert ws_connection.target == "serverless_endpoint"
-        self.check_rest_conversion_stable(ws_connection)
+        self.check_all_conversions_stable(ws_connection)
 
     # Old connection tests. These have not had their valid credential inputs verified by any known recent spec.
 
