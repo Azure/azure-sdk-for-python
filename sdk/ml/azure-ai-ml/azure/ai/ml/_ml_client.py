@@ -933,6 +933,7 @@ class MLClient:
         return self._featurestoreentities
 
     @property
+    @experimental
     def connections(self) -> ConnectionsOperations:
         """A collection of connection related operations.
 

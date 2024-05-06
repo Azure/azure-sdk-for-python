@@ -86,6 +86,9 @@ class Workspace(Resource):
     :type enable_data_isolation: bool
     :param serverless_compute: The serverless compute settings for the workspace.
     :type: ~azure.ai.ml.entities.ServerlessComputeSettings
+    :param workspace_hub: Deprecated resource ID of an existing workspace hub to help create project workspace.
+        Use the Project class instead now.
+    :type workspace_hub: Optional[str]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
@@ -119,6 +122,7 @@ class Workspace(Resource):
         managed_network: Optional[ManagedNetwork] = None,
         enable_data_isolation: bool = False,
         hub_id: Optional[str] = None,  # Hidden input, surfaced by Project
+        workspace_hub: Optional[str] = None,  # Deprecated input maintained for backwards compat.
         serverless_compute: Optional[ServerlessComputeSettings] = None,
         **kwargs: Any,
     ):
@@ -156,6 +160,8 @@ class Workspace(Resource):
         self.primary_user_assigned_identity = primary_user_assigned_identity
         self.managed_network = managed_network
         self.enable_data_isolation = enable_data_isolation
+        if workspace_hub and not hub_id:
+            hub_id = workspace_hub
         self.__hub_id = hub_id
         # Overwrite kind if hub_id is provided. Technically not needed anymore,
         # but kept for backwards if people try to just use a normal workspace like

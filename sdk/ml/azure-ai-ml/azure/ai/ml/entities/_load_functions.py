@@ -803,6 +803,7 @@ def load_batch_endpoint(
     return cast(BatchEndpoint, load_common(BatchEndpoint, source, relative_origin, params_override, **kwargs))
 
 
+@experimental
 def load_connection(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
@@ -842,7 +843,7 @@ def load_workspace_connection(
     relative_origin: Optional[str] = None,
     **kwargs: Any,
 ) -> Connection:
-    """Construct a connection object from yaml file.
+    """Deprecated - use 'load_connection' instead. Construct a connection object from yaml file.
 
     :param source: The local yaml source of a connection object. Must be either a
         path to a local file, or an already-open file.
@@ -861,7 +862,10 @@ def load_workspace_connection(
     :rtype: Connection
 
     """
-    return load_workspace_connection(source, relative_origin=relative_origin, **kwargs)
+    warnings.warn(
+        "the 'load_workspace_connection' function is deprecated. Use 'load_connection' instead.", DeprecationWarning
+    )
+    return load_connection(source, relative_origin=relative_origin, **kwargs)
 
 
 def load_schedule(

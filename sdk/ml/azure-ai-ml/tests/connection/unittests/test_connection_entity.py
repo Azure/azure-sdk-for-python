@@ -481,7 +481,7 @@ class TestWorkspaceConnectionEntity:
                 credentials=None,
             )
         _ = AzureOpenAIConnection(
-            target="dummy_target",
+            azure_endpoint="dummy_target",
             name="dummy_connection",
             strict_typing=True,
             credentials=None,
