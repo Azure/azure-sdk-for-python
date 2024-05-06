@@ -327,6 +327,8 @@ class AzureOpenAIConnection(ApiOrAadConnection):
     def __init__(
         self,
         *,
+        azure_endpoint: str,
+        api_key: Optional[str] = None,
         api_version: Optional[str] = None,
         api_type: str = "Azure",  # Required API input, hidden to allow for rare overrides
         open_ai_resource_id: Optional[str] = None,
@@ -338,6 +340,8 @@ class AzureOpenAIConnection(ApiOrAadConnection):
         if open_ai_resource_id is None and from_rest_resource_id is not None:
             open_ai_resource_id = from_rest_resource_id
         super().__init__(
+            azure_endpoint=azure_endpoint,
+            api_key=api_key,
             type=camel_to_snake(ConnectionCategory.AZURE_OPEN_AI),
             from_child=True,
             **kwargs,
@@ -407,6 +411,7 @@ class AzureOpenAIConnection(ApiOrAadConnection):
         self.tags[CONNECTION_RESOURCE_ID_KEY] = value
 
 
+@experimental
 class AzureAIServicesConnection(ApiOrAadConnection):
     """A Connection geared towards Azure AI services.
 
@@ -426,11 +431,15 @@ class AzureAIServicesConnection(ApiOrAadConnection):
     def __init__(
         self,
         *,
+        endpoint: str,
+        api_key: Optional[str] = None,
         ai_services_resource_id: str,
         **kwargs: Any,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(
+            endpoint=endpoint,
+            api_key=api_key,
             type=ConnectionTypes.AZURE_AI_SERVICES,
             from_child=True,
             **kwargs,
@@ -488,11 +497,16 @@ class AzureAISearchConnection(ApiOrAadConnection):
 
     def __init__(
         self,
+        *,
+        endpoint: str,
+        api_key: Optional[str] = None,
         **kwargs: Any,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
 
         super().__init__(
+            endpoint=endpoint,
+            api_key=api_key,
             type=ConnectionTypes.AZURE_SEARCH,
             from_child=True,
             **kwargs,
@@ -520,10 +534,15 @@ class AzureContentSafetyConnection(ApiOrAadConnection):
 
     def __init__(
         self,
+        *,
+        endpoint: str,
+        api_key: Optional[str] = None,
         **kwargs: Any,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(
+            endpoint=endpoint,
+            api_key=api_key,
             type=ConnectionTypes.AZURE_CONTENT_SAFETY,
             from_child=True,
             **kwargs,
@@ -548,7 +567,7 @@ class AzureSpeechServicesConnection(ApiOrAadConnection):
     :type endpoint: str
     :param api_key: The api key to connect to the azure endpoint.
         If unset, tries to use the user's Entra ID as credentials instead.
-    :type api_key: str
+    :type api_key: Optional[str]
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
     """
@@ -559,11 +578,13 @@ class AzureSpeechServicesConnection(ApiOrAadConnection):
         self,
         *,
         endpoint: str,
+        api_key: Optional[str] = None,
         **kwargs: Any,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(
             endpoint=endpoint,
+            api_key=api_key,
             type=ConnectionTypes.AZURE_SPEECH_SERVICES,
             from_child=True,
             **kwargs,
@@ -587,7 +608,7 @@ class APIKeyConnection(ApiOrAadConnection):
     :param api_base: The URL to target with this connection.
     :type api_base: str
     :param api_key: The API key needed to connect to the api_base.
-    :type api_key: str
+    :type api_key: Optional[str]
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
     """
@@ -596,11 +617,13 @@ class APIKeyConnection(ApiOrAadConnection):
         self,
         *,
         api_base: str,
+        api_key: Optional[str] = None,
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(
             api_base=api_base,
+            api_key=api_key,
             type=camel_to_snake(ConnectionCategory.API_KEY),
             allow_entra=False,
             from_child=True,
@@ -620,18 +643,21 @@ class OpenAIConnection(ApiOrAadConnection):
     :param name: Name of the connection.
     :type name: str
     :param api_key: The API key needed to connect to the Open AI.
-    :type api_key: str
+    :type api_key: Optional[str]
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
     """
 
     def __init__(
         self,
+        *,
+        api_key: Optional[str] = None,
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(
             type=ConnectionCategory.Open_AI,
+            api_key=api_key,
             allow_entra=False,
             from_child=True,
             **kwargs,
@@ -649,18 +675,21 @@ class SerpConnection(ApiOrAadConnection):
     :param name: Name of the connection.
     :type name: str
     :param api_key: The API key needed to connect to the Open AI.
-    :type api_key: str
+    :type api_key: Optional[str]
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
     """
 
     def __init__(
         self,
+        *,
+        api_key: Optional[str] = None,
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(
             type=ConnectionCategory.SERP,
+            api_key=api_key,
             allow_entra=False,
             from_child=True,
             **kwargs,
@@ -680,18 +709,23 @@ class ServerlessConnection(ApiOrAadConnection):
     :param endpoint: The serverless endpoint.
     :type endpoint: str
     :param api_key: The API key needed to connect to the endpoint.
-    :type api_key: str
+    :type api_key: Optional[str]
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
     """
 
     def __init__(
         self,
+        *,
+        endpoint: str,
+        api_key: Optional[str] = None,
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(
             type=ConnectionCategory.SERVERLESS,
+            endpoint=endpoint,
+            api_key=api_key,
             allow_entra=False,
             from_child=True,
             **kwargs,
