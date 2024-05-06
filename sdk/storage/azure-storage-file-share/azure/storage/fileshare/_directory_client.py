@@ -349,7 +349,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
 
         :paramtype file_change_time: str or ~datetime.datetime
         :keyword metadata:
-            Name-value pairs associated with the share as metadata.
+            Name-value pairs associated with the directory as metadata.
         :paramtype metadata: Optional[dict[str, str]]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
