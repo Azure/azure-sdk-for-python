@@ -192,7 +192,7 @@ class HealthInsightsSyncSamples:
                                                 continue
                                             elif sub_attribute == "url":
                                                 if sub_extension.url == "code" or sub_extension.url == "codingSystem" or sub_extension.url == "codeSystemName" or sub_extension.url == "displayName":
-                                                    print(f"Finding {counter}: INFERENCE EXTENSIONS: EXTENSION: {sub_attr.capitalize()}: {sub_extension.url}")
+                                                    print(f"Finding {counter}: INFERENCE EXTENSIONS: EXTENSION: {sub_attribute.capitalize()}: {sub_extension.url}")
                                             elif sub_attribute == "value_string" and sub_extension.value_string is not None:
                                                 print(f"Finding {counter}: INFERENCE EXTENSIONS: EXTENSION: {sub_attribute.capitalize()}: {sub_extension.value_string}")
                                 elif attribute == "url" and extension.url is not None:
