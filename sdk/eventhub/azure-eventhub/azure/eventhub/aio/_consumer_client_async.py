@@ -9,6 +9,7 @@ import logging
 import datetime
 from typing import (
     Any,
+    Literal,
     Union,
     TYPE_CHECKING,
     Dict,
@@ -244,9 +245,18 @@ class EventHubConsumerClient(
         auth_timeout: float = 60,
         user_agent: Optional[str] = None,
         retry_total: int = 3,
+        retry_backoff_factor: float = 0.8,
+        retry_backoff_max: float = 120,
+        retry_mode: Literal["exponential", "fixed"] = "exponential",
+        idle_timeout: Optional[float] = None,
         transport_type: TransportType = TransportType.Amqp,
         checkpoint_store: Optional["CheckpointStore"] = None,
         load_balancing_interval: float = 30,
+        partition_ownership_expiration_interval: Optional[float] = None,
+        load_balancing_strategy: Union[str, LoadBalancingStrategy] = LoadBalancingStrategy.GREEDY,
+        custom_endpoint_address: Optional[str] = None,
+        connection_verify: Optional[str] = None,
+        uamqp_transport: bool = False,
         **kwargs: Any
     ) -> "EventHubConsumerClient":
         """Create an EventHubConsumerClient from a connection string.
@@ -324,6 +334,7 @@ class EventHubConsumerClient(
         :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
          False and the Pure Python AMQP library will be used as the underlying transport.
         :paramtype uamqp_transport: bool
+        :returns: An EventHubConsumerClient instance.
         :rtype: ~azure.eventhub.aio.EventHubConsumerClient
 
         .. admonition:: Example:
@@ -345,9 +356,18 @@ class EventHubConsumerClient(
             auth_timeout=auth_timeout,
             user_agent=user_agent,
             retry_total=retry_total,
+            retry_backoff_factor=retry_backoff_factor,
+            retry_backoff_max=retry_backoff_max,
+            retry_mode=retry_mode,
+            idle_timeout=idle_timeout,
             transport_type=transport_type,
             checkpoint_store=checkpoint_store,
             load_balancing_interval=load_balancing_interval,
+            partition_ownership_expiration_interval=partition_ownership_expiration_interval,
+            load_balancing_strategy=load_balancing_strategy,
+            custom_endpoint_address=custom_endpoint_address,
+            connection_verify=connection_verify,
+            uamqp_transport=uamqp_transport,
             **kwargs,
         )
         return cls(**constructor_args)
@@ -355,8 +375,8 @@ class EventHubConsumerClient(
     async def _receive(
         self,
         on_event,
-        batch=False,
         *,
+        batch: bool = False,
         max_batch_size: int = 300,
         max_wait_time: Optional[float] = None,
         partition_id: Optional[str] = None,

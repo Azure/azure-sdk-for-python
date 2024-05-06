@@ -543,7 +543,7 @@ class CodegenTestPR:
                 f'{changelog}\n' \
                 f'```\n' \
                 '* (If you want private package for test or development, ' \
-                f'please build it locally with [guidance](https://github.com/Azure/azure-sdk-for-python/wiki/Common-issues-about-Python-SDK#build-private-package-with-pr) with https://github.com/Azure/azure-sdk-for-python/pull/{self.pr_number})\n\n'
+                f'please build it locally based on https://github.com/Azure/azure-sdk-for-python/pull/{self.pr_number} with [guidance](https://github.com/Azure/azure-sdk-for-python/wiki/Common-issues-about-Python-SDK#build-private-package-with-pr))\n\n'
             api.issues.create_comment(issue_number=issue_number, body=body)
 
             # comment for hint

@@ -954,9 +954,9 @@ class SynonymMap:
         return _SynonymMap(
             name=self.name,
             synonyms="\n".join(self.synonyms),
-            encryption_key=self.encryption_key._to_generated()  # pylint:disable=protected-access
-            if self.encryption_key
-            else None,
+            encryption_key=(
+                self.encryption_key._to_generated() if self.encryption_key else None  # pylint:disable=protected-access
+            ),
             e_tag=self.e_tag,
         )
 

@@ -43,7 +43,7 @@ class DenyStatusMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Authorized users can only read from a resource, but cannot modify or delete it."""
     REMOVED_BY_SYSTEM = "removedBySystem"
     """Deny assignment has been removed by Azure due to a resource management change (management group
-    #: move, etc.)"""
+    move, etc.)"""
     NONE = "None"
     """No denyAssignments have been applied."""
 
@@ -83,7 +83,7 @@ class ResourceStatusMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Unable to remove the deny assignment on resource."""
     DELETE_FAILED = "deleteFailed"
     """Unable to delete the resource from Azure. The delete will be retried on the next stack
-    #: deployment, or can be deleted manually."""
+    deployment, or can be deleted manually."""
     NONE = "None"
     """No denyAssignments have been applied."""
 

@@ -3,7 +3,25 @@
 ## 1.16.0 (unreleased)
 
 ### Features Added
-
+- Add experimental support for working with Promptflow evaluators: `ml_client.evaluators`.
+- Many changes to the Connection entity class and its associated operations.
+- Workspace Connection `list`, `get`, and `create_or_update` operations now include an optional `populate_secrets` input, which causes the operations to try making a secondary call to fill in the returned connections' credential info if possible. Only works with api key-based credentials for now.
+- Many workspace connection subtypes added. The full list of subclasses is now:
+  - `AzureBlobStoreConnection`
+  - `AzureBlobStoreConnection`
+  - `MicrosoftOneLakeConnection`
+  - `AzureOpenAIConnection`
+  - `AzureAIServicesConnection`
+  - `AzureAISearchConnection`
+  - `AzureContentSafetyConnection`
+  - `AzureSpeechServicesConnection`
+  - `APIKeyConnection`
+  - `OpenAIConnection`
+  - `SerpConnection`
+  - `ServerlessConnection`
+- Many workspace connections only accept api keys or entra ids for credentials. Since Entra IDs require not inputs, these have been refactored to not required a full credential object. Instead they only accept an api_key as a top-level input, and default to an entra credential otherwise. Their YAML schemas have been similarly altered.
+- Client-side credential-type validation added for some workspace connection types.
+- Added new credential type: `AadCredentialConfiguration`
 - Renamed WorkspaceHub class as Hub.
 - Added Project entity class and YAML support.
 - Project and Hub operations supported by workspace operations.
@@ -15,6 +33,7 @@
 
 ### Breaking Changes
 
+- WorkspaceConnection and subclasses renamed to just Connection
 - Removed WorkspaceHubConfig entity, and renamed WorkspaceHub to Hub.
 - workspace_hub input of Workspace class hidden, renamed to hub_id, and re-surfaced in child class Project.
 - Removed Workspace Hub Operations from ML Client.

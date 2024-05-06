@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+import logging
 from typing import Any, Optional
 
 from opentelemetry.context import (
@@ -43,6 +44,9 @@ from azure.monitor.opentelemetry.exporter._connection_string_parser import Conne
 from azure.monitor.opentelemetry.exporter._utils import _ticks_since_dot_net_epoch, PeriodicTask
 
 
+_logger = logging.getLogger(__name__)
+
+
 _QUICKPULSE_METRIC_TEMPORALITIES = {
     # Use DELTA temporalities because we want to reset the counts every collection interval
     Counter: AggregationTemporality.DELTA,
@@ -77,8 +81,8 @@ class _QuickpulseExporter(MetricExporter):
         self._live_endpoint = parsed_connection_string.live_endpoint
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         # TODO: Support AADaudience (scope)/credentials
-
-        self._client = QuickpulseClient(host=self._live_endpoint)
+        # Pass `None` for now until swagger definition is fixed
+        self._client = QuickpulseClient(credential=None, endpoint=self._live_endpoint)  # type: ignore
         # TODO: Support redirect
 
         MetricExporter.__init__(
@@ -113,10 +117,11 @@ class _QuickpulseExporter(MetricExporter):
 
         token = attach(set_value(_SUPPRESS_INSTRUMENTATION_KEY, True))
         try:
-            post_response = self._client.post(  # type: ignore
+            post_response = self._client.publish(  # type: ignore
+                endpoint=self._live_endpoint,
                 monitoring_data_points=data_points,
                 ikey=self._instrumentation_key,
-                x_ms_qps_transmission_time=_ticks_since_dot_net_epoch(),
+                transmission_time=_ticks_since_dot_net_epoch(),
                 cls=_Response,
             )
             if not post_response:
@@ -128,7 +133,7 @@ class _QuickpulseExporter(MetricExporter):
                     # User leaving the live metrics page will be treated as an unsuccessful
                     result = MetricExportResult.FAILURE
         except Exception:  # pylint: disable=broad-except,invalid-name
-            # Errors are not reported and assumed as unsuccessful
+            _logger.exception("Exception occurred while publishing live metrics.")
             result = MetricExportResult.FAILURE
         finally:
             detach(token)
@@ -164,20 +169,25 @@ class _QuickpulseExporter(MetricExporter):
         """
 
 
-    def _ping(self, monitoring_data_point) -> Optional[_Response]:
+    def _ping(self, monitoring_data_point: MonitoringDataPoint) -> Optional[_Response]:
         ping_response = None
         token = attach(set_value(_SUPPRESS_INSTRUMENTATION_KEY, True))
         try:
-            ping_response = self._client.ping(  # type: ignore
+            ping_response = self._client.is_subscribed(  # type: ignore
+                endpoint=self._live_endpoint,
                 monitoring_data_point=monitoring_data_point,
                 ikey=self._instrumentation_key,
-                x_ms_qps_transmission_time=_ticks_since_dot_net_epoch(),
+                transmission_time=_ticks_since_dot_net_epoch(),
+                machine_name=monitoring_data_point.machine_name,
+                instance_name=monitoring_data_point.instance,
+                stream_id=monitoring_data_point.stream_id,
+                role_name=monitoring_data_point.role_name,
+                invariant_version=monitoring_data_point.invariant_version,
                 cls=_Response,
             )
             return ping_response  # type: ignore
         except HttpResponseError:
-            # Errors are not reported
-            pass
+            _logger.exception("Exception occurred while pinging live metrics.")
         detach(token)
         return ping_response
 
@@ -208,14 +218,12 @@ class _QuickpulseMetricReader(MetricReader):
         if _is_ping_state():
             # Send a ping if elapsed number of request meets the threshold
             if self._elapsed_num_seconds % _get_global_quickpulse_state().value == 0:
-                print("pinging...")
                 ping_response = self._exporter._ping(  # pylint: disable=protected-access
                     self._base_monitoring_data_point,
                 )
                 if ping_response:
                     header = ping_response._response_headers.get("x-ms-qps-subscribed")  # pylint: disable=protected-access
                     if header and header == "true":
-                        print("ping succeeded: switching to post")
                         # Switch state to post if subscribed
                         _set_global_quickpulse_state(_QuickpulseState.POST_SHORT)
                         self._elapsed_num_seconds = 0
@@ -223,7 +231,6 @@ class _QuickpulseMetricReader(MetricReader):
                         # Backoff after _LONG_PING_INTERVAL_SECONDS (60s) of no successful requests
                         if _get_global_quickpulse_state() is _QuickpulseState.PING_SHORT and \
                             self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS:
-                            print("ping failed for 60s, switching to pinging every 60s")
                             _set_global_quickpulse_state(_QuickpulseState.PING_LONG)
                 # TODO: Implement redirect
                 else:
@@ -231,10 +238,8 @@ class _QuickpulseMetricReader(MetricReader):
                     # Backoff after _LONG_PING_INTERVAL_SECONDS (60s) of no successful requests
                     if _get_global_quickpulse_state() is _QuickpulseState.PING_SHORT and \
                         self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS:
-                        print("ping failed for 60s, switching to pinging every 60s")
                         _set_global_quickpulse_state(_QuickpulseState.PING_LONG)
         else:
-            print("posting...")
             try:
                 self.collect()
             except _UnsuccessfulQuickPulsePostError:
@@ -242,7 +247,6 @@ class _QuickpulseMetricReader(MetricReader):
                 # Backoff after _POST_CANCEL_INTERVAL_SECONDS (20s) of no successful requests
                 # And resume pinging
                 if self._elapsed_num_seconds >= _POST_CANCEL_INTERVAL_SECONDS:
-                    print("post failed for 20s, switching to pinging")
                     _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
                     self._elapsed_num_seconds = 0
 

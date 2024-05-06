@@ -22,6 +22,7 @@ from ._models_py3 import DeploymentListResult
 from ._models_py3 import DeploymentOperation
 from ._models_py3 import DeploymentOperationProperties
 from ._models_py3 import DeploymentOperationsListResult
+from ._models_py3 import DeploymentParameter
 from ._models_py3 import DeploymentProperties
 from ._models_py3 import DeploymentPropertiesExtended
 from ._models_py3 import DeploymentValidateResult
@@ -39,6 +40,8 @@ from ._models_py3 import GenericResourceFilter
 from ._models_py3 import HttpMessage
 from ._models_py3 import Identity
 from ._models_py3 import IdentityUserAssignedIdentitiesValue
+from ._models_py3 import KeyVaultParameterReference
+from ._models_py3 import KeyVaultReference
 from ._models_py3 import OnErrorDeployment
 from ._models_py3 import OnErrorDeploymentExtended
 from ._models_py3 import Operation
@@ -125,6 +128,7 @@ __all__ = [
     "DeploymentOperation",
     "DeploymentOperationProperties",
     "DeploymentOperationsListResult",
+    "DeploymentParameter",
     "DeploymentProperties",
     "DeploymentPropertiesExtended",
     "DeploymentValidateResult",
@@ -142,6 +146,8 @@ __all__ = [
     "HttpMessage",
     "Identity",
     "IdentityUserAssignedIdentitiesValue",
+    "KeyVaultParameterReference",
+    "KeyVaultReference",
     "OnErrorDeployment",
     "OnErrorDeploymentExtended",
     "Operation",

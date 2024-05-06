@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -73,6 +73,7 @@ class PolicyDefinitionsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @overload
     async def create_or_update(
@@ -92,7 +93,6 @@ class PolicyDefinitionsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -100,18 +100,22 @@ class PolicyDefinitionsOperations:
 
     @overload
     async def create_or_update(
-        self, policy_definition_name: str, parameters: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        policy_definition_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.PolicyDefinition:
         """Creates or updates a policy definition.
 
         :param policy_definition_name: The name of the policy definition to create. Required.
         :type policy_definition_name: str
         :param parameters: The policy definition properties. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -119,19 +123,15 @@ class PolicyDefinitionsOperations:
 
     @distributed_trace_async
     async def create_or_update(
-        self, policy_definition_name: str, parameters: Union[_models.PolicyDefinition, IO], **kwargs: Any
+        self, policy_definition_name: str, parameters: Union[_models.PolicyDefinition, IO[bytes]], **kwargs: Any
     ) -> _models.PolicyDefinition:
         """Creates or updates a policy definition.
 
         :param policy_definition_name: The name of the policy definition to create. Required.
         :type policy_definition_name: str
-        :param parameters: The policy definition properties. Is either a PolicyDefinition type or a IO
-         type. Required.
-        :type parameters: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param parameters: The policy definition properties. Is either a PolicyDefinition type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition or IO[bytes]
         :return: PolicyDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -147,7 +147,7 @@ class PolicyDefinitionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-12-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PolicyDefinition] = kwargs.pop("cls", None)
 
@@ -159,23 +159,22 @@ class PolicyDefinitionsOperations:
         else:
             _json = self._serialize.body(parameters, "PolicyDefinition")
 
-        request = build_policy_definitions_create_or_update_request(
+        _request = build_policy_definitions_create_or_update_request(
             policy_definition_name=policy_definition_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -187,13 +186,9 @@ class PolicyDefinitionsOperations:
         deserialized = self._deserialize("PolicyDefinition", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -203,7 +198,6 @@ class PolicyDefinitionsOperations:
 
         :param policy_definition_name: The name of the policy definition to delete. Required.
         :type policy_definition_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -219,23 +213,22 @@ class PolicyDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_policy_definitions_delete_request(
+        _request = build_policy_definitions_delete_request(
             policy_definition_name=policy_definition_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -245,11 +238,7 @@ class PolicyDefinitionsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def get(self, policy_definition_name: str, **kwargs: Any) -> _models.PolicyDefinition:
@@ -257,7 +246,6 @@ class PolicyDefinitionsOperations:
 
         :param policy_definition_name: The name of the policy definition to get. Required.
         :type policy_definition_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -273,23 +261,22 @@ class PolicyDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-12-01"))
         cls: ClsType[_models.PolicyDefinition] = kwargs.pop("cls", None)
 
-        request = build_policy_definitions_get_request(
+        _request = build_policy_definitions_get_request(
             policy_definition_name=policy_definition_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -301,13 +288,9 @@ class PolicyDefinitionsOperations:
         deserialized = self._deserialize("PolicyDefinition", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_built_in(self, policy_definition_name: str, **kwargs: Any) -> _models.PolicyDefinition:
@@ -315,7 +298,6 @@ class PolicyDefinitionsOperations:
 
         :param policy_definition_name: The name of the built in policy definition to get. Required.
         :type policy_definition_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -331,22 +313,21 @@ class PolicyDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-12-01"))
         cls: ClsType[_models.PolicyDefinition] = kwargs.pop("cls", None)
 
-        request = build_policy_definitions_get_built_in_request(
+        _request = build_policy_definitions_get_built_in_request(
             policy_definition_name=policy_definition_name,
             api_version=api_version,
-            template_url=self.get_built_in.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -358,11 +339,9 @@ class PolicyDefinitionsOperations:
         deserialized = self._deserialize("PolicyDefinition", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_built_in.metadata = {"url": "/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}"}
+        return deserialized  # type: ignore
 
     @overload
     async def create_or_update_at_management_group(
@@ -385,7 +364,6 @@ class PolicyDefinitionsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -396,7 +374,7 @@ class PolicyDefinitionsOperations:
         self,
         policy_definition_name: str,
         management_group_id: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -408,11 +386,10 @@ class PolicyDefinitionsOperations:
         :param management_group_id: The ID of the management group. Required.
         :type management_group_id: str
         :param parameters: The policy definition properties. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -423,7 +400,7 @@ class PolicyDefinitionsOperations:
         self,
         policy_definition_name: str,
         management_group_id: str,
-        parameters: Union[_models.PolicyDefinition, IO],
+        parameters: Union[_models.PolicyDefinition, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicyDefinition:
         """Creates or updates a policy definition at management group level.
@@ -432,13 +409,9 @@ class PolicyDefinitionsOperations:
         :type policy_definition_name: str
         :param management_group_id: The ID of the management group. Required.
         :type management_group_id: str
-        :param parameters: The policy definition properties. Is either a PolicyDefinition type or a IO
-         type. Required.
-        :type parameters: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param parameters: The policy definition properties. Is either a PolicyDefinition type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition or IO[bytes]
         :return: PolicyDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -454,7 +427,7 @@ class PolicyDefinitionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-12-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PolicyDefinition] = kwargs.pop("cls", None)
 
@@ -466,23 +439,22 @@ class PolicyDefinitionsOperations:
         else:
             _json = self._serialize.body(parameters, "PolicyDefinition")
 
-        request = build_policy_definitions_create_or_update_at_management_group_request(
+        _request = build_policy_definitions_create_or_update_at_management_group_request(
             policy_definition_name=policy_definition_name,
             management_group_id=management_group_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update_at_management_group.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -494,13 +466,9 @@ class PolicyDefinitionsOperations:
         deserialized = self._deserialize("PolicyDefinition", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_or_update_at_management_group.metadata = {
-        "url": "/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete_at_management_group(  # pylint: disable=inconsistent-return-statements
@@ -512,7 +480,6 @@ class PolicyDefinitionsOperations:
         :type policy_definition_name: str
         :param management_group_id: The ID of the management group. Required.
         :type management_group_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -528,23 +495,22 @@ class PolicyDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_policy_definitions_delete_at_management_group_request(
+        _request = build_policy_definitions_delete_at_management_group_request(
             policy_definition_name=policy_definition_name,
             management_group_id=management_group_id,
             api_version=api_version,
-            template_url=self.delete_at_management_group.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -554,11 +520,7 @@ class PolicyDefinitionsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete_at_management_group.metadata = {
-        "url": "/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def get_at_management_group(
@@ -570,7 +532,6 @@ class PolicyDefinitionsOperations:
         :type policy_definition_name: str
         :param management_group_id: The ID of the management group. Required.
         :type management_group_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -586,23 +547,22 @@ class PolicyDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-12-01"))
         cls: ClsType[_models.PolicyDefinition] = kwargs.pop("cls", None)
 
-        request = build_policy_definitions_get_at_management_group_request(
+        _request = build_policy_definitions_get_at_management_group_request(
             policy_definition_name=policy_definition_name,
             management_group_id=management_group_id,
             api_version=api_version,
-            template_url=self.get_at_management_group.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -614,19 +574,14 @@ class PolicyDefinitionsOperations:
         deserialized = self._deserialize("PolicyDefinition", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_at_management_group.metadata = {
-        "url": "/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list(self, **kwargs: Any) -> AsyncIterable["_models.PolicyDefinition"]:
         """Gets all the policy definitions for a subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyDefinition or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition]
@@ -635,7 +590,7 @@ class PolicyDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-12-01"))
         cls: ClsType[_models.PolicyDefinitionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -649,15 +604,14 @@ class PolicyDefinitionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_policy_definitions_list_request(
+                _request = build_policy_definitions_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -668,14 +622,14 @@ class PolicyDefinitionsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("PolicyDefinitionListResult", pipeline_response)
@@ -685,11 +639,11 @@ class PolicyDefinitionsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -700,14 +654,11 @@ class PolicyDefinitionsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyDefinitions"}
 
     @distributed_trace
     def list_built_in(self, **kwargs: Any) -> AsyncIterable["_models.PolicyDefinition"]:
         """Gets all the built in policy definitions.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyDefinition or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition]
@@ -716,7 +667,7 @@ class PolicyDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-12-01"))
         cls: ClsType[_models.PolicyDefinitionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -730,14 +681,13 @@ class PolicyDefinitionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_policy_definitions_list_built_in_request(
+                _request = build_policy_definitions_list_built_in_request(
                     api_version=api_version,
-                    template_url=self.list_built_in.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -748,14 +698,14 @@ class PolicyDefinitionsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("PolicyDefinitionListResult", pipeline_response)
@@ -765,11 +715,11 @@ class PolicyDefinitionsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -780,8 +730,6 @@ class PolicyDefinitionsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_built_in.metadata = {"url": "/providers/Microsoft.Authorization/policyDefinitions"}
 
     @distributed_trace
     def list_by_management_group(
@@ -791,7 +739,6 @@ class PolicyDefinitionsOperations:
 
         :param management_group_id: The ID of the management group. Required.
         :type management_group_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyDefinition or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition]
@@ -800,7 +747,7 @@ class PolicyDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-12-01"))
         cls: ClsType[_models.PolicyDefinitionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -814,15 +761,14 @@ class PolicyDefinitionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_policy_definitions_list_by_management_group_request(
+                _request = build_policy_definitions_list_by_management_group_request(
                     management_group_id=management_group_id,
                     api_version=api_version,
-                    template_url=self.list_by_management_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -833,14 +779,14 @@ class PolicyDefinitionsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("PolicyDefinitionListResult", pipeline_response)
@@ -850,11 +796,11 @@ class PolicyDefinitionsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -865,10 +811,6 @@ class PolicyDefinitionsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_management_group.metadata = {
-        "url": "/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policyDefinitions"
-    }
 
 
 class PolicyAssignmentsOperations:
@@ -889,6 +831,7 @@ class PolicyAssignmentsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace_async
     async def delete(
@@ -900,7 +843,6 @@ class PolicyAssignmentsOperations:
         :type scope: str
         :param policy_assignment_name: The name of the policy assignment to delete. Required.
         :type policy_assignment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyAssignment or None or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyAssignment or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -916,23 +858,22 @@ class PolicyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-12-01"))
         cls: ClsType[Optional[_models.PolicyAssignment]] = kwargs.pop("cls", None)
 
-        request = build_policy_assignments_delete_request(
+        _request = build_policy_assignments_delete_request(
             scope=scope,
             policy_assignment_name=policy_assignment_name,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -946,11 +887,9 @@ class PolicyAssignmentsOperations:
             deserialized = self._deserialize("PolicyAssignment", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    delete.metadata = {"url": "/{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}"}
+        return deserialized  # type: ignore
 
     @overload
     async def create(
@@ -976,7 +915,6 @@ class PolicyAssignmentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyAssignment or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -987,7 +925,7 @@ class PolicyAssignmentsOperations:
         self,
         scope: str,
         policy_assignment_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1002,11 +940,10 @@ class PolicyAssignmentsOperations:
         :param policy_assignment_name: The name of the policy assignment. Required.
         :type policy_assignment_name: str
         :param parameters: Parameters for the policy assignment. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyAssignment or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1014,7 +951,11 @@ class PolicyAssignmentsOperations:
 
     @distributed_trace_async
     async def create(
-        self, scope: str, policy_assignment_name: str, parameters: Union[_models.PolicyAssignment, IO], **kwargs: Any
+        self,
+        scope: str,
+        policy_assignment_name: str,
+        parameters: Union[_models.PolicyAssignment, IO[bytes]],
+        **kwargs: Any
     ) -> _models.PolicyAssignment:
         """Creates a policy assignment.
 
@@ -1026,12 +967,8 @@ class PolicyAssignmentsOperations:
         :param policy_assignment_name: The name of the policy assignment. Required.
         :type policy_assignment_name: str
         :param parameters: Parameters for the policy assignment. Is either a PolicyAssignment type or a
-         IO type. Required.
-        :type parameters: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyAssignment or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyAssignment or IO[bytes]
         :return: PolicyAssignment or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1047,7 +984,7 @@ class PolicyAssignmentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-12-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PolicyAssignment] = kwargs.pop("cls", None)
 
@@ -1059,23 +996,22 @@ class PolicyAssignmentsOperations:
         else:
             _json = self._serialize.body(parameters, "PolicyAssignment")
 
-        request = build_policy_assignments_create_request(
+        _request = build_policy_assignments_create_request(
             scope=scope,
             policy_assignment_name=policy_assignment_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1087,11 +1023,9 @@ class PolicyAssignmentsOperations:
         deserialized = self._deserialize("PolicyAssignment", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create.metadata = {"url": "/{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get(self, scope: str, policy_assignment_name: str, **kwargs: Any) -> _models.PolicyAssignment:
@@ -1101,7 +1035,6 @@ class PolicyAssignmentsOperations:
         :type scope: str
         :param policy_assignment_name: The name of the policy assignment to get. Required.
         :type policy_assignment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyAssignment or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1117,23 +1050,22 @@ class PolicyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-12-01"))
         cls: ClsType[_models.PolicyAssignment] = kwargs.pop("cls", None)
 
-        request = build_policy_assignments_get_request(
+        _request = build_policy_assignments_get_request(
             scope=scope,
             policy_assignment_name=policy_assignment_name,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1145,11 +1077,9 @@ class PolicyAssignmentsOperations:
         deserialized = self._deserialize("PolicyAssignment", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {"url": "/{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_for_resource_group(
@@ -1162,7 +1092,6 @@ class PolicyAssignmentsOperations:
         :type resource_group_name: str
         :param filter: The filter to apply on the operation. Default value is None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyAssignment or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2016_12_01.models.PolicyAssignment]
@@ -1171,7 +1100,7 @@ class PolicyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-12-01"))
         cls: ClsType[_models.PolicyAssignmentListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1185,17 +1114,16 @@ class PolicyAssignmentsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_policy_assignments_list_for_resource_group_request(
+                _request = build_policy_assignments_list_for_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     api_version=api_version,
-                    template_url=self.list_for_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1206,14 +1134,14 @@ class PolicyAssignmentsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("PolicyAssignmentListResult", pipeline_response)
@@ -1223,11 +1151,11 @@ class PolicyAssignmentsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1238,10 +1166,6 @@ class PolicyAssignmentsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_for_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/policyAssignments"
-    }
 
     @distributed_trace
     def list_for_resource(
@@ -1269,7 +1193,6 @@ class PolicyAssignmentsOperations:
         :type resource_name: str
         :param filter: The filter to apply on the operation. Default value is None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyAssignment or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2016_12_01.models.PolicyAssignment]
@@ -1278,7 +1201,7 @@ class PolicyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-12-01"))
         cls: ClsType[_models.PolicyAssignmentListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1292,7 +1215,7 @@ class PolicyAssignmentsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_policy_assignments_list_for_resource_request(
+                _request = build_policy_assignments_list_for_resource_request(
                     resource_group_name=resource_group_name,
                     resource_provider_namespace=resource_provider_namespace,
                     parent_resource_path=parent_resource_path,
@@ -1301,12 +1224,11 @@ class PolicyAssignmentsOperations:
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     api_version=api_version,
-                    template_url=self.list_for_resource.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1317,14 +1239,14 @@ class PolicyAssignmentsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("PolicyAssignmentListResult", pipeline_response)
@@ -1334,11 +1256,11 @@ class PolicyAssignmentsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1350,17 +1272,12 @@ class PolicyAssignmentsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_for_resource.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/policyAssignments"
-    }
-
     @distributed_trace
     def list(self, filter: Optional[str] = None, **kwargs: Any) -> AsyncIterable["_models.PolicyAssignment"]:
         """Gets all the policy assignments for a subscription.
 
         :param filter: The filter to apply on the operation. Default value is None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyAssignment or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2016_12_01.models.PolicyAssignment]
@@ -1369,7 +1286,7 @@ class PolicyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-12-01"))
         cls: ClsType[_models.PolicyAssignmentListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1383,16 +1300,15 @@ class PolicyAssignmentsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_policy_assignments_list_request(
+                _request = build_policy_assignments_list_request(
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1403,14 +1319,14 @@ class PolicyAssignmentsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("PolicyAssignmentListResult", pipeline_response)
@@ -1420,11 +1336,11 @@ class PolicyAssignmentsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1435,8 +1351,6 @@ class PolicyAssignmentsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyAssignments"}
 
     @distributed_trace_async
     async def delete_by_id(self, policy_assignment_id: str, **kwargs: Any) -> _models.PolicyAssignment:
@@ -1452,7 +1366,6 @@ class PolicyAssignmentsOperations:
          '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policy-assignment-name}'.
          Required.
         :type policy_assignment_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyAssignment or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1468,22 +1381,21 @@ class PolicyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-12-01"))
         cls: ClsType[_models.PolicyAssignment] = kwargs.pop("cls", None)
 
-        request = build_policy_assignments_delete_by_id_request(
+        _request = build_policy_assignments_delete_by_id_request(
             policy_assignment_id=policy_assignment_id,
             api_version=api_version,
-            template_url=self.delete_by_id.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1495,11 +1407,9 @@ class PolicyAssignmentsOperations:
         deserialized = self._deserialize("PolicyAssignment", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    delete_by_id.metadata = {"url": "/{policyAssignmentId}"}
+        return deserialized  # type: ignore
 
     @overload
     async def create_by_id(
@@ -1529,7 +1439,6 @@ class PolicyAssignmentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyAssignment or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1537,7 +1446,7 @@ class PolicyAssignmentsOperations:
 
     @overload
     async def create_by_id(
-        self, policy_assignment_id: str, parameters: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, policy_assignment_id: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.PolicyAssignment:
         """Creates a policy assignment by ID.
 
@@ -1554,11 +1463,10 @@ class PolicyAssignmentsOperations:
          Required.
         :type policy_assignment_id: str
         :param parameters: Parameters for policy assignment. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyAssignment or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1566,7 +1474,7 @@ class PolicyAssignmentsOperations:
 
     @distributed_trace_async
     async def create_by_id(
-        self, policy_assignment_id: str, parameters: Union[_models.PolicyAssignment, IO], **kwargs: Any
+        self, policy_assignment_id: str, parameters: Union[_models.PolicyAssignment, IO[bytes]], **kwargs: Any
     ) -> _models.PolicyAssignment:
         """Creates a policy assignment by ID.
 
@@ -1582,13 +1490,9 @@ class PolicyAssignmentsOperations:
          '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policy-assignment-name}'.
          Required.
         :type policy_assignment_id: str
-        :param parameters: Parameters for policy assignment. Is either a PolicyAssignment type or a IO
-         type. Required.
-        :type parameters: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyAssignment or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param parameters: Parameters for policy assignment. Is either a PolicyAssignment type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyAssignment or IO[bytes]
         :return: PolicyAssignment or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1604,7 +1508,7 @@ class PolicyAssignmentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-12-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PolicyAssignment] = kwargs.pop("cls", None)
 
@@ -1616,22 +1520,21 @@ class PolicyAssignmentsOperations:
         else:
             _json = self._serialize.body(parameters, "PolicyAssignment")
 
-        request = build_policy_assignments_create_by_id_request(
+        _request = build_policy_assignments_create_by_id_request(
             policy_assignment_id=policy_assignment_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_by_id.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1643,11 +1546,9 @@ class PolicyAssignmentsOperations:
         deserialized = self._deserialize("PolicyAssignment", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_by_id.metadata = {"url": "/{policyAssignmentId}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_by_id(self, policy_assignment_id: str, **kwargs: Any) -> _models.PolicyAssignment:
@@ -1663,7 +1564,6 @@ class PolicyAssignmentsOperations:
          '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policy-assignment-name}'.
          Required.
         :type policy_assignment_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyAssignment or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1679,22 +1579,21 @@ class PolicyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-12-01"))
         cls: ClsType[_models.PolicyAssignment] = kwargs.pop("cls", None)
 
-        request = build_policy_assignments_get_by_id_request(
+        _request = build_policy_assignments_get_by_id_request(
             policy_assignment_id=policy_assignment_id,
             api_version=api_version,
-            template_url=self.get_by_id.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1706,8 +1605,6 @@ class PolicyAssignmentsOperations:
         deserialized = self._deserialize("PolicyAssignment", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_by_id.metadata = {"url": "/{policyAssignmentId}"}
+        return deserialized  # type: ignore

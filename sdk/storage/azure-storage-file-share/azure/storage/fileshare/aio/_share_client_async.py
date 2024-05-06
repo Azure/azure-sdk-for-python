@@ -330,7 +330,9 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         later deleted during garbage collection.
 
         :param delete_snapshots:
-            Indicates if snapshots are to be deleted.
+            Indicates if snapshots are to be deleted. If "True" or enum "include", snapshots will
+            be deleted (but not include leased). To include leased snapshots, specify the "include-leased"
+            enum.
         :type delete_snapshots:
             Optional[Union[bool, Literal['include', 'include-leased']]]
         :keyword int timeout:
