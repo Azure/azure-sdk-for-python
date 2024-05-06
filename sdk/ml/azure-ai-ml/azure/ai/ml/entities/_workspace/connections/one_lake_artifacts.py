@@ -57,6 +57,5 @@ class OneLakeConnectionArtifact:
         # Not sure what this pylint complaint was about, probably due to the polymorphic
         # tricks at play. Disabling since testing indicates no issue.
         # pylint: disable-next=missing-kwoa
-        import pdb; pdb.set_trace()
         res: dict = OneLakeArtifactSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
