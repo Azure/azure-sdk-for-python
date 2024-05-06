@@ -703,10 +703,11 @@ def _send_recording_options_request(parameters: Dict, headers: Optional[Dict] = 
     if is_live_and_not_recording():
         return
 
-    headers_to_send = {}
-    for key in headers:
-        if headers[key] is not None:
-            headers_to_send[key] = headers[key]
+    headers_to_send = {"Content-Type": "application/json"}
+    if headers:
+        for key in headers:
+            if headers[key] is not None:
+                headers_to_send[key] = headers[key]
 
     http_client = get_http_client()
     http_client.request(
@@ -752,9 +753,10 @@ def _send_sanitizer_request(sanitizer: str, parameters: Dict, headers: Optional[
         return
 
     headers_to_send = {"x-abstraction-identifier": sanitizer, "Content-Type": "application/json"}
-    for key in headers:
-        if headers[key] is not None:
-            headers_to_send[key] = headers[key]
+    if headers:
+        for key in headers:
+            if headers[key] is not None:
+                headers_to_send[key] = headers[key]
 
     http_client = get_http_client()
     http_client.request(
@@ -778,9 +780,10 @@ def _send_transform_request(transform: str, parameters: Dict, headers: Optional[
         return
 
     headers_to_send = {"x-abstraction-identifier": transform, "Content-Type": "application/json"}
-    for key in headers:
-        if headers[key] is not None:
-            headers_to_send[key] = headers[key]
+    if headers:
+        for key in headers:
+            if headers[key] is not None:
+                headers_to_send[key] = headers[key]
 
     http_client = get_http_client()
     http_client.request(
