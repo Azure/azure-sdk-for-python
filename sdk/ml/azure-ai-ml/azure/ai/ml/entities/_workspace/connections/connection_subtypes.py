@@ -524,8 +524,6 @@ class AzureContentSafetyConnection(ApiOrAadConnection):
     :type tags: dict
     """
 
-    # kinds AzureOpenAI", "ContentSafety", and "Speech"
-
     def __init__(
         self,
         **kwargs: Any,
