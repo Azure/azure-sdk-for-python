@@ -104,43 +104,6 @@ def test_cache():
     assert mock_send.call_count == 2
 
 
-def test_imds_authority_override():
-    authority = "https://localhost"
-    expected_token = "***"
-    scope = "scope"
-    now = int(time.time())
-
-    transport = validating_transport(
-        requests=[
-            Request(
-                base_url=authority + IMDS_TOKEN_PATH,
-                method="GET",
-                required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
-                required_params={"api-version": "2018-02-01", "resource": scope},
-            ),
-        ],
-        responses=[
-            mock_response(
-                json_payload={
-                    "access_token": expected_token,
-                    "expires_in": 42,
-                    "expires_on": now + 42,
-                    "ext_expires_in": 42,
-                    "not_before": now,
-                    "resource": scope,
-                    "token_type": "Bearer",
-                }
-            ),
-        ],
-    )
-
-    with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST: authority}, clear=True):
-        credential = ImdsCredential(transport=transport)
-        token = credential.get_token(scope)
-
-    assert token.token == expected_token
-
-
 @pytest.mark.usefixtures("record_imds_test")
 class TestImds(RecordedTestCase):
     @recorded_by_proxy

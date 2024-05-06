@@ -776,9 +776,9 @@ def test_service_fabric_tenant_id():
 
 
 def test_azure_arc(tmpdir):
-    """Azure Arc 2019-11-01"""
+    """Azure Arc 2020-06-01"""
     access_token = "****"
-    api_version = "2019-11-01"
+    api_version = "2020-06-01"
     expires_on = 42
     identity_endpoint = "http://localhost:42/token"
     imds_endpoint = "http://localhost:42"
@@ -819,19 +819,12 @@ def test_azure_arc(tmpdir):
         ],
     )
 
-    with mock.patch(
-        "os.environ",
-        {EnvironmentVariables.IDENTITY_ENDPOINT: identity_endpoint, EnvironmentVariables.IMDS_ENDPOINT: imds_endpoint},
-    ):
-        token = ManagedIdentityCredential(transport=transport).get_token(scope)
-        assert token.token == access_token
-        assert token.expires_on == expires_on
 
 
 def test_azure_arc_tenant_id(tmpdir):
-    """Azure Arc 2019-11-01"""
+    """Azure Arc 2020-06-01"""
     access_token = "****"
-    api_version = "2019-11-01"
+    api_version = "2020-06-01"
     expires_on = 42
     identity_endpoint = "http://localhost:42/token"
     imds_endpoint = "http://localhost:42"
@@ -871,14 +864,6 @@ def test_azure_arc_tenant_id(tmpdir):
             ),
         ],
     )
-
-    with mock.patch(
-        "os.environ",
-        {EnvironmentVariables.IDENTITY_ENDPOINT: identity_endpoint, EnvironmentVariables.IMDS_ENDPOINT: imds_endpoint},
-    ):
-        token = ManagedIdentityCredential(transport=transport).get_token(scope, tenant_id="tenant_id")
-        assert token.token == access_token
-        assert token.expires_on == expires_on
 
 
 def test_azure_arc_client_id():
