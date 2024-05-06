@@ -28,21 +28,18 @@ USAGE:
 """
 import asyncio
 import os
-import sys
 
 from dotenv import find_dotenv, load_dotenv
 
-# To import utility files in ../shared folder
-sys.path.insert(1, os.path.join(sys.path[0], '..'))
-
-from shared.constants import (  # noqa: E402
+from shared.constants import (
     CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY,
     CONFIGURATION_NAME_FACE_API_ENDPOINT,
     DEFAULT_FACE_API_ACCOUNT_KEY,
     DEFAULT_FACE_API_ENDPOINT,
-    DEFAULT_IMAGE_FILE,
+    TestImages,
 )
-from shared.helpers import beautify_json, get_logger  # noqa: E402
+from shared import helpers
+from shared.helpers import beautify_json, get_logger
 
 
 class FaceAuthentication():
@@ -59,14 +56,9 @@ class FaceAuthentication():
 
         self.logger.info("Instantiate a FaceClient using an api key")
         async with FaceClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as face_client:
-            from pathlib import Path
-
-            sample_file_path = Path(__file__).resolve().parent / ("../" + DEFAULT_IMAGE_FILE)
-            with open(sample_file_path, "rb") as fd:
-                file_content = fd.read()
-
+            sample_file_path = helpers.get_image_path(TestImages.DEFAULT_IMAGE_FILE)
             result = await face_client.detect(
-                file_content,
+                helpers.read_file_content(sample_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
                 return_face_id=False)
@@ -84,15 +76,9 @@ class FaceAuthentication():
         self.logger.info("Instantiate a FaceClient using a TokenCredential")
         async with DefaultAzureCredential() as credential, \
                 FaceClient(endpoint=self.endpoint, credential=credential) as face_client:
-
-            from pathlib import Path
-
-            sample_file_path = Path(__file__).resolve().parent / ("../" + DEFAULT_IMAGE_FILE)
-            with open(sample_file_path, "rb") as fd:
-                file_content = fd.read()
-
+            sample_file_path = helpers.get_image_path(TestImages.DEFAULT_IMAGE_FILE)
             result = await face_client.detect(
-                file_content,
+                helpers.read_file_content(sample_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
                 return_face_id=False)

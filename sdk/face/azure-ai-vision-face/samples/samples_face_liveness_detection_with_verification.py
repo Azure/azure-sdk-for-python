@@ -35,8 +35,9 @@ from shared.constants import (
     CONFIGURATION_NAME_FACE_API_ENDPOINT,
     DEFAULT_FACE_API_ACCOUNT_KEY,
     DEFAULT_FACE_API_ENDPOINT,
-    DEFAULT_IMAGE_FILE,
+    TestImages,
 )
+from shared import helpers
 from shared.helpers import beautify_json, get_logger
 
 
@@ -76,11 +77,7 @@ class DetectLivenessWithVerify():
             self.wait_for_liveness_check_request()
 
             # 2. Create a session with verify image.
-            from pathlib import Path
-
-            verify_image_file_path = Path(__file__).resolve().parent / DEFAULT_IMAGE_FILE
-            with open(verify_image_file_path, "rb") as fd:
-                file_content = fd.read()
+            verify_image_file_path = helpers.get_image_path(TestImages.DEFAULT_IMAGE_FILE)
 
             self.logger.info("Create a new liveness with verify session with verify image.")
             created_session = face_session_client.create_liveness_with_verify_session(
@@ -89,7 +86,7 @@ class DetectLivenessWithVerify():
                     device_correlation_id=str(uuid.uuid4()),
                     send_results_to_client=False,
                     auth_token_time_to_live_in_seconds=60),
-                verify_image=file_content)
+                verify_image=helpers.read_file_content(verify_image_file_path))
             self.logger.info(f"Result: {beautify_json(created_session.as_dict())}")
 
             # 3. Provide session authorization token to mobile application.

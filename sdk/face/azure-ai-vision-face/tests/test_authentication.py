@@ -5,16 +5,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-from pathlib import Path
-
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from azure.ai.vision.face.models import (
         FaceDetectionModel, FaceRecognitionModel, FaceAttributeTypeDetection03, FaceAttributeTypeRecognition04)
 
 from preparers import FaceClientPreparer, FacePreparer
-from _shared.constants import IMAGE_DETECTION_1
+from _shared.constants import TestImages
+from _shared import helpers
 
 
 class TestAuthentication(AzureRecordedTestCase):
@@ -22,12 +20,9 @@ class TestAuthentication(AzureRecordedTestCase):
     @FaceClientPreparer()
     @recorded_by_proxy
     def test_face_client_api_key_authentication(self, client, **kwargs):
-        sample_file_path = Path(__file__).resolve().parent / IMAGE_DETECTION_1
-        with open(sample_file_path, "rb") as fd:
-            file_content = fd.read()
-
+        sample_file_path = helpers.get_image_path(TestImages.IMAGE_DETECTION_1)
         result = client.detect(
-            file_content,
+            helpers.read_file_content(sample_file_path),
             detection_model=FaceDetectionModel.DETECTION_03,
             recognition_model=FaceRecognitionModel.RECOGNITION_04,
             return_face_id=False,

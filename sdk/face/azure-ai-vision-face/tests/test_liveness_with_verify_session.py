@@ -5,7 +5,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from pathlib import Path
 import pytest
 import uuid
 
@@ -23,7 +22,8 @@ from _shared.asserter import (
     _assert_liveness_session_audit_entry_is_valid,
     _assert_liveness_with_verify_image_not_empty,
 )
-from _shared.constants import IMAGE_DETECTION_1
+from _shared import helpers
+from _shared.constants import TestImages
 
 
 class TestLivenessWithVerifySession(AzureRecordedTestCase):
@@ -62,16 +62,14 @@ class TestLivenessWithVerifySession(AzureRecordedTestCase):
         recorded_device_correlation_id = variables.setdefault("deviceCorrelationId", str(uuid.uuid4()))
 
         # verify_image
-        sample_file_path = Path(__file__).resolve().parent / IMAGE_DETECTION_1
-        with open(sample_file_path, "rb") as fd:
-            file_content = fd.read()
+        sample_file_path = helpers.get_image_path(TestImages.IMAGE_DETECTION_1)
 
         # Test `create session` operation
         created_session = client.create_liveness_with_verify_session(
             CreateLivenessSessionContent(
                 liveness_operation_mode=LivenessOperationMode.PASSIVE,
                 device_correlation_id=recorded_device_correlation_id),
-            verify_image=file_content)
+            verify_image=helpers.read_file_content(sample_file_path))
 
         _assert_is_string_and_not_empty(created_session.session_id)
         _assert_is_string_and_not_empty(created_session.auth_token)

@@ -27,9 +27,9 @@ from shared.constants import (
     CONFIGURATION_NAME_FACE_API_ENDPOINT,
     DEFAULT_FACE_API_ACCOUNT_KEY,
     DEFAULT_FACE_API_ENDPOINT,
-    DEFAULT_IMAGE_URL,
-    IMAGE_DETECTION_5,
+    TestImages,
 )
+from shared import helpers
 from shared.helpers import beautify_json, get_logger
 
 
@@ -47,14 +47,9 @@ class DetectFaces():
                 FaceDetectionModel, FaceRecognitionModel, FaceAttributeTypeDetection03, FaceAttributeTypeRecognition04)
 
         with FaceClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as face_client:
-            from pathlib import Path
-
-            sample_file_path = Path(__file__).resolve().parent / IMAGE_DETECTION_5
-            with open(sample_file_path, "rb") as fd:
-                file_content = fd.read()
-
+            sample_file_path = helpers.get_image_path(TestImages.IMAGE_DETECTION_5)
             result = face_client.detect(
-                file_content,
+                helpers.read_file_content(sample_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
                 return_face_id=True,
@@ -78,7 +73,7 @@ class DetectFaces():
                 FaceDetectionModel, FaceRecognitionModel, FaceAttributeTypeDetection01)
 
         with FaceClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as face_client:
-            sample_url = DEFAULT_IMAGE_URL
+            sample_url = TestImages.DEFAULT_IMAGE_URL
             result = face_client.detect_from_url(
                 url=sample_url,
                 detection_model=FaceDetectionModel.DETECTION_01,

@@ -20,21 +20,18 @@ USAGE:
 """
 import asyncio
 import os
-import sys
 
 from dotenv import find_dotenv, load_dotenv
 
-# To import utility files in ../shared folder
-sys.path.insert(1, os.path.join(sys.path[0], '..'))
-
-from shared.constants import (  # noqa: E402
+from shared.constants import (
     CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY,
     CONFIGURATION_NAME_FACE_API_ENDPOINT,
     DEFAULT_FACE_API_ACCOUNT_KEY,
     DEFAULT_FACE_API_ENDPOINT,
-    IMAGE_NINE_FACES,
+    TestImages,
 )
-from shared.helpers import beautify_json, get_logger  # noqa: E402
+from shared import helpers
+from shared.helpers import beautify_json, get_logger
 
 
 class GroupFaces():
@@ -50,14 +47,9 @@ class GroupFaces():
         from azure.ai.vision.face.models import FaceDetectionModel, FaceRecognitionModel
 
         async with FaceClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as face_client:
-            from pathlib import Path
-
-            sample_file_path = Path(__file__).resolve().parent / ("../" + IMAGE_NINE_FACES)
-            with open(sample_file_path, "rb") as fd:
-                file_content = fd.read()
-
+            sample_file_path = helpers.get_image_path(TestImages.IMAGE_NINE_FACES)
             detect_result = await face_client.detect(
-                file_content,
+                helpers.read_file_content(sample_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
                 return_face_id=True)
