@@ -2692,7 +2692,7 @@ class DiagnosticsProfile(_serialization.Model):
     """Specifies the boot diagnostic settings state. Minimum api-version: 2015-06-15.
 
     :ivar boot_diagnostics: Boot Diagnostics is a debugging feature which allows you to view
-     Console Output and Screenshot to diagnose VM status. **NOTE**\ : If storageUri is being
+     Console Output and Screenshot to diagnose VM status. **NOTE**\\ : If storageUri is being
      specified then ensure that the storage account is in the same region and subscription as the
      VM. You can easily view the output of your console log. Azure also enables you to see a
      screenshot of the VM from the hypervisor.
@@ -2706,7 +2706,7 @@ class DiagnosticsProfile(_serialization.Model):
     def __init__(self, *, boot_diagnostics: Optional["_models.BootDiagnostics"] = None, **kwargs: Any) -> None:
         """
         :keyword boot_diagnostics: Boot Diagnostics is a debugging feature which allows you to view
-         Console Output and Screenshot to diagnose VM status. **NOTE**\ : If storageUri is being
+         Console Output and Screenshot to diagnose VM status. **NOTE**\\ : If storageUri is being
          specified then ensure that the storage account is in the same region and subscription as the
          VM. You can easily view the output of your console log. Azure also enables you to see a
          screenshot of the VM from the hypervisor.
@@ -3114,9 +3114,9 @@ class HardwareProfile(_serialization.Model):
      deprecated and will be removed by December 23rd 2023. The recommended way to get the list of
      available sizes is using these APIs: `List all available virtual machine sizes in an
      availability set
-     <https://docs.microsoft.com/rest/api/compute/availabilitysets/listavailablesizes>`_\ , `List
+     <https://docs.microsoft.com/rest/api/compute/availabilitysets/listavailablesizes>`_\\ , `List
      all available virtual machine sizes in a region
-     <https://docs.microsoft.com/rest/api/compute/resourceskus/list>`_\ , `List all available
+     <https://docs.microsoft.com/rest/api/compute/resourceskus/list>`_\\ , `List all available
      virtual machine sizes for resizing
      <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. For more
      information about virtual machine sizes, see `Sizes for virtual machines
@@ -3181,9 +3181,9 @@ class HardwareProfile(_serialization.Model):
          deprecated and will be removed by December 23rd 2023. The recommended way to get the list of
          available sizes is using these APIs: `List all available virtual machine sizes in an
          availability set
-         <https://docs.microsoft.com/rest/api/compute/availabilitysets/listavailablesizes>`_\ , `List
+         <https://docs.microsoft.com/rest/api/compute/availabilitysets/listavailablesizes>`_\\ , `List
          all available virtual machine sizes in a region
-         <https://docs.microsoft.com/rest/api/compute/resourceskus/list>`_\ , `List all available
+         <https://docs.microsoft.com/rest/api/compute/resourceskus/list>`_\\ , `List all available
          virtual machine sizes for resizing
          <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. For more
          information about virtual machine sizes, see `Sizes for virtual machines
@@ -5108,7 +5108,7 @@ class OSProfile(_serialization.Model):
      characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
      :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
      fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-     digit :code:`<br>` Has a special character (Regex match [\W_]) :code:`<br>`:code:`<br>`
+     digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
      **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
      "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
      resetting the password, see `How to reset the Remote Desktop service or its login password in a
@@ -5199,7 +5199,7 @@ class OSProfile(_serialization.Model):
          characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
          :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
          fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-         digit :code:`<br>` Has a special character (Regex match [\W_]) :code:`<br>`:code:`<br>`
+         digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
          **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
          "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
          resetting the password, see `How to reset the Remote Desktop service or its login password in a
@@ -5260,7 +5260,7 @@ class OSProfileProvisioningData(_serialization.Model):
      characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
      :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
      fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-     digit :code:`<br>` Has a special character (Regex match [\W_]) :code:`<br>`:code:`<br>`
+     digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
      **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
      "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
      resetting the password, see `How to reset the Remote Desktop service or its login password in a
@@ -5295,7 +5295,7 @@ class OSProfileProvisioningData(_serialization.Model):
          characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
          :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
          fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-         digit :code:`<br>` Has a special character (Regex match [\W_]) :code:`<br>`:code:`<br>`
+         digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
          **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
          "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
          resetting the password, see `How to reset the Remote Desktop service or its login password in a
@@ -7798,7 +7798,7 @@ class Sku(_serialization.Model):
     :ivar name: The sku name.
     :vartype name: str
     :ivar tier: Specifies the tier of virtual machines in a scale set.:code:`<br />`:code:`<br />`
-     Possible Values::code:`<br />`:code:`<br />` **Standard**\ :code:`<br />`:code:`<br />`
+     Possible Values::code:`<br />`:code:`<br />` **Standard**\\ :code:`<br />`:code:`<br />`
      **Basic**.
     :vartype tier: str
     :ivar capacity: Specifies the number of virtual machines in the scale set.
@@ -7818,7 +7818,7 @@ class Sku(_serialization.Model):
         :keyword name: The sku name.
         :paramtype name: str
         :keyword tier: Specifies the tier of virtual machines in a scale set.:code:`<br />`:code:`<br
-         />` Possible Values::code:`<br />`:code:`<br />` **Standard**\ :code:`<br />`:code:`<br />`
+         />` Possible Values::code:`<br />`:code:`<br />` **Standard**\\ :code:`<br />`:code:`<br />`
          **Basic**.
         :paramtype tier: str
         :keyword capacity: Specifies the number of virtual machines in the scale set.
@@ -13289,7 +13289,7 @@ class VirtualMachineScaleSetOSProfile(_serialization.Model):
      characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
      :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
      fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-     digit :code:`<br>` Has a special character (Regex match [\W_]) :code:`<br>`:code:`<br>`
+     digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
      **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
      "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
      resetting the password, see `How to reset the Remote Desktop service or its login password in a
@@ -13373,7 +13373,7 @@ class VirtualMachineScaleSetOSProfile(_serialization.Model):
          characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
          :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
          fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-         digit :code:`<br>` Has a special character (Regex match [\W_]) :code:`<br>`:code:`<br>`
+         digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
          **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
          "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
          resetting the password, see `How to reset the Remote Desktop service or its login password in a

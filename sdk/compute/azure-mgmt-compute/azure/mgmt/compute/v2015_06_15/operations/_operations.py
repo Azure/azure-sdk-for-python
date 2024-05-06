@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, List, Literal, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, List, Literal, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -32,6 +33,10 @@ from .. import models as _models
 from ..._serialization import Serializer
 from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -1922,7 +1927,7 @@ class AvailabilitySetsOperations:
         :rtype: ~azure.mgmt.compute.v2015_06_15.models.AvailabilitySet
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1991,7 +1996,7 @@ class AvailabilitySetsOperations:
         :rtype: ~azure.mgmt.compute.v2015_06_15.models.OperationStatusResponse or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2048,7 +2053,7 @@ class AvailabilitySetsOperations:
         :rtype: ~azure.mgmt.compute.v2015_06_15.models.AvailabilitySet
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2107,7 +2112,7 @@ class AvailabilitySetsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.AvailabilitySetListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2191,7 +2196,7 @@ class AvailabilitySetsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.VirtualMachineSizeListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2294,7 +2299,7 @@ class VirtualMachineExtensionImagesOperations:
         :rtype: ~azure.mgmt.compute.v2015_06_15.models.VirtualMachineExtensionImage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2353,7 +2358,7 @@ class VirtualMachineExtensionImagesOperations:
         :rtype: list[~azure.mgmt.compute.v2015_06_15.models.VirtualMachineExtensionImage]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2426,7 +2431,7 @@ class VirtualMachineExtensionImagesOperations:
         :rtype: list[~azure.mgmt.compute.v2015_06_15.models.VirtualMachineExtensionImage]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2502,7 +2507,7 @@ class VirtualMachineExtensionsOperations:
         extension_parameters: Union[_models.VirtualMachineExtension, IO[bytes]],
         **kwargs: Any
     ) -> _models.VirtualMachineExtension:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2711,7 +2716,7 @@ class VirtualMachineExtensionsOperations:
         extension_parameters: Union[_models.VirtualMachineExtensionUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.VirtualMachineExtension:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2912,7 +2917,7 @@ class VirtualMachineExtensionsOperations:
     def _delete_initial(
         self, resource_group_name: str, vm_name: str, vm_extension_name: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3045,7 +3050,7 @@ class VirtualMachineExtensionsOperations:
         :rtype: ~azure.mgmt.compute.v2015_06_15.models.VirtualMachineExtension
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3131,7 +3136,7 @@ class VirtualMachineImagesOperations:
         :rtype: ~azure.mgmt.compute.v2015_06_15.models.VirtualMachineImage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3211,7 +3216,7 @@ class VirtualMachineImagesOperations:
         :rtype: list[~azure.mgmt.compute.v2015_06_15.models.VirtualMachineImageResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3273,7 +3278,7 @@ class VirtualMachineImagesOperations:
         :rtype: list[~azure.mgmt.compute.v2015_06_15.models.VirtualMachineImageResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3326,7 +3331,7 @@ class VirtualMachineImagesOperations:
         :rtype: list[~azure.mgmt.compute.v2015_06_15.models.VirtualMachineImageResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3384,7 +3389,7 @@ class VirtualMachineImagesOperations:
         :rtype: list[~azure.mgmt.compute.v2015_06_15.models.VirtualMachineImageResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3466,7 +3471,7 @@ class UsageOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.ListUsagesResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3566,7 +3571,7 @@ class VirtualMachineSizesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.VirtualMachineSizeListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3657,7 +3662,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         parameters: Union[_models.VirtualMachineCaptureParameters, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.VirtualMachineCaptureResult]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3852,7 +3857,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         parameters: Union[_models.VirtualMachine, IO[bytes]],
         **kwargs: Any
     ) -> _models.VirtualMachine:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4036,7 +4041,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
     def _delete_initial(
         self, resource_group_name: str, vm_name: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4157,7 +4162,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.compute.v2015_06_15.models.VirtualMachine
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4204,7 +4209,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
     def _deallocate_initial(
         self, resource_group_name: str, vm_name: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4323,7 +4328,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.compute.v2015_06_15.models.OperationStatusResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4383,7 +4388,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.VirtualMachineListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4461,7 +4466,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.VirtualMachineListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4544,7 +4549,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.VirtualMachineSizeListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4611,7 +4616,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
     def _power_off_initial(
         self, resource_group_name: str, vm_name: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4721,7 +4726,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
     def _restart_initial(
         self, resource_group_name: str, vm_name: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4830,7 +4835,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
     def _start_initial(
         self, resource_group_name: str, vm_name: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4939,7 +4944,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
     def _redeploy_initial(
         self, resource_group_name: str, vm_name: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5073,7 +5078,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         parameters: Union[_models.VirtualMachineScaleSet, IO[bytes]],
         **kwargs: Any
     ) -> _models.VirtualMachineScaleSet:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5260,7 +5265,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
     def _delete_initial(
         self, resource_group_name: str, vm_scale_set_name: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5376,7 +5381,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :rtype: ~azure.mgmt.compute.v2015_06_15.models.VirtualMachineScaleSet
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5426,7 +5431,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         vm_instance_i_ds: Optional[Union[_models.VirtualMachineScaleSetVMInstanceIDs, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5630,7 +5635,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         vm_instance_i_ds: Union[_models.VirtualMachineScaleSetVMInstanceRequiredIDs, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5832,7 +5837,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :rtype: ~azure.mgmt.compute.v2015_06_15.models.VirtualMachineScaleSetInstanceView
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5893,7 +5898,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.VirtualMachineScaleSetListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5974,7 +5979,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.VirtualMachineScaleSetListWithLinkResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6059,7 +6064,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.VirtualMachineScaleSetListSkusResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6130,7 +6135,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         vm_instance_i_ds: Optional[Union[_models.VirtualMachineScaleSetVMInstanceIDs, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6334,7 +6339,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         vm_instance_i_ds: Optional[Union[_models.VirtualMachineScaleSetVMInstanceIDs, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6532,7 +6537,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         vm_instance_i_ds: Optional[Union[_models.VirtualMachineScaleSetVMInstanceIDs, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6730,7 +6735,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         vm_instance_i_ds: Union[_models.VirtualMachineScaleSetVMInstanceRequiredIDs, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6921,7 +6926,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
     def _reimage_initial(
         self, resource_group_name: str, vm_scale_set_name: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7051,7 +7056,7 @@ class VirtualMachineScaleSetVMsOperations:
     def _reimage_initial(
         self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7164,7 +7169,7 @@ class VirtualMachineScaleSetVMsOperations:
     def _deallocate_initial(
         self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7279,7 +7284,7 @@ class VirtualMachineScaleSetVMsOperations:
     def _delete_initial(
         self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7403,7 +7408,7 @@ class VirtualMachineScaleSetVMsOperations:
         :rtype: ~azure.mgmt.compute.v2015_06_15.models.VirtualMachineScaleSetVM
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7463,7 +7468,7 @@ class VirtualMachineScaleSetVMsOperations:
         :rtype: ~azure.mgmt.compute.v2015_06_15.models.VirtualMachineScaleSetVMInstanceView
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7546,7 +7551,7 @@ class VirtualMachineScaleSetVMsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-06-15"))
         cls: ClsType[_models.VirtualMachineScaleSetVMListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7616,7 +7621,7 @@ class VirtualMachineScaleSetVMsOperations:
     def _power_off_initial(
         self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7731,7 +7736,7 @@ class VirtualMachineScaleSetVMsOperations:
     def _restart_initial(
         self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7844,7 +7849,7 @@ class VirtualMachineScaleSetVMsOperations:
     def _start_initial(
         self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
