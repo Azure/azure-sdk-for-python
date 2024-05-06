@@ -21,7 +21,9 @@ The Azure AI Face service provides AI algorithms that detect, recognize, and ana
 ### Prerequisites
 
 - Python 3.8 or later is required to use this package.
-- You need an [Azure subscription][azure_sub] to use this package and either
+- You need an [Azure subscription][azure_sub] to use this package.
+- Your Azure account must have a `Cognitive Services Contributor` role assigned in order for you to agree to the responsible AI terms and create a resource. To get this role assigned to your account, follow the steps in the [Assign roles][azure_role_assignment] documentation, or contact your administrator.
+- Once you have sufficient permissions to control your Azure subscription, you need either
   * an [Azure Face account][azure_portal_list_face_account] or
   * an [Azure Cognitive Service account][azure_portal_list_cognitive_service_account]
 
@@ -163,7 +165,10 @@ The following section provides several code snippets covering some of the most c
 * [Determining if a face in an video is real (live) or fake (spoof)](#liveness-detection "Liveness Detection")
 
 ### Face Detection
-Detect faces and analyze them from an binary data.
+Detect faces and analyze them from an binary data. The latest model is the most accurate and recommended to be used.
+For the detailed differences between different versions of **Detection** and **Recognition** model, please refer to the following links.
+* [Detection model](evaluate_different_detection_models)
+* [Recognition model](recommended_recognition_model)
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -181,8 +186,8 @@ with FaceClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as face_c
 
     result = face_client.detect(
         file_content,
-        detection_model=FaceDetectionModel.DETECTION_03,
-        recognition_model=FaceRecognitionModel.RECOGNITION_04,
+        detection_model=FaceDetectionModel.DETECTION_03,  # The latest detection model.
+        recognition_model=FaceRecognitionModel.RECOGNITION_04,  # The latest recognition model.
         return_face_id=True,
         return_face_attributes=[
             FaceAttributeTypeDetection03.HEAD_POSE,
@@ -302,7 +307,7 @@ The Liveness detection operation can not only confirm if the input is live or sp
 belongs to the expected person's face, which is called **liveness detection with face verification**. For the detail
 information, please refer to the [tutorial][liveness_tutorial].
 
-We'll only demonstrates how to create, query, delete a session and get the audit logs here. For how to perform a
+This package is only responsible for creating, quering, deleting a session and getting audit logs. For how to perform a
 liveness detection, please see the sample of [mobile applications][integrate_liveness_into_mobile_application].
 
 Here is an example to create and get the liveness detection result of a session.
@@ -443,6 +448,7 @@ additional questions or comments.
 [face_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples
 
 [azure_sub]: https://azure.microsoft.com/free/
+[azure_role_assignment]: https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-steps
 [azure_portal_list_face_account]: https://portal.azure.com/#blade/Microsoft_Azure_ProjectOxford/CognitiveServicesHub/Face
 [azure_portal_list_cognitive_service_account]: https://portal.azure.com/#view/Microsoft_Azure_ProjectOxford/CognitiveServicesHub/~/AllInOne
 [azure_cognitive_service_account]: https://learn.microsoft.com/en-us/azure/ai-services/multi-service-resource?tabs=windows&pivots=azportal#supported-services-with-a-multi-service-resource
@@ -459,6 +465,8 @@ additional questions or comments.
 [azure_sdk_python_default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [register_aad_app]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 
+[evaluate_different_detection_models]: https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model#evaluate-different-models
+[recommended_recognition_model]: https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-recognition-model#recommended-model
 [liveness_tutorial]: https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/tutorials/liveness
 [integrate_liveness_into_mobile_application]: https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/tutorials/liveness#integrate-liveness-into-mobile-application
 
