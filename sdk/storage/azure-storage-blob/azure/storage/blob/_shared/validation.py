@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=c-extension-no-member
 from __future__ import annotations
 
 import hashlib
@@ -27,10 +28,10 @@ class ChecksumAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 def _verify_extensions(module: str) -> None:
     try:
-        import azure.storage.extensions
-    except ImportError:
+        import azure.storage.extensions  # pylint: disable=unused-import
+    except ImportError as exc:
         raise ValueError(f"The use of {module} requires the azure-storage-extensions package to be installed. "
-                         f"Please install this package and try again.")
+                         f"Please install this package and try again.") from exc
 
 
 def parse_validation_option(validate_content: Optional[Union[bool, str]]) -> Optional[Union[bool, str]]:
@@ -55,7 +56,7 @@ def parse_validation_option(validate_content: Optional[Union[bool, str]]) -> Opt
 
 
 def calculate_md5(data: bytes) -> bytes:
-    md5 = hashlib.md5()
+    md5 = hashlib.md5()  # nosec
     md5.update(data)
     return md5.digest()
 
