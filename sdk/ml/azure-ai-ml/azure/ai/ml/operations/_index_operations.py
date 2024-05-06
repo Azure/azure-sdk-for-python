@@ -279,8 +279,7 @@ class IndexOperations(_ScopeDependentOperations):
         :keyword input_source_credential: The identity to be used for the index.
         :paramtype input_source_credential: Optional[Union[~azure.ai.ml.entities.ManagedIdentityConfiguration,
             ~azure.ai.ml.entities.UserIdentityConfiguration]]
-        :return: If the `source_input` is an AISearchSource, returns an MLIndex object.
-            If the `source_input` is a GitSource, returns a created DataIndex Job object.
+        :return: If the `source_input` is a GitSource, returns a created DataIndex Job object.
         :rtype: Union[~azure.ai.ml.entities._indexes.MLIndex, ~azure.ai.ml.entities.Job]
         :raises ValueError: If the `source_input` is not type ~typing.Str or
             ~azure.ai.ml.entities._indexes.LocalSource.

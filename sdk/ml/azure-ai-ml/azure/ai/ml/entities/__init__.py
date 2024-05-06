@@ -177,7 +177,6 @@ from ._indexes import (
     AzureAISearchConfig,
     IndexDataSource,
     GitSource,
-    AISearchSource,
     LocalSource,
 )
 from ._indexes import ModelConfiguration as IndexModelConfiguration

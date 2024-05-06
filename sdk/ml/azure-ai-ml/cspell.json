@@ -8,10 +8,6 @@
         "entra",
         "restclient",
         "SERP",
-        "FAISS",
-        "faiss",
-        "Faiss",
-        "LLMRAG",
-        "redef"
+        "mpnet"
     ]
 }

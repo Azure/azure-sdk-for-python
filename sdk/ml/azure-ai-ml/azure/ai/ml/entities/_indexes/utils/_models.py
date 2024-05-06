@@ -15,7 +15,6 @@ HUGGINGFACE_PROTOCOL_REGEX_PATTERN = HUGGINGFACE_PROTOCOL_TEMPLATE.format(".*")
 
 
 def build_model_protocol(model: Optional[str] = None):
-    """Build a model protocol from user input."""
     if not model or re.match(OPEN_AI_PROTOCOL_REGEX_PATTERN, model, re.IGNORECASE):
         return model
     if re.match(OPEN_AI_SHORT_FORM_PROTOCOL_TEMPLATE, model, re.IGNORECASE):

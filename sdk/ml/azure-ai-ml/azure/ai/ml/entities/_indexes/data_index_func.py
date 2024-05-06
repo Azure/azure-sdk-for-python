@@ -4,6 +4,7 @@
 # pylint: disable=protected-access
 # pylint: disable=no-member
 # pylint: disable=unused-argument
+# type: ignore [arg-type], [attr-defined]
 
 import json
 import re
@@ -111,7 +112,7 @@ def index_data(
             identity,
             input_data_override,
         )
-    elif data_index.index.type == DataIndexTypes.ACS or data_index.index.type == DataIndexTypes.PINECONE:
+    elif data_index.index.type in (DataIndexTypes.ACS, DataIndexTypes.PINECONE):
         if kwargs.get("incremental_update", False):
             configured_component = data_index_incremental_update_hosted(
                 ml_client,
@@ -182,8 +183,8 @@ def data_index_incremental_update_hosted(
         name=name if name else f"data_index_incremental_update_{data_index.index.type}",
         description=description,
         tags=tags,
-        display_name=display_name 
-            if display_name 
+        display_name=display_name
+            if display_name
             else f"LLM - Data to {data_index.index.type.upper()} (Incremental Update)",
         experiment_name=experiment_name,
         compute=compute,
@@ -244,7 +245,7 @@ def data_index_incremental_update_hosted(
         )
         if compute is None or compute == "serverless":
             use_automatic_compute(crack_and_chunk_and_embed, instance_type=serverless_instance_type)
-        if optional_pipeline_input_provided(embeddings_container):  # type: ignore [arg-type]
+        if optional_pipeline_input_provided(embeddings_container):
             crack_and_chunk_and_embed.outputs.embeddings = Output(
                 type="uri_folder", path=f"{embeddings_container.path}/{{name}}"
             )
@@ -366,11 +367,11 @@ def data_index_faiss(
         input_data: Input,
         embeddings_model: str,
         chunk_size: int = 1024,
-        data_source_glob: str = None,
-        data_source_url: str = None,
-        document_path_replacement_regex: str = None,
-        aoai_connection_id: str = None,
-        embeddings_container: Input = None,
+        data_source_glob: Optional[str] = None,
+        data_source_url: Optional[str] = None,
+        document_path_replacement_regex: Optional[str] = None,
+        aoai_connection_id: Optional[str] = None,
+        embeddings_container: Optional[Input] = None,
     ):
         """
         Generate embeddings for a `input_data` source and create a Faiss index from them.
@@ -516,11 +517,11 @@ def data_index_hosted(
         index_config: str,
         index_connection_id: str,
         chunk_size: int = 1024,
-        data_source_glob: str = None,
-        data_source_url: str = None,
-        document_path_replacement_regex: str = None,
-        aoai_connection_id: str = None,
-        embeddings_container: Input = None,
+        data_source_glob: Optional[str] = None,
+        data_source_url: Optional[str] = None,
+        document_path_replacement_regex: Optional[str] = None,
+        aoai_connection_id: Optional[str] = None,
+        embeddings_container: Optional[Input] = None,
     ):
         """
         Generate embeddings for a `input_data` source

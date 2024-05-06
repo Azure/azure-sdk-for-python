@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 # pylint: disable=protected-access
+# type: ignore [overload-overlap], [assignment], [arg-type], [return-value], [attr-defined]
 
 import inspect
 import logging
@@ -42,8 +43,6 @@ module_logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
 P = ParamSpec("P")
-
-# type: ignore [overload-overlap], [assignment], [arg-type], [return-value], [attr-defined]
 
 
 # Overload the returns a decorator when func is None
