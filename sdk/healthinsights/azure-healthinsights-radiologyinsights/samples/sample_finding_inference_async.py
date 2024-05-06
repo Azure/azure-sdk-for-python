@@ -191,7 +191,7 @@ class HealthInsightsSamples:
                                 elif attribute == "extension" and extension.extension is not None:
                                     for sub_extension in extension.extension:
                                         for sub_attribute in dir(sub_extension):
-                                            if sub_attribute.startswith('_') or callable(getattr(sub_extension, sub_attr)):
+                                            if sub_attribute.startswith('_') or callable(getattr(sub_extension, sub_attribute)):
                                                 continue
                                             elif sub_attribute == "url":
                                                 if sub_extension.url == "code" or sub_extension.url == "codingSystem" or sub_extension.url == "codeSystemName" or sub_extension.url == "displayName":

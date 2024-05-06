@@ -157,24 +157,24 @@ class HealthInsightsSyncSamples:
                         elif attribute == "component" and fin.component is not None:
                             print(f"Finding {counter}: COMPONENTS:")
                             for component in fin.component:
-                                for attr in dir(component):
-                                    if attr.startswith('_') or callable(getattr(component, attr)):
+                                for attribute in dir(component):
+                                    if attribute.startswith('_') or callable(getattr(component, attr)):
                                         continue
-                                    if attr == "code" and component.code is not None:
+                                    if attribute == "code" and component.code is not None:
                                         for code in component.code.coding:
                                             if code.code is not None and code.display is not None:
                                                 print(f"Finding {counter}: COMPONENTS: Code: {code.system} {code.code} {code.display}")
-                                    elif attr == "value_codeable_concept" and component.value_codeable_concept is not None:
+                                    elif attribute == "value_codeable_concept" and component.value_codeable_concept is not None:
                                         for code in component.value_codeable_concept.coding:
                                             if code.code is not None and code.display is not None:
                                                 print(f"Finding {counter}: COMPONENTS: Value Codeable Concept: {code.system} {code.code} {code.display}")
-                                    elif attr == "value_coding" and component.value_coding is not None:
+                                    elif attribute == "value_coding" and component.value_coding is not None:
                                         for code in component.value_coding.coding:
                                             if code.code is not None and code.display is not None:
                                                 print(f"Finding {counter}: COMPONENTS: Value Coding: {code.system} {code.code} {code.display}")
-                                    elif attr == "value_boolean" and component.value_boolean is not None:
+                                    elif attribute == "value_boolean" and component.value_boolean is not None:
                                         print(f"Finding {counter}: COMPONENTS: Value Boolean: {component.value_boolean}")
-                                    elif attr == "value_quantity" and component.value_quantity is not None:
+                                    elif attribute == "value_quantity" and component.value_quantity is not None:
                                         for attribute in dir(component.value_quantity):
                                             if not attribute.startswith('_') and not callable(getattr(component.value_quantity, attribute)) and getattr(component.value_quantity, attribute) is not None:
                                                 print(f"Finding {counter}: COMPONENTS: Value Quantity: {attribute.capitalize()}: {getattr(component.value_quantity, attribute)}")       
@@ -182,22 +182,22 @@ class HealthInsightsSyncSamples:
                     if inference_extension is not None:
                         print(f"Finding {counter}: INFERENCE EXTENSIONS:")
                         for extension in inference_extension:
-                            for attr in dir(extension):
-                                if attr.startswith('_') or callable(getattr(extension, attr)):
+                            for attribute in dir(extension):
+                                if attribute.startswith('_') or callable(getattr(extension, attribute)):
                                     continue
-                                elif attr == "extension" and extension.extension is not None:
+                                elif attribute == "extension" and extension.extension is not None:
                                     for sub_extension in extension.extension:
-                                        for sub_attr in dir(sub_extension):
-                                            if sub_attr.startswith('_') or callable(getattr(sub_extension, sub_attr)):
+                                        for sub_attribute in dir(sub_extension):
+                                            if sub_attribute.startswith('_') or callable(getattr(sub_extension, sub_attribute)):
                                                 continue
-                                            elif sub_attr == "url":
+                                            elif sub_attribute == "url":
                                                 if sub_extension.url == "code" or sub_extension.url == "codingSystem" or sub_extension.url == "codeSystemName" or sub_extension.url == "displayName":
                                                     print(f"Finding {counter}: INFERENCE EXTENSIONS: EXTENSION: {sub_attr.capitalize()}: {sub_extension.url}")
-                                            elif sub_attr == "value_string" and sub_extension.value_string is not None:
-                                                print(f"Finding {counter}: INFERENCE EXTENSIONS: EXTENSION: {sub_attr.capitalize()}: {sub_extension.value_string}")
-                                elif attr == "url" and extension.url is not None:
+                                            elif sub_attribute == "value_string" and sub_extension.value_string is not None:
+                                                print(f"Finding {counter}: INFERENCE EXTENSIONS: EXTENSION: {sub_attribute.capitalize()}: {sub_extension.value_string}")
+                                elif attribute == "url" and extension.url is not None:
                                     if extension.url == "section":
-                                        print(f"Finding {counter}: INFERENCE EXTENSIONS: {attr.capitalize()}: {extension.url}")
+                                        print(f"Finding {counter}: INFERENCE EXTENSIONS: {attribute.capitalize()}: {extension.url}")
 
 
 def main():
