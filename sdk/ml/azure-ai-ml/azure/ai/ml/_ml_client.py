@@ -82,11 +82,11 @@ from azure.ai.ml.operations import (
     DataOperations,
     DatastoreOperations,
     EnvironmentOperations,
+    EvaluatorOperations,
     IndexOperations,
     JobOperations,
     MarketplaceSubscriptionOperations,
     ModelOperations,
-    EvaluatorOperations,
     OnlineDeploymentOperations,
     OnlineEndpointOperations,
     RegistryOperations,
@@ -1310,7 +1310,7 @@ def _(entity: Datastore, operations):
 @_create_or_update.register(Index)
 def _(entity: Index, operations, *args, **kwargs):
     module_logger.debug("Creating or updating indexes")
-    return operations[AzureMLResourceType.INDEX].begin_create_or_update(entity, **kwargs)
+    return operations[AzureMLResourceType.INDEX].create_or_update(entity, **kwargs)
 
 
 @singledispatch
