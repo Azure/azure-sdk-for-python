@@ -18,10 +18,7 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-try:
-    from azure.ai.ml.entities import WorkspaceConnection as Connection
-except ImportError:
-    from azure.ai.ml.entities import Connection
+from azure.ai.ml.entities import Connection
 from azure.ai.ml.constants._common import DataIndexTypes
 from azure.ai.ml.constants._component import LLMRAGComponentUri
 from azure.ai.ml.entities._indexes.entities.data_index import DataIndex

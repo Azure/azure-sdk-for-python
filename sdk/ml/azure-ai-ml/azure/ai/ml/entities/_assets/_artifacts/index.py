@@ -127,13 +127,3 @@ class Index(Artifact):
             asset_artifact.relative_path,
         )
 
-    def as_langchain_retriever(self):
-        if not self.path:
-            raise ValueError("Index.path should not be none")
-        
-        import re
-        if not re.match(LONG_URI_FORMAT_TEMPLATE, self.path):
-            raise ValueError("Index path doesn't have a supported format")
-            
-        from azure.ai.ml.entities._indexes._mlindex import MLIndex
-        return MLIndex(str(self.path)).as_langchain_retriever()

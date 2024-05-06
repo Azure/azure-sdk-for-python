@@ -12,7 +12,7 @@ OPEN_AI_PROTOCOL_TEMPLATE = "azure_open_ai://deployment/{}/model/{}"
 
 def build_open_ai_protocol(model: Optional[str] = None, deployment: Optional[str] = None, ):
     if not deployment or not model:
-        raise ValueError("Please specify deployment_name and model_name in embeddings_model_config.")
+        return None
     else:
         return OPEN_AI_PROTOCOL_TEMPLATE.format(deployment, model)
     
