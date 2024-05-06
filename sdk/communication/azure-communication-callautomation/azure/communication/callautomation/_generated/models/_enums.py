@@ -55,13 +55,6 @@ class CommunicationIdentifierModelKind(str, Enum, metaclass=CaseInsensitiveEnumM
     MICROSOFT_TEAMS_APP = "microsoftTeamsApp"
 
 
-class DialogInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Determines the type of the dialog."""
-
-    POWER_VIRTUAL_AGENTS = "powerVirtualAgents"
-    AZURE_OPEN_AI = "azureOpenAI"
-
-
 class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DtmfTone."""
 
@@ -91,9 +84,46 @@ class MediaStreamingAudioChannelType(str, Enum, metaclass=CaseInsensitiveEnumMet
 
 
 class MediaStreamingContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Content type to stream, eg. audio, audio/video."""
+    """Content type to stream, eg. audio."""
 
     AUDIO = "audio"
+
+
+class MediaStreamingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MediaStreamingStatus."""
+
+    MEDIA_STREAMING_STARTED = "mediaStreamingStarted"
+    MEDIA_STREAMING_FAILED = "mediaStreamingFailed"
+    MEDIA_STREAMING_STOPPED = "mediaStreamingStopped"
+    UNSPECIFIED_ERROR = "unspecifiedError"
+
+
+class MediaStreamingStatusDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MediaStreamingStatusDetails."""
+
+    SUBSCRIPTION_STARTED = "subscriptionStarted"
+    STREAM_CONNECTION_REESTABLISHED = "streamConnectionReestablished"
+    STREAM_CONNECTION_UNSUCCESSFUL = "streamConnectionUnsuccessful"
+    STREAM_URL_MISSING = "streamUrlMissing"
+    SERVICE_SHUTDOWN = "serviceShutdown"
+    STREAM_CONNECTION_INTERRUPTED = "streamConnectionInterrupted"
+    SPEECH_SERVICES_CONNECTION_ERROR = "speechServicesConnectionError"
+    SUBSCRIPTION_STOPPED = "subscriptionStopped"
+    UNSPECIFIED_ERROR = "unspecifiedError"
+    AUTHENTICATION_FAILURE = "authenticationFailure"
+    BAD_REQUEST = "badRequest"
+    TOO_MANY_REQUESTS = "tooManyRequests"
+    FORBIDDEN = "forbidden"
+    SERVICE_TIMEOUT = "serviceTimeout"
+    INITIAL_WEB_SOCKET_CONNECTION_FAILED = "initialWebSocketConnectionFailed"
+
+
+class MediaStreamingSubscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or Sets media streaming subscription state."""
+
+    DISABLED = "disabled"
+    INACTIVE = "inactive"
+    ACTIVE = "active"
 
 
 class MediaStreamingTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -151,6 +181,17 @@ class RecordingFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MP4 = "mp4"
 
 
+class RecordingKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """RecordingKind."""
+
+    AZURE_COMMUNICATION_SERVICES = "AzureCommunicationServices"
+    """Recording initiated by Azure Communication Services"""
+    TEAMS = "Teams"
+    """Recording initiated by Teams user"""
+    TEAMS_COMPLIANCE = "TeamsCompliance"
+    """Recording initiated by Teams compliance policy"""
+
+
 class RecordingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RecordingState."""
 
@@ -158,19 +199,28 @@ class RecordingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INACTIVE = "inactive"
 
 
-class RecordingStorage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the type of external storage."""
+class RecordingStorageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the kind of external storage."""
 
-    ACS = "acs"
-    BLOB_STORAGE = "blobStorage"
+    AZURE_COMMUNICATION_SERVICES = "AzureCommunicationServices"
+    """Storage managed by Azure Communication Services"""
+    AZURE_BLOB_STORAGE = "AzureBlobStorage"
+    """Storage managed by provided Azure blob"""
 
 
-class RecordingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RecordingType."""
+class TranscriptionResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TranscriptionResultType."""
 
-    ACS = "acs"
-    TEAMS = "teams"
-    TEAMS_COMPLIANCE = "teamsCompliance"
+    FINAL = "final"
+    INTERMEDIATE = "intermediate"
+
+
+class TranscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets the state of the current transcription subscription for the call."""
+
+    DISABLED = "disabled"
+    INACTIVE = "inactive"
+    ACTIVE = "active"
 
 
 class TranscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
