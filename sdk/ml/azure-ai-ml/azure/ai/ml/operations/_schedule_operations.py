@@ -18,7 +18,14 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Job, JobSchedule, Schedule
 from azure.ai.ml.entities._inputs_outputs.input import Input
 from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
-from azure.ai.ml.entities._monitoring.signals import BaselineDataRange, FADProductionData, ProductionData, ReferenceData
+from azure.ai.ml.entities._monitoring.signals import (
+    BaselineDataRange,
+    FADProductionData,
+    ProductionData,
+    ReferenceData,
+    LlmData,
+    GenerationTokenStatisticsSignal,
+)
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ScheduleException
 from azure.core.credentials import TokenCredential
@@ -324,11 +331,12 @@ class ScheduleOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-    def _resolve_monitor_schedule_arm_id(  # pylint:disable=too-many-branches,too-many-statements
+    def _resolve_monitor_schedule_arm_id(  # pylint:disable=too-many-branches,too-many-statements,too-many-locals
         self, schedule: MonitorSchedule
     ) -> None:
         # resolve target ARM ID
         model_inputs_name, model_outputs_name = None, None
+        app_traces_name, app_traces_version = None, None
         model_inputs_version, model_outputs_version = None, None
         mdc_input_enabled, mdc_output_enabled = False, False
         target = schedule.create_monitor.monitoring_target
@@ -339,6 +347,10 @@ class ScheduleOperations(_ScopeDependentOperations):
             if deployment_data_collector:
                 in_reg = AMLVersionedArmId(deployment_data_collector.collections.get("model_inputs").data)
                 out_reg = AMLVersionedArmId(deployment_data_collector.collections.get("model_outputs").data)
+                if "app_traces" in deployment_data_collector.collections:
+                    app_traces = AMLVersionedArmId(deployment_data_collector.collections.get("app_traces").data)
+                    app_traces_name = app_traces.asset_name
+                    app_traces_version = app_traces.asset_version
                 model_inputs_name = in_reg.asset_name
                 model_inputs_version = in_reg.asset_version
                 model_outputs_name = out_reg.asset_name
@@ -382,6 +394,22 @@ class ScheduleOperations(_ScopeDependentOperations):
             if signal.type == MonitorSignalType.GENERATION_SAFETY_QUALITY:
                 for llm_data in signal.production_data:  # type: ignore[union-attr]
                     self._job_operations._resolve_job_input(llm_data.input_data, schedule._base_path)
+                continue
+            if signal.type == MonitorSignalType.GENERATION_TOKEN_STATISTICS:
+                if not signal.production_data:  # type: ignore[union-attr]
+                    # if target dataset is absent and data collector for input is enabled,
+                    # create a default target dataset with production app traces as target
+                    if isinstance(signal, GenerationTokenStatisticsSignal):
+                        signal.production_data = LlmData(  # type: ignore[union-attr]
+                            input_data=Input(
+                                path=f"{app_traces_name}:{app_traces_version}",
+                                type=self._data_operations.get(app_traces_name, app_traces_version).type,
+                            ),
+                            data_window=BaselineDataRange(lookback_window_size="P7D", lookback_window_offset="P0D"),
+                        )
+                self._job_operations._resolve_job_input(
+                    signal.production_data.input_data, schedule._base_path  # type: ignore[union-attr]
+                )
                 continue
             if signal.type == MonitorSignalType.CUSTOM:
                 if signal.inputs:  # type: ignore[union-attr]

@@ -82,6 +82,7 @@ from azure.ai.ml.operations import (
     DataOperations,
     DatastoreOperations,
     EnvironmentOperations,
+    EvaluatorOperations,
     IndexOperations,
     JobOperations,
     MarketplaceSubscriptionOperations,
@@ -537,6 +538,25 @@ class MLClient:
             registry_reference=registry_reference,
             **app_insights_handler_kwargs,  # type: ignore[arg-type]
         )
+        # Evaluators
+        self._evaluators = EvaluatorOperations(
+            self._operation_scope,
+            self._operation_config,
+            (
+                self._service_client_10_2021_dataplanepreview
+                if registry_name or registry_reference
+                else self._service_client_08_2023_preview
+            ),
+            self._datastores,
+            self._operation_container,
+            requests_pipeline=self._requests_pipeline,
+            control_plane_client=self._service_client_08_2023_preview,
+            workspace_rg=self._ws_rg,
+            workspace_sub=self._ws_sub,
+            registry_reference=registry_reference,
+            **app_insights_handler_kwargs,  # type: ignore[arg-type]
+        )
+
         self._operation_container.add(AzureMLResourceType.MODEL, self._models)
         self._code = CodeOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
@@ -719,7 +739,7 @@ class MLClient:
         self._operation_container.add(AzureMLResourceType.MARKETPLACE_SUBSCRIPTION, self._marketplace_subscriptions)
 
     @classmethod
-    def from_config(
+    def from_config(  # pylint: disable=C4758
         cls,
         credential: TokenCredential,
         *,
@@ -753,6 +773,8 @@ class MLClient:
         :keyword file_name: The configuration file name to search for when path is a directory path. Defaults to
             "config.json".
         :paramtype file_name: Optional[str]
+        :keyword cloud: The cloud name to use. Defaults to "AzureCloud".
+        :paramtype cloud: Optional[str]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if "config.json", or file_name if overridden,
             cannot be found in directory. Details will be provided in the error message.
         :returns: The client for an existing Azure ML Workspace.
@@ -911,6 +933,7 @@ class MLClient:
         return self._featurestoreentities
 
     @property
+    @experimental
     def connections(self) -> ConnectionsOperations:
         """A collection of connection related operations.
 
@@ -945,6 +968,16 @@ class MLClient:
         :rtype: ~azure.ai.ml.operations.ModelOperations
         """
         return self._models
+
+    @property
+    @experimental
+    def evaluators(self) -> EvaluatorOperations:
+        """A collection of model related operations.
+
+        :return: Model operations
+        :rtype: ~azure.ai.ml.operations.ModelOperations
+        """
+        return self._evaluators
 
     @property
     def online_endpoints(self) -> OnlineEndpointOperations:
@@ -1048,6 +1081,7 @@ class MLClient:
         return self._marketplace_subscriptions
 
     @property
+    @experimental
     def indexes(self) -> IndexOperations:
         """A collection of index related operations.
 
@@ -1277,7 +1311,7 @@ def _(entity: Datastore, operations):
 @_create_or_update.register(Index)
 def _(entity: Index, operations, *args, **kwargs):
     module_logger.debug("Creating or updating indexes")
-    return operations[AzureMLResourceType.INDEX].begin_create_or_update(entity, **kwargs)
+    return operations[AzureMLResourceType.INDEX].create_or_update(entity, **kwargs)
 
 
 @singledispatch

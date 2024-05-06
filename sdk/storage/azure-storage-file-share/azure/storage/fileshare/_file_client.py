@@ -718,7 +718,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
         :keyword metadata:
             Name-value pairs associated with the file as metadata.
-        :type metadata: dict[str, str]
+        :paramtype metadata: dict[str, str]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
