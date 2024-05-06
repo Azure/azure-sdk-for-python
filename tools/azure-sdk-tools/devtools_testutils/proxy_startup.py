@@ -30,6 +30,7 @@ from .sanitizers import (
     add_batch_sanitizers,
     Sanitizer,
     set_custom_default_matcher,
+    remove_batch_sanitizers,
 )
 
 
@@ -326,6 +327,10 @@ def set_common_sanitizers() -> None:
 
     # Send all the above sanitizers to the test proxy in a single, batch request
     add_batch_sanitizers(sanitizers=batch_sanitizers)
+
+    # Remove certain sanitizers that are too aggressive and cause excessive playback failures
+    #  - AZSDK2030: operation-location
+    remove_batch_sanitizers(["AZSDK2030"])
 
 
 def start_test_proxy(request) -> None:
