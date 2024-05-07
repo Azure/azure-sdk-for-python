@@ -272,7 +272,7 @@ class TableClient(TablesBaseClient):
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
-        encoder: TableEntityEncoderABC = DEFAULT_ENCODER,
+        encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER,
         **kwargs: Any,
     ) -> None:
         """Deletes the specified entity in a table. No error will be raised if
@@ -308,7 +308,7 @@ class TableClient(TablesBaseClient):
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
-        encoder: TableEntityEncoderABC[TableEntity] = DEFAULT_ENCODER,
+        encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER,
         **kwargs: Any,
     ) -> None:
         """Deletes the specified entity in a table. No error will be raised if
@@ -364,7 +364,7 @@ class TableClient(TablesBaseClient):
         """
 
     @distributed_trace
-    def delete_entity(self, *args: Union[EntityType, str], **kwargs: Any) -> None:
+    def delete_entity(self, *args: Union[EntityType, str, T], **kwargs: Any) -> None:
         try:
             entity = kwargs.pop("entity", None)
             if not entity:
@@ -408,7 +408,7 @@ class TableClient(TablesBaseClient):
         self,
         entity: EntityType,
         *,
-        encoder: TableEntityEncoderABC[TableEntity] = DEFAULT_ENCODER,
+        encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER,
         **kwargs
     ) -> Dict[str, Any]:
         """Insert entity in a table.
@@ -446,7 +446,7 @@ class TableClient(TablesBaseClient):
         """
     
     @distributed_trace
-    def create_entity(self, *args, **kwargs) -> Dict[str, Any]:
+    def create_entity(self, *args: Union[EntityType, T], **kwargs: Any) -> Dict[str, Any]:
         entity = kwargs.pop("entity", None)
         if not entity:
             entity = args[0]
@@ -478,7 +478,7 @@ class TableClient(TablesBaseClient):
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
-        encoder: TableEntityEncoderABC = DEFAULT_ENCODER,
+        encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER,
         **kwargs,
     ) -> Dict[str, Any]:
         """Updates an entity in a table.
@@ -539,7 +539,7 @@ class TableClient(TablesBaseClient):
         """
     
     @distributed_trace
-    def update_entity(self, *args, **kwargs) -> Dict[str, Any]:
+    def update_entity(self, *args: Union[EntityType, T], **kwargs: Any) -> Dict[str, Any]:
         entity = kwargs.pop("entity", None)
         if not entity:
             entity = args[0]
@@ -690,7 +690,7 @@ class TableClient(TablesBaseClient):
         row_key: str,
         *,
         select: Optional[Union[str, List[str]]] = None,
-        encoder: TableEntityEncoderABC = DEFAULT_ENCODER,
+        encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER,
         **kwargs,
     ) -> TableEntity:
         """Gets a single entity in a table.
@@ -740,7 +740,7 @@ class TableClient(TablesBaseClient):
         entity: EntityType,
         mode: UpdateMode = UpdateMode.MERGE,
         *,
-        encoder: TableEntityEncoderABC[TableEntity] = DEFAULT_ENCODER,
+        encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER,
         **kwargs
     ) -> Dict[str, Any]:
         """Updates (merge or replace) an entity into a table.
@@ -789,7 +789,7 @@ class TableClient(TablesBaseClient):
         """
     
     @distributed_trace
-    def upsert_entity(self, *args, **kwargs) -> Dict[str, Any]:
+    def upsert_entity(self, *args: Union[EntityType, T], **kwargs: Any) -> Dict[str, Any]:
         entity = kwargs.pop("entity", None)
         if not entity:
             entity = args[0]
