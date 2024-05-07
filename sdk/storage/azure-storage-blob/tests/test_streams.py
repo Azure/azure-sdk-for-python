@@ -78,12 +78,12 @@ def _build_structured_message(
 
             segment_crc = None
             if StructuredMessageProperties.CRC64 in flags:
-                segment_crc = crc64.compute_crc64(segment_data, 0)
+                segment_crc = crc64.compute(segment_data, 0)
                 if i == invalidate_crc_segment:
                     segment_crc += 5
             _write_segment(i, segment_data, segment_crc, message)
 
-            message_crc = crc64.compute_crc64(segment_data, message_crc)
+            message_crc = crc64.copute(segment_data, message_crc)
 
     # Message footer
     if StructuredMessageProperties.CRC64 in flags:
