@@ -460,7 +460,8 @@ def data_index_faiss(
             else None
         ),
         aoai_connection_id=_resolve_connection_id(
-            ml_client, data_index.embedding.connection),  # type: ignore [arg-type]
+            ml_client, data_index.embedding.connection
+        ),  # type: ignore [arg-type]
         embeddings_container=(
             Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path)  # type: ignore [arg-type]
             if data_index.embedding.cache_path
@@ -475,7 +476,7 @@ def data_index_faiss(
     component.inputs["embeddings_container"]._meta.optional = True
     if data_index.path:
         component.outputs.mlindex_asset_uri = Output(
-            type=AssetTypes.URI_FOLDER, path=data_index.path  # type: ignore [attr-defined], [arg-type]
+            type=AssetTypes.URI_FOLDER, path=data_index.path  # type: ignore [arg-type]
         )
 
     return component
