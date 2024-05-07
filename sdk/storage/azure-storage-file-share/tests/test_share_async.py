@@ -995,7 +995,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert e.value.error_code == StorageErrorCode.AUTHENTICATION_FAILED
-        assert "authenticationerrordetail" in e.value.message
+        assert "AuthenticationErrorDetail" in e.value.message
 
 
     @FileSharePreparer()
