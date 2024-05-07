@@ -1,3 +1,8 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
 import abc, enum
 from typing import Any, Optional, Tuple, Union, Mapping, TypeVar, Generic, Dict
 from uuid import UUID
