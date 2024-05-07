@@ -246,9 +246,9 @@ def data_index_incremental_update_hosted(
         )
         if compute is None or compute == "serverless":
             use_automatic_compute(crack_and_chunk_and_embed, instance_type=serverless_instance_type)
-        if optional_pipeline_input_provided(embeddings_container):
+        if optional_pipeline_input_provided(embeddings_container):  # type: ignore [arg-type]
             crack_and_chunk_and_embed.outputs.embeddings = Output(
-                type="uri_folder", path=f"{embeddings_container.path}/{{name}}"
+                type="uri_folder", path=f"{embeddings_container.path}/{{name}}"  # type: ignore [union-attr]
             )
         if identity:
             crack_and_chunk_and_embed.identity = identity
@@ -297,12 +297,11 @@ def data_index_incremental_update_hosted(
     if data_index.index.config is not None:
         index_config.update(data_index.index.config)
 
-    # type: ignore [arg-type]
     component = data_index_pipeline(
         input_data=input_data,
-        input_glob=data_index.source.input_glob,
-        chunk_size=data_index.source.chunk_size,
-        chunk_overlap=data_index.source.chunk_overlap,
+        input_glob=data_index.source.input_glob,  # type: ignore [arg-type]
+        chunk_size=data_index.source.chunk_size,  # type: ignore [arg-type]
+        chunk_overlap=data_index.source.chunk_overlap,  # type: ignore [arg-type]
         citation_url=data_index.source.citation_url,
         citation_replacement_regex=(
             json.dumps(data_index.source.citation_url_replacement_regex._to_dict())
@@ -317,7 +316,7 @@ def data_index_incremental_update_hosted(
             else None
         ),
         index_config=json.dumps(index_config),
-        index_connection_id=_resolve_connection_id(ml_client, data_index.index.connection),
+        index_connection_id=_resolve_connection_id(ml_client, data_index.index.connection),  # type: ignore [arg-type]
     )
     # Hack until full Component classes are implemented that can annotate the optional parameters properly
     component.inputs["input_glob"]._meta.optional = True
@@ -330,7 +329,7 @@ def data_index_incremental_update_hosted(
 
     if data_index.path:
         component.outputs.mlindex_asset_uri = Output(  # type: ignore [attr-defined]
-            type=AssetTypes.URI_FOLDER, path=data_index.path
+            type=AssetTypes.URI_FOLDER, path=data_index.path  # type: ignore [arg-type]
         )
 
     return component
@@ -369,11 +368,11 @@ def data_index_faiss(
         input_data: Input,
         embeddings_model: str,
         chunk_size: int = 1024,
-        data_source_glob: str = None,
-        data_source_url: str = None,
-        document_path_replacement_regex: str = None,
-        aoai_connection_id: str = None,
-        embeddings_container: Input = None,
+        data_source_glob: str = None,  # type: ignore [assignment]
+        data_source_url: str = None,  # type: ignore [assignment]
+        document_path_replacement_regex: str = None,  # type: ignore [assignment]
+        aoai_connection_id: str = None,  # type: ignore [assignment]
+        embeddings_container: Input = None,  # type: ignore [assignment]
     ):
         """
         Generate embeddings for a `input_data` source and create a Faiss index from them.
@@ -416,9 +415,9 @@ def data_index_faiss(
         )
         if compute is None or compute == "serverless":
             use_automatic_compute(generate_embeddings, instance_type=serverless_instance_type)
-        if optional_pipeline_input_provided(aoai_connection_id):
+        if optional_pipeline_input_provided(aoai_connection_id):  # type: ignore [arg-type]
             generate_embeddings.environment_variables["AZUREML_WORKSPACE_CONNECTION_ID_AOAI"] = aoai_connection_id
-        if optional_pipeline_input_provided(embeddings_container):
+        if optional_pipeline_input_provided(embeddings_container):  # type: ignore [arg-type]
             generate_embeddings.outputs.embeddings = Output(
                 type="uri_folder", path=f"{embeddings_container.path}/{{name}}"
             )
@@ -447,22 +446,22 @@ def data_index_faiss(
     if input_data_override is not None:
         input_data = input_data_override
     else:
-        input_data = Input(type=data_index.source.input_data.type, path=data_index.source.input_data.path)
+        input_data = Input(type=data_index.source.input_data.type, path=data_index.source.input_data.path)  # type: ignore [arg-type]
 
     component = data_index_faiss_pipeline(
         input_data=input_data,
         embeddings_model=build_model_protocol(data_index.embedding.model),
-        chunk_size=data_index.source.chunk_size,
-        data_source_glob=data_index.source.input_glob,
-        data_source_url=data_index.source.citation_url,
+        chunk_size=data_index.source.chunk_size,  # type: ignore [arg-type]
+        data_source_glob=data_index.source.input_glob,  # type: ignore [arg-type]
+        data_source_url=data_index.source.citation_url,  # type: ignore [arg-type]
         document_path_replacement_regex=(
-            json.dumps(data_index.source.citation_url_replacement_regex._to_dict())
+            json.dumps(data_index.source.citation_url_replacement_regex._to_dict())  # type: ignore [arg-type]
             if data_index.source.citation_url_replacement_regex
             else None
         ),
-        aoai_connection_id=_resolve_connection_id(ml_client, data_index.embedding.connection),
+        aoai_connection_id=_resolve_connection_id(ml_client, data_index.embedding.connection),  # type: ignore [arg-type]
         embeddings_container=(
-            Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path)
+            Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path)  # type: ignore [arg-type]
             if data_index.embedding.cache_path
             else None
         ),
@@ -474,7 +473,7 @@ def data_index_faiss(
     component.inputs["aoai_connection_id"]._meta.optional = True
     component.inputs["embeddings_container"]._meta.optional = True
     if data_index.path:
-        component.outputs.mlindex_asset_uri = Output(type=AssetTypes.URI_FOLDER, path=data_index.path)
+        component.outputs.mlindex_asset_uri = Output(type=AssetTypes.URI_FOLDER, path=data_index.path)  # type: ignore [attr-defined]
 
     return component
 
@@ -522,11 +521,11 @@ def data_index_hosted(
         index_config: str,
         index_connection_id: str,
         chunk_size: int = 1024,
-        data_source_glob: str = None,
-        data_source_url: str = None,
-        document_path_replacement_regex: str = None,
-        aoai_connection_id: str = None,
-        embeddings_container: Input = None,
+        data_source_glob: str = None,  # type: ignore [assignment]
+        data_source_url: str = None,  # type: ignore [assignment]
+        document_path_replacement_regex: str = None,  # type: ignore [assignment]
+        aoai_connection_id: str = None,  # type: ignore [assignment]
+        embeddings_container: Input = None,  # type: ignore [assignment]
     ):
         """
         Generate embeddings for a `input_data` source
@@ -574,9 +573,9 @@ def data_index_hosted(
         )
         if compute is None or compute == "serverless":
             use_automatic_compute(generate_embeddings, instance_type=serverless_instance_type)
-        if optional_pipeline_input_provided(aoai_connection_id):
+        if optional_pipeline_input_provided(aoai_connection_id):  # type: ignore [arg-type]
             generate_embeddings.environment_variables["AZUREML_WORKSPACE_CONNECTION_ID_AOAI"] = aoai_connection_id
-        if optional_pipeline_input_provided(embeddings_container):
+        if optional_pipeline_input_provided(embeddings_container):  # type: ignore [arg-type]
             generate_embeddings.outputs.embeddings = Output(
                 type="uri_folder", path=f"{embeddings_container.path}/{{name}}"
             )
@@ -616,7 +615,9 @@ def data_index_hosted(
     if input_data_override is not None:
         input_data = input_data_override
     else:
-        input_data = Input(type=data_index.source.input_data.type, path=data_index.source.input_data.path)
+        input_data = Input(
+            type=data_index.source.input_data.type, path=data_index.source.input_data.path
+        )  # type: ignore [arg-type]
 
     index_config = {
         "index_name": data_index.index.name if data_index.index.name is not None else data_index.name,
@@ -628,18 +629,18 @@ def data_index_hosted(
         input_data=input_data,
         embeddings_model=build_model_protocol(data_index.embedding.model),
         index_config=json.dumps(index_config),
-        index_connection_id=_resolve_connection_id(ml_client, data_index.index.connection),
-        chunk_size=data_index.source.chunk_size,
-        data_source_glob=data_index.source.input_glob,
-        data_source_url=data_index.source.citation_url,
+        index_connection_id=_resolve_connection_id(ml_client, data_index.index.connection),  # type: ignore [arg-type]
+        chunk_size=data_index.source.chunk_size,  # type: ignore [arg-type]
+        data_source_glob=data_index.source.input_glob,  # type: ignore [arg-type]
+        data_source_url=data_index.source.citation_url,  # type: ignore [arg-type]
         document_path_replacement_regex=(
-            json.dumps(data_index.source.citation_url_replacement_regex._to_dict())
+            json.dumps(data_index.source.citation_url_replacement_regex._to_dict())  # type: ignore [arg-type]
             if data_index.source.citation_url_replacement_regex
             else None
         ),
-        aoai_connection_id=_resolve_connection_id(ml_client, data_index.embedding.connection),
+        aoai_connection_id=_resolve_connection_id(ml_client, data_index.embedding.connection),  # type: ignore [arg-type]
         embeddings_container=(
-            Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path)
+            Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path)  # type: ignore [arg-type]
             if data_index.embedding.cache_path
             else None
         ),
@@ -652,7 +653,7 @@ def data_index_hosted(
     component.inputs["embeddings_container"]._meta.optional = True
 
     if data_index.path:
-        component.outputs.mlindex_asset_uri = Output(type=AssetTypes.URI_FOLDER, path=data_index.path)
+        component.outputs.mlindex_asset_uri = Output(type=AssetTypes.URI_FOLDER, path=data_index.path)  # type: ignore [arg-type]
 
     return component
 
@@ -729,7 +730,10 @@ def _resolve_connection_id(ml_client, connection: Optional[str] = None) -> Optio
 
     if isinstance(connection, str):
         from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId
+
         connection_name = AMLNamedArmId(connection).asset_name
 
         connection = ml_client.connections.get(connection_name)
+        if connection is None:
+            return None
     return connection.id

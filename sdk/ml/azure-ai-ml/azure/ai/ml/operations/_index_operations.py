@@ -27,7 +27,7 @@ from azure.ai.ml._utils._asset_utils import _resolve_label_to_asset
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _get_base_urls_from_discovery_service
-from azure.ai.ml.constants._common import AzureMLResourceType, WorkspaceDiscoveryUrlKey
+from azure.ai.ml.constants._common import AzureMLResourceType, WorkspaceDiscoveryUrlKey, AssetTypes
 from azure.ai.ml.entities._assets import Index
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
@@ -43,7 +43,22 @@ from azure.ai.ml.entities._indexes import (
     GitSource,
     ModelConfiguration,
 )
+from azure.ai.ml.entities._indexes.entities.data_index import (
+    CitationRegex,
+    Data,
+    DataIndex,
+    Embedding,
+    IndexSource,
+    IndexStore,
+)
+from azure.ai.ml.entities._indexes.utils._open_ai_utils import build_open_ai_protocol, build_connection_id
 from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration, UserIdentityConfiguration
+from azure.ai.ml.dsl import pipeline
+from azure.ai.ml.entities._indexes.data_index_func import index_data as index_data_func
+from azure.ai.ml._utils._asset_utils import (
+    _validate_auto_delete_setting_in_data_output,
+    _validate_workspace_managed_datastore,
+)
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -285,16 +300,6 @@ class IndexOperations(_ScopeDependentOperations):
         :raises ValueError: If the `source_input` is not type ~typing.Str or
             ~azure.ai.ml.entities._indexes.LocalSource.
         """
-        from azure.ai.ml.entities._indexes.entities.data_index import (
-            CitationRegex,
-            Data,
-            DataIndex,
-            Embedding,
-            IndexSource,
-            IndexStore,
-        )
-        from azure.ai.ml.entities._indexes.utils._open_ai_utils import build_open_ai_protocol, build_connection_id
-
         if document_path_replacement_regex:
             document_path_replacement_regex = json.loads(document_path_replacement_regex)
 
@@ -354,9 +359,7 @@ class IndexOperations(_ScopeDependentOperations):
             return self._create_data_indexing_job(data_index=data_index, identity=input_source_credential)
 
         if isinstance(input_source, GitSource):
-            from azure.ai.ml.dsl import pipeline
             from azure.ai.ml import MLClient
-            from azure.ai.ml.entities._indexes.data_index_func import index_data as index_data_func
 
             ml_registry = MLClient(credential=self._credential, registry_name="azureml")
             git_clone_component = ml_registry.components.get("llm_rag_git_clone", label="latest")
@@ -428,14 +431,8 @@ class IndexOperations(_ScopeDependentOperations):
         """
         # pylint: disable=no-member
         from azure.ai.ml import MLClient
-        from azure.ai.ml.constants._common import AssetTypes
-        from azure.ai.ml._utils._asset_utils import (
-            _validate_auto_delete_setting_in_data_output,
-            _validate_workspace_managed_datastore,
-        )
-        from azure.ai.ml.entities._indexes.data_index_func import index_data as index_data_func
 
-        default_name = "data_index_" + data_index.name
+        default_name = "data_index_" + data_index.name if data_index.name is not None else ""
         experiment_name = kwargs.pop("experiment_name", None) or default_name
         data_index.type = AssetTypes.URI_FOLDER
 
@@ -445,8 +442,8 @@ class IndexOperations(_ScopeDependentOperations):
         # block customer specified path on managed datastore
         data_index.path = _validate_workspace_managed_datastore(data_index.path)
 
-        if "${{name}}" not in data_index.path and "{name}" not in data_index.path:
-            data_index.path = data_index.path.rstrip("/") + "/${{name}}"
+        if "${{name}}" not in str(data_index.path) and "{name}" not in str(data_index.path):
+            data_index.path = str(data_index.path).rstrip("/") + "/${{name}}"
 
         index_job = index_data_func(
             description=data_index.description or kwargs.pop("description", None) or default_name,

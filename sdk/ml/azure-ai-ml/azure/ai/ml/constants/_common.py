@@ -966,8 +966,6 @@ class IndexInputType:
 
     GIT = "git"
     LOCAL = "local"
-    AOAI = "aoai"
-    """Azure OpenAI input data type."""
 
 
 class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
