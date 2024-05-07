@@ -9,7 +9,7 @@ from uuid import UUID
 from datetime import datetime
 from math import isnan
 
-from ._serialize import EdmType
+from ._entity import EdmType
 from ._entity import TableEntity
 from ._deserialize import _convert_to_entity
 from ._common_conversion import _encode_base64, _to_utc_datetime
@@ -56,28 +56,16 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
             except AttributeError:
                 pass
             return EdmType.DATETIME, _to_utc_datetime(value)
+        if isinstance(value, tuple):
+            if value[1] == EdmType.INT64:  # TODO: Test if this works with either string or enum input.
+                return EdmType.INT64, str(value[0])  # TODO: Test what happens if the supplied value exceeds int64
+            _, encoded_value = self.prepare_value(name, value[0])
+            return value[1], encoded_value
         if value is None:
             return None, None
         if name:
             raise TypeError(f"Unsupported data type '{type(value)}' for entity property '{name}'.")
         raise TypeError(f"Unsupported data type '{type(value)}'.")
-
-    def encode_property(self, name: Optional[str], value: Any) -> Tuple[Optional[EdmType], Optional[Union[str, int, float, bool]]]:
-        """This is a migration of the old add_entity_properties method in serialize.py, with some simplications like
-        removing int validation.
-        """
-        # TODO: move tuple handle into prepare_value
-        try:
-            if isinstance(value, tuple):
-                if value[1] == EdmType.INT64:  # TODO: Test if this works with either string or enum input.
-                    return EdmType.INT64, str(value[0])  # TODO: Test what happens if the supplied value exceeds int64
-                _, encoded_value = self.prepare_value(name, value[0])
-                return value[1], encoded_value
-        except TypeError:
-            pass
-        
-        return self.prepare_value(name, value)
-        
     
     @abc.abstractmethod
     def encode_entity(self, entity: T) -> Dict[str, Union[str, int, float, bool]]:
@@ -99,7 +87,7 @@ class TableEntityEncoder(TableEntityEncoderABC[Union[Mapping[str, Any], TableEnt
         """
         encoded = {}
         for key, value in entity.items():
-            edm_type, value = self.encode_property(key, value)
+            edm_type, value = self.prepare_value(key, value)
             try:
                 if _ODATA_SUFFIX in key or key + _ODATA_SUFFIX in entity:
                     encoded[key] = value
