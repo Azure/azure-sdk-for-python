@@ -221,8 +221,9 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
                 This parameter was introduced in API version '2021-06-08'.
 
         :paramtype file_change_time: str or ~datetime.datetime
-        :keyword dict[str, str] metadata:
+        :keyword metadata:
             Name-value pairs associated with the directory as metadata.
+        :paramtype metadata: Optional[dict[str, str]]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -731,8 +732,9 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
 
         :param str directory_name:
             The name of the subdirectory.
-        :keyword dict[str, str] metadata:
+        :keyword metadata:
             Name-value pairs associated with the subdirectory as metadata.
+        :paramtype metadata: Optional[dict[str, str]]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -805,8 +807,9 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         :type data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]]
         :param int length:
             Length of the file in bytes. Specify its maximum size, up to 1 TiB.
-        :keyword dict[str, str] metadata:
+        :keyword metadata:
             Name-value pairs associated with the file as metadata.
+        :paramtype metadata: Optional[dict[str, str]]
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
