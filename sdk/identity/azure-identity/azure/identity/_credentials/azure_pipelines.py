@@ -24,7 +24,7 @@ def build_oidc_request(service_connection_id: str) -> HttpRequest:
     base_uri = os.environ[ev.SYSTEM_TEAMFOUNDATIONCOLLECTIONURI].rstrip("/")
     url = (
         f"{base_uri}/{os.environ[ev.SYSTEM_TEAMPROJECTID]}/_apis/distributedtask/hubs/build/plans/"
-        f"{os.environ[ev.SYSTEM_PLANID]}/jobs/{os.environ[ev.SYSTEM_JOBID]}/oidctoken"
+        f"{os.environ[ev.SYSTEM_PLANID]}/jobs/{os.environ[ev.SYSTEM_JOBID]}/oidctoken?"
         f"api-version={OIDC_API_VERSION}&serviceConnectionId={service_connection_id}"
     )
     access_token = os.environ[ev.SYSTEM_ACCESSTOKEN]

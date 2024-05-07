@@ -91,13 +91,15 @@ def test_azure_pipelines_credential_missing_env_var():
 def test_azure_pipelines_credential_in_chain():
     mock_credential = MagicMock()
 
-    chain_credential = ChainedTokenCredential(
-        AzurePipelinesCredential(tenant_id="tenant-id", client_id="client-id", service_connection_id="connection-id"),
-        mock_credential,
-    )
-
-    chain_credential.get_token("scope")
-    assert mock_credential.get_token.called
+    with patch.dict("os.environ", {}, clear=True):
+        chain_credential = ChainedTokenCredential(
+            AzurePipelinesCredential(
+                tenant_id="tenant-id", client_id="client-id", service_connection_id="connection-id"
+            ),
+            mock_credential,
+        )
+        chain_credential.get_token("scope")
+        assert mock_credential.get_token.called
 
 
 @pytest.mark.live_test_only("Requires Azure Pipelines environment with configured service connection")
