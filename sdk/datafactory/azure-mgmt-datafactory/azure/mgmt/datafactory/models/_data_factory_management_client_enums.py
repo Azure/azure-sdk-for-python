@@ -37,6 +37,13 @@ class AmazonRdsForOraclePartitionOption(str, Enum, metaclass=CaseInsensitiveEnum
     DYNAMIC_RANGE = "DynamicRange"
 
 
+class AmazonRdsForSqlAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    SQL = "SQL"
+    WINDOWS = "Windows"
+
+
 class AvroCompressionCodec(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AvroCompressionCodec."""
 
@@ -64,6 +71,33 @@ class AzureSearchIndexWriteBehaviorType(str, Enum, metaclass=CaseInsensitiveEnum
 
     MERGE = "Merge"
     UPLOAD = "Upload"
+
+
+class AzureSqlDatabaseAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    SQL = "SQL"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
+
+
+class AzureSqlDWAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    SQL = "SQL"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
+
+
+class AzureSqlMIAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    SQL = "SQL"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
 
 
 class AzureStorageAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -809,7 +843,7 @@ class ScriptActivityParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ScriptType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the query. Type: string."""
+    """The type of the ScriptActivityScriptBlock."""
 
     QUERY = "Query"
     NON_QUERY = "NonQuery"
@@ -922,6 +956,13 @@ class SqlPartitionOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NONE = "None"
     PHYSICAL_PARTITIONS_OF_TABLE = "PhysicalPartitionsOfTable"
     DYNAMIC_RANGE = "DynamicRange"
+
+
+class SqlServerAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    SQL = "SQL"
+    WINDOWS = "Windows"
 
 
 class SqlWriteBehaviorEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
