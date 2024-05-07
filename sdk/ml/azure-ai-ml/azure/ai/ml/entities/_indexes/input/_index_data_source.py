@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from typing import Union
 
-from azure.ai.ml import Input
+from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.constants._common import IndexInputType
 
 

@@ -63,7 +63,7 @@ class DataTransferBuiltinComponentUri(object):
     EXPORT_DATABASE = "azureml://registries/azureml/components/export_data_database/versions/0.0.1"
 
 
-class LLMRAGComponentUri(object):
+class LLMRAGComponentUri:
     LLM_RAG_CRACK_AND_CHUNK = "azureml://registries/azureml/components/llm_rag_crack_and_chunk/labels/default"
     LLM_RAG_GENERATE_EMBEDDINGS = "azureml://registries/azureml/components/llm_rag_generate_embeddings/labels/default"
     LLM_RAG_CRACK_AND_CHUNK_AND_EMBED = (

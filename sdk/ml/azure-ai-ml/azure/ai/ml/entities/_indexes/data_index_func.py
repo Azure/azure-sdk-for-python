@@ -369,11 +369,11 @@ def data_index_faiss(
         input_data: Input,
         embeddings_model: str,
         chunk_size: int = 1024,
-        data_source_glob: Optional[str] = None,
-        data_source_url: Optional[str] = None,
-        document_path_replacement_regex: Optional[str] = None,
-        aoai_connection_id: Optional[str] = None,
-        embeddings_container: Optional[Input] = None,
+        data_source_glob: str = None,
+        data_source_url: str = None,
+        document_path_replacement_regex: str = None,
+        aoai_connection_id: str = None,
+        embeddings_container: Input = None,
     ):
         """
         Generate embeddings for a `input_data` source and create a Faiss index from them.
@@ -522,11 +522,11 @@ def data_index_hosted(
         index_config: str,
         index_connection_id: str,
         chunk_size: int = 1024,
-        data_source_glob: Optional[str] = None,
-        data_source_url: Optional[str] = None,
-        document_path_replacement_regex: Optional[str] = None,
-        aoai_connection_id: Optional[str] = None,
-        embeddings_container: Optional[Input] = None,
+        data_source_glob: str = None,
+        data_source_url: str = None,
+        document_path_replacement_regex: str = None,
+        aoai_connection_id: str = None,
+        embeddings_container: Input = None,
     ):
         """
         Generate embeddings for a `input_data` source
@@ -723,30 +723,13 @@ def get_component_obj(ml_client, component_uri):
     return component_obj
 
 
-def _resolve_connection_id(ml_client, connection: Optional[Union[str, Connection]] = None) -> Optional[str]:
+def _resolve_connection_id(ml_client, connection: Optional[str] = None) -> Optional[str]:
     if connection is None:
         return None
 
     if isinstance(connection, str):
-        short_form = re.match(r"azureml:(?P<connection_name>[^/]*)", connection)
-        if short_form:
-            connection_name = short_form.group("connection_name")
-        else:
-            # TODO: Handle long form connection sub/rg/ws, ideally reuse logic implemented by connections code.
-            long_form = re.match(r"(azureml:/)?/.*/connections/(?P<connection_name>[^/]*)", connection)
-            connection_name = long_form.group("connection_name") if long_form else connection
+        from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId
+        connection_name = AMLNamedArmId(connection).asset_name
 
-        try:
-            connection = ml_client.connections.get(connection_name)
-        except Exception:  # pylint: disable=broad-except
-            # Try again for Pinecone's custom connections
-            return ml_client.connections._operation.list_secrets(
-                connection_name=connection_name,
-                resource_group_name=ml_client.resource_group_name,
-                workspace_name=ml_client.workspace_name,
-            ).as_dict()["id"]
-    elif hasattr(connection, "_workspace_connection"):
-        # Handle azure.ai.generative Connections
-        connection = connection._workspace_connection
-
+        connection = ml_client.connections.get(connection_name)
     return connection.id

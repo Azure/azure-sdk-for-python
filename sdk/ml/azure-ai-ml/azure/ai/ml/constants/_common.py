@@ -961,7 +961,7 @@ class DataIndexTypes:
     """Faiss index type."""
 
 
-class IndexInputType(object):
+class IndexInputType:
     """An enumeration of values for the types of input data for an index."""
 
     GIT = "git"

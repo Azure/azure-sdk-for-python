@@ -35,6 +35,7 @@ from azure.core.credentials import TokenCredential
 
 from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
 from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._indexes.entities.data_index import DataIndex
 from azure.ai.ml.entities._indexes import (
     AzureAISearchConfig,
     IndexDataSource,
@@ -342,7 +343,7 @@ class IndexOperations(_ScopeDependentOperations):
                 path=input_source.input_data.path,
             )
 
-            return self.index_data(data_index=data_index, identity=input_source_credential)
+            return self._create_data_indexing_job(data_index=data_index, identity=input_source_credential)
 
         if isinstance(input_source, str):
             data_index.source.input_data = Data(
@@ -350,7 +351,7 @@ class IndexOperations(_ScopeDependentOperations):
                 path=input_source,
             )
 
-            return self.index_data(data_index=data_index, identity=input_source_credential)
+            return self._create_data_indexing_job(data_index=data_index, identity=input_source_credential)
 
         if isinstance(input_source, GitSource):
             from azure.ai.ml.dsl import pipeline
@@ -396,9 +397,9 @@ class IndexOperations(_ScopeDependentOperations):
             return self._all_operations.all_operations[AzureMLResourceType.JOB].create_or_update(git_index_job)
         raise ValueError(f"Unsupported input source type {type(input_source)}")
 
-    def index_data(
+    def _create_data_indexing_job(
         self,
-        data_index: "azureml.rag.dataindex.DataIndex",  # type: ignore[name-defined]
+        data_index: DataIndex,
         identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
         compute: str = "serverless",
         serverless_instance_type: Optional[str] = None,
