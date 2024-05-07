@@ -104,7 +104,7 @@ def process_storage_error(storage_error) -> NoReturn: # type: ignore [misc] # py
         # If it is an XML response
         if isinstance(error_body, Element):
             error_dict = {
-                child.tag.lower(): child.text
+                child.tag: child.text
                 for child in error_body
             }
         # If it is a JSON response
@@ -118,9 +118,16 @@ def process_storage_error(storage_error) -> NoReturn: # type: ignore [misc] # py
         # If we extracted from a Json or XML response
         # There is a chance error_dict is just a string
         if error_dict and isinstance(error_dict, dict):
-            error_code = error_dict.get('code')
-            error_message = error_dict.get('message')
-            additional_data = {k: v for k, v in error_dict.items() if k not in {'code', 'message'}}
+            code_keys = ['code', 'Code']
+            message_keys = ['message', 'Message']
+            additional_data = {}
+            for k, v in error_dict.items():
+                if k in code_keys:
+                    error_code = v
+                elif k in message_keys:
+                    error_message = v
+                else:
+                    additional_data[k] = v
     except DecodeError:
         pass
 
