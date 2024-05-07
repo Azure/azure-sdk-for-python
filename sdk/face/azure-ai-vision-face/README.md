@@ -130,11 +130,11 @@ face_client = FaceClient(endpoint, credential)
 `FaceAdministrationClient` is provided to interact with the following data structures that hold data on faces and
 persons for Face recognition:
 
- - PersonDirectory
- - FaceList
- - LargeFaceList
- - PersonGroup
- - LargePersonGroup
+ - `person` and `dynamic_person_group` in [PersonDirectory](https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/use-persondirectory)
+ - `face_list`
+ - `large_face_list`
+ - `person_group`
+ - `large_person_group`
 
 ### FaceSessionClient
 
@@ -167,8 +167,8 @@ The following section provides several code snippets covering some of the most c
 ### Face Detection
 Detect faces and analyze them from an binary data. The latest model is the most accurate and recommended to be used.
 For the detailed differences between different versions of **Detection** and **Recognition** model, please refer to the following links.
-* [Detection model](evaluate_different_detection_models)
-* [Recognition model](recommended_recognition_model)
+* [Detection model][evaluate_different_detection_models]
+* [Recognition model][recommended_recognition_model]
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -265,7 +265,7 @@ Before doing the identification, we need to train the LargePersonGroup first.
     training_result = poller.result()
 ```
 
-When the training operation is completed successfully, we can identify the faces in this LargePersonGroup throught
+When the training operation is completed successfully, we can identify the faces in this LargePersonGroup through
 `FaceClient`.
 ```python
 with FaceClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as face_client:

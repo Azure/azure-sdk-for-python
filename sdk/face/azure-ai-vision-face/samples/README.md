@@ -3,7 +3,7 @@ page_type: sample
 languages:
   - python
 products:
-  - azure-ai-vision-face
+  - azure-face
 urlFragment: face-samples
 ---
 
