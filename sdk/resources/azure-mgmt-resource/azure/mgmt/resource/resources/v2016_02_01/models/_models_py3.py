@@ -9,7 +9,7 @@
 
 import datetime
 import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Literal, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -17,10 +17,6 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -232,7 +228,7 @@ class DeploymentExtended(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The ID of the deployment.
     :vartype id: str
@@ -472,7 +468,7 @@ class DeploymentOperationsListResult(_serialization.Model):
 class DeploymentProperties(_serialization.Model):
     """Deployment properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar template: The template content. It can be a JObject or a well formed JSON string. Use
      only one of Template or TemplateLink.
@@ -1139,7 +1135,7 @@ class Identity(_serialization.Model):
 class ParametersLink(_serialization.Model):
     """Entity representing the reference to the deployment parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar uri: URI referencing the template. Required.
     :vartype uri: str
@@ -1348,7 +1344,7 @@ class ResourceGroup(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The ID of the resource group.
     :vartype id: str
@@ -1470,7 +1466,7 @@ class ResourceGroupFilter(_serialization.Model):
 class ResourceGroupListResult(_serialization.Model):
     """List of resource groups.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of resource groups.
     :vartype value: list[~azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroup]
@@ -1525,7 +1521,7 @@ class ResourceGroupProperties(_serialization.Model):
 class ResourceListResult(_serialization.Model):
     """List of resource groups.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of resources.
     :vartype value: list[~azure.mgmt.resource.resources.v2016_02_01.models.GenericResourceExpanded]
@@ -1560,7 +1556,7 @@ class ResourceListResult(_serialization.Model):
 class ResourceManagementErrorWithDetails(_serialization.Model):
     """ResourceManagementErrorWithDetails.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: The error code returned from the server. Required.
     :vartype code: str
@@ -1612,7 +1608,7 @@ class ResourceManagementErrorWithDetails(_serialization.Model):
         self.details = details
 
 
-class ResourceProviderOperationDisplayProperties(_serialization.Model):
+class ResourceProviderOperationDisplayProperties(_serialization.Model):  # pylint: disable=name-too-long
     """Resource provider operation's display properties.
 
     :ivar publisher: Operation description.
@@ -1851,7 +1847,7 @@ class TagDetails(_serialization.Model):
 class TagsListResult(_serialization.Model):
     """List of subscription tags.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of tags.
     :vartype value: list[~azure.mgmt.resource.resources.v2016_02_01.models.TagDetails]
@@ -1989,7 +1985,7 @@ class TemplateHashResult(_serialization.Model):
 class TemplateLink(_serialization.Model):
     """Entity representing the reference to the template.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar uri: URI referencing the template. Required.
     :vartype uri: str

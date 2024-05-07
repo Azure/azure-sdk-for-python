@@ -1,9 +1,10 @@
-# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=too-many-lines, docstring-keyword-should-match-keyword-only
+
 import re
 from datetime import datetime
 from typing import ( # pylint: disable=unused-import
@@ -61,6 +62,11 @@ class PathClient(StorageAccountHostsMixin):
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.TokenCredential or
+        str or dict[str, str] or None
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -449,7 +455,8 @@ class PathClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :keyword: response dict (Etag and last modified).
+        :returns: response dict containing access control options (Etag and last modified).
+        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
         """
         if not any([owner, group, permissions, acl]):
             raise ValueError("At least one parameter should be set for set_access_control API")
@@ -519,7 +526,8 @@ class PathClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :keyword: response dict.
+        :returns: response dict containing access control options with no modifications.
+        :rtype: dict[str, Any]
         """
         options = self._get_access_control_options(upn=upn, **kwargs)
         try:
@@ -583,7 +591,7 @@ class PathClient(StorageAccountHostsMixin):
             #other-client--per-operation-configuration>`_.
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
-        :rtype: :class:`~azure.storage.filedatalake.AccessControlChangeResult`
+        :rtype: ~azure.storage.filedatalake.AccessControlChangeResult
         :raises ~azure.core.exceptions.AzureError:
             User can restart the operation using continuation_token field of AzureError if the token is available.
         """
@@ -637,7 +645,7 @@ class PathClient(StorageAccountHostsMixin):
             #other-client--per-operation-configuration>`_.
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
-        :rtype: :class:`~azure.storage.filedatalake.AccessControlChangeResult`
+        :rtype: ~azure.storage.filedatalake.AccessControlChangeResult
         :raises ~azure.core.exceptions.AzureError:
             User can restart the operation using continuation_token field of AzureError if the token is available.
         """
@@ -690,7 +698,7 @@ class PathClient(StorageAccountHostsMixin):
             #other-client--per-operation-configuration>`_.
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
-        :rtype: :class:`~azure.storage.filedatalake.AccessControlChangeResult`
+        :rtype: ~azure.storage.filedatalake.AccessControlChangeResult
         :raises ~azure.core.exceptions.AzureError:
             User can restart the operation using continuation_token field of AzureError if the token is available.
         """
@@ -879,6 +887,8 @@ class PathClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
+        :returns: response dict containing information about the renamed path.
+        :rtype: dict[str, Any]
         """
         options = self._rename_path_options(
             rename_source,
@@ -919,20 +929,21 @@ class PathClient(StorageAccountHostsMixin):
             Use of customer-provided keys must be done over HTTPS.
             Required if the file/directory was created with a customer-provided key.
         :keyword bool upn:
-            Optional. Valid only when Hierarchical Namespace is
-            enabled for the account. If "True", the user identity values returned
-            in the x-ms-owner, x-ms-group, and x-ms-acl response headers will be
-            transformed from Azure Active Directory Object IDs to User Principal
-            Names. If "False", the values will be returned as Azure Active
-            Directory Object IDs. The default value is false. Note that group and
-            application Object IDs are not translated because they do not have
-            unique friendly names.
+            If True, the user identity values returned in the x-ms-owner, x-ms-group,
+            and x-ms-acl response headers will be transformed from Azure Active Directory Object IDs to User 
+            Principal Names in the owner, group, and acl fields of the respective property object returned.
+            If False, the values will be returned as Azure Active Directory Object IDs.
+            The default value is False. Note that group and application Object IDs are not translate
+            because they do not have unique friendly names.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
+        :returns:
+            Information including user-defined metadata, standard HTTP properties,
+            and system properties for the file or directory.
         :rtype: DirectoryProperties or FileProperties
 
         .. admonition:: Example:

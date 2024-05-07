@@ -3,7 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=invalid-overridden-method
+# pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
+
 from typing import ( # pylint: disable=unused-import
     Any, Dict, Optional, Union,
     TYPE_CHECKING)
@@ -56,6 +57,11 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials_async.AsyncTokenCredential or
+        str or dict[str, str] or None
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -221,7 +227,8 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :return: None
+        :returns: None.
+        :rtype: None
 
         .. admonition:: Example:
 
@@ -266,20 +273,21 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             Use of customer-provided keys must be done over HTTPS.
             Required if the directory was created with a customer-provided key.
         :keyword bool upn:
-            Optional. Valid only when Hierarchical Namespace is
-            enabled for the account. If "True", the user identity values returned
-            in the x-ms-owner, x-ms-group, and x-ms-acl response headers will be
-            transformed from Azure Active Directory Object IDs to User Principal
-            Names. If "False", the values will be returned as Azure Active
-            Directory Object IDs. The default value is false. Note that group and
-            application Object IDs are not translated because they do not have
-            unique friendly names.
+            If True, the user identity values returned in the x-ms-owner, x-ms-group,
+            and x-ms-acl response headers will be transformed from Azure Active Directory Object IDs to User
+            Principal Names in the owner, group, and acl fields of
+            :class:`~azure.storage.filedatalake.DirectoryProperties`. If False, the values will be returned
+            as Azure Active Directory Object IDs. The default value is False. Note that group and application
+            Object IDs are not translate because they do not have unique friendly names.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
+        :returns:
+            Information including user-defined metadata, standard HTTP properties,
+            and system properties for the file or directory.
         :rtype: DirectoryProperties
 
         .. admonition:: Example:
@@ -357,7 +365,8 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :return: DataLakeDirectoryClient
+        :returns: DataLakeDirectoryClient containing the renamed directory.
+        :rtype: ~azure.storage.filedatalake.aio.DataLakeDirectoryClient
 
         .. admonition:: Example:
 
@@ -457,7 +466,8 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :return: DataLakeDirectoryClient for the subdirectory.
+        :returns: DataLakeDirectoryClient for the subdirectory.
+        :rtype: ~azure.storage.filedatalake.aio.DataLakeDirectoryClient
         """
         subdir = self.get_sub_directory_client(sub_directory)
         await subdir.create_directory(metadata=metadata, **kwargs)
@@ -501,7 +511,8 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :return: DataLakeDirectoryClient for the subdirectory
+        :returns: DataLakeDirectoryClient for the subdirectory.
+        :rtype: ~azure.storage.filedatalake.aio.DataLakeDirectoryClient
         """
         subdir = self.get_sub_directory_client(sub_directory)
         await subdir.delete_directory(**kwargs)
@@ -593,7 +604,8 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :return: DataLakeFileClient
+        :returns: DataLakeFileClient with the new file.
+        :rtype: ~azure.storage.filedatalake.aio.DataLakeDirectoryClient
         """
         file_client = self.get_file_client(file)
         await file_client.create_file(**kwargs)

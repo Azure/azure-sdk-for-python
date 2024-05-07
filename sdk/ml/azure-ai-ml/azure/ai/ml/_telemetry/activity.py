@@ -60,23 +60,23 @@ class ActivityLoggerAdapter(logging.LoggerAdapter):
     :type activity_info: str
     """
 
-    def __init__(self, logger: logging.Logger, activity_info: str):
+    def __init__(self, logger: logging.Logger, activity_info: Dict):
         """Initialize a new instance of the class.
 
         :param logger: The activity logger.
         :type logger: logging.Logger
         :param activity_info: The info to write to the logger.
-        :type activity_info: str
+        :type activity_info: Dict
         """
         self._activity_info = activity_info
         super(ActivityLoggerAdapter, self).__init__(logger, None)  # type: ignore[arg-type]
 
     @property
-    def activity_info(self) -> str:
+    def activity_info(self) -> Dict:
         """Return current activity info.
 
         :return: The info to write to the logger
-        :rtype: str
+        :rtype: Dict
         """
         return self._activity_info
 
@@ -197,7 +197,7 @@ def log_activity(
 
     try:
         yield activityLogger
-    except BaseException as e:  # pylint: disable=broad-except
+    except BaseException as e:  # pylint: disable=W0718
         exception = error_preprocess(activityLogger, e)
         completion_status = ActivityCompletionStatus.FAILURE
         # All the system and unknown errors except for NotImplementedError will be wrapped with a new exception.
@@ -211,6 +211,7 @@ def log_activity(
                 and activityLogger.activity_info["errorCategory"]  # type: ignore[index]
                 in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN]
             ):
+                # pylint: disable=W0719
                 raise Exception("Got InternalSDKError", e) from e
             raise
         raise
@@ -225,7 +226,6 @@ def log_activity(
                 activity_name, completion_status, duration_ms
             )
             if exception:
-                message += ", Exception={}".format(type(exception).__name__)
                 activityLogger.activity_info["exception"] = type(exception).__name__  # type: ignore[index]
                 if isinstance(exception, MlException):
                     activityLogger.activity_info[  # type: ignore[index]
@@ -241,11 +241,15 @@ def log_activity(
                         activityLogger.activity_info["innerException"] = type(  # type: ignore[index]
                             exception.inner_exception
                         ).__name__
+                message += ", Exception={}".format(activityLogger.activity_info["exception"])
+                message += ", ErrorCategory={}".format(activityLogger.activity_info["errorCategory"])
+                message += ", ErrorMessage={}".format(activityLogger.activity_info["errorMessage"])
+
                 activityLogger.error(message)
             else:
                 activityLogger.info(message)
-        except Exception:  # pylint: disable=broad-except
-            return  # pylint: disable=lost-exception
+        except Exception:  # pylint: disable=W0718
+            return  # pylint: disable=lost-exception,return-in-finally
 
 
 # pylint: disable-next=docstring-missing-rtype
@@ -343,7 +347,7 @@ def monitor_with_telemetry_mixin(
                         dimensions.update(obj._get_telemetry_values())
                     elif extra_keys and key in extra_keys:
                         dimensions[key] = str(obj)
-                except Exception:  # pylint: disable=broad-except
+                except Exception:  # pylint: disable=W0718
                     pass
             # add left keys with None
             if extra_keys:
@@ -357,7 +361,7 @@ def monitor_with_telemetry_mixin(
 
             try:
                 return value._get_telemetry_values() if isinstance(value, TelemetryMixin) else {}
-            except Exception:  # pylint: disable=broad-except
+            except Exception:  # pylint: disable=W0718
                 return {}
 
         @functools.wraps(f)

@@ -64,6 +64,8 @@
 /sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
 
 # ServiceLabel: %Storage
+# ServiceOwners: @jalauzon-msft @vincenttran-msft
+
 # PRLabel: %Storage
 /sdk/storage/                                                        @annatisch @jalauzon-msft @vincenttran-msft @weirongw23-msft
 
@@ -114,9 +116,6 @@
 
 # PRLabel: %Communication - Identity
 /sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @AikoBB @maximrytych-ms @mjafferi-msft
-
-# PRLabel: %Communication - NetworkTraversal
-/sdk/communication/azure-communication-networktraversal/             @ajpeacock0 @nathpete-msft
 
 # PRLabel: %Communication - Common
 /sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk @AikoBB @maximrytych-ms @mjafferi-msft
@@ -663,9 +662,6 @@
 # ServiceLabel: %Digital Twins %Service Attention
 #/<NotInRepo>/          @sourabhguha @inesk-vt
 
-# ServiceLabel: %Event Grid %Service Attention
-#/<NotInRepo>/          @jfggdl
-
 # ServiceLabel: %Event Hubs %Service Attention
 #/<NotInRepo>/          @kasun04
 
@@ -819,9 +815,6 @@
 # ServiceLabel: %Redis Cache %Service Attention
 #/<NotInRepo>/          @yegu-ms
 
-# ServiceLabel: %Relay %Service Attention
-#/<NotInRepo>/          @jfggdl
-
 # ServiceLabel: %Reservations %Service Attention
 #/<NotInRepo>/          @Rkapso
 
@@ -872,9 +865,6 @@
 
 # ServiceLabel: %Service Attention %SQL - Replication & Failover
 #/<NotInRepo>/          @azureSQLGitHub
-
-# ServiceLabel: %Service Attention %Storage
-#/<NotInRepo>/          @xgithubtriage
 
 # ServiceLabel: %Service Attention %Storsimple
 #/<NotInRepo>/          @anoobbacker @ganzee @manuaery @patelkunal

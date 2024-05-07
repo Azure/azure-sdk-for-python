@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines, invalid-overridden-method, too-many-public-methods
+# pylint: disable=docstring-keyword-should-match-keyword-only
+
 import functools
 import sys
 import time
@@ -127,6 +129,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials_async.AsyncTokenCredential or
+        str or dict[str, str] or None
     :keyword token_intent:
         Required when using `TokenCredential` for authentication and ignored for other forms of authentication.
         Specifies the intent for all requests when using `TokenCredential` authentication. Possible values are:
@@ -284,8 +291,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
-        :keyword dict[str, str] metadata:
+        :keyword metadata:
             Name-value pairs associated with the file as metadata.
+        :paramtype metadata: Optional[dict[str, str]]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -397,8 +405,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 This parameter was introduced in API version '2021-06-08'.
 
         :paramtype file_change_time: str or ~datetime.datetime
-        :keyword dict[str, str] metadata:
+        :keyword metadata:
             Name-value pairs associated with the file as metadata.
+        :paramtype metadata: Optional[dict[str, str]]
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
@@ -571,7 +580,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
         :keyword metadata:
             Name-value pairs associated with the file as metadata.
-        :type metadata: dict[str, str]
+        :paramtype metadata: Optional[dict[str, str]]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.

@@ -168,7 +168,7 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
             continue
         try:
             # Check if dependent libraries/version are installed
-            conflict = get_dist_dependency_conflicts(entry_point.dist)
+            conflict = get_dist_dependency_conflicts(entry_point.dist) # type: ignore
             if conflict:
                 _logger.debug(
                     "Skipping instrumentation %s: %s",
