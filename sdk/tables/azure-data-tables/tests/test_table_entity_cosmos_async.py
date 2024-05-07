@@ -28,6 +28,7 @@ from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError, ResourceModifiedError
 
 from _shared.asynctestcase import AsyncTableTestCase
+from _shared.testcase import _encode_base64
 from async_preparers import cosmos_decorator_async
 
 # ------------------------------------------------------------------------------
@@ -181,12 +182,16 @@ class TestTableEntityCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             dict32["large"] = EntityProperty(2**31, EdmType.INT32)  # TODO: this is outside the range of int32
 
             # Assert
-            with pytest.raises(TypeError):
+            with pytest.raises(HttpResponseError) as error:
                 await self.table.create_entity(entity=dict32)
+            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
+            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
 
             dict32["large"] = EntityProperty(-(2**31 + 1), EdmType.INT32)  # TODO: this is outside the range of int32
-            with pytest.raises(TypeError):
+            with pytest.raises(HttpResponseError) as error:
                 await self.table.create_entity(entity=dict32)
+            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
+            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
         finally:
             await self._tear_down()
 
@@ -203,12 +208,16 @@ class TestTableEntityCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             dict64["large"] = EntityProperty(2**63, EdmType.INT64)
 
             # Assert
-            with pytest.raises(TypeError):
+            with pytest.raises(HttpResponseError) as error:
                 await self.table.create_entity(entity=dict64)
+            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
+            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
 
             dict64["large"] = EntityProperty(-(2**63 + 1), EdmType.INT64)
-            with pytest.raises(TypeError):
+            with pytest.raises(HttpResponseError) as error:
                 await self.table.create_entity(entity=dict64)
+            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
+            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
         finally:
             await self._tear_down()
 
@@ -2000,11 +2009,11 @@ class TestTableEntityCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             await self.table.upsert_entity(entity)
             result = await self.table.get_entity(entity["PartitionKey"], entity["RowKey"])
             assert result["bool"] == False
-            assert result["text"] == "42"
+            assert result["text"] == 42
             assert result["number"] == 23
             assert result["bigNumber"][0] == 64
-            assert result["bytes"] == b"test"
-            assert result["amount"] == 0.0
+            assert _encode_base64(result["bytes"]) == "test"
+            assert result["amount"] == 0
             assert str(result["since"]) == "2008-07-10 00:00:00+00:00"
             assert result["guid"] == entity["guid"][0]
 
