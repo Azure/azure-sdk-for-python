@@ -1012,5 +1012,6 @@
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
 /eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312
+/eng/common/pipelines/codeowners-linter.yml                          @lmazuel @mccoyp
 
 /pylintrc                                                            @l0lawrence
