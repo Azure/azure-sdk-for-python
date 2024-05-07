@@ -418,7 +418,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         *,
         operation: bytes,
         operation_type: bytes,
-        node: bytes,
+        node: str,
         timeout: int,
         callback: Callable
     ) -> "ServiceBusReceivedMessage":
@@ -428,7 +428,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :param ~pyamqp.message.Message mgmt_msg: Message.
         :keyword bytes operation: Operation.
         :keyword bytes operation_type: Op type.
-        :keyword bytes node: Mgmt target.
+        :keyword str node: Mgmt target.
         :keyword int timeout: Timeout.
         :keyword callable callback: Callback to process request response.
         :return: The result returned by the mgmt request.

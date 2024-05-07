@@ -926,7 +926,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         *,
         operation: bytes,
         operation_type: bytes,
-        node: bytes,
+        node: str,
         timeout: int,
         callback: Callable
     ) -> "ServiceBusReceivedMessage":
@@ -936,7 +936,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param ~pyamqp.message.Message mgmt_msg: Message.
         :keyword bytes operation: Operation.
         :keyword bytes operation_type: Op type.
-        :keyword bytes node: Mgmt target.
+        :keyword str node: Mgmt target.
         :keyword int timeout: Timeout.
         :keyword callable callback: Callback to process request response.
         :return: ServiceBusReceivedMessage
