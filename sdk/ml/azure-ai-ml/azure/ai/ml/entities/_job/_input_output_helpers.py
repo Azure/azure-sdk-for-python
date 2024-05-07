@@ -332,10 +332,6 @@ def to_rest_data_outputs(outputs: Optional[Dict]) -> Dict[str, RestJobOutput]:
 
                 output_value_type = output_value.type if output_value.type else AssetTypes.URI_FOLDER
                 if output_value_type in target_cls_dict:
-                    if getattr(output_value, "pathOnCompute", None) is not None:
-                        sourcePathOnCompute = output_value.pathOnCompute
-                    else:
-                        sourcePathOnCompute = None
                     output = target_cls_dict[output_value_type](
                         asset_name=output_value.name,
                         asset_version=output_value.version,
