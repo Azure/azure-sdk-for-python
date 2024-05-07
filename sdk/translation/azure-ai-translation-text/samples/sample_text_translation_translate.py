@@ -338,7 +338,7 @@ def get_text_translation_sentence_length():
                 if translated_text.sentences_lengths:
                     print(f"Source Sentence length: {translated_text.sentences_lengths.src_sentences_lengths}")
                     print(
-                        f"Translated Sentence length: {translated_text.sentences_lengths.trans_sentences_lengths}"
+                        f"Translated Sentence length: {translated_text.sentences_lengths.translated_sentences_lengths}"
                     )
 
     except HttpResponseError as exception:

@@ -1,8 +1,8 @@
 [tool.azure-sdk-build]
-pylint = false
-type_check_samples = false
-verifytypes = false
-pyright = false
+pylint = true
+type_check_samples = true
+verifytypes = true
+pyright = true
 strict_sphinx = true
 
 [tool.generate]

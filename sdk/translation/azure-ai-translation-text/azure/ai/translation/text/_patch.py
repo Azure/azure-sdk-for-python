@@ -87,11 +87,11 @@ class TranslatorAADAuthenticationPolicy(BearerTokenCredentialPolicy):
         super(TranslatorAADAuthenticationPolicy, self).__init__(
             credential.token_credential, "https://cognitiveservices.azure.com/.default", **kwargs
         )
-        self.translatorCredential = credential
+        self.translator_credential = credential
 
     def on_request(self, request: PipelineRequest) -> None:
-        request.http_request.headers["Ocp-Apim-ResourceId"] = self.translatorCredential.resource_id
-        request.http_request.headers["Ocp-Apim-Subscription-Region"] = self.translatorCredential.region
+        request.http_request.headers["Ocp-Apim-ResourceId"] = self.translator_credential.resource_id
+        request.http_request.headers["Ocp-Apim-Subscription-Region"] = self.translator_credential.region
         super().on_request(request)
 
 
