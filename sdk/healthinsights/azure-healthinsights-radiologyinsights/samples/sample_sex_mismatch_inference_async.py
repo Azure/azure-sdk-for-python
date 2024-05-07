@@ -22,7 +22,13 @@ submit it to the client and display the Sex Mismatch indication extracted by the
 
 
 USAGE:
-   
+
+1. Set the environment variables with your own values before running the sample:
+    - AZURE_HEALTH_INSIGHTS_API_KEY - your source from Health Insights API key.
+    - AZURE_HEALTH_INSIGHTS_ENDPOINT - the endpoint to your source Health Insights resource.
+
+2. python sample_sex_mismatch_inference_async.py
+
 """
 
 

@@ -21,8 +21,13 @@ submit it to the client, RadiologyInsightsClient, build a Radiology Insights job
 submit it to the client and display the Order Type code, Present Body Part code and measurement extracted by the Radiology Insights service.     
     
 
-
 USAGE:
+
+1. Set the environment variables with your own values before running the sample:
+    - AZURE_HEALTH_INSIGHTS_API_KEY - your source from Health Insights API key.
+    - AZURE_HEALTH_INSIGHTS_ENDPOINT - the endpoint to your source Health Insights resource.
+
+2. python sample_limited_order_discrepancy_inference_async.py
    
 """
 

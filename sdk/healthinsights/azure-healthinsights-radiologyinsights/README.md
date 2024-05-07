@@ -22,7 +22,7 @@ This table shows the relationship between SDK versions and supported API version
 
 | SDK version | Supported API version of service |
 |-------------|----------------------------------|
-| 1.0.0b1     | 2023-09-01-preview               |
+| 1.0.0     | 2024-04-01               |
 
 
 ### Authenticate the client
@@ -87,7 +87,8 @@ Once you've initialized a 'RadiologyInsightsClient', you can use it to analyse d
 * Follow-up Recommendation
 * Communication
 * Radiology Procedure
-Radiology Insights currently supports one document from one patient. Please take a look [here][inferences] for more detailed information about the inferences this service produces. 
+
+Radiology Insights currently supports one document from one patient. Please take a look [here][inferences] for more detailed information about the inferences this service produces.
 
 ## Examples
 
@@ -265,6 +266,7 @@ additional questions or comments.
 <!-- LINKS -->
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_portal]: https://portal.azure.com
+[azure_core]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html#module-azure.core.exceptions
 [health_insights]: https://learn.microsoft.com/azure/azure-health-insights/overview
 [radiology_insights_docs]: https://learn.microsoft.com/azure/azure-health-insights/radiology-insights/
 [azure_sub]: https://azure.microsoft.com/free/

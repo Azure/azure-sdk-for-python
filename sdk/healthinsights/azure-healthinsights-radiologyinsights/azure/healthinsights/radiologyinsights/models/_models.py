@@ -2134,7 +2134,7 @@ class Observation(DomainResource):  # pylint: disable=too-many-instance-attribut
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.resource_type: Literal["Observation"] = "Observation"
+        self.resource_type: Literal["Observation"] = "Observation"  # pyright: ignore[reportIncompatibleVariableOverride]
 
 
 class ObservationComponent(Element):  # pylint: disable=too-many-instance-attributes
