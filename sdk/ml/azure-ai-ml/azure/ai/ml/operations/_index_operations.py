@@ -316,9 +316,8 @@ class IndexOperations(_ScopeDependentOperations):
                 citation_url_replacement_regex=(
                     CitationRegex(
                         match_pattern=document_path_replacement_regex["match_pattern"],  # type: ignore[index]
-                        replacement_pattern=document_path_replacement_regex[
-                            "replacement_pattern"
-                        ],  # type: ignore[index]
+                        replacement_pattern=
+                            document_path_replacement_regex["replacement_pattern"],  # type: ignore[index]
                     )
                     if document_path_replacement_regex
                     else None

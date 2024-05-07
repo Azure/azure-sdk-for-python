@@ -17,7 +17,6 @@ from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration, User
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.ai.ml.entities import Connection
 from azure.ai.ml.constants._common import DataIndexTypes
 from azure.ai.ml.constants._component import LLMRAGComponentUri
 from azure.ai.ml.entities._indexes.entities.data_index import DataIndex
@@ -446,8 +445,8 @@ def data_index_faiss(
         input_data = input_data_override
     else:
         input_data = Input(
-            type=data_index.source.input_data.type, path=data_index.source.input_data.path
-        )  # type: ignore [arg-type]
+            type=data_index.source.input_data.type, path=data_index.source.input_data.path  # type: ignore [arg-type]
+        )
 
     component = data_index_faiss_pipeline(
         input_data=input_data,
@@ -460,7 +459,8 @@ def data_index_faiss(
             if data_index.source.citation_url_replacement_regex
             else None
         ),
-        aoai_connection_id=_resolve_connection_id(ml_client, data_index.embedding.connection),  # type: ignore [arg-type]
+        aoai_connection_id=_resolve_connection_id(
+            ml_client, data_index.embedding.connection),  # type: ignore [arg-type]
         embeddings_container=(
             Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path)  # type: ignore [arg-type]
             if data_index.embedding.cache_path
@@ -474,8 +474,9 @@ def data_index_faiss(
     component.inputs["aoai_connection_id"]._meta.optional = True
     component.inputs["embeddings_container"]._meta.optional = True
     if data_index.path:
-        # type: ignore [attr-defined], [arg-type]
-        component.outputs.mlindex_asset_uri = Output(type=AssetTypes.URI_FOLDER, path=data_index.path)
+        component.outputs.mlindex_asset_uri = Output(
+            type=AssetTypes.URI_FOLDER, path=data_index.path  # type: ignore [attr-defined], [arg-type]
+        )
 
     return component
 
