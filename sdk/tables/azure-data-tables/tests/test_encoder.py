@@ -106,7 +106,7 @@ def _check_backcompat(entity, new_encoding):
 
     adjusted_new_encoding = copy(new_encoding)
     # Filter out kv pair which value is None, and filter out it's odata type if there has
-    none_item_keys = [k for k, v in adjusted_new_encoding.items() if v in [None, "None"]]
+    none_item_keys = [k for k, v in adjusted_new_encoding.items() if v is None]
     for k in none_item_keys:
         adjusted_new_encoding.pop(k, None)
         adjusted_new_encoding.pop(k+"@odata.type", None)
