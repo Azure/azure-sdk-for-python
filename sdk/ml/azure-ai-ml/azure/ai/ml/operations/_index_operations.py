@@ -317,8 +317,8 @@ class IndexOperations(_ScopeDependentOperations):
                     CitationRegex(
                         match_pattern=document_path_replacement_regex["match_pattern"],  # type: ignore[index]
                         replacement_pattern=document_path_replacement_regex[
-                            "replacement_pattern"
-                        ],  # type: ignore[index]
+                            "replacement_pattern"  # type: ignore[index]
+                        ],
                     )
                     if document_path_replacement_regex
                     else None
