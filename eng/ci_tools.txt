@@ -8,7 +8,7 @@ pathlib2==2.3.5
 doc-warden==0.7.2
 beautifulsoup4==4.9.1
 pkginfo==1.9.6
-pip==23.2.1
+pip==24.0
 wrapt==1.12.1; python_version <= '3.10'
 wrapt==1.15.0; python_version >= '3.11'
 typing-extensions<=4.6.3

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -27,7 +27,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from ..._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -66,7 +66,7 @@ def build_changes_list_request(
         "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -110,7 +110,7 @@ def build_changes_get_request(
         "changeResourceId": _SERIALIZER.url("change_resource_id", change_resource_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -139,6 +139,7 @@ class ChangesOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def list(
@@ -165,7 +166,6 @@ class ChangesOperations:
         :type top: int
         :param skip_token: (Optional) The page-continuation token. Default value is None.
         :type skip_token: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ChangeResourceResult or the result of
          cls(response)
         :rtype:
@@ -175,7 +175,7 @@ class ChangesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-05-01"))
         cls: ClsType[_models.ChangeResourceListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -189,7 +189,7 @@ class ChangesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_changes_list_request(
+                _request = build_changes_list_request(
                     resource_group_name=resource_group_name,
                     resource_provider_namespace=resource_provider_namespace,
                     resource_type=resource_type,
@@ -198,12 +198,11 @@ class ChangesOperations:
                     top=top,
                     skip_token=skip_token,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -214,14 +213,14 @@ class ChangesOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ChangeResourceListResult", pipeline_response)
@@ -231,11 +230,11 @@ class ChangesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -247,10 +246,6 @@ class ChangesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}/providers/Microsoft.Resources/changes"
-    }
 
     @distributed_trace
     def get(
@@ -274,7 +269,6 @@ class ChangesOperations:
         :type resource_name: str
         :param change_resource_id: The ID of the change resource. Required.
         :type change_resource_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ChangeResourceResult or the result of cls(response)
         :rtype: ~azure.mgmt.resource.changes.v2022_05_01.models.ChangeResourceResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -290,10 +284,10 @@ class ChangesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-05-01"))
         cls: ClsType[_models.ChangeResourceResult] = kwargs.pop("cls", None)
 
-        request = build_changes_get_request(
+        _request = build_changes_get_request(
             resource_group_name=resource_group_name,
             resource_provider_namespace=resource_provider_namespace,
             resource_type=resource_type,
@@ -301,16 +295,15 @@ class ChangesOperations:
             change_resource_id=change_resource_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -323,10 +316,6 @@ class ChangesOperations:
         deserialized = self._deserialize("ChangeResourceResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}/providers/Microsoft.Resources/changes/{changeResourceId}"
-    }
+        return deserialized  # type: ignore

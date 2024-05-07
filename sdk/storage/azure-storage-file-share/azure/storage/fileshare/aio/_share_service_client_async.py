@@ -283,9 +283,10 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
         which to interact with the newly created share.
 
         :param str share_name: The name of the share to create.
-        :keyword dict[str, str] metadata:
+        :keyword metadata:
             A dict with name_value pairs to associate with the
             share as metadata. Example:{'Category':'test'}
+        :paramtype metadata: Optional[dict[str, str]]
         :keyword int quota:
             Quota in bytes.
         :keyword int timeout:

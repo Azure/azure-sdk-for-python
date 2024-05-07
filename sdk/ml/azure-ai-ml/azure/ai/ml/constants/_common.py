@@ -841,10 +841,10 @@ class OneLakeArtifactTypes:
 
 
 class CognitiveServiceKinds:
-    """Subtypes for connections using the Cognitive serive type. These
+    """Subtypes for connections using the Cognitive service type. These
     values are plugged into the connection's metadata."""
 
-    CONTENT_SAFETY = "content_safety"
+    CONTENT_SAFETY = "Content Safety"
     SPEECH = "speech"
 
 

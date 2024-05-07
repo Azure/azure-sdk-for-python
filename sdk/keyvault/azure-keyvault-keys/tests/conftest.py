@@ -8,7 +8,12 @@ import os
 from unittest import mock
 
 import pytest
-from devtools_testutils import add_general_string_sanitizer, add_oauth_response_sanitizer, is_live
+from devtools_testutils import (
+    add_general_string_sanitizer,
+    add_oauth_response_sanitizer,
+    is_live,
+    remove_batch_sanitizers
+)
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION, ApiVersion
 
 os.environ['PYTHONHASHSEED'] = '0'
@@ -41,6 +46,11 @@ def add_sanitizers(test_proxy):
     add_general_string_sanitizer(target=azure_managedhsm_url, value="https://managedhsmvaultname.managedhsm.azure.net")
     add_general_string_sanitizer(target=azure_attestation_uri, value="https://fakeattestation.azurewebsites.net")
     add_oauth_response_sanitizer()
+
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3430: $..id
+    #  - AZSDK3447: $.key
+    remove_batch_sanitizers(["AZSDK3430", "AZSDK3447",])
 
 
 @pytest.fixture(scope="session", autouse=True)

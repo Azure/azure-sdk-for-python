@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 from typing import Any, TYPE_CHECKING
 
-from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 from azure.mgmt.core.policies import ARMHttpLoggingPolicy, AsyncARMChallengeAuthenticationPolicy
 
@@ -20,7 +19,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class PolicyClientConfiguration(Configuration):
+class PolicyClientConfiguration:
     """Configuration for PolicyClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -28,26 +27,44 @@ class PolicyClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param policy_definition_name: The name of the policy definition. Required.
+    :type policy_definition_name: str
+    :param policy_definition_version: The policy definition version.  The format is x.y.z where x is the major version number, y is the minor version number, and z is the patch number. Required.
+    :type policy_definition_version: str
+    :param policy_set_definition_name: The name of the policy set definition. Required.
+    :type policy_set_definition_name: str
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     """
 
     def __init__(
         self,
         credential: "AsyncTokenCredential",
+        policy_definition_name: str,
+        policy_definition_version: str,
+        policy_set_definition_name: str,
         subscription_id: str,
         **kwargs: Any
     ) -> None:
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
+        if policy_definition_name is None:
+            raise ValueError("Parameter 'policy_definition_name' must not be None.")
+        if policy_definition_version is None:
+            raise ValueError("Parameter 'policy_definition_version' must not be None.")
+        if policy_set_definition_name is None:
+            raise ValueError("Parameter 'policy_set_definition_name' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        super(PolicyClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
+        self.policy_definition_name = policy_definition_name
+        self.policy_definition_version = policy_definition_version
+        self.policy_set_definition_name = policy_set_definition_name
         self.subscription_id = subscription_id
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'azure-mgmt-resource/{}'.format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
     def _configure(
