@@ -472,6 +472,35 @@ def add_batch_sanitizers(sanitizers: Dict[str, List[Optional[Dict[str, str]]]], 
     )
 
 
+def remove_batch_sanitizers(sanitizers: List[str], headers: Optional[Dict] = None) -> None:
+    """Removes a batch of sanitizers.
+
+    Sanitizers are denoted by their ID, which is a string. This method will remove all sanitizers with the provided
+    IDs.
+
+    :param sanitizers: A list of sanitizer IDs to remove.
+    :type sanitizers: list[str]
+    :param headers: Optional headers to include in the request.
+    :type headers: dict
+    """
+
+    data = {"Sanitizers" : sanitizers}
+
+    headers_to_send = {"Content-Type": "application/json"}
+    if headers is not None:
+        for key in headers:
+            if headers[key] is not None:
+                headers_to_send[key] = headers[key]
+
+    http_client = get_http_client()
+    http_client.request(
+        method="POST",
+        url="{}/Admin/RemoveSanitizers".format(PROXY_URL),
+        headers=headers_to_send,
+        body=json.dumps(data).encode("utf-8"),
+    )
+
+
 # ----------TRANSFORMS----------
 #
 # A transform extends functionality of the test proxy by applying to responses just before they are returned during
@@ -520,7 +549,7 @@ def add_header_transform(**kwargs) -> None:
 
 def add_storage_request_id_transform() -> None:
     """Registers a transform that ensures a response's "x-ms-client-request-id" header matches the request's.
-    
+
     This method should be called during test case execution, rather than at a session, module, or class level.
     """
 
