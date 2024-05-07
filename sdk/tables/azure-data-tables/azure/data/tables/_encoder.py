@@ -27,7 +27,7 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
         if isinstance(value, bool):
             return None, value
         if isinstance(value, enum.Enum):
-            return None, value.value
+            return self.prepare_value(name, value.value)
         if isinstance(value, str):
             return None, value
         if isinstance(value, int):
@@ -61,12 +61,13 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
         """This is a migration of the old add_entity_properties method in serialize.py, with some simplications like
         removing int validation.
         """
+        # TODO: move tuple handle into prepare_value
         try:
             if isinstance(value, tuple):
                 if value[1] == EdmType.INT64:  # TODO: Test if this works with either string or enum input.
                     return EdmType.INT64, str(value[0])  # TODO: Test what happens if the supplied value exceeds int64
-                edm_type, encoded_value = self.prepare_value(name, value[0])
-                return edm_type or value[1], encoded_value
+                _, encoded_value = self.prepare_value(name, value[0])
+                return value[1], encoded_value
         except TypeError:
             pass
         
