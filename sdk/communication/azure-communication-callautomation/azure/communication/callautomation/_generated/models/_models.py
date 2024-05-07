@@ -1932,11 +1932,11 @@ class HoldRequest(_serialization.Model):
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+    :ivar operation_callback_url: Set a callback URL that overrides the default callback URL set by
      CreateCall/AnswerCall for this operation.
-     This setup is per-action. If this is not set, the default callback URI set by
+     This setup is per-action. If this is not set, the default callback URL set by
      CreateCall/AnswerCall will be used.
-    :vartype operation_callback_uri: str
+    :vartype operation_callback_url: str
     """
 
     _validation = {
@@ -1947,7 +1947,7 @@ class HoldRequest(_serialization.Model):
         "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
         "play_source_info": {"key": "playSourceInfo", "type": "PlaySource"},
         "operation_context": {"key": "operationContext", "type": "str"},
-        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
+        "operation_callback_url": {"key": "operationCallbackUrl", "type": "str"},
     }
 
     def __init__(
@@ -1956,7 +1956,7 @@ class HoldRequest(_serialization.Model):
         target_participant: "_models.CommunicationIdentifierModel",
         play_source_info: Optional["_models.PlaySource"] = None,
         operation_context: Optional[str] = None,
-        operation_callback_uri: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1968,17 +1968,17 @@ class HoldRequest(_serialization.Model):
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+        :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
          by CreateCall/AnswerCall for this operation.
-         This setup is per-action. If this is not set, the default callback URI set by
+         This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
-        :paramtype operation_callback_uri: str
+        :paramtype operation_callback_url: str
         """
         super().__init__(**kwargs)
         self.target_participant = target_participant
         self.play_source_info = play_source_info
         self.operation_context = operation_context
-        self.operation_callback_uri = operation_callback_uri
+        self.operation_callback_url = operation_callback_url
 
 
 class MediaStreamingFailed(_serialization.Model):

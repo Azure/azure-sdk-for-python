@@ -937,7 +937,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         *,
         play_source: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None,
         operation_context: Optional[str] = None,
-        operation_callback_uri: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
         **kwargs
     )-> None:
         # pylint: disable=docstring-should-be-keyword
@@ -973,7 +973,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             target_participant=serialize_identifier(target_participant),
             play_source_info=play_source_single._to_generated() if play_source_single else None,  # pylint:disable=protected-access
             operation_context=operation_context,
-            operation_callback_uri=operation_callback_uri,
+            operation_callback_url=operation_callback_url,
             kwargs=kwargs
         )
 
