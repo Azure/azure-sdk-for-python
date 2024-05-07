@@ -341,7 +341,7 @@ def to_rest_data_outputs(outputs: Optional[Dict]) -> Dict[str, RestJobOutput]:
                         asset_version=output_value.version,
                         uri=output_value.path,
                         mode=OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None,
-                        pathOnCompute=sourcePathOnCompute,
+                        pathOnCompute=getattr(output_value, "path_on_compute", None),
                         description=output_value.description,
                     )
                 else:
@@ -375,8 +375,8 @@ def from_rest_data_outputs(outputs: Dict[str, RestJobOutput]) -> Dict[str, Outpu
         # deal with invalid output type submitted by feb api
         # todo: backend help convert node level input/output type
         normalize_job_input_output_type(output_value)
-        if getattr(output_value, "path_on_compute", None) is not None:
-            sourcePathOnCompute = output_value.path_on_compute
+        if getattr(output_value, "pathOnCompute", None) is not None:
+            sourcePathOnCompute = output_value.pathOnCompute
         else:
             sourcePathOnCompute = None
         if output_value.job_output_type in output_type_mapping:
