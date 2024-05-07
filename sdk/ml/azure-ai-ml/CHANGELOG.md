@@ -29,16 +29,12 @@
 - Add support for Microsoft Entra token (`aad_token`) auth in `invoke` and `get-credentials` operations.
 - Add experimental support for working with indexes: `ml_client.indexes`
 
-### Bugs Fixed
-
 ### Breaking Changes
 
 - WorkspaceConnection and subclasses renamed to just Connection
 - Removed WorkspaceHubConfig entity, and renamed WorkspaceHub to Hub.
 - workspace_hub input of Workspace class hidden, renamed to hub_id, and re-surfaced in child class Project.
 - Removed Workspace Hub Operations from ML Client.
-
-### Other Changes
 
 ## 1.15.0 (2024-03-26)
 
