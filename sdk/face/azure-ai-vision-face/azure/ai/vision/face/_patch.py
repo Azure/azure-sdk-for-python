@@ -939,8 +939,8 @@ class FaceSessionClient(FaceSessionClientGenerated):
                 }
         """
         if verify_image is not None:
-            request_body = _models._models.CreateLivenessWithVerifySessionContent(
-                parameters=cast(_models._models.CreateLivenessSessionContentForMultipart, body),
+            request_body = _models._models.CreateLivenessWithVerifySessionContent(  # pylint: disable=protected-access
+                parameters=cast(_models._models.CreateLivenessSessionContentForMultipart, body),  # pylint: disable=protected-access  # noqa: E501
                 verify_image=("verify-image", verify_image)
             )
             return super()._create_liveness_with_verify_session_with_verify_image(

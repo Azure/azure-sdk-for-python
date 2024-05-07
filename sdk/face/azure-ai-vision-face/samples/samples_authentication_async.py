@@ -57,7 +57,7 @@ class FaceAuthentication():
         self.logger.info("Instantiate a FaceClient using an api key")
         async with FaceClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as face_client:
             sample_file_path = helpers.get_image_path(TestImages.DEFAULT_IMAGE_FILE)
-            result = await face_client.detect(
+            result = await face_client.detect(  # type: ignore
                 helpers.read_file_content(sample_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
@@ -77,7 +77,7 @@ class FaceAuthentication():
         async with DefaultAzureCredential() as credential, \
                 FaceClient(endpoint=self.endpoint, credential=credential) as face_client:
             sample_file_path = helpers.get_image_path(TestImages.DEFAULT_IMAGE_FILE)
-            result = await face_client.detect(
+            result = await face_client.detect(  # type: ignore
                 helpers.read_file_content(sample_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,

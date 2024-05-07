@@ -97,7 +97,7 @@ class TestLivenessWithVerifySession(AzureRecordedTestCase):
             variables.setdefault("deviceCorrelationId2", str(uuid.uuid4())): "",  # '{id2}': ""
         }
 
-        # Create 2 sessions with different deivce_correlation_id
+        # Create 2 sessions with different device_correlation_id
         for dcid in recorded_device_correlation_ids_dict.keys():
             created_session = client.create_liveness_with_verify_session(
                 CreateLivenessSessionContent(

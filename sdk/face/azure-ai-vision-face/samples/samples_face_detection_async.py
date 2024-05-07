@@ -49,15 +49,15 @@ class DetectFaces():
 
         async with FaceClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as face_client:
             sample_file_path = helpers.get_image_path(TestImages.IMAGE_DETECTION_5)
-            result = await face_client.detect(
+            result = await face_client.detect(  # type: ignore
                 helpers.read_file_content(sample_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
                 return_face_id=True,
                 return_face_attributes=[
-                    FaceAttributeTypeDetection03.HEAD_POSE,
-                    FaceAttributeTypeDetection03.MASK,
-                    FaceAttributeTypeRecognition04.QUALITY_FOR_RECOGNITION],
+                    FaceAttributeTypeDetection03.HEAD_POSE,  # type: ignore  # pyright: ignore[reportAttributeAccessIssue]  # noqa: E501
+                    FaceAttributeTypeDetection03.MASK,  # type: ignore  # pyright: ignore[reportAttributeAccessIssue]  # noqa: E501
+                    FaceAttributeTypeRecognition04.QUALITY_FOR_RECOGNITION],  # type: ignore  # pyright: ignore[reportAttributeAccessIssue]  # noqa: E501
                 return_face_landmarks=True,
                 return_recognition_model=True,
                 face_id_time_to_live=120)
@@ -75,16 +75,16 @@ class DetectFaces():
 
         async with FaceClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as face_client:
             sample_url = TestImages.DEFAULT_IMAGE_URL
-            result = await face_client.detect_from_url(
+            result = await face_client.detect_from_url(  # type: ignore
                 url=sample_url,
                 detection_model=FaceDetectionModel.DETECTION_01,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
                 return_face_id=False,
                 return_face_attributes=[
-                    FaceAttributeTypeDetection01.ACCESSORIES,
-                    FaceAttributeTypeDetection01.EXPOSURE,
-                    FaceAttributeTypeDetection01.GLASSES,
-                    FaceAttributeTypeDetection01.NOISE])
+                    FaceAttributeTypeDetection01.ACCESSORIES,  # type: ignore  # pyright: ignore[reportAttributeAccessIssue]  # noqa: E501
+                    FaceAttributeTypeDetection01.EXPOSURE,  # type: ignore  # pyright: ignore[reportAttributeAccessIssue]  # noqa: E501
+                    FaceAttributeTypeDetection01.GLASSES,  # type: ignore  # pyright: ignore[reportAttributeAccessIssue]  # noqa: E501
+                    FaceAttributeTypeDetection01.NOISE])  # type: ignore  # pyright: ignore[reportAttributeAccessIssue]  # noqa: E501
 
             self.logger.info(f"Detect faces from the url: {sample_url}")
             for idx, face in enumerate(result):

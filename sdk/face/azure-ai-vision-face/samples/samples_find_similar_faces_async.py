@@ -49,7 +49,7 @@ class FindSimilarFaces():
         async with FaceClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as face_client:
             # Detect faces from 'IMAGE_NINE_FACES'
             nine_faces_file_path = helpers.get_image_path(TestImages.IMAGE_NINE_FACES)
-            detect_result1 = await face_client.detect(
+            detect_result1 = await face_client.detect(  # type: ignore
                 helpers.read_file_content(nine_faces_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
@@ -60,7 +60,7 @@ class FindSimilarFaces():
 
             # Detect face from 'IMAGE_FINDSIMILAR'
             find_similar_file_path = helpers.get_image_path(TestImages.IMAGE_FINDSIMILAR)
-            detect_result2 = await face_client.detect(
+            detect_result2 = await face_client.detect(  # type: ignore
                 helpers.read_file_content(find_similar_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
@@ -87,7 +87,7 @@ class FindSimilarFaces():
                 FaceClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as face_client:
 
             large_face_list_id = "lfl01"
-            # Prepare a LargeFaceList which contains serveral faces.
+            # Prepare a LargeFaceList which contains several faces.
             self.logger.info(f"Create a LargeFaceList, id = {large_face_list_id}")
             await face_admin_client.create_large_face_list(
                 large_face_list_id, name="List of Face", user_data="Large Face List for Test",
@@ -123,7 +123,7 @@ class FindSimilarFaces():
 
             # Detect face from 'IMAGE_FINDSIMILAR'
             find_similar_file_path = helpers.get_image_path(TestImages.IMAGE_FINDSIMILAR)
-            detect_result = await face_client.detect(
+            detect_result = await face_client.detect(  # type: ignore
                 helpers.read_file_content(find_similar_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,

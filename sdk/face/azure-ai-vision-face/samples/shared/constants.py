@@ -50,7 +50,7 @@ class TestImages(object):
     IMAGE_DETECTION_6 = "detection6.jpg"
     IMAGE_EXTRA_WOMAN_IMAGE = "extra-woman-image.jpg"
     IMAGE_FINDSIMILAR = "findsimilar.jpg"
-    IMAGE_IDENTIFICATION1 = "indentification1.jpg"
+    IMAGE_IDENTIFICATION1 = "identification1.jpg"
     IMAGE_MAN1_PERSON_GROUP = "man1-person-group.jpg"
     IMAGE_MAN2_PERSON_GROUP = "man2-person-group.jpg"
     IMAGE_MAN3_PERSON_GROUP = "man3-person-group.jpg"

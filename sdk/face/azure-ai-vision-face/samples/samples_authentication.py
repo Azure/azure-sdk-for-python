@@ -56,7 +56,7 @@ class FaceAuthentication():
         self.logger.info("Instantiate a FaceClient using an api key")
         with FaceClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as face_client:
             sample_file_path = helpers.get_image_path(TestImages.DEFAULT_IMAGE_FILE)
-            result = face_client.detect(
+            result = face_client.detect(  # type: ignore
                 helpers.read_file_content(sample_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
@@ -75,7 +75,7 @@ class FaceAuthentication():
         self.logger.info("Instantiate a FaceClient using a TokenCredential")
         with FaceClient(endpoint=self.endpoint, credential=DefaultAzureCredential()) as face_client:
             sample_file_path = helpers.get_image_path(TestImages.DEFAULT_IMAGE_FILE)
-            result = face_client.detect(
+            result = face_client.detect(  # type: ignore
                 helpers.read_file_content(sample_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,

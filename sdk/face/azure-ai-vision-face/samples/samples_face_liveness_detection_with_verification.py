@@ -80,7 +80,7 @@ class DetectLivenessWithVerify():
             verify_image_file_path = helpers.get_image_path(TestImages.DEFAULT_IMAGE_FILE)
 
             self.logger.info("Create a new liveness with verify session with verify image.")
-            created_session = face_session_client.create_liveness_with_verify_session(
+            created_session = face_session_client.create_liveness_with_verify_session(  # type: ignore
                 CreateLivenessSessionContent(
                     liveness_operation_mode=LivenessOperationMode.PASSIVE,
                     device_correlation_id=str(uuid.uuid4()),

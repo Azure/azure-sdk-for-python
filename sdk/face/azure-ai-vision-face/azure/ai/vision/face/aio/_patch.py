@@ -439,10 +439,10 @@ class FaceClient(FaceClientGenerated):
     async def detect(
         self,
         image_content: bytes,
+        *,
         detection_model: Union[str, _models.FaceDetectionModel],
         recognition_model: Union[str, _models.FaceRecognitionModel],
         return_face_id: bool,
-        *,
         return_face_attributes: Optional[List[Union[str, _models.FaceAttributeType]]] = None,
         return_face_landmarks: Optional[bool] = None,
         return_recognition_model: Optional[bool] = None,
@@ -939,8 +939,8 @@ class FaceSessionClient(FaceSessionClientGenerated):
                 }
         """
         if verify_image is not None:
-            request_body = _models._models.CreateLivenessWithVerifySessionContent(
-                parameters=cast(_models._models.CreateLivenessSessionContentForMultipart, body),
+            request_body = _models._models.CreateLivenessWithVerifySessionContent(  # pylint: disable=protected-access
+                parameters=cast(_models._models.CreateLivenessSessionContentForMultipart, body),  # pylint: disable=protected-access  # noqa: E501
                 verify_image=("verify-image", verify_image)
             )
             return await super()._create_liveness_with_verify_session_with_verify_image(

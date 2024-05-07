@@ -1771,6 +1771,29 @@
         "wday",
         "SNOMED"
       ]
+    },
+    {
+      "filename": "sdk/face/azure-ai-vision-face/**",
+      "words": [
+        "mros",
+        "Nify",
+        "ctxt",
+        "wday",
+        "faceid",
+        "facelistid",
+        "largefacelistid",
+        "persongroupid",
+        "largepersongroupid",
+        "dynamicpersongroupid",
+        "personid",
+        "maxnumofcandidatesreturned"
+      ]
+    },
+    {
+      "filename": "sdk/face/azure-ai-vision-face/tests/**",
+      "words": [
+        "dcid"
+      ]
     }
   ],
   "allowCompoundWords": true

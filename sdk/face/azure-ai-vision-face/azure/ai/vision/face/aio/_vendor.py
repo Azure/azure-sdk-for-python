@@ -6,8 +6,7 @@
 # --------------------------------------------------------------------------
 
 from abc import ABC
-import json
-from typing import Any, Dict, IO, List, Mapping, Optional, Sequence, TYPE_CHECKING, Tuple, Union
+from typing import TYPE_CHECKING
 
 from ._configuration import (
     FaceAdministrationClientConfiguration,
