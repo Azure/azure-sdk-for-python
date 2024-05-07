@@ -558,8 +558,8 @@ class TableClient(TablesBaseClient):
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
         entity_json = encoder.encode_entity(entity)
-        partition_key = entity_json["PartitionKey"]
-        row_key = entity_json["RowKey"]
+        partition_key = entity_json.pop("PartitionKey")
+        row_key = entity_json.pop("RowKey")
 
         try:
             if mode == UpdateMode.REPLACE:
@@ -801,8 +801,8 @@ class TableClient(TablesBaseClient):
                 mode = UpdateMode.MERGE
         encoder = kwargs.pop("encoder", DEFAULT_ENCODER)
         entity_json = encoder.encode_entity(entity)
-        partition_key = entity_json["PartitionKey"]
-        row_key = entity_json["RowKey"]
+        partition_key = entity_json.pop("PartitionKey")
+        row_key = entity_json.pop("RowKey")
         
         try:
             if mode == UpdateMode.MERGE:
