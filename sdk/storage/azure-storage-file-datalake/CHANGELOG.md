@@ -14,7 +14,7 @@ This version and all future versions will require Python 3.8+. Python 3.7 is no 
 - The `services` parameter has been added to the `generate_account_sas` API, which enables the ability to generate SAS
 tokens to be used with multiple services. By default, the SAS token service scope will default to the current service.
 - Added `upn` as an optional keyword that can be specified on APIs that return an instance of `PathProperties`, `DirectoryProperties` or
-`FileProperties`. Specifying this keyword transforms the user identity values returned in the `owner, `group`, and `acl` fields of the
+`FileProperties`. Specifying this keyword transforms the user identity values returned in the `owner`, `group`, and `acl` fields of the
 corresponding Properties from Azure Active Directory Object IDs to User Principal Names.
 
 ### Bugs Fixed
