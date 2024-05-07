@@ -125,6 +125,7 @@ def pipeline(
     # get_component force pipeline to return Pipeline instead of PipelineJob so we can set optional argument
     # need to remove get_component and rely on azure.ai.ml.dsl.pipeline
     get_component = kwargs.get("get_component", False)
+
     def pipeline_decorator(func: Callable[P, T]) -> Callable:
         # pylint: disable=isinstance-second-argument-not-valid-type
         if not isinstance(func, Callable):  # type: ignore

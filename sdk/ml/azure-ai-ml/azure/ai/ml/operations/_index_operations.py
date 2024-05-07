@@ -35,7 +35,6 @@ from azure.core.credentials import TokenCredential
 
 from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
 from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._indexes.entities.data_index import DataIndex
 from azure.ai.ml.entities._indexes import (
     AzureAISearchConfig,
     IndexDataSource,
@@ -317,7 +316,9 @@ class IndexOperations(_ScopeDependentOperations):
                 citation_url_replacement_regex=(
                     CitationRegex(
                         match_pattern=document_path_replacement_regex["match_pattern"],  # type: ignore[index]
-                        replacement_pattern=document_path_replacement_regex["replacement_pattern"],  # type: ignore[index]
+                        replacement_pattern=document_path_replacement_regex[
+                            "replacement_pattern"
+                        ],  # type: ignore[index]
                     )
                     if document_path_replacement_regex
                     else None

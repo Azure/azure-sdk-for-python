@@ -4,7 +4,6 @@
 # pylint: disable=protected-access
 # pylint: disable=no-member
 # pylint: disable=unused-argument
-# type: ignore [arg-type], [attr-defined]
 
 import json
 import re
@@ -180,7 +179,7 @@ def data_index_incremental_update_hosted(
 
     register_mlindex_asset_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_REGISTER_MLINDEX_ASSET)
 
-    @pipeline(
+    @pipeline(  # type: ignore [call-overload]
         name=name if name else f"data_index_incremental_update_{data_index.index.type}",
         description=description,
         tags=tags,
@@ -355,7 +354,7 @@ def data_index_faiss(
     create_faiss_index_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_CREATE_FAISS_INDEX)
     register_mlindex_asset_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_REGISTER_MLINDEX_ASSET)
 
-    @pipeline(
+    @pipeline(  # type: ignore [call-overload]
         name=name if name else "data_index_faiss",
         description=description,
         tags=tags,
@@ -446,7 +445,9 @@ def data_index_faiss(
     if input_data_override is not None:
         input_data = input_data_override
     else:
-        input_data = Input(type=data_index.source.input_data.type, path=data_index.source.input_data.path)  # type: ignore [arg-type]
+        input_data = Input(
+            type=data_index.source.input_data.type, path=data_index.source.input_data.path
+        )  # type: ignore [arg-type]
 
     component = data_index_faiss_pipeline(
         input_data=input_data,
@@ -473,7 +474,8 @@ def data_index_faiss(
     component.inputs["aoai_connection_id"]._meta.optional = True
     component.inputs["embeddings_container"]._meta.optional = True
     if data_index.path:
-        component.outputs.mlindex_asset_uri = Output(type=AssetTypes.URI_FOLDER, path=data_index.path)  # type: ignore [attr-defined]
+        # type: ignore [attr-defined], [arg-type]
+        component.outputs.mlindex_asset_uri = Output(type=AssetTypes.URI_FOLDER, path=data_index.path)
 
     return component
 
@@ -506,7 +508,7 @@ def data_index_hosted(
 
     register_mlindex_asset_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_REGISTER_MLINDEX_ASSET)
 
-    @pipeline(
+    @pipeline(  # type: ignore [call-overload]
         name=name if name else f"data_index_{data_index.index.type}",
         description=description,
         tags=tags,
@@ -616,8 +618,8 @@ def data_index_hosted(
         input_data = input_data_override
     else:
         input_data = Input(
-            type=data_index.source.input_data.type, path=data_index.source.input_data.path
-        )  # type: ignore [arg-type]
+            type=data_index.source.input_data.type, path=data_index.source.input_data.path  # type: ignore [arg-type]
+        )
 
     index_config = {
         "index_name": data_index.index.name if data_index.index.name is not None else data_index.name,
@@ -638,7 +640,9 @@ def data_index_hosted(
             if data_index.source.citation_url_replacement_regex
             else None
         ),
-        aoai_connection_id=_resolve_connection_id(ml_client, data_index.embedding.connection),  # type: ignore [arg-type]
+        aoai_connection_id=_resolve_connection_id(
+            ml_client, data_index.embedding.connection  # type: ignore [arg-type]
+        ),
         embeddings_container=(
             Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path)  # type: ignore [arg-type]
             if data_index.embedding.cache_path
@@ -653,7 +657,9 @@ def data_index_hosted(
     component.inputs["embeddings_container"]._meta.optional = True
 
     if data_index.path:
-        component.outputs.mlindex_asset_uri = Output(type=AssetTypes.URI_FOLDER, path=data_index.path)  # type: ignore [arg-type]
+        component.outputs.mlindex_asset_uri = Output(
+            type=AssetTypes.URI_FOLDER, path=data_index.path  # type: ignore [arg-type]
+        )
 
     return component
 
@@ -736,4 +742,4 @@ def _resolve_connection_id(ml_client, connection: Optional[str] = None) -> Optio
         connection = ml_client.connections.get(connection_name)
         if connection is None:
             return None
-    return connection.id
+    return connection.id  # type: ignore [attr-defined]
