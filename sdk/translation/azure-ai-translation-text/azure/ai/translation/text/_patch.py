@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# pylint: disable=C4717, C4722
 
 from typing import Union, Optional, Any
 from azure.core.pipeline import PipelineRequest
@@ -60,7 +61,8 @@ class TranslatorAuthenticationPolicy(SansIOHTTPPolicy):
 class TranslatorAADCredential:
     """Credential for Translator Service when using AAD authentication.
 
-    :param token_credential: An object which can provide an access token for the Translator Resource, such as a credential from
+    :param token_credential: An object which can provide an access token for the Translator Resource,
+        such as a credential from
         :mod:`azure.identity`
     :type token_credential: ~azure.core.credentials.TokenCredential
     :param str resource_id: Azure Resource Id of the Translation Resource.

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# pylint: disable=C4717, C4722
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -29,7 +30,8 @@ def patch_sdk():
 class AsyncTranslatorAADCredential:
     """Credential for Translator Service when using AAD authentication.
 
-    :param token_credential: An object which can provide an access token for the Translator Resource, such as a credential from
+    :param token_credential: An object which can provide an access token for the Translator Resource,
+        such as a credential from
         :mod:`azure.identity`
     :type token_credential: ~azure.core.credentials.TokenCredential
     :param str resource_id: Azure Resource Id of the Translation Resource.
@@ -119,7 +121,8 @@ class TextTranslationClient(ServiceClientGenerated):
          https://api.cognitive.microsofttranslator.com). Required.
     :type endpoint: str
     :param credential: Credential used to authenticate with the Translator service
-    :type credential: Union[AzureKeyCredential , AsyncTokenCredential , TranslatorCredential, AsyncTranslatorAADCredential]
+    :type credential: Union[AzureKeyCredential , AsyncTokenCredential , TranslatorCredential,
+        AsyncTranslatorAADCredential]
     :keyword api_version: Default value is "3.0". Note that overriding this default value may
      result in unsupported behavior.
     :paramtype api_version: str
