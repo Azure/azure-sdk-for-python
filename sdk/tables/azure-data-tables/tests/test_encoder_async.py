@@ -24,12 +24,12 @@ from _shared.asynctestcase import AsyncTableTestCase
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 from async_preparers import tables_decorator_async
-from test_encoder import(
+from test_encoder import (
     EnumBasicOptions,
     EnumStrOptions,
     EnumIntOptions,
     EncoderVerificationTransport,
-    _check_backcompat
+    _check_backcompat,
 )
 
 
@@ -128,7 +128,10 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.'
+                in str(error.value)
+            )
 
             test_entity = {"PartitionKey": "PK", "RowKey": True}
             expected_entity = test_entity
@@ -141,7 +144,10 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.'
+                in str(error.value)
+            )
 
             test_entity = {"PartitionKey": "PK", "RowKey": 3.14}
             expected_entity = {
@@ -158,7 +164,10 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.'
+                in str(error.value)
+            )
             await client.delete_table()
 
     @tables_decorator_async
@@ -194,7 +203,10 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.'
+                in str(error.value)
+            )
 
             test_entity = {
                 "PartitionKey": b"binarydata",
@@ -214,7 +226,10 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.'
+                in str(error.value)
+            )
             await client.delete_table()
         return recorded_variables
 
@@ -406,7 +421,9 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 "Data4": datetime(year=2022, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc),
                 "Data5": uuid.UUID(test_entity["Data5"][0]),
                 "Data7": 3.14,
-                "Data8": EntityProperty(9223372036854775807, EdmType.INT64), # diff: '(9223372036854775807, "Edm.Int64")' in sync response
+                "Data8": EntityProperty(
+                    9223372036854775807, EdmType.INT64
+                ),  # diff: '(9223372036854775807, "Edm.Int64")' in sync response
             }
             # _check_backcompat(test_entity, expected_entity) # will fail
             resp = await client.create_entity(
@@ -422,7 +439,9 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_encoder_create_entity_raw(self, tables_storage_account_name, tables_primary_storage_account_key, **kwargs):
+    async def test_encoder_create_entity_raw(
+        self, tables_storage_account_name, tables_primary_storage_account_key, **kwargs
+    ):
         recorded_variables = kwargs.pop("variables", {})
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable05")
@@ -612,7 +631,10 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.'
+                in str(error.value)
+            )
 
             # Infinite float values
             test_entity = {
@@ -664,7 +686,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert error.value.response.json()['odata.error']['code'] == "PropertyNameInvalid"
+            assert error.value.response.json()["odata.error"]["code"] == "PropertyNameInvalid"
 
             # Test enums - it is not supported in old encoder
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
@@ -712,7 +734,10 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     verify_response=(lambda: client.get_entity("PK", "1"), expected_entity),
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.'
+                in str(error.value)
+            )
             await client.delete_table()
 
     @tables_decorator_async
@@ -792,7 +817,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
             test_entity = {"PartitionKey": "PK", "RowKey": 3.14}
             expected_entity = {
                 "PartitionKey": "PK",
-                "RowKey": 3.14,                          
+                "RowKey": 3.14,
                 "RowKey@odata.type": "Edm.Double",
             }
             _check_backcompat(test_entity, expected_entity)
@@ -1144,7 +1169,9 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_encoder_upsert_entity_raw(self, tables_storage_account_name, tables_primary_storage_account_key, **kwargs):
+    async def test_encoder_upsert_entity_raw(
+        self, tables_storage_account_name, tables_primary_storage_account_key, **kwargs
+    ):
         recorded_variables = kwargs.pop("variables", {})
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable11")
@@ -2029,7 +2056,9 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_encoder_update_entity_raw(self, tables_storage_account_name, tables_primary_storage_account_key, **kwargs):
+    async def test_encoder_update_entity_raw(
+        self, tables_storage_account_name, tables_primary_storage_account_key, **kwargs
+    ):
         recorded_variables = kwargs.pop("variables", {})
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable17")
@@ -2728,7 +2757,9 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_encoder_get_entity_atypical_values(self, tables_storage_account_name, tables_primary_storage_account_key):
+    async def test_encoder_get_entity_atypical_values(
+        self, tables_storage_account_name, tables_primary_storage_account_key
+    ):
         table_name = self.get_resource_name("uttable26")
         url = self.account_url(tables_storage_account_name, "table")
         # Non-UTF8 characters in both keys and properties

@@ -193,13 +193,19 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
             with pytest.raises(HttpResponseError) as error:
                 await self.table.create_entity(entity=dict32)
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.'
+                in str(error.value)
+            )
 
             dict32["large"] = EntityProperty(-(2**31 + 1), EdmType.INT32)  # TODO: this is outside the range of int32
             with pytest.raises(HttpResponseError) as error:
                 await self.table.create_entity(entity=dict32)
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.'
+                in str(error.value)
+            )
         finally:
             await self._tear_down()
 
@@ -219,13 +225,19 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
             with pytest.raises(HttpResponseError) as error:
                 await self.table.create_entity(entity=dict64)
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.'
+                in str(error.value)
+            )
 
             dict64["large"] = EntityProperty(-(2**63 + 1), EdmType.INT64)
             with pytest.raises(HttpResponseError) as error:
                 await self.table.create_entity(entity=dict64)
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.'
+                in str(error.value)
+            )
         finally:
             await self._tear_down()
 

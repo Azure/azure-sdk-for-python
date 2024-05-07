@@ -24,11 +24,12 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
         try:
             return key.replace("'", "''")
         except (AttributeError, TypeError):
-            raise TypeError('PartitionKey or RowKey must be of type string.')
+            raise TypeError("PartitionKey or RowKey must be of type string.")
 
-    def prepare_value(self, name: Optional[str], value: Any) -> Tuple[Optional[EdmType], Optional[Union[str, int, float, bool]]]:
-        """This is a utility to allow customers to reproduce our internal encoding for types like datetime, bytes, float and int64.
-        """
+    def prepare_value(
+        self, name: Optional[str], value: Any
+    ) -> Tuple[Optional[EdmType], Optional[Union[str, int, float, bool]]]:
+        """This is a utility to allow customers to reproduce our internal encoding for types like datetime, bytes, float and int64."""
         if isinstance(value, bool):
             return None, value
         if isinstance(value, enum.Enum):
@@ -66,19 +67,17 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
         if name:
             raise TypeError(f"Unsupported data type '{type(value)}' for entity property '{name}'.")
         raise TypeError(f"Unsupported data type '{type(value)}'.")
-    
+
     @abc.abstractmethod
     def encode_entity(self, entity: T) -> Dict[str, Union[str, int, float, bool]]:
-        """Encode an entity object into JSON format to send out.
-        """
-    
+        """Encode an entity object into JSON format to send out."""
+
     @abc.abstractmethod
-    def decode_entity(self, entity: Dict[str, Union[str, int, float, bool]]) -> T:
-        ...
+    def decode_entity(self, entity: Dict[str, Union[str, int, float, bool]]) -> T: ...
 
 
 class TableEntityEncoder(TableEntityEncoderABC[Union[Mapping[str, Any], TableEntity]]):
-    
+
     def encode_entity(self, entity: Union[Mapping[str, Any], TableEntity]) -> Dict[str, Union[str, int, float, bool]]:
         """This method currently behaves the same as the existing serialization function in that
         there is no special treatment for the system keys - PartitionKey, RowKey, Timestamp, Etag.
@@ -101,6 +100,6 @@ class TableEntityEncoder(TableEntityEncoderABC[Union[Mapping[str, Any], TableEnt
                 pass
             encoded[key] = value
         return encoded
-    
+
     def decode_entity(self, entity: Dict[str, Union[str, int, float, bool]]) -> TableEntity:
         return _convert_to_entity(entity)

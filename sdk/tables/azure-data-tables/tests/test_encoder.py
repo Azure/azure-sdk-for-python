@@ -99,18 +99,20 @@ def _check_backcompat(entity, new_encoding):
     # Filter out odata type added for string value type in old result unless customer specified
     for k in old_encoding.keys():
         if "@odata.type" not in k:
-            odata_type = old_encoding.get(k+"@odata.type")
+            odata_type = old_encoding.get(k + "@odata.type")
             if odata_type is not None and odata_type == "Edm.String":
-                if entity.get(k+"@odata.type") is None and not isinstance(entity[k], tuple):
-                    adjusted_old_encoding.pop(k+"@odata.type")
+                if entity.get(k + "@odata.type") is None and not isinstance(entity[k], tuple):
+                    adjusted_old_encoding.pop(k + "@odata.type")
 
     adjusted_new_encoding = copy(new_encoding)
     # Filter out kv pair which value is None, and filter out it's odata type if there has
     none_item_keys = [k for k, v in adjusted_new_encoding.items() if v is None]
     for k in none_item_keys:
         adjusted_new_encoding.pop(k, None)
-        adjusted_new_encoding.pop(k+"@odata.type", None)
-    assert adjusted_old_encoding == adjusted_new_encoding, f"Old:\n'{adjusted_old_encoding}'\ndoes not match new:\n'{adjusted_new_encoding}'."
+        adjusted_new_encoding.pop(k + "@odata.type", None)
+    assert (
+        adjusted_old_encoding == adjusted_new_encoding
+    ), f"Old:\n'{adjusted_old_encoding}'\ndoes not match new:\n'{adjusted_new_encoding}'."
 
 
 class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
@@ -159,7 +161,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.'
+                in str(error.value)
+            )
 
             test_entity = {"PartitionKey": "PK", "RowKey": True}
             expected_entity = test_entity
@@ -172,7 +177,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.'
+                in str(error.value)
+            )
 
             test_entity = {"PartitionKey": "PK", "RowKey": 3.14}
             expected_entity = {
@@ -189,7 +197,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.'
+                in str(error.value)
+            )
             client.delete_table()
 
     @tables_decorator
@@ -225,7 +236,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.'
+                in str(error.value)
+            )
 
             test_entity = {
                 "PartitionKey": b"binarydata",
@@ -245,7 +259,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.'
+                in str(error.value)
+            )
             client.delete_table()
         return recorded_variables
 
@@ -643,7 +660,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.'
+                in str(error.value)
+            )
 
             # Infinite float values
             test_entity = {
@@ -695,7 +715,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert error.value.response.json()['odata.error']['code'] == "PropertyNameInvalid"
+            assert error.value.response.json()["odata.error"]["code"] == "PropertyNameInvalid"
 
             # Test enums - it is not supported in old encoder
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
@@ -743,7 +763,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     verify_response=(lambda: client.get_entity("PK", "1"), expected_entity),
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-US","value":"One of the request inputs is not valid.'
+                in str(error.value)
+            )
             client.delete_table()
 
     @tables_decorator
@@ -823,7 +846,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK", "RowKey": 3.14}
             expected_entity = {
                 "PartitionKey": "PK",
-                "RowKey": 3.14,                          
+                "RowKey": 3.14,
                 "RowKey@odata.type": "Edm.Double",
             }
             _check_backcompat(test_entity, expected_entity)

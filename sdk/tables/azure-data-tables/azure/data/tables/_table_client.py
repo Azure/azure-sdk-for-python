@@ -336,7 +336,7 @@ class TableClient(TablesBaseClient):
                 :dedent: 12
                 :caption: Deleting an entity of a Table
         """
-    
+
     @overload
     def delete_entity(
         self,
@@ -345,7 +345,7 @@ class TableClient(TablesBaseClient):
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         encoder: TableEntityEncoderABC[T],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Deletes the specified entity in a table. No error will be raised if
         the entity or PartitionKey-RowKey pairing is not found.
@@ -405,11 +405,7 @@ class TableClient(TablesBaseClient):
 
     @overload
     def create_entity(
-        self,
-        entity: EntityType,
-        *,
-        encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER,
-        **kwargs
+        self, entity: EntityType, *, encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER, **kwargs
     ) -> Dict[str, Any]:
         """Insert entity in a table.
 
@@ -431,7 +427,7 @@ class TableClient(TablesBaseClient):
                 :dedent: 12
                 :caption: Creating and adding an entity to a Table
         """
-    
+
     @overload
     def create_entity(self, entity: T, *, encoder: TableEntityEncoderABC[T], **kwargs) -> Dict[str, Any]:
         """Insert entity in a table.
@@ -444,7 +440,7 @@ class TableClient(TablesBaseClient):
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-    
+
     @distributed_trace
     def create_entity(self, *args: Union[EntityType, T], **kwargs: Any) -> Dict[str, Any]:
         entity = kwargs.pop("entity", None)
@@ -508,7 +504,7 @@ class TableClient(TablesBaseClient):
                 :dedent: 16
                 :caption: Updating an already existing entity in a Table
         """
-    
+
     @overload
     def update_entity(
         self,
@@ -518,7 +514,7 @@ class TableClient(TablesBaseClient):
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         encoder: TableEntityEncoderABC[T],
-        **kwargs
+        **kwargs,
     ) -> Dict[str, Any]:
         """Update entity in a table.
 
@@ -537,7 +533,7 @@ class TableClient(TablesBaseClient):
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-    
+
     @distributed_trace
     def update_entity(self, *args: Union[EntityType, T], **kwargs: Any) -> Dict[str, Any]:
         entity = kwargs.pop("entity", None)
@@ -741,7 +737,7 @@ class TableClient(TablesBaseClient):
         mode: UpdateMode = UpdateMode.MERGE,
         *,
         encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER,
-        **kwargs
+        **kwargs,
     ) -> Dict[str, Any]:
         """Updates (merge or replace) an entity into a table.
 
@@ -768,12 +764,7 @@ class TableClient(TablesBaseClient):
 
     @overload
     def upsert_entity(
-        self,
-        entity: T,
-        mode: UpdateMode = UpdateMode.MERGE,
-        *,
-        encoder: TableEntityEncoderABC[T],
-        **kwargs
+        self, entity: T, mode: UpdateMode = UpdateMode.MERGE, *, encoder: TableEntityEncoderABC[T], **kwargs
     ) -> Dict[str, Any]:
         """Updates (merge or replace) an entity into a table.
 
@@ -787,7 +778,7 @@ class TableClient(TablesBaseClient):
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-    
+
     @distributed_trace
     def upsert_entity(self, *args: Union[EntityType, T], **kwargs: Any) -> Dict[str, Any]:
         entity = kwargs.pop("entity", None)
@@ -803,7 +794,7 @@ class TableClient(TablesBaseClient):
         entity_json = encoder.encode_entity(entity)
         partition_key = entity_json.get("PartitionKey")
         row_key = entity_json.get("RowKey")
-        
+
         try:
             if mode == UpdateMode.MERGE:
                 metadata, content = cast(

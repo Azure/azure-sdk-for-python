@@ -19,12 +19,12 @@ from _shared.testcase import TableTestCase
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from preparers import cosmos_decorator
-from test_encoder import(
+from test_encoder import (
     EnumBasicOptions,
     EnumStrOptions,
     EnumIntOptions,
     EncoderVerificationTransport,
-    _check_backcompat
+    _check_backcompat,
 )
 
 
@@ -74,7 +74,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
+                in str(error.value)
+            )
 
             test_entity = {"PartitionKey": "PK", "RowKey": True}
             expected_entity = test_entity
@@ -87,7 +90,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
+                in str(error.value)
+            )
 
             test_entity = {"PartitionKey": "PK", "RowKey": 3.14}
             expected_entity = {
@@ -104,7 +110,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
+                in str(error.value)
+            )
             client.delete_table()
 
     @cosmos_decorator
@@ -140,7 +149,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
+                in str(error.value)
+            )
 
             test_entity = {
                 "PartitionKey": b"binarydata",
@@ -160,7 +172,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
+                in str(error.value)
+            )
             client.delete_table()
         return recorded_variables
 
@@ -511,7 +526,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             expected_entity = test_entity
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
-            
+
             assert "is too large to be cast to" in str(error.value)
             with pytest.raises(HttpResponseError) as error:
                 resp = client.create_entity(
@@ -559,7 +574,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
+                in str(error.value)
+            )
 
             # Infinite float values
             test_entity = {
@@ -611,7 +629,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"PropertyNameInvalid","message":{"lang":"en-us","value":"The property name \'123\' is invalid.' in str(error.value)
+            assert (
+                '"code":"PropertyNameInvalid","message":{"lang":"en-us","value":"The property name \'123\' is invalid.'
+                in str(error.value)
+            )
 
             # Test enums - it is not supported in old encoder
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
@@ -659,7 +680,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     verify_response=(lambda: client.get_entity("PK", "1"), expected_entity),
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
+                in str(error.value)
+            )
             client.delete_table()
 
     @cosmos_decorator
@@ -739,7 +763,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK", "RowKey": 3.14}
             expected_entity = {
                 "PartitionKey": "PK",
-                "RowKey": 3.14,                          
+                "RowKey": 3.14,
                 "RowKey@odata.type": "Edm.Double",
             }
             _check_backcompat(test_entity, expected_entity)
@@ -789,9 +813,12 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     verify_headers={
                         "Content-Type": "application/json",
                         "Accept": "application/json",
-                    }
+                    },
                 )
-            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
+                in str(error.value)
+            )
             with pytest.raises(HttpResponseError) as error:
                 resp = client.upsert_entity(
                     test_entity,
@@ -801,9 +828,12 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     verify_headers={
                         "Content-Type": "application/json",
                         "Accept": "application/json",
-                    }
+                    },
                 )
-            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
+                in str(error.value)
+            )
 
             test_entity = {"PartitionKey": b"binarydata", "RowKey": "1234", "Data": 1}
             pk = _encode_base64(test_entity["PartitionKey"])
@@ -824,9 +854,12 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     verify_headers={
                         "Content-Type": "application/json",
                         "Accept": "application/json",
-                    }
+                    },
                 )
-            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
+                in str(error.value)
+            )
             with pytest.raises(HttpResponseError) as error:
                 resp = client.upsert_entity(
                     test_entity,
@@ -836,9 +869,12 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     verify_headers={
                         "Content-Type": "application/json",
                         "Accept": "application/json",
-                    }
+                    },
                 )
-            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
+                in str(error.value)
+            )
             client.delete_table()
         return recorded_variables
 
@@ -1305,10 +1341,13 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     verify_headers={
                         "Content-Type": "application/json",
                         "Accept": "application/json",
-                    }
+                    },
                 )
             assert "One of the input values is invalid." in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
+                in str(error.value)
+            )
             with pytest.raises(HttpResponseError) as error:
                 resp = client.upsert_entity(
                     test_entity,
@@ -1318,10 +1357,13 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     verify_headers={
                         "Content-Type": "application/json",
                         "Accept": "application/json",
-                    }
+                    },
                 )
             assert "One of the input values is invalid." in str(error.value)
-            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
+                in str(error.value)
+            )
 
             test_entity = {"PartitionKey": "PK2", "RowKey": "RK2", "Data": (max_int64 - 1, "Edm.Int64")}
             expected_entity = {
@@ -1698,7 +1740,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     verify_url=f"/{table_name}(PartitionKey='{quote(pk)}',RowKey='{quote(rk)}')",
                     verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
                 )
-            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
+                in str(error.value)
+            )
             with pytest.raises(HttpResponseError) as error:
                 resp = client.update_entity(
                     test_entity,
@@ -1708,7 +1753,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
                     verify_response=(lambda: client.get_entity(pk, rk), response_entity),
                 )
-            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
+                in str(error.value)
+            )
 
             test_entity = {"PartitionKey": b"binarydata", "RowKey": "1234", "Data": 1}
             pk = _encode_base64(test_entity["PartitionKey"])
@@ -1730,7 +1778,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     verify_url=f"/{table_name}(PartitionKey='{quote(pk)}',RowKey='{rk}')",
                     verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
                 )
-            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
+                in str(error.value)
+            )
             with pytest.raises(HttpResponseError) as error:
                 resp = client.update_entity(
                     test_entity,
@@ -1739,7 +1790,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     verify_url=f"/{table_name}(PartitionKey='{quote(pk)}',RowKey='{rk}')",
                     verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
                 )
-            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
+                in str(error.value)
+            )
             client.delete_table()
         return recorded_variables
 
@@ -2181,7 +2235,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     verify_url=f"/{table_name}(PartitionKey='PK1',RowKey='RK1')",
                     verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
                 )
-            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
+                in str(error.value)
+            )
             with pytest.raises(HttpResponseError) as error:
                 resp = client.update_entity(
                     test_entity,
@@ -2190,7 +2247,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     verify_url=f"/{table_name}(PartitionKey='PK1',RowKey='RK1')",
                     verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
                 )
-            assert '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.' in str(error.value)
+            assert (
+                '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
+                in str(error.value)
+            )
 
             test_entity = {"PartitionKey": "PK2", "RowKey": "RK2", "Data": (max_int64 - 1, "Edm.Int64")}
             expected_entity = {
@@ -2239,7 +2299,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                     verify_url=f"/{table_name}(PartitionKey='PK3',RowKey='RK3')",
                     verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
                 )
-            assert 'One of the input values is invalid.' in str(error.value)
+            assert "One of the input values is invalid." in str(error.value)
             assert error.value.error_code == "InvalidInput"
             with pytest.raises(HttpResponseError) as error:
                 client.update_entity(

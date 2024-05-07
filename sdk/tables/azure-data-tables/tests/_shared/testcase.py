@@ -46,6 +46,7 @@ SERVICE_LIVE_RESP_BODY = (
     "></StorageServiceStats> "
 )
 
+
 def _encode_base64(data):
     if isinstance(data, str):
         data = data.encode("utf-8")

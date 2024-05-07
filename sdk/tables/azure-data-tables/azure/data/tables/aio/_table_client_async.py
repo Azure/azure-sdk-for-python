@@ -352,7 +352,7 @@ class TableClient(AsyncTablesBaseClient):
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         encoder: TableEntityEncoderABC[T],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Deletes the specified entity in a table. No error will be raised if
         the entity or PartitionKey-RowKey pairing is not found.
@@ -368,7 +368,7 @@ class TableClient(AsyncTablesBaseClient):
         :return: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-    
+
     @distributed_trace_async
     async def delete_entity(self, *args: Union[EntityType, str, T], **kwargs: Any) -> None:
         try:
@@ -410,11 +410,7 @@ class TableClient(AsyncTablesBaseClient):
 
     @overload
     async def create_entity(
-        self,
-        entity: EntityType,
-        *,
-        encoder: TableEntityEncoderABC[TableEntity] = DEFAULT_ENCODER,
-        **kwargs
+        self, entity: EntityType, *, encoder: TableEntityEncoderABC[TableEntity] = DEFAULT_ENCODER, **kwargs
     ) -> Dict[str, Any]:
         """Inserts entity in a table.
 
@@ -437,7 +433,7 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 12
                 :caption: Creating and adding an entity to a Table
         """
-    
+
     @overload
     async def create_entity(self, entity: T, *, encoder: TableEntityEncoderABC[T], **kwargs) -> Dict[str, Any]:
         """Insert entity in a table.
@@ -449,7 +445,7 @@ class TableClient(AsyncTablesBaseClient):
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-    
+
     @distributed_trace_async
     async def create_entity(self, *args: Union[EntityType, T], **kwargs: Any) -> Dict[str, Any]:
         entity = kwargs.pop("entity", None)
@@ -523,7 +519,7 @@ class TableClient(AsyncTablesBaseClient):
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         encoder: TableEntityEncoderABC[T],
-        **kwargs
+        **kwargs,
     ) -> Dict[str, Any]:
         """Update entity in a table.
         :param entity: The properties for the table entity.
@@ -746,7 +742,7 @@ class TableClient(AsyncTablesBaseClient):
         mode: UpdateMode = UpdateMode.MERGE,
         *,
         encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER,
-        **kwargs
+        **kwargs,
     ) -> Dict[str, Any]:
         """Updates (merge or replace) an entity into a table.
 
@@ -770,15 +766,10 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Replacing/Merging or Inserting an entity into a table
         """
-    
+
     @overload
     async def upsert_entity(
-        self,
-        entity: T,
-        mode: UpdateMode = UpdateMode.MERGE,
-        *,
-        encoder: TableEntityEncoderABC[T],
-        **kwargs
+        self, entity: T, mode: UpdateMode = UpdateMode.MERGE, *, encoder: TableEntityEncoderABC[T], **kwargs
     ) -> Dict[str, Any]:
         """Updates (merge or replace) an entity into a table.
         :param entity: The properties for the table entity.
@@ -791,7 +782,7 @@ class TableClient(AsyncTablesBaseClient):
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-    
+
     @distributed_trace_async
     async def upsert_entity(self, *args: Union[EntityType, T], **kwargs: Any) -> Dict[str, Any]:
         entity = kwargs.pop("entity", None)
