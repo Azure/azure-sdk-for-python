@@ -30,12 +30,51 @@ from azure.core.exceptions import (
     ServiceRequestTimeoutError,
     map_error,
 )
-from azure.core.polling import LROPoller
+from azure.core.polling import LROPoller, PollingMethod
 from azure.core.rest import HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 module_logger = logging.getLogger(__name__)
 initialize_logger_info(module_logger, terminator="")
+
+class FuturePolling(PollingMethod):
+    def __init__(
+        self,
+        future: Future,
+        timeout: int = LROConfigurations.POLLING_TIMEOUT,
+        interval: int = LROConfigurations.POLL_INTERVAL,
+        message: str = None
+    ):
+        self._future = future
+        self._timeout = timeout
+        self._interval = interval
+        self._message = message
+
+    def run(self):
+        module_logger.warning(str(self._message))
+        if not self._timeout:
+            while not self.finished():
+                module_logger.warning(".")
+                time.sleep(self._interval)
+        else:
+            self._future.result(timeout=self._timeout)
+
+        if self._future.done():
+            module_logger.warning("Done ")
+        else:
+            module_logger.warning("Timeout waiting for long running operation")
+
+    def initialize(self, *_):
+        pass
+
+    def status(self) -> str:
+        return self._future._state
+
+    def finished(self) -> bool:
+        return self._future.done()
+
+    def resource(self):
+        return self._future.result(self._timeout)
 
 
 def get_duration(start_time: float) -> None:
@@ -87,7 +126,7 @@ def polling_wait(
         get_duration(start_time)
 
 
-def local_endpoint_polling_wrapper(func: Callable, message: str, **kwargs) -> Any:
+def local_endpoint_polling_wrapper(func: Callable, message: str, **kwargs) ->  LROPoller[Any]:
     """Wrapper for polling local endpoint operations.
 
     :param Callable func: Name of the endpoint.
@@ -96,10 +135,17 @@ def local_endpoint_polling_wrapper(func: Callable, message: str, **kwargs) -> An
     :return: The type returned by Func
     """
     pool = concurrent.futures.ThreadPoolExecutor()
-    start_time = time.time()
     event = pool.submit(func, **kwargs)
-    polling_wait(poller=event, start_time=start_time, message=message, is_local=True)
-    return event.result()
+    return LROPoller(
+        None,
+        None,
+        None,
+        FuturePolling(
+            event,
+            timeout=None,
+            message=message
+        )
+    )
 
 
 def validate_response(response: HttpResponse) -> None:

@@ -9,7 +9,7 @@ import logging
 from typing import Any, Iterable, List, Optional
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
-
+from azure.core.polling import LROPoller
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._local_endpoints import EndpointStub
 from azure.ai.ml._local_endpoints.docker_client import (
@@ -40,7 +40,7 @@ class _LocalEndpointHelper(object):
         self._endpoint_stub = EndpointStub()
         self._requests_pipeline = requests_pipeline
 
-    def create_or_update(self, endpoint: OnlineEndpoint) -> OnlineEndpoint:  # type: ignore
+    def create_or_update(self, endpoint: OnlineEndpoint) -> LROPoller[OnlineEndpoint]:  # type: ignore
         """Create or update an endpoint locally using Docker.
 
         :param endpoint: OnlineEndpoint object with information from user yaml.
@@ -57,12 +57,15 @@ class _LocalEndpointHelper(object):
             except LocalEndpointNotFoundError:
                 operation_message = "Creating local endpoint"
 
-            local_endpoint_polling_wrapper(
-                func=self._endpoint_stub.create_or_update,
+            def local_endpoint_wrapper(*args, **kwargs):
+                self._endpoint_stub.create_or_update(*args, **kwargs)
+                return self.get(endpoint_name=endpoint.name)
+
+            return local_endpoint_polling_wrapper(
+                func=local_endpoint_wrapper,
                 message=f"{operation_message} ({endpoint.name}) ",
                 endpoint=endpoint,
             )
-            return self.get(endpoint_name=str(endpoint.name))
         except Exception as ex:  # pylint: disable=broad-except
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
@@ -143,7 +146,7 @@ class _LocalEndpointHelper(object):
             endpoints.append(_convert_container_to_endpoint(container=container))
         return endpoints
 
-    def delete(self, name: str) -> None:
+    def delete(self, name: str) -> LROPoller[None]:
         """Delete a local endpoint.
 
         :param name: Name of endpoint to delete.
@@ -154,7 +157,11 @@ class _LocalEndpointHelper(object):
             self._endpoint_stub.delete(endpoint_name=name)
             endpoint_container = self._docker_client.get_endpoint_container(endpoint_name=name)
             if endpoint_container:
-                self._docker_client.delete(endpoint_name=name)
+                    return local_endpoint_polling_wrapper(
+                    self._docker_client.delete,
+                    message=f"Deleting endpoint: {name}",
+                    endpoint_name=name
+                )
         else:
             raise LocalEndpointNotFoundError(endpoint_name=name)
 

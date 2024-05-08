@@ -10,7 +10,6 @@ import os
 import shutil
 from pathlib import Path
 from typing import Any, Iterable, Optional, Union
-
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
@@ -20,6 +19,7 @@ from azure.ai.ml._local_endpoints.docker_client import (
     get_deployment_json_from_container,
     get_status_from_container,
 )
+from azure.core.polling import LROPoller
 from azure.ai.ml._local_endpoints.mdc_config_resolver import MdcConfigResolver
 from azure.ai.ml._local_endpoints.validators.code_validator import get_code_configuration_artifacts
 from azure.ai.ml._local_endpoints.validators.environment_validator import get_environment_artifacts
@@ -56,7 +56,7 @@ class _LocalDeploymentHelper(object):
         deployment: OnlineDeployment,
         local_endpoint_mode: LocalEndpointMode,
         local_enable_gpu: Optional[bool] = False,
-    ) -> OnlineDeployment:
+    ) -> LROPoller[OnlineDeployment]:
         """Create or update an deployment locally using Docker.
 
         :param deployment: OnlineDeployment object with information from user yaml.
@@ -81,14 +81,18 @@ class _LocalDeploymentHelper(object):
             except LocalEndpointNotFoundError:
                 operation_message = "Creating local deployment"
 
+            def local_deploy_wrapper(*args, **kwargs):
+                self._create_deployment(*args, **kwargs)
+                return self.get(endpoint_name=deployment.endpoint_name, deployment_name=deployment.name)
+            
             deployment_metadata = json.dumps(deployment._to_dict())
             endpoint_metadata = (
                 endpoint_metadata
                 if endpoint_metadata
                 else _get_stubbed_endpoint_metadata(endpoint_name=str(deployment.endpoint_name))
             )
-            local_endpoint_polling_wrapper(
-                func=self._create_deployment,
+            return local_endpoint_polling_wrapper(
+                func=local_deploy_wrapper,
                 message=f"{operation_message} ({deployment.endpoint_name} / {deployment.name}) ",
                 endpoint_name=deployment.endpoint_name,
                 deployment=deployment,
@@ -97,7 +101,6 @@ class _LocalDeploymentHelper(object):
                 endpoint_metadata=endpoint_metadata,
                 deployment_metadata=deployment_metadata,
             )
-            return self.get(endpoint_name=str(deployment.endpoint_name), deployment_name=str(deployment.name))
         except Exception as ex:  # pylint: disable=broad-except
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
@@ -149,20 +152,27 @@ class _LocalDeploymentHelper(object):
             deployments.append(_convert_container_to_deployment(container=container))
         return deployments
 
-    def delete(self, name: str, deployment_name: Optional[str] = None) -> None:
-        """Delete a local deployment.
+    def delete(self, name: str, deployment_name: str = None) -> LROPoller[None]:
+        def local_delete_wrapper(name: str, deployment_name: str = None):
+            """Delete a local deployment.
+            :param name: Name of endpoint associated with the deployment to delete.
+            :type name: str
+            :param deployment_name: Name of specific deployment to delete.
+            :type deployment_name: str
+            """
+            self._docker_client.delete(endpoint_name=name, deployment_name=deployment_name)
+            try:
+                build_directory = _get_deployment_directory(endpoint_name=name, deployment_name=deployment_name)
+                shutil.rmtree(build_directory)
+            except (PermissionError, OSError):
+                pass
 
-        :param name: Name of endpoint associated with the deployment to delete.
-        :type name: str
-        :param deployment_name: Name of specific deployment to delete.
-        :type deployment_name: str
-        """
-        self._docker_client.delete(endpoint_name=name, deployment_name=deployment_name)
-        try:
-            build_directory = _get_deployment_directory(endpoint_name=name, deployment_name=deployment_name)
-            shutil.rmtree(build_directory)
-        except (PermissionError, OSError):
-            pass
+        return local_endpoint_polling_wrapper(
+            func=local_delete_wrapper,
+            message=f"Deleting deployment {deployment_name} on endpoint {name}",
+            name=name,
+            deployment_name=deployment_name
+        )
 
     def _create_deployment(
         self,
