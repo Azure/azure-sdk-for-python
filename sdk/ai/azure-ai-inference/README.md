@@ -259,7 +259,7 @@ import sys
 import logging
 
 # Acquire the logger for this client library. Use 'azure' to affect both
-# 'azure.core` and `azure.ai.vision.imageanalysis' libraries.
+# 'azure.core` and `azure.ai.inference' libraries.
 logger = logging.getLogger("azure")
 
 # Set the desired logging level. logging.INFO or logging.DEBUG are good options.
