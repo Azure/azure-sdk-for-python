@@ -21,6 +21,7 @@ from devtools_testutils.proxy_testcase import (
 
 from async_wrapper import async_wrapper
 
+
 # A modified version of devtools_testutils.aio.recorded_by_proxy_async
 # that modifies AioHttpTransport.send and RequestsTransport.send to make
 # both async and sync calls work with the proxy.

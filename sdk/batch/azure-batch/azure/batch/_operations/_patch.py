@@ -433,7 +433,9 @@ class _TaskWorkflowManager(object):
         <azure.batch.models.BatchTaskAddCollectionResult>`
     """
 
-    def __init__(self, original_create_task_collection, job_id: str, task_collection: _models.BatchTaskCollection, **kwargs):
+    def __init__(
+        self, original_create_task_collection, job_id: str, task_collection: _models.BatchTaskCollection, **kwargs
+    ):
         # Append operations thread safe - Only read once all threads have completed
         # List of tasks which failed to add due to a returned client error
         self.failure_tasks = collections.deque()

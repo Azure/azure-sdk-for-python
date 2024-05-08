@@ -845,7 +845,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Get remote desktop
         with io.BytesIO() as file_handle:
-            remote_desktop_bytes = await async_wrapper(client.get_node_remote_desktop_file(batch_pool.name, nodes[0].id))
+            remote_desktop_bytes = await async_wrapper(
+                client.get_node_remote_desktop_file(batch_pool.name, nodes[0].id)
+            )
             assert remote_desktop_bytes is not None
         assert "full address" in str(b"".join(remote_desktop_bytes), "utf-8")
 

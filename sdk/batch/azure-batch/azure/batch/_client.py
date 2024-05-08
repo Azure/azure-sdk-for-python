@@ -14,24 +14,28 @@ from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import BatchClientConfiguration
-from ._operations import BatchClientOperationsMixin
 from ._serialization import Deserializer, Serializer
+from .operations import BatchApiOperations, BatchOpsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class BatchClient(BatchClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class BatchClient:  # pylint: disable=client-accepts-api-version-keyword
     """Azure Batch provides Cloud-scale job scheduling and compute management.
 
+    :ivar batch_ops: BatchOpsOperations operations
+    :vartype batch_ops: azure.batch.operations.BatchOpsOperations
+    :ivar batch_api: BatchApiOperations operations
+    :vartype batch_api: azure.batch.operations.BatchApiOperations
     :param endpoint: Batch account endpoint (for example:
      https://batchaccount.eastus2.batch.azure.com). Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Required.
+    :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2023-05-01.17.0". Note that overriding this default value may result in unsupported behavior.
+     "2024-02-01.19.0". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -61,6 +65,8 @@ class BatchClient(BatchClientOperationsMixin):  # pylint: disable=client-accepts
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
+        self.batch_ops = BatchOpsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.batch_api = BatchApiOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
