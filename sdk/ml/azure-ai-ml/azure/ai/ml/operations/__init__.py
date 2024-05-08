@@ -30,6 +30,7 @@ from ._schedule_operations import ScheduleOperations
 from ._connections_operations import ConnectionsOperations
 from ._workspace_operations import WorkspaceOperations
 from ._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
+from ._evaluator_operations import EvaluatorOperations
 from ._serverless_endpoint_operations import ServerlessEndpointOperations
 from ._marketplace_subscription_operations import MarketplaceSubscriptionOperations
 
@@ -38,6 +39,7 @@ __all__ = [
     "DatastoreOperations",
     "JobOperations",
     "ModelOperations",
+    "EvaluatorOperations",
     "WorkspaceOperations",
     "RegistryOperations",
     "OnlineEndpointOperations",

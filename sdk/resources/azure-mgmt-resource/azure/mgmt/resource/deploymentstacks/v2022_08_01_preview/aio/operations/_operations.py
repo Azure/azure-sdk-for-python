@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -71,6 +71,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def list_at_resource_group(
@@ -81,7 +82,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeploymentStack or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DeploymentStack]
@@ -90,7 +90,9 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.DeploymentStackListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -104,16 +106,15 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_deployment_stacks_list_at_resource_group_request(
+                _request = build_deployment_stacks_list_at_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_at_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -124,14 +125,14 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("DeploymentStackListResult", pipeline_response)
@@ -141,11 +142,11 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -157,16 +158,11 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_at_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentStacks"
-    }
 
     @distributed_trace
     def list_at_subscription(self, **kwargs: Any) -> AsyncIterable["_models.DeploymentStack"]:
         """Lists all the Deployment Stacks within the specified subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeploymentStack or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DeploymentStack]
@@ -175,7 +171,9 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.DeploymentStackListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -189,15 +187,14 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_deployment_stacks_list_at_subscription_request(
+                _request = build_deployment_stacks_list_at_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_at_subscription.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -208,14 +205,14 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("DeploymentStackListResult", pipeline_response)
@@ -225,11 +222,11 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -241,10 +238,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_at_subscription.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deploymentStacks"
-    }
 
     @distributed_trace
     def list_at_management_group(
@@ -254,7 +247,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
 
         :param management_group_id: Management Group. Required.
         :type management_group_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeploymentStack or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DeploymentStack]
@@ -263,7 +255,9 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.DeploymentStackListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -277,15 +271,14 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_deployment_stacks_list_at_management_group_request(
+                _request = build_deployment_stacks_list_at_management_group_request(
                     management_group_id=management_group_id,
                     api_version=api_version,
-                    template_url=self.list_at_management_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -296,14 +289,14 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("DeploymentStackListResult", pipeline_response)
@@ -313,11 +306,11 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -330,15 +323,11 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_at_management_group.metadata = {
-        "url": "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Resources/deploymentStacks"
-    }
-
-    async def _create_or_update_at_resource_group_initial(
+    async def _create_or_update_at_resource_group_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         deployment_stack_name: str,
-        deployment_stack: Union[_models.DeploymentStack, IO],
+        deployment_stack: Union[_models.DeploymentStack, IO[bytes]],
         **kwargs: Any
     ) -> _models.DeploymentStack:
         error_map = {
@@ -352,7 +341,9 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DeploymentStack] = kwargs.pop("cls", None)
 
@@ -364,7 +355,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(deployment_stack, "DeploymentStack")
 
-        request = build_deployment_stacks_create_or_update_at_resource_group_request(
+        _request = build_deployment_stacks_create_or_update_at_resource_group_request(
             resource_group_name=resource_group_name,
             deployment_stack_name=deployment_stack_name,
             subscription_id=self._config.subscription_id,
@@ -372,16 +363,15 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_at_resource_group_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -401,10 +391,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_at_resource_group_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentStacks/{deploymentStackName}"
-    }
 
     @overload
     async def begin_create_or_update_at_resource_group(
@@ -429,14 +415,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentStack or the result of
          cls(response)
         :rtype:
@@ -449,7 +427,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         deployment_stack_name: str,
-        deployment_stack: IO,
+        deployment_stack: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -462,18 +440,10 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
         :param deployment_stack: Deployment Stack supplied to the operation. Required.
-        :type deployment_stack: IO
+        :type deployment_stack: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentStack or the result of
          cls(response)
         :rtype:
@@ -486,7 +456,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         deployment_stack_name: str,
-        deployment_stack: Union[_models.DeploymentStack, IO],
+        deployment_stack: Union[_models.DeploymentStack, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentStack]:
         """Creates or updates a Deployment Stack.
@@ -497,20 +467,9 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
         :param deployment_stack: Deployment Stack supplied to the operation. Is either a
-         DeploymentStack type or a IO type. Required.
+         DeploymentStack type or a IO[bytes] type. Required.
         :type deployment_stack:
-         ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DeploymentStack or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DeploymentStack or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either DeploymentStack or the result of
          cls(response)
         :rtype:
@@ -520,7 +479,9 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DeploymentStack] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -543,7 +504,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("DeploymentStack", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -556,17 +517,15 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.DeploymentStack].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update_at_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentStacks/{deploymentStackName}"
-    }
+        return AsyncLROPoller[_models.DeploymentStack](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def get_at_resource_group(
@@ -579,7 +538,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeploymentStack or the result of cls(response)
         :rtype: ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DeploymentStack
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -595,24 +553,25 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.DeploymentStack] = kwargs.pop("cls", None)
 
-        request = build_deployment_stacks_get_at_resource_group_request(
+        _request = build_deployment_stacks_get_at_resource_group_request(
             resource_group_name=resource_group_name,
             deployment_stack_name=deployment_stack_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_at_resource_group.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -625,13 +584,9 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("DeploymentStack", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_at_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentStacks/{deploymentStackName}"
-    }
+        return deserialized  # type: ignore
 
     async def _delete_at_resource_group_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -652,26 +607,27 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_deployment_stacks_delete_at_resource_group_request(
+        _request = build_deployment_stacks_delete_at_resource_group_request(
             resource_group_name=resource_group_name,
             deployment_stack_name=deployment_stack_name,
             subscription_id=self._config.subscription_id,
             unmanage_action_resources=unmanage_action_resources,
             unmanage_action_resource_groups=unmanage_action_resource_groups,
             api_version=api_version,
-            template_url=self._delete_at_resource_group_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -686,11 +642,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _delete_at_resource_group_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentStacks/{deploymentStackName}"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def begin_delete_at_resource_group(
@@ -717,14 +669,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
          resource groups. Known values are: "delete" and "detach". Default value is None.
         :type unmanage_action_resource_groups: str or
          ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.UnmanageActionResourceGroupMode
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -732,7 +676,9 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -753,7 +699,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
@@ -764,20 +710,16 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete_at_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentStacks/{deploymentStackName}"
-    }
-
-    async def _create_or_update_at_subscription_initial(
-        self, deployment_stack_name: str, deployment_stack: Union[_models.DeploymentStack, IO], **kwargs: Any
+    async def _create_or_update_at_subscription_initial(  # pylint: disable=name-too-long
+        self, deployment_stack_name: str, deployment_stack: Union[_models.DeploymentStack, IO[bytes]], **kwargs: Any
     ) -> _models.DeploymentStack:
         error_map = {
             401: ClientAuthenticationError,
@@ -790,7 +732,9 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DeploymentStack] = kwargs.pop("cls", None)
 
@@ -802,23 +746,22 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(deployment_stack, "DeploymentStack")
 
-        request = build_deployment_stacks_create_or_update_at_subscription_request(
+        _request = build_deployment_stacks_create_or_update_at_subscription_request(
             deployment_stack_name=deployment_stack_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_at_subscription_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -839,10 +782,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    _create_or_update_at_subscription_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deploymentStacks/{deploymentStackName}"
-    }
-
     @overload
     async def begin_create_or_update_at_subscription(
         self,
@@ -862,14 +801,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentStack or the result of
          cls(response)
         :rtype:
@@ -879,25 +810,22 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def begin_create_or_update_at_subscription(
-        self, deployment_stack_name: str, deployment_stack: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        deployment_stack_name: str,
+        deployment_stack: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentStack]:
         """Creates or updates a Deployment Stack.
 
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
         :param deployment_stack: Deployment Stack supplied to the operation. Required.
-        :type deployment_stack: IO
+        :type deployment_stack: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentStack or the result of
          cls(response)
         :rtype:
@@ -907,27 +835,16 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_create_or_update_at_subscription(
-        self, deployment_stack_name: str, deployment_stack: Union[_models.DeploymentStack, IO], **kwargs: Any
+        self, deployment_stack_name: str, deployment_stack: Union[_models.DeploymentStack, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentStack]:
         """Creates or updates a Deployment Stack.
 
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
         :param deployment_stack: Deployment Stack supplied to the operation. Is either a
-         DeploymentStack type or a IO type. Required.
+         DeploymentStack type or a IO[bytes] type. Required.
         :type deployment_stack:
-         ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DeploymentStack or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DeploymentStack or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either DeploymentStack or the result of
          cls(response)
         :rtype:
@@ -937,7 +854,9 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DeploymentStack] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -959,7 +878,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("DeploymentStack", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -972,17 +891,15 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.DeploymentStack].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update_at_subscription.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deploymentStacks/{deploymentStackName}"
-    }
+        return AsyncLROPoller[_models.DeploymentStack](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def get_at_subscription(self, deployment_stack_name: str, **kwargs: Any) -> _models.DeploymentStack:
@@ -990,7 +907,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
 
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeploymentStack or the result of cls(response)
         :rtype: ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DeploymentStack
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1006,23 +922,24 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.DeploymentStack] = kwargs.pop("cls", None)
 
-        request = build_deployment_stacks_get_at_subscription_request(
+        _request = build_deployment_stacks_get_at_subscription_request(
             deployment_stack_name=deployment_stack_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_at_subscription.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1035,13 +952,9 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("DeploymentStack", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_at_subscription.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deploymentStacks/{deploymentStackName}"
-    }
+        return deserialized  # type: ignore
 
     async def _delete_at_subscription_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -1061,25 +974,26 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_deployment_stacks_delete_at_subscription_request(
+        _request = build_deployment_stacks_delete_at_subscription_request(
             deployment_stack_name=deployment_stack_name,
             subscription_id=self._config.subscription_id,
             unmanage_action_resources=unmanage_action_resources,
             unmanage_action_resource_groups=unmanage_action_resource_groups,
             api_version=api_version,
-            template_url=self._delete_at_subscription_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1094,11 +1008,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _delete_at_subscription_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deploymentStacks/{deploymentStackName}"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def begin_delete_at_subscription(
@@ -1121,14 +1031,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
          resource groups. Known values are: "delete" and "detach". Default value is None.
         :type unmanage_action_resource_groups: str or
          ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.UnmanageActionResourceGroupMode
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1136,7 +1038,9 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1156,7 +1060,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
@@ -1167,23 +1071,19 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete_at_subscription.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deploymentStacks/{deploymentStackName}"
-    }
-
-    async def _create_or_update_at_management_group_initial(
+    async def _create_or_update_at_management_group_initial(  # pylint: disable=name-too-long
         self,
         management_group_id: str,
         deployment_stack_name: str,
-        deployment_stack: Union[_models.DeploymentStack, IO],
+        deployment_stack: Union[_models.DeploymentStack, IO[bytes]],
         **kwargs: Any
     ) -> _models.DeploymentStack:
         error_map = {
@@ -1197,7 +1097,9 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DeploymentStack] = kwargs.pop("cls", None)
 
@@ -1209,23 +1111,22 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(deployment_stack, "DeploymentStack")
 
-        request = build_deployment_stacks_create_or_update_at_management_group_request(
+        _request = build_deployment_stacks_create_or_update_at_management_group_request(
             management_group_id=management_group_id,
             deployment_stack_name=deployment_stack_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_at_management_group_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1246,12 +1147,8 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    _create_or_update_at_management_group_initial.metadata = {
-        "url": "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Resources/deploymentStacks/{deploymentStackName}"
-    }
-
     @overload
-    async def begin_create_or_update_at_management_group(
+    async def begin_create_or_update_at_management_group(  # pylint: disable=name-too-long
         self,
         management_group_id: str,
         deployment_stack_name: str,
@@ -1272,14 +1169,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentStack or the result of
          cls(response)
         :rtype:
@@ -1288,11 +1177,11 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def begin_create_or_update_at_management_group(
+    async def begin_create_or_update_at_management_group(  # pylint: disable=name-too-long
         self,
         management_group_id: str,
         deployment_stack_name: str,
-        deployment_stack: IO,
+        deployment_stack: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1304,18 +1193,10 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
         :param deployment_stack: Deployment Stack supplied to the operation. Required.
-        :type deployment_stack: IO
+        :type deployment_stack: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentStack or the result of
          cls(response)
         :rtype:
@@ -1324,11 +1205,11 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
-    async def begin_create_or_update_at_management_group(
+    async def begin_create_or_update_at_management_group(  # pylint: disable=name-too-long
         self,
         management_group_id: str,
         deployment_stack_name: str,
-        deployment_stack: Union[_models.DeploymentStack, IO],
+        deployment_stack: Union[_models.DeploymentStack, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentStack]:
         """Creates or updates a Deployment Stack.
@@ -1338,20 +1219,9 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
         :param deployment_stack: Deployment Stack supplied to the operation. Is either a
-         DeploymentStack type or a IO type. Required.
+         DeploymentStack type or a IO[bytes] type. Required.
         :type deployment_stack:
-         ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DeploymentStack or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DeploymentStack or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either DeploymentStack or the result of
          cls(response)
         :rtype:
@@ -1361,7 +1231,9 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DeploymentStack] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -1384,7 +1256,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("DeploymentStack", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1397,17 +1269,15 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.DeploymentStack].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update_at_management_group.metadata = {
-        "url": "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Resources/deploymentStacks/{deploymentStackName}"
-    }
+        return AsyncLROPoller[_models.DeploymentStack](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def get_at_management_group(
@@ -1419,7 +1289,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         :type management_group_id: str
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeploymentStack or the result of cls(response)
         :rtype: ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DeploymentStack
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1435,23 +1304,24 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.DeploymentStack] = kwargs.pop("cls", None)
 
-        request = build_deployment_stacks_get_at_management_group_request(
+        _request = build_deployment_stacks_get_at_management_group_request(
             management_group_id=management_group_id,
             deployment_stack_name=deployment_stack_name,
             api_version=api_version,
-            template_url=self.get_at_management_group.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1464,13 +1334,9 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("DeploymentStack", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_at_management_group.metadata = {
-        "url": "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Resources/deploymentStacks/{deploymentStackName}"
-    }
+        return deserialized  # type: ignore
 
     async def _delete_at_management_group_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -1492,26 +1358,27 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_deployment_stacks_delete_at_management_group_request(
+        _request = build_deployment_stacks_delete_at_management_group_request(
             management_group_id=management_group_id,
             deployment_stack_name=deployment_stack_name,
             unmanage_action_resources=unmanage_action_resources,
             unmanage_action_resource_groups=unmanage_action_resource_groups,
             unmanage_action_management_groups=unmanage_action_management_groups,
             api_version=api_version,
-            template_url=self._delete_at_management_group_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1526,11 +1393,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _delete_at_management_group_initial.metadata = {
-        "url": "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Resources/deploymentStacks/{deploymentStackName}"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def begin_delete_at_management_group(
@@ -1561,14 +1424,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
          management groups. Known values are: "delete" and "detach". Default value is None.
         :type unmanage_action_management_groups: str or
          ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.UnmanageActionManagementGroupMode
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1576,7 +1431,9 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1598,7 +1455,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
@@ -1609,17 +1466,13 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete_at_management_group.metadata = {
-        "url": "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Resources/deploymentStacks/{deploymentStackName}"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
     async def export_template_at_resource_group(
@@ -1632,7 +1485,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeploymentStackTemplateDefinition or the result of cls(response)
         :rtype:
          ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DeploymentStackTemplateDefinition
@@ -1649,24 +1501,25 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.DeploymentStackTemplateDefinition] = kwargs.pop("cls", None)
 
-        request = build_deployment_stacks_export_template_at_resource_group_request(
+        _request = build_deployment_stacks_export_template_at_resource_group_request(
             resource_group_name=resource_group_name,
             deployment_stack_name=deployment_stack_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.export_template_at_resource_group.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1679,13 +1532,9 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("DeploymentStackTemplateDefinition", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    export_template_at_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentStacks/{deploymentStackName}/exportTemplate"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def export_template_at_subscription(
@@ -1695,7 +1544,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
 
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeploymentStackTemplateDefinition or the result of cls(response)
         :rtype:
          ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DeploymentStackTemplateDefinition
@@ -1712,23 +1560,24 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.DeploymentStackTemplateDefinition] = kwargs.pop("cls", None)
 
-        request = build_deployment_stacks_export_template_at_subscription_request(
+        _request = build_deployment_stacks_export_template_at_subscription_request(
             deployment_stack_name=deployment_stack_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.export_template_at_subscription.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1741,13 +1590,9 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("DeploymentStackTemplateDefinition", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    export_template_at_subscription.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deploymentStacks/{deploymentStackName}/exportTemplate"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def export_template_at_management_group(
@@ -1759,7 +1604,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         :type management_group_id: str
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeploymentStackTemplateDefinition or the result of cls(response)
         :rtype:
          ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DeploymentStackTemplateDefinition
@@ -1776,23 +1620,24 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.DeploymentStackTemplateDefinition] = kwargs.pop("cls", None)
 
-        request = build_deployment_stacks_export_template_at_management_group_request(
+        _request = build_deployment_stacks_export_template_at_management_group_request(
             management_group_id=management_group_id,
             deployment_stack_name=deployment_stack_name,
             api_version=api_version,
-            template_url=self.export_template_at_management_group.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1805,10 +1650,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("DeploymentStackTemplateDefinition", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    export_template_at_management_group.metadata = {
-        "url": "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Resources/deploymentStacks/{deploymentStackName}/exportTemplate"
-    }
+        return deserialized  # type: ignore

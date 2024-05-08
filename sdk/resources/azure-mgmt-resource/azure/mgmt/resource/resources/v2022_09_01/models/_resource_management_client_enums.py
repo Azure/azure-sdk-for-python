@@ -65,22 +65,22 @@ class ChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CREATE = "Create"
     """The resource does not exist in the current state but is present in the desired state. The
-    #: resource will be created when the deployment is executed."""
+    resource will be created when the deployment is executed."""
     DELETE = "Delete"
     """The resource exists in the current state and is missing from the desired state. The resource
-    #: will be deleted when the deployment is executed."""
+    will be deleted when the deployment is executed."""
     IGNORE = "Ignore"
     """The resource exists in the current state and is missing from the desired state. The resource
-    #: will not be deployed or modified when the deployment is executed."""
+    will not be deployed or modified when the deployment is executed."""
     DEPLOY = "Deploy"
     """The resource exists in the current state and the desired state and will be redeployed when the
-    #: deployment is executed. The properties of the resource may or may not change."""
+    deployment is executed. The properties of the resource may or may not change."""
     NO_CHANGE = "NoChange"
     """The resource exists in the current state and the desired state and will be redeployed when the
-    #: deployment is executed. The properties of the resource will not change."""
+    deployment is executed. The properties of the resource will not change."""
     MODIFY = "Modify"
     """The resource exists in the current state and the desired state and will be redeployed when the
-    #: deployment is executed. The properties of the resource will change."""
+    deployment is executed. The properties of the resource will change."""
     UNSUPPORTED = "Unsupported"
     """The resource is not supported by What-If."""
 
@@ -127,13 +127,13 @@ class PropertyChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CREATE = "Create"
     """The property does not exist in the current state but is present in the desired state. The
-    #: property will be created when the deployment is executed."""
+    property will be created when the deployment is executed."""
     DELETE = "Delete"
     """The property exists in the current state and is missing from the desired state. It will be
-    #: deleted when the deployment is executed."""
+    deleted when the deployment is executed."""
     MODIFY = "Modify"
     """The property exists in both current and desired state and is different. The value of the
-    #: property will change when the deployment is executed."""
+    property will change when the deployment is executed."""
     ARRAY = "Array"
     """The property is an array and contains nested changes."""
     NO_EFFECT = "NoEffect"
@@ -172,7 +172,7 @@ class ProvisioningOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning operation is evaluate output."""
     DEPLOYMENT_CLEANUP = "DeploymentCleanup"
     """The provisioning operation is cleanup. This operation is part of the 'complete' mode
-    #: deployment."""
+    deployment."""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -208,7 +208,7 @@ class TagsPatchOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The 'replace' option replaces the entire set of existing tags with a new set."""
     MERGE = "Merge"
     """The 'merge' option allows adding tags with new names and updating the values of tags with
-    #: existing names."""
+    existing names."""
     DELETE = "Delete"
     """The 'delete' option allows selectively deleting tags based on given names or name/value pairs."""
 

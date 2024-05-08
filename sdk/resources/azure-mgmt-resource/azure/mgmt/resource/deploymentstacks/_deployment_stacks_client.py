@@ -11,7 +11,9 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core.pipeline import policies
 from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 
@@ -30,7 +32,7 @@ class _SDKClient(object):
         pass
 
 class DeploymentStacksClient(MultiApiClientMixin, _SDKClient):
-    """The APIs listed in this specification can be used to manage deployment stack resources through the Azure Resource Manager.
+    """The APIs listed in this specification can be used to manage Deployment stack resources through the Azure Resource Manager.
 
     This ready contains multiple API versions, to help you deal with all of the Azure clouds
     (Azure Stack, Azure Government, Azure China, etc.).
@@ -42,7 +44,7 @@ class DeploymentStacksClient(MultiApiClientMixin, _SDKClient):
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -53,7 +55,7 @@ class DeploymentStacksClient(MultiApiClientMixin, _SDKClient):
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2022-08-01-preview'
+    DEFAULT_API_VERSION = '2024-03-01'
     _PROFILE_TAG = "azure.mgmt.resource.deploymentstacks.DeploymentStacksClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -71,8 +73,28 @@ class DeploymentStacksClient(MultiApiClientMixin, _SDKClient):
         profile: KnownProfiles=KnownProfiles.default,
         **kwargs: Any
     ):
+        if api_version:
+            kwargs.setdefault('api_version', api_version)
         self._config = DeploymentStacksClientConfiguration(credential, subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                ARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client = ARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
         super(DeploymentStacksClient, self).__init__(
             api_version=api_version,
             profile=profile
@@ -87,9 +109,13 @@ class DeploymentStacksClient(MultiApiClientMixin, _SDKClient):
         """Module depends on the API version:
 
            * 2022-08-01-preview: :mod:`v2022_08_01_preview.models<azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models>`
+           * 2024-03-01: :mod:`v2024_03_01.models<azure.mgmt.resource.deploymentstacks.v2024_03_01.models>`
         """
         if api_version == '2022-08-01-preview':
             from .v2022_08_01_preview import models
+            return models
+        elif api_version == '2024-03-01':
+            from .v2024_03_01 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -98,14 +124,17 @@ class DeploymentStacksClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2022-08-01-preview: :class:`DeploymentStacksOperations<azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.operations.DeploymentStacksOperations>`
+           * 2024-03-01: :class:`DeploymentStacksOperations<azure.mgmt.resource.deploymentstacks.v2024_03_01.operations.DeploymentStacksOperations>`
         """
         api_version = self._get_api_version('deployment_stacks')
         if api_version == '2022-08-01-preview':
             from .v2022_08_01_preview.operations import DeploymentStacksOperations as OperationClass
+        elif api_version == '2024-03-01':
+            from .v2024_03_01.operations import DeploymentStacksOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'deployment_stacks'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     def close(self):
         self._client.close()
