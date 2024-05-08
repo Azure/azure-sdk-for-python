@@ -28,6 +28,7 @@ from collections import deque
 
 from azure.cosmos import _base
 from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQueryExecutionContext
+# pylint: disable=protected-access
 
 
 class _DocumentProducer(object):
