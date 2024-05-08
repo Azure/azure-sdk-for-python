@@ -293,4 +293,4 @@ class _NonStreamingDocumentProducer(object):
 
     def __lt__(self, other):
         return _OrderByHelper.compare(self._item_result["orderByItems"][0],
-                                               other._item_result["orderByItems"]) < 0
+                                               other._item_result["orderByItems"][0]) < 0
