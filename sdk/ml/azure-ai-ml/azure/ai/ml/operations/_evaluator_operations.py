@@ -127,11 +127,11 @@ class EvaluatorOperations(_ScopeDependentOperations):
             )
 
     @monitor_with_activity(ops_logger, "Evaluator.Get", ActivityType.PUBLICAPI)
-    def get(self, *, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs) -> Model:
+    def get(self, name: str, *, version: Optional[str] = None, label: Optional[str] = None, **kwargs) -> Model:
         """Returns information about the specified model asset.
 
-        :keyword name: Name of the model.
-        :paramtype name: str
+        :param name: Name of the model.
+        :type name: str
         :keyword version: Version of the model.
         :paramtype version: str
         :keyword label: Label of the model. (mutually exclusive with version)
