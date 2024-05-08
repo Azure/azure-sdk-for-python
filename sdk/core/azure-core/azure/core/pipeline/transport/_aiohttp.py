@@ -112,6 +112,9 @@ class AioHttpTransport(AsyncHttpTransport):
             raise ValueError("session_owner cannot be False if no session is provided")
         self.connection_config = ConnectionConfiguration(**kwargs)
         self._use_env_settings = kwargs.pop("use_env_settings", True)
+        # See https://github.com/Azure/azure-sdk-for-python/issues/25640 to understand why we track this
+        self._has_been_opened = False
+        self._has_been_closed = False
 
     async def __aenter__(self):
         await self.open()
@@ -126,27 +129,35 @@ class AioHttpTransport(AsyncHttpTransport):
         await self.close()
 
     async def open(self):
-        """Opens the connection."""
-        if not self.session and self._session_owner:
-            jar = aiohttp.DummyCookieJar()
-            clientsession_kwargs = {
-                "trust_env": self._use_env_settings,
-                "cookie_jar": jar,
-                "auto_decompress": False,
-            }
-            if self._loop is not None:
-                clientsession_kwargs["loop"] = self._loop
-            self.session = aiohttp.ClientSession(**clientsession_kwargs)
-        # pyright has trouble to understand that self.session is not None, since we raised at worst in the init
-        self.session = cast(aiohttp.ClientSession, self.session)
+        if self._has_been_opened and self._has_been_closed:
+            raise ValueError(
+                "HTTP transport has already been closed. "
+                "You may check if you're calling a function outside of the `with` of your client creation, "
+                "or if you called `close()` on your client already."
+            )
+        if not self.session:
+            if self._session_owner:
+                jar = aiohttp.DummyCookieJar()
+                clientsession_kwargs = {
+                    "trust_env": self._use_env_settings,
+                    "cookie_jar": jar,
+                    "auto_decompress": False,
+                }
+                if self._loop is not None:
+                    clientsession_kwargs["loop"] = self._loop
+                self.session = aiohttp.ClientSession(**clientsession_kwargs)
+            else:
+                raise ValueError("session_owner cannot be False and no session is available")
+
+        self._has_been_opened = True
         await self.session.__aenter__()
 
     async def close(self):
         """Closes the connection."""
         if self._session_owner and self.session:
             await self.session.close()
-            self._session_owner = False
             self.session = None
+        self._has_been_closed = True
 
     def _build_ssl_config(self, cert, verify):
         """Build the SSL configuration.
