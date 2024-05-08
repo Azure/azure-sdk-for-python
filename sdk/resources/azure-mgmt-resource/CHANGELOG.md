@@ -1,16 +1,10 @@
 # Release History
 
-## 24.0.0 (2024-05-20)
+## 23.1.1 (2024-05-08)
 
-### Breaking Changes
+### Other Changes
 
-  - Model ParameterDefinitionsValue no longer has parameter schema
-  - Model PolicyDefinition no longer has parameter version
-  - Model PolicyDefinition no longer has parameter versions
-  - Model PolicySetDefinition no longer has parameter version
-  - Model PolicySetDefinition no longer has parameter versions
-  - Removed operation group PolicyDefinitionVersionsOperations
-  - Removed operation group PolicySetDefinitionVersionsOperations
+  - Remove `2023-04-01` for PolicyClient to avoid breaking change caused by wrong swagger.
 
 ## 23.1.0 (2024-05-06)
 
