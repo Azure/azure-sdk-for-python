@@ -635,29 +635,15 @@ async def use_vector_embedding_policy(db):
         # Create a container with vector embedding policy and vector indexes
         indexing_policy = {
             "vectorIndexes": [
-                {"path": "/vector1", "type": "flat"},
-                {"path": "/vector2", "type": "quantizedFlat"},
-                {"path": "/vector3", "type": "diskANN"}
+                {"path": "/vector", "type": "quantizedFlat"},
             ]
         }
         vector_embedding_policy = {
             "vectorEmbeddings": [
                 {
-                    "path": "/vector1",
+                    "path": "/vector",
                     "dataType": "float32",
                     "dimensions": 1000,
-                    "distanceFunction": "euclidean"
-                },
-                {
-                    "path": "/vector2",
-                    "dataType": "int8",
-                    "dimensions": 200,
-                    "distanceFunction": "dotproduct"
-                },
-                {
-                    "path": "/vector3",
-                    "dataType": "uint8",
-                    "dimensions": 400,
                     "distanceFunction": "cosine"
                 }
             ]
@@ -676,7 +662,20 @@ async def use_vector_embedding_policy(db):
         print_dictionary_items(properties["indexingPolicy"])
         print_dictionary_items(properties["vectorEmbeddingPolicy"])
 
-        # TODO: add rest of sample once query work is done
+        # We define our own get_embeddings() function for the sake of the sample, but you should be using a third
+        # party service to generate these properly.
+        def get_embeddings(num):
+            return [num, num, num]
+
+        # Create some items with vector embeddings
+        for i in range(10):
+            created_container.create_item({"id": "vector_item" + str(i), "embeddings": get_embeddings(i)})
+
+        # Run vector similarity search queries using VectorDistance
+        query = "SELECT TOP 5 c.id,VectorDistance(c.embeddings, [{}]) AS " \
+                "SimilarityScore FROM c ORDER BY VectorDistance(c.embeddings, [{}])".format(get_embeddings(1),
+                                                                                            get_embeddings(1))
+        await query_documents_with_custom_query(created_container, query)
 
         # Cleanup
         await db.delete_container(created_container)
