@@ -2,7 +2,7 @@
 
 ## 1.0.0b1 (2024-05-21)
 
-This is the first preview of the `azure-ai-vsion-face` client library that follows the [Azure Python SDK Design Guidelines](https://azure.github.io/azure-sdk/python_design.html).
+This is the first preview of the `azure-ai-vision-face` client library that follows the [Azure Python SDK Design Guidelines](https://azure.github.io/azure-sdk/python_design.html).
 This library replaces the package [azure-cognitiveservices-vision-face](https://pypi.org/project/azure-cognitiveservices-vision-face/).
 
 This package's [documentation](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/) and [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples) demonstrate the new API.
