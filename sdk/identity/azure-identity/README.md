@@ -294,7 +294,7 @@ variables:
 |`AZURE_TENANT_ID`|ID of the application's Microsoft Entra tenant|X
 |`AZURE_CLIENT_CERTIFICATE_PATH`|path to a PEM or PKCS12 certificate file including private key|X
 |`AZURE_CLIENT_CERTIFICATE_PASSWORD`|password of the certificate file, if any|
-|`AZURE_CLIENT_SEND_CERTIFICATE_CHAIN`|if True, the credential will send the public certificate chain in the x5c header of each token request's JWT. This is required for Subject Name/Issuer (SNI) authentication. Defaults to False.|
+|`AZURE_CLIENT_SEND_CERTIFICATE_CHAIN`|if True, the credential will send the public certificate chain in the x5c header of each token request's JWT. This is required for Subject Name/Issuer (SNI) authentication. Defaults to False. There is a [known limitation](https://github.com/Azure/azure-sdk-for-python/issues/13349) that async SNI authentication is not supported.|
 
 ### Username and password
 

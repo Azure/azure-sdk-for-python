@@ -413,7 +413,9 @@ class SubscriptionFeatureRegistrationList(_serialization.Model):
         self.value = value
 
 
-class SubscriptionFeatureRegistrationProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class SubscriptionFeatureRegistrationProperties(
+    _serialization.Model
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """SubscriptionFeatureRegistrationProperties.
 
     Variables are only populated by the server, and will be ignored when sending a request.

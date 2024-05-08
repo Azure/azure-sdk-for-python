@@ -233,7 +233,7 @@ class DataEffect(_serialization.Model):
         self.details_schema = details_schema
 
 
-class DataManifestCustomResourceFunctionDefinition(_serialization.Model):
+class DataManifestCustomResourceFunctionDefinition(_serialization.Model):  # pylint: disable=name-too-long
     """The custom resource function definition.
 
     :ivar name: The function name as it will appear in the policy rule. eg - 'vault'.
@@ -536,7 +536,7 @@ class NonComplianceMessage(_serialization.Model):
     """A message that describes why a resource is non-compliant with the policy. This is shown in
     'deny' error messages and on resource's non-compliant compliance results.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar message: A message that describes why a resource is non-compliant with the policy. This
      is shown in 'deny' error messages and on resource's non-compliant compliance results. Required.
@@ -968,7 +968,7 @@ class PolicyDefinition(_serialization.Model):
 class PolicyDefinitionGroup(_serialization.Model):
     """The policy definition group.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the group. Required.
     :vartype name: str
@@ -1061,7 +1061,7 @@ class PolicyDefinitionListResult(_serialization.Model):
 class PolicyDefinitionReference(_serialization.Model):
     """The policy definition reference.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar policy_definition_id: The ID of the policy definition or policy set definition. Required.
     :vartype policy_definition_id: str
