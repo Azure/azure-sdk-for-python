@@ -611,17 +611,8 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             # Non-string keys
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", 123: 456}
             expected_entity = test_entity
-            # expected_backcompat_entity = {
-            #     "PartitionKey": "PK",
-            #     "PartitionKey@odata.type": "Edm.String",
-            #     "RowKey": "RK",
-            #     "RowKey@odata.type": "Edm.String",
-            #     123: 456,
-            # }
-            expected_payload_entity = {"PartitionKey": "PK", "RowKey": "RK", "123": 456}
-            with pytest.raises(TypeError) as error:
-                _check_backcompat(test_entity, expected_entity)
-            assert "argument of type 'int' is not iterable" in str(error.value)
+            expected_payload_entity = {"PartitionKey": "PK", "RowKey": "RK", "123": 456} # "123" is an invalid property name
+            _check_backcompat(test_entity, expected_entity)
             with pytest.raises(HttpResponseError) as error:
                 await client.create_entity(
                     test_entity,

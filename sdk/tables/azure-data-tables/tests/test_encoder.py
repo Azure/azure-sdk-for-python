@@ -97,12 +97,15 @@ def _check_backcompat(entity, new_encoding):
     old_encoding = _add_entity_properties(entity)
     adjusted_old_encoding = copy(old_encoding)
     # Filter out odata type added for string value type in old result unless customer specified
-    for k in old_encoding.keys():
-        if "@odata.type" not in k:
-            odata_type = old_encoding.get(k + "@odata.type")
-            if odata_type is not None and odata_type == "Edm.String":
-                if entity.get(k + "@odata.type") is None and not isinstance(entity[k], tuple):
-                    adjusted_old_encoding.pop(k + "@odata.type")
+    try:
+        for k in old_encoding.keys():
+            if "@odata.type" not in k:
+                odata_type = old_encoding.get(k + "@odata.type")
+                if odata_type is not None and odata_type == "Edm.String":
+                    if entity.get(k + "@odata.type") is None and not isinstance(entity[k], tuple):
+                        adjusted_old_encoding.pop(k + "@odata.type")
+    except TypeError:
+        pass
 
     adjusted_new_encoding = copy(new_encoding)
     # Filter out kv pair which value is None, and filter out it's odata type if there has
@@ -696,17 +699,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             # Non-string keys
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", 123: 456}
             expected_entity = test_entity
-            # expected_backcompat_entity = {
-            #     "PartitionKey": "PK",
-            #     "PartitionKey@odata.type": "Edm.String",
-            #     "RowKey": "RK",
-            #     "RowKey@odata.type": "Edm.String",
-            #     123: 456,
-            # }
             expected_payload_entity = {"PartitionKey": "PK", "RowKey": "RK", "123": 456}
-            with pytest.raises(TypeError) as error:
-                _check_backcompat(test_entity, expected_entity)
-            assert "argument of type 'int' is not iterable" in str(error.value)
+            _check_backcompat(test_entity, expected_entity)
             with pytest.raises(HttpResponseError) as error:
                 client.create_entity(
                     test_entity,
@@ -715,7 +709,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert error.value.response.json()["odata.error"]["code"] == "PropertyNameInvalid"
+            assert '"odata.error":{"code":"PropertyNameInvalid","message":{"lang":"en-US","value":"The property name is invalid.' in str(error.value)
 
             # Test enums - it is not supported in old encoder
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}

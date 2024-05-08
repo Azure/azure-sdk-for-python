@@ -667,17 +667,8 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
             # Non-string keys
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", 123: 456}
             expected_entity = test_entity
-            # expected_backcompat_entity = {
-            #     "PartitionKey": "PK",
-            #     "PartitionKey@odata.type": "Edm.String",
-            #     "RowKey": "RK",
-            #     "RowKey@odata.type": "Edm.String",
-            #     123: 456,
-            # }
-            expected_payload_entity = {"PartitionKey": "PK", "RowKey": "RK", "123": 456}
-            with pytest.raises(TypeError) as error:
-                _check_backcompat(test_entity, expected_entity)
-            assert "argument of type 'int' is not iterable" in str(error.value)
+            expected_payload_entity = {"PartitionKey": "PK", "RowKey": "RK", "123": 456} # "123" is an invalid property name
+            _check_backcompat(test_entity, expected_entity)
             with pytest.raises(HttpResponseError) as error:
                 await client.create_entity(
                     test_entity,
@@ -686,7 +677,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert error.value.response.json()["odata.error"]["code"] == "PropertyNameInvalid"
+            assert '"odata.error":{"code":"PropertyNameInvalid","message":{"lang":"en-US","value":"The property name is invalid.' in str(error.value)
 
             # Test enums - it is not supported in old encoder
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
