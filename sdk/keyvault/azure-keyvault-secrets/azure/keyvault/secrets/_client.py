@@ -468,3 +468,7 @@ class SecretClient(KeyVaultClientBase):
     def __enter__(self) -> "SecretClient":
         self._client.__enter__()
         return self
+
+    async def __aenter__(self) -> "SecretClient":
+        await super().__aenter__()
+        return self
