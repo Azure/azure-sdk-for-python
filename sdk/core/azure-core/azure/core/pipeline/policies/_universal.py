@@ -35,15 +35,13 @@ import xml.etree.ElementTree as ET
 import types
 import re
 import uuid
-from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, Set, MutableMapping
-import urllib.parse
+from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, Set, MutableMapping, Iterable
 
 from azure.core import __version__ as azcore_version
 from azure.core.exceptions import DecodeError
-
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from ._base import SansIOHTTPPolicy
-
+from ._utils import sanitize_url_query_params
 from ..transport import HttpRequest as LegacyHttpRequest
 from ..transport._base import _HttpResponseBase as LegacySansIOHttpResponse
 from ...rest import HttpRequest
@@ -394,8 +392,12 @@ class HttpLoggingPolicy(
 
     :param logger: The logger to use for logging. Default to azure.core.pipeline.policies.http_logging_policy.
     :type logger: logging.Logger
+    :keyword additional_allowed_query_params: Additional query parameters that should not be sanitized in URL span
+        attributes.
+    :paramtype additional_allowed_query_params: Iterable[str]
     """
 
+    DEFAULT_QUERY_PARAMS_ALLOWLIST: Set[str] = set(["api-version"])
     DEFAULT_HEADERS_ALLOWLIST: Set[str] = set(
         [
             "x-ms-request-id",
@@ -430,12 +432,11 @@ class HttpLoggingPolicy(
 
     def __init__(self, logger: Optional[logging.Logger] = None, **kwargs: Any):  # pylint: disable=unused-argument
         self.logger: logging.Logger = logger or logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
-        self.allowed_query_params: Set[str] = set()
+        additional_allowed_query_params: Iterable[str] = kwargs.get("additional_allowed_query_params", {})
+        self.allowed_query_params: Set[str] = set(self.__class__.DEFAULT_QUERY_PARAMS_ALLOWLIST) | set(
+            additional_allowed_query_params
+        )
         self.allowed_header_names: Set[str] = set(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
-
-    def _redact_query_param(self, key: str, value: str) -> str:
-        lower_case_allowed_query_params = [param.lower() for param in self.allowed_query_params]
-        return value if key.lower() in lower_case_allowed_query_params else HttpLoggingPolicy.REDACTED_PLACEHOLDER
 
     def _redact_header(self, key: str, value: str) -> str:
         lower_case_allowed_header_names = [header.lower() for header in self.allowed_header_names]
@@ -459,12 +460,9 @@ class HttpLoggingPolicy(
             return
 
         try:
-            parsed_url = list(urllib.parse.urlparse(http_request.url))
-            parsed_qp = urllib.parse.parse_qsl(parsed_url[4], keep_blank_values=True)
-            filtered_qp = [(key, self._redact_query_param(key, value)) for key, value in parsed_qp]
-            # 4 is query
-            parsed_url[4] = "&".join(["=".join(part) for part in filtered_qp])
-            redacted_url = urllib.parse.urlunparse(parsed_url)
+            redacted_url = sanitize_url_query_params(
+                http_request.url, self.allowed_query_params, self.REDACTED_PLACEHOLDER
+            )
 
             multi_record = os.environ.get(HttpLoggingPolicy.MULTI_RECORD_LOG, False)
             if multi_record:

@@ -461,6 +461,7 @@ from azure.core.pipeline.policies import (
 |  |  | logging_enable | x | x | Use to enable per operation. Defaults to `False`. |
 | HttpLoggingPolicy | SansIOHTTPPolicy |  |  |  |  |
 |  |  | logger | x | x | If specified, it will be used to log information |
+|  |  | additional_allowed_query_params | x |  | Additional URL query parameters that should not be sanitized in logs. Applies to `DistributedTracingPolicy` as well. |
 | ContentDecodePolicy | SansIOHTTPPolicy |  |  |  |  |
 |  |  | response_encoding | x | x | The encoding to use if known for this service (will disable auto-detection). |
 | ProxyPolicy | SansIOHTTPPolicy |  |  |  |  |
@@ -471,6 +472,7 @@ from azure.core.pipeline.policies import (
 | DistributedTracingPolicy | SansIOHTTPPolicy |  |  |  |  |
 |  |  | network_span_namer | x | x | A callable to customize the span name. |
 |  |  | tracing_attributes | x | x | Attributes to set on all created spans. |
+|  |  | additional_allowed_query_params | x |  | Additional URL query parameters that should not be sanitized in span attributes. Applies to `HttpLoggingPolicy` as well. |
 | --- | --- | --- | --- | --- | --- |
 | RedirectPolicy | HTTPPolicy |  |  |  |  |
 |  |  | permit_redirects | x | x | Whether the client allows redirects. Defaults to `True`. |

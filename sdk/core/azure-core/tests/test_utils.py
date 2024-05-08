@@ -8,7 +8,7 @@ from unittest.mock import patch
 import pytest
 from azure.core.utils import case_insensitive_dict
 from azure.core.utils._utils import get_running_async_lock
-from azure.core.pipeline.policies._utils import parse_retry_after
+from azure.core.pipeline.policies._utils import parse_retry_after, sanitize_url_query_params
 
 
 @pytest.fixture()
@@ -146,3 +146,43 @@ def test_parse_retry_after():
     assert ret == 0
     ret = parse_retry_after("0.9")
     assert ret == 0.9
+
+
+def test_sanitize_url_query_params():
+    url = "https://www.example.com?q1=value1&q2=value2"
+    assert sanitize_url_query_params(url, {"q1"}) == "https://www.example.com?q1=value1&q2=REDACTED"
+    assert sanitize_url_query_params(url, {"q1", "q2"}) == url
+    assert sanitize_url_query_params(url, {"q2", "q3"}) == "https://www.example.com?q1=REDACTED&q2=value2"
+    url = "https://www.example.com"
+    assert sanitize_url_query_params(url, {"q1", "q3"}) == url
+    url = "https://www.example.com?q1=value1"
+    assert sanitize_url_query_params(url, {"q1", "q3"}) == url
+    url = "https://www.example.com?q1=value1&q2="
+    assert sanitize_url_query_params(url, {"q1", "q3"}) == "https://www.example.com?q1=value1&q2=REDACTED"
+    url = "https://www.example.com?q1=value1&q2"
+    assert sanitize_url_query_params(url, {"q1", "q3"}) == "https://www.example.com?q1=value1&q2=REDACTED"
+    url = "https://www.example.com?q1=value1&q2&q3=value3"
+    assert sanitize_url_query_params(url, {"q1", "q3"}) == "https://www.example.com?q1=value1&q2=REDACTED&q3=value3"
+    url = "https://www.example.com?q2=value1&q2=value2"
+    assert sanitize_url_query_params(url, {"q1", "q3"}) == "https://www.example.com?q2=REDACTED&q2=REDACTED"
+
+    url = "https://www.example.com?REDACTED=foo"
+    assert sanitize_url_query_params(url, {"q1", "q3"}) == "https://www.example.com?REDACTED=REDACTED"
+    url = "https://www.example.com?REDACTED=foo&REDACTED=bar"
+    assert sanitize_url_query_params(url, {"redacted"}) == "https://www.example.com?REDACTED=foo&REDACTED=bar"
+    url = "https://www.example.com?Q1=value1"
+    assert sanitize_url_query_params(url, {"q3"}) == "https://www.example.com?Q1=REDACTED"
+
+    # Test query paramaters in the path
+    url = "https://www.example.com/q1=value1/foo"
+    assert sanitize_url_query_params(url, {"q1", "q3"}) == url
+    url = "https://www.example.com/q1=value1&q2=value2/foo"
+    assert sanitize_url_query_params(url, {"q1", "q3"}) == url
+
+
+def test_sanitize_url_query_params_with_different_placeholder():
+    url = "https://www.example.com?q1=value1&q2=value2"
+    assert (
+        sanitize_url_query_params(url, {"q1"}, placeholder="SANITIZED")
+        == "https://www.example.com?q1=value1&q2=SANITIZED"
+    )

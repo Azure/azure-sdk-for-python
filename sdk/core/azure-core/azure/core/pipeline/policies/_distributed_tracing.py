@@ -24,14 +24,16 @@
 #
 # --------------------------------------------------------------------------
 """Traces network calls using the implementation library from the settings."""
+import copy
 import logging
 import sys
 import urllib.parse
-from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union, Any, Type
+from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union, Any, Type, Set, Iterable
 from types import TracebackType
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.pipeline.policies._utils import sanitize_url_query_params
 from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
 from azure.core.rest import HttpResponse, HttpRequest
 from azure.core.settings import settings
@@ -68,12 +70,17 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     """The policy to create spans for Azure calls.
 
     :keyword network_span_namer: A callable to customize the span name
-    :type network_span_namer: callable[[~azure.core.pipeline.transport.HttpRequest], str]
+    :paramtype network_span_namer: callable[[~azure.core.pipeline.transport.HttpRequest], str]
     :keyword tracing_attributes: Attributes to set on all created spans
-    :type tracing_attributes: dict[str, str]
+    :paramtype tracing_attributes: dict[str, str]
+    :keyword additional_allowed_query_params: Additional query parameters that should not be sanitized in URL span
+        attributes.
+    :type additional_allowed_query_params: Iterable[str]
     """
 
+    DEFAULT_QUERY_PARAMS_ALLOWLIST: Set[str] = set(["api-version"])
     TRACING_CONTEXT = "TRACING_CONTEXT"
+    _REDACTED_PLACEHOLDER: str = "REDACTED"
     _REQUEST_ID = "x-ms-client-request-id"
     _RESPONSE_ID = "x-ms-request-id"
     _HTTP_RESEND_COUNT = "http.request.resend_count"
@@ -81,6 +88,10 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     def __init__(self, **kwargs: Any):
         self._network_span_namer = kwargs.get("network_span_namer", _default_network_span_namer)
         self._tracing_attributes = kwargs.get("tracing_attributes", {})
+        additional_allowed_query_params: Iterable[str] = kwargs.get("additional_allowed_query_params", {})
+        self.allowed_query_params: Set[str] = set(self.__class__.DEFAULT_QUERY_PARAMS_ALLOWLIST) | set(
+            additional_allowed_query_params
+        )
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         ctxt = request.context.options
@@ -123,8 +134,12 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
             return
 
         span: "AbstractSpan" = request.context[self.TRACING_CONTEXT]
-        http_request: Union[HttpRequest, LegacyHttpRequest] = request.http_request
         if span is not None:
+            http_request: Union[HttpRequest, LegacyHttpRequest] = copy.copy(request.http_request)
+            redacted_url = sanitize_url_query_params(
+                http_request.url, self.allowed_query_params, self._REDACTED_PLACEHOLDER
+            )
+            http_request.url = redacted_url
             span.set_http_attributes(http_request, response=response)
             if request.context.get("retry_count"):
                 span.add_attribute(self._HTTP_RESEND_COUNT, request.context["retry_count"])
