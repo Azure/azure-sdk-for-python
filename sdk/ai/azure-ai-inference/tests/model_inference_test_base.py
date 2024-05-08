@@ -44,6 +44,7 @@ ServicePreparerEmbeddings = functools.partial(
     embeddings_key="00000000000000000000000000000000",
 )
 
+
 # The test class name needs to start with "Test" to get collected by pytest
 class ModelClientTestBase(AzureRecordedTestCase):
 
@@ -51,7 +52,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
     PRINT_RESULT = True
 
     # Regular expression describing the pattern of a result ID (e.g. "183b56eb-8512-484d-be50-5d8df82301a2")
-    REGEX_RESULT_ID = re.compile(r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$')
+    REGEX_RESULT_ID = re.compile(r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$|^Sanitized$")
 
     # Methods to load credentials from environment variables
     def _load_chat_credentials(self, *, bad_key: bool, **kwargs):
@@ -96,8 +97,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         assert result.choices[0].finish_reason == sdk.models.CompletionsFinishReason.STOPPED
         assert result.choices[0].index == 0
 
-        assert result.id is not None
-        assert len(result.id) == 36
+        assert bool(ModelClientTestBase.REGEX_RESULT_ID.match(result.id))
         assert result.created is not None
         assert result.created != ""
         assert result.model is not None
@@ -122,7 +122,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         assert update.choices[0].index == 0
         assert update.id is not None
         assert len(update.id) == 36
-        assert update.model is not None 
+        assert update.model is not None
         assert update.model != ""
         if update.choices[0].delta.content != None:
             return update.choices[0].delta.content
@@ -132,12 +132,12 @@ class ModelClientTestBase(AzureRecordedTestCase):
     @staticmethod
     def _validate_chat_completions_streaming_result(result: sdk.models.StreamingChatCompletions):
         count = 0
-        content =""
+        content = ""
         for update in result:
             content += ModelClientTestBase._validate_chat_completions_update(update, count == 0)
             count += 1
         assert count > 2
-        assert len(content) > 100 # Some arbitrary number
+        assert len(content) > 100  # Some arbitrary number
         # The last update should have a finish reason and usage
         assert update.choices[0].finish_reason == sdk.models.CompletionsFinishReason.STOPPED
         assert update.usage.prompt_tokens > 0
@@ -154,7 +154,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
             content += ModelClientTestBase._validate_chat_completions_update(update, count == 0)
             count += 1
         assert count > 2
-        assert len(content) > 100 # Some arbitrary number
+        assert len(content) > 100  # Some arbitrary number
         # The last update should have a finish reason and usage
         assert update.choices[0].finish_reason == sdk.models.CompletionsFinishReason.STOPPED
         assert update.usage.prompt_tokens > 0
@@ -180,7 +180,6 @@ class ModelClientTestBase(AzureRecordedTestCase):
             print("\tusage.completion_tokens: {}".format(result.usage.completion_tokens))
             print("\tusage.total_tokens: {}".format(result.usage.total_tokens))
 
-
     @staticmethod
     def _validate_embeddings_result(result: sdk.models.EmbeddingsResult):
         assert result is not None
@@ -194,13 +193,12 @@ class ModelClientTestBase(AzureRecordedTestCase):
             assert result.data[i].embedding[0] != 0.0
             assert result.data[i].embedding[1023] != 0.0
         assert bool(ModelClientTestBase.REGEX_RESULT_ID.match(result.id))
-        #assert len(result.model) > 0  # At the time of writing this test, this JSON field existed but was empty
+        # assert len(result.model) > 0  # At the time of writing this test, this JSON field existed but was empty
         assert result.object == "list"
         # At the time of writing this test, input_tokens did not exist (I see completion tokens instead)
-        #assert result.usage.input_tokens > 0
-        #assert result.usage.prompt_tokens > 0
-        #assert result.total_tokens == result.usage.input_tokens + result.usage.prompt_tokens
-
+        # assert result.usage.input_tokens > 0
+        # assert result.usage.prompt_tokens > 0
+        # assert result.total_tokens == result.usage.input_tokens + result.usage.prompt_tokens
 
     @staticmethod
     def _print_embeddings_result(result: sdk.models.EmbeddingsResult):
@@ -214,6 +212,6 @@ class ModelClientTestBase(AzureRecordedTestCase):
             print(f"\tid: {result.id}")
             print(f"\tmodel: {result.model}")
             print(f"\tobject: {result.object}")
-            #print(f"\tusage.input_tokens: {result.usage.input_tokens}") # At the time of writing this test, this JSON field does not exist
+            # print(f"\tusage.input_tokens: {result.usage.input_tokens}") # At the time of writing this test, this JSON field does not exist
             print(f"\tusage.prompt_tokens: {result.usage.prompt_tokens}")
             print(f"\tusage.total_tokens: {result.usage.total_tokens}")

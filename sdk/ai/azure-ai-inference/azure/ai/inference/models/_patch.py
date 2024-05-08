@@ -38,7 +38,7 @@ class StreamingChatCompletions:
         self._is_async_iterator = isinstance(self._response, AsyncHttpResponse)
         self._queue: "queue.Queue[_models.ChatCompletionsUpdate]" = queue.Queue()
         self._incomplete_json = ""
-        self._done = False # Will be set to True when reading 'data: [DONE]' line
+        self._done = False  # Will be set to True when reading 'data: [DONE]' line
 
     def __iter__(self):
         if self._is_async_iterator:
@@ -126,9 +126,7 @@ class StreamingChatCompletions:
             # and add it to the queue.
             self._queue.put(
                 # pylint: disable=W0212 # Access to a protected member _deserialize of a client class
-                _models.ChatCompletionsUpdate._deserialize(
-                    json.loads(line[len(self.SSE_DATA_EVENT_PREFIX) : -1]), []
-                )
+                _models.ChatCompletionsUpdate._deserialize(json.loads(line[len(self.SSE_DATA_EVENT_PREFIX) : -1]), [])
             )
 
             if self.ENABLE_CLASS_LOGS:

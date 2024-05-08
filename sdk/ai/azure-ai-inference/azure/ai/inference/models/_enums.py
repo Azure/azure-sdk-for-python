@@ -70,6 +70,8 @@ class CompletionsFinishReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONTENT_FILTERED = "content_filter"
     """Completions generated a response that was identified as potentially sensitive per content
     moderation policies."""
+    TOOL_CALLS = "tool_calls"
+    """Completion ended with the model calling a provided tool for output."""
 
 
 class EmbeddingInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

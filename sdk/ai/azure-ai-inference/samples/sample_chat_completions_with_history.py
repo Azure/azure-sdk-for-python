@@ -19,6 +19,7 @@ USAGE:
     2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
+
 def sample_chat_completions_with_history():
     import os
 
@@ -36,8 +37,10 @@ def sample_chat_completions_with_history():
 
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    messages=[
-        SystemMessage(content="You are an AI assistant that helps people find information. Your replies are short, no more than two sentences."),
+    messages = [
+        SystemMessage(
+            content="You are an AI assistant that helps people find information. Your replies are short, no more than two sentences."
+        ),
         UserMessage(content="What year was construction of the international space station mostly done?"),
     ]
 
@@ -49,6 +52,7 @@ def sample_chat_completions_with_history():
 
     result = client.create(messages=messages)
     print(result.choices[0].message.content)
+
 
 if __name__ == "__main__":
     sample_chat_completions_with_history()

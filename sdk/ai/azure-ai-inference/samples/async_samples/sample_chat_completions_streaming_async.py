@@ -19,6 +19,7 @@ USAGE:
 """
 import asyncio
 
+
 async def sample_chat_completions_streaming_async():
     import os
     from azure.ai.inference.aio import ChatCompletionsClient
@@ -69,6 +70,7 @@ async def sample_chat_completions_streaming_async():
 
     # Remember to always close the asynchronous client when you are done with it
     await client.close()
+
 
 async def main():
     await sample_chat_completions_streaming_async()

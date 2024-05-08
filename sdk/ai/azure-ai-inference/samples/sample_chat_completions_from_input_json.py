@@ -19,6 +19,7 @@ USAGE:
     2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
+
 def sample_chat_completions_from_input_json():
     import os
     from typing import MutableMapping, Any
@@ -40,20 +41,14 @@ def sample_chat_completions_from_input_json():
         "messages": [
             {
                 "role": "system",
-                "content": "You are an AI assistant that helps people find information. Your replies are short, no more than two sentences."
+                "content": "You are an AI assistant that helps people find information. Your replies are short, no more than two sentences.",
             },
-            {
-                "role": "user",
-                "content": "What year was construction of the International Space Station mostly done?"
-            },
+            {"role": "user", "content": "What year was construction of the International Space Station mostly done?"},
             {
                 "role": "assistant",
-                "content": "The main construction of the International Space Station (ISS) was completed between 1998 and 2011. During this period, more than 30 flights by US space shuttles and 40 by Russian rockets were conducted to transport components and modules to the station."
+                "content": "The main construction of the International Space Station (ISS) was completed between 1998 and 2011. During this period, more than 30 flights by US space shuttles and 40 by Russian rockets were conducted to transport components and modules to the station.",
             },
-            {
-                "role": "user",
-                "content": "And what was the estimated cost to build it?"
-            }
+            {"role": "user", "content": "And what was the estimated cost to build it?"},
         ]
     }
 
@@ -62,6 +57,7 @@ def sample_chat_completions_from_input_json():
     result = client.create(json_messages)
 
     print(result.choices[0].message.content)
+
 
 if __name__ == "__main__":
     sample_chat_completions_from_input_json()

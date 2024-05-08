@@ -20,6 +20,7 @@ USAGE:
 """
 import io
 
+
 def sample_chat_completions_from_input_bytes():
     import os
 
@@ -43,14 +44,16 @@ def sample_chat_completions_from_input_bytes():
 
     print(result.choices[0].message.content)
 
+
 def read_text_file(file_path: str) -> io.BytesIO:
     """Reads a text file and returns a BytesIO object with the file content in UTF-8 encoding."""
     try:
-        with open(file_path, 'r') as file:
-            return io.BytesIO(file.read().encode('utf-8'))
+        with open(file_path, "r") as file:
+            return io.BytesIO(file.read().encode("utf-8"))
     except FileNotFoundError:
         print(f"File '{file_path}' not found.")
         return None
+
 
 if __name__ == "__main__":
     sample_chat_completions_from_input_bytes()

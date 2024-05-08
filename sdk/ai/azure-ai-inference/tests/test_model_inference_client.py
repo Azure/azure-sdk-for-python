@@ -72,7 +72,6 @@ class TestModelClient(ModelClientTestBase):
         client.close()
         assert exception_caught
 
-
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
     def test_embeddings_on_chat_completion_endpoint(self, **kwargs):

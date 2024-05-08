@@ -37,6 +37,7 @@ _Unset: Any = object()
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
+
 class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
     @overload

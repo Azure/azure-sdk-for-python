@@ -49,8 +49,7 @@ class ChatRequestMessage(_model_base.Model):
         self,
         *,
         role: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -74,6 +73,10 @@ class AssistantMessage(ChatRequestMessage, discriminator="assistant"):
     :vartype role: str or ~azure.ai.inference.models.ASSISTANT
     :ivar content: The content of the message. Required.
     :vartype content: str
+    :ivar tool_calls: The tool calls that must be resolved and have their outputs appended to
+     subsequent input messages for the chat
+     completions request to resolve as configured.
+    :vartype tool_calls: list[~azure.ai.inference.models.ChatCompletionsToolCall]
     """
 
     role: Literal[ChatRole.ASSISTANT] = rest_discriminator(name="role")  # type: ignore
@@ -81,14 +84,18 @@ class AssistantMessage(ChatRequestMessage, discriminator="assistant"):
      Required. The role that provides responses to system-instructed, user-prompted input."""
     content: str = rest_field()
     """The content of the message. Required."""
+    tool_calls: Optional[List["_models.ChatCompletionsToolCall"]] = rest_field()
+    """The tool calls that must be resolved and have their outputs appended to subsequent input
+     messages for the chat
+     completions request to resolve as configured."""
 
     @overload
     def __init__(
         self,
         *,
         content: str,
-    ):
-        ...
+        tool_calls: Optional[List["_models.ChatCompletionsToolCall"]] = None,
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -112,7 +119,7 @@ class ChatChoice(_model_base.Model):
     :ivar index: The ordered index associated with this chat completions choice. Required.
     :vartype index: int
     :ivar finish_reason: The reason that this chat completions choice completed its generated.
-     Required. Known values are: "stop", "length", and "content_filter".
+     Required. Known values are: "stop", "length", "content_filter", and "tool_calls".
     :vartype finish_reason: str or ~azure.ai.inference.models.CompletionsFinishReason
     :ivar message: The chat message for a given chat completions prompt. Required.
     :vartype message: ~azure.ai.inference.models.ChatResponseMessage
@@ -122,7 +129,7 @@ class ChatChoice(_model_base.Model):
     """The ordered index associated with this chat completions choice. Required."""
     finish_reason: Union[str, "_models.CompletionsFinishReason"] = rest_field()
     """The reason that this chat completions choice completed its generated. Required. Known values
-     are: \"stop\", \"length\", and \"content_filter\"."""
+     are: \"stop\", \"length\", \"content_filter\", and \"tool_calls\"."""
     message: "_models.ChatResponseMessage" = rest_field()
     """The chat message for a given chat completions prompt. Required."""
 
@@ -133,8 +140,7 @@ class ChatChoice(_model_base.Model):
         index: int,
         finish_reason: Union[str, "_models.CompletionsFinishReason"],
         message: "_models.ChatResponseMessage",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -158,7 +164,7 @@ class ChatChoiceUpdate(_model_base.Model):
     :ivar index: The ordered index associated with this chat completions choice. Required.
     :vartype index: int
     :ivar finish_reason: The reason that this chat completions choice completed its generated.
-     Required. Known values are: "stop", "length", and "content_filter".
+     Required. Known values are: "stop", "length", "content_filter", and "tool_calls".
     :vartype finish_reason: str or ~azure.ai.inference.models.CompletionsFinishReason
     :ivar delta: An update to the chat message for a given chat completions prompt. Required.
     :vartype delta: ~azure.ai.inference.models.ChatResponseMessage
@@ -168,7 +174,7 @@ class ChatChoiceUpdate(_model_base.Model):
     """The ordered index associated with this chat completions choice. Required."""
     finish_reason: Union[str, "_models.CompletionsFinishReason"] = rest_field()
     """The reason that this chat completions choice completed its generated. Required. Known values
-     are: \"stop\", \"length\", and \"content_filter\"."""
+     are: \"stop\", \"length\", \"content_filter\", and \"tool_calls\"."""
     delta: "_models.ChatResponseMessage" = rest_field()
     """An update to the chat message for a given chat completions prompt. Required."""
 
@@ -179,8 +185,7 @@ class ChatChoiceUpdate(_model_base.Model):
         index: int,
         finish_reason: Union[str, "_models.CompletionsFinishReason"],
         delta: "_models.ChatResponseMessage",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -247,8 +252,7 @@ class ChatCompletions(_model_base.Model):
         model: str,
         usage: "_models.CompletionsUsage",
         choices: List["_models.ChatChoice"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -289,8 +293,7 @@ class ChatCompletionsToolCall(_model_base.Model):
         *,
         type: str,
         id: str,  # pylint: disable=redefined-builtin
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -330,8 +333,7 @@ class ChatCompletionsFunctionToolCall(ChatCompletionsToolCall, discriminator="fu
         *,
         id: str,  # pylint: disable=redefined-builtin
         function: "_models.FunctionCall",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -366,8 +368,7 @@ class ChatCompletionsToolDefinition(_model_base.Model):
         self,
         *,
         type: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -402,8 +403,7 @@ class ChatCompletionsFunctionToolDefinition(ChatCompletionsToolDefinition, discr
         self,
         *,
         function: "_models.FunctionDefinition",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -487,8 +487,7 @@ class ChatCompletionsUpdate(_model_base.Model):
         model: str,
         usage: "_models.CompletionsUsage",
         choices: List["_models.ChatChoiceUpdate"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -534,8 +533,7 @@ class ChatResponseMessage(_model_base.Model):
         role: Union[str, "_models.ChatRole"],
         content: str,
         tool_calls: Optional[List["_models.ChatCompletionsToolCall"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -587,8 +585,7 @@ class CompletionsUsage(_model_base.Model):
         completion_tokens: int,
         prompt_tokens: int,
         total_tokens: int,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -631,8 +628,7 @@ class EmbeddingItem(_model_base.Model):
         embedding: List[float],
         index: int,
         object: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -685,8 +681,7 @@ class EmbeddingsResult(_model_base.Model):
         usage: "_models.EmbeddingsUsage",
         object: str,
         model: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -710,7 +705,7 @@ class EmbeddingsUsage(_model_base.Model):
     :ivar input_tokens: Number of tokens in the request prompt. Required.
     :vartype input_tokens: int
     :ivar prompt_tokens: Number of tokens used for the prompt sent to the AI model. Typically
-     identical to\ ``input_tokens``.
+     identical to ``input_tokens``.
      However, certain AI models may add extra tokens to the input hence the number can be higher.
      (for example when input_type="query"). Required.
     :vartype prompt_tokens: int
@@ -724,7 +719,7 @@ class EmbeddingsUsage(_model_base.Model):
     input_tokens: int = rest_field()
     """Number of tokens in the request prompt. Required."""
     prompt_tokens: int = rest_field()
-    """Number of tokens used for the prompt sent to the AI model. Typically identical to\
+    """Number of tokens used for the prompt sent to the AI model. Typically identical to
      ``input_tokens``.
      However, certain AI models may add extra tokens to the input hence the number can be higher.
      (for example when input_type=\"query\"). Required."""
@@ -739,8 +734,7 @@ class EmbeddingsUsage(_model_base.Model):
         input_tokens: int,
         prompt_tokens: int,
         total_tokens: int,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -782,8 +776,7 @@ class FunctionCall(_model_base.Model):
         *,
         name: str,
         arguments: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -828,8 +821,7 @@ class FunctionDefinition(_model_base.Model):
         name: str,
         description: Optional[str] = None,
         parameters: Optional[Any] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -864,8 +856,7 @@ class ImageGenerationData(_model_base.Model):
         *,
         url: Optional[str] = None,
         b64_json: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -912,8 +903,7 @@ class ImageGenerations(_model_base.Model):
         created: datetime.datetime,
         model: str,
         data: List["_models.ImageGenerationData"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -955,8 +945,7 @@ class ModelInformation(_model_base.Model):
         model_type: Union[str, "_models.ModelType"],
         model_provider: str,
         model_name: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -994,8 +983,7 @@ class SystemMessage(ChatRequestMessage, discriminator="system"):
         self,
         *,
         content: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1037,8 +1025,7 @@ class ToolMessage(ChatRequestMessage, discriminator="tool"):
         *,
         content: str,
         tool_call_id: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1076,8 +1063,7 @@ class UserMessage(ChatRequestMessage, discriminator="user"):
         self,
         *,
         content: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):

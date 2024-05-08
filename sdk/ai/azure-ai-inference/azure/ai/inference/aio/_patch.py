@@ -34,6 +34,7 @@ else:
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
 
+
 class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
     @overload

@@ -172,6 +172,7 @@ def build_image_generation_get_model_info_request(**kwargs: Any) -> HttpRequest:
 
 
 class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
+
     @overload
     def create(
         self,
@@ -263,7 +264,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
                         {
                             "finish_reason": "str",  # The reason that this chat
                               completions choice completed its generated. Required. Known values are:
-                              "stop", "length", and "content_filter".
+                              "stop", "length", "content_filter", and "tool_calls".
                             "index": 0,  # The ordered index associated with this chat
                               completions choice. Required.
                             "message": {
@@ -413,7 +414,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
                         {
                             "finish_reason": "str",  # The reason that this chat
                               completions choice completed its generated. Required. Known values are:
-                              "stop", "length", and "content_filter".
+                              "stop", "length", "content_filter", and "tool_calls".
                             "index": 0,  # The ordered index associated with this chat
                               completions choice. Required.
                             "message": {
@@ -488,7 +489,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
                         {
                             "finish_reason": "str",  # The reason that this chat
                               completions choice completed its generated. Required. Known values are:
-                              "stop", "length", and "content_filter".
+                              "stop", "length", "content_filter", and "tool_calls".
                             "index": 0,  # The ordered index associated with this chat
                               completions choice. Required.
                             "message": {
@@ -690,7 +691,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
                         {
                             "finish_reason": "str",  # The reason that this chat
                               completions choice completed its generated. Required. Known values are:
-                              "stop", "length", and "content_filter".
+                              "stop", "length", "content_filter", and "tool_calls".
                             "index": 0,  # The ordered index associated with this chat
                               completions choice. Required.
                             "message": {
@@ -869,6 +870,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
 
 
 class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
+
     @overload
     def create(
         self,
@@ -941,7 +943,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
                         "input_tokens": 0,  # Number of tokens in the request prompt.
                           Required.
                         "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
-                          the AI model. Typically identical to"" ``input_tokens``. However, certain AI
+                          the AI model. Typically identical to ``input_tokens``. However, certain AI
                           models may add extra tokens to the input hence the number can be higher. (for
                           example when input_type="query"). Required.
                         "total_tokens": 0  # Total number of tokens transacted in this
@@ -1017,7 +1019,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
                         "input_tokens": 0,  # Number of tokens in the request prompt.
                           Required.
                         "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
-                          the AI model. Typically identical to"" ``input_tokens``. However, certain AI
+                          the AI model. Typically identical to ``input_tokens``. However, certain AI
                           models may add extra tokens to the input hence the number can be higher. (for
                           example when input_type="query"). Required.
                         "total_tokens": 0  # Total number of tokens transacted in this
@@ -1081,7 +1083,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
                         "input_tokens": 0,  # Number of tokens in the request prompt.
                           Required.
                         "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
-                          the AI model. Typically identical to"" ``input_tokens``. However, certain AI
+                          the AI model. Typically identical to ``input_tokens``. However, certain AI
                           models may add extra tokens to the input hence the number can be higher. (for
                           example when input_type="query"). Required.
                         "total_tokens": 0  # Total number of tokens transacted in this
@@ -1173,7 +1175,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
                         "input_tokens": 0,  # Number of tokens in the request prompt.
                           Required.
                         "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
-                          the AI model. Typically identical to"" ``input_tokens``. However, certain AI
+                          the AI model. Typically identical to ``input_tokens``. However, certain AI
                           models may add extra tokens to the input hence the number can be higher. (for
                           example when input_type="query"). Required.
                         "total_tokens": 0  # Total number of tokens transacted in this
@@ -1311,6 +1313,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
 
 
 class ImageGenerationClientOperationsMixin(ImageGenerationClientMixinABC):
+
     @overload
     def create(
         self,

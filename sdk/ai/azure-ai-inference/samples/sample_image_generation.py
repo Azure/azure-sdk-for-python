@@ -18,6 +18,7 @@ USAGE:
     2) IMAGE_GENERATION_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
+
 def sample_image_generation():
     import os
     import base64

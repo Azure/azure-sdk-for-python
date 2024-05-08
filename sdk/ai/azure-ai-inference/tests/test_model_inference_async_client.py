@@ -9,6 +9,7 @@ from model_inference_test_base import ModelClientTestBase, ServicePreparerChatCo
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import AzureError
 
+
 # The test class name needs to start with "Test" to get collected by pytest
 class TestModelAsyncClient(ModelClientTestBase):
 
@@ -23,7 +24,7 @@ class TestModelAsyncClient(ModelClientTestBase):
     async def test_async_chat_completions_error_free(self, **kwargs):
         messages = [
             sdk.models.SystemMessage(content="You are a helpful assistant answering questions regarding length units."),
-            sdk.models.UserMessage(content="How many feet are in a mile?")
+            sdk.models.UserMessage(content="How many feet are in a mile?"),
         ]
 
         client = self._create_async_chat_client(**kwargs)

@@ -18,6 +18,7 @@ USAGE:
 """
 import asyncio
 
+
 async def sample_embeddings_async():
     import os
     from azure.ai.inference.aio import EmbeddingsClient
