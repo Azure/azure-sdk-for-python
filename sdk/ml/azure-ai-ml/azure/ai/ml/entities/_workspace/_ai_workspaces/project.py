@@ -5,6 +5,7 @@
 
 from typing import Any, Dict, Optional
 
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._schema.workspace import ProjectSchema
 from azure.ai.ml.constants._common import WorkspaceKind
 from azure.ai.ml.entities import Workspace
