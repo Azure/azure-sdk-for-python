@@ -487,7 +487,7 @@ class ContainerProxy:
 
         :keyword bool is_start_from_beginning: Get whether change feed should start from
             beginning (true) or from current (false). By default, it's start from current (false).
-        :keyword datetime start_time: Specifies a point of time to start change feed. Start time in
+        :keyword ~datetime.datetime start_time: Specifies a point of time to start change feed. Start time in
             '%a, %d %b %Y %H:%M:%S GMT' format. Converts datetime to UTC regardless of timezone.
         :keyword str partition_key_range_id: ChangeFeed requests can be executed against specific partition key
             ranges. This is used to process the change feed in parallel across multiple consumers.
