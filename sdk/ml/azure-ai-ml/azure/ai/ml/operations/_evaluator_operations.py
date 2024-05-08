@@ -92,12 +92,14 @@ class EvaluatorOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(ops_logger, "Evaluator.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(  # type: ignore
-        self, model: Union[Model, WorkspaceAssetReference]
+        self, model: Union[Model, WorkspaceAssetReference], **kwargs
     ) -> Model:  # TODO: Are we going to implement job_name?
         """Returns created or updated model asset.
 
         :param model: Model asset object.
         :type model: ~azure.ai.ml.entities.Model
+        :param kwargs: A dictionary of additional configuration parameters.
+        :type kwargs: dict
         :raises ~azure.ai.ml.exceptions.AssetPathException: Raised when the Model artifact path is
             already linked to another asset
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Model cannot be successfully validated.
@@ -125,7 +127,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
             )
 
     @monitor_with_activity(ops_logger, "Evaluator.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Model:
+    def get(self, *, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs) -> Model:
         """Returns information about the specified model asset.
 
         :param name: Name of the model.
@@ -134,6 +136,8 @@ class EvaluatorOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the model. (mutually exclusive with version)
         :type label: str
+        :param kwargs: A dictionary of additional configuration parameters.
+        :type kwargs: dict
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Model cannot be successfully validated.
             Details will be provided in the error message.
         :return: Model asset object.
@@ -150,7 +154,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
         return model
 
     @monitor_with_activity(ops_logger, "Evaluator.Download", ActivityType.PUBLICAPI)
-    def download(self, name: str, version: str, download_path: Union[PathLike, str] = ".") -> None:
+    def download(self, name: str, version: str, download_path: Union[PathLike, str] = ".", **kwargs) -> None:
         """Download files related to a model.
 
         :param name: Name of the model.
@@ -160,6 +164,8 @@ class EvaluatorOperations(_ScopeDependentOperations):
         :param download_path: Local path as download destination, defaults to current working directory of the current
             user. Contents will be overwritten.
         :type download_path: Union[PathLike, str]
+        :param kwargs: A dictionary of additional configuration parameters.
+        :type kwargs: dict
         :raises ResourceNotFoundError: if can't find a model matching provided name.
         """
         self._model_op.download(name, version, download_path)
@@ -171,6 +177,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
         stage: Optional[str] = None,
         *,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
+        **kwargs,
     ) -> Iterable[Model]:
         """List all model assets in workspace.
 
@@ -181,6 +188,8 @@ class EvaluatorOperations(_ScopeDependentOperations):
         :keyword list_view_type: View type for including/excluding (for example) archived models.
             Defaults to :attr:`ListViewType.ACTIVE_ONLY`.
         :paramtype list_view_type: ListViewType
+        :param kwargs: A dictionary of additional configuration parameters.
+        :type kwargs: dict
         :return: An iterator like instance of Model objects
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Model]
         """
