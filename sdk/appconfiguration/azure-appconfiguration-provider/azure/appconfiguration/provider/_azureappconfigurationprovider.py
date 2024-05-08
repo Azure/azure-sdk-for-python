@@ -49,6 +49,13 @@ from ._constants import (
     ContainerAppEnvironmentVariable,
     KubernetesEnvironmentVariable,
     EMPTY_LABEL,
+    PERCENTAGE_FILTER_NAMES,
+    TIME_WINDOW_FILTER_NAMES,
+    TARGETING_FILTER_NAMES,
+    CUSTOM_FILTER_KEY,
+    PERCENTAGE_FILTER_KEY,
+    TIME_WINDOW_FILTER_KEY,
+    TARGETING_FILTER_KEY,
 )
 from ._user_agent import USER_AGENT
 
@@ -268,14 +275,14 @@ def _get_headers(request_type, **kwargs) -> str:
     if "feature_filters_used" in kwargs:
         filters_used = ""
         feature_filters_used = kwargs.pop("feature_filters_used", {})
-        if "Custom" in feature_filters_used:
-            filters_used = "CSTM"
-        if "Percentage" in feature_filters_used:
-            filters_used += ("+" if filters_used else "") + "PRCNT"
-        if "TimeWindow" in feature_filters_used:
-            filters_used += ("+" if filters_used else "") + "TIME"
-        if "Targeting" in feature_filters_used:
-            filters_used += ("+" if filters_used else "") + "TRGT"
+        if CUSTOM_FILTER_KEY in feature_filters_used:
+            filters_used = CUSTOM_FILTER_KEY
+        if PERCENTAGE_FILTER_KEY in feature_filters_used:
+            filters_used += ("+" if filters_used else "") + PERCENTAGE_FILTER_KEY
+        if TIME_WINDOW_FILTER_KEY in feature_filters_used:
+            filters_used += ("+" if filters_used else "") + TIME_WINDOW_FILTER_KEY
+        if TARGETING_FILTER_KEY in feature_filters_used:
+            filters_used += ("+" if filters_used else "") + TARGETING_FILTER_KEY
         correlation_context += ",Filters=" + filters_used
 
     correlation_context += _uses_feature_flags(**kwargs)
@@ -675,19 +682,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
         filters_used = {}
-        percentage_filter_names = [
-            "Percentage",
-            "PercentageFilter",
-            "Microsoft.Percentage",
-            "Microsoft.PercentageFilter",
-        ]
-        time_window_filter_names = [
-            "TimeWindow",
-            "TimeWindowFilter",
-            "Microsoft.TimeWindow",
-            "Microsoft.TimeWindowFilter",
-        ]
-        targeting_filter_names = ["Targeting", "TargetingFilter", "Microsoft.Targeting", "Microsoft.TargetingFilter"]
         for select in self._feature_flag_selectors:
             feature_flags = self._client.list_configuration_settings(
                 key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, **kwargs
@@ -699,14 +693,14 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
                 if feature_flag.filters:
                     for filter in feature_flag.filters:
-                        if filter.get("name") in percentage_filter_names:
-                            filters_used["Percentage"] = True
-                        elif filter.get("name") in time_window_filter_names:
-                            filters_used["TimeWindow"] = True
-                        elif filter.get("name") in targeting_filter_names:
-                            filters_used["Targeting"] = True
+                        if filter.get("name") in PERCENTAGE_FILTER_NAMES:
+                            filters_used[PERCENTAGE_FILTER_KEY] = True
+                        elif filter.get("name") in TIME_WINDOW_FILTER_NAMES:
+                            filters_used[TIME_WINDOW_FILTER_KEY] = True
+                        elif filter.get("name") in TARGETING_FILTER_NAMES:
+                            filters_used[TARGETING_FILTER_KEY] = True
                         else:
-                            filters_used["Custom"] = True
+                            filters_used[CUSTOM_FILTER_KEY] = True
         self._feature_filter_usage = filters_used
 
         return loaded_feature_flags, feature_flag_sentinel_keys
