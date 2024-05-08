@@ -628,7 +628,7 @@ as well as containing the list of failed responses for the failed request.
 
 For more information on Transactional Batch, see [Azure Cosmos DB Transactional Batch][cosmos_transactional_batch].
 
-### Private Preview - Vector Embeddings and Vector Indexes
+### Public Preview - Vector Embeddings and Vector Indexes
 We have added new capabilities to utilize vector embeddings and vector indexing for users to leverage vector
 search utilizing our Cosmos SDK. These two container-level configurations have to be turned on at the account-level
 before you can use them.
@@ -693,6 +693,19 @@ database.create_container(id=container_id, partition_key=PartitionKey(path="/id"
                           indexing_policy=indexing_policy, vector_embedding_policy=vector_embedding_policy)
 ```
 ***Note: vector embeddings and vector indexes CANNOT be edited by container replace operations. They are only available directly through creation.***
+
+### Public Preview - Vector Search
+
+With the addition of the vector indexing and vector embedding capabilities, the SDK can now perform order by vector search queries.
+These queries specify the VectorDistance to use as a metric within the query text. These must always use a TOP or LIMIT clause within the query though,
+since vector search queries have to look through a lot of data otherwise and may become too expensive or long-running.
+A sample vector search query would look something like this:
+```python
+    query = "SELECT TOP 10 c.title,VectorDistance(c.Embedding, [{}]) AS " \
+            "SimilarityScore FROM c ORDER BY VectorDistance(c.Embedding, [{}])".format(embeddings_string, embeddings_string)
+```
+The `embeddings_string` above would be your string made from your vector embeddings.
+You can find our sync samples [here]() and our async samples [here]() as well to help yourself out.
 
 ## Troubleshooting
 
