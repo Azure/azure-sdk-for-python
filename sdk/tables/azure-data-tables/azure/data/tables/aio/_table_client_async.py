@@ -410,7 +410,7 @@ class TableClient(AsyncTablesBaseClient):
 
     @overload
     async def create_entity(
-        self, entity: EntityType, *, encoder: TableEntityEncoderABC[TableEntity] = DEFAULT_ENCODER, **kwargs
+        self, entity: EntityType, *, encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER, **kwargs
     ) -> Dict[str, Any]:
         """Inserts entity in a table.
 

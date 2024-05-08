@@ -4,15 +4,15 @@
 # license information.
 # --------------------------------------------------------------------------
 import abc, enum
-from typing import Any, Optional, Tuple, Union, Mapping, TypeVar, Generic, Dict
+from typing import Any, Optional, Tuple, Union, TypeVar, Generic, Dict
 from uuid import UUID
 from datetime import datetime
 from math import isnan
 
-from ._entity import EdmType
-from ._entity import TableEntity
+from ._entity import EdmType, TableEntity
 from ._deserialize import _convert_to_entity
 from ._common_conversion import _encode_base64, _to_utc_datetime
+from ._table_batch import EntityType
 
 _ODATA_SUFFIX = "@odata.type"
 T = TypeVar("T")
@@ -52,7 +52,7 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
             return EdmType.BINARY, _encode_base64(value)
         if isinstance(value, datetime):
             try:
-                if value.tables_service_value:
+                if hasattr(value, "tables_service_value") and value.tables_service_value:
                     return EdmType.DATETIME, value.tables_service_value
             except AttributeError:
                 pass
@@ -76,9 +76,9 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
     def decode_entity(self, entity: Dict[str, Union[str, int, float, bool]]) -> T: ...
 
 
-class TableEntityEncoder(TableEntityEncoderABC[Union[Mapping[str, Any], TableEntity]]):
+class TableEntityEncoder(TableEntityEncoderABC[EntityType]):
 
-    def encode_entity(self, entity: Union[Mapping[str, Any], TableEntity]) -> Dict[str, Union[str, int, float, bool]]:
+    def encode_entity(self, entity: EntityType) -> Dict[str, Union[str, int, float, bool]]:
         """This method currently behaves the same as the existing serialization function in that
         there is no special treatment for the system keys - PartitionKey, RowKey, Timestamp, Etag.
 
