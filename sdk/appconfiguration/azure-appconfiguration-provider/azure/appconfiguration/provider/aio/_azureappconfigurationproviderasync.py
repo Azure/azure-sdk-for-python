@@ -361,7 +361,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         self._keyvault_client_configs = kwargs.pop("keyvault_client_configs", {})
         self._uses_key_vault = (
             self._keyvault_credential is not None
-            or self._keyvault_client_configs is not None
+            or len(self._keyvault_client_configs) > 0
             or self._secret_resolver is not None
         )
         self._feature_flag_enabled = kwargs.pop("feature_flag_enabled", False)
@@ -369,6 +369,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         self._refresh_on_feature_flags: Mapping[Tuple[str, str], Optional[str]] = {}
         self._feature_flag_refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_refresh_enabled = kwargs.pop("feature_flag_refresh_enabled", False)
+        self._feature_filter_usage = {}
         self._update_lock = Lock()
         self._refresh_lock = Lock()
 
@@ -403,12 +404,18 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             if not success:
                 self._refresh_timer.backoff()
             elif need_refresh and self._on_refresh_success:
-                self._on_refresh_success()
+                await self._on_refresh_success()
 
     async def _refresh_configuration_settings(self, **kwargs) -> bool:
         need_refresh = False
         updated_sentinel_keys = dict(self._refresh_on)
-        headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
+        headers = _get_headers(
+            "Watch",
+            uses_key_vault=self._uses_key_vault,
+            feature_filters_used=self._feature_filter_usage,
+            uses_feature_flags=self._feature_flag_enabled,
+            **kwargs
+        )
         for (key, label), etag in updated_sentinel_keys.items():
             changed, updated_sentinel = await self._check_configuration_setting(
                 key=key, label=label, etag=etag, headers=headers, **kwargs
@@ -429,7 +436,13 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
     async def _refresh_feature_flags(self, **kwargs) -> bool:
         feature_flag_sentinel_keys = dict(self._refresh_on_feature_flags)
-        headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
+        headers = _get_headers(
+            "Watch",
+            uses_key_vault=self._uses_key_vault,
+            feature_filters_used=self._feature_filter_usage,
+            uses_feature_flags=self._feature_flag_enabled,
+            **kwargs
+        )
         for (key, label), etag in feature_flag_sentinel_keys.items():
             changed = await self._check_configuration_setting(
                 key=key, label=label, etag=etag, headers=headers, **kwargs
@@ -523,6 +536,20 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         loaded_feature_flags = []
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
+        filters_used = {}
+        percentage_filter_names = [
+            "Percentage",
+            "PercentageFilter",
+            "Microsoft.Percentage",
+            "Microsoft.PercentageFilter",
+        ]
+        time_window_filter_names = [
+            "TimeWindow",
+            "TimeWindowFilter",
+            "Microsoft.TimeWindow",
+            "Microsoft.TimeWindowFilter",
+        ]
+        targeting_filter_names = ["Targeting", "TargetingFilter", "Microsoft.Targeting", "Microsoft.TargetingFilter"]
         for select in self._feature_flag_selectors:
             feature_flags = self._client.list_configuration_settings(
                 key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, **kwargs
@@ -532,6 +559,18 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
                 if self._feature_flag_refresh_enabled:
                     feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
+                if feature_flag.filters:
+                    for filter in feature_flag.filters:
+                        if filter.get("name") in percentage_filter_names:
+                            filters_used["Percentage"] = True
+                        elif filter.get("name") in time_window_filter_names:
+                            filters_used["TimeWindow"] = True
+                        elif filter.get("name") in targeting_filter_names:
+                            filters_used["Targeting"] = True
+                        else:
+                            filters_used["Custom"] = True
+        self._feature_filter_usage = filters_used
+
         return loaded_feature_flags, feature_flag_sentinel_keys
 
     def _process_key_name(self, config):
@@ -606,7 +645,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         return self._dict.values()
 
     @overload
-    def get(self, key: str, default: None = None) -> Union[str, JSON, None]: ...
+    def get(self, key: str, default: None = None) -> Union[str, JSON, None]:
+        ...
 
     @overload
     def get(self, key: str, default: Union[str, JSON, _T]) -> Union[str, JSON, _T]:  # pylint: disable=signature-differs
