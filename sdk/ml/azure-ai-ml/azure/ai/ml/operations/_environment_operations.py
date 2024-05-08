@@ -240,7 +240,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(ops_logger, "Environment.Get", ActivityType.PUBLICAPI)
-    def get(self, *, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Environment:
+    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Environment:
         """Returns the specified environment asset.
 
         :param name: Name of the environment.

@@ -92,7 +92,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(ops_logger, "Evaluator.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(  # type: ignore
-        self, model: Union[Model, WorkspaceAssetReference], **kwargs
+        self, model: Union[Model, WorkspaceAssetReference], **kwargs: Any
     ) -> Model:  # TODO: Are we going to implement job_name?
         """Returns created or updated model asset.
 
@@ -154,7 +154,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
         return model
 
     @monitor_with_activity(ops_logger, "Evaluator.Download", ActivityType.PUBLICAPI)
-    def download(self, name: str, version: str, download_path: Union[PathLike, str] = ".", **kwargs) -> None:
+    def download(self, name: str, version: str, download_path: Union[PathLike, str] = ".", **kwargs: Any) -> None:
         """Download files related to a model.
 
         :param name: Name of the model.
@@ -177,7 +177,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
         stage: Optional[str] = None,
         *,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
-        **kwargs,
+        **kwargs: Any,
     ) -> Iterable[Model]:
         """List all model assets in workspace.
 
