@@ -33,9 +33,9 @@ class RemoteRenderingPolling(PollingMethod):
         if self._query_status is None:
             raise RuntimeError("this poller has not been initialized")
         self._response = self._query_status()  # pylint: disable=E1102
-        if self._response.error is not None:
+        if self._response.error is not None: # type: ignore
             error = HttpResponseError("Polling returned a status indicating an error state.", model=self._response)
-            error.error = ODataV4Format(self._response.error.serialize())
+            error.error = ODataV4Format(self._response.error.serialize()) # type: ignore
             raise error
 
     def initialize(self, client: Any, initial_response: Any, deserialization_callback: Callable) -> None:
@@ -65,7 +65,10 @@ class RemoteRenderingPolling(PollingMethod):
 
     def get_continuation_token(self) -> str:
         # returns a Base64 encoded string of "<version>:<account_id>:<session_id/conversion_id>"
-        return base64.b64encode(("1:"+self._account_id+":"+self._response.id).encode('ascii')).decode('ascii')
+        token_str = "1:"+self._account_id+":"+self._response.id # type: ignore
+        encoded = token_str.encode('ascii')
+        base64_endcoded = base64.b64encode(encoded)
+        return base64_endcoded.decode('ascii')
 
 
 class ConversionPolling(RemoteRenderingPolling):
@@ -85,9 +88,9 @@ class ConversionPolling(RemoteRenderingPolling):
                                                   initial_response=initial_response,
                                                   deserialization_callback=deserialization_callback)
         self._query_status = partial(
-            self._client.remote_rendering.get_conversion,
+            self._client.remote_rendering.get_conversion, # type: ignore
             account_id=self._account_id,
-            conversion_id=initial_response.id)
+            conversion_id=initial_response.id) # type: ignore
 
     def status(self) -> str:
         if self._response is None:
@@ -127,7 +130,9 @@ class SessionPolling(RemoteRenderingPolling):
     def initialize(self, client: Any, initial_response: Any, deserialization_callback: Callable) -> None:
         super(SessionPolling, self).initialize(client, initial_response, deserialization_callback)
         self._query_status = partial(
-            self._client.remote_rendering.get_session, account_id=self._account_id, session_id=initial_response.id)
+            self._client.remote_rendering.get_session, # type: ignore
+            account_id=self._account_id,
+            session_id=initial_response.id) # type: ignore
 
     def status(self) -> str:
         if self._response is None:

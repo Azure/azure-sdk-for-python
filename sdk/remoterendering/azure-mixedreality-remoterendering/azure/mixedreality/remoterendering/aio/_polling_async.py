@@ -6,7 +6,7 @@
 import asyncio
 import base64
 from functools import partial
-from typing import Any, Callable, Union, Tuple
+from typing import Any, Callable, Union
 
 from azure.core.polling import AsyncPollingMethod
 from azure.core.exceptions import HttpResponseError, ODataV4Format
@@ -65,7 +65,10 @@ class RemoteRenderingPollingAsync(AsyncPollingMethod):
 
     def get_continuation_token(self) -> str:
         # returns a Base64 encoded string of "<version>:<account_id>:<session_id/conversion_id>"
-        return base64.b64encode(("1:"+self._account_id+":"+self._response.id).encode('ascii')).decode('ascii')
+        token_str = "1:"+self._account_id+":"+self._response.id # type: ignore
+        encoded = token_str.encode('ascii')
+        base64_endcoded = base64.b64encode(encoded)
+        return base64_endcoded.decode('ascii')
 
 
 class ConversionPollingAsync(RemoteRenderingPollingAsync):
@@ -99,7 +102,7 @@ class ConversionPollingAsync(RemoteRenderingPollingAsync):
     async def initial_response_from_continuation_token(cls,
                                                        continuation_token: str,
                                                        client: RemoteRenderingRestClient,
-                                                       **kwargs: Any) -> Tuple:
+                                                       **kwargs: Any) -> AssetConversion:
 
         version, account_id, conversion_id = base64.b64decode(
             continuation_token.encode('ascii')).decode('ascii').split(":")
@@ -146,7 +149,7 @@ class SessionPollingAsync(RemoteRenderingPollingAsync):
     async def initial_response_from_continuation_token(cls,
                                                        continuation_token: str,
                                                        client: RemoteRenderingRestClient,
-                                                       **kwargs: Any) -> Tuple:
+                                                       **kwargs: Any) -> RenderingSession:
 
         version, account_id, session_id = base64.b64decode(
             continuation_token.encode('ascii')).decode('ascii').split(":")

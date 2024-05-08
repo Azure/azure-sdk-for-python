@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 
 
-from typing import Any, Callable, Union, TypeVar
+from typing import Any, Callable, Union
 
 from azure.core.credentials import AccessToken, AzureKeyCredential
 from azure.core.paging import ItemPaged
@@ -32,8 +32,6 @@ from ._shared.mixedreality_account_key_credential import \
     MixedRealityAccountKeyCredential
 from ._shared.static_access_token_credential import StaticAccessTokenCredential
 from ._version import SDK_MONIKER
-
-TRemoteRenderingClient = TypeVar("TRemoteRenderingClient", bound="RemoteRenderingClient")
 
 class RemoteRenderingClient:
     """A client for the Azure Remote Rendering Service.
@@ -223,7 +221,7 @@ class RemoteRenderingClient:
         :raises ~azure.core.exceptions.HttpResponseError:
         :return: List of conversion for the remote rendering account.
         """
-        return self._client.remote_rendering.list_conversions(account_id=self._account_id, **kwargs)
+        return self._client.remote_rendering.list_conversions(account_id=self._account_id, **kwargs) # type: ignore
 
     @distributed_trace
     def begin_rendering_session(self,
@@ -366,7 +364,7 @@ class RemoteRenderingClient:
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> TRemoteRenderingClient:
+    def __enter__(self) -> "RemoteRenderingClient":
         self._client.__enter__()  # pylint:disable=no-member
         return self
 

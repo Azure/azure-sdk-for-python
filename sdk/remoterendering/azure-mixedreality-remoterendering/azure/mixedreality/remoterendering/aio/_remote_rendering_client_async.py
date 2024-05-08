@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 
 
-from typing import Any, Callable, Union, TypeVar
+from typing import Any, Callable, Union
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AccessToken, AzureKeyCredential
@@ -33,8 +33,6 @@ from .._shared.aio.static_access_token_credential import \
 from .._shared.authentication_endpoint import construct_endpoint_url
 from .._version import SDK_MONIKER
 from ._polling_async import ConversionPollingAsync, SessionPollingAsync
-
-TRemoteRenderingClient = TypeVar("TRemoteRenderingClient", bound="RemoteRenderingClient")
 
 class RemoteRenderingClient(object):
     """A client for the Azure Remote Rendering Service.
@@ -222,7 +220,7 @@ class RemoteRenderingClient(object):
         :rtype: AsyncItemPaged[AssetConversion]
         :return: List of conversions for the remote rendering account.
         """
-        return self._client.remote_rendering.list_conversions(account_id=self._account_id, **kwargs)
+        return self._client.remote_rendering.list_conversions(account_id=self._account_id, **kwargs) # type: ignore
 
     @distributed_trace_async
     async def begin_rendering_session(self,
@@ -354,12 +352,12 @@ class RemoteRenderingClient(object):
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mixedreality.remoterendering.RenderingSession]
         :return: List of rendering sessions in the 'Ready' or 'Starting' state.
         """
-        return self._client.remote_rendering.list_sessions(account_id=self._account_id, **kwargs)
+        return self._client.remote_rendering.list_sessions(account_id=self._account_id, **kwargs) # type: ignore
 
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> TRemoteRenderingClient:
+    async def __aenter__(self) -> "RemoteRenderingClient":
         await self._client.__aenter__()
         return self
 
