@@ -2,10 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Customize generated code here.
-
-Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
-"""
+# mypy: disable-error-code="attr-defined"
 
 from typing import Any, List, Union, overload, Optional, cast, Tuple, TypeVar, Dict
 from enum import Enum
@@ -123,7 +120,7 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
         try:
             return _TranslationStatus(self._pipeline_response.http_response.json())
         except json.decoder.JSONDecodeError:
-            return _TranslationStatus()
+            return _TranslationStatus() # type: ignore[call-overload]
 
     def _get_id_from_headers(self) -> str:
         return (
@@ -158,7 +155,7 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
         return self._get_id_from_headers()
 
     # pylint: disable=arguments-differ
-    def from_continuation_token(self, continuation_token: str, **kwargs: Any) -> Tuple:
+    def from_continuation_token(self, continuation_token: str, **kwargs: Any) -> Tuple: # type: ignore[override]
         try:
             client = kwargs["client"]
         except KeyError as exc:
@@ -551,7 +548,7 @@ class DocumentTranslationClient:
         """
 
     @distributed_trace
-    def begin_translation(
+    def begin_translation(  # pylint: disable=docstring-missing-param
         self, *args: Union[str, List[DocumentTranslationInput]], **kwargs: Any
     ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
@@ -566,36 +563,6 @@ class DocumentTranslationClient:
         For supported languages and document formats, see the service documentation:
         https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
 
-        :param str source_url: The source URL to the Azure Blob container containing the documents to be translated.
-            This can be a SAS URL (see the service documentation for the supported SAS permissions for accessing
-            source storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions) or a managed
-            identity can be created and used to access documents in your storage account
-            (see https://aka.ms/azsdk/documenttranslation/managed-identity).
-        :param str target_url: The target URL to the Azure Blob container where the translated documents
-            should be written. This can be a SAS URL (see the service documentation for the supported SAS permissions
-            for accessing target storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions)
-            or a managed identity can be created and used to access documents in your storage account
-            (see https://aka.ms/azsdk/documenttranslation/managed-identity).
-        :param str target_language: This is the language code you want your documents to be translated to.
-            See supported language codes here:
-            https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
-        :param inputs: A list of translation inputs. Each individual input has a single
-            source URL to documents and can contain multiple TranslationTargets (one for each language)
-            for the destination to write translated documents.
-        :type inputs: List[~azure.ai.translation.document.DocumentTranslationInput]
-        :keyword str source_language: Language code for the source documents.
-            If none is specified, the source language will be auto-detected for each document.
-        :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
-            translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
-            sub folders for translation.
-        :keyword str suffix: A case-sensitive suffix string to filter documents in the source path for
-            translation. This is most often use for file extensions.
-        :keyword storage_type: Storage type of the input documents source string. Possible values
-            include: "Folder", "File".
-        :paramtype storage_type: str or ~azure.ai.translation.document.StorageInputType
-        :keyword str category_id: Category / custom model ID for using custom translation.
-        :keyword glossaries: Glossaries to apply to translation.
-        :paramtype glossaries: list[~azure.ai.translation.document.TranslationGlossary]
         :return: An instance of a DocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
@@ -664,7 +631,7 @@ class DocumentTranslationClient:
 
         translation_status = self._client.get_translation_status(translation_id, **kwargs)
         return TranslationStatus._from_generated(  # pylint: disable=protected-access
-            _TranslationStatus(translation_status)
+            _TranslationStatus(translation_status) # type: ignore[call-overload]
         )
 
     @distributed_trace
@@ -848,7 +815,7 @@ class DocumentTranslationClient:
         """
 
         document_status = self._client.get_document_status(translation_id, document_id, **kwargs)
-        return DocumentStatus._from_generated(_DocumentStatus(document_status))  # pylint: disable=protected-access
+        return DocumentStatus._from_generated(_DocumentStatus(document_status)) # type: ignore[call-overload] # pylint: disable=protected-access
 
     @distributed_trace
     def get_supported_glossary_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:

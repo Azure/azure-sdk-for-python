@@ -224,14 +224,14 @@ class DocumentTranslationTest(AzureRecordedTestCase):
             result = poller.result()
             for doc in result:
                 self._validate_doc_status(doc, language)
-        
+
         assert poller.details.id is not None
-        
+
         # validate
         self._validate_translation_metadata(
             poller=poller, status="Succeeded", total=total_docs_count, succeeded=total_docs_count
         )
-       
+
         return poller.id
 
     def _begin_multiple_translations(self, client, operations_count, **kwargs):

@@ -7,9 +7,9 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-import sys, json
+import sys
 from typing import Any, IO, Callable, Dict, Iterator, List, Optional, Type, TypeVar, Union, cast, overload
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.polling import NoPolling, PollingMethod
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
@@ -40,15 +40,15 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]  # type: ignore[misc] # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]] # type: ignore[misc]
 
 
 class DocumentTranslationClientOperationsMixin(GeneratedDocumentTranslationClientOperationsMixin):
 
     @distributed_trace
-    def begin_start_translation(
+    def begin_start_translation( # type: ignore[override]
         self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> DocumentTranslationLROPoller[_models.TranslationStatus]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -60,7 +60,7 @@ class DocumentTranslationClientOperationsMixin(GeneratedDocumentTranslationClien
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._start_translation_initial(
+            raw_result = self._start_translation_initial( # type: ignore[func-returns-value]
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
         kwargs.pop("error_map", None)
@@ -100,7 +100,10 @@ class DocumentTranslationClientOperationsMixin(GeneratedDocumentTranslationClien
             self._client, raw_result, get_long_running_output, polling_method
         )
 
-class SingleDocumentTranslationClientOperationsMixin(GeneratedSingleDocumentTranslationClientOperationsMixin):
+
+class SingleDocumentTranslationClientOperationsMixin(
+    GeneratedSingleDocumentTranslationClientOperationsMixin
+):  # pylint: disable=name-too-long
 
     @overload
     def document_translate(
@@ -299,19 +302,19 @@ class SingleDocumentTranslationClientOperationsMixin(GeneratedSingleDocumentTran
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers["x-ms-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-request-id")
-        )
-        #deserialized = response.iter_bytes()
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        # deserialized = response.iter_bytes()
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            # return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, response.read(), response_headers)  # type: ignore
 
         return response.read()
-    
+
+
 __all__: List[str] = [
     "DocumentTranslationClientOperationsMixin",
-    "SingleDocumentTranslationClientOperationsMixin"
+    "SingleDocumentTranslationClientOperationsMixin",
 ]  # Add all objects you want publicly available to users at this package level
 
 

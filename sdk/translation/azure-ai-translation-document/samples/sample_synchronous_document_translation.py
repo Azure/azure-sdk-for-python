@@ -23,7 +23,10 @@ from azure.ai.translation.document import SingleDocumentTranslationClient
 from azure.ai.translation.document.models import DocumentTranslateContent
 from azure.ai.translation.document._vendor import FileType
 
-TEST_INPUT_FILE_NAME = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "../tests/TestData/test-input.txt"))
+TEST_INPUT_FILE_NAME = os.path.abspath(
+    os.path.join(os.path.abspath(__file__), "..", "../tests/TestData/test-input.txt")
+)
+
 
 def sample_synchronous_document_translation():
     # [START synchronous_document_translation]
@@ -41,13 +44,12 @@ def sample_synchronous_document_translation():
     document_content: FileType = (file_name, file_contents, file_type)
     document_translate_content = DocumentTranslateContent(document=document_content)
 
-    response_stream = client.document_translate(
-        body=document_translate_content, target_language=target_languages
-    )
-    translated_response = response_stream.decode("utf-8-sig")
+    response_stream = client.document_translate(body=document_translate_content, target_language=target_languages)
+    translated_response = response_stream.decode("utf-8-sig") # type: ignore[attr-defined]
     print(f"Translated response: {translated_response}")
 
     # [END synchronous_document_translation]
+
 
 if __name__ == "__main__":
     sample_synchronous_document_translation()

@@ -7,8 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import sys
-from typing import AsyncIterator, Callable, Dict, List, Type, TypeVar, overload
-from typing import Any, IO, List, Optional, Union, cast
+from typing import AsyncIterator, Callable, Dict, Type, TypeVar, overload, Any, IO, List, Optional, Union, cast
 from azure.core.polling import AsyncNoPolling, AsyncPollingMethod
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator import distributed_trace
@@ -27,7 +26,7 @@ from azure.core.utils import case_insensitive_dict
 
 from ..._vendor import prepare_multipart_form_data
 from ... import _model_base, models as _models
-from ..._model_base import SdkJSONEncoder, _deserialize
+from ..._model_base import _deserialize
 from ._operations import (
     DocumentTranslationClientOperationsMixin as GeneratedDocumentTranslationClientOperationsMixin,
     SingleDocumentTranslationClientOperationsMixin as GeneratedSingleDocumentTranslationClientOperationsMixin,
@@ -37,19 +36,22 @@ from ._operations import (
 )
 from ...aio._patch import AsyncDocumentTranslationLROPoller
 from ... import models as _models
+
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]  # type: ignore[misc] # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[ # type: ignore[misc]
+    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
+    ] 
 
 
 class DocumentTranslationClientOperationsMixin(GeneratedDocumentTranslationClientOperationsMixin):
 
     @distributed_trace
-    async def begin_start_translation(
+    async def begin_start_translation( # type: ignore[override]
         self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[_models.TranslationStatus]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -61,7 +63,7 @@ class DocumentTranslationClientOperationsMixin(GeneratedDocumentTranslationClien
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._start_translation_initial(
+            raw_result = await self._start_translation_initial( # type: ignore[func-returns-value]
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
         kwargs.pop("error_map", None)
@@ -102,7 +104,10 @@ class DocumentTranslationClientOperationsMixin(GeneratedDocumentTranslationClien
             self._client, raw_result, get_long_running_output, polling_method
         )
 
-class SingleDocumentTranslationClientOperationsMixin(GeneratedSingleDocumentTranslationClientOperationsMixin):
+
+class SingleDocumentTranslationClientOperationsMixin(
+    GeneratedSingleDocumentTranslationClientOperationsMixin
+):  # pylint: disable=name-too-long
 
     @overload
     async def document_translate(
@@ -301,21 +306,20 @@ class SingleDocumentTranslationClientOperationsMixin(GeneratedSingleDocumentTran
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers["x-ms-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-request-id")
-        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
 
-        #deserialized = response.iter_bytes()
+        # deserialized = response.iter_bytes()
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            # return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, response.read(), response_headers)  # type: ignore
 
         return await response.read()
 
 
 __all__: List[str] = [
     "DocumentTranslationClientOperationsMixin",
-    "SingleDocumentTranslationClientOperationsMixin"
+    "SingleDocumentTranslationClientOperationsMixin",
 ]  # Add all objects you want publicly available to users at this package level
 
 

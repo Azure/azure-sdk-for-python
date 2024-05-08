@@ -6,11 +6,8 @@
 # --------------------------------------------------------------------------
 
 from abc import ABC
-import json
-from typing import Any, Dict, IO, List, Mapping, Optional, Sequence, TYPE_CHECKING, Tuple, Union
-
+from typing import TYPE_CHECKING
 from ._configuration import DocumentTranslationClientConfiguration, SingleDocumentTranslationClientConfiguration
-from .._model_base import Model, SdkJSONEncoder
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports

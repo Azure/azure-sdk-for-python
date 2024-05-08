@@ -10,24 +10,25 @@ from azure.ai.translation.document.models import DocumentTranslationInput, Trans
 
 class AsyncDocumentTranslationTest(DocumentTranslationTest, AzureRecordedTestCase):
     async def _begin_and_validate_translation_async(
-        self, async_client, translation_inputs, total_docs_count, language=None, **kwargs):
+        self, async_client, translation_inputs, total_docs_count, language=None, **kwargs
+    ):
         wait_for_operation = kwargs.pop("wait", True)
         # submit operation
         poller = await async_client.begin_translation(translation_inputs)
         assert poller.id is not None
-         # wait for result
+        # wait for result
         if wait_for_operation:
             result = await poller.result()
             async for doc in result:
                 self._validate_doc_status(doc, language)
 
         assert poller.details.id is not None
-        
+
         # validate
         self._validate_translation_metadata(
             poller=poller, status="Succeeded", total=total_docs_count, succeeded=total_docs_count
         )
-        
+
         return poller.id
 
     # client helpers
