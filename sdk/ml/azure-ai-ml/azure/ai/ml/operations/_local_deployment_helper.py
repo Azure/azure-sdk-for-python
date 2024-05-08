@@ -101,12 +101,7 @@ class _LocalDeploymentHelper(object):
                 endpoint_metadata=endpoint_metadata,
                 deployment_metadata=deployment_metadata,
             )
-<<<<<<< HEAD
-        except Exception as ex:  # pylint: disable=broad-except
-=======
-            return self.get(endpoint_name=str(deployment.endpoint_name), deployment_name=str(deployment.name))
         except Exception as ex:  # pylint: disable=W0718
->>>>>>> main
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:
