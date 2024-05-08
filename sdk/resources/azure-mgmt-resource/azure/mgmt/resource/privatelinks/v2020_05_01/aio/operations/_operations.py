@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -38,6 +39,10 @@ from ...operations._operations import (
     build_resource_management_private_link_put_request,
 )
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -137,7 +142,7 @@ class PrivateLinkAssociationOperations:
         :rtype: ~azure.mgmt.resource.privatelinks.v2020_05_01.models.PrivateLinkAssociation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -207,7 +212,7 @@ class PrivateLinkAssociationOperations:
         :rtype: ~azure.mgmt.resource.privatelinks.v2020_05_01.models.PrivateLinkAssociation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -263,7 +268,7 @@ class PrivateLinkAssociationOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -311,7 +316,7 @@ class PrivateLinkAssociationOperations:
         :rtype: ~azure.mgmt.resource.privatelinks.v2020_05_01.models.PrivateLinkAssociationGetResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -452,7 +457,7 @@ class ResourceManagementPrivateLinkOperations:
         :rtype: ~azure.mgmt.resource.privatelinks.v2020_05_01.models.ResourceManagementPrivateLink
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -526,7 +531,7 @@ class ResourceManagementPrivateLinkOperations:
         :rtype: ~azure.mgmt.resource.privatelinks.v2020_05_01.models.ResourceManagementPrivateLink
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -584,7 +589,7 @@ class ResourceManagementPrivateLinkOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -632,7 +637,7 @@ class ResourceManagementPrivateLinkOperations:
          ~azure.mgmt.resource.privatelinks.v2020_05_01.models.ResourceManagementPrivateLinkListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -687,7 +692,7 @@ class ResourceManagementPrivateLinkOperations:
          ~azure.mgmt.resource.privatelinks.v2020_05_01.models.ResourceManagementPrivateLinkListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
