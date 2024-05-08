@@ -117,7 +117,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -158,10 +158,10 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -211,10 +211,10 @@ class Fleet(TrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -382,7 +382,9 @@ class FleetHubProfile(_serialization.Model):
 class FleetListResult(_serialization.Model):
     """The response of a Fleet list operation.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The Fleet items on this page. Required.
     :vartype value: list[~azure.mgmt.containerservicefleet.v2022_06_02_preview.models.Fleet]
@@ -392,6 +394,7 @@ class FleetListResult(_serialization.Model):
 
     _validation = {
         "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -399,16 +402,14 @@ class FleetListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Fleet"], next_link: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: List["_models.Fleet"], **kwargs: Any) -> None:
         """
         :keyword value: The Fleet items on this page. Required.
         :paramtype value: list[~azure.mgmt.containerservicefleet.v2022_06_02_preview.models.Fleet]
-        :keyword next_link: The link to the next page of items.
-        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = next_link
+        self.next_link = None
 
 
 class ProxyResource(Resource):
@@ -418,7 +419,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -430,24 +431,6 @@ class ProxyResource(Resource):
     :vartype system_data: ~azure.mgmt.containerservicefleet.v2022_06_02_preview.models.SystemData
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
 
 class FleetMember(ProxyResource):
     """A member of the Fleet. It contains a reference to an existing Kubernetes cluster on Azure.
@@ -455,7 +438,7 @@ class FleetMember(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -472,7 +455,7 @@ class FleetMember(ProxyResource):
     :vartype e_tag: str
     :ivar cluster_resource_id: The ARM resource id of the cluster that joins the Fleet. Must be a
      valid Azure resource id. e.g.:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{clusterName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{clusterName}'.  # pylint: disable=line-too-long
     :vartype cluster_resource_id: str
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Joining", "Leaving", and "Updating".
@@ -503,7 +486,7 @@ class FleetMember(ProxyResource):
         """
         :keyword cluster_resource_id: The ARM resource id of the cluster that joins the Fleet. Must be
          a valid Azure resource id. e.g.:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{clusterName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{clusterName}'.  # pylint: disable=line-too-long
         :paramtype cluster_resource_id: str
         """
         super().__init__(**kwargs)
@@ -515,7 +498,9 @@ class FleetMember(ProxyResource):
 class FleetMemberListResult(_serialization.Model):
     """The response of a FleetMember list operation.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The FleetMember items on this page. Required.
     :vartype value: list[~azure.mgmt.containerservicefleet.v2022_06_02_preview.models.FleetMember]
@@ -525,6 +510,7 @@ class FleetMemberListResult(_serialization.Model):
 
     _validation = {
         "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -532,17 +518,15 @@ class FleetMemberListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.FleetMember"], next_link: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: List["_models.FleetMember"], **kwargs: Any) -> None:
         """
         :keyword value: The FleetMember items on this page. Required.
         :paramtype value:
          list[~azure.mgmt.containerservicefleet.v2022_06_02_preview.models.FleetMember]
-        :keyword next_link: The link to the next page of items.
-        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = next_link
+        self.next_link = None
 
 
 class FleetPatch(_serialization.Model):

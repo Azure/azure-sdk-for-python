@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -34,7 +34,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class IntegrationRuntimeObjectMetadataOperations:
+class IntegrationRuntimeObjectMetadataOperations:  # pylint: disable=name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -70,22 +70,21 @@ class IntegrationRuntimeObjectMetadataOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[Optional[_models.SsisObjectMetadataStatusResponse]] = kwargs.pop("cls", None)
 
-        request = build_refresh_request(
+        _request = build_refresh_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
             integration_runtime_name=integration_runtime_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._refresh_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -99,13 +98,9 @@ class IntegrationRuntimeObjectMetadataOperations:
             deserialized = self._deserialize("SsisObjectMetadataStatusResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _refresh_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/refreshObjectMetadata"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_refresh(
@@ -119,14 +114,6 @@ class IntegrationRuntimeObjectMetadataOperations:
         :type factory_name: str
         :param integration_runtime_name: The integration runtime name. Required.
         :type integration_runtime_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SsisObjectMetadataStatusResponse or
          the result of cls(response)
         :rtype:
@@ -157,7 +144,7 @@ class IntegrationRuntimeObjectMetadataOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("SsisObjectMetadataStatusResponse", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -167,17 +154,15 @@ class IntegrationRuntimeObjectMetadataOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.SsisObjectMetadataStatusResponse].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_refresh.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/refreshObjectMetadata"
-    }
+        return AsyncLROPoller[_models.SsisObjectMetadataStatusResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @overload
     async def get(
@@ -205,7 +190,6 @@ class IntegrationRuntimeObjectMetadataOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SsisObjectMetadataListResponse or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.SsisObjectMetadataListResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -217,7 +201,7 @@ class IntegrationRuntimeObjectMetadataOperations:
         resource_group_name: str,
         factory_name: str,
         integration_runtime_name: str,
-        get_metadata_request: Optional[IO] = None,
+        get_metadata_request: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -233,11 +217,10 @@ class IntegrationRuntimeObjectMetadataOperations:
         :type integration_runtime_name: str
         :param get_metadata_request: The parameters for getting a SSIS object metadata. Default value
          is None.
-        :type get_metadata_request: IO
+        :type get_metadata_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SsisObjectMetadataListResponse or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.SsisObjectMetadataListResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -249,7 +232,7 @@ class IntegrationRuntimeObjectMetadataOperations:
         resource_group_name: str,
         factory_name: str,
         integration_runtime_name: str,
-        get_metadata_request: Optional[Union[_models.GetSsisObjectMetadataRequest, IO]] = None,
+        get_metadata_request: Optional[Union[_models.GetSsisObjectMetadataRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.SsisObjectMetadataListResponse:
         """Get a SSIS integration runtime object metadata by specified path. The return is pageable
@@ -262,12 +245,9 @@ class IntegrationRuntimeObjectMetadataOperations:
         :param integration_runtime_name: The integration runtime name. Required.
         :type integration_runtime_name: str
         :param get_metadata_request: The parameters for getting a SSIS object metadata. Is either a
-         GetSsisObjectMetadataRequest type or a IO type. Default value is None.
-        :type get_metadata_request: ~azure.mgmt.datafactory.models.GetSsisObjectMetadataRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         GetSsisObjectMetadataRequest type or a IO[bytes] type. Default value is None.
+        :type get_metadata_request: ~azure.mgmt.datafactory.models.GetSsisObjectMetadataRequest or
+         IO[bytes]
         :return: SsisObjectMetadataListResponse or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.SsisObjectMetadataListResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -298,7 +278,7 @@ class IntegrationRuntimeObjectMetadataOperations:
             else:
                 _json = None
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
             integration_runtime_name=integration_runtime_name,
@@ -307,16 +287,15 @@ class IntegrationRuntimeObjectMetadataOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -328,10 +307,6 @@ class IntegrationRuntimeObjectMetadataOperations:
         deserialized = self._deserialize("SsisObjectMetadataListResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/getObjectMetadata"
-    }
+        return deserialized  # type: ignore

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -33,7 +33,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class PostgreSQLManagementClientOperationsMixin(PostgreSQLManagementClientMixinABC):
+class PostgreSQLManagementClientOperationsMixin(PostgreSQLManagementClientMixinABC):  # pylint: disable=name-too-long
     @overload
     async def check_migration_name_availability(
         self,
@@ -62,7 +62,6 @@ class PostgreSQLManagementClientOperationsMixin(PostgreSQLManagementClientMixinA
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MigrationNameAvailabilityResource or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationNameAvailabilityResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -74,7 +73,7 @@ class PostgreSQLManagementClientOperationsMixin(PostgreSQLManagementClientMixinA
         subscription_id: str,
         resource_group_name: str,
         target_db_server_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -91,11 +90,10 @@ class PostgreSQLManagementClientOperationsMixin(PostgreSQLManagementClientMixinA
         :type target_db_server_name: str
         :param parameters: The required parameters for checking if a migration name is available.
          Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MigrationNameAvailabilityResource or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationNameAvailabilityResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -107,7 +105,7 @@ class PostgreSQLManagementClientOperationsMixin(PostgreSQLManagementClientMixinA
         subscription_id: str,
         resource_group_name: str,
         target_db_server_name: str,
-        parameters: Union[_models.MigrationNameAvailabilityResource, IO],
+        parameters: Union[_models.MigrationNameAvailabilityResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.MigrationNameAvailabilityResource:
         """Check migration name validity and availability.
@@ -121,13 +119,10 @@ class PostgreSQLManagementClientOperationsMixin(PostgreSQLManagementClientMixinA
         :param target_db_server_name: The name of the target database server. Required.
         :type target_db_server_name: str
         :param parameters: The required parameters for checking if a migration name is available. Is
-         either a MigrationNameAvailabilityResource type or a IO type. Required.
+         either a MigrationNameAvailabilityResource type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationNameAvailabilityResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationNameAvailabilityResource or
+         IO[bytes]
         :return: MigrationNameAvailabilityResource or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationNameAvailabilityResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -155,7 +150,7 @@ class PostgreSQLManagementClientOperationsMixin(PostgreSQLManagementClientMixinA
         else:
             _json = self._serialize.body(parameters, "MigrationNameAvailabilityResource")
 
-        request = build_check_migration_name_availability_request(
+        _request = build_check_migration_name_availability_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             target_db_server_name=target_db_server_name,
@@ -163,16 +158,15 @@ class PostgreSQLManagementClientOperationsMixin(PostgreSQLManagementClientMixinA
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.check_migration_name_availability.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -185,10 +179,6 @@ class PostgreSQLManagementClientOperationsMixin(PostgreSQLManagementClientMixinA
         deserialized = self._deserialize("MigrationNameAvailabilityResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_migration_name_availability.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{targetDbServerName}/checkMigrationNameAvailability"
-    }
+        return deserialized  # type: ignore

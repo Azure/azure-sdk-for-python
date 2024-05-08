@@ -1,5 +1,11 @@
 # Release History
 
+## 7.0.0 (2024-04-22)
+
+### Breaking Changes
+
+  - Model ManagedIdentityCredential no longer has parameter resource_id
+
 ## 6.1.0 (2024-03-18)
 
 ### Features Added

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -57,7 +57,7 @@ class BackupAndExportOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.BackupAndExportRequest, IO],
+        parameters: Union[_models.BackupAndExportRequest, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.BackupAndExportResponse]:
         error_map = {
@@ -83,7 +83,7 @@ class BackupAndExportOperations:
         else:
             _json = self._serialize.body(parameters, "BackupAndExportRequest")
 
-        request = build_create_request(
+        _request = build_create_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             subscription_id=self._config.subscription_id,
@@ -91,16 +91,15 @@ class BackupAndExportOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -122,13 +121,9 @@ class BackupAndExportOperations:
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _create_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/flexibleServers/{serverName}/backupAndExport"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def begin_create(
@@ -153,14 +148,6 @@ class BackupAndExportOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either BackupAndExportResponse or the
          result of cls(response)
         :rtype:
@@ -173,7 +160,7 @@ class BackupAndExportOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -187,18 +174,10 @@ class BackupAndExportOperations:
         :type server_name: str
         :param parameters: The required parameters for creating and exporting backup of the given
          server. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either BackupAndExportResponse or the
          result of cls(response)
         :rtype:
@@ -211,7 +190,7 @@ class BackupAndExportOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.BackupAndExportRequest, IO],
+        parameters: Union[_models.BackupAndExportRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BackupAndExportResponse]:
         """Exports the backup of the given server by creating a backup if not existing.
@@ -222,19 +201,9 @@ class BackupAndExportOperations:
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: The required parameters for creating and exporting backup of the given
-         server. Is either a BackupAndExportRequest type or a IO type. Required.
-        :type parameters: ~azure.mgmt.rdbms.mysql_flexibleservers.models.BackupAndExportRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         server. Is either a BackupAndExportRequest type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.rdbms.mysql_flexibleservers.models.BackupAndExportRequest or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns either BackupAndExportResponse or the
          result of cls(response)
         :rtype:
@@ -267,7 +236,7 @@ class BackupAndExportOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("BackupAndExportResponse", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -279,17 +248,15 @@ class BackupAndExportOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.BackupAndExportResponse].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/flexibleServers/{serverName}/backupAndExport"
-    }
+        return AsyncLROPoller[_models.BackupAndExportResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def validate_backup(
@@ -302,7 +269,6 @@ class BackupAndExportOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ValidateBackupResponse or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.mysql_flexibleservers.models.ValidateBackupResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -321,21 +287,20 @@ class BackupAndExportOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
         cls: ClsType[_models.ValidateBackupResponse] = kwargs.pop("cls", None)
 
-        request = build_validate_backup_request(
+        _request = build_validate_backup_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.validate_backup.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -348,10 +313,6 @@ class BackupAndExportOperations:
         deserialized = self._deserialize("ValidateBackupResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    validate_backup.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/flexibleServers/{serverName}/validateBackup"
-    }
+        return deserialized  # type: ignore

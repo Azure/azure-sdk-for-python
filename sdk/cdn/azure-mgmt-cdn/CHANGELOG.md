@@ -1,5 +1,12 @@
 # Release History
 
+## 13.1.0 (2024-04-15)
+
+### Features Added
+
+  - Model Profile has a new parameter log_scrubbing
+  - Model ProfileUpdateParameters has a new parameter log_scrubbing
+
 ## 13.0.0 (2023-10-23)
 
 ### Features Added

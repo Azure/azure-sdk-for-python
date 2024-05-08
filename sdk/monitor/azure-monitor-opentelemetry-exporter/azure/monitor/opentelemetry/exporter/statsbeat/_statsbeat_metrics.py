@@ -212,7 +212,7 @@ class _StatsbeatMetrics:
             request_url = "{0}?{1}&{2}".format(
                 _AIMS_URI, _AIMS_API_VERSION, _AIMS_FORMAT)
             response = requests.get(
-                request_url, headers={"MetaData": "True"}, timeout=5.0)
+                request_url, headers={"MetaData": "True"}, timeout=0.2)
         except (requests.exceptions.ConnectionError, requests.Timeout):
             # Not in VM
             self._vm_retry = False

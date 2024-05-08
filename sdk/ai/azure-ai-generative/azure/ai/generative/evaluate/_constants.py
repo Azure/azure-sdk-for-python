@@ -20,7 +20,7 @@ class ContentSafetyMetrics:
     Evaluation metrics supported by evaluation in azure-ai-generative sdk
     """
 
-    HATE_FAIRNESS = "hate_fairness"
+    HATE_FAIRNESS = "hate_unfairness"
     VIOLENCE = "violence"
     SELF_HARM = "self_harm"
     SEXUAL = "sexual"

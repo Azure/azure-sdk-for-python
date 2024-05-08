@@ -337,13 +337,13 @@ class Connection:  # pylint:disable=too-many-instance-attributes
 
     def _outgoing_empty(self) -> None:
         """Send an empty frame to prevent the connection from reaching an idle timeout."""
-        if self._network_trace:
-            _LOGGER.debug("-> EmptyFrame()", extra=self._network_trace_params)
         if self._error:
             raise self._error
 
         try:
             if self._can_write():
+                if self._network_trace:
+                    _LOGGER.debug("-> EmptyFrame()", extra=self._network_trace_params)
                 self._transport.write(EMPTY_FRAME)
                 self._last_frame_sent_time = time.time()
         except (OSError, IOError, SSLError, socket.error) as exc:

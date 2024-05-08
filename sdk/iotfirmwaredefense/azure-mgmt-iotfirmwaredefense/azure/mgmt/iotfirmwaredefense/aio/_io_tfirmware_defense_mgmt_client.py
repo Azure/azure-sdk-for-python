@@ -15,31 +15,57 @@ from azure.mgmt.core import AsyncARMPipelineClient
 from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import IoTFirmwareDefenseMgmtClientConfiguration
-from .operations import FirmwareOperations, Operations, WorkspacesOperations
+from .operations import (
+    BinaryHardeningOperations,
+    CryptoCertificatesOperations,
+    CryptoKeysOperations,
+    CvesOperations,
+    FirmwaresOperations,
+    Operations,
+    PasswordHashesOperations,
+    SbomComponentsOperations,
+    SummariesOperations,
+    WorkspacesOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class IoTFirmwareDefenseMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
-    """The definitions and parameters in this swagger specification will be used to manage the IoT
-    Firmware Defense resources.
+class IoTFirmwareDefenseMgmtClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+    """Firmware & IoT Security REST API.
 
-    :ivar firmware: FirmwareOperations operations
-    :vartype firmware: azure.mgmt.iotfirmwaredefense.aio.operations.FirmwareOperations
-    :ivar workspaces: WorkspacesOperations operations
-    :vartype workspaces: azure.mgmt.iotfirmwaredefense.aio.operations.WorkspacesOperations
+    :ivar binary_hardening: BinaryHardeningOperations operations
+    :vartype binary_hardening:
+     azure.mgmt.iotfirmwaredefense.aio.operations.BinaryHardeningOperations
+    :ivar crypto_certificates: CryptoCertificatesOperations operations
+    :vartype crypto_certificates:
+     azure.mgmt.iotfirmwaredefense.aio.operations.CryptoCertificatesOperations
+    :ivar crypto_keys: CryptoKeysOperations operations
+    :vartype crypto_keys: azure.mgmt.iotfirmwaredefense.aio.operations.CryptoKeysOperations
+    :ivar cves: CvesOperations operations
+    :vartype cves: azure.mgmt.iotfirmwaredefense.aio.operations.CvesOperations
+    :ivar firmwares: FirmwaresOperations operations
+    :vartype firmwares: azure.mgmt.iotfirmwaredefense.aio.operations.FirmwaresOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.iotfirmwaredefense.aio.operations.Operations
+    :ivar password_hashes: PasswordHashesOperations operations
+    :vartype password_hashes: azure.mgmt.iotfirmwaredefense.aio.operations.PasswordHashesOperations
+    :ivar sbom_components: SbomComponentsOperations operations
+    :vartype sbom_components: azure.mgmt.iotfirmwaredefense.aio.operations.SbomComponentsOperations
+    :ivar summaries: SummariesOperations operations
+    :vartype summaries: azure.mgmt.iotfirmwaredefense.aio.operations.SummariesOperations
+    :ivar workspaces: WorkspacesOperations operations
+    :vartype workspaces: azure.mgmt.iotfirmwaredefense.aio.operations.WorkspacesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-02-08-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2024-01-10". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -59,9 +85,20 @@ class IoTFirmwareDefenseMgmtClient:  # pylint: disable=client-accepts-api-versio
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.firmware = FirmwareOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workspaces = WorkspacesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.binary_hardening = BinaryHardeningOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.crypto_certificates = CryptoCertificatesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.crypto_keys = CryptoKeysOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.cves = CvesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.firmwares = FirmwaresOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.password_hashes = PasswordHashesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.sbom_components = SbomComponentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.summaries = SummariesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.workspaces = WorkspacesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

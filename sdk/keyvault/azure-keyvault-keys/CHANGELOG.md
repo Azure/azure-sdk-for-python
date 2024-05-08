@@ -7,6 +7,8 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Typing errors from using Key Vault clients as context managers have been fixed
+  ([#34744](https://github.com/Azure/azure-sdk-for-python/issues/34744))
 
 ### Other Changes
 

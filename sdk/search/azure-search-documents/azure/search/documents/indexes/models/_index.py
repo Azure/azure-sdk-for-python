@@ -34,13 +34,22 @@ class SearchField:
     :vartype name: str
     :ivar type: The data type of the field. Required. Known values are: "Edm.String", "Edm.Int32",
         "Edm.Int64", "Edm.Double", "Edm.Boolean", "Edm.DateTimeOffset", "Edm.GeographyPoint",
-        "Edm.ComplexType", and "Edm.Single".
+        "Edm.ComplexType", "Edm.Single", "Edm.Half", "Edm.Int16", "Edm.SByte", and "Edm.Byte".
     :vartype type: str or ~azure.search.documents.indexes.models.SearchFieldDataType
     :ivar key: A value indicating whether the field uniquely identifies documents in the index.
         Exactly one top-level field in each index must be chosen as the key field and it must be of
         type Edm.String. Key fields can be used to look up documents directly and update or delete
         specific documents. Default is false for simple fields and null for complex fields.
     :vartype key: bool
+    :ivar stored: An immutable value indicating whether the field will be persisted separately on
+       disk to be returned in a search result. You can disable this option if you don't plan to return
+       the field contents in a search response to save on storage overhead. This can only be set
+       during index creation and only for vector fields. This property cannot be changed for existing
+       fields or set as false for new fields. If this property is set as false, the property
+       'hidden' must be set to true. This property must be true or unset for key fields,
+       for new fields, and for non-vector fields, and it must be null for complex fields. Disabling
+       this property will reduce index storage requirements. The default is true for vector fields.
+    :vartype stored: bool
     :ivar searchable: A value indicating whether the field is full-text searchable. This means it
         will undergo analysis such as word-breaking during indexing. If you set a searchable field to a
         value like "sunny day", internally it will be split into the individual tokens "sunny" and
@@ -162,6 +171,8 @@ class SearchField:
     :ivar fields: A list of sub-fields if this is a field of type Edm.ComplexType or
         Collection(Edm.ComplexType). Must be null or empty for simple fields.
     :vartype fields: list[~azure.search.documents.indexes.models.SearchField]
+    :ivar vector_encoding_format: The encoding format to interpret the field contents. "packedBit"
+    :vartype vector_encoding_format: str or ~azure.search.documents.indexes.models.VectorEncodingFormat
     """
 
     def __init__(self, **kwargs):
@@ -169,6 +180,7 @@ class SearchField:
         self.type = kwargs["type"]
         self.key = kwargs.get("key", None)
         self.hidden = kwargs.get("hidden", None)
+        self.stored = kwargs.get("stored", None)
         self.searchable = kwargs.get("searchable", None)
         self.filterable = kwargs.get("filterable", None)
         self.sortable = kwargs.get("sortable", None)
@@ -181,6 +193,7 @@ class SearchField:
         self.fields = kwargs.get("fields", None)
         self.vector_search_dimensions = kwargs.get("vector_search_dimensions", None)
         self.vector_search_profile_name = kwargs.get("vector_search_profile_name", None)
+        self.vector_encoding_format = kwargs.get("vector_encoding_format", None)
 
     def _to_generated(self) -> _SearchField:
         fields = [pack_search_field(x) for x in self.fields] if self.fields else None
@@ -190,6 +203,7 @@ class SearchField:
             type=self.type,
             key=self.key,
             retrievable=retrievable,
+            stored=self.stored,
             searchable=self.searchable,
             filterable=self.filterable,
             sortable=self.sortable,
@@ -202,6 +216,7 @@ class SearchField:
             fields=fields,
             vector_search_dimensions=self.vector_search_dimensions,
             vector_search_profile_name=self.vector_search_profile_name,
+            vector_encoding_format=self.vector_encoding_format,
         )
 
     @classmethod
@@ -220,6 +235,7 @@ class SearchField:
             type=search_field.type,
             key=search_field.key,
             hidden=hidden,
+            stored=search_field.stored,
             searchable=search_field.searchable,
             filterable=search_field.filterable,
             sortable=search_field.sortable,
@@ -232,6 +248,7 @@ class SearchField:
             fields=fields,
             vector_search_dimensions=search_field.vector_search_dimensions,
             vector_search_profile_name=search_field.vector_search_profile_name,
+            vector_encoding_format=search_field.vector_encoding_format,
         )
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
@@ -667,9 +684,11 @@ class SearchIndex:
             analyzers = None
         if search_index.tokenizers:
             tokenizers = [
-                PatternTokenizer._from_generated(x)  # pylint:disable=protected-access
-                if isinstance(x, _PatternTokenizer)
-                else x
+                (
+                    PatternTokenizer._from_generated(x)  # pylint:disable=protected-access
+                    if isinstance(x, _PatternTokenizer)
+                    else x
+                )
                 for x in search_index.tokenizers
             ]
         else:

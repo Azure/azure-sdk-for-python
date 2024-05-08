@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Optional, Union
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._generated.aio._client import PhoneNumbersClient as PhoneNumbersClientGen
@@ -13,6 +13,9 @@ from .._generated.models import (
     PhoneNumberCapabilitiesRequest,
     PhoneNumberPurchaseRequest,
     PhoneNumberType,
+    OperatorInformationOptions,
+    OperatorInformationRequest,
+    OperatorInformationResult,
 )
 from .._shared.auth_policy_utils import get_authentication_policy
 from .._shared.utils import parse_connection_str
@@ -35,7 +38,6 @@ if TYPE_CHECKING:
         PhoneNumberSearchResult,
         PurchasedPhoneNumber,
     )
-
 
 class PhoneNumbersClient(object):
     """A client to interact with the AzureCommunicationService Phone Numbers gateway.
@@ -418,6 +420,32 @@ class PhoneNumbersClient(object):
                 "locality", None),
             administrative_division=kwargs.pop(
                 "administrative_division", None),
+            **kwargs
+        )
+
+    @distributed_trace
+    def search_operator_information(
+            self,
+            phone_numbers,  # type: Union [ str, List[str] ]
+            options:Optional[OperatorInformationOptions]=None, #type: OperatorInformationOptions
+            **kwargs  # type: Any
+    ) -> OperatorInformationResult:
+        """Searches for operator information for a given list of phone numbers.
+
+        :param phone_numbers: The phone number(s) whose operator information should be searched
+        :type phone_numbers: str or list[str]
+        :param options: Options to modify the search.  Please note: use of options can affect the cost of the search.
+        :type options: OperatorInformationOptions
+        :return: A search result containing operator information associated with the requested phone numbers
+        :rtype: ~azure.communication.phonenumbers.models.OperatorInformationResult
+        """
+        if not isinstance(phone_numbers, list):
+            phone_numbers = [ phone_numbers ]
+        if options is None:
+            options = OperatorInformationOptions(include_additional_operator_details=False)
+        request = OperatorInformationRequest(phone_numbers = phone_numbers, options = options)
+        return self._phone_number_client.phone_numbers.operator_information_search(
+            request,
             **kwargs
         )
 

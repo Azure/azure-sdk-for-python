@@ -13,4 +13,8 @@ TextTranslationPreparer = functools.partial(
     text_translation_custom_endpoint="https://fakeCustomEndpoint.cognitiveservices.azure.com",
     text_translation_apikey="fakeapikey",
     text_translation_region="fakeregion",
+    text_translation_aadClientId="fakeAADClientId",
+    text_translation_aadTenantId="fakeAADTenantId",
+    text_translation_aadSecret="fakeAADSecret",
+    text_translation_aadResourceId="fakeResourceId"
 )

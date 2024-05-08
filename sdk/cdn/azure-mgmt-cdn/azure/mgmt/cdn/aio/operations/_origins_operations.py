@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -77,7 +77,6 @@ class OriginsOperations:
         :param endpoint_name: Name of the endpoint under the profile which is unique globally.
          Required.
         :type endpoint_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Origin or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cdn.models.Origin]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -99,18 +98,17 @@ class OriginsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_endpoint_request(
+                _request = build_list_by_endpoint_request(
                     resource_group_name=resource_group_name,
                     profile_name=profile_name,
                     endpoint_name=endpoint_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_endpoint.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -122,13 +120,13 @@ class OriginsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("OriginListResult", pipeline_response)
@@ -138,11 +136,11 @@ class OriginsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -154,10 +152,6 @@ class OriginsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_endpoint.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins"
-    }
 
     @distributed_trace_async
     async def get(
@@ -175,7 +169,6 @@ class OriginsOperations:
         :type endpoint_name: str
         :param origin_name: Name of the origin which is unique within the endpoint. Required.
         :type origin_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Origin or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.Origin
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -194,23 +187,22 @@ class OriginsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.Origin] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
             origin_name=origin_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -223,13 +215,9 @@ class OriginsOperations:
         deserialized = self._deserialize("Origin", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins/{originName}"
-    }
+        return deserialized  # type: ignore
 
     async def _create_initial(
         self,
@@ -237,7 +225,7 @@ class OriginsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_name: str,
-        origin: Union[_models.Origin, IO],
+        origin: Union[_models.Origin, IO[bytes]],
         **kwargs: Any
     ) -> _models.Origin:
         error_map = {
@@ -263,7 +251,7 @@ class OriginsOperations:
         else:
             _json = self._serialize.body(origin, "Origin")
 
-        request = build_create_request(
+        _request = build_create_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
@@ -273,16 +261,15 @@ class OriginsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -308,10 +295,6 @@ class OriginsOperations:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins/{originName}"
-    }
 
     @overload
     async def begin_create(
@@ -342,14 +325,6 @@ class OriginsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Origin or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Origin]
@@ -363,7 +338,7 @@ class OriginsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_name: str,
-        origin: IO,
+        origin: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -381,18 +356,10 @@ class OriginsOperations:
         :param origin_name: Name of the origin that is unique within the endpoint. Required.
         :type origin_name: str
         :param origin: Origin properties. Required.
-        :type origin: IO
+        :type origin: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Origin or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Origin]
@@ -406,7 +373,7 @@ class OriginsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_name: str,
-        origin: Union[_models.Origin, IO],
+        origin: Union[_models.Origin, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Origin]:
         """Creates a new origin within the specified endpoint.
@@ -421,19 +388,8 @@ class OriginsOperations:
         :type endpoint_name: str
         :param origin_name: Name of the origin that is unique within the endpoint. Required.
         :type origin_name: str
-        :param origin: Origin properties. Is either a Origin type or a IO type. Required.
-        :type origin: ~azure.mgmt.cdn.models.Origin or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param origin: Origin properties. Is either a Origin type or a IO[bytes] type. Required.
+        :type origin: ~azure.mgmt.cdn.models.Origin or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either Origin or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Origin]
@@ -467,7 +423,7 @@ class OriginsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Origin", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -477,17 +433,15 @@ class OriginsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.Origin].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins/{originName}"
-    }
+        return AsyncLROPoller[_models.Origin](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _update_initial(
         self,
@@ -495,7 +449,7 @@ class OriginsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_name: str,
-        origin_update_properties: Union[_models.OriginUpdateParameters, IO],
+        origin_update_properties: Union[_models.OriginUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Origin:
         error_map = {
@@ -521,7 +475,7 @@ class OriginsOperations:
         else:
             _json = self._serialize.body(origin_update_properties, "OriginUpdateParameters")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
@@ -531,16 +485,15 @@ class OriginsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -563,10 +516,6 @@ class OriginsOperations:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
-
-    _update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins/{originName}"
-    }
 
     @overload
     async def begin_update(
@@ -597,14 +546,6 @@ class OriginsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Origin or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Origin]
@@ -618,7 +559,7 @@ class OriginsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_name: str,
-        origin_update_properties: IO,
+        origin_update_properties: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -636,18 +577,10 @@ class OriginsOperations:
         :param origin_name: Name of the origin which is unique within the endpoint. Required.
         :type origin_name: str
         :param origin_update_properties: Origin properties. Required.
-        :type origin_update_properties: IO
+        :type origin_update_properties: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Origin or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Origin]
@@ -661,7 +594,7 @@ class OriginsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_name: str,
-        origin_update_properties: Union[_models.OriginUpdateParameters, IO],
+        origin_update_properties: Union[_models.OriginUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Origin]:
         """Updates an existing origin within an endpoint.
@@ -677,19 +610,8 @@ class OriginsOperations:
         :param origin_name: Name of the origin which is unique within the endpoint. Required.
         :type origin_name: str
         :param origin_update_properties: Origin properties. Is either a OriginUpdateParameters type or
-         a IO type. Required.
-        :type origin_update_properties: ~azure.mgmt.cdn.models.OriginUpdateParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         a IO[bytes] type. Required.
+        :type origin_update_properties: ~azure.mgmt.cdn.models.OriginUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either Origin or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Origin]
@@ -723,7 +645,7 @@ class OriginsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Origin", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -733,17 +655,15 @@ class OriginsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.Origin].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins/{originName}"
-    }
+        return AsyncLROPoller[_models.Origin](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, profile_name: str, endpoint_name: str, origin_name: str, **kwargs: Any
@@ -762,23 +682,22 @@ class OriginsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
             origin_name=origin_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -793,11 +712,7 @@ class OriginsOperations:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins/{originName}"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(
@@ -815,14 +730,6 @@ class OriginsOperations:
         :type endpoint_name: str
         :param origin_name: Name of the origin which is unique within the endpoint. Required.
         :type origin_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -851,7 +758,7 @@ class OriginsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -860,14 +767,10 @@ class OriginsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins/{originName}"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

@@ -169,8 +169,6 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             If dest is a file path, a new file will be created.
             If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
-        :keyword kwargs: Additional arguments to pass to the YAML serializer.
-        :paramtype kwargs: dict
         :raises FileExistsError: Raised if dest is a file path and the file already exists.
         :raises IOError: Raised if dest is an open file and the file is not writable.
         """
@@ -260,8 +258,6 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         :param params_override: Fields to overwrite on top of the yaml file.
             Format is [{"field1": "value1"}, {"field2": "value2"}], defaults to None
         :type params_override: List[Dict]
-        :keyword kwargs: A dictionary of additional configuration parameters.
-        :paramtype kwargs: dict
         :raises Exception: An exception
         :return: Loaded job object.
         :rtype: Job
@@ -335,14 +331,13 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
                 no_personal_data_message=f"Unable to parse a job resource of type:{type(obj).__name__}",
                 error_category=ErrorCategory.SYSTEM_ERROR,
             ) from ex
-        else:
-            msg = f"Unsupported job type {obj.properties.job_type}"
-            raise JobException(
-                message=msg,
-                no_personal_data_message=msg,
-                target=ErrorTarget.JOB,
-                error_category=ErrorCategory.SYSTEM_ERROR,
-            )
+        msg = f"Unsupported job type {obj.properties.job_type}"
+        raise JobException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.JOB,
+            error_category=ErrorCategory.SYSTEM_ERROR,
+        )
 
     def _get_telemetry_values(self) -> Dict:  # pylint: disable=arguments-differ
         telemetry_values = {"type": self.type}

@@ -601,15 +601,15 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
             assert temp["conditions"] == set_flag_value["conditions"]
 
             changed_flag.value = json.dumps({})
-            assert changed_flag.enabled == None
+            assert changed_flag.enabled == False
             temp = json.loads(changed_flag.value)
             assert temp["id"] == set_flag_value["id"]
-            assert temp["enabled"] == None
+            assert temp["enabled"] == False
             assert temp["conditions"] != None
             assert temp["conditions"]["client_filters"] == None
 
             set_flag.value = "bad_value"
-            assert set_flag.enabled == None
+            assert set_flag.enabled == False
             assert set_flag.filters == None
             assert set_flag.value == "bad_value"
 

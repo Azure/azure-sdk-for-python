@@ -96,7 +96,7 @@ class TestAppConfigurationConsistency(AppConfigTestCase):
         set_flag = client.set_configuration_setting(feature_flag)
 
         set_flag.value = "hello world"
-        assert set_flag.enabled == None
+        assert set_flag.enabled == False
         assert set_flag.filters == None
         client.delete_configuration_setting(feature_flag)
 

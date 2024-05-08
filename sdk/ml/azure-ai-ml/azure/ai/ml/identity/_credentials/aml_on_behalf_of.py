@@ -40,7 +40,7 @@ class AzureMLOnBehalfOfCredential(object):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :rtype: ~azure.core.credentials.AccessToken
         :return: AzureML On behalf of credentials isn't available in the hosting environment
         :raises: ~azure.ai.ml.identity.CredentialUnavailableError
         """

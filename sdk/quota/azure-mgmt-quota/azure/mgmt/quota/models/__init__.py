@@ -6,71 +6,197 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import AdditionalAttributes
+from ._models_py3 import AdditionalAttributesPatch
+from ._models_py3 import AllocatedQuotaToSubscriptionList
+from ._models_py3 import AllocatedToSubscription
+from ._models_py3 import BillingAccountId
 from ._models_py3 import CommonResourceProperties
 from ._models_py3 import CreateGenericQuotaRequestParameters
 from ._models_py3 import CurrentQuotaLimitBase
 from ._models_py3 import CurrentUsagesBase
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
 from ._models_py3 import ExceptionResponse
+from ._models_py3 import GroupQuotaDetails
+from ._models_py3 import GroupQuotaDetailsName
+from ._models_py3 import GroupQuotaLimit
+from ._models_py3 import GroupQuotaLimitList
+from ._models_py3 import GroupQuotaList
+from ._models_py3 import GroupQuotaRequestBase
+from ._models_py3 import GroupQuotaRequestBaseProperties
+from ._models_py3 import GroupQuotaRequestBasePropertiesName
+from ._models_py3 import GroupQuotaSubscriptionId
+from ._models_py3 import GroupQuotaSubscriptionIdList
+from ._models_py3 import GroupQuotaSubscriptionIdProperties
+from ._models_py3 import GroupQuotaSubscriptionRequestStatus
+from ._models_py3 import GroupQuotaSubscriptionRequestStatusList
+from ._models_py3 import GroupQuotaSubscriptionRequestStatusProperties
+from ._models_py3 import GroupQuotaUsagesBase
+from ._models_py3 import GroupQuotaUsagesBaseName
+from ._models_py3 import GroupQuotasEnforcementListResponse
+from ._models_py3 import GroupQuotasEnforcementResponse
+from ._models_py3 import GroupQuotasEnforcementResponseProperties
+from ._models_py3 import GroupQuotasEntity
+from ._models_py3 import GroupQuotasEntityBase
+from ._models_py3 import GroupQuotasEntityBasePatch
+from ._models_py3 import GroupQuotasEntityPatch
+from ._models_py3 import GroupingId
+from ._models_py3 import LROResponse
+from ._models_py3 import LROResponseProperties
 from ._models_py3 import LimitJsonObject
 from ._models_py3 import LimitObject
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationList
 from ._models_py3 import OperationResponse
+from ._models_py3 import ProxyResource
+from ._models_py3 import QuotaAllocationRequestBase
+from ._models_py3 import QuotaAllocationRequestBaseProperties
+from ._models_py3 import QuotaAllocationRequestBasePropertiesName
+from ._models_py3 import QuotaAllocationRequestStatus
+from ._models_py3 import QuotaAllocationRequestStatusList
+from ._models_py3 import QuotaAllocationRequestStatusProperties
 from ._models_py3 import QuotaLimits
 from ._models_py3 import QuotaLimitsResponse
 from ._models_py3 import QuotaProperties
 from ._models_py3 import QuotaRequestDetails
 from ._models_py3 import QuotaRequestDetailsList
+from ._models_py3 import QuotaRequestOneResourceProperties
 from ._models_py3 import QuotaRequestOneResourceSubmitResponse
 from ._models_py3 import QuotaRequestProperties
+from ._models_py3 import QuotaRequestStatusDetails
 from ._models_py3 import QuotaRequestSubmitResponse
 from ._models_py3 import QuotaRequestSubmitResponse202
+from ._models_py3 import Resource
+from ._models_py3 import ResourceBaseRequest
 from ._models_py3 import ResourceName
+from ._models_py3 import ResourceUsageList
+from ._models_py3 import ResourceUsages
 from ._models_py3 import ServiceError
 from ._models_py3 import ServiceErrorDetail
 from ._models_py3 import SubRequest
+from ._models_py3 import SubmittedResourceRequestStatus
+from ._models_py3 import SubmittedResourceRequestStatusList
+from ._models_py3 import SubmittedResourceRequestStatusProperties
+from ._models_py3 import SubscriptionGroupQuotaAssignment
+from ._models_py3 import SubscriptionQuotaAllocationRequestList
+from ._models_py3 import SubscriptionQuotaAllocations
+from ._models_py3 import SubscriptionQuotaAllocationsList
+from ._models_py3 import SubscriptionQuotaAllocationsStatusList
+from ._models_py3 import SubscriptionQuotaDetails
+from ._models_py3 import SubscriptionQuotaDetailsName
+from ._models_py3 import SystemData
 from ._models_py3 import UsagesLimits
 from ._models_py3 import UsagesObject
 from ._models_py3 import UsagesProperties
 
+from ._quota_mgmt_client_enums import CreatedByType
+from ._quota_mgmt_client_enums import EnforcementState
+from ._quota_mgmt_client_enums import EnvironmentType
+from ._quota_mgmt_client_enums import GroupingIdType
 from ._quota_mgmt_client_enums import LimitType
 from ._quota_mgmt_client_enums import QuotaLimitTypes
 from ._quota_mgmt_client_enums import QuotaRequestState
+from ._quota_mgmt_client_enums import RequestState
 from ._quota_mgmt_client_enums import UsagesTypes
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AdditionalAttributes",
+    "AdditionalAttributesPatch",
+    "AllocatedQuotaToSubscriptionList",
+    "AllocatedToSubscription",
+    "BillingAccountId",
     "CommonResourceProperties",
     "CreateGenericQuotaRequestParameters",
     "CurrentQuotaLimitBase",
     "CurrentUsagesBase",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
     "ExceptionResponse",
+    "GroupQuotaDetails",
+    "GroupQuotaDetailsName",
+    "GroupQuotaLimit",
+    "GroupQuotaLimitList",
+    "GroupQuotaList",
+    "GroupQuotaRequestBase",
+    "GroupQuotaRequestBaseProperties",
+    "GroupQuotaRequestBasePropertiesName",
+    "GroupQuotaSubscriptionId",
+    "GroupQuotaSubscriptionIdList",
+    "GroupQuotaSubscriptionIdProperties",
+    "GroupQuotaSubscriptionRequestStatus",
+    "GroupQuotaSubscriptionRequestStatusList",
+    "GroupQuotaSubscriptionRequestStatusProperties",
+    "GroupQuotaUsagesBase",
+    "GroupQuotaUsagesBaseName",
+    "GroupQuotasEnforcementListResponse",
+    "GroupQuotasEnforcementResponse",
+    "GroupQuotasEnforcementResponseProperties",
+    "GroupQuotasEntity",
+    "GroupQuotasEntityBase",
+    "GroupQuotasEntityBasePatch",
+    "GroupQuotasEntityPatch",
+    "GroupingId",
+    "LROResponse",
+    "LROResponseProperties",
     "LimitJsonObject",
     "LimitObject",
     "OperationDisplay",
     "OperationList",
     "OperationResponse",
+    "ProxyResource",
+    "QuotaAllocationRequestBase",
+    "QuotaAllocationRequestBaseProperties",
+    "QuotaAllocationRequestBasePropertiesName",
+    "QuotaAllocationRequestStatus",
+    "QuotaAllocationRequestStatusList",
+    "QuotaAllocationRequestStatusProperties",
     "QuotaLimits",
     "QuotaLimitsResponse",
     "QuotaProperties",
     "QuotaRequestDetails",
     "QuotaRequestDetailsList",
+    "QuotaRequestOneResourceProperties",
     "QuotaRequestOneResourceSubmitResponse",
     "QuotaRequestProperties",
+    "QuotaRequestStatusDetails",
     "QuotaRequestSubmitResponse",
     "QuotaRequestSubmitResponse202",
+    "Resource",
+    "ResourceBaseRequest",
     "ResourceName",
+    "ResourceUsageList",
+    "ResourceUsages",
     "ServiceError",
     "ServiceErrorDetail",
     "SubRequest",
+    "SubmittedResourceRequestStatus",
+    "SubmittedResourceRequestStatusList",
+    "SubmittedResourceRequestStatusProperties",
+    "SubscriptionGroupQuotaAssignment",
+    "SubscriptionQuotaAllocationRequestList",
+    "SubscriptionQuotaAllocations",
+    "SubscriptionQuotaAllocationsList",
+    "SubscriptionQuotaAllocationsStatusList",
+    "SubscriptionQuotaDetails",
+    "SubscriptionQuotaDetailsName",
+    "SystemData",
     "UsagesLimits",
     "UsagesObject",
     "UsagesProperties",
+    "CreatedByType",
+    "EnforcementState",
+    "EnvironmentType",
+    "GroupingIdType",
     "LimitType",
     "QuotaLimitTypes",
     "QuotaRequestState",
+    "RequestState",
     "UsagesTypes",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

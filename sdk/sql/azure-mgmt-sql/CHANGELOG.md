@@ -1,5 +1,32 @@
 # Release History
 
+## 4.0.0b16 (2024-04-07)
+
+### Features Added
+
+  - Added operation DistributedAvailabilityGroupsOperations.begin_failover
+  - Added operation DistributedAvailabilityGroupsOperations.begin_set_role
+  - Model DistributedAvailabilityGroup has a new parameter databases
+  - Model DistributedAvailabilityGroup has a new parameter distributed_availability_group_name
+  - Model DistributedAvailabilityGroup has a new parameter failover_mode
+  - Model DistributedAvailabilityGroup has a new parameter instance_availability_group_name
+  - Model DistributedAvailabilityGroup has a new parameter instance_link_role
+  - Model DistributedAvailabilityGroup has a new parameter partner_availability_group_name
+  - Model DistributedAvailabilityGroup has a new parameter partner_endpoint
+  - Model DistributedAvailabilityGroup has a new parameter partner_link_role
+  - Model DistributedAvailabilityGroup has a new parameter seeding_mode
+
+### Breaking Changes
+
+  - Model DistributedAvailabilityGroup no longer has parameter last_hardened_lsn
+  - Model DistributedAvailabilityGroup no longer has parameter link_state
+  - Model DistributedAvailabilityGroup no longer has parameter primary_availability_group_name
+  - Model DistributedAvailabilityGroup no longer has parameter secondary_availability_group_name
+  - Model DistributedAvailabilityGroup no longer has parameter source_endpoint
+  - Model DistributedAvailabilityGroup no longer has parameter source_replica_id
+  - Model DistributedAvailabilityGroup no longer has parameter target_database
+  - Model DistributedAvailabilityGroup no longer has parameter target_replica_id
+
 ## 4.0.0b15 (2024-01-11)
 
 ### Features Added

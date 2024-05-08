@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0 (2024-02-01)
+## 1.0.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0 (2024-03-25)
 
 This is the GA release of Azure Communication Messages Python SDK. For more information, please see the [README][read_me].
 

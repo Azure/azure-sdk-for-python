@@ -6,9 +6,11 @@ This page describes how to mark a package deprecated on PyPI. You likely need to
 they shouldn't use the package you used to release anymore.
 
 The overall idea is that PyPI do not support an official deprecation logic. We concluded that the best way was:
-- Change the classifier as Inactive, to showcase in metadata that this package is longer worked on
-- Add a disclaimer on the main Readme file to explain deprecation, and guide to migration guide to other package as necessary
-- Push a [post release](https://peps.python.org/pep-0440/#post-releases) to PyPI
+- Change the classifier as `Inactive`, to showcase in metadata that this package is longer worked on
+- Add a disclaimer on the main Readme file to explain deprecation, and guide to migration guide to other package as necessary. While a migration guide should always be written, you may decide to postpone this work based on downloads numbers (found on [pypistats](https://pypistats.org/), [pype.tech](https://www.pepy.tech/), etc.) and internal knowledge of the usage of the package.
+- Push a new release to PyPI
+
+**Important Note**: The best versioning approach would be to do a [post release](https://peps.python.org/pep-0440/#post-releases). However, due to some tooling issues at the moment, currently version should be the next beta, or the next patch version ([example](https://github.com/Azure/azure-sdk-for-python/commit/cf3bfed65a65fcbb4b5c93db89a221c2959c5bb4)). Follow those issues for details https://github.com/Azure/azure-sdk/issues/7479 and https://github.com/Azure/azure-sdk-tools/issues/5916.
 
 # Step 1: Update in the repository
 
@@ -19,15 +21,23 @@ Clone the repository and udpate the following files of your package:
    >
    > For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/my-new-package).
 
-- `CHANGELOG.MD` add a new post version with the current date, and the same disclaimer. For instance
+- `CHANGELOG.MD` add a new version with the current date, and the same disclaimer. For instance
 
    > ## 1.2.3.post1 (2023-03-31)
    >
    > This package is no longer being maintained. Use the [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/) package instead.
    >
    > For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/my-new-package).
+   
+   or
 
-- `azure/mypackage/_version.py` : Change the version to the one used in the changelog (for instance `"1.2.3.post1"`). This file may be called `version.py` if your package is very old.
+   > ## 1.2.4 (2023-03-31)
+   >
+   > This package is no longer being maintained. Use the [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/) package instead.
+   >
+   > For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/my-new-package).
+
+- `azure/mypackage/_version.py` : Change the version to the one used in the changelog (for instance `"1.2.3.post1"` or `"1.2.4"`). This file may be called `version.py` if your package is very old.
 - `sdk_packaging.toml` : You need to add `auto_update = false` if not already present to avoid the bot overriding your changes
 - `setup.py` change the `Development Status` classifier to `Development Status :: 7 - Inactive`. **Important: This needs to be your LAST commit on the PR. More on this at the bottom of this page if you want details.**.
 
@@ -44,5 +54,5 @@ Once the PR is merged, move to the next step.
 
 A release here is the same as usual, triggering the release pipeline of you SDK. More instruction can be found at: https://aka.ms/azsdk/release-checklist
 
-**Important Note**: As CI don't build Inactive projects right now, you can't build and release. This is a classical chicken and egg problem: we don't want to lose time on testing Inactive projects, but you need at least have one run of build to release the Inactive project. It's important then to pass the variable "BUILD_INACTIVE=true" while triggering the release pipeline. But doing this may uncover issues that were not seen in your initial PR as the CI was disabled. To avoid most of those problems, it's highly recommended that you put the commit with "Inactive" LAST in your PR. In other words, push all changes to Readme and ChangeLog, wait to confirm the CI is green, and when everything is clean, push finally "Inactive" in the `setup.py`
+**Important Note**: As CI don't build Inactive projects right now, you can't build and release. This is a classical chicken and egg problem: we don't want to lose time on testing Inactive projects, but you need at least have one run of build to release the Inactive project. It's important then to pass the variable `"BUILD_INACTIVE=true"` while triggering the release pipeline. But doing this may uncover issues that were not seen in your initial PR as the CI was disabled. To avoid most of those problems, it's highly recommended that you put the commit with "Inactive" LAST in your PR. In other words, push all changes to Readme and ChangeLog, wait to confirm the CI is green, and when everything is clean, push finally "Inactive" in the `setup.py`
 

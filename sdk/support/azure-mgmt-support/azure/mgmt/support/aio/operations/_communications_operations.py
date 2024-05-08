@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -80,7 +80,6 @@ class CommunicationsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityOutput or the result of cls(response)
         :rtype: ~azure.mgmt.support.models.CheckNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -90,7 +89,7 @@ class CommunicationsOperations:
     async def check_name_availability(
         self,
         support_ticket_name: str,
-        check_name_availability_input: IO,
+        check_name_availability_input: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -101,11 +100,10 @@ class CommunicationsOperations:
         :param support_ticket_name: Support ticket name. Required.
         :type support_ticket_name: str
         :param check_name_availability_input: Input to check. Required.
-        :type check_name_availability_input: IO
+        :type check_name_availability_input: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityOutput or the result of cls(response)
         :rtype: ~azure.mgmt.support.models.CheckNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -115,7 +113,7 @@ class CommunicationsOperations:
     async def check_name_availability(
         self,
         support_ticket_name: str,
-        check_name_availability_input: Union[_models.CheckNameAvailabilityInput, IO],
+        check_name_availability_input: Union[_models.CheckNameAvailabilityInput, IO[bytes]],
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityOutput:
         """Check the availability of a resource name. This API should be used to check the uniqueness of
@@ -124,13 +122,9 @@ class CommunicationsOperations:
         :param support_ticket_name: Support ticket name. Required.
         :type support_ticket_name: str
         :param check_name_availability_input: Input to check. Is either a CheckNameAvailabilityInput
-         type or a IO type. Required.
+         type or a IO[bytes] type. Required.
         :type check_name_availability_input: ~azure.mgmt.support.models.CheckNameAvailabilityInput or
-         IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         IO[bytes]
         :return: CheckNameAvailabilityOutput or the result of cls(response)
         :rtype: ~azure.mgmt.support.models.CheckNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -158,23 +152,22 @@ class CommunicationsOperations:
         else:
             _json = self._serialize.body(check_name_availability_input, "CheckNameAvailabilityInput")
 
-        request = build_check_name_availability_request(
+        _request = build_check_name_availability_request(
             support_ticket_name=support_ticket_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.check_name_availability.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -187,13 +180,9 @@ class CommunicationsOperations:
         deserialized = self._deserialize("CheckNameAvailabilityOutput", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_name_availability.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Support/supportTickets/{supportTicketName}/checkNameAvailability"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list(
@@ -218,7 +207,6 @@ class CommunicationsOperations:
          CommunicationType and CreatedDate filters by Logical And ('and') operator. Default value is
          None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CommunicationDetails or the result of
          cls(response)
         :rtype:
@@ -242,18 +230,17 @@ class CommunicationsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     support_ticket_name=support_ticket_name,
                     subscription_id=self._config.subscription_id,
                     top=top,
                     filter=filter,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -265,13 +252,13 @@ class CommunicationsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("CommunicationsListResult", pipeline_response)
@@ -281,11 +268,11 @@ class CommunicationsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -298,10 +285,6 @@ class CommunicationsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Support/supportTickets/{supportTicketName}/communications"
-    }
-
     @distributed_trace_async
     async def get(
         self, support_ticket_name: str, communication_name: str, **kwargs: Any
@@ -312,7 +295,6 @@ class CommunicationsOperations:
         :type support_ticket_name: str
         :param communication_name: Communication name. Required.
         :type communication_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CommunicationDetails or the result of cls(response)
         :rtype: ~azure.mgmt.support.models.CommunicationDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -331,21 +313,20 @@ class CommunicationsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.CommunicationDetails] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             support_ticket_name=support_ticket_name,
             communication_name=communication_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -358,19 +339,15 @@ class CommunicationsOperations:
         deserialized = self._deserialize("CommunicationDetails", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Support/supportTickets/{supportTicketName}/communications/{communicationName}"
-    }
+        return deserialized  # type: ignore
 
     async def _create_initial(
         self,
         support_ticket_name: str,
         communication_name: str,
-        create_communication_parameters: Union[_models.CommunicationDetails, IO],
+        create_communication_parameters: Union[_models.CommunicationDetails, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.CommunicationDetails]:
         error_map = {
@@ -396,7 +373,7 @@ class CommunicationsOperations:
         else:
             _json = self._serialize.body(create_communication_parameters, "CommunicationDetails")
 
-        request = build_create_request(
+        _request = build_create_request(
             support_ticket_name=support_ticket_name,
             communication_name=communication_name,
             subscription_id=self._config.subscription_id,
@@ -404,16 +381,15 @@ class CommunicationsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -428,13 +404,9 @@ class CommunicationsOperations:
             deserialized = self._deserialize("CommunicationDetails", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _create_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Support/supportTickets/{supportTicketName}/communications/{communicationName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def begin_create(
@@ -457,14 +429,6 @@ class CommunicationsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either CommunicationDetails or the result
          of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.support.models.CommunicationDetails]
@@ -476,7 +440,7 @@ class CommunicationsOperations:
         self,
         support_ticket_name: str,
         communication_name: str,
-        create_communication_parameters: IO,
+        create_communication_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -488,18 +452,10 @@ class CommunicationsOperations:
         :param communication_name: Communication name. Required.
         :type communication_name: str
         :param create_communication_parameters: Communication object. Required.
-        :type create_communication_parameters: IO
+        :type create_communication_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either CommunicationDetails or the result
          of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.support.models.CommunicationDetails]
@@ -511,7 +467,7 @@ class CommunicationsOperations:
         self,
         support_ticket_name: str,
         communication_name: str,
-        create_communication_parameters: Union[_models.CommunicationDetails, IO],
+        create_communication_parameters: Union[_models.CommunicationDetails, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CommunicationDetails]:
         """Adds a new customer communication to an Azure support ticket.
@@ -521,19 +477,9 @@ class CommunicationsOperations:
         :param communication_name: Communication name. Required.
         :type communication_name: str
         :param create_communication_parameters: Communication object. Is either a CommunicationDetails
-         type or a IO type. Required.
-        :type create_communication_parameters: ~azure.mgmt.support.models.CommunicationDetails or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         type or a IO[bytes] type. Required.
+        :type create_communication_parameters: ~azure.mgmt.support.models.CommunicationDetails or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns either CommunicationDetails or the result
          of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.support.models.CommunicationDetails]
@@ -565,7 +511,7 @@ class CommunicationsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("CommunicationDetails", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -578,14 +524,12 @@ class CommunicationsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.CommunicationDetails].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Support/supportTickets/{supportTicketName}/communications/{communicationName}"
-    }
+        return AsyncLROPoller[_models.CommunicationDetails](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )

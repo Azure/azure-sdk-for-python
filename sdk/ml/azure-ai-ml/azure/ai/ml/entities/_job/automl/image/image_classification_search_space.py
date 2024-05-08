@@ -363,13 +363,13 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
             early_stopping=obj.early_stopping if hasattr(obj, "early_stopping") else None,
             early_stopping_delay=obj.early_stopping_delay if hasattr(obj, "early_stopping_delay") else None,
             early_stopping_patience=obj.early_stopping_patience if hasattr(obj, "early_stopping_patience") else None,
-            enable_onnx_normalization=obj.enable_onnx_normalization
-            if hasattr(obj, "enable_onnx_normalization")
-            else None,
+            enable_onnx_normalization=(
+                obj.enable_onnx_normalization if hasattr(obj, "enable_onnx_normalization") else None
+            ),
             evaluation_frequency=obj.evaluation_frequency if hasattr(obj, "evaluation_frequency") else None,
-            gradient_accumulation_step=obj.gradient_accumulation_step
-            if hasattr(obj, "gradient_accumulation_step")
-            else None,
+            gradient_accumulation_step=(
+                obj.gradient_accumulation_step if hasattr(obj, "gradient_accumulation_step") else None
+            ),
             layers_to_freeze=obj.layers_to_freeze if hasattr(obj, "layers_to_freeze") else None,
             learning_rate=obj.learning_rate if hasattr(obj, "learning_rate") else None,
             learning_rate_scheduler=obj.learning_rate_scheduler if hasattr(obj, "learning_rate_scheduler") else None,
@@ -385,9 +385,9 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
             training_batch_size=obj.training_batch_size if hasattr(obj, "training_batch_size") else None,
             validation_batch_size=obj.validation_batch_size if hasattr(obj, "validation_batch_size") else None,
             warmup_cosine_lr_cycles=obj.warmup_cosine_lr_cycles if hasattr(obj, "warmup_cosine_lr_cycles") else None,
-            warmup_cosine_lr_warmup_epochs=obj.warmup_cosine_lr_warmup_epochs
-            if hasattr(obj, "warmup_cosine_lr_warmup_epochs")
-            else None,
+            warmup_cosine_lr_warmup_epochs=(
+                obj.warmup_cosine_lr_warmup_epochs if hasattr(obj, "warmup_cosine_lr_warmup_epochs") else None
+            ),
             weight_decay=obj.weight_decay if hasattr(obj, "weight_decay") else None,
             training_crop_size=obj.training_crop_size if hasattr(obj, "training_crop_size") else None,
             validation_crop_size=obj.validation_crop_size if hasattr(obj, "validation_crop_size") else None,

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -42,7 +42,7 @@ def build_create_chat_thread_request(*, repeatability_request_id: Optional[str] 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-07"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-07"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -70,7 +70,7 @@ def build_list_chat_threads_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-07"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-07"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -93,7 +93,7 @@ def build_delete_chat_thread_request(chat_thread_id: str, **kwargs: Any) -> Http
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-07"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-07"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -157,7 +157,6 @@ class ChatOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CreateChatThreadResult or the result of cls(response)
         :rtype: ~azure.communication.chat.models.CreateChatThreadResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -166,7 +165,7 @@ class ChatOperations:
     @overload
     def create_chat_thread(
         self,
-        create_chat_thread_request: IO,
+        create_chat_thread_request: IO[bytes],
         repeatability_request_id: Optional[str] = None,
         *,
         content_type: str = "application/json",
@@ -177,7 +176,7 @@ class ChatOperations:
         Creates a chat thread.
 
         :param create_chat_thread_request: Request payload for creating a chat thread. Required.
-        :type create_chat_thread_request: IO
+        :type create_chat_thread_request: IO[bytes]
         :param repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
          Repeatability-Request-Id and get back an appropriate response without the server executing the
@@ -188,7 +187,6 @@ class ChatOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CreateChatThreadResult or the result of cls(response)
         :rtype: ~azure.communication.chat.models.CreateChatThreadResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -197,7 +195,7 @@ class ChatOperations:
     @distributed_trace
     def create_chat_thread(
         self,
-        create_chat_thread_request: Union[_models.CreateChatThreadRequest, IO],
+        create_chat_thread_request: Union[_models.CreateChatThreadRequest, IO[bytes]],
         repeatability_request_id: Optional[str] = None,
         **kwargs: Any
     ) -> _models.CreateChatThreadResult:
@@ -206,9 +204,9 @@ class ChatOperations:
         Creates a chat thread.
 
         :param create_chat_thread_request: Request payload for creating a chat thread. Is either a
-         CreateChatThreadRequest type or a IO type. Required.
+         CreateChatThreadRequest type or a IO[bytes] type. Required.
         :type create_chat_thread_request: ~azure.communication.chat.models.CreateChatThreadRequest or
-         IO
+         IO[bytes]
         :param repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
          Repeatability-Request-Id and get back an appropriate response without the server executing the
@@ -216,10 +214,6 @@ class ChatOperations:
          representing a client-generated, globally unique for all time, identifier for the request. It
          is recommended to use version 4 (random) UUIDs. Default value is None.
         :type repeatability_request_id: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CreateChatThreadResult or the result of cls(response)
         :rtype: ~azure.communication.chat.models.CreateChatThreadResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -281,7 +275,7 @@ class ChatOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
             raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("CreateChatThreadResult", pipeline_response)
@@ -305,7 +299,6 @@ class ChatOperations:
         :param start_time: The earliest point in time to get chat threads up to. The timestamp should
          be in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``. Default value is None.
         :type start_time: ~datetime.datetime
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ChatThreadItem or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.models.ChatThreadItem]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -393,7 +386,7 @@ class ChatOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -410,7 +403,6 @@ class ChatOperations:
 
         :param chat_thread_id: Id of the thread to be deleted. Required.
         :type chat_thread_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -460,7 +452,7 @@ class ChatOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
             raise HttpResponseError(response=response)
 
         if cls:

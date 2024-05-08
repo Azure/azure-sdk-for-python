@@ -1,5 +1,11 @@
 # Release History
 
+## 12.0.0 (2024-03-18)
+
+### Breaking Changes
+
+  - Model VolumeGroupMetaData no longer has parameter deployment_spec_id
+
 ## 12.0.0b1 (2023-12-22)
 
 ### Features Added

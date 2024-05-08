@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines, invalid-overridden-method
+# pylint: disable=too-many-lines, invalid-overridden-method, docstring-keyword-should-match-keyword-only
 
 import functools
 import warnings
@@ -208,6 +208,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
+        :returns: The renamed container.
         :rtype: ~azure.storage.blob.ContainerClient
         """
         lease = kwargs.pop('lease', None)
@@ -461,6 +462,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: Container-updated property dict (Etag and last modified).
+        :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 
@@ -852,6 +854,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
 
         :param str name: The blob with which to interact.
         :param data: The blob data to upload.
+        :type data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]]
         :param ~azure.storage.blob.BlobType blob_type: The type of the blob. This can be
             either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
         :param int length:

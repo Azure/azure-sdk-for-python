@@ -35,7 +35,7 @@ class RoomsClient(object):
     param Union[TokenCredential, AzureKeyCredential] credential:
         The access key we use to authenticate against the service.
     :keyword api_version: Azure Communication Rooms API version.
-        Default value is "2023-10-30-preview".
+        Default value is "2024-04-15".
         Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """

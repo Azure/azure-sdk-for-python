@@ -37,8 +37,8 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
     :keyword int parent_window_handle: If your app is a GUI app running on a modern Windows system, you are required to
         also provide its window handle so that the sign in UI window will properly pop up on top of your window.
-    :keyword bool use_default_broker_account: Whether to authenticate with the currently signed in user instead of
-        prompting the user with a login dialog. Defaults to False.
+    :keyword bool use_default_broker_account: Enables automatically using the default broker account for
+        authentication instead of prompting the user with an account picker. Defaults to False.
     :keyword bool enable_msa_passthrough: Determines whether Microsoft Account (MSA) passthrough is enabled. Note, this
         is only needed for select legacy first-party applications. Defaults to False.
     :keyword bool disable_instance_discovery: Determines whether or not instance discovery is performed when attempting

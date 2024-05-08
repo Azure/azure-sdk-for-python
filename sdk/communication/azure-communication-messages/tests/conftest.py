@@ -52,7 +52,8 @@ def start_proxy(test_proxy):
         add_general_string_sanitizer(target=resource_name, value="sanitized")
         add_general_regex_sanitizer(regex=connection_str, value=FAKE_CONNECTION_STRING)
         add_general_regex_sanitizer(regex=endpoint, value=FAKE_ENDPOINT)
-
+            
+    add_general_string_sanitizer(target="8f8c29b2-c2e4-4340-bb28-3009c8a57283", value="sanitized")
     add_body_key_sanitizer(json_path="channel_registration_id", value="sanitized")
     add_body_key_sanitizer(json_path="*.channel_registration_id", value="sanitized")
     add_body_key_sanitizer(json_path="*..channel_registration_id", value="sanitized")
@@ -65,6 +66,9 @@ def start_proxy(test_proxy):
     add_body_key_sanitizer(json_path="media_uri", value="sanitized")
     add_body_key_sanitizer(json_path="*.media_uri", value="sanitized")
     add_body_key_sanitizer(json_path="*..media_uri", value="sanitized")
+    add_body_key_sanitizer(json_path="id", value="sanitized")
+    add_body_key_sanitizer(json_path="*.id", value="sanitized")
+    add_body_key_sanitizer(json_path="*..id", value="sanitized")
     add_body_key_sanitizer(json_path="repeatability-request-id", value="sanitized")
     add_body_key_sanitizer(json_path="*.repeatability-request-id", value="sanitized")
     add_body_key_sanitizer(json_path="*..repeatability-request-id", value="sanitized")

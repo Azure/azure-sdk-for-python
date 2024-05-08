@@ -62,6 +62,7 @@ jobs:
           # install autorest
           sudo npm init -f
           sudo npm install -g autorest --save
+          sudo npm install -g @azure-tools/typespec-client-generator-cli
 
           mkdir temp_folder
 
@@ -79,19 +80,13 @@ jobs:
         # import env variable
         export AZURE_TEST_RUN_LIVE=$(AZURE_TEST_RUN_LIVE)
         export TENANT_ID=$(ENV-TENANT-ID)
-        export CLIENT_ID=$(ENV-CLIENT-ID)
-        export CLIENT_SECRET=$(ENV-CLIENT-SECRET)
         export SUBSCRIPTION_ID=$(ENV-SUBSCRIPTION-ID)
         export AZURE_TENANT_ID=$(ENV-TENANT-ID)
-        export AZURE_CLIENT_ID=$(ENV-CLIENT-ID)
-        export AZURE_CLIENT_SECRET=$(ENV-CLIENT-SECRET)
         export AZURE_SUBSCRIPTION_ID=$(ENV-SUBSCRIPTION-ID)
         export ISSUE_LINK=$(ISSUE_LINK)
         export SCRIPT_PATH=$script_path
         export BOT_TOKEN=$(azuresdk-github-pat)
         export GIT_TOKEN=$(Yuchao-GitToken)
-        export STORAGE_CONN_STR=$(storage-conn-str)
-        export STORAGE_ENDPOINT=$(storage-endpoint)
         export PYTHON_TAG=$(PYTHON_TAG)
         export DEBUG_SDK_BRANCH=$(DEBUG_SDK_BRANCH)
         export TARGET_DATE=$(TARGET_DATE)

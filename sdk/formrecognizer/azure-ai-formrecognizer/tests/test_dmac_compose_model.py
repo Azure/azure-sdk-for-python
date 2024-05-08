@@ -104,7 +104,7 @@ class TestTraining(FormRecognizerTest):
         result = poller.result()
         assert result
 
-        initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+        initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
 
     @skip_flaky_test
     @FormRecognizerPreparer()

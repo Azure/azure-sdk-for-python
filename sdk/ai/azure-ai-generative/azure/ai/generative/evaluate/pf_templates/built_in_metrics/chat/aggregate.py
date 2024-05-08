@@ -7,8 +7,8 @@ from constants import RAIService
 
 @tool
 def aggregate_variants_results(results: List[dict], metrics: List[dict],
-                                thresholds = None):
-    if metrics:         
+                               thresholds=None):
+    if metrics:
         rag_metrics = filter_metrics(metrics[0]["rag_metrics"])
         non_rag_metrics = filter_metrics(metrics[0]["non_rag_metrics"])
         safety_metrics = filter_metrics(metrics[0]["safety_metrics"])
@@ -16,7 +16,7 @@ def aggregate_variants_results(results: List[dict], metrics: List[dict],
         rag_metrics = []
         non_rag_metrics = []
         safety_metrics = []
-    selected_quality_metrics =  rag_metrics + non_rag_metrics 
+    selected_quality_metrics = rag_metrics + non_rag_metrics
 
     # set threshold for safety metric defect_rate
     if thresholds != [] and thresholds is not None:
@@ -51,7 +51,8 @@ def aggregate_variants_results(results: List[dict], metrics: List[dict],
             if name in selected_quality_metrics:
                 aggregate_output[metric_name] = round(np.nanmean(values), 2)
             elif name in safety_metrics:
-                aggregate_output[metric_name] = round(np.sum(values >= threshold) / len(values), 2)
+                aggregate_output[metric_name] = round(
+                    np.sum(values >= threshold) / len(values), 2)
             else:
                 aggregate_output[metric_name] = np.nan
         log_metric(metric_name, aggregate_output[metric_name])

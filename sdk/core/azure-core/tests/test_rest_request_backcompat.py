@@ -130,6 +130,7 @@ def test_request_streamed_data_body(old_request, new_request):
     assert old_request.files == new_request.files == None
     assert old_request.data == new_request.data == None
     old_request.files = new_request.files = "foo"
+
     # passing in iterable
     def streaming_body(data):
         yield data  # pragma: nocover

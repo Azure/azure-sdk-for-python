@@ -4,6 +4,7 @@ extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: openai
+      TestTimeoutInMinutes: 200
       ToxTestEnv: optional
       MatrixFilters:
         - PythonVersion=3.11.*

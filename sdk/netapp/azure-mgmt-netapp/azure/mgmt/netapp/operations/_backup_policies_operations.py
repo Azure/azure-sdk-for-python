@@ -43,7 +43,7 @@ def build_list_request(resource_group_name: str, account_name: str, subscription
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -78,7 +78,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -114,7 +114,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -153,7 +153,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -189,9 +189,12 @@ def build_update_request(
 def build_delete_request(
     resource_group_name: str, account_name: str, backup_policy_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -213,7 +216,10 @@ def build_delete_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 class BackupPoliciesOperations:
@@ -316,7 +322,8 @@ class BackupPoliciesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -382,7 +389,8 @@ class BackupPoliciesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("BackupPolicy", pipeline_response)
 
@@ -451,7 +459,8 @@ class BackupPoliciesOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -697,7 +706,8 @@ class BackupPoliciesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
             deserialized = self._deserialize("BackupPolicy", pipeline_response)
@@ -925,7 +935,8 @@ class BackupPoliciesOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})

@@ -137,9 +137,9 @@ class RegressionJob(AutoMLTabular):
             "compute": properties.compute_id,
             "outputs": from_rest_data_outputs(properties.outputs),
             "resources": properties.resources,
-            "identity": _BaseJobIdentityConfiguration._from_rest_object(properties.identity)
-            if properties.identity
-            else None,
+            "identity": (
+                _BaseJobIdentityConfiguration._from_rest_object(properties.identity) if properties.identity else None
+            ),
             "queue_settings": properties.queue_settings,
         }
 
@@ -153,15 +153,21 @@ class RegressionJob(AutoMLTabular):
             n_cross_validations=task_details.n_cross_validations,
             test_data=task_details.test_data,
             test_data_size=task_details.test_data_size,
-            featurization=TabularFeaturizationSettings._from_rest_object(task_details.featurization_settings)
-            if task_details.featurization_settings
-            else None,
-            limits=TabularLimitSettings._from_rest_object(task_details.limit_settings)
-            if task_details.limit_settings
-            else None,
-            training=RegressionTrainingSettings._from_rest_object(task_details.training_settings)
-            if task_details.training_settings
-            else None,
+            featurization=(
+                TabularFeaturizationSettings._from_rest_object(task_details.featurization_settings)
+                if task_details.featurization_settings
+                else None
+            ),
+            limits=(
+                TabularLimitSettings._from_rest_object(task_details.limit_settings)
+                if task_details.limit_settings
+                else None
+            ),
+            training=(
+                RegressionTrainingSettings._from_rest_object(task_details.training_settings)
+                if task_details.training_settings
+                else None
+            ),
             primary_metric=task_details.primary_metric,
             log_verbosity=task_details.log_verbosity,
             **job_args_dict,

@@ -44,6 +44,8 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -60,9 +62,9 @@ setup(
         "pytyped": ["py.typed"],
     },
     install_requires=[
-        "isodate<1.0.0,>=0.6.1",
-        "azure-core<2.0.0,>=1.24.0",
-        "pyjwt>=2.0.0"
+        "isodate>=0.6.1",
+        "azure-core>=1.24.0",
+        "pyjwt>=2.6.0",
     ],
     python_requires=">=3.8",
 )

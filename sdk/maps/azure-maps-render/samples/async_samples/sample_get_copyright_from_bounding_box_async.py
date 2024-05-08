@@ -44,7 +44,7 @@ async def get_copyright_from_bounding_box_async():
     print(result.general_copyrights[0])
     print("Result country code:")
     print(result.regions[0].country.iso3)
-    # [END get_copyright_from_bounding_box]
+    # [END get_copyright_from_bounding_box_async]
 
 if __name__ == '__main__':
     asyncio.run(get_copyright_from_bounding_box_async())
