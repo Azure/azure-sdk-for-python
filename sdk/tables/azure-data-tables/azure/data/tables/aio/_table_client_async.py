@@ -629,7 +629,7 @@ class TableClient(AsyncTablesBaseClient):
     async def upsert_entity(
         self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs
     ) -> Mapping[str, Any]:
-        """Replaces/Merges or Inserts an entity into a table.
+        """Updates (merge or replace) or inserts an entity into a table.
 
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
