@@ -98,7 +98,7 @@ class IndexOperations(_ScopeDependentOperations):
         return self.__azure_ai_assets_client
 
     @monitor_with_activity(ops_logger, "Index.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(self, index: Index) -> Index:
+    def create_or_update(self, index: Index, **kwargs) -> Index:
         """Returns created or updated index asset.
 
         If not already in storage, asset will be uploaded to the workspace's default datastore.
@@ -154,12 +154,12 @@ class IndexOperations(_ScopeDependentOperations):
 
         return Index._from_rest_object(
             self._azure_ai_assets.indexes.create_or_update(
-                name=index.name, version=index.version, body=index._to_rest_object()
+                name=index.name, version=index.version, body=index._to_rest_object(), **kwargs
             )
         )
 
     @monitor_with_activity(ops_logger, "Index.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, *, version: Optional[str] = None, label: Optional[str] = None) -> Index:
+    def get(self, name: str, *, version: Optional[str] = None, label: Optional[str] = None, **kwargs) -> Index:
         """Returns information about the specified index asset.
 
         :param str name: Name of the index asset.
@@ -193,7 +193,7 @@ class IndexOperations(_ScopeDependentOperations):
                 error_type=ValidationErrorType.MISSING_FIELD,
             )
 
-        index_version_resource = self._azure_ai_assets.indexes.get(name=name, version=version)
+        index_version_resource = self._azure_ai_assets.indexes.get(name=name, version=version, **kwargs)
 
         return Index._from_rest_object(index_version_resource)
 
@@ -202,7 +202,7 @@ class IndexOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(ops_logger, "Index.List", ActivityType.PUBLICAPI)
     def list(
-        self, name: Optional[str] = None, *, list_view_type: ListViewType = ListViewType.ACTIVE_ONLY
+        self, name: Optional[str] = None, *, list_view_type: ListViewType = ListViewType.ACTIVE_ONLY, **kwargs
     ) -> Iterable[Index]:
         """List all Index assets in workspace.
 
@@ -221,6 +221,6 @@ class IndexOperations(_ScopeDependentOperations):
             return [Index._from_rest_object(i) for i in rest_indexes]
 
         if name is None:
-            return self._azure_ai_assets.indexes.list_latest(cls=cls)
+            return self._azure_ai_assets.indexes.list_latest(cls=cls, **kwargs)
 
-        return self._azure_ai_assets.indexes.list(name, list_view_type=list_view_type, cls=cls)
+        return self._azure_ai_assets.indexes.list(name, list_view_type=list_view_type, cls=cls, **kwargs)
