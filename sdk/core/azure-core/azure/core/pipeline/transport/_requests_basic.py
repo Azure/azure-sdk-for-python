@@ -251,6 +251,9 @@ class RequestsTransport(HttpTransport):
             raise ValueError("session_owner cannot be False if no session is provided")
         self.connection_config = ConnectionConfiguration(**kwargs)
         self._use_env_settings = kwargs.pop("use_env_settings", True)
+        # See https://github.com/Azure/azure-sdk-for-python/issues/25640 to understand why we track this
+        self._has_been_opened = False
+        self._has_been_closed = False
 
     def __enter__(self) -> "RequestsTransport":
         self.open()
@@ -273,17 +276,25 @@ class RequestsTransport(HttpTransport):
             session.mount(p, adapter)
 
     def open(self):
-        if not self.session and self._session_owner:
-            self.session = requests.Session()
-            self._init_session(self.session)
-        # pyright has trouble to understand that self.session is not None, since we raised at worst in the init
-        self.session = cast(requests.Session, self.session)
+        if self._has_been_opened and self._has_been_closed:
+            raise ValueError(
+                "HTTP transport has already been closed. "
+                "You may check if you're calling a function outside of the `with` of your client creation, "
+                "or if you called `close()` on your client already."
+            )
+        if not self.session:
+            if self._session_owner:
+                self.session = requests.Session()
+                self._init_session(self.session)
+            else:
+                raise ValueError("session_owner cannot be False and no session is available")
+        self._has_been_opened = True
 
     def close(self):
         if self._session_owner and self.session:
             self.session.close()
-            self._session_owner = False
             self.session = None
+        self._has_been_closed = True
 
     @overload
     def send(
