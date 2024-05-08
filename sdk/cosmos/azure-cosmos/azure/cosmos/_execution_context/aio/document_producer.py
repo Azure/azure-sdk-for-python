@@ -28,7 +28,6 @@ from collections import deque
 
 from azure.cosmos import _base
 from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQueryExecutionContext
-# pylint: disable=protected-access
 
 
 class _DocumentProducer(object):
@@ -313,8 +312,8 @@ class _NonStreamingOrderByComparator(object):
                 negative integer if doc_producers1 < doc_producers2
         :rtype: int
         """
-        rank1 = doc_producer1._item_result["orderByItems"][0]
-        rank2 = doc_producer2._item_result["orderByItems"][0]
+        rank1 = doc_producer1._item_result["orderByItems"][0]  # pylint: disable=protected-access
+        rank2 = doc_producer2._item_result["orderByItems"][0]  # pylint: disable=protected-access
         res = await _OrderByHelper.compare(rank1, rank2)
         if res != 0:
             if self._sort_order[0] == "Descending":
