@@ -285,12 +285,17 @@ class _NonStreamingDocumentProducer(object):
     to properly sort items as they get inserted.
     """
 
-    def __init__(self, item_result):
+    def __init__(self, item_result, sort_order):
         """
         Constructor
         """
         self._item_result = item_result
+        self._sort_order = sort_order
 
     def __lt__(self, other):
-        return _OrderByHelper.compare(self._item_result["orderByItems"][0],
-                                               other._item_result["orderByItems"][0]) < 0
+        res = _OrderByHelper.compare(self._item_result["orderByItems"][0],
+                                               other._item_result["orderByItems"][0])
+        if res != 0:
+            if self._sort_order[0] == "Descending":
+                res = -res
+        return res < 0

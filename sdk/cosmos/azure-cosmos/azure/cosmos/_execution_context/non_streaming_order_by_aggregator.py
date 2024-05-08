@@ -90,7 +90,7 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
             while True:
                 try:
                     result = doc_producer.peek()
-                    item_result = document_producer._NonStreamingDocumentProducer(result)
+                    item_result = document_producer._NonStreamingDocumentProducer(result, self._sort_orders)
                     self._orderByPQ.push(item_result)
                     next(doc_producer)
                 except StopIteration:
