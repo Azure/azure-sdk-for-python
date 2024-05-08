@@ -8,6 +8,7 @@ import sys
 import azure.ai.inference as sdk
 import azure.ai.inference.aio as async_sdk
 import re
+import json
 
 from os import path
 from typing import List, Optional, Union
@@ -51,8 +52,9 @@ class ModelClientTestBase(AzureRecordedTestCase):
     # Set to True to print out all results to the console
     PRINT_RESULT = True
 
-    # Regular expression describing the pattern of a result ID (e.g. "183b56eb-8512-484d-be50-5d8df82301a2")
-    REGEX_RESULT_ID = re.compile(r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$|^Sanitized$")
+    # Regular expression describing the pattern of a result ID. Format allowed are:
+    # "183b56eb-8512-484d-be50-5d8df82301a2", "26ef25aa45424781865a2d38a4484274" and "Sanitized"
+    REGEX_RESULT_ID = re.compile(r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$|^[0-9a-fA-F]{32}$|^Sanitized$")
 
     # Methods to load credentials from environment variables
     def _load_chat_credentials(self, *, bad_key: bool, **kwargs):
@@ -96,12 +98,31 @@ class ModelClientTestBase(AzureRecordedTestCase):
         assert result.choices[0].message.role == sdk.models.ChatRole.ASSISTANT
         assert result.choices[0].finish_reason == sdk.models.CompletionsFinishReason.STOPPED
         assert result.choices[0].index == 0
-
         assert bool(ModelClientTestBase.REGEX_RESULT_ID.match(result.id))
         assert result.created is not None
         assert result.created != ""
         assert result.model is not None
         assert result.model != ""
+        assert result.object == "chat.completion"
+        assert result.usage.prompt_tokens > 0
+        assert result.usage.completion_tokens > 0
+        assert result.usage.total_tokens == result.usage.prompt_tokens + result.usage.completion_tokens
+
+    @staticmethod
+    def _validate_chat_completions_tool_result(result: sdk.models.ChatCompletions):
+        assert result.choices[0].message.content == None or result.choices[0].message.content == ""
+        assert result.choices[0].message.role == sdk.models.ChatRole.ASSISTANT
+        assert result.choices[0].finish_reason == sdk.models.CompletionsFinishReason.TOOL_CALLS
+        assert result.choices[0].index == 0
+        function_args = json.loads(result.choices[0].message.tool_calls[0].function.arguments.replace("'", '"'))
+        print(function_args)
+        assert function_args["city"].lower() == "seattle"
+        assert function_args["days"] == "2"
+        assert bool(ModelClientTestBase.REGEX_RESULT_ID.match(result.id))
+        assert result.created is not None
+        assert result.created != ""
+        assert result.model is not None
+        #assert result.model != ""
         assert result.object == "chat.completion"
         assert result.usage.prompt_tokens > 0
         assert result.usage.completion_tokens > 0
@@ -121,7 +142,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         assert update.choices[0].delta.tool_calls == None
         assert update.choices[0].index == 0
         assert update.id is not None
-        assert len(update.id) == 36
+        assert bool(ModelClientTestBase.REGEX_RESULT_ID.match(update.id))
         assert update.model is not None
         assert update.model != ""
         if update.choices[0].delta.content != None:
@@ -169,6 +190,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
             print(" Chat Completions result:")
             for choice in result.choices:
                 print(f"\tchoices[0].message.content: {choice.message.content}")
+                print(f"\tchoices[0].message.tool_calls: {choice.message.tool_calls}")
                 print("\tchoices[0].message.role: {}".format(choice.message.role))
                 print("\tchoices[0].finish_reason: {}".format(choice.finish_reason))
                 print("\tchoices[0].index: {}".format(choice.index))

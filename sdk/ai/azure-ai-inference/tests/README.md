@@ -6,9 +6,9 @@ The instructions below are for running tests locally, on a Windows machine, agai
 
 The live tests were written against the AI models mentioned below. You will need to deploy them in [Azure AI Studio](https://ai.azure.com/) and have the endpoint and key for each one of them.
 
-- llama-2-13b (fro chat completion tests)
-- TBD (for embedding tests)
-- TBD (for image generation tests)
+- `Mistral-Large` for chat completion tests
+- `Cohere-embed-v3-english` for embedding tests
+- `TBD` for image generation tests
 
 ## Setup
 
@@ -47,6 +47,8 @@ Configure the test proxy to run live service tests without recordings:
 ```
 set AZURE_TEST_RUN_LIVE=true
 set AZURE_SKIP_LIVE_RECORDING=true
+set PROXY_URL=http://localhost:5000
+set AZURE_TEST_USE_CLI_AUTH=true
 ```
 
 ## Run tests
