@@ -1,14 +1,18 @@
 # Release History
 
-## 1.30.3 (Unreleased)
+## 1.31.0 (Unreleased)
 
 ### Features Added
+
+- Introduced the keyword argument `additional_allowed_query_params` to `DistributedTracingPolicy` and `HttpLoggingPolicy` to allow users to specify additional URL query parameters that should not be sanitized in span attributes or logs.  #35546
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+- URL attributes in HTTP tracing spans will now have query parameters sanitized by default.  #35546
 
 ## 1.30.2 (2024-06-06)
 
