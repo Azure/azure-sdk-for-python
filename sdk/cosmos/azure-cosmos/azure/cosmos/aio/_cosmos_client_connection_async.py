@@ -145,7 +145,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         self.connection_policy = connection_policy or ConnectionPolicy()
         self.partition_resolvers: Dict[str, RangePartitionResolver] = {}
-        self.container_properties_cache: Dict[str, Dict[str, Any]] = {}
+        self.__container_properties_cache: Dict[str, Dict[str, Any]] = {}
         self.default_headers: Dict[str, Any] = {
             http_constants.HttpHeaders.CacheControl: "no-cache",
             http_constants.HttpHeaders.Version: http_constants.Versions.CurrentVersion,
@@ -226,6 +226,21 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # Routing map provider
         self._routing_map_provider: SmartRoutingMapProvider = SmartRoutingMapProvider(self)
+
+    @property
+    def _container_properties_cache(self) -> Dict[str, Dict[str, Any]]:
+        """Gets the container properties cache from the client.
+        :returns: the container properties cache for the client.
+        :rtype: Dict[str, Dict[str, Any]]"""
+        return self.__container_properties_cache
+
+    def _set_container_properties_cache(self, container_link: str, properties: Optional[Dict[str, Any]]) -> None:
+        """Sets the container properties cache for the specified container.
+
+        This will only update the properties cache for a specified container.
+        :param container_link: The container link will be used as the key to cache the container properties.
+        :param properties: These are the container properties to cache."""
+        self.__container_properties_cache[container_link] = properties
 
     @property
     def _Session(self) -> Optional[_session.Session]:
@@ -3035,14 +3050,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # TODO: Refresh the cache if partition is extracted automatically and we get a 400.1001
 
         # If the document collection link is present in the cache, then use the cached partitionkey definition
-        if collection_link in self.container_properties_cache:
-            cached_container = self.container_properties_cache.get(collection_link)
+        if collection_link in self.__container_properties_cache:
+            cached_container = self.__container_properties_cache.get(collection_link)
             partitionKeyDefinition = cached_container.get("partitionKey")
         # Else read the collection from backend and add it to the cache
         else:
             container = await self.ReadContainer(collection_link)
             partitionKeyDefinition = container.get("partitionKey")
-            self.container_properties_cache[collection_link] = _set_properties_cache(container)
+            self.__container_properties_cache[collection_link] = _set_properties_cache(container)
 
         # If the collection doesn't have a partition key definition, skip it as it's a legacy collection
         if partitionKeyDefinition:

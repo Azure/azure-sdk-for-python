@@ -58,17 +58,25 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
             pass
 
         # Delete The cache as this is meant to test calling operations on a preexisting container
-        # and not a freshly made one
-        client.client_connection.container_properties_cache = {}
+        # and not a freshly made one. It's a private attribute so use mangled name.
+        client.client_connection._CosmosClientConnection__container_properties_cache = {}
         # We will hot path operations to verify cache persists
         # This will extract partition key from the item body, which will need partition key definition from
         # container properties. We test to check the cache is empty since we just created the container
-        assert client.client_connection.container_properties_cache == {}
+        assert client.client_connection._container_properties_cache == {}
         await client.get_database_client(database_name).get_container_client(container_name).create_item(
             body={'id': 'item1', container_pk: 'value'})
         # Since the cache was empty, it should have called a container read to get properties. So now Cache should
         # be populated and available even when we don't have a container instance
-        assert client.client_connection.container_properties_cache != {}
+        assert client.client_connection._container_properties_cache != {}
+        # We can test if the cache properties are correct by comparing them to a fresh read.
+        # First lets save the old cache values
+        cached_properties = await created_db.get_container_client(container_name)._get_properties()
+        # Get the container dictionary out of a fresh container read
+        fresh_container_read = await created_db.get_container_client(container_name).read()
+        # Now we can compare the RID and Partition Key Definition
+        assert cached_properties.get("_rid") == fresh_container_read.get("_rid")
+        assert cached_properties.get("partitionKey") == fresh_container_read.get("partitionKey")
         await client.delete_database(created_db)
 
 
