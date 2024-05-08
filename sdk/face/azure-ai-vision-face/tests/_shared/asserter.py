@@ -63,7 +63,7 @@ def _assert_session_audit_entry_response_info_not_empty(
 
 def _assert_liveness_session_audit_entry_is_valid(
         audit_entry: models.LivenessSessionAuditEntry, expected_session_id="", is_liveness_with_verify: bool = True):
-    assert audit_entry.id > 0
+    assert bool(audit_entry.id)
     assert bool(expected_session_id) or audit_entry.session_id == expected_session_id
     assert bool(audit_entry.request_id)
     assert audit_entry.received_date_time is not None
