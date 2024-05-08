@@ -37,7 +37,7 @@ output-folder: ../
 package-name: azure-synapse-artifacts
 namespace: azure.synapse.artifacts
 license-header: MICROSOFT_MIT_NO_VERSION
-package-version: 0.18.0
+package-version: 0.19.0
 version-tolerant: false
 package-pprint-name: Synapse Artifacts
 security: AADToken
