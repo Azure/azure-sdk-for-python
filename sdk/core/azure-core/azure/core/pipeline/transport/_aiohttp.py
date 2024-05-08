@@ -132,8 +132,8 @@ class AioHttpTransport(AsyncHttpTransport):
         if self._has_been_opened and self._has_been_closed:
             raise ValueError(
                 "HTTP transport has already been closed. "
-                "You may check if you're calling a function outside of the `with` of your client creation, "
-                "or if you called `close()` on your client already."
+                "You may check if you're calling a function outside of the `async with` of your client creation, "
+                "or if you called `await close()` on your client already."
             )
         if not self.session:
             if self._session_owner:
