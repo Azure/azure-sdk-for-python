@@ -102,7 +102,7 @@ def sample_chat_completions_with_tools():
     result = client.create(
         messages=messages,
         tools=[flight_info],
-        #tool_choice=ChatCompletionsToolSelectionPreset.NONE
+        #tool_choice=ChatCompletionsToolSelectionPreset.NONE  # Cohere model does not support
     )
 
     # As long as the model keeps requesting tool calls, make tool calls and provide the tool outputs to the model
