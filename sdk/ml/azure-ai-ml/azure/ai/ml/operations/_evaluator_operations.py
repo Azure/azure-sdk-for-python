@@ -63,6 +63,8 @@ class EvaluatorOperations(_ScopeDependentOperations):
     :type datastore_operations: ~azure.ai.ml.operations._datastore_operations.DatastoreOperations
     :param all_operations: All operations classes of an MLClient object.
     :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
     """
 
     # pylint: disable=unused-argument
@@ -98,8 +100,6 @@ class EvaluatorOperations(_ScopeDependentOperations):
 
         :param model: Model asset object.
         :type model: ~azure.ai.ml.entities.Model
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
         :raises ~azure.ai.ml.exceptions.AssetPathException: Raised when the Model artifact path is
             already linked to another asset
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Model cannot be successfully validated.
@@ -130,14 +130,12 @@ class EvaluatorOperations(_ScopeDependentOperations):
     def get(self, *, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs) -> Model:
         """Returns information about the specified model asset.
 
-        :param name: Name of the model.
-        :type name: str
-        :param version: Version of the model.
-        :type version: str
-        :param label: Label of the model. (mutually exclusive with version)
-        :type label: str
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
+        :keyword name: Name of the model.
+        :paramtype name: str
+        :keyword version: Version of the model.
+        :paramtype version: str
+        :keyword label: Label of the model. (mutually exclusive with version)
+        :paramtype label: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Model cannot be successfully validated.
             Details will be provided in the error message.
         :return: Model asset object.
@@ -164,8 +162,6 @@ class EvaluatorOperations(_ScopeDependentOperations):
         :param download_path: Local path as download destination, defaults to current working directory of the current
             user. Contents will be overwritten.
         :type download_path: Union[PathLike, str]
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
         :raises ResourceNotFoundError: if can't find a model matching provided name.
         """
         self._model_op.download(name, version, download_path)
@@ -188,8 +184,6 @@ class EvaluatorOperations(_ScopeDependentOperations):
         :keyword list_view_type: View type for including/excluding (for example) archived models.
             Defaults to :attr:`ListViewType.ACTIVE_ONLY`.
         :paramtype list_view_type: ListViewType
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
         :return: An iterator like instance of Model objects
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Model]
         """
