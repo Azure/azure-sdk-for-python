@@ -8,7 +8,7 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionCategor
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import PatTokenConfiguration, Connection
-from azure.ai.ml.operations import ConnectionsOperations
+from azure.ai.ml.operations import WorkspaceConnectionsOperations
 
 
 @pytest.fixture
@@ -23,8 +23,8 @@ def mock_workspace_connection_operation(
     mock_aml_services_2022_01_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_credential: Mock,
-) -> ConnectionsOperations:
-    yield ConnectionsOperations(
+) -> WorkspaceConnectionsOperations:
+    yield WorkspaceConnectionsOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_01_01_preview,
@@ -39,7 +39,7 @@ class TestWorkspaceConnectionsOperation:
     @pytest.mark.parametrize(
         "arg", [ConnectionCategory.GIT, ConnectionCategory.PYTHON_FEED, ConnectionCategory.CONTAINER_REGISTRY]
     )
-    def test_list(self, arg: str, mock_workspace_connection_operation: ConnectionsOperations) -> None:
+    def test_list(self, arg: str, mock_workspace_connection_operation: WorkspaceConnectionsOperations) -> None:
         mock_workspace_connection_operation.list(connection_type=arg)
         mock_workspace_connection_operation._operation.list.assert_called_once()
 
@@ -47,7 +47,7 @@ class TestWorkspaceConnectionsOperation:
     def test_get(
         self,
         mock_from_rest,
-        mock_workspace_connection_operation: ConnectionsOperations,
+        mock_workspace_connection_operation: WorkspaceConnectionsOperations,
     ) -> None:
         mock_from_rest.return_value = Connection(
             target="dummy_target",
@@ -62,7 +62,7 @@ class TestWorkspaceConnectionsOperation:
     def test_create_or_update(
         self,
         mock_from_rest,
-        mock_workspace_connection_operation: ConnectionsOperations,
+        mock_workspace_connection_operation: WorkspaceConnectionsOperations,
     ):
         mock_from_rest.return_value = Connection(
             target="dummy_target",
@@ -77,7 +77,7 @@ class TestWorkspaceConnectionsOperation:
 
     def test_delete(
         self,
-        mock_workspace_connection_operation: ConnectionsOperations,
+        mock_workspace_connection_operation: WorkspaceConnectionsOperations,
     ) -> None:
         mock_workspace_connection_operation.delete("randstr")
         mock_workspace_connection_operation._operation.delete.assert_called_once()
