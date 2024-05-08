@@ -278,7 +278,7 @@ class TableClient(AsyncTablesBaseClient):
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
-        encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER,
+        encoder: TableEntityEncoderABC = DEFAULT_ENCODER,
         **kwargs: Any,
     ) -> None:
         """Deletes the specified entity in a table. No error will be raised if
@@ -475,7 +475,7 @@ class TableClient(AsyncTablesBaseClient):
     async def update_entity(
         self,
         entity: EntityType,
-        mode: UpdateMode = UpdateMode.MERGE,
+        mode: Union[str, UpdateMode] = UpdateMode.MERGE,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -487,7 +487,7 @@ class TableClient(AsyncTablesBaseClient):
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :param mode: Merge or Replace entity.
-        :type mode: ~azure.data.tables.UpdateMode
+        :type mode: ~azure.data.tables.UpdateMode or str
         :keyword etag: Etag of the entity.
         :paramtype etag: str or None
         :keyword match_condition: The condition under which to perform the operation.
@@ -514,7 +514,7 @@ class TableClient(AsyncTablesBaseClient):
     async def update_entity(
         self,
         entity: T,
-        mode: UpdateMode = UpdateMode.MERGE,
+        mode: Union[str, UpdateMode] = UpdateMode.MERGE,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -525,7 +525,7 @@ class TableClient(AsyncTablesBaseClient):
         :param entity: The properties for the table entity.
         :type entity: Custom entity type
         :param mode: Merge or Replace entity.
-        :type mode: ~azure.data.tables.UpdateMode
+        :type mode: ~azure.data.tables.UpdateMode or str
         :keyword etag: Etag of the entity.
         :paramtype etag: str or None
         :keyword match_condition: The condition under which to perform the operation.
@@ -690,7 +690,7 @@ class TableClient(AsyncTablesBaseClient):
         row_key: str,
         *,
         select: Optional[Union[str, List[str]]] = None,
-        encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER,
+        encoder: TableEntityEncoderABC = DEFAULT_ENCODER,
         **kwargs,
     ) -> TableEntity:
         """Gets a single entity in a table.
@@ -739,7 +739,7 @@ class TableClient(AsyncTablesBaseClient):
     async def upsert_entity(
         self,
         entity: EntityType,
-        mode: UpdateMode = UpdateMode.MERGE,
+        mode: Union[str, UpdateMode] = UpdateMode.MERGE,
         *,
         encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER,
         **kwargs,
@@ -749,7 +749,7 @@ class TableClient(AsyncTablesBaseClient):
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :param mode: Merge or Replace entity.
-        :type mode: ~azure.data.tables.UpdateMode
+        :type mode: ~azure.data.tables.UpdateMode or str
         :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
             `azure.data.tables.TableEntityEncoder` will be used.
         :type encoder: ~azure.data.Tables.TableEntityEncoderABC
@@ -769,13 +769,13 @@ class TableClient(AsyncTablesBaseClient):
 
     @overload
     async def upsert_entity(
-        self, entity: T, mode: UpdateMode = UpdateMode.MERGE, *, encoder: TableEntityEncoderABC[T], **kwargs
+        self, entity: T, mode: Union[str, UpdateMode] = UpdateMode.MERGE, *, encoder: TableEntityEncoderABC[T], **kwargs
     ) -> Dict[str, Any]:
         """Updates (merge or replace) an entity into a table.
         :param entity: The properties for the table entity.
         :type entity: Custom entity type
         :param mode: Merge or Replace entity.
-        :type mode: ~azure.data.tables.UpdateMode
+        :type mode: ~azure.data.tables.UpdateMode or str
         :keyword encoder: The encoder used to serialize the outgoing Tables entities.
         :type encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: Dictionary mapping operation metadata returned from the service.
