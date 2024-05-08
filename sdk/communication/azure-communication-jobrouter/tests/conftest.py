@@ -35,6 +35,7 @@ from devtools_testutils import (
     set_default_session_settings,
     add_uri_regex_sanitizer,
     add_body_key_sanitizer,
+    remove_batch_sanitizers,
 )
 from router_test_constants import SANITIZED, FAKE_FUNCTION_URI, FAKE_ENDPOINT, FAKE_CONNECTION_STRING
 from azure.communication.jobrouter._shared.utils import parse_connection_str
@@ -69,6 +70,11 @@ def start_proxy(test_proxy):
     add_body_key_sanitizer(json_path="$..functionKey", value=SANITIZED)
     add_body_key_sanitizer(json_path="$..appKey", value=SANITIZED)
     add_body_key_sanitizer(json_path="$..clientId", value=SANITIZED)
+
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3430: $..id
+    #  - AZSDK3493: $..name
+    remove_batch_sanitizers(["AZSDK3430", "AZSDK3493"])
     return
 
 

@@ -595,9 +595,9 @@ class Connection(Resource):
             and rest_obj.properties.metadata is not None
         ):
             kind = rest_obj.properties.metadata.get(CONNECTION_KIND_KEY, "").lower()
-            if kind == CognitiveServiceKinds.CONTENT_SAFETY:
+            if kind == CognitiveServiceKinds.CONTENT_SAFETY.lower():
                 return AzureContentSafetyConnection
-            if kind == CognitiveServiceKinds.SPEECH:
+            if kind == CognitiveServiceKinds.SPEECH.lower():
                 return AzureSpeechServicesConnection
             return Connection
 

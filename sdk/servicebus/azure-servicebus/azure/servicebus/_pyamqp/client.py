@@ -15,12 +15,12 @@ import queue
 import time
 import uuid
 from functools import partial
-from typing import Any, Dict, Optional, Tuple, Union, overload, cast
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union, overload, cast
 import certifi
 from typing_extensions import Literal
 
 from ._connection import Connection
-from .message import _MessageDelivery
+from .message import _MessageDelivery, Message
 from .error import (
     AMQPException,
     ErrorCondition,
@@ -426,7 +426,16 @@ class AMQPClient(
             return True
         return self._client_run(**kwargs)
 
-    def mgmt_request(self, message, **kwargs):
+    def mgmt_request(
+            self,
+            message,
+            *,
+            operation: Optional[Union[str, bytes]] = None,
+            operation_type: Optional[Union[str, bytes]] = None,
+            node: str = "$management",
+            timeout: float = 0,
+            **kwargs
+        ):
         """
         :param message: The message to send in the management request.
         :type message: ~pyamqp.message.Message
@@ -446,10 +455,6 @@ class AMQPClient(
         # The method also takes "status_code_field" and "status_description_field"
         # keyword arguments as alternate names for the status code and description
         # in the response body. Those two keyword arguments are used in Azure services only.
-        operation = kwargs.pop("operation", None)
-        operation_type = kwargs.pop("operation_type", None)
-        node = kwargs.pop("node", "$management")
-        timeout = kwargs.pop("timeout", 0)
         with self._mgmt_link_lock:
             try:
                 mgmt_link = self._mgmt_links[node]
@@ -659,8 +664,7 @@ class SendClient(AMQPClient):
                 message_delivery, condition=ErrorCondition.UnknownError
             )
 
-    def _send_message_impl(self, message, **kwargs):
-        timeout = kwargs.pop("timeout", 0)
+    def _send_message_impl(self, message, *, timeout: float = 0):
         expire_time = (time.time() + timeout) if timeout else None
         self.open()
         message_delivery = _MessageDelivery(
@@ -692,14 +696,19 @@ class SendClient(AMQPClient):
                     condition=ErrorCondition.UnknownError, description="Send failed."
                 ) from None
 
-    def send_message(self, message, **kwargs):
+    def send_message(self, message, *, timeout: float = 0, **kwargs):
         """
         :param ~pyamqp.message.Message message:
         :keyword float timeout: timeout in seconds. If set to
          0, the client will continue to wait until the message is sent or error happens. The
          default is 0.
         """
-        self._do_retryable_operation(self._send_message_impl, message=message, **kwargs)
+        self._do_retryable_operation(
+            self._send_message_impl,
+            message=message,
+            timeout=timeout,
+            **kwargs
+        )
 
 
 class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
@@ -877,13 +886,16 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
             self._received_messages.put((frame, message))
 
     def _receive_message_batch_impl(
-        self, max_batch_size=None, on_message_received=None, timeout=0
+        self,
+        max_batch_size: Optional[int] = None,
+        on_message_received: Optional[Callable] = None,
+        timeout: float = 0,
     ):
         self._message_received_callback = on_message_received
         max_batch_size = max_batch_size or self._link_credit
         timeout = time.time() + timeout if timeout else 0
         receiving = True
-        batch = []
+        batch: List[Message] = []
         self.open()
         while len(batch) < max_batch_size:
             try:
@@ -928,7 +940,14 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         self._received_messages = queue.Queue()
         super(ReceiveClient, self).close()
 
-    def receive_message_batch(self, **kwargs):
+    def receive_message_batch( # pylint: disable=unused-argument
+            self,
+            *,
+            max_batch_size: Optional[int] = None,
+            on_message_received: Optional[Callable] = None,
+            timeout: float = 0,
+            **kwargs
+        ):
         """Receive a batch of messages. Messages returned in the batch have already been
         accepted - if you wish to add logic to accept or reject messages based on custom
         criteria, pass in a callback. This method will return as soon as some messages are
@@ -950,7 +969,12 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         :return: A list of messages.
         :rtype: list[~pyamqp.message.Message]
         """
-        return self._do_retryable_operation(self._receive_message_batch_impl, **kwargs)
+        return self._do_retryable_operation(
+            self._receive_message_batch_impl,
+            max_batch_size=max_batch_size,
+            on_message_received=on_message_received,
+            timeout=timeout
+        )
 
     def receive_messages_iter(self, timeout=None, on_message_received=None):
         """Receive messages by generator. Messages returned in the generator have already been

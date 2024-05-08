@@ -91,7 +91,7 @@ def parse_connection_string(conn_str: str) -> "EventHubConnectionStringPropertie
     :return: A properties bag containing the parsed connection string.
     :rtype: ~azure.eventhub.EventHubConnectionStringProperties
     """
-    fully_qualified_namespace, policy, key, entity, signature = _parse_conn_str(
+    fully_qualified_namespace, policy, key, entity, signature, emulator = _parse_conn_str(
         conn_str, check_case=True
     )[:-1]
     endpoint = "sb://" + fully_qualified_namespace + "/"
@@ -102,5 +102,6 @@ def parse_connection_string(conn_str: str) -> "EventHubConnectionStringPropertie
         "shared_access_signature": signature,
         "shared_access_key_name": policy,
         "shared_access_key": key,
+        "emulator": emulator,
     }
     return EventHubConnectionStringProperties(**props)
