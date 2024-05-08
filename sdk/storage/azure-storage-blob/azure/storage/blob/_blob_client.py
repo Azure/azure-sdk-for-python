@@ -614,7 +614,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         self, offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
-        encoding: Optional[str] = None,
+        encoding: None = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[bytes]:
         ...
@@ -624,9 +624,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         self, offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
-        encoding: Optional[str] = None,
+        encoding: Union[str, None] = None,
         **kwargs: Any
-    ) -> StorageStreamDownloader:
+    ) -> Union[StorageStreamDownloader[str], StorageStreamDownloader[bytes]]:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
