@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import logging
-from typing import NoReturn
+from typing import Dict, NoReturn, Optional
 from xml.etree.ElementTree import Element
 
 from azure.core.exceptions import (
@@ -92,8 +92,8 @@ def process_storage_error(storage_error) -> NoReturn: # type: ignore [misc] # py
         serialized = True
     error_code = storage_error.response.headers.get('x-ms-error-code')
     error_message = storage_error.message
-    additional_data = {}
-    error_dict = {}
+    additional_data: Dict[str, Optional[str]] = {}
+    error_dict: Dict[str, Optional[str]] = {}
     try:
         error_body = ContentDecodePolicy.deserialize_from_http_generics(storage_error.response)
         try:
@@ -118,7 +118,6 @@ def process_storage_error(storage_error) -> NoReturn: # type: ignore [misc] # py
         # If we extracted from a Json or XML response
         # There is a chance error_dict is just a string
         if error_dict and isinstance(error_dict, dict):
-            additional_data = {}
             for k, v in error_dict.items():
                 k_lower = k.lower()
                 if k_lower == 'code':
