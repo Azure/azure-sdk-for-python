@@ -79,7 +79,7 @@ class DenySettings(_serialization.Model):
     :ivar excluded_actions: List of role-based management operations that are excluded from the
      denySettings. Up to 200 actions are permitted. If the denySetting mode is set to
      'denyWriteAndDelete', then the following actions are automatically appended to
-     'excludedActions': '*\/read' and 'Microsoft.Authorization/locks/delete'. If the denySetting
+     'excludedActions': '*\\/read' and 'Microsoft.Authorization/locks/delete'. If the denySetting
      mode is set to 'denyDelete', then the following actions are automatically appended to
      'excludedActions': 'Microsoft.Authorization/locks/delete'. Duplicate actions will be removed.
     :vartype excluded_actions: list[str]
@@ -118,7 +118,7 @@ class DenySettings(_serialization.Model):
         :keyword excluded_actions: List of role-based management operations that are excluded from the
          denySettings. Up to 200 actions are permitted. If the denySetting mode is set to
          'denyWriteAndDelete', then the following actions are automatically appended to
-         'excludedActions': '*\/read' and 'Microsoft.Authorization/locks/delete'. If the denySetting
+         'excludedActions': '*\\/read' and 'Microsoft.Authorization/locks/delete'. If the denySetting
          mode is set to 'denyDelete', then the following actions are automatically appended to
          'excludedActions': 'Microsoft.Authorization/locks/delete'. Duplicate actions will be removed.
         :paramtype excluded_actions: list[str]
