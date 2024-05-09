@@ -86,16 +86,16 @@ class AzurePipelinesCredential:
         **kwargs: Any,
     ) -> None:
 
-        self._tenant_id = tenant_id
-        self._client_id = client_id
-        self._service_connection_id = service_connection_id
-
+        if not tenant_id or not client_id or not service_connection_id:
+            raise ValueError("tenant_id, client_id, and service_connection_id are required.")
         validate_tenant_id(tenant_id)
 
+        self._service_connection_id = service_connection_id
         self._client_assertion_credential = ClientAssertionCredential(
             tenant_id=tenant_id, client_id=client_id, func=self._get_oidc_token, **kwargs
         )
         self._pipeline = build_pipeline(**kwargs)
+        self._env_validated = False
 
     def get_token(
         self,
@@ -125,7 +125,9 @@ class AzurePipelinesCredential:
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
             attribute gives a reason.
         """
-        validate_env_vars()
+        if not self._env_validated:
+            validate_env_vars()
+            self._env_validated = True
         return self._client_assertion_credential.get_token(
             *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
         )

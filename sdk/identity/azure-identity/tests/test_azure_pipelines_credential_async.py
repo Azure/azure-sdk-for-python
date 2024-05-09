@@ -8,7 +8,7 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 from azure.identity import CredentialUnavailableError
-from azure.identity.aio import AzurePipelinesCredential, ChainedTokenCredential
+from azure.identity.aio import AzurePipelinesCredential, ChainedTokenCredential, ClientAssertionCredential
 from azure.identity._constants import EnvironmentVariables
 
 
@@ -23,9 +23,8 @@ def test_azure_pipelines_credential_initialize():
         service_connection_id=service_connection_id,
     )
 
-    assert credential._client_id == client_id
-    assert credential._tenant_id == tenant_id
     assert credential._service_connection_id == service_connection_id
+    assert isinstance(credential._client_assertion_credential, ClientAssertionCredential)
 
 
 @pytest.mark.asyncio

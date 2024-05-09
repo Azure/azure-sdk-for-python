@@ -8,7 +8,12 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from azure.core.rest import HttpRequest
-from azure.identity import AzurePipelinesCredential, ChainedTokenCredential, CredentialUnavailableError
+from azure.identity import (
+    AzurePipelinesCredential,
+    ChainedTokenCredential,
+    ClientAssertionCredential,
+    CredentialUnavailableError,
+)
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.azure_pipelines import build_oidc_request, OIDC_API_VERSION
 
@@ -24,9 +29,8 @@ def test_azure_pipelines_credential_initialize():
         service_connection_id=service_connection_id,
     )
 
-    assert credential._client_id == client_id
-    assert credential._tenant_id == tenant_id
     assert credential._service_connection_id == service_connection_id
+    assert isinstance(credential._client_assertion_credential, ClientAssertionCredential)
 
 
 def test_azure_pipelines_credential_context_manager():
