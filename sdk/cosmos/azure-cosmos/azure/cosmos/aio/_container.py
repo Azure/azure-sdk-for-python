@@ -93,10 +93,10 @@ class ContainerProxy:
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
 
-    async def _get_properties(self) -> Dict[str, Any]:  # pylint: disable=protected-access
-        if self.container_link not in self.client_connection._container_properties_cache:
+    async def _get_properties(self) -> Dict[str, Any]:
+        if self.container_link not in self.client_connection._container_properties_cache:  # pylint: disable=protected-access, line-too-long
             await self.read()
-        return self.client_connection._container_properties_cache[self.container_link]
+        return self.client_connection._container_properties_cache[self.container_link]  # pylint: disable=protected-access, line-too-long
 
     @property
     async def is_system_key(self) -> bool:
