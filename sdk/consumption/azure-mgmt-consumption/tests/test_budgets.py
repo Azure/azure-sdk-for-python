@@ -26,9 +26,8 @@ class TestMgmtConsumption(AzureMgmtRecordedTestCase):
         SUBSCRIPTION_ID = self.get_settings_value('SUBSCRIPTION_ID')
         SCOPE = '/subscriptions/{}/resourceGroups/{}'.format(SUBSCRIPTION_ID, resource_group.name)
         BUDGET_NAME = self.get_resource_name('budget')
-        TODAY = datetime.datetime.now()
-        start_date = TODAY.strftime('%Y-%m-01T00:00:00Z')
-        end_date = (TODAY+datetime.timedelta(180)).strftime('%Y-%m-01T00:00:00Z')
+        start_date = "2022-12-01T00:00:00.000Z"
+        end_date =  "2023-06-01T00:00:00.000Z"
         # create
         BODY = {
             "category": "Cost",
