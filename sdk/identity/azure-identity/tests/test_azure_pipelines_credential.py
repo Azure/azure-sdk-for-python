@@ -48,6 +48,7 @@ def test_build_oidc_request():
     plan_id = "plan-id"
     job_id = "job-id"
     access_token = "access-token"
+    host_type = "build"
 
     environment = {
         EnvironmentVariables.SYSTEM_TEAMFOUNDATIONCOLLECTIONURI: collection_uri,
@@ -55,13 +56,15 @@ def test_build_oidc_request():
         EnvironmentVariables.SYSTEM_PLANID: plan_id,
         EnvironmentVariables.SYSTEM_JOBID: job_id,
         EnvironmentVariables.SYSTEM_ACCESSTOKEN: access_token,
+        EnvironmentVariables.SYSTEM_HOSTTYPE: host_type,
     }
 
     with patch.dict("os.environ", environment, clear=True):
         request: HttpRequest = build_oidc_request(service_connection_id)
         assert request.method == "POST"
         assert request.url.startswith(
-            f"{collection_uri}/{project_id}/_apis/distributedtask/hubs/build/plans/{plan_id}/jobs/{job_id}/oidctoken"
+            f"{collection_uri}/{project_id}/_apis/distributedtask/hubs/{host_type}/plans/{plan_id}/"
+            f"jobs/{job_id}/oidctoken"
         )
         assert f"api-version={OIDC_API_VERSION}" in request.url
         assert f"serviceConnectionId={service_connection_id}" in request.url
@@ -80,6 +83,7 @@ def test_azure_pipelines_credential_missing_env_var():
         EnvironmentVariables.SYSTEM_TEAMPROJECTID: "foo",
         EnvironmentVariables.SYSTEM_PLANID: "foo",
         EnvironmentVariables.SYSTEM_JOBID: "foo",
+        EnvironmentVariables.SYSTEM_HOSTTYPE: "foo",
     }
 
     with patch.dict("os.environ", environment, clear=True):

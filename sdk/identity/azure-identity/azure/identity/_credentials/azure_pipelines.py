@@ -17,15 +17,23 @@ from .._internal.pipeline import build_pipeline
 from .._constants import EnvironmentVariables as ev
 
 
+AZURE_PIPELINES_VARS = (
+    ev.SYSTEM_TEAMFOUNDATIONCOLLECTIONURI,
+    ev.SYSTEM_TEAMPROJECTID,
+    ev.SYSTEM_PLANID,
+    ev.SYSTEM_JOBID,
+    ev.SYSTEM_ACCESSTOKEN,
+    ev.SYSTEM_HOSTTYPE,
+)
 OIDC_API_VERSION = "7.1-preview.1"
 
 
 def build_oidc_request(service_connection_id: str) -> HttpRequest:
     base_uri = os.environ[ev.SYSTEM_TEAMFOUNDATIONCOLLECTIONURI].rstrip("/")
     url = (
-        f"{base_uri}/{os.environ[ev.SYSTEM_TEAMPROJECTID]}/_apis/distributedtask/hubs/build/plans/"
-        f"{os.environ[ev.SYSTEM_PLANID]}/jobs/{os.environ[ev.SYSTEM_JOBID]}/oidctoken?"
-        f"api-version={OIDC_API_VERSION}&serviceConnectionId={service_connection_id}"
+        f"{base_uri}/{os.environ[ev.SYSTEM_TEAMPROJECTID]}/_apis/distributedtask/hubs/"
+        f"{os.environ[ev.SYSTEM_HOSTTYPE]}/plans/{os.environ[ev.SYSTEM_PLANID]}/jobs/{os.environ[ev.SYSTEM_JOBID]}/"
+        f"oidctoken?api-version={OIDC_API_VERSION}&serviceConnectionId={service_connection_id}"
     )
     access_token = os.environ[ev.SYSTEM_ACCESSTOKEN]
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {access_token}"}
@@ -34,14 +42,14 @@ def build_oidc_request(service_connection_id: str) -> HttpRequest:
 
 def validate_env_vars():
     missing_vars = []
-    for var in ev.AZURE_PIPELINES_VARS:
+    for var in AZURE_PIPELINES_VARS:
         if var not in os.environ or not os.environ[var]:
             missing_vars.append(var)
     if missing_vars:
         raise CredentialUnavailableError(
             message=f"Missing values for environment variables: {', '.join(missing_vars)}. "
             f"AzurePipelinesCredential is intended for use in Azure Pipelines where the following environment "
-            f"variables are set: {ev.AZURE_PIPELINES_VARS}."
+            f"variables are set: {AZURE_PIPELINES_VARS}."
         )
 
 

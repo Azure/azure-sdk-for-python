@@ -245,12 +245,12 @@ Not all credentials require this configuration. Credentials that authenticate th
 |[`EnvironmentCredential`][environment_cred_ref]| Authenticates a service principal or user via credential information specified in environment variables.
 |[`ManagedIdentityCredential`][managed_id_cred_ref]| Authenticates the managed identity of an Azure resource.
 |[`WorkloadIdentityCredential`][workload_id_cred_ref]| Supports [Microsoft Entra Workload ID](https://learn.microsoft.com/azure/aks/workload-identity-overview) on Kubernetes.
-| `AzurePipelinesCredential` | Supports [Microsoft Entra Workload ID](https://learn.microsoft.com/azure/devops/pipelines/release/configure-workload-identity?view=azure-devops) on Azure Pipelines.
 
 ### Authenticate service principals
 
 |Credential|Usage|Reference
 |-|-|-
+| `AzurePipelinesCredential` | Supports [Microsoft Entra Workload ID](https://learn.microsoft.com/azure/devops/pipelines/release/configure-workload-identity?view=azure-devops) on Azure Pipelines. |
 |[`CertificateCredential`][cert_cred_ref]| Authenticates a service principal using a certificate. | [Service principal authentication](https://learn.microsoft.com/entra/identity-platform/app-objects-and-service-principals)
 |[`ClientAssertionCredential`][client_assertion_cred_ref]| Authenticates a service principal using a signed client assertion. |
 |[`ClientSecretCredential`][client_secret_cred_ref]| Authenticates a service principal using a secret. | [Service principal authentication](https://learn.microsoft.com/entra/identity-platform/app-objects-and-service-principals)
