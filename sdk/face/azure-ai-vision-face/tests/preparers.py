@@ -19,10 +19,7 @@ from _shared import helpers
 
 class ClientPreparer(AzureMgmtPreparer):
     def __init__(self, client_cls, client_kwargs={}, **kwargs):
-        super(ClientPreparer, self).__init__(
-            name_prefix="",
-            random_name_length=24
-        )
+        super(ClientPreparer, self).__init__(name_prefix="", random_name_length=24)
         self._client_kwargs = client_kwargs
         self._client_cls = client_cls
         self._client = None
@@ -32,8 +29,12 @@ class ClientPreparer(AzureMgmtPreparer):
         account_key = helpers.get_account_key(**kwargs)
 
         self._client = self._client_cls(endpoint, AzureKeyCredential(account_key))
-        env_name = self._client_kwargs["client_env_name"] \
-            if self._client_kwargs is not None and "client_env_name" in self._client_kwargs else "client"
+        env_name = (
+            self._client_kwargs["client_env_name"]
+            if self._client_kwargs is not None
+            and "client_env_name" in self._client_kwargs
+            else "client"
+        )
 
         kwargs.update({env_name: self._client})
         return kwargs
@@ -49,14 +50,20 @@ FacePreparer = functools.partial(
     "face",
     azure_face_api_endpoint="https://fakeendpoint.cognitiveservices.azure.com/",
     azure_face_api_name="fakeaccountname",
-    azure_face_api_account_key="fakeaccountkey"
+    azure_face_api_account_key="fakeaccountkey",
 )
 
-FaceAdministrationClientPreparer = functools.partial(ClientPreparer, Client.FaceAdministrationClient)
+FaceAdministrationClientPreparer = functools.partial(
+    ClientPreparer, Client.FaceAdministrationClient
+)
 FaceClientPreparer = functools.partial(ClientPreparer, Client.FaceClient)
 FaceSessionClientPreparer = functools.partial(ClientPreparer, Client.FaceSessionClient)
 
 # Async client
-AsyncFaceAdministrationClientPreparer = functools.partial(ClientPreparer, AsyncClient.FaceAdministrationClient)
+AsyncFaceAdministrationClientPreparer = functools.partial(
+    ClientPreparer, AsyncClient.FaceAdministrationClient
+)
 AsyncFaceClientPreparer = functools.partial(ClientPreparer, AsyncClient.FaceClient)
-AsyncFaceSessionClientPreparer = functools.partial(ClientPreparer, AsyncClient.FaceSessionClient)
+AsyncFaceSessionClientPreparer = functools.partial(
+    ClientPreparer, AsyncClient.FaceSessionClient
+)

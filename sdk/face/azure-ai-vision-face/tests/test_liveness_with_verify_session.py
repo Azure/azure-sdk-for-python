@@ -33,14 +33,18 @@ class TestLivenessWithVerifySession(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_create_session(self, client, **kwargs):
         variables = kwargs.pop("variables", {})
-        recorded_device_correlation_id = variables.setdefault("deviceCorrelationId", str(uuid.uuid4()))
+        recorded_device_correlation_id = variables.setdefault(
+            "deviceCorrelationId", str(uuid.uuid4())
+        )
 
         # Test `create session` operation
         created_session = client.create_liveness_with_verify_session(
             CreateLivenessSessionContent(
                 liveness_operation_mode=LivenessOperationMode.PASSIVE,
-                device_correlation_id=recorded_device_correlation_id),
-            verify_image=None)
+                device_correlation_id=recorded_device_correlation_id,
+            ),
+            verify_image=None,
+        )
 
         _assert_is_string_and_not_empty(created_session.session_id)
         _assert_is_string_and_not_empty(created_session.auth_token)
@@ -60,7 +64,9 @@ class TestLivenessWithVerifySession(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_create_session_with_verify_image(self, client, **kwargs):
         variables = kwargs.pop("variables", {})
-        recorded_device_correlation_id = variables.setdefault("deviceCorrelationId", str(uuid.uuid4()))
+        recorded_device_correlation_id = variables.setdefault(
+            "deviceCorrelationId", str(uuid.uuid4())
+        )
 
         # verify_image
         sample_file_path = helpers.get_image_path(TestImages.IMAGE_DETECTION_1)
@@ -69,8 +75,10 @@ class TestLivenessWithVerifySession(AzureRecordedTestCase):
         created_session = client.create_liveness_with_verify_session(
             CreateLivenessSessionContent(
                 liveness_operation_mode=LivenessOperationMode.PASSIVE,
-                device_correlation_id=recorded_device_correlation_id),
-            verify_image=helpers.read_file_content(sample_file_path))
+                device_correlation_id=recorded_device_correlation_id,
+            ),
+            verify_image=helpers.read_file_content(sample_file_path),
+        )
 
         _assert_is_string_and_not_empty(created_session.session_id)
         _assert_is_string_and_not_empty(created_session.auth_token)
@@ -93,7 +101,7 @@ class TestLivenessWithVerifySession(AzureRecordedTestCase):
         variables = kwargs.pop("variables", {})
         recorded_device_correlation_ids = {
             variables.setdefault("deviceCorrelationId1", str(uuid.uuid4())),
-            variables.setdefault("deviceCorrelationId2", str(uuid.uuid4()))
+            variables.setdefault("deviceCorrelationId2", str(uuid.uuid4())),
         }
 
         # key = session_id, value = device_correlation_id
@@ -104,14 +112,19 @@ class TestLivenessWithVerifySession(AzureRecordedTestCase):
             created_session = client.create_liveness_with_verify_session(
                 CreateLivenessSessionContent(
                     liveness_operation_mode=LivenessOperationMode.PASSIVE,
-                    device_correlation_id=dcid),
-                verify_image=None)
+                    device_correlation_id=dcid,
+                ),
+                verify_image=None,
+            )
 
             _assert_is_string_and_not_empty(created_session.session_id)
             created_session_dict[created_session.session_id] = dcid
 
         # Sort the dict by key because the `list sessions` operation returns sessions in ascending alphabetical order.
-        expected_dcid_queue = deque(value for _, value in sorted(created_session_dict.items(), key=lambda t: t[0]))
+        expected_dcid_queue = deque(
+            value
+            for _, value in sorted(created_session_dict.items(), key=lambda t: t[0])
+        )
 
         # Test `list sessions` operation
         result = client.get_liveness_with_verify_sessions()
@@ -135,7 +148,9 @@ class TestLivenessWithVerifySession(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_get_session_result(self, client, **kwargs):
         variables = kwargs.pop("variables", {})
-        recorded_session_id = variables.setdefault("sessionId", "1b79f44d-d8e0-4652-8f2d-637c4205d854")
+        recorded_session_id = variables.setdefault(
+            "sessionId", "1b79f44d-d8e0-4652-8f2d-637c4205d854"
+        )
 
         session = client.get_liveness_with_verify_session_result(recorded_session_id)
         assert session.created_date_time is not None
@@ -146,7 +161,10 @@ class TestLivenessWithVerifySession(AzureRecordedTestCase):
         assert session.auth_token_time_to_live_in_seconds <= 86400
         assert isinstance(session.status, FaceSessionStatus)
         _assert_liveness_session_audit_entry_is_valid(
-               session.result, expected_session_id=recorded_session_id, is_liveness_with_verify=False)
+            session.result,
+            expected_session_id=recorded_session_id,
+            is_liveness_with_verify=False,
+        )
 
         return variables
 
@@ -156,13 +174,20 @@ class TestLivenessWithVerifySession(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_get_session_audit_entries(self, client, **kwargs):
         variables = kwargs.pop("variables", {})
-        recorded_session_id = variables.setdefault("sessionId", "1b79f44d-d8e0-4652-8f2d-637c4205d854")
+        recorded_session_id = variables.setdefault(
+            "sessionId", "1b79f44d-d8e0-4652-8f2d-637c4205d854"
+        )
 
-        entries = client.get_liveness_with_verify_session_audit_entries(recorded_session_id)
+        entries = client.get_liveness_with_verify_session_audit_entries(
+            recorded_session_id
+        )
         assert len(entries) == 2
         for entry in entries:
             _assert_liveness_session_audit_entry_is_valid(
-                    entry, expected_session_id=recorded_session_id, is_liveness_with_verify=True)
+                entry,
+                expected_session_id=recorded_session_id,
+                is_liveness_with_verify=True,
+            )
 
         return variables
 
@@ -171,13 +196,17 @@ class TestLivenessWithVerifySession(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_delete_session(self, client, **kwargs):
         variables = kwargs.pop("variables", {})
-        recorded_device_correlation_id = variables.setdefault("deviceCorrelationId", str(uuid.uuid4()))
+        recorded_device_correlation_id = variables.setdefault(
+            "deviceCorrelationId", str(uuid.uuid4())
+        )
 
         created_session = client.create_liveness_with_verify_session(
             CreateLivenessSessionContent(
                 liveness_operation_mode=LivenessOperationMode.PASSIVE,
-                device_correlation_id=recorded_device_correlation_id),
-            verify_image=None)
+                device_correlation_id=recorded_device_correlation_id,
+            ),
+            verify_image=None,
+        )
         session_id = created_session.session_id
         _assert_is_string_and_not_empty(session_id)
 

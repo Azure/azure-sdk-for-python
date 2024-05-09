@@ -28,18 +28,26 @@ def _assert_liveness_outputs_target_not_empty(target: models.LivenessOutputsTarg
     assert isinstance(target.image_type, models.FaceImageType)
 
 
-def _assert_liveness_with_verify_image_not_empty(verify_image: models.LivenessWithVerifyImage):
+def _assert_liveness_with_verify_image_not_empty(
+    verify_image: models.LivenessWithVerifyImage,
+):
     _assert_face_rectangle_not_empty(verify_image.face_rectangle)
-    assert isinstance(verify_image.quality_for_recognition, models.QualityForRecognition)
+    assert isinstance(
+        verify_image.quality_for_recognition, models.QualityForRecognition
+    )
 
 
-def _assert_liveness_with_verify_outputs_not_empty(output: models.LivenessWithVerifyOutputs):
+def _assert_liveness_with_verify_outputs_not_empty(
+    output: models.LivenessWithVerifyOutputs,
+):
     _assert_liveness_with_verify_image_not_empty(output.verify_image)
     assert output.match_confidence > 0
     assert output.is_identical is not None
 
 
-def _assert_liveness_response_body_not_empty(body: models.LivenessResponseBody, is_liveness_with_verify: bool = True):
+def _assert_liveness_response_body_not_empty(
+    body: models.LivenessResponseBody, is_liveness_with_verify: bool = True
+):
     assert body.liveness_decision in models.FaceLivenessDecision
     _assert_liveness_outputs_target_not_empty(body.target)
     assert body.model_version_used in models.LivenessModel
@@ -47,7 +55,9 @@ def _assert_liveness_response_body_not_empty(body: models.LivenessResponseBody, 
         _assert_liveness_with_verify_outputs_not_empty(body.verify_result)
 
 
-def _assert_session_audit_entry_request_info_not_empty(request: models.AuditRequestInfo):
+def _assert_session_audit_entry_request_info_not_empty(
+    request: models.AuditRequestInfo,
+):
     assert bool(request.url)
     assert bool(request.method)
     assert request.content_length > 0
@@ -55,19 +65,26 @@ def _assert_session_audit_entry_request_info_not_empty(request: models.AuditRequ
 
 
 def _assert_session_audit_entry_response_info_not_empty(
-        response: models.AuditLivenessResponseInfo, is_liveness_with_verify: bool = True):
-    _assert_liveness_response_body_not_empty(response.body, is_liveness_with_verify=is_liveness_with_verify)
+    response: models.AuditLivenessResponseInfo, is_liveness_with_verify: bool = True
+):
+    _assert_liveness_response_body_not_empty(
+        response.body, is_liveness_with_verify=is_liveness_with_verify
+    )
     assert response.status_code > 0
     assert response.latency_in_milliseconds > 0
 
 
 def _assert_liveness_session_audit_entry_is_valid(
-        audit_entry: models.LivenessSessionAuditEntry, expected_session_id="", is_liveness_with_verify: bool = True):
+    audit_entry: models.LivenessSessionAuditEntry,
+    expected_session_id="",
+    is_liveness_with_verify: bool = True,
+):
     assert bool(audit_entry.id)
     assert bool(expected_session_id) or audit_entry.session_id == expected_session_id
     assert bool(audit_entry.request_id)
     assert audit_entry.received_date_time is not None
     _assert_session_audit_entry_request_info_not_empty(audit_entry.request)
     _assert_session_audit_entry_response_info_not_empty(
-            audit_entry.response, is_liveness_with_verify=is_liveness_with_verify)
+        audit_entry.response, is_liveness_with_verify=is_liveness_with_verify
+    )
     assert bool(audit_entry.digest)

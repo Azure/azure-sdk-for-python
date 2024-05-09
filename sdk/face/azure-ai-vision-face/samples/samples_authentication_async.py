@@ -42,11 +42,15 @@ from shared import helpers
 from shared.helpers import beautify_json, get_logger
 
 
-class FaceAuthentication():
+class FaceAuthentication:
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.endpoint = os.getenv(CONFIGURATION_NAME_FACE_API_ENDPOINT, DEFAULT_FACE_API_ENDPOINT)
-        self.key = os.getenv(CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY, DEFAULT_FACE_API_ACCOUNT_KEY)
+        self.endpoint = os.getenv(
+            CONFIGURATION_NAME_FACE_API_ENDPOINT, DEFAULT_FACE_API_ENDPOINT
+        )
+        self.key = os.getenv(
+            CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY, DEFAULT_FACE_API_ACCOUNT_KEY
+        )
         self.logger = get_logger("sample_authentication_async")
 
     async def authentication_by_api_key(self):
@@ -55,13 +59,16 @@ class FaceAuthentication():
         from azure.ai.vision.face.models import FaceDetectionModel, FaceRecognitionModel
 
         self.logger.info("Instantiate a FaceClient using an api key")
-        async with FaceClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as face_client:
+        async with FaceClient(
+            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
+        ) as face_client:
             sample_file_path = helpers.get_image_path(TestImages.DEFAULT_IMAGE_FILE)
             result = await face_client.detect(  # type: ignore
                 helpers.read_file_content(sample_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
-                return_face_id=False)
+                return_face_id=False,
+            )
 
             self.logger.info(f"Detect faces from the file: {sample_file_path}")
             for idx, face in enumerate(result):
@@ -74,14 +81,16 @@ class FaceAuthentication():
         from azure.ai.vision.face.models import FaceDetectionModel, FaceRecognitionModel
 
         self.logger.info("Instantiate a FaceClient using a TokenCredential")
-        async with DefaultAzureCredential() as credential, \
-                FaceClient(endpoint=self.endpoint, credential=credential) as face_client:
+        async with DefaultAzureCredential() as credential, FaceClient(
+            endpoint=self.endpoint, credential=credential
+        ) as face_client:
             sample_file_path = helpers.get_image_path(TestImages.DEFAULT_IMAGE_FILE)
             result = await face_client.detect(  # type: ignore
                 helpers.read_file_content(sample_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
-                return_face_id=False)
+                return_face_id=False,
+            )
 
             self.logger.info(f"Detect faces from the file: {sample_file_path}")
             for idx, face in enumerate(result):

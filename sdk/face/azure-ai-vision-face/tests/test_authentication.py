@@ -8,7 +8,11 @@
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from azure.ai.vision.face.models import (
-        FaceDetectionModel, FaceRecognitionModel, FaceAttributeTypeDetection03, FaceAttributeTypeRecognition04)
+    FaceDetectionModel,
+    FaceRecognitionModel,
+    FaceAttributeTypeDetection03,
+    FaceAttributeTypeRecognition04,
+)
 
 from preparers import FaceClientPreparer, FacePreparer
 from _shared.constants import TestImages
@@ -29,7 +33,9 @@ class TestAuthentication(AzureRecordedTestCase):
             return_face_attributes=[
                 FaceAttributeTypeDetection03.HEAD_POSE,
                 FaceAttributeTypeDetection03.MASK,
-                FaceAttributeTypeRecognition04.QUALITY_FOR_RECOGNITION],
-            return_face_landmarks=True)
+                FaceAttributeTypeRecognition04.QUALITY_FOR_RECOGNITION,
+            ],
+            return_face_landmarks=True,
+        )
 
         assert result is not None
