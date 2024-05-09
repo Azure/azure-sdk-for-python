@@ -243,7 +243,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         This will only update the properties cache for a specified container.
         :param container_link: The container link will be used as the key to cache the container properties.
-        :param properties: These are the container properties to cache."""
+        :type container_link: str
+        :param properties: These are the container properties to cache.
+        :type properties:  Optional[Dict[str, Any]]"""
         if properties:
             self.__container_properties_cache[container_link] = properties
         else:
