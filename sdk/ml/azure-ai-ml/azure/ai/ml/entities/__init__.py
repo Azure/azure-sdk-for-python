@@ -306,6 +306,10 @@ from ._workspace.workspace_keys import (
     WorkspaceKeys,
 )
 
+# Prevents breaking change of WC name change, allowing users
+# to continue to the old name of "WorkspaceConnection".
+WorkspaceConnection = Connection
+
 __all__ = [
     "Resource",
     "Job",
@@ -360,6 +364,7 @@ __all__ = [
     "Workspace",
     "WorkspaceKeys",
     "Connection",
+    "WorkspaceConnection",
     "AzureBlobStoreConnection",
     "MicrosoftOneLakeConnection",
     "AzureOpenAIConnection",

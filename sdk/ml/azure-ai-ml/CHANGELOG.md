@@ -5,6 +5,7 @@
 ### Features Added
 - Add experimental support for working with Promptflow evaluators: `ml_client.evaluators`.
 - Many changes to the Connection entity class and its associated operations.
+- WorkspaceConnection class renamed to Connection, however the WorkspaceConnection class name now acts as a mask over the Connection class, allowing either to be imported and functional to maintain backwards compatibility.
 - Workspace Connection `list`, `get`, and `create_or_update` operations now include an optional `populate_secrets` input, which causes the operations to try making a secondary call to fill in the returned connections' credential info if possible. Only works with api key-based credentials for now.
 - Many workspace connection subtypes added. The full list of subclasses is now:
   - `AzureBlobStoreConnection`
@@ -33,7 +34,6 @@
 
 ### Breaking Changes
 
-- WorkspaceConnection and subclasses renamed to just Connection
 - Removed WorkspaceHubConfig entity, and renamed WorkspaceHub to Hub.
 - workspace_hub input of Workspace class hidden, renamed to hub_id, and re-surfaced in child class Project.
 - Removed Workspace Hub Operations from ML Client.

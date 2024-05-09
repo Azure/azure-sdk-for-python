@@ -34,6 +34,7 @@ from azure.ai.ml.entities import (
     OpenAIConnection,
     SerpConnection,
     ServerlessConnection,
+    WorkspaceConnection,
 )
 
 
@@ -368,6 +369,29 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.credentials.type == ConnectionAuthType.NONE
         assert ws_connection.name == "git_no_cred_conn"
         assert ws_connection.target == "https://test-git-feed.com2"
+        self.check_all_conversions_stable(ws_connection)
+
+    def test_old_connection_class(self):
+        ws_connection = load_connection(source="./tests/test_configs/connection/git_pat.yaml")
+
+        assert type(ws_connection) == WorkspaceConnection
+        assert type(ws_connection) == Connection
+        assert ws_connection.type == camel_to_snake(ConnectionCategory.GIT)
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.PAT)
+        assert ws_connection.credentials.pat == "dummy_pat"
+        assert ws_connection.name == "test_ws_conn_git_pat"
+        assert ws_connection.target == "https://test-git-feed.com"
+        self.check_all_conversions_stable(ws_connection)
+
+        ws_connection = WorkspaceConnection(
+            target="123", name="1234", type="git", credentials=NoneCredentialConfiguration()
+        )
+        assert type(ws_connection) == WorkspaceConnection
+        assert type(ws_connection) == Connection
+        assert ws_connection.type == camel_to_snake(ConnectionCategory.GIT)
+        assert ws_connection.credentials.type == ConnectionAuthType.NONE
+        assert ws_connection.name == "1234"
+        assert ws_connection.target == "123"
         self.check_all_conversions_stable(ws_connection)
 
     def test_python_feed(self):
