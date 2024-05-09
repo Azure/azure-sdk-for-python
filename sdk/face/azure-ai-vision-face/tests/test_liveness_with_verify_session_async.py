@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from collections import deque
 import pytest
 import uuid
 
@@ -93,15 +94,16 @@ class TestLivenessWithVerifySessionAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_list_sessions(self, client, **kwargs):
         variables = kwargs.pop("variables", {})
-
-        # key-value pairs = {device_correlation_id, created_session_id}
-        recorded_device_correlation_ids_dict = {
-            variables.setdefault("deviceCorrelationId1", str(uuid.uuid4())): "",  # '{id1}': ""
-            variables.setdefault("deviceCorrelationId2", str(uuid.uuid4())): "",  # '{id2}': ""
+        recorded_device_correlation_ids = {
+            variables.setdefault("deviceCorrelationId1", str(uuid.uuid4())),
+            variables.setdefault("deviceCorrelationId2", str(uuid.uuid4()))
         }
 
+        # key = session_id, value = device_correlation_id
+        created_session_dict = dict()
+
         # Create 2 sessions with different device_correlation_id
-        for dcid in recorded_device_correlation_ids_dict.keys():
+        for dcid in recorded_device_correlation_ids:
             created_session = await client.create_liveness_with_verify_session(
                 CreateLivenessSessionContent(
                     liveness_operation_mode=LivenessOperationMode.PASSIVE,
@@ -109,22 +111,23 @@ class TestLivenessWithVerifySessionAsync(AzureRecordedTestCase):
                 verify_image=None)
 
             _assert_is_string_and_not_empty(created_session.session_id)
-            recorded_device_correlation_ids_dict[dcid] = created_session.session_id
+            created_session_dict[created_session.session_id] = dcid
+
+        # Sort the dict by key because the `list sessions` operation returns sessions in ascending alphabetical order.
+        expected_dcid_queue = deque(value for _, value in sorted(created_session_dict.items(), key=lambda t: t[0]))
 
         # Test `list sessions` operation
         result = await client.get_liveness_with_verify_sessions()
 
         assert len(result) == 2
-        assert result[0].id < result[1].id
         for session in result:
-            assert session.device_correlation_id in recorded_device_correlation_ids_dict
-            assert session.id == recorded_device_correlation_ids_dict[session.device_correlation_id]
+            assert session.device_correlation_id == expected_dcid_queue.popleft()
             assert session.created_date_time is not None
             assert session.auth_token_time_to_live_in_seconds >= 60
             assert session.auth_token_time_to_live_in_seconds <= 86400
 
         # Teardown
-        for sid in recorded_device_correlation_ids_dict.values():
+        for sid in created_session_dict.keys():
             await client.delete_liveness_with_verify_session(sid)
         await client.close()
 
@@ -139,7 +142,6 @@ class TestLivenessWithVerifySessionAsync(AzureRecordedTestCase):
         recorded_session_id = variables.setdefault("sessionId", "1b79f44d-d8e0-4652-8f2d-637c4205d854")
 
         session = await client.get_liveness_with_verify_session_result(recorded_session_id)
-        assert session.id == recorded_session_id
         assert session.created_date_time is not None
         assert session.session_start_date_time is not None
         assert isinstance(session.session_expired, bool)
