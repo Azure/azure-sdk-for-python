@@ -270,6 +270,10 @@ class AzureMLResourceType:
     """Hub resource type."""
     PROJECT = "project"
     """Project resource type."""
+    SERVERLESS_ENDPOINT = "serverless_endpoints"
+    """Serverless endpoint resource type."""
+    MARKETPLACE_SUBSCRIPTION = "marketplace_subscriptions"
+    """Marketplace subscription resource type."""
     INDEX = "indexes"
     """Index resource type."""
 
@@ -837,10 +841,10 @@ class OneLakeArtifactTypes:
 
 
 class CognitiveServiceKinds:
-    """Subtypes for connections using the Cognitive serive type. These
+    """Subtypes for connections using the Cognitive service type. These
     values are plugged into the connection's metadata."""
 
-    CONTENT_SAFETY = "content_safety"
+    CONTENT_SAFETY = "Content Safety"
     SPEECH = "speech"
 
 
@@ -944,6 +948,24 @@ class InferenceServerType:
 
 class AzureDevopsArtifactsType:
     ARTIFACT = "artifact"
+
+
+class DataIndexTypes:
+    """DataIndexTypes is an enumeration of values for the types out indexes which can be written to by DataIndex."""
+
+    ACS = "acs"
+    """Azure Cognitive Search index type."""
+    PINECONE = "pinecone"
+    """Pinecone index type."""
+    FAISS = "faiss"
+    """Faiss index type."""
+
+
+class IndexInputType:
+    """An enumeration of values for the types of input data for an index."""
+
+    GIT = "git"
+    LOCAL = "local"
 
 
 class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
