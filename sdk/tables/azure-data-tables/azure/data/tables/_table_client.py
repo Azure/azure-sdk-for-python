@@ -366,10 +366,10 @@ class TableClient(TablesBaseClient):
     @distributed_trace
     def delete_entity(self, *args: Union[EntityType, str, T], **kwargs: Any) -> None:
         entity = kwargs.pop("entity", None)
-        if not entity:
-            entity = args[0]
         encoder = kwargs.pop("encoder", DEFAULT_ENCODER)
         try:
+            if not entity:
+                entity = args[0]
             entity_json = encoder.encode_entity(entity)
             partition_key = entity_json.get("PartitionKey")
             row_key = entity_json.get("RowKey")
