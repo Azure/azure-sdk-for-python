@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.1.0b1 (Unreleased)
 
 ### Features Added
 - `document_translate` is the method added to submit a single/synchronous document translation request to the Document Translation service.
