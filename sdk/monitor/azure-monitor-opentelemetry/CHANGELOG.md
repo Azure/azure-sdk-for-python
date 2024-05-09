@@ -5,7 +5,7 @@
 ### Features Added
 
 - Enable live metrics feature
-    ([#35218](https://github.com/Azure/azure-sdk-for-python/pull/35218))
+    ([#35566](https://github.com/Azure/azure-sdk-for-python/pull/35566))
 
 ### Breaking Changes
 

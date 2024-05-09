@@ -84,6 +84,8 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
      Attributes take priority over default attributes and those from Resource Detectors.
     :keyword list[~opentelemetry.sdk.trace.SpanProcessor] span_processors: List of `SpanProcessor` objects
      to process every span prior to exporting. Will be run sequentially.
+    :keyword bool enable_live_metrics: Boolean value to determine whether to enable live metrics feature.
+     Defaults to `False`.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
      `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
     :rtype: None
