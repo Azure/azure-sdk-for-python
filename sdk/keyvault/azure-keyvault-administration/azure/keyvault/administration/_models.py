@@ -10,6 +10,7 @@ from ._enums import KeyVaultSettingType
 from ._generated.models import (
     FullBackupOperation,
     Permission,
+    RestoreOperation,
     RoleAssignment,
     RoleAssignmentProperties,
     RoleAssignmentPropertiesWithScope,
@@ -153,6 +154,46 @@ class KeyVaultRoleDefinition(object):
         )
 
 
+class KeyVaultBackupOperation:
+    """The details of a Key Vault backup operation.
+
+    :ivar str status: The status of the backup operation.
+    :ivar str status_details: The status details of the backup operation.
+    :ivar str error: The error details of the backup operation.
+    :ivar start_time: The start time of the backup operation in UTC.
+    :vartype start_time: ~datetime.datetime or None
+    :ivar end_time: The end time of the backup operation in UTC.
+    :vartype end_time: ~datetime.datetime or None
+    :ivar str job_id: The job identifier of the backup operation.
+    :ivar str folder_url: The URL of the Azure Blob Storage container where the backup is stored.
+    """
+
+    # pylint:disable=unused-argument
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.status = kwargs.get("status")
+        self.status_details = kwargs.get("status_details")
+        self.error = kwargs.get("error")
+        self.start_time = kwargs.get("start_time")
+        self.end_time = kwargs.get("end_time")
+        self.job_id = kwargs.get("job_id")
+        self.folder_url = kwargs.get("folder_url")
+
+    @classmethod
+    def _from_generated(
+        cls, response: HttpResponse, deserialized_operation: FullBackupOperation, response_headers: Dict
+    ) -> "KeyVaultBackupOperation":
+        return cls(
+            status=deserialized_operation.status,
+            status_details=deserialized_operation.status_details,
+            error=deserialized_operation.error,
+            start_time=deserialized_operation.start_time,
+            end_time=deserialized_operation.end_time,
+            job_id=deserialized_operation.job_id,
+            folder_url=deserialized_operation.azure_storage_blob_container_uri,
+        )
+
+
 class KeyVaultBackupResult(object):
     """A Key Vault full backup operation result
 
@@ -169,6 +210,43 @@ class KeyVaultBackupResult(object):
         cls, response: HttpResponse, deserialized_operation: FullBackupOperation, response_headers: Dict
     ) -> "KeyVaultBackupResult":
         return cls(folder_url=deserialized_operation.azure_storage_blob_container_uri)
+
+
+class KeyVaultRestoreOperation:
+    """The details of a Key Vault restore operation.
+
+    :ivar str status: The status of the restore operation.
+    :ivar str status_details: The status details of the restore operation.
+    :ivar str error: The error details of the restore operation.
+    :ivar start_time: The start time of the restore operation in UTC.
+    :vartype start_time: ~datetime.datetime or None
+    :ivar end_time: The end time of the restore operation in UTC.
+    :vartype end_time: ~datetime.datetime or None
+    :ivar str job_id: The job identifier of the restore operation.
+    """
+
+    # pylint:disable=unused-argument
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.status = kwargs.get("status")
+        self.status_details = kwargs.get("status_details")
+        self.error = kwargs.get("error")
+        self.start_time = kwargs.get("start_time")
+        self.end_time = kwargs.get("end_time")
+        self.job_id = kwargs.get("job_id")
+
+    @classmethod
+    def _from_generated(
+        cls, response: HttpResponse, deserialized_operation: RestoreOperation, response_headers: Dict
+    ) -> "KeyVaultRestoreOperation":
+        return cls(
+            status=deserialized_operation.status,
+            status_details=deserialized_operation.status_details,
+            error=deserialized_operation.error,
+            start_time=deserialized_operation.start_time,
+            end_time=deserialized_operation.end_time,
+            job_id=deserialized_operation.job_id,
+        )
 
 
 class KeyVaultSetting(object):
