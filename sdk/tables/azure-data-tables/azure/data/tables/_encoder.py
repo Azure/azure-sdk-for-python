@@ -141,20 +141,23 @@ class TableEntityEncoder(TableEntityEncoderABC[Union[TableEntity, Mapping[str, A
     def encode_entity(self, entity: Union[TableEntity, Mapping[str, Any]]) -> Dict[str, Union[str, int, float, bool]]:
         """Encode an entity object into JSON format to send out.
         The entity format is:
-        {
-            "Address":"Mountain View",
-            "Age":23,
-            "AmountDue":200.23,
-            "CustomerCode@odata.type":"Edm.Guid",
-            "CustomerCode":"c9da6455-213d-42c9-9a79-3e9149a57833",
-            "CustomerSince@odata.type":"Edm.DateTime",
-            "CustomerSince":"2008-07-10T00:00:00",
-            "IsActive":true,
-            "NumberOfOrders@odata.type":"Edm.Int64",
-            "NumberOfOrders":"255",
-            "PartitionKey":"my_partition_key",
-            "RowKey":"my_row_key"
-        }
+
+        .. code-block:: json
+
+            {
+                "Address":"Mountain View",
+                "Age":23,
+                "AmountDue":200.23,
+                "CustomerCode@odata.type":"Edm.Guid",
+                "CustomerCode":"c9da6455-213d-42c9-9a79-3e9149a57833",
+                "CustomerSince@odata.type":"Edm.DateTime",
+                "CustomerSince":"2008-07-10T00:00:00",
+                "IsActive":true,
+                "NumberOfOrders@odata.type":"Edm.Int64",
+                "NumberOfOrders":"255",
+                "PartitionKey":"my_partition_key",
+                "RowKey":"my_row_key"
+            }
 
         :param entity: A table entity.
         :type entity: ~azure.data.tables.TableEntity or Mapping[str, Any]
