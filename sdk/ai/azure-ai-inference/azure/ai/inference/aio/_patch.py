@@ -45,12 +45,12 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.StreamingChatCompletions:
+    ) -> _models.AsyncStreamingChatCompletions:
         # pylint: disable=line-too-long
         """Gets streaming chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
         "completes" provided prompt data. When using this method, the response is streamed
-        back to the client. Iterate over the resulting ~azure.ai.inference.models.StreamingChatCompletions
+        back to the client. Iterate over the resulting ~azure.ai.inference.models.AsyncStreamingChatCompletions
         object to get content updates as they arrive.
 
         :param body: Required.
@@ -64,7 +64,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
          Default value is "application/json".
         :paramtype content_type: str
         :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.StreamingChatCompletions
+        :rtype: ~azure.ai.inference.models.AsyncStreamingChatCompletions
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -89,12 +89,12 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         ] = None,
         seed: Optional[int] = None,
         **kwargs: Any
-    ) -> _models.StreamingChatCompletions:
+    ) -> _models.AsyncStreamingChatCompletions:
         # pylint: disable=line-too-long
         """Gets streaming chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
         "completes" provided prompt data. When using this method, the response is streamed
-        back to the client. Iterate over the resulting ~azure.ai.inference.models.StreamingChatCompletions
+        back to the client. Iterate over the resulting ~azure.ai.inference.models.AsyncStreamingChatCompletions
         object to get content updates as they arrive.
 
         :keyword messages: The collection of context messages associated with this chat completions
@@ -182,12 +182,12 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.StreamingChatCompletions:
+    ) -> _models.AsyncStreamingChatCompletions:
         # pylint: disable=line-too-long
         """Gets streaming chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
         "completes" provided prompt data. When using this method, the response is streamed
-        back to the client. Iterate over the resulting ~azure.ai.inference.models.StreamingChatCompletions
+        back to the client. Iterate over the resulting ~azure.ai.inference.models.AsyncStreamingChatCompletions
         object to get content updates as they arrive.
 
         :param body: Required.
@@ -226,12 +226,12 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         ] = None,
         seed: Optional[int] = None,
         **kwargs: Any
-    ) -> _models.StreamingChatCompletions:
+    ) -> _models.AsyncStreamingChatCompletions:
         # pylint: disable=line-too-long
         """Gets streaming chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
         "completes" provided prompt data. When using this method, the response is streamed
-        back to the client. Iterate over the resulting ~azure.ai.inference.models.StreamingChatCompletions
+        back to the client. Iterate over the resulting ~azure.ai.inference.models.AsyncStreamingChatCompletions
         object to get content updates as they arrive.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
@@ -373,7 +373,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        return _models.StreamingChatCompletions(response)
+        return _models.AsyncStreamingChatCompletions(response)
 
 
 __all__: List[str] = [

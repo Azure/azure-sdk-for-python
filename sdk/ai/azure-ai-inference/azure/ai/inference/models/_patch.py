@@ -17,10 +17,10 @@ from .. import models as _models
 
 logger = logging.getLogger(__name__)
 
-class StreamingChatCompletions:
-    """Represents an interator over ChatCompletionsUpdate objects. It can be used for either synchronous or
-    asynchronous iterations. The class deserializes the Server Sent Events (SSE) response stream
-    into chat completions updates, each one represented by a ChatCompletionsUpdate object.
+class BaseStreamingChatCompletions:
+    """A base class for the sync and async streaming chat completions responses, holding any common code
+    to deserializes the Server Sent Events (SSE) response stream into chat completions updates, each one
+    represented by a ChatCompletionsUpdate object.
     """
 
     # Enable detailed logs of SSE parsing. For development only, should be `False` by default.
@@ -33,63 +33,10 @@ class StreamingChatCompletions:
     # The line indicating the end of the SSE stream
     SSE_DATA_EVENT_DONE = "data: [DONE]"
 
-    def __init__(self, response: Union[HttpResponse, AsyncHttpResponse]):
-        self._response = response
-        self._bytes_iterator: Union[AsyncIterator[bytes], Iterator[bytes]] = response.iter_bytes()
-        self._is_async_iterator = isinstance(self._response, AsyncHttpResponse)
+    def __init__(self):
         self._queue: "queue.Queue[_models.ChatCompletionsUpdate]" = queue.Queue()
         self._incomplete_json = ""
         self._done = False  # Will be set to True when reading 'data: [DONE]' line
-
-    def __iter__(self):
-        if self._is_async_iterator:
-            raise ValueError("This method is not supported for async iterators")
-        return self
-
-    def __next__(self) -> _models.ChatCompletionsUpdate:
-        if self._is_async_iterator:
-            raise ValueError("This method is not supported for async iterators")
-        while self._queue.empty() and not self._done:
-            self._done = self._read_next_block()
-        if self._queue.empty():
-            raise StopIteration
-        return self._queue.get()
-
-    def _read_next_block(self) -> bool:
-        if self.ENABLE_CLASS_LOGS:
-            logger.debug("[Reading next block]")
-        try:
-            # Use 'cast' to make 'pyright' error go away
-            element = cast(Iterator[bytes], self._bytes_iterator).__next__()
-        except StopIteration:
-            self.close()
-            return True
-        return self._deserialize_and_add_to_queue(element)
-
-    def __aiter__(self):
-        if not self._is_async_iterator:
-            raise ValueError("This method is only supported for async iterators")
-        return self
-
-    async def __anext__(self) -> _models.ChatCompletionsUpdate:
-        if not self._is_async_iterator:
-            raise ValueError("This method is only supported for async iterators")
-        while self._queue.empty() and not self._done:
-            self._done = await self._read_next_block_async()
-        if self._queue.empty():
-            raise StopAsyncIteration
-        return self._queue.get()
-
-    async def _read_next_block_async(self) -> bool:
-        if self.ENABLE_CLASS_LOGS:
-            logger.debug("[Reading next block]")
-        try:
-            # Use 'cast' to make 'pyright' error go away
-            element = await cast(AsyncIterator[bytes], self._bytes_iterator).__anext__()
-        except StopAsyncIteration:
-            await self.aclose()
-            return True
-        return self._deserialize_and_add_to_queue(element)
 
     def _deserialize_and_add_to_queue(self, element: bytes) -> bool:
 
@@ -139,6 +86,39 @@ class StreamingChatCompletions:
 
         return False
 
+
+class StreamingChatCompletions(BaseStreamingChatCompletions):
+    """Represents an interator over ChatCompletionsUpdate objects. It can be used for either synchronous or
+    asynchronous iterations. The class deserializes the Server Sent Events (SSE) response stream
+    into chat completions updates, each one represented by a ChatCompletionsUpdate object.
+    """
+
+    def __init__(self, response: HttpResponse):
+        super().__init__()
+        self._response = response
+        self._bytes_iterator: Iterator[bytes] = response.iter_bytes()
+
+    def __iter__(self):
+        return self
+
+    def __next__(self) -> _models.ChatCompletionsUpdate:
+        while self._queue.empty() and not self._done:
+            self._done = self._read_next_block()
+        if self._queue.empty():
+            raise StopIteration
+        return self._queue.get()
+
+    def _read_next_block(self) -> bool:
+        if self.ENABLE_CLASS_LOGS:
+            logger.debug("[Reading next block]")
+        try:
+            # Use 'cast' to make 'pyright' error go away
+            element = cast(Iterator[bytes], self._bytes_iterator).__next__()
+        except StopIteration:
+            self.close()
+            return True
+        return self._deserialize_and_add_to_queue(element)
+
     def __enter__(self):
         return self
 
@@ -146,17 +126,54 @@ class StreamingChatCompletions:
         self.close()
 
     def close(self) -> None:
-        if isinstance(self._response, HttpResponse):
-            self._response.close()
+        self._response.close()
+
+
+class AsyncStreamingChatCompletions(BaseStreamingChatCompletions):
+    """Represents an async interator over ChatCompletionsUpdate objects. It can be used for either synchronous or
+    asynchronous iterations. The class deserializes the Server Sent Events (SSE) response stream
+    into chat completions updates, each one represented by a ChatCompletionsUpdate object.
+    """
+
+    def __init__(self, response: AsyncHttpResponse):
+        super().__init__()
+        self._response = response
+        self._bytes_iterator: AsyncIterator[bytes] = response.iter_bytes()
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self) -> _models.ChatCompletionsUpdate:
+        while self._queue.empty() and not self._done:
+            self._done = await self._read_next_block_async()
+        if self._queue.empty():
+            raise StopAsyncIteration
+        return self._queue.get()
+
+    async def _read_next_block_async(self) -> bool:
+        if self.ENABLE_CLASS_LOGS:
+            logger.debug("[Reading next block]")
+        try:
+            # Use 'cast' to make 'pyright' error go away
+            element = await cast(AsyncIterator[bytes], self._bytes_iterator).__anext__()
+        except StopAsyncIteration:
+            await self.aclose()
+            return True
+        return self._deserialize_and_add_to_queue(element)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        self.close()
 
     async def aclose(self) -> None:
-        # `if`` statement added to avoid mypy error: Incompatible types in "await" (actual type "Optional[Coroutine[Any, Any, None]]", expected type "Awaitable[Any]")
-        if isinstance(self._response, AsyncHttpResponse):
-            await self._response.close()
+        await self._response.close()
 
 
 __all__: List[str] = [
-    "StreamingChatCompletions"
+    "StreamingChatCompletions",
+    "AsyncStreamingChatCompletions"
 ]  # Add all objects you want publicly available to users at this package level
 
 
