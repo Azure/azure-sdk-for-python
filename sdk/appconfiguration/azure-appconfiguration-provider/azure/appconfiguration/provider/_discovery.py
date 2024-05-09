@@ -52,7 +52,7 @@ def _find_origin(domain):
     srv_records = _request_record(request)
     if not srv_records:
         return None
-    return SRVRecord(_request_record(request)[0])
+    return SRVRecord(srv_records[0])
 
 
 def _find_replicas(origin):
