@@ -6,7 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, IO, List, Optional, Union, cast
+from typing import Any, IO, List, Optional, Union, cast, overload
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -30,6 +30,54 @@ class FaceClient(FaceClientGenerated):
      default value may result in unsupported behavior.
     :paramtype api_version: str or ~azure.ai.vision.face.models.Versions
     """
+
+    @overload
+    def detect_from_url(
+        self,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        detection_model: Union[str, _models.FaceDetectionModel],
+        recognition_model: Union[str, _models.FaceRecognitionModel],
+        return_face_id: bool,
+        return_face_attributes: Optional[List[Union[str, _models.FaceAttributeType]]] = None,
+        return_face_landmarks: Optional[bool] = None,
+        return_recognition_model: Optional[bool] = None,
+        face_id_time_to_live: Optional[int] = None,
+        **kwargs: Any,
+    ) -> List[_models.FaceDetectionResult]: ...
+
+    @overload
+    def detect_from_url(
+        self,
+        *,
+        url: str,
+        content_type: str = "application/json",
+        detection_model: Union[str, _models.FaceDetectionModel],
+        recognition_model: Union[str, _models.FaceRecognitionModel],
+        return_face_id: bool,
+        return_face_attributes: Optional[List[Union[str, _models.FaceAttributeType]]] = None,
+        return_face_landmarks: Optional[bool] = None,
+        return_recognition_model: Optional[bool] = None,
+        face_id_time_to_live: Optional[int] = None,
+        **kwargs: Any,
+    ) -> List[_models.FaceDetectionResult]: ...
+
+    @overload
+    def detect_from_url(
+        self,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        detection_model: Union[str, _models.FaceDetectionModel],
+        recognition_model: Union[str, _models.FaceRecognitionModel],
+        return_face_id: bool,
+        return_face_attributes: Optional[List[Union[str, _models.FaceAttributeType]]] = None,
+        return_face_landmarks: Optional[bool] = None,
+        return_recognition_model: Optional[bool] = None,
+        face_id_time_to_live: Optional[int] = None,
+        **kwargs: Any,
+    ) -> List[_models.FaceDetectionResult]: ...
 
     @distributed_trace
     def detect_from_url(
@@ -846,12 +894,43 @@ class FaceSessionClient(FaceSessionClientGenerated):
     :paramtype api_version: str or ~azure.ai.vision.face.models.Versions
     """
 
+    @overload
+    def create_liveness_with_verify_session(
+        self,
+        body: _models.CreateLivenessSessionContent,
+        *,
+        verify_image: Union[bytes, None],
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.CreateLivenessWithVerifySessionResult: ...
+
+    @overload
+    def create_liveness_with_verify_session(
+        self,
+        body: JSON,
+        *,
+        verify_image: Union[bytes, None],
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.CreateLivenessWithVerifySessionResult: ...
+
+    @overload
+    def create_liveness_with_verify_session(
+        self,
+        body: IO[bytes],
+        *,
+        verify_image: Union[bytes, None],
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.CreateLivenessWithVerifySessionResult: ...
+
     @distributed_trace
     def create_liveness_with_verify_session(
         self,
         body: Union[_models.CreateLivenessSessionContent, JSON, IO[bytes]],
-        verify_image: bytes,
-        **kwargs: Any
+        *,
+        verify_image: Union[bytes, None],
+        **kwargs: Any,
     ) -> _models.CreateLivenessWithVerifySessionResult:
         # pylint: disable=line-too-long
         """Create a new liveness session with verify. Client device submits VerifyImage during the
@@ -896,9 +975,9 @@ class FaceSessionClient(FaceSessionClientGenerated):
         :param body: Is one of the following types: CreateLivenessSessionContent, JSON, IO[bytes]
          Required.
         :type body: ~azure.ai.vision.face.models.CreateLivenessSessionContent or JSON or IO[bytes]
-        :param verify_image: The image for verify. If you don't have any images to use for verification, set it to None.
-         Required.
-        :type verify_image: bytes
+        :keyword verify_image: The image for verify. If you don't have any images to use for verification,
+         set it to None. Required.
+        :paramtype verify_image: bytes or None
         :return: CreateLivenessWithVerifySessionResult. The CreateLivenessWithVerifySessionResult is
          compatible with MutableMapping
         :rtype: ~azure.ai.vision.face.models.CreateLivenessWithVerifySessionResult

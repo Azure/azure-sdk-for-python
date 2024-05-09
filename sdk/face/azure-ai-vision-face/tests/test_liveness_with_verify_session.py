@@ -39,7 +39,7 @@ class TestLivenessWithVerifySession(AzureRecordedTestCase):
             CreateLivenessSessionContent(
                 liveness_operation_mode=LivenessOperationMode.PASSIVE,
                 device_correlation_id=recorded_device_correlation_id),
-            None)  # verify_image = None
+            verify_image=None)
 
         _assert_is_string_and_not_empty(created_session.session_id)
         _assert_is_string_and_not_empty(created_session.auth_token)
@@ -103,7 +103,7 @@ class TestLivenessWithVerifySession(AzureRecordedTestCase):
                 CreateLivenessSessionContent(
                     liveness_operation_mode=LivenessOperationMode.PASSIVE,
                     device_correlation_id=dcid),
-                None)  # verify_image = None
+                verify_image=None)
 
             _assert_is_string_and_not_empty(created_session.session_id)
             recorded_device_correlation_ids_dict[dcid] = created_session.session_id
@@ -175,7 +175,7 @@ class TestLivenessWithVerifySession(AzureRecordedTestCase):
             CreateLivenessSessionContent(
                 liveness_operation_mode=LivenessOperationMode.PASSIVE,
                 device_correlation_id=recorded_device_correlation_id),
-            None)  # verify_image = None
+            verify_image=None)
         session_id = created_session.session_id
         _assert_is_string_and_not_empty(session_id)
 
