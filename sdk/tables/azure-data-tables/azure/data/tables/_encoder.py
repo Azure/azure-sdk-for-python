@@ -58,16 +58,55 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
                 pass
             return EdmType.DATETIME, _to_utc_datetime(value)
         if isinstance(value, tuple):
-            if value[1] == EdmType.INT64:  # TODO: Test if this works with either string or enum input.
-                return EdmType.INT64, str(value[0])  # TODO: Test what happens if the supplied value exceeds int64
-            _, encoded_value = self.prepare_value(name, value[0])
-            return value[1], encoded_value
+            return self._prepare_value_in_tuple(value)
         if value is None:
             return None, None
         if name:
             raise TypeError(f"Unsupported data type '{type(value)}' for entity property '{name}'.")
         raise TypeError(f"Unsupported data type '{type(value)}'.")
 
+    def _prepare_value_in_tuple(self, value: Tuple[Any, Optional[Union[str, EdmType]]]) -> Tuple[Optional[EdmType], Optional[Union[str, int, float, bool]]]:
+        unencoded_value = value[0]
+        edm_type = value[1]
+        if unencoded_value is None:
+            return edm_type, unencoded_value
+        if edm_type == EdmType.STRING:
+            return EdmType.STRING, str(unencoded_value)
+        if edm_type == EdmType.INT64:
+            return EdmType.INT64, str(unencoded_value) 
+        if edm_type == EdmType.INT32:
+            return EdmType.INT32, int(unencoded_value)
+        if edm_type == EdmType.BOOLEAN:
+            return EdmType.BOOLEAN, unencoded_value  # Leaving unaltered as per original implementation.
+        if edm_type == EdmType.GUID:
+            return EdmType.GUID, str(unencoded_value)
+        if edm_type == EdmType.BINARY:
+            return EdmType.BINARY, _encode_base64(unencoded_value)  # Leaving this with the double-encoding bug for now, as per original implementation
+        if edm_type == EdmType.DOUBLE:
+            if isinstance(unencoded_value, str):
+                # Pass a serialized value straight through
+                return EdmType.DOUBLE, unencoded_value
+            if isnan(unencoded_value):
+                return EdmType.DOUBLE, "NaN"
+            if unencoded_value == float("inf"):
+                return EdmType.DOUBLE, "Infinity"
+            if unencoded_value == float("-inf"):
+                return EdmType.DOUBLE, "-Infinity"
+            return EdmType.DOUBLE, unencoded_value
+        if edm_type == EdmType.DATETIME:
+            if isinstance(unencoded_value, str):
+                # Pass a serialized datetime straight through
+                return EdmType.DATETIME, unencoded_value
+            try:
+                # Check is this is a 'round-trip' datetime, and if so
+                # pass through the original value.
+                if unencoded_value.tables_service_value:
+                    return EdmType.DATETIME, unencoded_value.tables_service_value
+            except AttributeError:
+                pass
+            return EdmType.DATETIME, _to_utc_datetime(unencoded_value)
+        raise TypeError(f"Unsupported edm type '{edm_type}'.")
+    
     @abc.abstractmethod
     def encode_entity(self, entity: T) -> Dict[str, Union[str, int, float, bool]]:
         """Encode an entity object into JSON format to send out."""
@@ -96,7 +135,7 @@ class TableEntityEncoder(TableEntityEncoderABC[EntityType]):
                 # the type is string instead of Guid after encoded
                 if edm_type:
                     encoded[key + _ODATA_SUFFIX] = edm_type.value if hasattr(edm_type, "value") else edm_type
-            except TypeError as ex:
+            except TypeError:
                 pass
             encoded[key] = value
         return encoded
