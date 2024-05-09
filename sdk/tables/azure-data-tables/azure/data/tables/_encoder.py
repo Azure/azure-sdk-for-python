@@ -122,7 +122,6 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
             except AttributeError:
                 pass
             return EdmType.DATETIME, _to_utc_datetime(unencoded_value)
-        raise TypeError(f"Unsupported edm type '{edm_type}'.")
 
     @abc.abstractmethod
     def encode_entity(self, entity: T) -> Dict[str, Union[str, int, float, bool]]:
