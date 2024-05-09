@@ -253,7 +253,6 @@ class RequestsTransport(HttpTransport):
         self._use_env_settings = kwargs.pop("use_env_settings", True)
         # See https://github.com/Azure/azure-sdk-for-python/issues/25640 to understand why we track this
         self._has_been_opened = False
-        self._has_been_closed = False
 
     def __enter__(self) -> "RequestsTransport":
         self.open()
@@ -276,7 +275,7 @@ class RequestsTransport(HttpTransport):
             session.mount(p, adapter)
 
     def open(self):
-        if self._has_been_opened and self._has_been_closed:
+        if self._has_been_opened and not self.session:
             raise ValueError(
                 "HTTP transport has already been closed. "
                 "You may check if you're calling a function outside of the `with` of your client creation, "
@@ -289,14 +288,11 @@ class RequestsTransport(HttpTransport):
             else:
                 raise ValueError("session_owner cannot be False and no session is available")
         self._has_been_opened = True
-        # Let's make sure if close was called before it was opened, it has no impact
-        self._has_been_closed = False
 
     def close(self):
         if self._session_owner and self.session:
             self.session.close()
             self.session = None
-        self._has_been_closed = True
 
     @overload
     def send(

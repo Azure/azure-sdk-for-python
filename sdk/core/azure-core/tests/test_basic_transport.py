@@ -1296,6 +1296,7 @@ def test_already_close_with_with(caplog, port, http_request):
         transport.send(request)
     assert "HTTP transport has already been closed." in str(err)
 
+
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_already_close_manually(caplog, port, http_request):
     transport = RequestsTransport()
@@ -1310,13 +1311,14 @@ def test_already_close_manually(caplog, port, http_request):
         transport.send(request)
     assert "HTTP transport has already been closed." in str(err)
 
+
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_close_too_soon_works_fine(caplog, port, http_request):
     transport = RequestsTransport()
 
     request = http_request("GET", "http://localhost:{}/basic/string".format(port))
 
-    transport.close() # Never opened, should work fine
+    transport.close()  # Never opened, should work fine
     result = transport.send(request)
 
     assert result  # No exception is good enough here

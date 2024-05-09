@@ -114,7 +114,6 @@ class AioHttpTransport(AsyncHttpTransport):
         self._use_env_settings = kwargs.pop("use_env_settings", True)
         # See https://github.com/Azure/azure-sdk-for-python/issues/25640 to understand why we track this
         self._has_been_opened = False
-        self._has_been_closed = False
 
     async def __aenter__(self):
         await self.open()
@@ -129,7 +128,7 @@ class AioHttpTransport(AsyncHttpTransport):
         await self.close()
 
     async def open(self):
-        if self._has_been_opened and self._has_been_closed:
+        if self._has_been_opened and not self.session:
             raise ValueError(
                 "HTTP transport has already been closed. "
                 "You may check if you're calling a function outside of the `async with` of your client creation, "
@@ -150,8 +149,6 @@ class AioHttpTransport(AsyncHttpTransport):
                 raise ValueError("session_owner cannot be False and no session is available")
 
         self._has_been_opened = True
-        # Let's make sure if close was called before it was opened, it has no impact
-        self._has_been_closed = False
         await self.session.__aenter__()
 
     async def close(self):
@@ -159,7 +156,6 @@ class AioHttpTransport(AsyncHttpTransport):
         if self._session_owner and self.session:
             await self.session.close()
             self.session = None
-        self._has_been_closed = True
 
     def _build_ssl_config(self, cert, verify):
         """Build the SSL configuration.

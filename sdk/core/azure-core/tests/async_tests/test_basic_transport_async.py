@@ -1010,6 +1010,7 @@ async def test_already_close_with_with(caplog, port, http_request):
         await transport.send(request)
     assert "HTTP transport has already been closed." in str(err)
 
+
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 @pytest.mark.asyncio
 async def test_already_close_manually(caplog, port, http_request):
