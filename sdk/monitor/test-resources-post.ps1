@@ -14,6 +14,8 @@ $clientSecret = $DeploymentOutputs['MONITOR_CLIENT_SECRET']
 $dcrImmutableId = $DeploymentOutputs['AZURE_MONITOR_DCR_ID']
 $dceEndpoint = $DeploymentOutputs['AZURE_MONITOR_DCE']
 $streamName = $DeploymentOutputs['AZURE_MONITOR_STREAM_NAME']
+$environment = $DeploymentOutputs['MONITOR_ENVIRONMENT']
+$authorityHost = $DeploymentOutputs['AZURE_AUTHORITY_HOST']
 
 ##################
 ### Step 0: Wait for role assignment to propagate
@@ -24,10 +26,19 @@ Start-Sleep -s 180
 ##################
 ### Step 1: Obtain a bearer token used later to authenticate against the DCE.
 ##################
-$scope= [System.Web.HttpUtility]::UrlEncode("https://monitor.azure.com//.default")
+# Audience Mappings
+$audienceMappings = @{
+    "AzureCloud" = "https://monitor.azure.com";
+    "AzureUSGovernment" = "https://monitor.azure.us";
+    "AzureChinaCloud" = "https://monitor.azure.cn";
+}
+
+$audience = $audienceMappings[$environment]
+
+$scope= [System.Web.HttpUtility]::UrlEncode("$audience/.default")
 $body = "client_id=$clientId&scope=$scope&client_secret=$clientSecret&grant_type=client_credentials";
 $headers = @{"Content-Type"="application/x-www-form-urlencoded"};
-$uri = "https://login.microsoftonline.com/$tenantId/oauth2/v2.0/token"
+$uri = "$authorityHost/$tenantId/oauth2/v2.0/token"
 $bearerToken = (Invoke-RestMethod -Uri $uri -Method "Post" -Body $body -Headers $headers).access_token
 
 ##################
@@ -68,12 +79,12 @@ $staticData = @"
 ##################
 $body = $staticData;
 $headers = @{"Authorization"="Bearer $bearerToken";"Content-Type"="application/json"};
-$uri = "$dceEndpoint/dataCollectionRules/$dcrImmutableId/streams/${streamName}?api-version=2021-11-01-preview"
-$uri2 = "$dceEndpoint/dataCollectionRules/$dcrImmutableId/streams/${streamName}2?api-version=2021-11-01-preview"
+$uri = "$dceEndpoint/dataCollectionRules/$dcrImmutableId/streams/${streamName}?api-version=2023-01-01"
+$uri2 = "$dceEndpoint/dataCollectionRules/$dcrImmutableId/streams/${streamName}2?api-version=2023-01-01"
 
 Write-Host "Sending sample data..."
-Invoke-RestMethod -Uri $uri -Method "Post" -Body $body -Headers $headers -TimeoutSec 20 -MaximumRetryCount 3
-Invoke-RestMethod -Uri $uri2 -Method "Post" -Body $body -Headers $headers -TimeoutSec 20 -MaximumRetryCount 3
+Invoke-RestMethod -Uri $uri -Method "Post" -Body $body -Headers $headers -TimeoutSec 40 -MaximumRetryCount 3
+Invoke-RestMethod -Uri $uri2 -Method "Post" -Body $body -Headers $headers -TimeoutSec 40 -MaximumRetryCount 3
 
 ##################
 ### Step 4: Sleep to allow time for data to reflect in the workspace tables.

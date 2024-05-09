@@ -17,6 +17,7 @@ from .connection_subtypes import (
     OpenAIConnectionSchema,
     SerpConnectionSchema,
     ServerlessConnectionSchema,
+    OneLakeArtifactSchema,
 )
 
 __all__ = [
@@ -32,4 +33,5 @@ __all__ = [
     "OpenAIConnectionSchema",
     "SerpConnectionSchema",
     "ServerlessConnectionSchema",
+    "OneLakeArtifactSchema",
 ]
