@@ -39,7 +39,7 @@ from azure.monitor.opentelemetry._constants import (
     SPAN_PROCESSORS_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
-from azure.monitor.opentelemetry.exporter._quickpulse import enable_live_metrics
+from azure.monitor.opentelemetry.exporter._quickpulse import enable_live_metrics  # pylint: disable=import-error,no-name-in-module
 from azure.monitor.opentelemetry.exporter._quickpulse._processor import (
     _QuickpulseLogRecordProcessor,
     _QuickpulseSpanProcessor,
@@ -98,7 +98,7 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     disable_tracing = configurations[DISABLE_TRACING_ARG]
     disable_logging = configurations[DISABLE_LOGGING_ARG]
     disable_metrics = configurations[DISABLE_METRICS_ARG]
-    enable_live_metrics = configurations[ENABLE_LIVE_METRICS_ARG]
+    enable_live_metrics_config = configurations[ENABLE_LIVE_METRICS_ARG]
 
     # Setup tracing pipeline
     if not disable_tracing:
@@ -113,7 +113,7 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
         _setup_metrics(configurations)
 
     # Setup live metrics
-    if enable_live_metrics:
+    if enable_live_metrics_config:
         _setup_live_metrics(configurations)
 
     # Setup instrumentations
@@ -149,8 +149,8 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     logger_provider = LoggerProvider(resource=resource)
     set_logger_provider(logger_provider)
     if configurations.get(ENABLE_LIVE_METRICS_ARG):
-        qlrp = _QuickpulseLogRecordProcessor()
-        get_logger_provider().add_log_record_processor(qlrp) # type: ignore
+        qlp = _QuickpulseLogRecordProcessor()
+        get_logger_provider().add_log_record_processor(qlp) # type: ignore
     log_exporter = AzureMonitorLogExporter(**configurations)
     log_record_processor = BatchLogRecordProcessor(
         log_exporter,
