@@ -609,9 +609,9 @@ _PYTHON_TO_ENTITY_CONVERSIONS: Dict[Type, Callable[[Any], Tuple[Optional[EdmType
 # Conversion from Edm type to a function which returns a tuple of the
 # type string and content string. These conversions are only used when the
 # full EdmProperty tuple is specified. As a result, in this case we ALWAYS add
-# the Odatatype tag, even for field types where it's not necessary. This is why
+# the Odata type tag, even for field types where it's not necessary. This is why
 # boolean and int32 have special processing below, as we would not normally add the
-# Odatatype tags for these to keep payload size minimal.
+# Odata type tags for these to keep payload size minimal.
 # This is also necessary for CLI compatibility.
 _EDM_TO_ENTITY_CONVERSIONS: Dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Any]]] = {
     EdmType.BINARY: _to_entity_binary,

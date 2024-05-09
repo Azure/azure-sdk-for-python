@@ -2735,6 +2735,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
             assert resp == test_entity
             await client.delete_table()
 
+    @pytest.mark.live_test_only
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_encoder_batch(self, tables_storage_account_name, tables_primary_storage_account_key, **kwargs):

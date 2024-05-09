@@ -2705,6 +2705,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             assert resp == test_entity
             client.delete_table()
 
+    @pytest.mark.live_test_only
     @cosmos_decorator
     @recorded_by_proxy
     def test_encoder_batch(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
