@@ -150,6 +150,8 @@ class AioHttpTransport(AsyncHttpTransport):
                 raise ValueError("session_owner cannot be False and no session is available")
 
         self._has_been_opened = True
+        # Let's make sure if close was called before it was opened, it has no impact
+        self._has_been_closed = False
         await self.session.__aenter__()
 
     async def close(self):

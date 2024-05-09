@@ -289,6 +289,8 @@ class RequestsTransport(HttpTransport):
             else:
                 raise ValueError("session_owner cannot be False and no session is available")
         self._has_been_opened = True
+        # Let's make sure if close was called before it was opened, it has no impact
+        self._has_been_closed = False
 
     def close(self):
         if self._session_owner and self.session:
