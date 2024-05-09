@@ -5,5 +5,5 @@ verifytypes = false
 pyright = false
 strict_sphinx = true
 
-: [tool.generate]
+[tool.generate]
 autorest-post-process = true
