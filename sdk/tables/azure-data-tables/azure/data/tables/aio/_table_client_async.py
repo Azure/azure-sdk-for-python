@@ -371,13 +371,15 @@ class TableClient(AsyncTablesBaseClient):
 
     @distributed_trace_async
     async def delete_entity(self, *args: Union[EntityType, str, T], **kwargs: Any) -> None:
+        entity = kwargs.pop("entity", None)
+        if not entity:
+            entity = args[0]
+        encoder = kwargs.pop("encoder", DEFAULT_ENCODER)
         try:
-            entity = kwargs.pop("entity", None)
-            if not entity:
-                entity = args[0]
-            partition_key = entity["PartitionKey"]
-            row_key = entity["RowKey"]
-        except (TypeError, IndexError):
+            entity_json = encoder.encode_entity(entity)
+            partition_key = entity_json.get("PartitionKey")
+            row_key = entity_json.get("RowKey")
+        except (TypeError, IndexError, AttributeError):
             partition_key = kwargs.pop("partition_key", None)
             if partition_key is None:
                 partition_key = args[0]
@@ -393,7 +395,6 @@ class TableClient(AsyncTablesBaseClient):
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
 
-        encoder = kwargs.pop("encoder", DEFAULT_ENCODER)
         try:
             await self._client.table.delete_entity(
                 table=self.table_name,
