@@ -28,7 +28,6 @@ def sample_chat_completions_with_tools():
     # Enable unredacted logging, including full request and response payloads (delete me!)
     import sys
     import logging
-
     logger = logging.getLogger("azure")
     logger.setLevel(logging.DEBUG)
     logger.addHandler(logging.StreamHandler(stream=sys.stdout))
@@ -51,6 +50,7 @@ def sample_chat_completions_with_tools():
         FunctionDefinition,
         CompletionsFinishReason,
         ChatCompletionsToolSelectionPreset,
+        ChatCompletionsNamedToolSelection
     )
     from azure.core.credentials import AzureKeyCredential
 
@@ -71,14 +71,14 @@ def sample_chat_completions_with_tools():
         str: The airline name, fight number, date and time of the next flight between the cities
         """
         if origin_city == "Seattle" and destination_city == "Miami":
-            # return "Delta airlines flight number 123 from Seattle to Miami, departing May 7th, 2024 at 10:00 AM."
-            return '{"info": "Delta airlines flight number 123 from Seattle to Miami, departing May 7th, 2024 at 10:00 AM."}'
+            return "Delta airlines flight number 123 from Seattle to Miami, departing May 7th, 2024 at 10:00 AM."
+            #return '{"info": "Delta airlines flight number 123 from Seattle to Miami, departing May 7th, 2024 at 10:00 AM."}'
         elif origin_city == "Seattle" and destination_city == "Orlando":
-            # return "American Airlines flight number 456 from Seattle to Orlando, departing May 8th, 2024 at 2:45 PM."
-            return '{"info": "American Airlines flight number 456 from Seattle to Orlando, departing May 8th, 2024 at 2:45 PM."}'
+            return "American Airlines flight number 456 from Seattle to Orlando, departing May 8th, 2024 at 2:45 PM."
+            #return '{"info": "American Airlines flight number 456 from Seattle to Orlando, departing May 8th, 2024 at 2:45 PM."}'
         else:
-            # return "I don't have that information."
-            return '{"into": "I don\'t have that information."}'
+            return "I don't have that information."
+            #return '{"into": "I don\'t have that information."}'
 
     # Define a 'tool' that the model can use to retrieves flight information
     flight_info = ChatCompletionsFunctionToolDefinition(
@@ -108,10 +108,11 @@ def sample_chat_completions_with_tools():
         UserMessage(content="What are the next flights from Seattle to Miami and from Seattle to Orlando?"),
     ]
 
+    x : ChatCompletionsNamedToolSelection
     result = client.create(
         messages=messages,
         tools=[flight_info],
-        # tool_choice=ChatCompletionsToolSelectionPreset.NONE  # Cohere model does not support
+        #tool_choice=ChatCompletionsNamedToolSelection(type="function")  # Cohere model does not support
     )
 
     # As long as the model keeps requesting tool calls, make tool calls and provide the tool outputs to the model
@@ -140,7 +141,7 @@ def sample_chat_completions_with_tools():
         result = client.create(
             messages=messages,
             tools=[flight_info],
-            # tool_choice=ChatCompletionsToolSelectionPreset.AUTO
+            tool_choice=ChatCompletionsToolSelectionPreset.AUTO
         )
 
     # Print the final response

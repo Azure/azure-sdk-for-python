@@ -6,15 +6,16 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import queue
-import time
-import re
 import json
+import logging
+import queue
+import re
 
 from typing import List, Union, AsyncIterator, Iterator, cast
 from azure.core.rest import HttpResponse, AsyncHttpResponse
 from .. import models as _models
 
+logger = logging.getLogger(__name__)
 
 class StreamingChatCompletions:
     """Represents an interator over ChatCompletionsUpdate objects. It can be used for either synchronous or
@@ -22,7 +23,7 @@ class StreamingChatCompletions:
     into chat completions updates, each one represented by a ChatCompletionsUpdate object.
     """
 
-    # Enable console logs for debugging. For development only, will be removed before release.
+    # Enable detailed logs of SSE parsing. For development only, should be `False` by default.
     ENABLE_CLASS_LOGS = False
 
     # The prefix of each line in the SSE stream that contains a JSON string
@@ -55,6 +56,8 @@ class StreamingChatCompletions:
         return self._queue.get()
 
     def _read_next_block(self) -> bool:
+        if self.ENABLE_CLASS_LOGS:
+            logger.debug("[Reading next block]")
         try:
             # Use 'cast' to make 'pyright' error go away
             element = cast(Iterator[bytes], self._bytes_iterator).__next__()
@@ -78,6 +81,8 @@ class StreamingChatCompletions:
         return self._queue.get()
 
     async def _read_next_block_async(self) -> bool:
+        if self.ENABLE_CLASS_LOGS:
+            logger.debug("[Reading next block]")
         try:
             # Use 'cast' to make 'pyright' error go away
             element = await cast(AsyncIterator[bytes], self._bytes_iterator).__anext__()
@@ -97,7 +102,7 @@ class StreamingChatCompletions:
         for index, line in enumerate(line_list):
 
             if self.ENABLE_CLASS_LOGS:
-                print(f"[original] {repr(line)}")
+                logger.debug(f"[Original line] {repr(line)}")
 
             if index == 0:
                 line = self._incomplete_json + line
@@ -108,7 +113,7 @@ class StreamingChatCompletions:
                 return False
 
             if self.ENABLE_CLASS_LOGS:
-                print(f"[modified] {repr(line)}")
+                logger.debug(f"[Modified line] {repr(line)}")
 
             if line == "\n":  # Empty line, indicating flush output to client
                 continue
@@ -118,7 +123,7 @@ class StreamingChatCompletions:
 
             if line.startswith(self.SSE_DATA_EVENT_DONE):
                 if self.ENABLE_CLASS_LOGS:
-                    print("done]")
+                    logger.debug("[Done]")
                 return True
 
             # If you reached here, the line should contain `data: {...}\n`
@@ -130,7 +135,7 @@ class StreamingChatCompletions:
             )
 
             if self.ENABLE_CLASS_LOGS:
-                print("[added]")
+                logger.debug("[Added to queue]")
 
         return False
 
