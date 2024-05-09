@@ -414,7 +414,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             expected_entity = {
                 "PartitionKey": "PK2",
                 "RowKey": "RK2",
-                "Data1": "12345",
+                "Data1": 12345,
                 "Data1@odata.type": "Edm.Int32",
                 "Data2": "False",
                 "Data2@odata.type": "Edm.Boolean",
@@ -431,24 +431,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data8": "9223372036854775807",
                 "Data8@odata.type": "Edm.Int64",
             }
-            # expected_backcompat_entity = {
-            #     "PartitionKey": "PK2",
-            #     "RowKey": "RK2",
-            #     "Data1": 12345, # diff: is "12345" in new encoded result
-            #     "Data1@odata.type": "Edm.Int32",
-            #     "Data2": "False",
-            #     "Data2@odata.type": "Edm.Boolean",
-            #     "Data3": "None", # diff: not in new encoded result
-            #     "Data3@odata.type": "Edm.String", # diff: not in new encoded result
-            #     "Data4": test_entity["Data4"][0],
-            #     "Data4@odata.type": "Edm.DateTime",
-            #     "Data5": test_entity["Data5"][0],
-            #     "Data5@odata.type": "Edm.Guid",
-            #     "Data7": "3.14",
-            #     "Data7@odata.type": "Edm.Double",
-            #     "Data8": "9223372036854775807",
-            #     "Data8@odata.type": "Edm.Int64",
-            # }
             response_entity = {
                 "PartitionKey": "PK2",
                 "RowKey": "RK2",
@@ -459,7 +441,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data7": 3.14,
                 "Data8": (9223372036854775807, "Edm.Int64"),
             }
-            # _check_backcompat(test_entity, expected_entity) # will fail
+            _check_backcompat(test_entity, expected_entity)
             resp = client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -1116,7 +1098,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             expected_entity = {
                 "PartitionKey": "PK2",
                 "RowKey": "RK2",
-                "Data1": "12345",
+                "Data1": 12345,
                 "Data1@odata.type": "Edm.Int32",
                 "Data2": "False",
                 "Data2@odata.type": "Edm.Boolean",
@@ -1133,24 +1115,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data8": "9223372036854775807",
                 "Data8@odata.type": "Edm.Int64",
             }
-            # expected_backcompat_entity = {
-            #     "PartitionKey": "PK2",
-            #     "RowKey": "RK2",
-            #     "Data1": 12345, # diff: is "12345" in new encoded result
-            #     "Data1@odata.type": "Edm.Int32",
-            #     "Data2": "False",
-            #     "Data2@odata.type": "Edm.Boolean",
-            #     "Data3": "None", # diff: not in new encoded result
-            #     "Data3@odata.type": "Edm.String", # diff: not in new encoded result
-            #     "Data4": test_entity["Data4"][0],
-            #     "Data4@odata.type": "Edm.DateTime",
-            #     "Data5": test_entity["Data5"][0],
-            #     "Data5@odata.type": "Edm.Guid",
-            #     "Data7": "3.14",
-            #     "Data7@odata.type": "Edm.Double",
-            #     "Data8": "9223372036854775807",
-            #     "Data8@odata.type": "Edm.Int64",
-            # }
             response_entity = {
                 "PartitionKey": "PK2",
                 "RowKey": "RK2",
@@ -1161,7 +1125,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data7": 3.14,
                 "Data8": EntityProperty(value=9223372036854775807, edm_type="Edm.Int64"),
             }
-            # _check_backcompat(test_entity, expected_entity) # will fail
+            _check_backcompat(test_entity, expected_entity)
             verification = json.dumps(expected_entity, sort_keys=True)
             resp = client.upsert_entity(
                 test_entity,
@@ -2006,7 +1970,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             expected_entity = {
                 "PartitionKey": "PK2",
                 "RowKey": "RK2",
-                "Data1": "12345",
+                "Data1": 12345,
                 "Data1@odata.type": "Edm.Int32",
                 "Data2": "False",
                 "Data2@odata.type": "Edm.Boolean",
@@ -2023,24 +1987,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data8": "9223372036854775807",
                 "Data8@odata.type": "Edm.Int64",
             }
-            # expected_backcompat_entity = {
-            #     "PartitionKey": "PK2",
-            #     "RowKey": "RK2",
-            #     "Data1": 12345,  # diff: is "12345" in new encoded result
-            #     "Data1@odata.type": "Edm.Int32",
-            #     "Data2": "False",
-            #     "Data2@odata.type": "Edm.Boolean",
-            #     "Data3": "None", # diff: not in new encoded result
-            #     "Data3@odata.type": "Edm.String", # diff: not in new encoded result
-            #     "Data4": test_entity["Data4"][0],
-            #     "Data4@odata.type": "Edm.DateTime",
-            #     "Data5": test_entity["Data5"][0],
-            #     "Data5@odata.type": "Edm.Guid",
-            #     "Data7": "3.14",
-            #     "Data7@odata.type": "Edm.Double",
-            #     "Data8": "9223372036854775807",
-            #     "Data8@odata.type": "Edm.Int64",
-            # }
             response_entity = {
                 "PartitionKey": "PK2",
                 "RowKey": "RK2",
@@ -2051,7 +1997,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data7": 3.14,
                 "Data8": EntityProperty(value=9223372036854775807, edm_type="Edm.Int64"),
             }
-            # _check_backcompat(test_entity, expected_entity) # will fail
+            _check_backcompat(test_entity, expected_entity)
             client.upsert_entity({"PartitionKey": "PK2", "RowKey": "RK2"})
             verification = json.dumps(expected_entity, sort_keys=True)
             resp = client.update_entity(

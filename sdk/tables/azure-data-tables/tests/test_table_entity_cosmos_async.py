@@ -2021,11 +2021,11 @@ class TestTableEntityCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             await self.table.upsert_entity(entity)
             result = await self.table.get_entity(entity["PartitionKey"], entity["RowKey"])
             assert result["bool"] == False
-            assert result["text"] == 42
+            assert result["text"] == "42"
             assert result["number"] == 23
             assert result["bigNumber"][0] == 64
-            assert _encode_base64(result["bytes"]) == "test"
-            assert result["amount"] == 0
+            assert result["bytes"] == b"test"
+            assert result["amount"] == 0.0
             assert str(result["since"]) == "2008-07-10 00:00:00+00:00"
             assert result["guid"] == entity["guid"][0]
 
