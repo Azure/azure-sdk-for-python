@@ -23,9 +23,13 @@ class FixedSizePriorityQueue:
         return await _queue_async_helper.heap_pop(self._heap, document_producer_comparator)
 
     async def push_async(self, item, document_producer_comparator):
-        await _queue_async_helper.heap_push(self._heap, item, document_producer_comparator)
-        if len(self._heap) > self.max_size:
-            self._heap.pop(len(self._heap) - 1)
+        if len(self._heap) < self.max_size:
+            await _queue_async_helper.heap_push(self._heap, item, document_producer_comparator)
+        else:
+            await _queue_async_helper.heap_push(self._heap, item, document_producer_comparator)
+            holder_item = await _queue_async_helper.heap_pop(self._heap, document_producer_comparator)
+            await _queue_async_helper.heap_push(self._heap, holder_item, document_producer_comparator)
+            self._heap.pop(self.max_size)
 
     def peek(self):
         return self._heap[0]

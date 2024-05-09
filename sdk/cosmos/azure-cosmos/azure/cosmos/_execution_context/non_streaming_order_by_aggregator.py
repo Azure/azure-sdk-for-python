@@ -24,9 +24,12 @@ class FixedSizePriorityQueue:
         return heapq.heappop(self._heap)
 
     def push(self, item):
-        heapq.heappush(self._heap, item)
-        if len(self._heap) > self.max_size:
-            self._heap.pop(len(self._heap) - 1)
+        if len(self._heap) < self.max_size:
+            heapq.heappush(self._heap, item)
+        else:
+            holder_item = heapq.heappushpop(self._heap, item)
+            heapq.heappush(self._heap, holder_item)
+            self._heap.pop(self.max_size)
 
     def peek(self):
         return self._heap[0]
@@ -86,18 +89,15 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
 
         pq_size = partitioned_query_ex_info.get_top() or partitioned_query_ex_info.get_limit()
         self._orderByPQ = FixedSizePriorityQueue(pq_size)
-        alist = []
         for doc_producer in self._doc_producers:
             while True:
                 try:
                     result = doc_producer.peek()
-                    alist.append(result)
                     item_result = document_producer._NonStreamingDocumentProducer(result, self._sort_orders)
                     self._orderByPQ.push(item_result)
                     next(doc_producer)
                 except StopIteration:
                     break
-
     def __next__(self):
         """Returns the next item result.
 
