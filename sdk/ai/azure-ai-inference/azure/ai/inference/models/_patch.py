@@ -6,6 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import asyncio
 import json
 import logging
 import queue
@@ -165,7 +166,7 @@ class AsyncStreamingChatCompletions(BaseStreamingChatCompletions):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
-        self.close()
+        asyncio.run(self.close())
 
     async def aclose(self) -> None:
         await self._response.close()
