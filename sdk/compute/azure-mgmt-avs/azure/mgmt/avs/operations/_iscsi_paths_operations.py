@@ -44,7 +44,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_list_request(
+def build_list_by_private_cloud_request(
     resource_group_name: str, private_cloud_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -56,7 +56,7 @@ def build_list_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/iscsiPaths",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
@@ -78,7 +78,7 @@ def build_list_request(
 
 
 def build_get_request(
-    resource_group_name: str, private_cloud_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str, private_cloud_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -89,7 +89,7 @@ def build_get_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/iscsiPaths/default",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
@@ -97,7 +97,6 @@ def build_get_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "privateCloudName": _SERIALIZER.url("private_cloud_name", private_cloud_name, "str", pattern=r"^[-\w\._]+$"),
-        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str", pattern=r"^[-\w\._]+$"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -112,7 +111,7 @@ def build_get_request(
 
 
 def build_create_or_update_request(
-    resource_group_name: str, private_cloud_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str, private_cloud_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -124,7 +123,7 @@ def build_create_or_update_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/iscsiPaths/default",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
@@ -132,7 +131,6 @@ def build_create_or_update_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "privateCloudName": _SERIALIZER.url("private_cloud_name", private_cloud_name, "str", pattern=r"^[-\w\._]+$"),
-        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str", pattern=r"^[-\w\._]+$"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -148,45 +146,8 @@ def build_create_or_update_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_update_request(
-    resource_group_name: str, private_cloud_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "privateCloudName": _SERIALIZER.url("private_cloud_name", private_cloud_name, "str", pattern=r"^[-\w\._]+$"),
-        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str", pattern=r"^[-\w\._]+$"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_delete_request(
-    resource_group_name: str, private_cloud_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str, private_cloud_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -197,7 +158,7 @@ def build_delete_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/iscsiPaths/default",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
@@ -205,7 +166,6 @@ def build_delete_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "privateCloudName": _SERIALIZER.url("private_cloud_name", private_cloud_name, "str", pattern=r"^[-\w\._]+$"),
-        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str", pattern=r"^[-\w\._]+$"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -219,48 +179,14 @@ def build_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_zones_request(
-    resource_group_name: str, private_cloud_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}/listZones",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "privateCloudName": _SERIALIZER.url("private_cloud_name", private_cloud_name, "str", pattern=r"^[-\w\._]+$"),
-        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str", pattern=r"^[-\w\._]+$"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-class ClustersOperations:
+class IscsiPathsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.avs.AVSClient`'s
-        :attr:`clusters` attribute.
+        :attr:`iscsi_paths` attribute.
     """
 
     models = _models
@@ -273,23 +199,25 @@ class ClustersOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, resource_group_name: str, private_cloud_name: str, **kwargs: Any) -> Iterable["_models.Cluster"]:
-        """List Cluster resources by PrivateCloud.
+    def list_by_private_cloud(
+        self, resource_group_name: str, private_cloud_name: str, **kwargs: Any
+    ) -> Iterable["_models.IscsiPath"]:
+        """List IscsiPath resources by PrivateCloud.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
-        :return: An iterator like instance of either Cluster or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.avs.models.Cluster]
+        :return: An iterator like instance of either IscsiPath or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.avs.models.IscsiPath]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ClusterListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.IscsiPathListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -302,7 +230,7 @@ class ClustersOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_list_request(
+                _request = build_list_by_private_cloud_request(
                     resource_group_name=resource_group_name,
                     private_cloud_name=private_cloud_name,
                     subscription_id=self._config.subscription_id,
@@ -332,7 +260,7 @@ class ClustersOperations:
             return _request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("ClusterListResult", pipeline_response)
+            deserialized = self._deserialize("IscsiPathListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -357,20 +285,16 @@ class ClustersOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get(
-        self, resource_group_name: str, private_cloud_name: str, cluster_name: str, **kwargs: Any
-    ) -> _models.Cluster:
-        """Get a Cluster.
+    def get(self, resource_group_name: str, private_cloud_name: str, **kwargs: Any) -> _models.IscsiPath:
+        """Get a IscsiPath.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
-        :param cluster_name: Name of the cluster. Required.
-        :type cluster_name: str
-        :return: Cluster or the result of cls(response)
-        :rtype: ~azure.mgmt.avs.models.Cluster
+        :return: IscsiPath or the result of cls(response)
+        :rtype: ~azure.mgmt.avs.models.IscsiPath
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -385,12 +309,11 @@ class ClustersOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.Cluster] = kwargs.pop("cls", None)
+        cls: ClsType[_models.IscsiPath] = kwargs.pop("cls", None)
 
         _request = build_get_request(
             resource_group_name=resource_group_name,
             private_cloud_name=private_cloud_name,
-            cluster_name=cluster_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -411,7 +334,7 @@ class ClustersOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Cluster", pipeline_response)
+        deserialized = self._deserialize("IscsiPath", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -422,10 +345,9 @@ class ClustersOperations:
         self,
         resource_group_name: str,
         private_cloud_name: str,
-        cluster_name: str,
-        cluster: Union[_models.Cluster, IO[bytes]],
+        resource: Union[_models.IscsiPath, IO[bytes]],
         **kwargs: Any
-    ) -> _models.Cluster:
+    ) -> _models.IscsiPath:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -439,20 +361,19 @@ class ClustersOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Cluster] = kwargs.pop("cls", None)
+        cls: ClsType[_models.IscsiPath] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(cluster, (IOBase, bytes)):
-            _content = cluster
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
         else:
-            _json = self._serialize.body(cluster, "Cluster")
+            _json = self._serialize.body(resource, "IscsiPath")
 
         _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             private_cloud_name=private_cloud_name,
-            cluster_name=cluster_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -478,12 +399,12 @@ class ClustersOperations:
 
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize("Cluster", pipeline_response)
+            deserialized = self._deserialize("IscsiPath", pipeline_response)
 
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-            deserialized = self._deserialize("Cluster", pipeline_response)
+            deserialized = self._deserialize("IscsiPath", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -495,28 +416,25 @@ class ClustersOperations:
         self,
         resource_group_name: str,
         private_cloud_name: str,
-        cluster_name: str,
-        cluster: _models.Cluster,
+        resource: _models.IscsiPath,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.Cluster]:
-        """Create a Cluster.
+    ) -> LROPoller[_models.IscsiPath]:
+        """Create a IscsiPath.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
-        :param cluster_name: Name of the cluster. Required.
-        :type cluster_name: str
-        :param cluster: Resource create parameters. Required.
-        :type cluster: ~azure.mgmt.avs.models.Cluster
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.avs.models.IscsiPath
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns either Cluster or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.avs.models.Cluster]
+        :return: An instance of LROPoller that returns either IscsiPath or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.avs.models.IscsiPath]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -525,28 +443,25 @@ class ClustersOperations:
         self,
         resource_group_name: str,
         private_cloud_name: str,
-        cluster_name: str,
-        cluster: IO[bytes],
+        resource: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.Cluster]:
-        """Create a Cluster.
+    ) -> LROPoller[_models.IscsiPath]:
+        """Create a IscsiPath.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
-        :param cluster_name: Name of the cluster. Required.
-        :type cluster_name: str
-        :param cluster: Resource create parameters. Required.
-        :type cluster: IO[bytes]
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns either Cluster or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.avs.models.Cluster]
+        :return: An instance of LROPoller that returns either IscsiPath or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.avs.models.IscsiPath]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -555,24 +470,21 @@ class ClustersOperations:
         self,
         resource_group_name: str,
         private_cloud_name: str,
-        cluster_name: str,
-        cluster: Union[_models.Cluster, IO[bytes]],
+        resource: Union[_models.IscsiPath, IO[bytes]],
         **kwargs: Any
-    ) -> LROPoller[_models.Cluster]:
-        """Create a Cluster.
+    ) -> LROPoller[_models.IscsiPath]:
+        """Create a IscsiPath.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
-        :param cluster_name: Name of the cluster. Required.
-        :type cluster_name: str
-        :param cluster: Resource create parameters. Is either a Cluster type or a IO[bytes] type.
+        :param resource: Resource create parameters. Is either a IscsiPath type or a IO[bytes] type.
          Required.
-        :type cluster: ~azure.mgmt.avs.models.Cluster or IO[bytes]
-        :return: An instance of LROPoller that returns either Cluster or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.avs.models.Cluster]
+        :type resource: ~azure.mgmt.avs.models.IscsiPath or IO[bytes]
+        :return: An instance of LROPoller that returns either IscsiPath or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.avs.models.IscsiPath]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -580,7 +492,7 @@ class ClustersOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Cluster] = kwargs.pop("cls", None)
+        cls: ClsType[_models.IscsiPath] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -588,8 +500,7 @@ class ClustersOperations:
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 private_cloud_name=private_cloud_name,
-                cluster_name=cluster_name,
-                cluster=cluster,
+                resource=resource,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -600,7 +511,7 @@ class ClustersOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("Cluster", pipeline_response)
+            deserialized = self._deserialize("IscsiPath", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -614,225 +525,18 @@ class ClustersOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.Cluster].from_continuation_token(
+            return LROPoller[_models.IscsiPath].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.Cluster](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    def _update_initial(
-        self,
-        resource_group_name: str,
-        private_cloud_name: str,
-        cluster_name: str,
-        cluster_update: Union[_models.ClusterUpdate, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.Cluster:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Cluster] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(cluster_update, (IOBase, bytes)):
-            _content = cluster_update
-        else:
-            _json = self._serialize.body(cluster_update, "ClusterUpdate")
-
-        _request = build_update_request(
-            resource_group_name=resource_group_name,
-            private_cloud_name=private_cloud_name,
-            cluster_name=cluster_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request = _convert_request(_request)
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 200:
-            deserialized = self._deserialize("Cluster", pipeline_response)
-
-        if response.status_code == 201:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-            deserialized = self._deserialize("Cluster", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_update(
-        self,
-        resource_group_name: str,
-        private_cloud_name: str,
-        cluster_name: str,
-        cluster_update: _models.ClusterUpdate,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.Cluster]:
-        """Update a Cluster.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_cloud_name: Name of the private cloud. Required.
-        :type private_cloud_name: str
-        :param cluster_name: Name of the cluster. Required.
-        :type cluster_name: str
-        :param cluster_update: The cluster properties to be updated. Required.
-        :type cluster_update: ~azure.mgmt.avs.models.ClusterUpdate
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns either Cluster or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.avs.models.Cluster]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_update(
-        self,
-        resource_group_name: str,
-        private_cloud_name: str,
-        cluster_name: str,
-        cluster_update: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.Cluster]:
-        """Update a Cluster.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_cloud_name: Name of the private cloud. Required.
-        :type private_cloud_name: str
-        :param cluster_name: Name of the cluster. Required.
-        :type cluster_name: str
-        :param cluster_update: The cluster properties to be updated. Required.
-        :type cluster_update: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns either Cluster or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.avs.models.Cluster]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_update(
-        self,
-        resource_group_name: str,
-        private_cloud_name: str,
-        cluster_name: str,
-        cluster_update: Union[_models.ClusterUpdate, IO[bytes]],
-        **kwargs: Any
-    ) -> LROPoller[_models.Cluster]:
-        """Update a Cluster.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_cloud_name: Name of the private cloud. Required.
-        :type private_cloud_name: str
-        :param cluster_name: Name of the cluster. Required.
-        :type cluster_name: str
-        :param cluster_update: The cluster properties to be updated. Is either a ClusterUpdate type or
-         a IO[bytes] type. Required.
-        :type cluster_update: ~azure.mgmt.avs.models.ClusterUpdate or IO[bytes]
-        :return: An instance of LROPoller that returns either Cluster or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.avs.models.Cluster]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Cluster] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._update_initial(
-                resource_group_name=resource_group_name,
-                private_cloud_name=private_cloud_name,
-                cluster_name=cluster_name,
-                cluster_update=cluster_update,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("Cluster", pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.Cluster].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.Cluster](
+        return LROPoller[_models.IscsiPath](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, private_cloud_name: str, cluster_name: str, **kwargs: Any
+        self, resource_group_name: str, private_cloud_name: str, **kwargs: Any
     ) -> None:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -851,7 +555,6 @@ class ClustersOperations:
         _request = build_delete_request(
             resource_group_name=resource_group_name,
             private_cloud_name=private_cloud_name,
-            cluster_name=cluster_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -881,18 +584,14 @@ class ClustersOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def begin_delete(
-        self, resource_group_name: str, private_cloud_name: str, cluster_name: str, **kwargs: Any
-    ) -> LROPoller[None]:
-        """Delete a Cluster.
+    def begin_delete(self, resource_group_name: str, private_cloud_name: str, **kwargs: Any) -> LROPoller[None]:
+        """Delete a IscsiPath.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
-        :param cluster_name: Name of the cluster. Required.
-        :type cluster_name: str
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -909,7 +608,6 @@ class ClustersOperations:
             raw_result = self._delete_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 private_cloud_name=private_cloud_name,
-                cluster_name=cluster_name,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -938,65 +636,3 @@ class ClustersOperations:
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @distributed_trace
-    def list_zones(
-        self, resource_group_name: str, private_cloud_name: str, cluster_name: str, **kwargs: Any
-    ) -> _models.ClusterZoneList:
-        """List hosts by zone in a cluster.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_cloud_name: Name of the private cloud. Required.
-        :type private_cloud_name: str
-        :param cluster_name: Name of the cluster. Required.
-        :type cluster_name: str
-        :return: ClusterZoneList or the result of cls(response)
-        :rtype: ~azure.mgmt.avs.models.ClusterZoneList
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ClusterZoneList] = kwargs.pop("cls", None)
-
-        _request = build_list_zones_request(
-            resource_group_name=resource_group_name,
-            private_cloud_name=private_cloud_name,
-            cluster_name=cluster_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request = _convert_request(_request)
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("ClusterZoneList", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
