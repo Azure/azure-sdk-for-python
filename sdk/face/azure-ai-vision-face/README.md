@@ -44,9 +44,12 @@ python -m pip install azure-ai-vision-face
 In order to interact with the Face service, you will need to create an instance of a client.
 An **endpoint** and **credential** are necessary to instantiate the client object.
 
-#### Get the endpoint and API keys
+Both key credential and Microsoft Entra ID credential are supported to authenticate the client.
+For enhanced security, we strongly recommend utilizing Microsoft Entra ID credential for authentication in the production environment, while AzureKeyCredential should be reserved exclusively for the testing environment.
 
-You can find the endpoint and keys for your Face resource using the [Azure Portal][get_endpoint_via_azure_portal] or [Azure CLI][get_endpoint_via_azure_cli]:
+#### Get the endpoint
+
+You can find the endpoint for your Face resource using the Azure Portal or Azure CLI:
 
 ```bash
 # Get the endpoint for the Face resource
@@ -60,18 +63,20 @@ Regional endpoint: https://<region>.api.cognitive.microsoft.com/
 Custom subdomain: https://<resource-name>.cognitiveservices.azure.com/
 ```
 
-A regional endpoint is the same for every resource in a region. A complete list of supported regional endpoints can be consulted [here][regional_endpoints]. Please note that regional endpoints do not support AAD authentication.
+A regional endpoint is the same for every resource in a region. A complete list of supported regional endpoints can be consulted [here][regional_endpoints]. Please note that regional endpoints do not support Microsoft Entra ID authentication.
 
 A custom subdomain, on the other hand, is a name that is unique to the Face resource. They can only be used by [single-service resources][azure_portal_create_face_account].
+
+
+#### Create the client with AzureKeyCredential
+
+To use an API key as the `credential` parameter, pass the key as a string into an instance of [AzureKeyCredential][azure_sdk_python_azure_key_credential].
+You can get the API key for your Face resource using the [Azure Portal][get_key_via_azure_portal] or [Azure CLI][get_key_via_azure_cli]:
 
 ```bash
 # Get the API keys for the Face resource
 az cognitiveservices account keys list --name "<resource-name>" --resource-group "<resource-group-name>"
 ```
-
-#### Create the client with AzureKeyCredential
-
-To use an API key as the `credential` parameter, pass the key as a string into an instance of [AzureKeyCredential][azure_sdk_python_azure_key_credential].
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -82,10 +87,10 @@ credential = AzureKeyCredential("<api_key>")
 face_client = FaceClient(endpoint, credential)
 ```
 
-#### Create the client with an Azure Active Directory credential
+#### Create the client with an Microsoft Entra ID credential
 
 `AzureKeyCredential` authentication is used in the examples in this getting started guide, but you can also authenticate with Azure Active Directory using the [azure-identity][azure_sdk_python_identity] library.
-Note that regional endpoints do not support AAD authentication. Create a [custom subdomain][custom_subdomain] name for your resource in order to use this type of authentication.
+Note that regional endpoints do not support Microsoft Entra ID authentication. Create a [custom subdomain][custom_subdomain] name for your resource in order to use this type of authentication.
 
 To use the [DefaultAzureCredential][azure_sdk_python_default_azure_credential] type shown below, or other credential types provided with the Azure SDK, please install the `azure-identity` package:
 
@@ -93,9 +98,9 @@ To use the [DefaultAzureCredential][azure_sdk_python_default_azure_credential] t
 pip install azure-identity
 ```
 
-You will also need to [register a new AAD application and grant access][register_aad_app] to Face by assigning the `"Cognitive Services User"` role to your service principal.
+You will also need to [register a new Microsoft Entra ID application and grant access][register_aad_app] to Face by assigning the `"Cognitive Services User"` role to your service principal.
 
-Once completed, set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
+Once completed, set the values of the client ID, tenant ID, and client secret of the Microsoft Entra ID application as environment variables:
 `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
 
 ```python
@@ -130,11 +135,28 @@ face_client = FaceClient(endpoint, credential)
 `FaceAdministrationClient` is provided to interact with the following data structures that hold data on faces and
 persons for Face recognition:
 
- - `person` and `dynamic_person_group` in [PersonDirectory](https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/use-persondirectory)
- - `face_list`
- - `large_face_list`
- - `person_group`
- - `large_person_group`
+ - `person`: It is a container that holds faces and is used by face recognition. It can either not belong to any group or be a member of multiple `dynamic_person_group` simultaneously.
+   - Each person can have up to 248 faces, and the total number of persons can reach 75 million.
+   - For [face verification][face_verification], call `verify_from_person_directory()`.
+   - For [face identification][face_identification], training is not needed before calling `identify_from_person_directory()`.
+   - See [Use the PersonDirectory structure][use_person_directory_structure] to get more information.
+ - `dynamic_person_group`: It is a group that can hold several `person`, and is used by face identification.
+   - The total `dynamic_person_group` is unlimited.
+   - Training is not needed before calling `identify_from_dynamic_person_group()`.
+   - See [Use the PersonDirectory structure][use_person_directory_structure] to get more information.
+ - `face_list`: It is a list of faces and used by [find similar faces][find_similar] (call `find_similar_from_face_list()`).
+   - It can up to 1,000 faces.
+ - `large_face_list`: It is a list of faces which can hold more faces and used by [find similar faces][find_similar].
+   - It can up to 1,000,000 faces.
+   - Training (`begin_train_large_face_list()`) is required before calling `find_similar_from_large_face_list()`.
+ - `person_group`: It is a container that store the uploaded person data, including their face recognition features, and is used by face recognition.
+   - It can up to 10,000 persons, with each person capable of holding up to 248 faces.
+   - For [face verification][face_verification], call `verify_from_person_group()`.
+   - For [face identification][face_identification], training (`begin_train_person_group()`) is required before calling `identify_from_person_group()`.
+ - `large_person_group`: It is a container which can hold more persons, and is used by face recognition.
+   - It can up to 1,000,000 persons, with each person capable of holding up to 248 faces. The total persons in all `large_person_group` should not exceed 1,000,000,000.
+   - For [face verification][face_verification], call `verify_from_large_person_group()`.
+   - For [face identification][face_identification], training (`begin_train_large_person_group()`) is required before calling `identify_from_large_person_group()`.
 
 ### FaceSessionClient
 
@@ -298,7 +320,7 @@ Face Liveness detection can be used to determine if a face in an input video str
 The goal of liveness detection is to ensure that the system is interacting with a physically present live person at
 the time of authentication. The whole process of authentication is called a session.
 
-There're two different components in the authentication: a mobile application and an app server/orchestrator.
+There are two different components in the authentication: a mobile application and an app server/orchestrator.
 Before uploading the video stream, the app server has to create a session, and then the mobile client could upload
 the payload with a `session authorization token` to call the liveness detection. The app server can query for the
 liveness detection result and audit logs anytime until the session is deleted.
@@ -444,20 +466,20 @@ additional questions or comments.
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/azure/ai/vision/face
 [face_pypi]: https://pypi.org/project/azure-ai-vision-face/
 [face_ref_docs]: https://aka.ms/azsdk-python-face-ref
-[face_product_docs]: https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/overview-identity
+[face_product_docs]: https://learn.microsoft.com/azure/ai-services/computer-vision/overview-identity
 [face_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples
 
 [azure_sub]: https://azure.microsoft.com/free/
-[azure_role_assignment]: https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-steps
+[azure_role_assignment]: https://learn.microsoft.com/azure/role-based-access-control/role-assignments-steps
 [azure_portal_list_face_account]: https://portal.azure.com/#blade/Microsoft_Azure_ProjectOxford/CognitiveServicesHub/Face
 [azure_portal_list_cognitive_service_account]: https://portal.azure.com/#view/Microsoft_Azure_ProjectOxford/CognitiveServicesHub/~/AllInOne
-[azure_cognitive_service_account]: https://learn.microsoft.com/en-us/azure/ai-services/multi-service-resource?tabs=windows&pivots=azportal#supported-services-with-a-multi-service-resource
+[azure_cognitive_service_account]: https://learn.microsoft.com/azure/ai-services/multi-service-resource?tabs=windows&pivots=azportal#supported-services-with-a-multi-service-resource
 [azure_portal_create_face_account]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesFace
-[quick_start_create_account_via_azure_cli]: https://learn.microsoft.com/en-us/azure/ai-services/multi-service-resource?tabs=windows&pivots=azcli
-[quick_start_create_account_via_azure_powershell]: https://learn.microsoft.com/en-us/azure/ai-services/multi-service-resource?tabs=windows&pivots=azpowershell
+[quick_start_create_account_via_azure_cli]: https://learn.microsoft.com/azure/ai-services/multi-service-resource?tabs=windows&pivots=azcli
+[quick_start_create_account_via_azure_powershell]: https://learn.microsoft.com/azure/ai-services/multi-service-resource?tabs=windows&pivots=azpowershell
 
-[get_endpoint_via_azure_portal]: https://learn.microsoft.com/en-us/azure/ai-services/multi-service-resource?tabs=windows&pivots=azportal#get-the-keys-for-your-resource
-[get_endpoint_via_azure_cli]: https://learn.microsoft.com/en-us/azure/ai-services/multi-service-resource?tabs=windows&pivots=azcli#get-the-keys-for-your-resource
+[get_key_via_azure_portal]: https://learn.microsoft.com/azure/ai-services/multi-service-resource?tabs=windows&pivots=azportal#get-the-keys-for-your-resource
+[get_key_via_azure_cli]: https://learn.microsoft.com/azure/ai-services/multi-service-resource?tabs=windows&pivots=azcli#get-the-keys-for-your-resource
 [regional_endpoints]: https://azure.microsoft.com/global-infrastructure/services/?products=cognitive-services
 [azure_sdk_python_azure_key_credential]: https://aka.ms/azsdk/python/core/azurekeycredential
 [azure_sdk_python_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
@@ -465,10 +487,15 @@ additional questions or comments.
 [azure_sdk_python_default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [register_aad_app]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 
-[evaluate_different_detection_models]: https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model#evaluate-different-models
-[recommended_recognition_model]: https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-recognition-model#recommended-model
-[liveness_tutorial]: https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/tutorials/liveness
-[integrate_liveness_into_mobile_application]: https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/tutorials/liveness#integrate-liveness-into-mobile-application
+[face_verification]: https://learn.microsoft.com/azure/ai-services/computer-vision/overview-identity#verification
+[face_identification]: https://learn.microsoft.com/azure/ai-services/computer-vision/overview-identity#identification
+[find_similar]: https://learn.microsoft.com/azure/ai-services/computer-vision/overview-identity#find-similar-faces
+[use_person_directory_structure]: https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/use-persondirectory
+
+[evaluate_different_detection_models]: https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model#evaluate-different-models
+[recommended_recognition_model]: https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-recognition-model#recommended-model
+[liveness_tutorial]: https://learn.microsoft.com/azure/ai-services/computer-vision/tutorials/liveness
+[integrate_liveness_into_mobile_application]: https://learn.microsoft.com/azure/ai-services/computer-vision/tutorials/liveness#integrate-liveness-into-mobile-application
 
 [python_azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
 [face_errors]: https://aka.ms/face-error-codes-and-messages

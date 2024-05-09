@@ -56,7 +56,7 @@ class FaceClient(FaceClientGenerated):
            To mitigate potential misuse that can subject people to stereotyping, discrimination, or
         unfair denial of services, we are retiring Face API attributes that predict emotion, gender,
         age, smile, facial hair, hair, and makeup. Read more about this decision
-        https://azure.microsoft.com/en-us/blog/responsible-ai-investments-and-safeguards-for-facial-recognition/.
+        https://azure.microsoft.com/blog/responsible-ai-investments-and-safeguards-for-facial-recognition/.
 
 
         *
@@ -81,7 +81,7 @@ class FaceClient(FaceClientGenerated):
         200x200 pixels (100 pixels between eyes).
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model
 
           * 'detection_02': Face attributes and landmarks are disabled if you choose this detection
         model.
@@ -94,7 +94,7 @@ class FaceClient(FaceClientGenerated):
         needed, please explicitly specify the model you need in this parameter. Once specified, the
         detected faceIds will be associated with the specified recognition model. More details, please
         refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-recognition-model.
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-recognition-model.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
@@ -459,7 +459,7 @@ class FaceClient(FaceClientGenerated):
            To mitigate potential misuse that can subject people to stereotyping, discrimination, or
         unfair denial of services, we are retiring Face API attributes that predict emotion, gender,
         age, smile, facial hair, hair, and makeup. Read more about this decision
-        https://azure.microsoft.com/en-us/blog/responsible-ai-investments-and-safeguards-for-facial-recognition/.
+        https://azure.microsoft.com/blog/responsible-ai-investments-and-safeguards-for-facial-recognition/.
 
 
         *
@@ -484,7 +484,7 @@ class FaceClient(FaceClientGenerated):
         200x200 pixels (100 pixels between eyes).
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model
 
           * 'detection_02': Face attributes and landmarks are disabled if you choose this detection
         model.
@@ -497,7 +497,7 @@ class FaceClient(FaceClientGenerated):
         needed, please explicitly specify the model you need in this parameter. Once specified, the
         detected faceIds will be associated with the specified recognition model. More details, please
         refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-recognition-model.
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-recognition-model.
 
         :param image_content: The input image binary. Required.
         :type image_content: bytes

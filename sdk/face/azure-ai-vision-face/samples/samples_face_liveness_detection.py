@@ -15,7 +15,7 @@ DESCRIPTION:
     an app server/orchestrator, and here we demonstrate the entire process from the perspective of the server side.
 
     For more information about liveness detection, see
-    https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/tutorials/liveness.
+    https://learn.microsoft.com/azure/ai-services/computer-vision/tutorials/liveness.
 
 USAGE:
     python sample_face_liveness_detection.py
@@ -56,14 +56,14 @@ class DetectLiveness():
     def wait_for_liveness_session_complete(self):
         # The logic to wait the notification from mobile application.
         self.logger.info(
-            "Please refer to https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/tutorials/liveness"
+            "Please refer to https://learn.microsoft.com/azure/ai-services/computer-vision/tutorials/liveness"
             " and use the mobile client SDK to perform liveness detection on your mobile application.")
         input("Press any key to continue when you complete these steps to run sample to get session results ...")
         pass
 
     def livenessSession(self):
         """This example demonstrates the liveness detection from a app server-side perspective.
-        To get the full picture of the entire steps, see https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/tutorials/liveness#orchestrate-the-liveness-solution.  # noqa: E501
+        To get the full picture of the entire steps, see https://learn.microsoft.com/azure/ai-services/computer-vision/tutorials/liveness#orchestrate-the-liveness-solution.  # noqa: E501
         """
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.vision.face import FaceSessionClient
@@ -89,7 +89,7 @@ class DetectLiveness():
 
             # 4 ~ 6. The mobile application uses the session-authorization-token to perform the liveness detection.
             # To learn how to integrate the UI and the code into your native mobile application, see
-            # https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/tutorials/liveness#integrate-liveness-into-mobile-application  # noqa: E501
+            # https://learn.microsoft.com/azure/ai-services/computer-vision/tutorials/liveness#integrate-liveness-into-mobile-application  # noqa: E501
 
             # 7. Wait for session completion notification from client.
             self.wait_for_liveness_session_complete()
