@@ -1,6 +1,6 @@
 # Release History
 
-## 1.16.0 (unreleased)
+## 1.16.0 (2024-05-14)
 
 ### Features Added
 - Add experimental support for working with Promptflow evaluators: `ml_client.evaluators`.
@@ -29,16 +29,12 @@
 - Add support for Microsoft Entra token (`aad_token`) auth in `invoke` and `get-credentials` operations.
 - Add experimental support for working with indexes: `ml_client.indexes`
 
-### Bugs Fixed
-
 ### Breaking Changes
 
 - WorkspaceConnection and subclasses renamed to just Connection
 - Removed WorkspaceHubConfig entity, and renamed WorkspaceHub to Hub.
 - workspace_hub input of Workspace class hidden, renamed to hub_id, and re-surfaced in child class Project.
 - Removed Workspace Hub Operations from ML Client.
-
-### Other Changes
 
 ## 1.15.0 (2024-03-26)
 
@@ -142,7 +138,7 @@
 
 ### Other Changes
 
-- `azure-ai-ml` now performs all file i/o on `utf-8` encoded files per Azure SDK guidance. 
+- `azure-ai-ml` now performs all file i/o on `utf-8` encoded files per Azure SDK guidance.
   (instead of the default behavior for python < 3.15, which uses locale specific encodings)
 - Removed references to deprecated "feature_store" workspace connection type.
 
