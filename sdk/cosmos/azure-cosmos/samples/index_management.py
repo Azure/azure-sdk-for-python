@@ -670,7 +670,7 @@ def use_vector_embedding_policy(db):
         # We define our own get_embeddings() function for the sake of the sample, but you should be using a third
         # party service to generate these properly
         def get_embeddings(num):
-            return [num, num, num]
+            return f"{str(num)}, {str(num)}, {str(num)}"
 
         # Create some items with vector embeddings
         for i in range(10):
