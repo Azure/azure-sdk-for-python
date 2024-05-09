@@ -18,7 +18,7 @@ class SRVRecord:
     weight: int
     port: int
     target: str
-    protocol = "https://"
+    protocol: str = "https://"
 
     def __init__(self, answer):
         self.priority = answer.priority
