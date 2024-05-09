@@ -31,7 +31,12 @@ from ._serialize import (
     _get_match_condition,
 )
 from ._deserialize import deserialize_iso, _return_headers_and_deserialized, _convert_to_entity, _trim_service_metadata
-from ._table_batch import TableBatchOperations, EntityType, TransactionOperationType
+from ._table_batch import (
+    TableBatchOperations,
+    EntityType,
+    TransactionOperationType,
+    CustomEntityTransactionOperationType,
+)
 from ._models import TableEntityPropertiesPaged, UpdateMode, TableAccessPolicy, TableItem
 
 T = TypeVar("T")
@@ -829,8 +834,14 @@ class TableClient(TablesBaseClient):
             _process_table_error(error, table_name=self.table_name)
         return _trim_service_metadata(metadata, content=content)
 
-    @distributed_trace
-    def submit_transaction(self, operations: Iterable[TransactionOperationType], **kwargs) -> List[Mapping[str, Any]]:
+    @overload
+    def submit_transaction(
+        self,
+        operations: Iterable[TransactionOperationType],
+        *,
+        encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER,
+        **kwargs,
+    ) -> List[Mapping[str, Any]]:
         """Commits a list of operations as a single transaction.
 
         If any one of these operations fails, the entire transaction will be rejected.
@@ -843,6 +854,9 @@ class TableClient(TablesBaseClient):
             - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}, {'mode': UpdateMode.REPLACE})
 
         :type operations: Iterable[Tuple[str, TableEntity, Mapping[str, Any]]]
+        :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
+            `azure.data.tables.TableEntityEncoder` will be used.
+        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: A list of mappings with response metadata for each operation in the transaction.
         :rtype: list[Mapping[str, Any]]
         :raises: :class:`~azure.data.tables.TableTransactionError`
@@ -856,11 +870,50 @@ class TableClient(TablesBaseClient):
                 :dedent: 8
                 :caption: Using transactions to send multiple requests at once
         """
+
+    @overload
+    def submit_transaction(
+        self,
+        operations: Iterable[CustomEntityTransactionOperationType],
+        *,
+        encoder: TableEntityEncoderABC[T],
+        **kwargs,
+    ) -> List[Mapping[str, Any]]:
+        """Commits a list of operations as a single transaction.
+
+        If any one of these operations fails, the entire transaction will be rejected.
+
+        :param operations: The list of operations to commit in a transaction. This should be an iterable of
+         tuples containing an operation name, the entity on which to operate, and optionally, a dict of additional
+         kwargs for that operation. For example::
+
+            - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'})
+            - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}, {'mode': UpdateMode.REPLACE})
+
+        :type operations: Iterable[Tuple[str, T, Mapping[str, Any]]]
+        :keyword encoder: The encoder used to serialize the outgoing Tables entities.
+        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
+        :return: A list of mappings with response metadata for each operation in the transaction.
+        :rtype: list[Mapping[str, Any]]
+        :raises: :class:`~azure.data.tables.TableTransactionError`
+        """
+
+    @distributed_trace
+    def submit_transaction(
+        self,
+        *args: Union[Iterable[TransactionOperationType], Iterable[CustomEntityTransactionOperationType]],
+        **kwargs: Any,
+    ) -> List[Mapping[str, Any]]:
+        operations = kwargs.pop("operations", None)
+        if not operations:
+            operations = args[0]
+        encoder = kwargs.pop("encoder", DEFAULT_ENCODER)
         batched_requests = TableBatchOperations(
             config=self._client._config,  # pylint: disable=protected-access
             endpoint=f"{self.scheme}://{self._primary_hostname}",
             table_name=self.table_name,
             is_cosmos_endpoint=self._cosmos_endpoint,
+            encoder=encoder,
         )
         try:
             for operation in operations:

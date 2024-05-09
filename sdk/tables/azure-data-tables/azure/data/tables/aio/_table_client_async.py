@@ -34,7 +34,7 @@ from .._error import (
     _validate_tablename_error,
     _validate_key_values,
 )
-from .._table_client import EntityType, TransactionOperationType, DEFAULT_ENCODER
+from .._table_client import EntityType, TransactionOperationType, CustomEntityTransactionOperationType, DEFAULT_ENCODER
 from ._base_client_async import AsyncTablesBaseClient
 from ._models import TableEntityPropertiesPaged
 from .._table_batch import TableBatchOperations
@@ -833,9 +833,13 @@ class TableClient(AsyncTablesBaseClient):
             _process_table_error(error, table_name=self.table_name)
         return _trim_service_metadata(metadata, content=content)
 
-    @distributed_trace_async
+    @overload
     async def submit_transaction(
-        self, operations: Union[Iterable[TransactionOperationType], AsyncIterable[TransactionOperationType]], **kwargs
+        self,
+        operations: Iterable[TransactionOperationType],
+        *,
+        encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER,
+        **kwargs,
     ) -> List[Mapping[str, Any]]:
         """Commits a list of operations as a single transaction.
 
@@ -863,11 +867,55 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Using transactions to send multiple requests at once
         """
+
+    @overload
+    async def submit_transaction(
+        self,
+        operations: Iterable[CustomEntityTransactionOperationType],
+        *,
+        encoder: TableEntityEncoderABC[T],
+        **kwargs,
+    ) -> List[Mapping[str, Any]]:
+        """Commits a list of operations as a single transaction.
+
+        If any one of these operations fails, the entire transaction will be rejected.
+
+        :param operations: The list of operations to commit in a transaction. This should be an iterable of
+         tuples containing an operation name, the entity on which to operate, and optionally, a dict of additional
+         kwargs for that operation. For example::
+
+            - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'})
+            - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}, {'mode': UpdateMode.REPLACE})
+
+        :type operations: Iterable[Tuple[str, T, Mapping[str, Any]]]
+        :keyword encoder: The encoder used to serialize the outgoing Tables entities.
+        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
+        :return: A list of mappings with response metadata for each operation in the transaction.
+        :rtype: list[Mapping[str, Any]]
+        :raises: :class:`~azure.data.tables.TableTransactionError`
+        """
+
+    @distributed_trace_async
+    async def submit_transaction(
+        self,
+        *args: Union[
+            Iterable[TransactionOperationType],
+            AsyncIterable[TransactionOperationType],
+            Iterable[TransactionOperationType],
+            AsyncIterable[TransactionOperationType],
+        ],
+        **kwargs,
+    ) -> List[Mapping[str, Any]]:
+        operations = kwargs.pop("operations", None)
+        if not operations:
+            operations = args[0]
+        encoder = kwargs.pop("encoder", DEFAULT_ENCODER)
         batched_requests = TableBatchOperations(
             config=self._client._config,  # pylint: disable=protected-access
             endpoint=f"{self.scheme}://{self._primary_hostname}",
             table_name=self.table_name,
             is_cosmos_endpoint=self._cosmos_endpoint,
+            encoder=encoder,
         )
         if isinstance(operations, AsyncIterable):
             async for operation in operations:

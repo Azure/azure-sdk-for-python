@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import abc
 import enum
-from typing import Any, Optional, Tuple, Union, TypeVar, Generic, Dict
+from typing import Any, Optional, Tuple, Mapping, Union, TypeVar, Generic, Dict
 from uuid import UUID
 from datetime import datetime
 from math import isnan
@@ -13,7 +13,6 @@ from math import isnan
 from ._entity import EdmType, TableEntity
 from ._deserialize import _convert_to_entity
 from ._common_conversion import _encode_base64, _to_utc_datetime
-from ._table_batch import EntityType
 
 _ODATA_SUFFIX = "@odata.type"
 T = TypeVar("T")
@@ -32,7 +31,7 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
         except (AttributeError, TypeError) as exc:
             raise TypeError("PartitionKey or RowKey must be of type string.") from exc
 
-    def prepare_value( # pylint: disable=too-many-return-statements
+    def prepare_value(  # pylint: disable=too-many-return-statements
         self, name: Optional[str], value: Any
     ) -> Tuple[Optional[EdmType], Optional[Union[str, int, float, bool]]]:
         """Prepare the encoded value and its edm type.
@@ -79,9 +78,9 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
             raise TypeError(f"Unsupported data type '{type(value)}' for entity property '{name}'.")
         raise TypeError(f"Unsupported data type '{type(value)}'.")
 
-    def _prepare_value_in_tuple( # pylint: disable=too-many-return-statements
-            self, value: Tuple[Any, Optional[Union[str, EdmType]]]
-        ) -> Tuple[Optional[EdmType], Optional[Union[str, int, float, bool]]]:
+    def _prepare_value_in_tuple(  # pylint: disable=too-many-return-statements
+        self, value: Tuple[Any, Optional[Union[str, EdmType]]]
+    ) -> Tuple[Optional[EdmType], Optional[Union[str, int, float, bool]]]:
         unencoded_value = value[0]
         edm_type = value[1]
         if unencoded_value is None:
@@ -122,6 +121,7 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
             except AttributeError:
                 pass
             return EdmType.DATETIME, _to_utc_datetime(unencoded_value)
+        raise TypeError(f"Unsupported data type '{type(value)}'.")
 
     @abc.abstractmethod
     def encode_entity(self, entity: T) -> Dict[str, Union[str, int, float, bool]]:
@@ -137,8 +137,8 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
     def decode_entity(self, entity: Dict[str, Union[str, int, float, bool]]) -> T: ...
 
 
-class TableEntityEncoder(TableEntityEncoderABC[EntityType]):
-    def encode_entity(self, entity: EntityType) -> Dict[str, Union[str, int, float, bool]]:
+class TableEntityEncoder(TableEntityEncoderABC[Union[TableEntity, Mapping[str, Any]]]):
+    def encode_entity(self, entity: Union[TableEntity, Mapping[str, Any]]) -> Dict[str, Union[str, int, float, bool]]:
         """Encode an entity object into JSON format to send out.
         The entity format is:
         {
@@ -155,7 +155,7 @@ class TableEntityEncoder(TableEntityEncoderABC[EntityType]):
             "PartitionKey":"my_partition_key",
             "RowKey":"my_row_key"
         }
-        
+
         :param entity: A table entity.
         :type entity: ~azure.data.tables.TableEntity or Mapping[str, Any]
         :return: An entity with property's metadata in JSON format.
