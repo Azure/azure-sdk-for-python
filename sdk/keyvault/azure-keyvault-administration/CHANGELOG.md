@@ -4,6 +4,8 @@
 
 ### Features Added
 - Added support for service API version `7.6-preview.1`
+- Added `KeyVaultBackupClient.begin_pre_backup` and `KeyVaultBackupClient.begin_pre_restore` methods for checking if it
+  is possible to perform a full key backup or full key restore.
 
 ### Breaking Changes
 
