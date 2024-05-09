@@ -88,12 +88,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self._scripts: Optional[ScriptsProxy] = None
         if properties:
             self.client_connection._set_container_properties_cache(self.container_link,
-                                                                   _set_properties_cache(properties))
+                                                                   _set_properties_cache(properties))  # pylint: disable=protected-access, line-too-long
 
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
 
-    def _get_properties(self) -> Dict[str, Any]:
+    def _get_properties(self) -> Dict[str, Any]:  # pylint: disable=protected-access
         if self.container_link not in self.client_connection._container_properties_cache:
             self.read()
         return self.client_connection._container_properties_cache[self.container_link]
@@ -178,7 +178,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["populateQuotaInfo"] = populate_quota_info
         container = self.client_connection.ReadContainer(self.container_link, options=request_options, **kwargs)
         # Only cache Container Properties that will not change in the lifetime of the container
-        self.client_connection._set_container_properties_cache(self.container_link, _set_properties_cache(container))
+        self.client_connection._set_container_properties_cache(self.container_link, _set_properties_cache(container))  # pylint: disable=protected-access, line-too-long
         return container
 
     @distributed_trace
