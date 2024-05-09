@@ -18,7 +18,7 @@ from azure.data.tables._common_conversion import _encode_base64, _to_utc_datetim
 
 from _shared.asynctestcase import AsyncTableTestCase
 
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from async_preparers import cosmos_decorator_async
 from test_encoder import EnumBasicOptions, EnumStrOptions, EnumIntOptions, _check_backcompat
@@ -593,7 +593,11 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             # Non-string keys
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", 123: 456}
             expected_entity = test_entity
-            expected_payload_entity = {"PartitionKey": "PK", "RowKey": "RK", "123": 456} # "123" is an invalid property name
+            expected_payload_entity = {
+                "PartitionKey": "PK",
+                "RowKey": "RK",
+                "123": 456,  # "123" is an invalid property name
+            }
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(HttpResponseError) as error:
                 await client.create_entity(
@@ -2504,6 +2508,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 await client.delete_entity("foo", b"binarydata")
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
             await client.delete_entity({"PartitionKey": "foo", "RowKey": b"binarydata"})
+        return recorded_variables
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
@@ -2652,6 +2657,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             with pytest.raises(TypeError) as error:
                 await client.get_entity("foo", b"binarydata")
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
+        return recorded_variables
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
@@ -2711,3 +2717,119 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             )
             assert resp == test_entity
             await client.delete_table()
+
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_batch(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+        recorded_variables = kwargs.pop("variables", {})
+        recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
+        table_name = self.get_resource_name("uttable27")
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        async with TableClient(
+            url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
+        ) as client:
+            await client.create_table()
+            test_entity1 = {
+                "PartitionKey": "PK",
+                "RowKey": "RK'@*$!%",
+                "Data1": 12345,
+                "Data2": False,
+                "Data3": b"testdata",
+                "Data4": self.get_datetime(),
+                "Data5": None,
+            }
+            response_entity = {
+                "PartitionKey": "PK",
+                "RowKey": "RK'@*$!%",
+                "Data1": 12345,
+                "Data2": False,
+                "Data3": b"testdata",
+                "Data4": self.get_datetime(),
+            }
+            resp = await client.submit_transaction(
+                [("create", test_entity1)],
+                verify_response=(lambda: client.get_entity("PK", "RK'@*$!%"), response_entity),
+            )
+            assert list(resp[0].keys()) == ["etag"]
+
+            test_entity2 = {
+                "PartitionKey": "PK",
+                "RowKey": "RK",
+                "Data1": 12345,
+                "Data2": False,
+                "Data3": b"testdata",
+                "Data4": self.get_datetime(),
+                "Data5": EntityProperty(recorded_uuid, "Edm.Guid"),
+                "Data6": ("Foobar", EdmType.STRING),
+                "Data7": (3.14, EdmType.DOUBLE),
+                "Data8": (2**60, "Edm.Int64"),
+            }
+            response_entity = {
+                "PartitionKey": "PK",
+                "RowKey": "RK",
+                "Data1": 12345,
+                "Data2": False,
+                "Data3": b"testdata",
+                "Data4": self.get_datetime(),
+                "Data5": recorded_uuid,
+                "Data6": "Foobar",
+                "Data7": 3.14,
+                "Data8": (2**60, "Edm.Int64"),
+            }
+            resp = await client.submit_transaction(
+                [("upsert", test_entity2, {"mode": "merge"})],
+                verify_response=(lambda: client.get_entity("PK", "RK"), response_entity),
+            )
+            assert list(resp[0].keys()) == ["etag"]
+            resp = await client.submit_transaction(
+                [("upsert", test_entity2, {"mode": "replace"})],
+                verify_response=(lambda: client.get_entity("PK", "RK"), response_entity),
+            )
+            assert list(resp[0].keys()) == ["etag"]
+
+            test_entity3 = {
+                "PartitionKey": "PK",
+                "PartitionKey@odata.type": "Edm.String",
+                "RowKey": "RK",
+                "RowKey@odata.type": "Edm.String",
+                "Data1": "3.14",
+                "Data1@odata.type": "Edm.Double",
+                "Data2": "1152921504606846976",
+                "Data2@odata.type": "Edm.Int64",
+                "Data3": "你好",
+                "Data4": float("nan"),
+                "Data5": float("inf"),
+                "Data6": float("-inf"),
+                "Data7": EnumBasicOptions.ONE,
+                "Data8": EnumStrOptions.ONE,
+            }
+            response_entity = {
+                "PartitionKey": "PK",
+                "RowKey": "RK",
+                "Data1": 3.14,
+                "Data2": (1152921504606846976, "Edm.Int64"),
+                "Data3": "你好",
+                "Data4": float("nan"),
+                "Data5": float("inf"),
+                "Data6": float("-inf"),
+                "Data7": "One",
+                "Data8": "One",
+            }
+            resp = await client.submit_transaction(
+                [("update", test_entity3, {"mode": "merge"})],
+                verify_response=(lambda: client.get_entity("PK", "RK"), response_entity),
+            )
+            assert list(resp[0].keys()) == ["etag"]
+            resp = await client.submit_transaction(
+                [("update", test_entity3, {"mode": "replace"})],
+                verify_response=(lambda: client.get_entity("PK", "RK"), response_entity),
+            )
+            assert list(resp[0].keys()) == ["etag"]
+
+            await client.submit_transaction([("delete", test_entity1), ("delete", test_entity3)])
+
+            await client.delete_table()
+        return recorded_variables
