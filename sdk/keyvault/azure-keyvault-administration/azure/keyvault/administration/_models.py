@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from datetime import datetime
 from typing import Any, Dict, Optional, Union
 
 from azure.core.rest import HttpResponse
@@ -171,22 +172,26 @@ class KeyVaultBackupOperation:
     # pylint:disable=unused-argument
 
     def __init__(self, **kwargs: Any) -> None:
-        self.status = kwargs.get("status")
-        self.status_details = kwargs.get("status_details")
-        self.error = kwargs.get("error")
-        self.start_time = kwargs.get("start_time")
-        self.end_time = kwargs.get("end_time")
-        self.job_id = kwargs.get("job_id")
-        self.folder_url = kwargs.get("folder_url")
+        self.status: Optional[str] = kwargs.get("status")
+        self.status_details: Optional[str] = kwargs.get("status_details")
+        self.error: Optional[str] = kwargs.get("error")
+        self.start_time: Optional[datetime] = kwargs.get("start_time")
+        self.end_time: Optional[datetime] = kwargs.get("end_time")
+        self.job_id: Optional[str] = kwargs.get("job_id")
+        self.folder_url: Optional[str] = kwargs.get("folder_url")
 
     @classmethod
     def _from_generated(
         cls, response: HttpResponse, deserialized_operation: FullBackupOperation, response_headers: Dict
     ) -> "KeyVaultBackupOperation":
+        error = deserialized_operation.error
+        error_message: Optional[str] = None
+        if error and error.message:
+            error_message = f"{error.code}: {error.message}"
         return cls(
             status=deserialized_operation.status,
             status_details=deserialized_operation.status_details,
-            error=deserialized_operation.error,
+            error=error_message,
             start_time=deserialized_operation.start_time,
             end_time=deserialized_operation.end_time,
             job_id=deserialized_operation.job_id,
@@ -228,21 +233,25 @@ class KeyVaultRestoreOperation:
     # pylint:disable=unused-argument
 
     def __init__(self, **kwargs: Any) -> None:
-        self.status = kwargs.get("status")
-        self.status_details = kwargs.get("status_details")
-        self.error = kwargs.get("error")
-        self.start_time = kwargs.get("start_time")
-        self.end_time = kwargs.get("end_time")
-        self.job_id = kwargs.get("job_id")
+        self.status: Optional[str] = kwargs.get("status")
+        self.status_details: Optional[str] = kwargs.get("status_details")
+        self.error: Optional[str] = kwargs.get("error")
+        self.start_time: Optional[datetime] = kwargs.get("start_time")
+        self.end_time: Optional[datetime] = kwargs.get("end_time")
+        self.job_id: Optional[str] = kwargs.get("job_id")
 
     @classmethod
     def _from_generated(
         cls, response: HttpResponse, deserialized_operation: RestoreOperation, response_headers: Dict
     ) -> "KeyVaultRestoreOperation":
+        error = deserialized_operation.error
+        error_message: Optional[str] = None
+        if error and error.message:
+            error_message = f"{error.code}: {error.message}"
         return cls(
             status=deserialized_operation.status,
             status_details=deserialized_operation.status_details,
-            error=deserialized_operation.error,
+            error=error_message,
             start_time=deserialized_operation.start_time,
             end_time=deserialized_operation.end_time,
             job_id=deserialized_operation.job_id,
