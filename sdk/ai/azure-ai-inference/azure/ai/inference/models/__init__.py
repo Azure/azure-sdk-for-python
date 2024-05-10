@@ -26,7 +26,7 @@ from ._models import FunctionCall
 from ._models import FunctionDefinition
 from ._models import ImageGenerationData
 from ._models import ImageGenerations
-from ._models import ModelInformation
+from ._models import ModelInfo
 from ._models import SystemMessage
 from ._models import ToolMessage
 from ._models import UserMessage
@@ -65,7 +65,7 @@ __all__ = [
     "FunctionDefinition",
     "ImageGenerationData",
     "ImageGenerations",
-    "ModelInformation",
+    "ModelInfo",
     "SystemMessage",
     "ToolMessage",
     "UserMessage",

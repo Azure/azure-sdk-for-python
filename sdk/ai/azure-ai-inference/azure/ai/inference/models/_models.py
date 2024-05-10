@@ -916,7 +916,7 @@ class ImageGenerations(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelInformation(_model_base.Model):
+class ModelInfo(_model_base.Model):
     """Represents some basic information about the AI model.
 
     All required parameters must be populated in order to send to server.
@@ -931,12 +931,12 @@ class ModelInformation(_model_base.Model):
     """
 
     model_type: Union[str, "_models.ModelType"] = rest_field()
-    """The type of the AI model. Required. Known values are: \"embeddings\", \"custom\", \"chat\",
-     \"text_generation\", and \"image_generation\"."""
-    model_provider: str = rest_field()
-    """The model provider. Required."""
+    """The type of the AI model. A Unique identifier for the profile. Required. Known values are: \"embeddings\", \"image_generation\", \"text_generation\",
+     \"image_embeddings\", \"audio_generation\", and \"chat\"."""
+    model_provider_name: str = rest_field()
+    """The model provider name. For example: `Microsoft Research`. Required."""
     model_name: str = rest_field()
-    """The name of the AI model. Required."""
+    """The name of the AI model. For example: `Phi21`. Required."""
 
     @overload
     def __init__(

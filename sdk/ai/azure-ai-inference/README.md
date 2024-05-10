@@ -99,6 +99,7 @@ In the following sections you will find simple examples of:
 * [Streaming chat completions](#streaming-chat-completions-example)
 * [Embeddings](#embeddings-example)
 * [Image geneartion](#image-generation-example)
+* [Get model information](#get-model-information-example)
 
 The examples create a synchronous client as mentioned in [Create and authenticate clients](#create-and-authenticate-clients). Only mandatory input settings are shown for simplicity.
 
@@ -154,7 +155,10 @@ result = client.create_streaming(
 )
 
 for update in result:
-    print(update.choices[0].delta.content, end="")
+    if update.choices[0].delta.content:
+        print(update.choices[0].delta.content, end="")
+
+result.close()
 ```
 
 <!-- END SNIPPET -->
@@ -210,8 +214,30 @@ client = ImageGenerationClient(endpoint=endpoint, credential=AzureKeyCredential(
 
 result = client.create(prompt="A painting of a beautiful sunset over a mountain lake.", size="1024x768")
 
-with open(f"image.png", "wb") as image:
-    image.write(result.data[0].b64_json.decode("base64"))
+if result.data[0].b64_json is not None:
+    with open(f"image.png", "wb") as image:
+        image.write(base64.b64decode(result.data[0].b64_json))
+```
+
+<!-- END SNIPPET -->
+
+### Get model information example
+
+Each one of the clients supports a `get_model_info` method that can be used to retreive infomation about the AI model. This example shows how to get model information from the `ChatCompletionsClient`, but similarly can be done with the other clients.
+
+<!-- SNIPPET:sample_get_model_info.get_model_info -->
+
+```python
+from azure.ai.inference import ChatCompletionsClient
+from azure.core.credentials import AzureKeyCredential
+
+client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+model_info = client.get_model_info()
+
+print(f"Model name: {model_info.model_name}")
+print(f"Model provider name: {model_info.model_provider_name}")
+print(f"Model type: {model_info.model_type}")
 ```
 
 <!-- END SNIPPET -->

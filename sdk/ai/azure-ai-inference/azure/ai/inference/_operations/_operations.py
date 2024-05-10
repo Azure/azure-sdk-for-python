@@ -803,12 +803,12 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_model_info(self, **kwargs: Any) -> _models.ModelInformation:
+    def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
         # pylint: disable=line-too-long
         """Returns information about the AI model.
 
-        :return: ModelInformation. The ModelInformation is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.ModelInformation
+        :return: ModelInfo. The ModelInfo is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.ModelInfo
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -833,7 +833,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ModelInformation] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ModelInfo] = kwargs.pop("cls", None)
 
         _request = build_chat_completions_get_model_info_request(
             api_version=self._config.api_version,
@@ -861,7 +861,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ModelInformation, response.json())
+            deserialized = _deserialize(_models.ModelInfo, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1246,12 +1246,12 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_model_info(self, **kwargs: Any) -> _models.ModelInformation:
+    def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
         # pylint: disable=line-too-long
         """Returns information about the AI model.
 
-        :return: ModelInformation. The ModelInformation is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.ModelInformation
+        :return: ModelInfo. The ModelInfo is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.ModelInfo
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1276,7 +1276,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ModelInformation] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ModelInfo] = kwargs.pop("cls", None)
 
         _request = build_embeddings_get_model_info_request(
             api_version=self._config.api_version,
@@ -1304,7 +1304,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ModelInformation, response.json())
+            deserialized = _deserialize(_models.ModelInfo, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1674,12 +1674,12 @@ class ImageGenerationClientOperationsMixin(ImageGenerationClientMixinABC):
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_model_info(self, **kwargs: Any) -> _models.ModelInformation:
+    def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
         # pylint: disable=line-too-long
         """Returns information about the AI model.
 
-        :return: ModelInformation. The ModelInformation is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.ModelInformation
+        :return: ModelInfo. The ModelInfo is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.ModelInfo
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1704,7 +1704,7 @@ class ImageGenerationClientOperationsMixin(ImageGenerationClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ModelInformation] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ModelInfo] = kwargs.pop("cls", None)
 
         _request = build_image_generation_get_model_info_request(
             api_version=self._config.api_version,
@@ -1732,7 +1732,7 @@ class ImageGenerationClientOperationsMixin(ImageGenerationClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ModelInformation, response.json())
+            deserialized = _deserialize(_models.ModelInfo, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
