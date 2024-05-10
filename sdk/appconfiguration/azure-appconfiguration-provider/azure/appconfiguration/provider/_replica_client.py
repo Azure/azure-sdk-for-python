@@ -31,7 +31,7 @@ class ReplicaClient:
         """
         Creates a new instance of the ReplicaClient class, using the provided credential to authenticate requests.
 
-        :param str endpoint: The endpoint of the App Configuration service
+        :param str endpoint: The endpoint of the App Configuration store
         :param TokenCredential credential: The credential to use for authentication
         :param str user_agent: The user agent string to use for the request
         :param int retry_total: The total number of retries to allow for requests
@@ -57,7 +57,7 @@ class ReplicaClient:
         Creates a new instance of the ReplicaClient class, using the provided connection string to authenticate
         requests.
 
-        :param str endpoint: The endpoint of the App Configuration service
+        :param str endpoint: The endpoint of the App Configuration store
         :param str connection_string: The connection string to use for authentication
         :param str user_agent: The user agent string to use for the request
         :param int retry_total: The total number of retries to allow for requests
@@ -127,8 +127,7 @@ class ReplicaClient:
                     # Feature flags are ignored when loaded by Selects, as they are selected from
                     # `feature_flag_selectors`
                     pass
-                else:
-                    configuration_settings.append(config)
+                configuration_settings.append(config)
                 # Every time we run load_all, we should update the etag of our refresh sentinels
                 # so they stay up-to-date.
                 # Sentinel keys will have unprocessed key names, so we need to use the original key.
@@ -231,12 +230,12 @@ class ReplicaClientManager:
         backoff_time = self._calculate_backoff(client.failed_attempts)
         client.backoff_end_time = time.time() + backoff_time
 
-    def _calculate_backoff(self, attempts) -> float:
+    def _calculate_backoff(self, attempts: int) -> float:
         max_attempts = 63
-        millisecond = 1000  # 1 Second in milliseconds
+        ms_per_second = 1000  # 1 Second in milliseconds
 
-        min_backoff_milliseconds = self._min_backoff * millisecond
-        max_backoff_milliseconds = self._max_backoff * millisecond
+        min_backoff_milliseconds = self._min_backoff * ms_per_second
+        max_backoff_milliseconds = self._max_backoff * ms_per_second
 
         if self._max_backoff <= self._min_backoff:
             return min_backoff_milliseconds

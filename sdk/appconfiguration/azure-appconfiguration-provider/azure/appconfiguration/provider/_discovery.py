@@ -8,7 +8,7 @@ import os
 import time
 from dataclasses import dataclass
 import dns.resolver
-from dns.resolver import NXDOMAIN
+from dns.resolver import NXDOMAIN, LifetimeTimeout, NoNameservers
 from ._constants import DISABLE_APPCONFIGURATION_DISCOVERY
 
 
@@ -28,7 +28,7 @@ class SRVRecord:
 
 
 def find_auto_failover_endpoints(endpoint):
-    if os.environ.get(DISABLE_APPCONFIGURATION_DISCOVERY).lower() == "true":
+    if os.environ.get(DISABLE_APPCONFIGURATION_DISCOVERY, "").lower() == "true":
         return [endpoint]
     known_domain = _get_known_domains(endpoint)
     if known_domain is None:
@@ -47,7 +47,7 @@ def find_auto_failover_endpoints(endpoint):
 
 
 def _find_origin(domain):
-    uri = domain[8:]
+    uri = domain.lstrip("https://")
     request = f"_origin._tcp.{uri}"
     srv_records = _request_record(request)
     if not srv_records:
@@ -76,6 +76,8 @@ def _request_record(request):
             return dns.resolver.resolve(request, "SRV")
         except NXDOMAIN:
             break
+        except (LifetimeTimeout, NoNameservers):
+            continue
     return None
 
 
@@ -91,7 +93,7 @@ def _get_known_domains(known_host):
     trusted_domain_labels = ["appconfig", "azconfig"]
 
     for label in trusted_domain_labels:
-        index = known_host.lower().find(label)
+        index = known_host.lower().find(f".{label}.")
         if index > 0:
             return known_host[index:]
     return None
