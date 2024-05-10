@@ -12,11 +12,11 @@ class TestMgmtResourceLinks(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.client = self.create_mgmt_client(
-            azure.mgmt.resource.policy.PolicyClient
+            azure.mgmt.resource.FeatureClient
         )
 
     @RandomNameResourceGroupPreparer()
     @recorded_by_proxy
-    def test_policy_list(self):
-        result = list(self.client.policy_assignments.list())
+    def test_features_list(self):
+        result = list(self.client.features.list_all())
         assert len(result) > 0

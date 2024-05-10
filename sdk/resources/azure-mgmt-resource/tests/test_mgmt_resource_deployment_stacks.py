@@ -12,11 +12,10 @@ class TestMgmtResourceLinks(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.client = self.create_mgmt_client(
-            azure.mgmt.resource.policy.PolicyClient
+            azure.mgmt.resource.DeploymentStacksClient
         )
 
     @RandomNameResourceGroupPreparer()
     @recorded_by_proxy
-    def test_policy_list(self):
-        result = list(self.client.policy_assignments.list())
-        assert len(result) > 0
+    def test_deployment_stacks_list(self):
+        result = list(self.client.deployment_stacks.list_at_subscription())
