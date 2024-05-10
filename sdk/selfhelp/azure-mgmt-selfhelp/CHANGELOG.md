@@ -1,5 +1,11 @@
 # Release History
 
+## 2.0.0b4 (2024-05-20)
+
+### Breaking Changes
+
+  - Operation DiscoverySolutionNLPSubscriptionScopeOperations.post has a new required parameter subscription_id
+
 ## 2.0.0b3 (2024-04-22)
 
 ### Features Added

@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -28,6 +29,10 @@ from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._discovery_solution_nlp_subscription_scope_operations import build_post_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -54,6 +59,7 @@ class DiscoverySolutionNLPSubscriptionScopeOperations:  # pylint: disable=name-t
     @overload
     async def post(
         self,
+        subscription_id: str,
         discover_solution_request: Optional[_models.DiscoveryNlpRequest] = None,
         *,
         content_type: str = "application/json",
@@ -62,6 +68,8 @@ class DiscoverySolutionNLPSubscriptionScopeOperations:  # pylint: disable=name-t
         """Search for relevant Azure Diagnostics, Solutions and Troubleshooters using a natural language
         issue summary and subscription.
 
+        :param subscription_id: The Azure subscription ID. Required.
+        :type subscription_id: str
         :param discover_solution_request: Request body for discovering solutions using NLP. Default
          value is None.
         :type discover_solution_request: ~azure.mgmt.selfhelp.models.DiscoveryNlpRequest
@@ -76,6 +84,7 @@ class DiscoverySolutionNLPSubscriptionScopeOperations:  # pylint: disable=name-t
     @overload
     async def post(
         self,
+        subscription_id: str,
         discover_solution_request: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
@@ -84,6 +93,8 @@ class DiscoverySolutionNLPSubscriptionScopeOperations:  # pylint: disable=name-t
         """Search for relevant Azure Diagnostics, Solutions and Troubleshooters using a natural language
         issue summary and subscription.
 
+        :param subscription_id: The Azure subscription ID. Required.
+        :type subscription_id: str
         :param discover_solution_request: Request body for discovering solutions using NLP. Default
          value is None.
         :type discover_solution_request: IO[bytes]
@@ -97,11 +108,16 @@ class DiscoverySolutionNLPSubscriptionScopeOperations:  # pylint: disable=name-t
 
     @distributed_trace_async
     async def post(
-        self, discover_solution_request: Optional[Union[_models.DiscoveryNlpRequest, IO[bytes]]] = None, **kwargs: Any
+        self,
+        subscription_id: str,
+        discover_solution_request: Optional[Union[_models.DiscoveryNlpRequest, IO[bytes]]] = None,
+        **kwargs: Any
     ) -> _models.DiscoveryNlpResponse:
         """Search for relevant Azure Diagnostics, Solutions and Troubleshooters using a natural language
         issue summary and subscription.
 
+        :param subscription_id: The Azure subscription ID. Required.
+        :type subscription_id: str
         :param discover_solution_request: Request body for discovering solutions using NLP. Is either a
          DiscoveryNlpRequest type or a IO[bytes] type. Default value is None.
         :type discover_solution_request: ~azure.mgmt.selfhelp.models.DiscoveryNlpRequest or IO[bytes]
@@ -109,7 +125,7 @@ class DiscoverySolutionNLPSubscriptionScopeOperations:  # pylint: disable=name-t
         :rtype: ~azure.mgmt.selfhelp.models.DiscoveryNlpResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -136,7 +152,7 @@ class DiscoverySolutionNLPSubscriptionScopeOperations:  # pylint: disable=name-t
                 _json = None
 
         _request = build_post_request(
-            subscription_id=self._config.subscription_id,
+            subscription_id=subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,

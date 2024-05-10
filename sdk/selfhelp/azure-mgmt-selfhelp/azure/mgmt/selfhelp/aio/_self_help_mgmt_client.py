@@ -64,8 +64,6 @@ class SelfHelpMgmtClient:  # pylint: disable=client-accepts-api-version-keyword,
      azure.mgmt.selfhelp.aio.operations.DiscoverySolutionNLPSubscriptionScopeOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
-    :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
     :keyword api_version: Api Version. Default value is "2024-03-01-preview". Note that overriding
@@ -76,13 +74,9 @@ class SelfHelpMgmtClient:  # pylint: disable=client-accepts-api-version-keyword,
     """
 
     def __init__(
-        self,
-        credential: "AsyncTokenCredential",
-        subscription_id: str,
-        base_url: str = "https://management.azure.com",
-        **kwargs: Any
+        self, credential: "AsyncTokenCredential", base_url: str = "https://management.azure.com", **kwargs: Any
     ) -> None:
-        self._config = SelfHelpMgmtClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = SelfHelpMgmtClientConfiguration(credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
