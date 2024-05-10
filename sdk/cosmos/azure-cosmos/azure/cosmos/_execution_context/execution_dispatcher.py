@@ -24,6 +24,7 @@ Cosmos database service.
 """
 
 import json
+import os
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos._execution_context import endpoint_component, multi_execution_aggregator
 from azure.cosmos._execution_context import non_streaming_order_by_aggregator
@@ -121,10 +122,10 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         # throw exception here for vector search query without limit filter
         if query_execution_info.get_non_streaming_order_by():
             if query_execution_info.get_top() is None and query_execution_info.get_limit() is None:
-                # TODO: missing one last if statement here to check for the system variable bypass - need name
-                raise ValueError("Executing a vector search query without TOP or LIMIT can consume many" +
-                                 " RUs very fast and have long runtimes. Please ensure you are using one" +
-                                 " of the two filters with your vector search query.")
+                if os.environ.get('NO_ITEM_LIMIT_FOR_VECTOR_SEARCH', None) is None:
+                    raise ValueError("Executing a vector search query without TOP or LIMIT can consume many" +
+                                     " RUs very fast and have long runtimes. Please ensure you are using one" +
+                                     " of the two filters with your vector search query.")
             execution_context_aggregator =\
                 non_streaming_order_by_aggregator._NonStreamingOrderByContextAggregator(self._client,
                                                                                         self._resource_link,

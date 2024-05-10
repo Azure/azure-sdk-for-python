@@ -698,8 +698,10 @@ database.create_container(id=container_id, partition_key=PartitionKey(path="/id"
 
 With the addition of the vector indexing and vector embedding capabilities, the SDK can now perform order by vector search queries.
 These queries specify the VectorDistance to use as a metric within the query text. These must always use a TOP or LIMIT clause within the query though,
-since vector search queries have to look through a lot of data otherwise and may become too expensive or long-running. The query syntax
-for these operations looks like this:
+since vector search queries have to look through a lot of data otherwise and may become too expensive or long-running.
+If you'd still like to skip setting a limit on your query - which is *not* recommended - you can do so by setting the
+environment variable `NO_ITEM_LIMIT_FOR_VECTOR_SEARCH` to True.
+The query syntax for these operations looks like this:
 ```python
 VectorDistance(<embedding1>, <embedding2>, [,<exact_search>], [,<specification>])
 ```
