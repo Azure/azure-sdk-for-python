@@ -539,7 +539,9 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         local_connection = load_connection(source="./tests/test_configs/connection/azure_open_ai_api.yaml")
         local_connection.name = wps_connection_name
         local_connection.open_ai_resource_id = None  # Not dealing with finding a valid ID for this test
-        created_connection = client.connections.create_or_update(workspace_connection=local_connection, populate_secrets=True)
+        created_connection = client.connections.create_or_update(
+            workspace_connection=local_connection, populate_secrets=True
+        )
         client.connections.delete(name=wps_connection_name)
 
         assert isinstance(created_connection, AzureOpenAIConnection)
@@ -560,7 +562,9 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         local_connection = load_connection(source="./tests/test_configs/connection/azure_open_ai_entra.yaml")
         local_connection.name = wps_connection_name
 
-        created_connection = client.connections.create_or_update(workspace_connection=local_connection, populate_secrets=True)
+        created_connection = client.connections.create_or_update(
+            workspace_connection=local_connection, populate_secrets=True
+        )
         client.connections.delete(name=wps_connection_name)
 
         assert isinstance(created_connection, AzureOpenAIConnection)
@@ -590,7 +594,9 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         # local_connection._target = "https://<ai-services-name>.cognitiveservices.azure.com/"
         # local_connection.ai_services_resource_id = "/subscriptions/<sub-id>/resourceGroups/<rg-name>/providers/Microsoft.CognitiveServices/accounts/<ai-services name>"
         # local_connection.api_key ="<valid-key>"
-        created_connection = client.connections.create_or_update(workspace_connection=local_connection, populate_secrets=True)
+        created_connection = client.connections.create_or_update(
+            workspace_connection=local_connection, populate_secrets=True
+        )
         client.connections.delete(name=wps_connection_name)
         assert isinstance(created_connection, AzureAIServicesConnection)
         assert created_connection.name == wps_connection_name
@@ -604,7 +610,9 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         local_connection = load_connection(source="./tests/test_configs/connection/ai_services_with_entra.yaml")
         local_connection.name = wps_connection_name
         # Need similar value injection as before
-        created_connection = client.connections.create_or_update(workspace_connection=local_connection, populate_secrets=True)
+        created_connection = client.connections.create_or_update(
+            workspace_connection=local_connection, populate_secrets=True
+        )
         client.connections.delete(name=wps_connection_name)
 
         assert isinstance(created_connection, AzureAIServicesConnection)
@@ -624,7 +632,9 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         local_connection = load_connection(source="./tests/test_configs/connection/content_safety_with_key.yaml")
         local_connection.name = wps_connection_name
 
-        created_connection = client.connections.create_or_update(workspace_connection=local_connection, populate_secrets=True)
+        created_connection = client.connections.create_or_update(
+            workspace_connection=local_connection, populate_secrets=True
+        )
         client.connections.delete(name=wps_connection_name)
 
         assert isinstance(created_connection, AzureContentSafetyConnection)
@@ -640,7 +650,9 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         local_connection = load_connection(source="./tests/test_configs/connection/content_safety_with_entra.yaml")
         local_connection.name = wps_connection_name
 
-        created_connection = client.connections.create_or_update(workspace_connection=local_connection, populate_secrets=True)
+        created_connection = client.connections.create_or_update(
+            workspace_connection=local_connection, populate_secrets=True
+        )
         client.connections.delete(name=wps_connection_name)
 
         assert isinstance(created_connection, AzureContentSafetyConnection)
@@ -661,7 +673,9 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         local_connection = load_connection(source="./tests/test_configs/connection/speech_with_key.yaml")
         local_connection.name = wps_connection_name
 
-        created_connection = client.connections.create_or_update(workspace_connection=local_connection, populate_secrets=True)
+        created_connection = client.connections.create_or_update(
+            workspace_connection=local_connection, populate_secrets=True
+        )
         client.connections.delete(name=wps_connection_name)
 
         assert isinstance(created_connection, AzureSpeechServicesConnection)
@@ -677,7 +691,9 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         local_connection = load_connection(source="./tests/test_configs/connection/speech_with_entra.yaml")
         local_connection.name = wps_connection_name
 
-        created_connection = client.connections.create_or_update(workspace_connection=local_connection, populate_secrets=True)
+        created_connection = client.connections.create_or_update(
+            workspace_connection=local_connection, populate_secrets=True
+        )
         client.connections.delete(name=wps_connection_name)
 
         assert isinstance(created_connection, AzureSpeechServicesConnection)
@@ -698,7 +714,9 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         local_connection = load_connection(source="./tests/test_configs/connection/search_with_key.yaml")
         local_connection.name = wps_connection_name
 
-        created_connection = client.connections.create_or_update(workspace_connection=local_connection, populate_secrets=True)
+        created_connection = client.connections.create_or_update(
+            workspace_connection=local_connection, populate_secrets=True
+        )
         client.connections.delete(name=wps_connection_name)
 
         assert isinstance(created_connection, AzureAISearchConnection)
@@ -714,7 +732,9 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         local_connection = load_connection(source="./tests/test_configs/connection/search_with_entra.yaml")
         local_connection.name = wps_connection_name
 
-        created_connection = client.connections.create_or_update(workspace_connection=local_connection, populate_secrets=True)
+        created_connection = client.connections.create_or_update(
+            workspace_connection=local_connection, populate_secrets=True
+        )
         client.connections.delete(name=wps_connection_name)
 
         assert isinstance(created_connection, AzureAISearchConnection)
