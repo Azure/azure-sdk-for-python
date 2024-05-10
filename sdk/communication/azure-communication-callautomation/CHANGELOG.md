@@ -1,14 +1,12 @@
 # Release History
 
-## 1.2.0b1 (Unreleased)
+## 1.3.0b1 (Unreleased)
 
 ### Features Added
-- StartRecording now accepts PauseOnStart.
+
+- Start and Stop media streaming added.
 - Start, Stop, Update transcript added.
-- Start, Stop hold music added.
-- Introduced `MicrosoftTeamsAppIdentifier` for MS Teams automated scenarios.
-- Introduced `TeamsComplianceRecordingStateChanged` event.
-- Introduced `TeamsRecordingStateChanged` event.
+- Start, Stop hold added.
 
 ### Breaking Changes
 
