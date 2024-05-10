@@ -33,7 +33,7 @@ Install the Azure Document Translation client library for Python with [pip][pip]
 pip install azure-ai-translation-document
 ```
 
-> Note: This version of the client library defaults to the v1.0 version of the service
+> Note: This version of the client library defaults to the v2024-05-01 version of the service
 
 #### Create a Translator resource
 
