@@ -62,7 +62,7 @@ class FindSimilarFaces:
                 return_face_id=True,
             )
 
-            face_ids = [face.face_id for face in detect_result1]
+            face_ids = [str(face.face_id) for face in detect_result1]
             self.logger.info(
                 f"Detect {len(face_ids)} faces from the file '{nine_faces_file_path}': {face_ids}"
             )
@@ -79,7 +79,7 @@ class FindSimilarFaces:
             )
 
             assert len(detect_result2) == 1
-            face_id = detect_result2[0].face_id
+            face_id = str(detect_result2[0].face_id)
             self.logger.info(
                 f"Detect 1 face from the file '{find_similar_file_path}': {face_id}"
             )
@@ -182,7 +182,7 @@ class FindSimilarFaces:
             )
 
             assert len(detect_result) == 1
-            face_id = detect_result[0].face_id
+            face_id = str(detect_result[0].face_id)
             self.logger.info(
                 f"Detect 1 face from the file '{find_similar_file_path}': {face_id}"
             )

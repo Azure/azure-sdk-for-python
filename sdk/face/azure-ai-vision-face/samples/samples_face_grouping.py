@@ -60,7 +60,7 @@ class GroupFaces:
                 return_face_id=True,
             )
 
-            face_ids = [face.face_id for face in detect_result]
+            face_ids = [str(face.face_id) for face in detect_result]
             self.logger.info(
                 f"Detect {len(face_ids)} faces from the file '{sample_file_path}': {face_ids}"
             )
