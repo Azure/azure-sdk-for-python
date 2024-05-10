@@ -40,8 +40,14 @@ from ._models import DtmfOptions
 from ._models import DtmfResult
 from ._models import ExternalStorage
 from ._models import FileSource
-from ._models import MediaStreamingConfiguration
-from ._models import MediaStreamingStateResponse
+from ._models import HoldFailed
+from ._models import HoldRequest
+from ._models import MediaStreamingFailed
+from ._models import MediaStreamingOptions
+from ._models import MediaStreamingStarted
+from ._models import MediaStreamingStopped
+from ._models import MediaStreamingSubscription
+from ._models import MediaStreamingUpdate
 from ._models import MicrosoftTeamsAppIdentifierModel
 from ._models import MicrosoftTeamsUserIdentifierModel
 from ._models import MuteParticipantsRequest
@@ -54,6 +60,7 @@ from ._models import PlayFailed
 from ._models import PlayOptions
 from ._models import PlayRequest
 from ._models import PlaySource
+from ._models import PlayStarted
 from ._models import RecognizeCanceled
 from ._models import RecognizeCompleted
 from ._models import RecognizeFailed
@@ -77,10 +84,21 @@ from ._models import SpeechResult
 from ._models import SsmlSource
 from ._models import StartCallRecordingRequest
 from ._models import StartMediaStreamingRequest
+from ._models import StartTranscriptionRequest
 from ._models import StopMediaStreamingRequest
+from ._models import StopTranscriptionRequest
 from ._models import TextSource
+from ._models import TranscriptionFailed
+from ._models import TranscriptionOptions
+from ._models import TranscriptionStarted
+from ._models import TranscriptionStopped
+from ._models import TranscriptionSubscription
+from ._models import TranscriptionUpdate
+from ._models import TranscriptionUpdated
 from ._models import TransferCallResponse
 from ._models import TransferToParticipantRequest
+from ._models import UnholdRequest
+from ._models import UpdateTranscriptionRequest
 
 from ._enums import CallConnectionState
 from ._enums import CallLocatorKind
@@ -90,9 +108,10 @@ from ._enums import CommunicationIdentifierModelKind
 from ._enums import DtmfTone
 from ._enums import MediaStreamingAudioChannelType
 from ._enums import MediaStreamingContentType
-from ._enums import MediaStreamingState
+from ._enums import MediaStreamingStatus
+from ._enums import MediaStreamingStatusDetails
+from ._enums import MediaStreamingSubscriptionState
 from ._enums import MediaStreamingTransportType
-from ._enums import MediaStreamingType
 from ._enums import PlaySourceType
 from ._enums import RecognitionType
 from ._enums import RecognizeInputType
@@ -102,6 +121,11 @@ from ._enums import RecordingFormat
 from ._enums import RecordingKind
 from ._enums import RecordingState
 from ._enums import RecordingStorageKind
+from ._enums import TranscriptionResultType
+from ._enums import TranscriptionStatus
+from ._enums import TranscriptionStatusDetails
+from ._enums import TranscriptionSubscriptionState
+from ._enums import TranscriptionTransportType
 from ._enums import VoiceKind
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -142,8 +166,14 @@ __all__ = [
     "DtmfResult",
     "ExternalStorage",
     "FileSource",
-    "MediaStreamingConfiguration",
-    "MediaStreamingStateResponse",
+    "HoldFailed",
+    "HoldRequest",
+    "MediaStreamingFailed",
+    "MediaStreamingOptions",
+    "MediaStreamingStarted",
+    "MediaStreamingStopped",
+    "MediaStreamingSubscription",
+    "MediaStreamingUpdate",
     "MicrosoftTeamsAppIdentifierModel",
     "MicrosoftTeamsUserIdentifierModel",
     "MuteParticipantsRequest",
@@ -156,6 +186,7 @@ __all__ = [
     "PlayOptions",
     "PlayRequest",
     "PlaySource",
+    "PlayStarted",
     "RecognizeCanceled",
     "RecognizeCompleted",
     "RecognizeFailed",
@@ -179,10 +210,21 @@ __all__ = [
     "SsmlSource",
     "StartCallRecordingRequest",
     "StartMediaStreamingRequest",
+    "StartTranscriptionRequest",
     "StopMediaStreamingRequest",
+    "StopTranscriptionRequest",
     "TextSource",
+    "TranscriptionFailed",
+    "TranscriptionOptions",
+    "TranscriptionStarted",
+    "TranscriptionStopped",
+    "TranscriptionSubscription",
+    "TranscriptionUpdate",
+    "TranscriptionUpdated",
     "TransferCallResponse",
     "TransferToParticipantRequest",
+    "UnholdRequest",
+    "UpdateTranscriptionRequest",
     "CallConnectionState",
     "CallLocatorKind",
     "CallRejectReason",
@@ -191,9 +233,10 @@ __all__ = [
     "DtmfTone",
     "MediaStreamingAudioChannelType",
     "MediaStreamingContentType",
-    "MediaStreamingState",
+    "MediaStreamingStatus",
+    "MediaStreamingStatusDetails",
+    "MediaStreamingSubscriptionState",
     "MediaStreamingTransportType",
-    "MediaStreamingType",
     "PlaySourceType",
     "RecognitionType",
     "RecognizeInputType",
@@ -203,6 +246,11 @@ __all__ = [
     "RecordingKind",
     "RecordingState",
     "RecordingStorageKind",
+    "TranscriptionResultType",
+    "TranscriptionStatus",
+    "TranscriptionStatusDetails",
+    "TranscriptionSubscriptionState",
+    "TranscriptionTransportType",
     "VoiceKind",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

@@ -1,8 +1,16 @@
 # Release History
 
-## 1.2.0 (Unreleased)
+## 1.3.0b1 (Unreleased)
 
 ### Features Added
+
+- Media Steaming
+- Transcription
+
+## 1.2.0
+
+### Features Added
+
 - StartRecording now accepts PauseOnStart.
 - Introduced recording kind to the recording state result.
 - You can store your recording in your own storage - Bring-your-own-storage.
@@ -14,14 +22,18 @@
 ### Other Changes
 
 ## 1.1.0 (2023-11-23)
+
 ### Features Added
+
 - Mid Call actions support overriding callback url.
 - Cancel adding Participant invitation.
 - Support transfer a participant in a group call to another participant.
 - Add Custom Context payload to Transfer and AddParticipant API.
 
 ## 1.1.0b1 (2023-08-17)
+
 ### Features Added
+
 - Play and recognize supports TTS and SSML source prompts.
 - Recognize supports choices and freeform speech.
 - Start/Stop continuous DTMF recognition by subscribing/unsubscribing to tones.
@@ -29,6 +41,7 @@
 - Mute participants in the call.
 
 ### Other Changes
+
 - The models `ServerCallLocator` and `GroupCallLocator` have been deprecated, and the ID values can now be passed directly into `CallAutomationClient.start_recording` as keyword arguments.
 - The model `CallInvite` has been deprecated and now the target `CommunicationIdentifier` and associated properties can be passed directly into `create_call`, `redirect_call` and `add_participant`.
 - The method `CallAutomationClient.create_group_call` has been deprecated, this can now be achieved by passing a list of `CommunicationIdentifier`s into `create_call`.
@@ -36,9 +49,11 @@
 - The `MicrosoftBotIdentifier` has been deprecated.
 
 ## 1.0.0 (2023-06-14)
+
 Call Automation enables developers to build call workflows. Personalise customer interactions by listening to call events and take actions based on your business logic. For more information, please see the [README][read_me].
 
 ### Features Added
+
 - Create outbound calls to an Azure Communication Service user or a phone number.
 - Answer/Redirect/Reject incoming call from an Azure Communication Service user or a phone number.
 - Transfer the call to another participant.
