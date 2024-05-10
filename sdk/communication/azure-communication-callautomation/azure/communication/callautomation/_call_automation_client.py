@@ -15,8 +15,6 @@ from ._call_connection_client import CallConnectionClient
 from ._generated._client import AzureCommunicationCallAutomationService
 from ._shared.auth_policy_utils import get_authentication_policy
 from ._shared.utils import parse_connection_str
-from ._credential.call_automation_auth_policy_utils import get_call_automation_auth_policy
-from ._credential.credential_utils import get_custom_enabled, get_custom_url
 from ._generated.models import (
     CreateCallRequest,
     AnswerCallRequest,
@@ -30,7 +28,9 @@ from ._models import (
     CallConnectionProperties,
     RecordingProperties,
     ChannelAffinity,
-    CallInvite
+    CallInvite,
+    AzureCommunicationsRecordingStorage,
+    AzureBlobContainerRecordingStorage
 )
 from ._content_downloader import ContentDownloader
 from ._utils import (
@@ -38,14 +38,15 @@ from ._utils import (
     serialize_identifier,
     serialize_communication_user_identifier,
     build_call_locator,
+    build_external_storage,
     process_repeatability_first_sent
 )
 if TYPE_CHECKING:
     from ._models  import (
         ServerCallLocator,
         GroupCallLocator,
-        MediaStreamingConfiguration,
-        TranscriptionConfiguration
+        MediaStreamingOptions,
+        TranscriptionOptions
     )
     from azure.core.credentials import (
         TokenCredential,
@@ -61,7 +62,7 @@ if TYPE_CHECKING:
         RecordingContent,
         RecordingChannel,
         RecordingFormat,
-        RecordingStorage
+        RecordingStorageKind
     )
 
 
@@ -103,26 +104,14 @@ class CallAutomationClient:
         if not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {format(endpoint)}")
 
-        custom_enabled = get_custom_enabled()
-        custom_url = get_custom_url()
-        if custom_enabled and custom_url is not None:
-            self._client = AzureCommunicationCallAutomationService(
-                custom_url,
-                credential,
-                api_version=api_version or DEFAULT_VERSION,
-                authentication_policy=get_call_automation_auth_policy(
-                custom_url, credential, acs_url=endpoint),
-                sdk_moniker=SDK_MONIKER,
-                **kwargs)
-        else:
-            self._client = AzureCommunicationCallAutomationService(
-                endpoint,
-                credential,
-                api_version=api_version or DEFAULT_VERSION,
-                authentication_policy=get_authentication_policy(
-                    endpoint, credential),
-                sdk_moniker=SDK_MONIKER,
-                **kwargs)
+        self._client = AzureCommunicationCallAutomationService(
+            endpoint,
+            credential,
+            api_version=api_version or DEFAULT_VERSION,
+            authentication_policy=get_authentication_policy(
+                endpoint, credential),
+            sdk_moniker=SDK_MONIKER,
+            **kwargs)
 
         self._call_recording_client = self._client.call_recording
         self._downloader = ContentDownloader(self._call_recording_client)
@@ -178,8 +167,8 @@ class CallAutomationClient:
         cognitive_services_endpoint: Optional[str] = None,
         sip_headers: Optional[Dict[str, str]] = None,
         voip_headers: Optional[Dict[str, str]] = None,
-        media_streaming_configuration: Optional['MediaStreamingConfiguration'] = None,
-        transcription_configuration: Optional['TranscriptionConfiguration'] = None,
+        media_streaming_options: Optional['MediaStreamingOptions'] = None,
+        transcription_options: Optional['TranscriptionOptions'] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """Create a call connection request to a target identity.
@@ -204,11 +193,11 @@ class CallAutomationClient:
         :paramtype sip_headers: Dict[str, str] or None
         :keyword voip_headers: Voip Headers for Voip Call
         :paramtype voip_headers: Dict[str, str] or None
-        :keyword media_streaming_configuration: Media Streaming Configuration.
-        :paramtype media_streaming_configuration: ~azure.communication.callautomation.MediaStreamingConfiguration
+        :keyword media_streaming_options: Media Streaming Configuration.
+        :paramtype media_streaming_options: ~azure.communication.callautomation.MediaStreamingOptions
          or None
-        :keyword transcription_configuration: Configuration of live transcription.
-        :paramtype transcription_configuration: ~azure.communication.callautomation.TranscriptionConfiguration
+        :keyword transcription_options: Configuration of live transcription.
+        :paramtype transcription_options: ~azure.communication.callautomation.TranscriptionOptions
          or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
@@ -235,8 +224,8 @@ class CallAutomationClient:
             targets = [serialize_identifier(p) for p in target_participant]
         except TypeError:
             targets = [serialize_identifier(target_participant)]
-        media_config = media_streaming_configuration.to_generated() if media_streaming_configuration else None
-        transcription_config = transcription_configuration.to_generated() if transcription_configuration else None
+        media_config = media_streaming_options.to_generated() if media_streaming_options else None
+        transcription_config = transcription_options.to_generated() if transcription_options else None
         create_call_request = CreateCallRequest(
             targets=targets,
             callback_uri=callback_url,
@@ -245,8 +234,8 @@ class CallAutomationClient:
             source=serialize_communication_user_identifier(self.source),
             operation_context=operation_context,
             call_intelligence_options=call_intelligence_options,
-            media_streaming_configuration=media_config,
-            transcription_configuration=transcription_config,
+            media_streaming_options=media_config,
+            transcription_options=transcription_config,
             cognitive_services_endpoint=cognitive_services_endpoint,
             custom_calling_context=user_custom_context
         )
@@ -314,8 +303,8 @@ class CallAutomationClient:
         *,
         cognitive_services_endpoint: Optional[str] = None,
         operation_context: Optional[str] = None,
-        media_streaming_configuration: Optional['MediaStreamingConfiguration'] = None,
-        transcription_configuration: Optional['TranscriptionConfiguration'] = None,
+        media_streaming_options: Optional['MediaStreamingOptions'] = None,
+        transcription_options: Optional['TranscriptionOptions'] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """Answer incoming call with Azure Communication Service's IncomingCall event
@@ -331,10 +320,10 @@ class CallAutomationClient:
         :paramtype cognitive_services_endpoint: str
         :keyword operation_context: The operation context.
         :paramtype operation_context: str
-        :keyword media_streaming_configuration: Media Streaming Configuration.
-        :paramtype media_streaming_configuration: ~azure.communication.callautomation.MediaStreamingConfiguration
-        :keyword transcription_configuration: Configuration of live transcription.
-        :paramtype transcription_configuration: ~azure.communication.callautomation.TranscriptionConfiguration
+        :keyword media_streaming_options: Media Streaming Configuration.
+        :paramtype media_streaming_options: ~azure.communication.callautomation.MediaStreamingOptions
+        :keyword transcription_options: Configuration of live transcription.
+        :paramtype transcription_options: ~azure.communication.callautomation.TranscriptionOptions
          or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
@@ -350,10 +339,10 @@ class CallAutomationClient:
             call_intelligence_options=call_intelligence_options,
             answered_by=serialize_communication_user_identifier(
                 self.source) if self.source else None,
-            media_streaming_configuration=media_streaming_configuration.to_generated(
-            ) if media_streaming_configuration else None,
-            transcription_configuration=transcription_configuration.to_generated()
-            if transcription_configuration else None,
+            media_streaming_options=media_streaming_options.to_generated(
+            ) if media_streaming_options else None,
+            transcription_options=transcription_options.to_generated()
+            if transcription_options else None,
             cognitive_services_endpoint=cognitive_services_endpoint,
             operation_context=operation_context
         )
@@ -453,8 +442,8 @@ class CallAutomationClient:
         recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
         audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
         channel_affinity: Optional[List['ChannelAffinity']] = None,
-        recording_storage_type: Optional[Union[str, 'RecordingStorage']] = None,
-        external_storage_location: Optional[str] = None,
+        recording_storage: Optional[Union['AzureCommunicationsRecordingStorage',
+                                          'AzureBlobContainerRecordingStorage']] = None,
         pause_on_start: Optional[bool] = None,
         **kwargs
     ) -> RecordingProperties:
@@ -482,12 +471,10 @@ class CallAutomationClient:
          'channel' will be automatically assigned.
          Channel-Participant mapping details can be found in the metadata of the recording.
         :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
-        :keyword recording_storage_type: Recording storage mode.
-         ``External`` enables bring your own storage.
-        :paramtype recording_storage_type: str or None
-        :keyword external_storage_location: The location where recording is stored,
-         when RecordingStorageType is set to 'BlobStorage'.
-        :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorage or None
+        :keyword recording_storage: Defines the kind of external storage. Known values are:
+          ``AzureCommunicationsRecordingStorage`` and ``AzureBlobContainerRecordingStorage``.
+          If no storage option is provided, the default is Azure Communications recording storage.
+        :paramtype recording_storage: AzureCommunicationsRecordingStorage or AzureBlobContainerRecordingStorage or None
         :keyword pause_on_start: The state of the pause on start option.
         :paramtype pause_on_start: bool or None
         :return: RecordingProperties
@@ -506,8 +493,8 @@ class CallAutomationClient:
         recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
         audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
         channel_affinity: Optional[List['ChannelAffinity']] = None,
-        recording_storage_type: Optional[Union[str, 'RecordingStorage']] = None,
-        external_storage_location: Optional[str] = None,
+        recording_storage: Optional[Union['AzureCommunicationsRecordingStorage',
+                                          'AzureBlobContainerRecordingStorage']] = None,
         pause_on_start: Optional[bool] = None,
         **kwargs
     ) -> RecordingProperties:
@@ -535,12 +522,10 @@ class CallAutomationClient:
          'channel' will be automatically assigned.
          Channel-Participant mapping details can be found in the metadata of the recording.
         :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
-        :keyword recording_storage_type: Recording storage mode.
-         ``External`` enables bring your own storage.
-        :paramtype recording_storage_type: str or None
-        :keyword external_storage_location: The location where recording is stored,
-         when RecordingStorageType is set to 'BlobStorage'.
-        :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorage or None
+        :keyword recording_storage: Defines the kind of external storage. Known values are:
+          ``AzureCommunicationsRecordingStorage`` and ``AzureBlobContainerRecordingStorage``.
+          If no storage option is provided, the default is Azure Communications recording storage.
+        :paramtype recording_storage: AzureCommunicationsRecordingStorage or AzureBlobContainerRecordingStorage or None
         :keyword pause_on_start: The state of the pause on start option.
         :paramtype pause_on_start: bool or None
         :return: RecordingProperties
@@ -563,6 +548,8 @@ class CallAutomationClient:
             kwargs.pop("server_call_id", None),
             kwargs.pop("group_call_id", None)
         )
+        external_storage = build_external_storage(kwargs.pop("recording_storage", None))
+
         start_recording_request = StartCallRecordingRequest(
             call_locator=call_locator,
             recording_state_callback_uri=kwargs.pop("recording_state_callback_url", None),
@@ -570,8 +557,7 @@ class CallAutomationClient:
             recording_channel_type=kwargs.pop("recording_channel_type", None),
             recording_format_type=kwargs.pop("recording_format_type", None),
             audio_channel_participant_ordering=kwargs.pop("audio_channel_participant_ordering", None),
-            recording_storage_type=kwargs.pop("recording_storage_type", None),
-            external_storage_location=kwargs.pop("external_storage_location", None),
+            external_storage=external_storage,
             channel_affinity=channel_affinity_internal,
             pause_on_start=kwargs.pop("pause_on_start", None)
         )

@@ -4,10 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import List, Optional, Union, TYPE_CHECKING
+from typing_extensions import Literal
 from ._generated.models import (
     CallLocator,
-    MediaStreamingConfiguration as MediaStreamingConfigurationRest,
-    TranscriptionConfiguration as TranscriptionConfigurationRest,
+    MediaStreamingOptions as MediaStreamingOptionsRest,
+    TranscriptionOptions as TranscriptionOptionsRest,
     FileSource as FileSourceInternal,
     TextSource as TextSourceInternal,
     SsmlSource as SsmlSourceInternal,
@@ -20,7 +21,7 @@ from ._shared.models import (
     CommunicationUserIdentifier,
     PhoneNumberIdentifier,
 )
-from ._generated.models._enums import PlaySourceType
+from ._generated.models._enums import PlaySourceType, RecordingStorageKind
 from ._utils import (
     deserialize_phone_identifier,
     deserialize_identifier,
@@ -35,6 +36,7 @@ if TYPE_CHECKING:
         TranscriptionTransportType,
         CallConnectionState,
         RecordingState,
+        RecordingKind,
         VoiceKind,
         DtmfTone
     )
@@ -136,6 +138,36 @@ class GroupCallLocator:
     def _to_generated(self):
         return CallLocator(kind=self.kind, group_call_id=self.group_call_id)
 
+class RecordingStorage:
+    """Recording Storage for the recording.
+    :param kind: Defines the kind of external storage.
+    :type kind: str
+    """
+    kind: str
+    """The recording storage kind"""
+
+class AzureCommunicationsRecordingStorage(RecordingStorage):
+    """
+    Recording Storage for the recording.
+    :param kind: Defines the kind of external storage.
+    :type kind: ~azure.communication.callautomation.RecordingStorageKind or str
+    """
+    kind: Literal[RecordingStorageKind.AZURE_COMMUNICATION_SERVICES] = RecordingStorageKind.AZURE_COMMUNICATION_SERVICES
+    """The kind of recording storage is set to AZURE_COMMUNICATION_SERVICES"""
+
+class AzureBlobContainerRecordingStorage(RecordingStorage):
+    """Recording Storage for the recording.
+    :param kind: Defines the kind of external storage.
+    :type kind: ~azure.communication.callautomation.RecordingStorageKind or str
+    :param container_url: Defines the kind of external storage. Required.
+    :type container_url: str
+    """
+    kind: Literal[RecordingStorageKind.AZURE_BLOB_STORAGE] = RecordingStorageKind.AZURE_BLOB_STORAGE
+    """The kind of recording storage is set to AZURE_BLOB_STORAGE"""
+    container_url: str
+    """The container url for the AZURE_BLOB_STORAGE type"""
+    def __init__(self, container_url: str):
+        self.container_url = container_url
 
 class ChannelAffinity:
     """Channel affinity for a participant.
@@ -300,7 +332,7 @@ class SsmlSource:
             play_source_cache_id=self.play_source_cache_id
         )
 
-class MediaStreamingConfiguration:
+class MediaStreamingOptions:
     """Configuration of Media streaming.
 
     :param transport_url: Transport URL for media streaming.
@@ -311,6 +343,9 @@ class MediaStreamingConfiguration:
     :type content_type: str or ~azure.communication.callautomation.MediaStreamingContentType
     :param audio_channel_type: Audio channel type to stream, eg. unmixed audio, mixed audio.
     :type audio_channel_type: str or ~azure.communication.callautomation.MediaStreamingAudioChannelType
+    :param start_media_streaming: Determines if the media streaming should be started immediately
+     after call is answered or not. Required.
+    :type start_media_streaming: bool
     """
 
     transport_url: str
@@ -321,28 +356,34 @@ class MediaStreamingConfiguration:
     """Content type to stream, eg. audio, audio/video."""
     audio_channel_type: Union[str, 'MediaStreamingAudioChannelType']
     """Audio channel type to stream, eg. unmixed audio, mixed audio."""
+    start_media_streaming: bool
+    """Determines if the media streaming should be started immediately
+     after call is answered or not"""
 
     def __init__(
         self,
         transport_url: str,
         transport_type: Union[str, 'MediaStreamingTransportType'],
         content_type: Union[str, 'MediaStreamingContentType'],
-        audio_channel_type: Union[str, 'MediaStreamingAudioChannelType']
+        audio_channel_type: Union[str, 'MediaStreamingAudioChannelType'],
+        start_media_streaming: bool
     ):
         self.transport_url = transport_url
         self.transport_type = transport_type
         self.content_type = content_type
         self.audio_channel_type = audio_channel_type
+        self.start_media_streaming = start_media_streaming
 
     def to_generated(self):
-        return MediaStreamingConfigurationRest(
+        return MediaStreamingOptionsRest(
             transport_url=self.transport_url,
             transport_type=self.transport_type,
             content_type=self.content_type,
-            audio_channel_type=self.audio_channel_type
+            audio_channel_type=self.audio_channel_type,
+            start_media_streaming= self.start_media_streaming
         )
 
-class TranscriptionConfiguration:
+class TranscriptionOptions:
     """Configuration of live transcription.
 
     :param transport_url: Transport URL for live transcription. Required.
@@ -352,9 +393,13 @@ class TranscriptionConfiguration:
     :type transport_type: str or ~azure.communication.callautomation.TranscriptionTransportType
     :param locale: Defines the locale for the data e.g en-CA, en-AU. Required.
     :type locale: str
+    :param speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
+    :type speech_recognition_model_endpoint_id: str
     :param start_transcription: Determines if the transcription should be started immediately after
      call is answered or not. Required.
     :type start_transcription: bool
+    :param enable_intermediate_results: Enables intermediate results for the transcribed speech.
+    :type enable_intermediate_results: bool
     """
 
     transport_url: str
@@ -363,27 +408,37 @@ class TranscriptionConfiguration:
     """The type of transport to be used for live transcription."""
     locale: str
     """Defines the locale for the data."""
+    speech_recognition_model_endpoint_id: str
+    """Determines endpoint where the custom model was deployed."""
     start_transcription: bool
     """Determines if the transcription should be started immediately after call is answered or not."""
+    enable_intermediate_results: bool
+    """Determines if the intermediate results should be enabled for transcribed speech or not."""
 
     def __init__(
         self,
         transport_url: str,
         transport_type: Union[str, 'TranscriptionTransportType'],
         locale: str,
-        start_transcription: bool
+        speech_recognition_model_endpoint_id: str,
+        start_transcription: bool,
+        enable_intermediate_results: bool
     ):
         self.transport_url = transport_url
         self.transport_type = transport_type
         self.locale = locale
+        self.speech_recognition_model_endpoint_id = speech_recognition_model_endpoint_id
         self.start_transcription = start_transcription
+        self.enable_intermediate_results = enable_intermediate_results
 
     def to_generated(self):
-        return TranscriptionConfigurationRest(
+        return TranscriptionOptionsRest(
             transport_url=self.transport_url,
             transport_type=self.transport_type,
             locale=self.locale,
-            start_transcription=self.start_transcription
+            speech_recognition_model_endpoint_id=self.speech_recognition_model_endpoint_id,
+            start_transcription=self.start_transcription,
+            enable_intermediate_results=self.enable_intermediate_results
         )
 
 class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
@@ -504,27 +559,34 @@ class RecordingProperties:
     :paramtype recording_id: str
     :keyword recording_state: state of ongoing recording.
     :paramtype recording_state: str or ~azure.communication.callautomation.RecordingState
+    :keyword recording_kind: kind of the recording.
+    :paramtype recording_kind: str or ~azure.communication.callautomation.RecordingKind
     """
 
     recording_id: Optional[str]
     """Id of this recording operation."""
     recording_state: Optional[Union[str,'RecordingState']]
     """state of ongoing recording."""
+    recording_kind: Optional[Union[str, 'RecordingKind']]
+    """kind of the recording."""
 
     def __init__(
         self,
         *,
         recording_id: Optional[str] = None,
-        recording_state: Optional[Union[str,'RecordingState']] = None
+        recording_state: Optional[Union[str,'RecordingState']] = None,
+        recording_kind: Optional[Union[str, 'RecordingKind']] = None,
     ):
         self.recording_id = recording_id
         self.recording_state = recording_state
+        self.recording_kind = recording_kind
 
     @classmethod
     def _from_generated(cls, recording_state_result: 'RecordingStateResultRest'):
         return cls(
             recording_id=recording_state_result.recording_id,
-            recording_state=recording_state_result.recording_state
+            recording_state=recording_state_result.recording_state,
+            recording_kind=recording_state_result.recording_kind,
         )
 
 
