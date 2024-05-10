@@ -85,12 +85,6 @@ TODO: Add overview and link to explain embeddings.
 
 Embeddings operations target the URL route `/v1/embeddings` on the provided endpoint.
 
-### Image Generation
-
-TODO: Add overview and link to explain image generation.
-
-Image generation operations target the URL route `/images/generations` on the provided endpoint.
-
 ## Examples
 
 In the following sections you will find simple examples of:
@@ -98,7 +92,6 @@ In the following sections you will find simple examples of:
 * [Chat completions](#chat-completions-example)
 * [Streaming chat completions](#streaming-chat-completions-example)
 * [Embeddings](#embeddings-example)
-* [Image geneartion](#image-generation-example)
 * [Get model information](#get-model-information-example)
 
 The examples create a synchronous client as mentioned in [Create and authenticate clients](#create-and-authenticate-clients). Only mandatory input settings are shown for simplicity.
@@ -199,27 +192,6 @@ data[2]: length=1024, [0.04196167, 0.029083252, ..., -0.0027484894, 0.0073127747
 ```
 
 To generate embeddings for additional phrases, simply call `client.create` multiple times using the same `client`.
-
-### Image generation example
-
-This example demonstrates how to generate an image of size 1024x768 from a text prompt, and save the resulting image to a `image.png` file.
-
-<!-- SNIPPET:sample_image_generation.image_generation -->
-
-```python
-from azure.ai.inference import ImageGenerationClient
-from azure.core.credentials import AzureKeyCredential
-
-client = ImageGenerationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-
-result = client.create(prompt="A painting of a beautiful sunset over a mountain lake.", size="1024x768")
-
-if result.data[0].b64_json is not None:
-    with open(f"image.png", "wb") as image:
-        image.write(base64.b64decode(result.data[0].b64_json))
-```
-
-<!-- END SNIPPET -->
 
 ### Get model information example
 

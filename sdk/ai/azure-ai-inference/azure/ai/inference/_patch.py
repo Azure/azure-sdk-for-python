@@ -12,6 +12,7 @@ import sys
 from io import IOBase
 from typing import Any, Dict, Union, IO, List, Optional, overload
 from azure.core.pipeline import PipelineResponse
+from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.core.exceptions import (
@@ -27,6 +28,7 @@ from ._model_base import SdkJSONEncoder
 from ._serialization import Serializer
 from ._operations._operations import build_chat_completions_create_request
 from ._client import ChatCompletionsClient as ChatCompletionsClientGenerated
+from ._client import EmbeddingsClient
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -36,6 +38,22 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
+
+
+class ClientGenerator:
+    @staticmethod
+    def from_endpoint(endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> Union[ChatCompletionsClientGenerated, EmbeddingsClient]:
+        client = ChatCompletionsClient(endpoint, credential, **kwargs) # Pick any of the clients, it does not matter...
+        model_info = client.get_model_info()
+        print(model_info)
+        if model_info.model_type == None or model_info.model_type == "":
+            raise ValueError("The AI model information is missing a value for `model type`. Cannot create an appropriate client.")
+        elif model_info.model_type == _models.ModelType.CHAT:
+            return client
+        elif model_info.model_type == _models.ModelType.EMBEDDINGS:
+            return EmbeddingsClient(endpoint, credential, **kwargs)
+        else:
+            raise ValueError(f"No client available to support AI model type {model_info.model_type}")
 
 
 class ChatCompletionsClient(ChatCompletionsClientGenerated):
@@ -380,6 +398,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
 
 __all__: List[str] = [
+    "ClientGenerator",
     "ChatCompletionsClient"
 ]  # Add all objects you want publicly available to users at this package level
 
