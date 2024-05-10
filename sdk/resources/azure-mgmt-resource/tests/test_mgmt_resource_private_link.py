@@ -19,4 +19,4 @@ class TestMgmtResourceLinks(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer()
     @recorded_by_proxy
     def test_private_link_list(self):
-        result = list(self.client.resource_management_private_link.list().value)
+        result = self.client.resource_management_private_link.list()
