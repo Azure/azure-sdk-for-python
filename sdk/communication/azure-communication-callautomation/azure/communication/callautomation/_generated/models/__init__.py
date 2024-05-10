@@ -91,7 +91,6 @@ from ._models import TextSource
 from ._models import TranscriptionFailed
 from ._models import TranscriptionOptions
 from ._models import TranscriptionStarted
-from ._models import TranscriptionStateResponse
 from ._models import TranscriptionStopped
 from ._models import TranscriptionSubscription
 from ._models import TranscriptionUpdate
@@ -123,7 +122,6 @@ from ._enums import RecordingKind
 from ._enums import RecordingState
 from ._enums import RecordingStorageKind
 from ._enums import TranscriptionResultType
-from ._enums import TranscriptionState
 from ._enums import TranscriptionStatus
 from ._enums import TranscriptionStatusDetails
 from ._enums import TranscriptionSubscriptionState
@@ -219,7 +217,6 @@ __all__ = [
     "TranscriptionFailed",
     "TranscriptionOptions",
     "TranscriptionStarted",
-    "TranscriptionStateResponse",
     "TranscriptionStopped",
     "TranscriptionSubscription",
     "TranscriptionUpdate",
@@ -250,7 +247,6 @@ __all__ = [
     "RecordingState",
     "RecordingStorageKind",
     "TranscriptionResultType",
-    "TranscriptionState",
     "TranscriptionStatus",
     "TranscriptionStatusDetails",
     "TranscriptionSubscriptionState",
