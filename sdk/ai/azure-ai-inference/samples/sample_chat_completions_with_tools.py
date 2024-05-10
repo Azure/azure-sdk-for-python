@@ -3,6 +3,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
+NOTE: 
+    This sample is still work in progress...
+
 DESCRIPTION:
     This sample demonstrates how to do chat completions using a synchronous client,
     with the assistance of tools. In this sample, we use a mock function tool to retrieve
@@ -42,15 +45,16 @@ def sample_chat_completions_with_tools():
 
     from azure.ai.inference import ChatCompletionsClient
     from azure.ai.inference.models import (
-        SystemMessage,
-        UserMessage,
         AssistantMessage,
-        ToolMessage,
+        ChatCompletionsFunctionToolCall,
         ChatCompletionsFunctionToolDefinition,
-        FunctionDefinition,
-        CompletionsFinishReason,
+        ChatCompletionsNamedToolSelection,
         ChatCompletionsToolSelectionPreset,
-        ChatCompletionsNamedToolSelection
+        CompletionsFinishReason,
+        FunctionDefinition,
+        SystemMessage,
+        ToolMessage,
+        UserMessage,
     )
     from azure.core.credentials import AzureKeyCredential
 
@@ -108,7 +112,6 @@ def sample_chat_completions_with_tools():
         UserMessage(content="What are the next flights from Seattle to Miami and from Seattle to Orlando?"),
     ]
 
-    x : ChatCompletionsNamedToolSelection
     result = client.create(
         messages=messages,
         tools=[flight_info],
@@ -119,23 +122,27 @@ def sample_chat_completions_with_tools():
     while result.choices[0].finish_reason == CompletionsFinishReason.TOOL_CALLS:
 
         # Append the previous model response to the chat history
-        messages.append(AssistantMessage(tool_calls=result.choices[0].message.tool_calls))
+        if result.choices[0].message.tool_calls is not None:
+            # TODO: Remove the need to set content=""
+            messages.append(AssistantMessage(content="", tool_calls=result.choices[0].message.tool_calls)) 
 
         # Make new function call(s) as needed. If parallel function calling is supported by the model,
         # we may have more than one tool call request.
-        for tool_call in result.choices[0].message.tool_calls:
-            function_name = tool_call.function.name
-            function_args = json.loads(tool_call.function.arguments.replace("'", '"'))
-            tool_call_id = tool_call.id
-            print(f"Calling function `{function_name}` with arguments {function_args}")
-            callable_func = locals()[function_name]
-            function_response = callable_func(**function_args)
-            print(f"Function response is: {function_response}")
+        if result.choices[0].message.tool_calls is not None:
+            for tool_call in result.choices[0].message.tool_calls:
+                if hasattr(tool_call, "function"):
+                    function_name = tool_call.function.name
+                    function_args = json.loads(tool_call.function.arguments.replace("'", '"'))
+                    tool_call_id = tool_call.id
+                    print(f"Calling function `{function_name}` with arguments {function_args}")
+                    callable_func = locals()[function_name]
+                    function_response = callable_func(**function_args)
+                    print(f"Function response is: {function_response}")
 
-            # Provide the tool response to the model, by appending it to the chat history
-            messages.append(
-                ToolMessage(tool_call_id=tool_call_id, content=function_response)  # json.dumps(function_response)
-            )
+                    # Provide the tool response to the model, by appending it to the chat history
+                    messages.append(
+                        ToolMessage(tool_call_id=tool_call_id, content=function_response)  # json.dumps(function_response)
+                    )
 
         # With the additional tools information on hand, get another response from the model
         result = client.create(

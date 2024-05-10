@@ -12,7 +12,7 @@ import logging
 import queue
 import re
 
-from typing import List, Union, AsyncIterator, Iterator, cast
+from typing import List, AsyncIterator, Iterator, cast
 from azure.core.rest import HttpResponse, AsyncHttpResponse
 from .. import models as _models
 
@@ -50,7 +50,7 @@ class BaseStreamingChatCompletions:
         for index, line in enumerate(line_list):
 
             if self.ENABLE_CLASS_LOGS:
-                logger.debug(f"[Original line] {repr(line)}")
+                logger.debug("[Original line] %s", repr(line))
 
             if index == 0:
                 line = self._incomplete_json + line
@@ -61,7 +61,7 @@ class BaseStreamingChatCompletions:
                 return False
 
             if self.ENABLE_CLASS_LOGS:
-                logger.debug(f"[Modified line] {repr(line)}")
+                logger.debug("[Modified line] %s", repr(line))
 
             if line == "\n":  # Empty line, indicating flush output to client
                 continue
@@ -166,7 +166,7 @@ class AsyncStreamingChatCompletions(BaseStreamingChatCompletions):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
-        asyncio.run(self.close())
+        asyncio.run(self.aclose())
 
     async def aclose(self) -> None:
         await self._response.close()

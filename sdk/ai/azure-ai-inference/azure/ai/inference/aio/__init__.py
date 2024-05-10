@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._client import ChatCompletionsClient
+from ._patch import ChatCompletionsClient
 from ._client import EmbeddingsClient
 from ._client import ImageGenerationClient
 
