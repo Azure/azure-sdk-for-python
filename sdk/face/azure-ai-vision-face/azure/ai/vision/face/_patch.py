@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -467,10 +468,6 @@ class FaceClient(FaceClientGenerated):
                     }
                 ]
         """
-        # By default, return_face_id is False.
-        if return_face_id is not True:
-            return_face_id = False
-
         return super()._detect_from_url(
             body,
             url=url,
@@ -481,7 +478,8 @@ class FaceClient(FaceClientGenerated):
             return_face_landmarks=return_face_landmarks,
             return_recognition_model=return_recognition_model,
             face_id_time_to_live=face_id_time_to_live,
-            **kwargs)
+            **kwargs,
+        )
 
     @distributed_trace
     def detect(
@@ -863,10 +861,6 @@ class FaceClient(FaceClientGenerated):
                     }
                 ]
         """
-        # By default, return_face_id is False.
-        if return_face_id is not True:
-            return_face_id = False
-
         return super()._detect(
             image_content,
             detection_model=detection_model,
@@ -876,7 +870,12 @@ class FaceClient(FaceClientGenerated):
             return_face_landmarks=return_face_landmarks,
             return_recognition_model=return_recognition_model,
             face_id_time_to_live=face_id_time_to_live,
-            **kwargs)
+            **kwargs,
+        )
+
+    def __enter__(self) -> "FaceClient":
+        super().__enter__()
+        return self
 
 
 class FaceSessionClient(FaceSessionClientGenerated):
@@ -1019,14 +1018,18 @@ class FaceSessionClient(FaceSessionClientGenerated):
         """
         if verify_image is not None:
             request_body = _models._models.CreateLivenessWithVerifySessionContent(  # pylint: disable=protected-access
-                parameters=cast(_models._models.CreateLivenessSessionContentForMultipart, body),  # pylint: disable=protected-access  # noqa: E501
-                verify_image=("verify-image", verify_image)
+                parameters=cast(
+                    _models._models.CreateLivenessSessionContentForMultipart, body  # pylint: disable=protected-access
+                ),
+                verify_image=("verify-image", verify_image),
             )
-            return super()._create_liveness_with_verify_session_with_verify_image(
-                request_body, **kwargs)
+            return super()._create_liveness_with_verify_session_with_verify_image(request_body, **kwargs)
 
-        return super()._create_liveness_with_verify_session(
-            body, **kwargs)
+        return super()._create_liveness_with_verify_session(body, **kwargs)
+
+    def __enter__(self) -> "FaceSessionClient":
+        super().__enter__()
+        return self
 
 
 __all__: List[str] = [
