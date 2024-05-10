@@ -14,7 +14,9 @@ from ._generated.models import (
     SsmlSource as SsmlSourceInternal,
     PlaySource as PlaySourceInternal,
     Choice as ChoiceInternal,
-    ChannelAffinity as ChannelAffinityInternal
+    ChannelAffinity as ChannelAffinityInternal,
+    MediaStreamingSubscription as MediaStreamingSubscriptionInternal,
+    TranscriptionSubscription as TranscriptionSubscriptionInternal
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -32,8 +34,11 @@ if TYPE_CHECKING:
     from ._generated.models._enums  import (
         MediaStreamingTransportType,
         MediaStreamingContentType,
+        MediaStreamingSubscriptionState,
         MediaStreamingAudioChannelType,
         TranscriptionTransportType,
+        TranscriptionSubscriptionState,
+        TranscriptionResultType,
         CallConnectionState,
         RecordingState,
         RecordingKind,
@@ -332,6 +337,57 @@ class SsmlSource:
             play_source_cache_id=self.play_source_cache_id
         )
 
+class MediaStreamingSubscription:
+    """Media streaming Subscription Object.
+
+    :keyword id: Subscription Id.
+    :paramtype id: str
+    :keyword state: Media streaming subscription state. Known values are: "disabled", "inactive", and
+     "active".
+    :paramtype state: str or
+     ~azure.communication.callautomation.models.MediaStreamingSubscriptionState
+    :keyword subscribed_content_types: Subscribed media streaming content types.
+    :paramtype subscribed_content_types: list[str or
+     ~azure.communication.callautomation.models.MediaStreamingContentType]
+    """
+    
+    id: Optional[str]
+    """subscription id."""
+    state: Optional[Union[str, 'MediaStreamingSubscriptionState']]
+    """media streaming subscription state."""
+    subscribed_content_types: Optional[List[Union[str, 'MediaStreamingContentType']]]
+    """subscribed media streaming content types."""
+    
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        state: Optional[Union[str, "MediaStreamingSubscriptionState"]] = None,
+        subscribed_content_types: Optional[List[Union[str, "MediaStreamingContentType"]]] = None
+    ) -> None:
+        """
+        :keyword id: Subscription Id.
+        :paramtype id: str
+        :keyword state: Media streaming subscription state. Known values are: "disabled", "inactive",
+         and "active".
+        :paramtype state: str or
+         ~azure.communication.callautomation.models.MediaStreamingSubscriptionState
+        :keyword subscribed_content_types: Subscribed media streaming content types.
+        :paramtype subscribed_content_types: list[str or
+         ~azure.communication.callautomation.models.MediaStreamingContentType]
+        """
+        
+        self.id = id
+        self.state = state
+        self.subscribed_content_types = subscribed_content_types
+    
+    def to_generated(self):
+        return MediaStreamingSubscriptionInternal(
+            id=self.id,
+            state=self.state ,
+            subscribed_content_types=self.subscribed_content_types,
+        )
+
 class MediaStreamingOptions:
     """Configuration of Media streaming.
 
@@ -441,6 +497,57 @@ class TranscriptionOptions:
             enable_intermediate_results=self.enable_intermediate_results
         )
 
+class TranscriptionSubscription:
+    """Media streaming Subscription Object.
+
+    :keyword id: Subscription Id.
+    :paramtype id: str
+    :keyword state: Transcription subscription state. Known values are: "disabled", "inactive", and
+     "active".
+    :paramtype state: str or
+     ~azure.communication.callautomation.models.TranscriptionSubscriptionState
+    :keyword subscribed_result_types: Subscribed transcription result types.
+    :paramtype subscribed_result_types: list[str or
+     ~azure.communication.callautomation.models.TranscriptionResultType]
+    """
+    
+    id: Optional[str]
+    """subscription id."""
+    state: Optional[Union[str, 'TranscriptionSubscriptionState']]
+    """transcription subscription state."""
+    subscribed_result_types: Optional[List[Union[str, 'TranscriptionResultType']]]
+    """subscribed transcription result types."""
+    
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        state: Optional[Union[str, "TranscriptionSubscriptionState"]] = None,
+        subscribed_result_types: Optional[List[Union[str, "TranscriptionResultType"]]] = None
+    ) -> None:
+        """
+        :keyword id: Subscription Id.
+        :paramtype id: str
+        :keyword state: Transcription subscription state. Known values are: "disabled", "inactive", and
+        "active".
+        :paramtype state: str or
+        ~azure.communication.callautomation.models.TranscriptionSubscriptionState
+        :keyword subscribed_result_types: Subscribed transcription result types.
+        :paramtype subscribed_result_types: list[str or
+        ~azure.communication.callautomation.models.TranscriptionResultType]
+        """
+        
+        self.id = id
+        self.state = state
+        self.subscribed_result_types = subscribed_result_types
+    
+    def to_generated(self):
+        return TranscriptionSubscriptionInternal(
+            id=self.id,
+            state=self.state ,
+            subscribed_result_types=self.subscribed_result_types
+        )
+
 class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     """ Detailed properties of the call.
 
@@ -454,8 +561,8 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     :paramtype call_connection_state: str or ~azure.communication.callautomation.CallConnectionState
     :keyword callback_url: The callback URL.
     :paramtype callback_url: str
-    :keyword media_subscription_id: SubscriptionId for media streaming.
-    :paramtype media_subscription_id: str
+    :keyword media_streaming_subscription: media_streaming_subscription for media streaming.
+    :paramtype media_streaming_subscription: ~azure.communication.callautomation.MediaStreamingSubscription
     :keyword source_caller_id_number:
      The source caller Id, a phone number, that's shown to the
      PSTN participant being invited.
@@ -481,7 +588,7 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     """The state of the call."""
     callback_url: Optional[str]
     """The callback URL."""
-    media_subscription_id: Optional[str]
+    media_streaming_subscription: Optional[MediaStreamingSubscription]
     """SubscriptionId for media streaming."""
     source_caller_id_number: Optional[PhoneNumberIdentifier]
     """The source caller Id, a phone number, that's shown to the
@@ -504,7 +611,7 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
         targets: Optional[List[CommunicationIdentifier]] = None,
         call_connection_state: Optional[Union[str, 'CallConnectionState']] = None,
         callback_url: Optional[str] = None,
-        media_subscription_id: Optional[str] = None,
+        media_streaming_subscription: Optional[MediaStreamingSubscription] = None,
         source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
         source_display_name: Optional[str] = None,
         source: Optional[CommunicationIdentifier] = None,
@@ -516,7 +623,7 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
         self.targets = targets
         self.call_connection_state = call_connection_state
         self.callback_url = callback_url
-        self.media_subscription_id = media_subscription_id
+        self.media_streaming_subscription = media_streaming_subscription
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
         self.source = source
@@ -535,7 +642,7 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
             targets=target_models,
             call_connection_state=call_connection_properties_generated.call_connection_state,
             callback_url=call_connection_properties_generated.callback_uri,
-            media_subscription_id=call_connection_properties_generated.media_subscription_id,
+            media_streaming_subscription=call_connection_properties_generated.media_streaming_subscription,
             source_caller_id_number=deserialize_phone_identifier(
             call_connection_properties_generated.source_caller_id_number)
             if call_connection_properties_generated.source_caller_id_number
