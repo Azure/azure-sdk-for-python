@@ -13,6 +13,7 @@ from typing_extensions import Literal
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
+from ._generated.models import PreBackupOperationParameters, PreRestoreOperationParameters, SASTokenParameter
 from ._models import KeyVaultBackupOperation, KeyVaultBackupResult, KeyVaultRestoreOperation
 from ._internal import KeyVaultClientBase, parse_folder_url
 from ._internal.polling import KeyVaultBackupClientPolling, KeyVaultBackupClientPollingMethod
@@ -293,15 +294,15 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             will be stored. If the check fails, the object will have a string `error` attribute.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.KeyVaultBackupOperation]
         """
-        polling_interval = kwargs.pop("_polling_interval", 5)
-        continuation_token = kwargs.pop("continuation_token", None)
-        use_managed_identity = kwargs.pop("use_managed_identity", False)
-        sas_token = kwargs.pop("sas_token", None)
+        polling_interval: int = kwargs.pop("_polling_interval", 5)
+        continuation_token: Optional[str] = kwargs.pop("continuation_token", None)
+        use_managed_identity: bool = kwargs.pop("use_managed_identity", False)
+        sas_token: Optional[str] = kwargs.pop("sas_token", None)
 
-        parameters = self._models.PreBackupOperationParameters(
+        parameters: PreBackupOperationParameters = PreBackupOperationParameters(
             storage_resource_uri=blob_storage_url, token=sas_token, use_managed_identity=use_managed_identity
         )
-        status_response = None
+        status_response: Optional[str] = None
         if continuation_token:
             status_response = self._use_continuation_token(continuation_token, self._client.full_backup_status)
 
@@ -364,19 +365,19 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             object will have a string `error` attribute.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.KeyVaultRestoreOperation]
         """
-        polling_interval = kwargs.pop("_polling_interval", 5)
-        continuation_token = kwargs.pop("continuation_token", None)
-        use_managed_identity = kwargs.pop("use_managed_identity", False)
-        sas_token = kwargs.pop("sas_token", None)
+        polling_interval: int = kwargs.pop("_polling_interval", 5)
+        continuation_token: Optional[str] = kwargs.pop("continuation_token", None)
+        use_managed_identity: bool = kwargs.pop("use_managed_identity", False)
+        sas_token: Optional[str] = kwargs.pop("sas_token", None)
 
         container_url, folder_name = parse_folder_url(folder_url)
-        sas_parameter = self._models.SASTokenParameter(
+        sas_parameter: SASTokenParameter = SASTokenParameter(
             storage_resource_uri=container_url, token=sas_token, use_managed_identity=use_managed_identity
         )
-        parameters = self._models.PreRestoreOperationParameters(
+        parameters: PreRestoreOperationParameters = PreRestoreOperationParameters(
             folder_to_restore=folder_name, sas_token_parameters=sas_parameter
         )
-        status_response = None
+        status_response: Optional[str] = None
         if continuation_token:
             status_response = self._use_continuation_token(continuation_token, self._client.restore_status)
 
