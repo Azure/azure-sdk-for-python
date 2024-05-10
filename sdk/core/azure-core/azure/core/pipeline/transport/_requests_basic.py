@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from typing import Iterator, Optional, Union, TypeVar, overload, cast, TYPE_CHECKING, MutableMapping
+from typing import Iterator, Optional, Union, TypeVar, overload, TYPE_CHECKING, MutableMapping
 from urllib3.util.retry import Retry
 from urllib3.exceptions import (
     DecodeError as CoreDecodeError,
