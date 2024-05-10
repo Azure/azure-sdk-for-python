@@ -40,7 +40,7 @@ from azure.monitor.opentelemetry._constants import (
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry.exporter._quickpulse import enable_live_metrics  # pylint: disable=import-error,no-name-in-module
-from azure.monitor.opentelemetry.exporter._quickpulse._processor import (
+from azure.monitor.opentelemetry.exporter._quickpulse._processor import (  # pylint: disable=import-error,no-name-in-module
     _QuickpulseLogRecordProcessor,
     _QuickpulseSpanProcessor,
 )
