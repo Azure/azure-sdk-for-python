@@ -278,7 +278,7 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProducerCompa
                 raise ValueError("Expected {}, but got {}.".format(type1, type2))
 
 
-class _NonStreamingDocumentProducer(object):
+class _NonStreamingItemResultProducer:
     """This class takes care of handling of the items to be sorted in a non-streaming context.
 
     One instance of this document producer goes attached to every item coming in for the priority queue to be able

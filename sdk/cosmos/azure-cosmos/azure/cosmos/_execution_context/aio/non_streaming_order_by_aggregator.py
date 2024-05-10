@@ -5,35 +5,12 @@
 """
 
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
-from azure.cosmos._execution_context.aio import document_producer, _queue_async_helper
+from azure.cosmos._execution_context.aio.multi_execution_aggregator import _MultiExecutionContextAggregator
+from azure.cosmos._execution_context.aio import document_producer
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
 
 # pylint: disable=protected-access
-
-
-class FixedSizePriorityQueue:
-    """Provides a Fixed Size Priority Queue abstraction data structure"""
-
-    def __init__(self, max_size):
-        self._heap = []
-        self.max_size = max_size
-
-    async def pop_async(self, document_producer_comparator):
-        return await _queue_async_helper.heap_pop(self._heap, document_producer_comparator)
-
-    async def push_async(self, item, document_producer_comparator):
-        await _queue_async_helper.heap_push(self._heap, item, document_producer_comparator)
-        if len(self._heap) > self.max_size:
-            holder_item = await _queue_async_helper.heap_pop(self._heap, document_producer_comparator)
-            await _queue_async_helper.heap_push(self._heap, holder_item, document_producer_comparator)
-            self._heap.pop(self.max_size)
-
-    def peek(self):
-        return self._heap[0]
-
-    def size(self):
-        return len(self._heap)
 
 class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
     """This class is a subclass of the query execution context base and serves for
@@ -55,9 +32,7 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
         self._query = query
         self._partitioned_query_ex_info = partitioned_query_ex_info
         self._sort_orders = partitioned_query_ex_info.get_order_by()
-
-        pq_size = partitioned_query_ex_info.get_top() or partitioned_query_ex_info.get_limit()
-        self._orderByPQ = FixedSizePriorityQueue(pq_size)
+        self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
 
     async def __anext__(self):
         """Returns the next result
@@ -160,13 +135,18 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
                 continue
 
         pq_size = self._partitioned_query_ex_info.get_top() or self._partitioned_query_ex_info.get_limit()
-        self._orderByPQ = FixedSizePriorityQueue(pq_size)
         for doc_producer in self._doc_producers:
             while True:
                 try:
                     result = await doc_producer.peek()
-                    item_result = document_producer._NonStreamingDocumentProducer(result, self._sort_orders)
+                    item_result = document_producer._NonStreamingItemResultProducer(result, self._sort_orders)
                     await self._orderByPQ.push_async(item_result, self._document_producer_comparator)
                     await doc_producer.__anext__()
                 except StopAsyncIteration:
+                    # this logic is necessary so that we only hold 2 * items_per_partition in memory at any time
+                    if len(self._orderByPQ._heap) > pq_size:
+                        new_heap = []
+                        for i in range(pq_size):
+                            new_heap.append(await self._orderByPQ.pop_async(self._document_producer_comparator))
+                        self._orderByPQ._heap = new_heap
                     break
