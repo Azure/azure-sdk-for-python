@@ -1408,7 +1408,7 @@ class TestPipelineJobSchema:
             ),
             (
                 "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_object_detection.yml",
-                "hello_automl_image_object_detection", 
+                "hello_automl_image_object_detection",
             ),
             (
                 "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_instance_segmentation.yml",
