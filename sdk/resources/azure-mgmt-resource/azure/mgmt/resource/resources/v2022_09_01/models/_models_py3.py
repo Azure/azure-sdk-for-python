@@ -354,7 +354,7 @@ class Dependency(_serialization.Model):
 class Deployment(_serialization.Model):
     """Deployment operation parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: The location to store the deployment data.
     :vartype location: str
@@ -667,10 +667,44 @@ class DeploymentOperationsListResult(_serialization.Model):
         self.next_link = None
 
 
+class DeploymentParameter(_serialization.Model):
+    """Deployment parameter for the template.
+
+    :ivar value: Input value to the parameter .
+    :vartype value: any
+    :ivar reference: Azure Key Vault parameter reference.
+    :vartype reference:
+     ~azure.mgmt.resource.resources.v2022_09_01.models.KeyVaultParameterReference
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "object"},
+        "reference": {"key": "reference", "type": "KeyVaultParameterReference"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[Any] = None,
+        reference: Optional["_models.KeyVaultParameterReference"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: Input value to the parameter .
+        :paramtype value: any
+        :keyword reference: Azure Key Vault parameter reference.
+        :paramtype reference:
+         ~azure.mgmt.resource.resources.v2022_09_01.models.KeyVaultParameterReference
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.reference = reference
+
+
 class DeploymentProperties(_serialization.Model):
     """Deployment properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar template: The template content. You use this element when you want to pass the template
      syntax directly in the request rather than link to an existing template. It can be a JObject or
@@ -684,7 +718,8 @@ class DeploymentProperties(_serialization.Model):
      You use this element when you want to provide the parameter values directly in the request
      rather than link to an existing parameter file. Use either the parametersLink property or the
      parameters property, but not both. It can be a JObject or a well formed JSON string.
-    :vartype parameters: JSON
+    :vartype parameters: dict[str,
+     ~azure.mgmt.resource.resources.v2022_09_01.models.DeploymentParameter]
     :ivar parameters_link: The URI of parameters file. You use this element to link to an existing
      parameters file. Use either the parametersLink property or the parameters property, but not
      both.
@@ -715,7 +750,7 @@ class DeploymentProperties(_serialization.Model):
     _attribute_map = {
         "template": {"key": "template", "type": "object"},
         "template_link": {"key": "templateLink", "type": "TemplateLink"},
-        "parameters": {"key": "parameters", "type": "object"},
+        "parameters": {"key": "parameters", "type": "{DeploymentParameter}"},
         "parameters_link": {"key": "parametersLink", "type": "ParametersLink"},
         "mode": {"key": "mode", "type": "str"},
         "debug_setting": {"key": "debugSetting", "type": "DebugSetting"},
@@ -729,7 +764,7 @@ class DeploymentProperties(_serialization.Model):
         mode: Union[str, "_models.DeploymentMode"],
         template: Optional[JSON] = None,
         template_link: Optional["_models.TemplateLink"] = None,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[Dict[str, "_models.DeploymentParameter"]] = None,
         parameters_link: Optional["_models.ParametersLink"] = None,
         debug_setting: Optional["_models.DebugSetting"] = None,
         on_error_deployment: Optional["_models.OnErrorDeployment"] = None,
@@ -749,7 +784,8 @@ class DeploymentProperties(_serialization.Model):
          template. You use this element when you want to provide the parameter values directly in the
          request rather than link to an existing parameter file. Use either the parametersLink property
          or the parameters property, but not both. It can be a JObject or a well formed JSON string.
-        :paramtype parameters: JSON
+        :paramtype parameters: dict[str,
+         ~azure.mgmt.resource.resources.v2022_09_01.models.DeploymentParameter]
         :keyword parameters_link: The URI of parameters file. You use this element to link to an
          existing parameters file. Use either the parametersLink property or the parameters property,
          but not both.
@@ -928,7 +964,7 @@ class DeploymentValidateResult(_serialization.Model):
 class DeploymentWhatIf(_serialization.Model):
     """Deployment What-if operation parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: The location to store the deployment data.
     :vartype location: str
@@ -964,7 +1000,7 @@ class DeploymentWhatIf(_serialization.Model):
 class DeploymentWhatIfProperties(DeploymentProperties):
     """Deployment What-if properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar template: The template content. You use this element when you want to pass the template
      syntax directly in the request rather than link to an existing template. It can be a JObject or
@@ -978,7 +1014,8 @@ class DeploymentWhatIfProperties(DeploymentProperties):
      You use this element when you want to provide the parameter values directly in the request
      rather than link to an existing parameter file. Use either the parametersLink property or the
      parameters property, but not both. It can be a JObject or a well formed JSON string.
-    :vartype parameters: JSON
+    :vartype parameters: dict[str,
+     ~azure.mgmt.resource.resources.v2022_09_01.models.DeploymentParameter]
     :ivar parameters_link: The URI of parameters file. You use this element to link to an existing
      parameters file. Use either the parametersLink property or the parameters property, but not
      both.
@@ -1012,7 +1049,7 @@ class DeploymentWhatIfProperties(DeploymentProperties):
     _attribute_map = {
         "template": {"key": "template", "type": "object"},
         "template_link": {"key": "templateLink", "type": "TemplateLink"},
-        "parameters": {"key": "parameters", "type": "object"},
+        "parameters": {"key": "parameters", "type": "{DeploymentParameter}"},
         "parameters_link": {"key": "parametersLink", "type": "ParametersLink"},
         "mode": {"key": "mode", "type": "str"},
         "debug_setting": {"key": "debugSetting", "type": "DebugSetting"},
@@ -1027,7 +1064,7 @@ class DeploymentWhatIfProperties(DeploymentProperties):
         mode: Union[str, "_models.DeploymentMode"],
         template: Optional[JSON] = None,
         template_link: Optional["_models.TemplateLink"] = None,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[Dict[str, "_models.DeploymentParameter"]] = None,
         parameters_link: Optional["_models.ParametersLink"] = None,
         debug_setting: Optional["_models.DebugSetting"] = None,
         on_error_deployment: Optional["_models.OnErrorDeployment"] = None,
@@ -1048,7 +1085,8 @@ class DeploymentWhatIfProperties(DeploymentProperties):
          template. You use this element when you want to provide the parameter values directly in the
          request rather than link to an existing parameter file. Use either the parametersLink property
          or the parameters property, but not both. It can be a JObject or a well formed JSON string.
-        :paramtype parameters: JSON
+        :paramtype parameters: dict[str,
+         ~azure.mgmt.resource.resources.v2022_09_01.models.DeploymentParameter]
         :keyword parameters_link: The URI of parameters file. You use this element to link to an
          existing parameters file. Use either the parametersLink property or the parameters property,
          but not both.
@@ -1628,7 +1666,7 @@ class Identity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.resource.resources.v2022_09_01.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the resource. The
      user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.resource.resources.v2022_09_01.models.IdentityUserAssignedIdentitiesValue]
     """
@@ -1658,7 +1696,7 @@ class Identity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.resource.resources.v2022_09_01.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user identities associated with the resource.
          The user identity dictionary key references will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.resource.resources.v2022_09_01.models.IdentityUserAssignedIdentitiesValue]
         """
@@ -1695,6 +1733,78 @@ class IdentityUserAssignedIdentitiesValue(_serialization.Model):
         super().__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
+
+
+class KeyVaultParameterReference(_serialization.Model):
+    """Azure Key Vault parameter reference.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar key_vault: Azure Key Vault reference. Required.
+    :vartype key_vault: ~azure.mgmt.resource.resources.v2022_09_01.models.KeyVaultReference
+    :ivar secret_name: Azure Key Vault secret name. Required.
+    :vartype secret_name: str
+    :ivar secret_version: Azure Key Vault secret version.
+    :vartype secret_version: str
+    """
+
+    _validation = {
+        "key_vault": {"required": True},
+        "secret_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "key_vault": {"key": "keyVault", "type": "KeyVaultReference"},
+        "secret_name": {"key": "secretName", "type": "str"},
+        "secret_version": {"key": "secretVersion", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        key_vault: "_models.KeyVaultReference",
+        secret_name: str,
+        secret_version: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword key_vault: Azure Key Vault reference. Required.
+        :paramtype key_vault: ~azure.mgmt.resource.resources.v2022_09_01.models.KeyVaultReference
+        :keyword secret_name: Azure Key Vault secret name. Required.
+        :paramtype secret_name: str
+        :keyword secret_version: Azure Key Vault secret version.
+        :paramtype secret_version: str
+        """
+        super().__init__(**kwargs)
+        self.key_vault = key_vault
+        self.secret_name = secret_name
+        self.secret_version = secret_version
+
+
+class KeyVaultReference(_serialization.Model):
+    """Azure Key Vault reference.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Azure Key Vault resource id. Required.
+    :vartype id: str
+    """
+
+    _validation = {
+        "id": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        """
+        :keyword id: Azure Key Vault resource id. Required.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
 
 
 class OnErrorDeployment(_serialization.Model):
@@ -1881,7 +1991,7 @@ class OperationListResult(_serialization.Model):
 class ParametersLink(_serialization.Model):
     """Entity representing the reference to the deployment parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar uri: The URI of the parameters file. Required.
     :vartype uri: str
@@ -2393,7 +2503,7 @@ class ResourceGroup(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The ID of the resource group.
     :vartype id: str
@@ -2645,7 +2755,7 @@ class ResourceListResult(_serialization.Model):
         self.next_link = None
 
 
-class ResourceProviderOperationDisplayProperties(_serialization.Model):
+class ResourceProviderOperationDisplayProperties(_serialization.Model):  # pylint: disable=name-too-long
     """Resource provider operation's display properties.
 
     :ivar publisher: Operation description.
@@ -2805,7 +2915,7 @@ class RoleDefinition(_serialization.Model):
 class ScopedDeployment(_serialization.Model):
     """Deployment operation parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: The location to store the deployment data. Required.
     :vartype location: str
@@ -2851,7 +2961,7 @@ class ScopedDeployment(_serialization.Model):
 class ScopedDeploymentWhatIf(_serialization.Model):
     """Deployment What-if operation parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: The location to store the deployment data. Required.
     :vartype location: str
@@ -3158,7 +3268,7 @@ class TagsResource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The ID of the tags wrapper resource.
     :vartype id: str
@@ -3368,7 +3478,7 @@ class TemplateLink(_serialization.Model):
 class WhatIfChange(_serialization.Model):
     """Information about a single resource change predicted by What-If operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar resource_id: Resource ID. Required.
     :vartype resource_id: str
@@ -3479,7 +3589,7 @@ class WhatIfOperationResult(_serialization.Model):
 class WhatIfPropertyChange(_serialization.Model):
     """The predicted change to the resource property.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar path: The path of the property. Required.
     :vartype path: str

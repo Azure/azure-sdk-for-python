@@ -379,12 +379,13 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         # Should equal batch size
         assert totalCount == batchSize
 
-        # test an invalid value, will ignore start time option
+        # test an invalid value, Attribute error will be raised for passing non datetime object
         invalid_time = "Invalid value"
-        change_feed_iter = [i async for i in created_collection.query_items_change_feed(start_time=invalid_time)]
-        totalCount = len(change_feed_iter)
-        # Should not equal batch size
-        assert totalCount != batchSize
+        try:
+            change_feed_iter = [i async for i in created_collection.query_items_change_feed(start_time=invalid_time)]
+            self.fail("Cannot format date on a non datetime object.")
+        except AttributeError as e:
+            assert ("'str' object has no attribute 'astimezone'" == e.args[0])
 
         await self.created_db.delete_container(created_collection.id)
 

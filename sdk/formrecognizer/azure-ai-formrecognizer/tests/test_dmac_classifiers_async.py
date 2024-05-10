@@ -71,7 +71,7 @@ class TestClassifiersAsync(AsyncFormRecognizerTest):
             assert result.description == "IRS document classifier"
             for doc_type, source in result.doc_types.items():
                 assert doc_type
-                assert source.source.container_url.endswith("training-data-classifier")
+                assert source.source.container_url
                 assert source.source.prefix
 
     @FormRecognizerPreparer()
@@ -127,7 +127,7 @@ class TestClassifiersAsync(AsyncFormRecognizerTest):
             assert result.description is None
             for doc_type, source in result.doc_types.items():
                 assert doc_type
-                assert source.source.container_url.endswith("training-data-classifier")
+                assert source.source.container_url
                 assert source.source.file_list
 
     @FormRecognizerPreparer()

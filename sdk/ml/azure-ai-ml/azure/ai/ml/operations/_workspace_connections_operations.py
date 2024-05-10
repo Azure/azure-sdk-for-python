@@ -26,8 +26,8 @@ ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-class ConnectionsOperations(_ScopeDependentOperations):
-    """ConnectionsOperations.
+class WorkspaceConnectionsOperations(_ScopeDependentOperations):
+    """WorkspaceConnectionsOperations.
 
     You should not instantiate this class directly. Instead, you should create
     an MLClient instance that instantiates it for you and attaches it as an attribute.
@@ -42,7 +42,7 @@ class ConnectionsOperations(_ScopeDependentOperations):
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
-        super(ConnectionsOperations, self).__init__(operation_scope, operation_config)
+        super(WorkspaceConnectionsOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._all_operations = all_operations
         self._operation = service_client.workspace_connections
