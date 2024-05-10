@@ -12,7 +12,7 @@ from azure.cosmos import CosmosClient, PartitionKey
 
 
 @pytest.mark.skip  # Skipping tests until emulator supports
-class TestAutoScale(unittest.TestCase):
+class TestVectorPolicy(unittest.TestCase):
     client: CosmosClient = None
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey

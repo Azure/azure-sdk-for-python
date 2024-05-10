@@ -13,7 +13,7 @@ from azure.cosmos.aio import CosmosClient, DatabaseProxy
 
 
 @pytest.mark.skip  # Skipping tests until emulator supports
-class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
+class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy

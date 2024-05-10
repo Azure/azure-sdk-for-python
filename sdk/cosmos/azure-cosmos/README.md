@@ -698,14 +698,27 @@ database.create_container(id=container_id, partition_key=PartitionKey(path="/id"
 
 With the addition of the vector indexing and vector embedding capabilities, the SDK can now perform order by vector search queries.
 These queries specify the VectorDistance to use as a metric within the query text. These must always use a TOP or LIMIT clause within the query though,
-since vector search queries have to look through a lot of data otherwise and may become too expensive or long-running.
+since vector search queries have to look through a lot of data otherwise and may become too expensive or long-running. The query syntax
+for these operations looks like this:
+```python
+VectorDistance(<embedding1>, <embedding2>, [,<exact_search>], [,<specification>])
+```
+Embeddings 1 and 2 are the arrays of values for the relevant embeddings, `exact_search` is an optional boolean indicating whether
+to do an exact search vs. an approximate one (default value of false), and `specification` is an optional Json snippet with embedding
+specs that can include `dataType`, `dimensions` and `distanceFunction`.
 A sample vector search query would look something like this:
 ```python
-    query = "SELECT TOP 10 c.title,VectorDistance(c.Embedding, [{}]) AS " \
-            "SimilarityScore FROM c ORDER BY VectorDistance(c.Embedding, [{}])".format(embeddings_string, embeddings_string)
+    query = "SELECT TOP 10 c.title,VectorDistance(c.embedding, [{}]) AS " \
+            "SimilarityScore FROM c ORDER BY VectorDistance(c.embedding, [{}])".format(embeddings_string, embeddings_string)
+```
+Or if you'd like to add the optional parameters to the vector distance, you could do this:
+```python
+    query = "SELECT TOP 10 c.title,VectorDistance(c.embedding, [{}], true, {{'dataType': 'float32' , 'distanceFunction': 'cosine'}}) AS " \
+            "SimilarityScore FROM c ORDER BY VectorDistance(c.embedding, [{}], true, {{'dataType': " \
+            "'float32', 'distanceFunction': 'cosine'}})"
 ```
 The `embeddings_string` above would be your string made from your vector embeddings.
-You can find our sync samples [here]() and our async samples [here]() as well to help yourself out.
+You can find our sync samples [here][cosmos_index_sample] and our async samples [here][cosmos_index_sample_async] as well to help yourself out.
 
 ## Troubleshooting
 
@@ -841,6 +854,8 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [timeouts_document]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/docs/TimeoutAndRetriesConfig.md
 [cosmos_transactional_batch]: https://learn.microsoft.com/azure/cosmos-db/nosql/transactional-batch
 [cosmos_concurrency_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/concurrency_sample.py
+[cosmos_index_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/index_management.py
+[cosmos_index_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/index_management_async.py
 
 ## Contributing
 

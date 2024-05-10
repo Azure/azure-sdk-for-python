@@ -682,6 +682,13 @@ def use_vector_embedding_policy(db):
                                                                                             get_embeddings(1))
         query_documents_with_custom_query(created_container, query)
 
+        # Run vector similarity search queries using VectorDistance with specifications
+        query = "SELECT TOP 5 c.id,VectorDistance(c.embeddings, [{}], true, {{'dataType': 'float32' ," \
+                " 'distanceFunction': 'cosine'}}) AS SimilarityScore FROM c ORDER BY VectorDistance(c.embeddings," \
+                " [{}], true, {{'dataType': 'float32', 'distanceFunction': 'cosine'}})".format(get_embeddings(1),
+                                                                                               get_embeddings(1))
+        query_documents_with_custom_query(created_container, query)
+
         # Cleanup
         db.delete_container(created_container)
         print("\n")
