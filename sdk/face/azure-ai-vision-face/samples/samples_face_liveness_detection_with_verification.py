@@ -96,7 +96,7 @@ class DetectLivenessWithVerify:
             self.logger.info(
                 "Create a new liveness with verify session with verify image."
             )
-            created_session = face_session_client.create_liveness_with_verify_session(  # type: ignore
+            created_session = face_session_client.create_liveness_with_verify_session(
                 CreateLivenessSessionContent(
                     liveness_operation_mode=LivenessOperationMode.PASSIVE,
                     device_correlation_id=str(uuid.uuid4()),

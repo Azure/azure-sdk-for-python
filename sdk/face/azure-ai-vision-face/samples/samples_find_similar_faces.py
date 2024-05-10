@@ -54,7 +54,7 @@ class FindSimilarFaces:
         ) as face_client:
             # Detect faces from 'IMAGE_NINE_FACES'
             nine_faces_file_path = helpers.get_image_path(TestImages.IMAGE_NINE_FACES)
-            detect_result1 = face_client.detect(  # type: ignore
+            detect_result1 = face_client.detect(
                 helpers.read_file_content(nine_faces_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
@@ -70,7 +70,7 @@ class FindSimilarFaces:
             find_similar_file_path = helpers.get_image_path(
                 TestImages.IMAGE_FINDSIMILAR
             )
-            detect_result2 = face_client.detect(  # type: ignore
+            detect_result2 = face_client.detect(
                 helpers.read_file_content(find_similar_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
@@ -173,7 +173,7 @@ class FindSimilarFaces:
             find_similar_file_path = helpers.get_image_path(
                 TestImages.IMAGE_FINDSIMILAR
             )
-            detect_result = face_client.detect(  # type: ignore
+            detect_result = face_client.detect(
                 helpers.read_file_content(find_similar_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,

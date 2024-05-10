@@ -53,7 +53,7 @@ class GroupFaces:
             endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
         ) as face_client:
             sample_file_path = helpers.get_image_path(TestImages.IMAGE_NINE_FACES)
-            detect_result = face_client.detect(  # type: ignore
+            detect_result = face_client.detect(
                 helpers.read_file_content(sample_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
