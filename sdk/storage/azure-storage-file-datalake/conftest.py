@@ -14,7 +14,8 @@ from devtools_testutils import (
     add_header_regex_sanitizer,
     add_oauth_response_sanitizer,
     add_uri_string_sanitizer,
-    test_proxy
+    test_proxy,
+    remove_batch_sanitizers,
 )
 
 # Ignore async tests for PyPy
@@ -36,3 +37,7 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="x-ms-encryption-key", value="Sanitized")
 
     add_uri_string_sanitizer(target=".preprod.", value=".")
+
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3493: $..name
+    remove_batch_sanitizers(["AZSDK3493"])

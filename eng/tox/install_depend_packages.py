@@ -45,11 +45,10 @@ MINIMUM_VERSION_GENERIC_OVERRIDES = {
     "six": "1.12.0",
     "cryptography": "3.3.2",
     "msal": "1.23.0",
+    "azure-storage-file-datalake": "12.2.0",
 }
 
-MAXIMUM_VERSION_GENERIC_OVERRIDES = {
-    "aiohttp": "3.9.3"
-}
+MAXIMUM_VERSION_GENERIC_OVERRIDES = {}
 
 # SPECIFIC OVERRIDES provide additional filtering of upper and lower bound by
 # binding an override to the specific package being processed. As an example, when

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -98,7 +98,7 @@ class LongRunningBackupOperations:
         resource_group_name: str,
         server_name: str,
         backup_name: str,
-        parameters: Optional[Union[_models.ServerBackupV2, IO]] = None,
+        parameters: Optional[Union[_models.ServerBackupV2, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Optional[_models.ServerBackupV2]:
         error_map = {
@@ -127,7 +127,7 @@ class LongRunningBackupOperations:
             else:
                 _json = None
 
-        request = build_create_request(
+        _request = build_create_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             backup_name=backup_name,
@@ -136,16 +136,15 @@ class LongRunningBackupOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -170,13 +169,9 @@ class LongRunningBackupOperations:
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _create_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/flexibleServers/{serverName}/backupsV2/{backupName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_create(
@@ -204,14 +199,6 @@ class LongRunningBackupOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either ServerBackupV2 or the result of
          cls(response)
         :rtype:
@@ -225,7 +212,7 @@ class LongRunningBackupOperations:
         resource_group_name: str,
         server_name: str,
         backup_name: str,
-        parameters: Optional[IO] = None,
+        parameters: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -241,18 +228,10 @@ class LongRunningBackupOperations:
         :type backup_name: str
         :param parameters: The required parameters for creating and exporting backup of the given
          server. Default value is None.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either ServerBackupV2 or the result of
          cls(response)
         :rtype:
@@ -266,7 +245,7 @@ class LongRunningBackupOperations:
         resource_group_name: str,
         server_name: str,
         backup_name: str,
-        parameters: Optional[Union[_models.ServerBackupV2, IO]] = None,
+        parameters: Optional[Union[_models.ServerBackupV2, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[_models.ServerBackupV2]:
         """Create backup for a given server with specified backup name.
@@ -279,19 +258,8 @@ class LongRunningBackupOperations:
         :param backup_name: The name of the backup. Required.
         :type backup_name: str
         :param parameters: The required parameters for creating and exporting backup of the given
-         server. Is either a ServerBackupV2 type or a IO type. Default value is None.
-        :type parameters: ~azure.mgmt.rdbms.mysql_flexibleservers.models.ServerBackupV2 or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         server. Is either a ServerBackupV2 type or a IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.rdbms.mysql_flexibleservers.models.ServerBackupV2 or IO[bytes]
         :return: An instance of LROPoller that returns either ServerBackupV2 or the result of
          cls(response)
         :rtype:
@@ -325,7 +293,7 @@ class LongRunningBackupOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("ServerBackupV2", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -337,14 +305,12 @@ class LongRunningBackupOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.ServerBackupV2].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/flexibleServers/{serverName}/backupsV2/{backupName}"
-    }
+        return LROPoller[_models.ServerBackupV2](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )

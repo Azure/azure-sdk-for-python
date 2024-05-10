@@ -147,12 +147,14 @@ query = """AzureActivity | take 5"""
 
 try:
     response = client.query_resource(os.environ['LOGS_RESOURCE_ID'], query, timespan=timedelta(days=1))
-    if response.status == LogsQueryStatus.PARTIAL:
+    if response.status == LogsQueryStatus.SUCCESS:
+        data = response.tables
+    else:
+        # LogsQueryPartialResult
         error = response.partial_error
         data = response.partial_data
         print(error)
-    elif response.status == LogsQueryStatus.SUCCESS:
-        data = response.tables
+
     for table in data:
         df = pd.DataFrame(data=table.rows, columns=table.columns)
         print(df)
@@ -175,7 +177,7 @@ For example:
 import os
 import pandas as pd
 from datetime import datetime, timezone
-from azure.monitor.query import LogsQueryClient, LogsQueryStatus
+from azure.monitor.query import LogsQueryClient, LogsQueryResult
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
@@ -193,12 +195,14 @@ try:
         query=query,
         timespan=(start_time, end_time)
         )
-    if response.status == LogsQueryStatus.PARTIAL:
+    if response.status == LogsQueryStatus.SUCCESS:
+        data = response.tables
+    else:
+        # LogsQueryPartialResult
         error = response.partial_error
         data = response.partial_data
         print(error)
-    elif response.status == LogsQueryStatus.SUCCESS:
-        data = response.tables
+
     for table in data:
         df = pd.DataFrame(data=table.rows, columns=table.columns)
         print(df)
@@ -294,10 +298,7 @@ requests = [
 results = client.query_batch(requests)
 
 for res in results:
-    if res.status == LogsQueryStatus.FAILURE:
-        # this will be a LogsQueryError
-        print(res.message)
-    elif res.status == LogsQueryStatus.PARTIAL:
+    if res.status == LogsQueryStatus.PARTIAL:
         ## this will be a LogsQueryPartialResult
         print(res.partial_error)
         for table in res.partial_data:
@@ -308,6 +309,9 @@ for res in results:
         table = res.tables[0]
         df = pd.DataFrame(table.rows, columns=table.columns)
         print(df)
+    else:
+        # this will be a LogsQueryError
+        print(res.message)
 
 ```
 

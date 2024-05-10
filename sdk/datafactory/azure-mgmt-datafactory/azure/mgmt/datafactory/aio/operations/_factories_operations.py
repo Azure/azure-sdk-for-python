@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -41,6 +42,10 @@ from ...operations._factories_operations import (
     build_update_request,
 )
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -68,7 +73,6 @@ class FactoriesOperations:
     def list(self, **kwargs: Any) -> AsyncIterable["_models.Factory"]:
         """Lists factories under the specified subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Factory or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.datafactory.models.Factory]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -79,7 +83,7 @@ class FactoriesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.FactoryListResponse] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -90,15 +94,14 @@ class FactoriesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -110,13 +113,13 @@ class FactoriesOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("FactoryListResponse", pipeline_response)
@@ -126,11 +129,11 @@ class FactoriesOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -141,8 +144,6 @@ class FactoriesOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.DataFactory/factories"}
 
     @overload
     async def configure_factory_repo(
@@ -162,7 +163,6 @@ class FactoriesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Factory or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.Factory
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -170,18 +170,17 @@ class FactoriesOperations:
 
     @overload
     async def configure_factory_repo(
-        self, location_id: str, factory_repo_update: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, location_id: str, factory_repo_update: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Factory:
         """Updates a factory's repo information.
 
         :param location_id: The location identifier. Required.
         :type location_id: str
         :param factory_repo_update: Update factory repo request definition. Required.
-        :type factory_repo_update: IO
+        :type factory_repo_update: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Factory or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.Factory
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -189,24 +188,20 @@ class FactoriesOperations:
 
     @distributed_trace_async
     async def configure_factory_repo(
-        self, location_id: str, factory_repo_update: Union[_models.FactoryRepoUpdate, IO], **kwargs: Any
+        self, location_id: str, factory_repo_update: Union[_models.FactoryRepoUpdate, IO[bytes]], **kwargs: Any
     ) -> _models.Factory:
         """Updates a factory's repo information.
 
         :param location_id: The location identifier. Required.
         :type location_id: str
         :param factory_repo_update: Update factory repo request definition. Is either a
-         FactoryRepoUpdate type or a IO type. Required.
-        :type factory_repo_update: ~azure.mgmt.datafactory.models.FactoryRepoUpdate or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         FactoryRepoUpdate type or a IO[bytes] type. Required.
+        :type factory_repo_update: ~azure.mgmt.datafactory.models.FactoryRepoUpdate or IO[bytes]
         :return: Factory or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.Factory
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -229,23 +224,22 @@ class FactoriesOperations:
         else:
             _json = self._serialize.body(factory_repo_update, "FactoryRepoUpdate")
 
-        request = build_configure_factory_repo_request(
+        _request = build_configure_factory_repo_request(
             location_id=location_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.configure_factory_repo.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -257,13 +251,9 @@ class FactoriesOperations:
         deserialized = self._deserialize("Factory", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    configure_factory_repo.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.DataFactory/locations/{locationId}/configureFactoryRepo"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.Factory"]:
@@ -271,7 +261,6 @@ class FactoriesOperations:
 
         :param resource_group_name: The resource group name. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Factory or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.datafactory.models.Factory]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -282,7 +271,7 @@ class FactoriesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.FactoryListResponse] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -293,16 +282,15 @@ class FactoriesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_request(
+                _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -314,13 +302,13 @@ class FactoriesOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("FactoryListResponse", pipeline_response)
@@ -330,11 +318,11 @@ class FactoriesOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -345,10 +333,6 @@ class FactoriesOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories"
-    }
 
     @overload
     async def create_or_update(
@@ -375,7 +359,6 @@ class FactoriesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Factory or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.Factory
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -386,7 +369,7 @@ class FactoriesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        factory: IO,
+        factory: IO[bytes],
         if_match: Optional[str] = None,
         *,
         content_type: str = "application/json",
@@ -399,14 +382,13 @@ class FactoriesOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param factory: Factory resource definition. Required.
-        :type factory: IO
+        :type factory: IO[bytes]
         :param if_match: ETag of the factory entity. Should only be specified for update, for which it
          should match existing entity or can be * for unconditional update. Default value is None.
         :type if_match: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Factory or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.Factory
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -417,7 +399,7 @@ class FactoriesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        factory: Union[_models.Factory, IO],
+        factory: Union[_models.Factory, IO[bytes]],
         if_match: Optional[str] = None,
         **kwargs: Any
     ) -> _models.Factory:
@@ -427,20 +409,17 @@ class FactoriesOperations:
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param factory: Factory resource definition. Is either a Factory type or a IO type. Required.
-        :type factory: ~azure.mgmt.datafactory.models.Factory or IO
+        :param factory: Factory resource definition. Is either a Factory type or a IO[bytes] type.
+         Required.
+        :type factory: ~azure.mgmt.datafactory.models.Factory or IO[bytes]
         :param if_match: ETag of the factory entity. Should only be specified for update, for which it
          should match existing entity or can be * for unconditional update. Default value is None.
         :type if_match: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Factory or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.Factory
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -463,7 +442,7 @@ class FactoriesOperations:
         else:
             _json = self._serialize.body(factory, "Factory")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
             subscription_id=self._config.subscription_id,
@@ -472,16 +451,15 @@ class FactoriesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -493,13 +471,9 @@ class FactoriesOperations:
         deserialized = self._deserialize("Factory", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def update(
@@ -522,7 +496,6 @@ class FactoriesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Factory or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.Factory
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -533,7 +506,7 @@ class FactoriesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        factory_update_parameters: IO,
+        factory_update_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -545,11 +518,10 @@ class FactoriesOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param factory_update_parameters: The parameters for updating a factory. Required.
-        :type factory_update_parameters: IO
+        :type factory_update_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Factory or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.Factory
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -560,7 +532,7 @@ class FactoriesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        factory_update_parameters: Union[_models.FactoryUpdateParameters, IO],
+        factory_update_parameters: Union[_models.FactoryUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Factory:
         """Updates a factory.
@@ -570,17 +542,14 @@ class FactoriesOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param factory_update_parameters: The parameters for updating a factory. Is either a
-         FactoryUpdateParameters type or a IO type. Required.
-        :type factory_update_parameters: ~azure.mgmt.datafactory.models.FactoryUpdateParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         FactoryUpdateParameters type or a IO[bytes] type. Required.
+        :type factory_update_parameters: ~azure.mgmt.datafactory.models.FactoryUpdateParameters or
+         IO[bytes]
         :return: Factory or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.Factory
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -603,7 +572,7 @@ class FactoriesOperations:
         else:
             _json = self._serialize.body(factory_update_parameters, "FactoryUpdateParameters")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
             subscription_id=self._config.subscription_id,
@@ -611,16 +580,15 @@ class FactoriesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -632,13 +600,9 @@ class FactoriesOperations:
         deserialized = self._deserialize("Factory", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get(
@@ -654,12 +618,11 @@ class FactoriesOperations:
          matches the existing entity tag, or if * was provided, then no content will be returned.
          Default value is None.
         :type if_none_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Factory or None or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.Factory or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -673,22 +636,21 @@ class FactoriesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[Optional[_models.Factory]] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
             subscription_id=self._config.subscription_id,
             if_none_match=if_none_match,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -702,13 +664,9 @@ class FactoriesOperations:
             deserialized = self._deserialize("Factory", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -720,12 +678,11 @@ class FactoriesOperations:
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -739,21 +696,20 @@ class FactoriesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -763,11 +719,7 @@ class FactoriesOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def get_git_hub_access_token(
@@ -790,7 +742,6 @@ class FactoriesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GitHubAccessTokenResponse or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.GitHubAccessTokenResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -801,7 +752,7 @@ class FactoriesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        git_hub_access_token_request: IO,
+        git_hub_access_token_request: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -813,11 +764,10 @@ class FactoriesOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param git_hub_access_token_request: Get GitHub access token request definition. Required.
-        :type git_hub_access_token_request: IO
+        :type git_hub_access_token_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GitHubAccessTokenResponse or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.GitHubAccessTokenResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -828,7 +778,7 @@ class FactoriesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        git_hub_access_token_request: Union[_models.GitHubAccessTokenRequest, IO],
+        git_hub_access_token_request: Union[_models.GitHubAccessTokenRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.GitHubAccessTokenResponse:
         """Get GitHub Access Token.
@@ -838,18 +788,14 @@ class FactoriesOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param git_hub_access_token_request: Get GitHub access token request definition. Is either a
-         GitHubAccessTokenRequest type or a IO type. Required.
+         GitHubAccessTokenRequest type or a IO[bytes] type. Required.
         :type git_hub_access_token_request: ~azure.mgmt.datafactory.models.GitHubAccessTokenRequest or
-         IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         IO[bytes]
         :return: GitHubAccessTokenResponse or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.GitHubAccessTokenResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -872,7 +818,7 @@ class FactoriesOperations:
         else:
             _json = self._serialize.body(git_hub_access_token_request, "GitHubAccessTokenRequest")
 
-        request = build_get_git_hub_access_token_request(
+        _request = build_get_git_hub_access_token_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
             subscription_id=self._config.subscription_id,
@@ -880,16 +826,15 @@ class FactoriesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.get_git_hub_access_token.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -901,13 +846,9 @@ class FactoriesOperations:
         deserialized = self._deserialize("GitHubAccessTokenResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_git_hub_access_token.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/getGitHubAccessToken"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def get_data_plane_access(
@@ -930,7 +871,6 @@ class FactoriesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AccessPolicyResponse or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.AccessPolicyResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -941,7 +881,7 @@ class FactoriesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        policy: IO,
+        policy: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -953,11 +893,10 @@ class FactoriesOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param policy: Data Plane user access policy definition. Required.
-        :type policy: IO
+        :type policy: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AccessPolicyResponse or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.AccessPolicyResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -965,7 +904,11 @@ class FactoriesOperations:
 
     @distributed_trace_async
     async def get_data_plane_access(
-        self, resource_group_name: str, factory_name: str, policy: Union[_models.UserAccessPolicy, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        factory_name: str,
+        policy: Union[_models.UserAccessPolicy, IO[bytes]],
+        **kwargs: Any
     ) -> _models.AccessPolicyResponse:
         """Get Data Plane access.
 
@@ -974,17 +917,13 @@ class FactoriesOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param policy: Data Plane user access policy definition. Is either a UserAccessPolicy type or a
-         IO type. Required.
-        :type policy: ~azure.mgmt.datafactory.models.UserAccessPolicy or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         IO[bytes] type. Required.
+        :type policy: ~azure.mgmt.datafactory.models.UserAccessPolicy or IO[bytes]
         :return: AccessPolicyResponse or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.AccessPolicyResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1007,7 +946,7 @@ class FactoriesOperations:
         else:
             _json = self._serialize.body(policy, "UserAccessPolicy")
 
-        request = build_get_data_plane_access_request(
+        _request = build_get_data_plane_access_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
             subscription_id=self._config.subscription_id,
@@ -1015,16 +954,15 @@ class FactoriesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.get_data_plane_access.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1036,10 +974,6 @@ class FactoriesOperations:
         deserialized = self._deserialize("AccessPolicyResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_data_plane_access.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/getDataPlaneAccess"
-    }
+        return deserialized  # type: ignore

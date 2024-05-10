@@ -35,7 +35,9 @@ class AdvancedFilterOperatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class AlternativeAuthenticationNameSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """AlternativeAuthenticationNameSource."""
+    """Alternative authentication name sources related to client authentication settings for namespace
+    resource.
+    """
 
     CLIENT_CERTIFICATE_SUBJECT = "ClientCertificateSubject"
     CLIENT_CERTIFICATE_DNS = "ClientCertificateDns"
@@ -129,6 +131,31 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
+class CustomDomainIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of managed identity used. Can be either 'SystemAssigned' or 'UserAssigned'."""
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+
+
+class CustomDomainValidationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Validation state for the custom domain. This is a read only property and is initially set to
+    'Pending' and will be updated to 'Approved' by Event Grid only after ownership of the domain
+    name has been successfully validated.
+    """
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    ERROR_RETRIEVING_DNS_RECORD = "ErrorRetrievingDnsRecord"
+
+
+class CustomJwtAuthenticationManagedIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of managed identity used. Can be either 'SystemAssigned' or 'UserAssigned'."""
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+
+
 class DataResidencyBoundary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Data Residency Boundary of the resource."""
 
@@ -220,10 +247,7 @@ class EventInputSchema(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class EventSubscriptionIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of managed identity used. The type 'SystemAssigned, UserAssigned' includes both an
-    implicitly created identity and a set of user-assigned identities. The type 'None' will remove
-    any identity.
-    """
+    """The type of managed identity used. Can be either 'SystemAssigned' or 'UserAssigned'."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
@@ -577,7 +601,7 @@ class ResourceRegionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class RoutingIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RoutingIdentityType."""
+    """Routing identity type for topic spaces configuration."""
 
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"

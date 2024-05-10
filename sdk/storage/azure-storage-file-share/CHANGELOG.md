@@ -1,6 +1,16 @@
 # Release History
 
-## 12.16.0b1 (Unreleased)
+## 12.17.0b1 (Unreleased)
+
+### Features Added
+
+
+## 12.16.0 (2024-05-07)
+
+### Features Added
+- Stable release of features from 12.16.0b1
+
+## 12.16.0b1 (2024-04-16)
 
 This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
 
@@ -9,6 +19,8 @@ This version and all future versions will require Python 3.8+. Python 3.7 is no 
 - Added support for service version 2024-05-04.
 - The `services` parameter has been added to the `generate_account_sas` API, which enables the ability to generate SAS
 tokens to be used with multiple services. By default, the SAS token service scope will default to the current service.
+- Added `client_name` property to `Handle`.
+- Added support for `support_rename` to `get_ranges_diff()`
 
 ### Bugs Fixed
 - Fixed an issue where the `ShareDirectoryClient` returned by `get_subdirectory_client` with a `ShareDirectoryClient`

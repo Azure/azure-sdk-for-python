@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -45,7 +45,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-03-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -59,7 +59,7 @@ def build_delete_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "machineName": _SERIALIZER.url(
-            "machine_name", machine_name, "str", max_length=54, min_length=1, pattern=r"[a-zA-Z0-9-_\.]"
+            "machine_name", machine_name, "str", max_length=54, min_length=1, pattern=r"^[a-zA-Z0-9-_\.]{1,54}$"
         ),
     }
 
@@ -75,17 +75,12 @@ def build_delete_request(
 
 
 def build_get_request(
-    resource_group_name: str,
-    machine_name: str,
-    subscription_id: str,
-    *,
-    expand: Optional[Union[str, _models.InstanceViewTypes]] = None,
-    **kwargs: Any
+    resource_group_name: str, machine_name: str, subscription_id: str, *, expand: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-03-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -99,7 +94,7 @@ def build_get_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "machineName": _SERIALIZER.url(
-            "machine_name", machine_name, "str", max_length=54, min_length=1, pattern=r"[a-zA-Z0-9-_\.]"
+            "machine_name", machine_name, "str", max_length=54, min_length=1, pattern=r"^[a-zA-Z0-9-_\.]{1,54}$"
         ),
     }
 
@@ -122,7 +117,7 @@ def build_assess_patches_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-03-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -153,7 +148,7 @@ def build_install_patches_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-03-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -187,7 +182,7 @@ def build_list_by_resource_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-03-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -219,7 +214,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-03-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -269,7 +264,6 @@ class MachinesOperations:
         :type resource_group_name: str
         :param machine_name: The name of the hybrid machine. Required.
         :type machine_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -288,21 +282,20 @@ class MachinesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             machine_name=machine_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -313,19 +306,11 @@ class MachinesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{machineName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def get(
-        self,
-        resource_group_name: str,
-        machine_name: str,
-        expand: Optional[Union[str, _models.InstanceViewTypes]] = None,
-        **kwargs: Any
+        self, resource_group_name: str, machine_name: str, expand: Optional[str] = None, **kwargs: Any
     ) -> _models.Machine:
         """Retrieves information about the model view or the instance view of a hybrid machine.
 
@@ -334,10 +319,8 @@ class MachinesOperations:
         :type resource_group_name: str
         :param machine_name: The name of the hybrid machine. Required.
         :type machine_name: str
-        :param expand: The expand expression to apply on the operation. "instanceView" Default value is
-         None.
-        :type expand: str or ~azure.mgmt.hybridcompute.models.InstanceViewTypes
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param expand: The expand expression to apply on the operation. Default value is None.
+        :type expand: str
         :return: Machine or the result of cls(response)
         :rtype: ~azure.mgmt.hybridcompute.models.Machine
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -356,22 +339,21 @@ class MachinesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.Machine] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             machine_name=machine_name,
             subscription_id=self._config.subscription_id,
             expand=expand,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -384,13 +366,9 @@ class MachinesOperations:
         deserialized = self._deserialize("Machine", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{machineName}"
-    }
+        return deserialized  # type: ignore
 
     def _assess_patches_initial(
         self, resource_group_name: str, name: str, **kwargs: Any
@@ -409,21 +387,20 @@ class MachinesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[Optional[_models.MachineAssessPatchesResult]] = kwargs.pop("cls", None)
 
-        request = build_assess_patches_request(
+        _request = build_assess_patches_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._assess_patches_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -442,13 +419,9 @@ class MachinesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _assess_patches_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{name}/assessPatches"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_assess_patches(
@@ -460,14 +433,6 @@ class MachinesOperations:
         :type resource_group_name: str
         :param name: The name of the hybrid machine. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either MachineAssessPatchesResult or the result
          of cls(response)
         :rtype:
@@ -497,7 +462,7 @@ class MachinesOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("MachineAssessPatchesResult", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -509,23 +474,21 @@ class MachinesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.MachineAssessPatchesResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_assess_patches.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{name}/assessPatches"
-    }
+        return LROPoller[_models.MachineAssessPatchesResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _install_patches_initial(
         self,
         resource_group_name: str,
         name: str,
-        install_patches_input: Union[_models.MachineInstallPatchesParameters, IO],
+        install_patches_input: Union[_models.MachineInstallPatchesParameters, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.MachineInstallPatchesResult]:
         error_map = {
@@ -551,7 +514,7 @@ class MachinesOperations:
         else:
             _json = self._serialize.body(install_patches_input, "MachineInstallPatchesParameters")
 
-        request = build_install_patches_request(
+        _request = build_install_patches_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
@@ -559,16 +522,15 @@ class MachinesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._install_patches_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -587,13 +549,9 @@ class MachinesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _install_patches_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{name}/installPatches"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_install_patches(
@@ -617,14 +575,6 @@ class MachinesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either MachineInstallPatchesResult or the result
          of cls(response)
         :rtype:
@@ -637,7 +587,7 @@ class MachinesOperations:
         self,
         resource_group_name: str,
         name: str,
-        install_patches_input: IO,
+        install_patches_input: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -650,18 +600,10 @@ class MachinesOperations:
         :type name: str
         :param install_patches_input: Input for InstallPatches as directly received by the API.
          Required.
-        :type install_patches_input: IO
+        :type install_patches_input: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either MachineInstallPatchesResult or the result
          of cls(response)
         :rtype:
@@ -674,7 +616,7 @@ class MachinesOperations:
         self,
         resource_group_name: str,
         name: str,
-        install_patches_input: Union[_models.MachineInstallPatchesParameters, IO],
+        install_patches_input: Union[_models.MachineInstallPatchesParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.MachineInstallPatchesResult]:
         """The operation to install patches on a hybrid machine identity in Azure.
@@ -684,20 +626,9 @@ class MachinesOperations:
         :param name: The name of the hybrid machine. Required.
         :type name: str
         :param install_patches_input: Input for InstallPatches as directly received by the API. Is
-         either a MachineInstallPatchesParameters type or a IO type. Required.
+         either a MachineInstallPatchesParameters type or a IO[bytes] type. Required.
         :type install_patches_input: ~azure.mgmt.hybridcompute.models.MachineInstallPatchesParameters
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         or IO[bytes]
         :return: An instance of LROPoller that returns either MachineInstallPatchesResult or the result
          of cls(response)
         :rtype:
@@ -730,7 +661,7 @@ class MachinesOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("MachineInstallPatchesResult", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -742,17 +673,15 @@ class MachinesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.MachineInstallPatchesResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_install_patches.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{name}/installPatches"
-    }
+        return LROPoller[_models.MachineInstallPatchesResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def list_by_resource_group(
@@ -766,7 +695,6 @@ class MachinesOperations:
         :type resource_group_name: str
         :param expand: Expands referenced resources. Default value is None.
         :type expand: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Machine or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.hybridcompute.models.Machine]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -788,17 +716,16 @@ class MachinesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_request(
+                _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     expand=expand,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -810,13 +737,13 @@ class MachinesOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("MachineListResult", pipeline_response)
@@ -826,11 +753,11 @@ class MachinesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -842,17 +769,12 @@ class MachinesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines"
-    }
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.Machine"]:
         """Lists all the hybrid machines in the specified subscription. Use the nextLink property in the
         response to get the next page of hybrid machines.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Machine or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.hybridcompute.models.Machine]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -874,15 +796,14 @@ class MachinesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_subscription_request(
+                _request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_subscription.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -894,13 +815,13 @@ class MachinesOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("MachineListResult", pipeline_response)
@@ -910,11 +831,11 @@ class MachinesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -926,7 +847,3 @@ class MachinesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_subscription.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.HybridCompute/machines"
-    }

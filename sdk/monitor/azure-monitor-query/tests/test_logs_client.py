@@ -8,7 +8,16 @@ from datetime import timedelta
 import pytest
 
 from azure.core.exceptions import HttpResponseError
-from azure.monitor.query import LogsQueryClient, LogsBatchQuery, LogsQueryError, LogsTable, LogsQueryResult, LogsTableRow, LogsQueryPartialResult
+from azure.monitor.query import (
+    LogsQueryClient,
+    LogsBatchQuery,
+    LogsQueryError,
+    LogsTable,
+    LogsQueryResult,
+    LogsTableRow,
+    LogsQueryPartialResult,
+    LogsQueryStatus
+)
 from azure.monitor.query._helpers import native_col_type
 
 from base_testcase import AzureMonitorQueryLogsTestCase
@@ -26,6 +35,7 @@ class TestLogsClient(AzureMonitorQueryLogsTestCase):
         response = client.query_workspace(monitor_info['workspace_id'], query, timespan=None)
 
         assert response is not None
+        assert response.status == LogsQueryStatus.SUCCESS
         assert response.tables is not None
 
     def test_logs_single_query_raises_no_timespan(self, monitor_info):
@@ -57,6 +67,7 @@ class TestLogsClient(AzureMonitorQueryLogsTestCase):
 
         assert response.partial_error is not None
         assert response.partial_data is not None
+        assert response.status == LogsQueryStatus.PARTIAL
         assert response.__class__ == LogsQueryPartialResult
 
     def test_logs_server_timeout(self, recorded_test, monitor_info):

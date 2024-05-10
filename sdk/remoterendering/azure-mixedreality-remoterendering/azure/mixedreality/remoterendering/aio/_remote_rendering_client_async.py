@@ -333,6 +333,7 @@ class RemoteRenderingClient(object):
         :keyword lease_time_minutes: The new lease time of the rendering session. Has to be strictly larger than
             the previous lease time.
         :paramtype lease_time_minutes: int
+        :return: The updated rendering session
         :rtype: ~azure.mixedreality.remoterendering.models.RenderingSession
         :raises ~azure.core.exceptions.HttpResponseError:
         """

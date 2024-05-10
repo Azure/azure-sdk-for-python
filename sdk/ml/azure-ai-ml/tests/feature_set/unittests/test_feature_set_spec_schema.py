@@ -91,3 +91,15 @@ class TestFeatureSetSchema:
         featureset_spec_yaml_path = Path(spec_path, "FeatureSetSpec.yaml")
         with pytest.raises(ValidationException):
             FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_yaml_path)
+
+        spec_path = "./tests/test_configs/feature_set/invalid_spec8"
+        featureset_spec_contents = read_feature_set_metadata(path=spec_path)
+        featureset_spec_yaml_path = Path(spec_path, "FeatureSetSpec.yaml")
+        with pytest.raises(ValidationException):
+            FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_yaml_path)
+
+        spec_path = "./tests/test_configs/feature_set/invalid_spec9"
+        featureset_spec_contents = read_feature_set_metadata(path=spec_path)
+        featureset_spec_yaml_path = Path(spec_path, "FeatureSetSpec.yaml")
+        with pytest.raises(ValidationException):
+            FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_yaml_path)

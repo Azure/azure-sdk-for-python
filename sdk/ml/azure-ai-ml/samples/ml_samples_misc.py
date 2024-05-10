@@ -306,9 +306,9 @@ class MiscConfigurationOptions(object):
         # [END intellectual_property_configuration]
 
         # [START personal_access_token_configuration]
-        from azure.ai.ml.entities import PatTokenConfiguration, WorkspaceConnection
+        from azure.ai.ml.entities import PatTokenConfiguration, Connection
 
-        ws_connection = WorkspaceConnection(
+        ws_connection = Connection(
             target="my_target",
             type="python_feed",
             credentials=PatTokenConfiguration(pat="abcdefghijklmnopqrstuvwxyz"),

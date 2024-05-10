@@ -111,7 +111,7 @@ class ArmDeploymentExecutor(object):
 
                     if poller._exception is not None:
                         error = poller._exception
-                except Exception as e:  # pylint: disable=broad-except
+                except Exception as e:  # pylint: disable=W0718
                     error = e
                 finally:
                     # one last check to make sure all print statements make it
@@ -213,7 +213,7 @@ class ArmDeploymentExecutor(object):
                 # duration comes in format: "PT1M56.3454108S"
                 try:
                     duration_in_min_sec = from_iso_duration_format_min_sec(duration)
-                except Exception:  # pylint: disable=broad-except
+                except Exception:  # pylint: disable=W0718
                     duration_in_min_sec = ""
 
                 self._resources_being_deployed[resource_name] = (

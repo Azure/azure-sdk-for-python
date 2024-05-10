@@ -15,6 +15,7 @@ from devtools_testutils import (
     add_oauth_response_sanitizer,
     add_body_key_sanitizer,
     test_proxy,
+    remove_batch_sanitizers,
 )
 
 
@@ -23,26 +24,6 @@ def add_sanitizers(test_proxy):
     add_remove_header_sanitizer(headers="Ocp-Apim-Subscription-Key")
     add_general_regex_sanitizer(value="fakeendpoint", regex="(?<=\\/\\/)[a-z-]+(?=\\.cognitiveservices\\.azure\\.com)")
     add_oauth_response_sanitizer()
-    add_body_key_sanitizer(
-        json_path="urlSource",
-        value="blob_sas_url",
-        regex="(?<=\\/\\/)[a-z-]+(?=\\.blob\\.core\\.windows\\.net)(.*)$",
-    )
-    add_body_key_sanitizer(
-        json_path="azureBlobSource.containerUrl",
-        value="blob_sas_url",
-        regex="(?<=\\/\\/)[a-z-]+(?=\\.blob\\.core\\.windows\\.net)(.*)$",
-    )
-    add_body_key_sanitizer(
-        json_path="source",
-        value="blob_sas_url",
-        regex="(?<=\\/\\/)[a-z-]+(?=\\.blob\\.core\\.windows\\.net)(.*)$",
-    )
-    add_body_key_sanitizer(
-        json_path="accessToken",
-        value="redacted",
-        regex="([0-9a-f-]{36})",
-    )
     add_body_key_sanitizer(
         json_path="targetResourceId",
         value="/path/to/resource/id",
@@ -58,6 +39,9 @@ def add_sanitizers(test_proxy):
         value="redacted",
         regex="([0-9a-f-]{36})",
     )
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3496: "$..resourceLocation"
+    remove_batch_sanitizers(["AZSDK3496"])
 
 
 def skip_flaky_test(f):
