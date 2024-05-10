@@ -705,7 +705,8 @@ VectorDistance(<embedding1>, <embedding2>, [,<exact_search>], [,<specification>]
 ```
 Embeddings 1 and 2 are the arrays of values for the relevant embeddings, `exact_search` is an optional boolean indicating whether
 to do an exact search vs. an approximate one (default value of false), and `specification` is an optional Json snippet with embedding
-specs that can include `dataType`, `dimensions` and `distanceFunction`.
+specs that can include `dataType`, `dimensions` and `distanceFunction`. The specifications within the query will take precedence
+to any configurations previously set by a vector embedding policy.
 A sample vector search query would look something like this:
 ```python
     query = "SELECT TOP 10 c.title,VectorDistance(c.embedding, [{}]) AS " \
@@ -715,7 +716,7 @@ Or if you'd like to add the optional parameters to the vector distance, you coul
 ```python
     query = "SELECT TOP 10 c.title,VectorDistance(c.embedding, [{}], true, {{'dataType': 'float32' , 'distanceFunction': 'cosine'}}) AS " \
             "SimilarityScore FROM c ORDER BY VectorDistance(c.embedding, [{}], true, {{'dataType': " \
-            "'float32', 'distanceFunction': 'cosine'}})"
+            "'float32', 'distanceFunction': 'cosine'}})".format(embeddings_string, embeddings_string)
 ```
 The `embeddings_string` above would be your string made from your vector embeddings.
 You can find our sync samples [here][cosmos_index_sample] and our async samples [here][cosmos_index_sample_async] as well to help yourself out.
