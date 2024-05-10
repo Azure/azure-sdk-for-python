@@ -146,7 +146,11 @@ that test, which is recommended.
 
 ### Sanitization impacting URL structure
 
-In some cases, values in response bodies are used to construct URLs for subsequent requests or are used as request URLS themselves. If these values are sanitized, the recorded request URL might differ than what is expected during playback. Common culprits include sanitization of "name", "id", and "Location" fields. To resolve this, you can opt out of sanitization for the fields that are used for your request URLs by calling the `remove_batch_sanitizer` method from `devtools_testutils` with the [sanitizer IDs][test_proxy_sanitizers] to exclude. Generally, this is done in the `conftest.py` file, in the one of the session-scoped fixtures. Example:
+In some cases, values in response bodies are used to construct URLs for subsequent requests or are used as request URLS themselves. If these values are sanitized, the recorded request URL might differ than what is expected during playback. Common culprits include sanitization of "name", "id", and "Location" fields. To resolve this, you can either opt out of specific sanitization or add another sanitizer to align with the sanitized value.
+
+#### Opt out
+
+You can opt out of sanitization for the fields that are used for your request URLs by calling the `remove_batch_sanitizer` method from `devtools_testutils` with the [sanitizer IDs][test_proxy_sanitizers] to exclude. Generally, this is done in the `conftest.py` file, in the one of the session-scoped fixtures. Example:
 
 ```python
 from devtools_testutils import remove_batch_sanitizers, test_proxy
@@ -165,6 +169,26 @@ Some sanitizer IDs that are often opted out of are:
   - `AZSDK3493`: `$..name` - Body key sanitizer
 
 However, **please be mindful when opting out of a sanitizer, and ensure that no sensitive data is being exposed**.
+
+#### Add another sanitizer
+
+Alternatively, you can add another sanitizer to align the recorded request URL with the expected URL.
+
+```python
+from devtools_testutils import add_uri_regex_sanitizer, test_proxy
+
+
+@pytest.fixture(scope="session", autouse=True)
+def add_sanitizers(test_proxy):
+    ...
+    add_uri_regex_sanitizer(
+        regex=r"https://(?<storage_account_name>[^\.]+).blob\.core\.windows\.net",
+        group_for_replace="storage_account_name",
+        value=SANITIZED,
+        function_scoped=True,
+    )
+```
+
 
 ## Recordings not being produced
 

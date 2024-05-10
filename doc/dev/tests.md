@@ -486,7 +486,7 @@ For more details about sanitizers and their options, please refer to [devtools_t
 
 In the past, it was recommended that the tests using Shared Access Signature (SAS) tokens should use the `AzureRecordedTestCase.generate_sas` method to generate the token and automatically register a sanitizer to keep this token out of test recordings. This method is now deprecated since the test proxy automatically sanitizes SAS tokens. If you have tests that use SAS tokens, you can remove the usage of the `generate_sas` method.
 
-#### Opting out of specific sanitizers
+#### Opt out of specific sanitizers
 
 Since, in some cases, the default sanitizers might be considered too aggressive and breaks tests during playback, you can opt out of certain sanitizers using the `remove_batch_sanitizers` function in your respective `conftest.py` files. For example:
 
