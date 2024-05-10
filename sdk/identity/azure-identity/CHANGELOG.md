@@ -5,6 +5,7 @@
 ### Features Added
 
 - Added environment variable `AZURE_CLIENT_SEND_CERTIFICATE_CHAIN` support for `EnvironmentCredential`.
+- Introduced a new credential, `AzurePipelinesCredential`, for supporting workload identity federation in Azure Pipelines with service connections ([#35397](https://github.com/Azure/azure-sdk-for-python/pull/35397)).
 
 ### Breaking Changes
 
