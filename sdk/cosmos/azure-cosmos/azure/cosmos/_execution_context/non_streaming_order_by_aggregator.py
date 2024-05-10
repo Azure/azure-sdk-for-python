@@ -36,7 +36,6 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
 
         # will be a list of (partition_min, partition_max) tuples
         targetPartitionRanges = self._get_target_partition_key_range()
-        print(self._sort_orders)
 
         self._document_producer_comparator = document_producer._OrderByDocumentProducerComparator(self._sort_orders)
 
