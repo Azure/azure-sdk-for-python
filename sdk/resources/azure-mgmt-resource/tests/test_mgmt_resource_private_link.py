@@ -6,17 +6,17 @@
 #--------------------------------------------------------------------------
 
 import azure.mgmt.resource
+import azure.mgmt.resource.privatelinks
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 class TestMgmtResourceLinks(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.client = self.create_mgmt_client(
-            azure.mgmt.resource.policy.PolicyClient
+            azure.mgmt.resource.privatelinks.ResourcePrivateLinkClient
         )
 
     @RandomNameResourceGroupPreparer()
     @recorded_by_proxy
-    def test_policy_list(self):
-        result = list(self.client.policy_assignments.list())
-        assert len(result) > 0
+    def test_private_link_list(self):
+        result = self.client.resource_management_private_link.list()
