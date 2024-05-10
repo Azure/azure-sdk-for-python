@@ -1,4 +1,3 @@
-
 parameters:
   ServiceDirectory: not-set
   ArmTemplateParameters: '@{}'
