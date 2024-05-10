@@ -39,7 +39,7 @@ from azure.ai.ml._schema.workspace.connections.connection_subtypes import (
     ServerlessConnectionSchema,
 )
 from .one_lake_artifacts import OneLakeConnectionArtifact
-from .connection import WorkspaceConnection
+from .workspace_connection import WorkspaceConnection
 
 
 # Dev notes: Any new classes require modifying the elif chains in the following functions in the

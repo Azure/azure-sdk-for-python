@@ -27,7 +27,7 @@ from azure.ai.ml.constants._common import ConnectionTypes
 from azure.ai.ml.entities import NoneCredentialConfiguration, AadCredentialConfiguration
 
 
-class ConnectionSchema(ResourceSchema):
+class WorkspaceConnectionSchema(ResourceSchema):
     # Inherits name, id, tags, and description fields from ResourceSchema
     creation_context = NestedField(CreationContextSchema, dump_only=True)
     type = StringTransformedEnum(

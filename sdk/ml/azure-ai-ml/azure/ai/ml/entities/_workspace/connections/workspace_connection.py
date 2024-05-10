@@ -19,7 +19,7 @@ from azure.ai.ml._restclient.v2024_04_01_preview.models import (
     AADAuthTypeWorkspaceConnectionProperties,
 )
 
-from azure.ai.ml._schema.workspace.connections.connection import ConnectionSchema
+from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import (
@@ -420,7 +420,7 @@ class WorkspaceConnection(Resource):
             # No default in pop, this should fail if we somehow don't get a resource ID
             rest_kwargs["ai_services_resource_id"] = rest_kwargs.pop(camel_to_snake(CONNECTION_RESOURCE_ID_KEY))
         connection = conn_class(**rest_kwargs)
-        return cast(Optional["Connection"], connection)
+        return cast(Optional["WorkspaceConnection"], connection)
 
     def _validate(self) -> str:
         return str(self.name)
@@ -616,7 +616,7 @@ class WorkspaceConnection(Resource):
         :rtype: Type
         """
         if conn_type is None:
-            return ConnectionSchema
+            return WorkspaceConnectionSchema
         entity_class = cls._get_entity_class_from_type(conn_type)
         return entity_class._get_schema_class()
 
@@ -640,4 +640,4 @@ class WorkspaceConnection(Resource):
         :return: The appropriate schema class to use with this entity class.
         :rtype: Type
         """
-        return ConnectionSchema
+        return WorkspaceConnectionSchema

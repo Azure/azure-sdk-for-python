@@ -262,7 +262,7 @@ from ._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
 from ._system_data import SystemData
 from ._validation import ValidationResult
 from ._workspace.compute_runtime import ComputeRuntime
-from ._workspace.connections.connection import WorkspaceConnection
+from ._workspace.connections.workspace_connection import WorkspaceConnection
 from ._workspace.connections.connection_subtypes import (
     AzureBlobStoreConnection,
     MicrosoftOneLakeConnection,

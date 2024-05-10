@@ -16,7 +16,7 @@ from azure.ai.ml._scope_dependent_operations import (
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _snake_to_camel
-from azure.ai.ml.entities._workspace.connections.connection import WorkspaceConnection
+from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 from azure.core.credentials import TokenCredential
 from azure.ai.ml.entities._credentials import (
     ApiKeyConfiguration,

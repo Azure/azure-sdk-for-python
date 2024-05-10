@@ -44,7 +44,7 @@ from azure.ai.ml.entities._registry.registry import Registry
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._schedule.schedule import Schedule
 from azure.ai.ml.entities._validation import PathAwareSchemaValidatableMixin, ValidationResultBuilder
-from azure.ai.ml.entities._workspace.connections.connection import WorkspaceConnection
+from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 from azure.ai.ml.entities._workspace.workspace import Workspace
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 

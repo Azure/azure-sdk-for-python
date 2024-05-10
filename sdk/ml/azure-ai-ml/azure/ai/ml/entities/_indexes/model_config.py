@@ -4,7 +4,7 @@
 from dataclasses import dataclass
 from typing import Any, Dict, Optional
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities._workspace.connections.connection import WorkspaceConnection
+from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 from azure.ai.ml.entities._workspace.connections.connection_subtypes import (
     AzureOpenAIConnection,
     AadCredentialConfiguration,
