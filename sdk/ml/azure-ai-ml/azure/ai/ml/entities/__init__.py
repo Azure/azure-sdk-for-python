@@ -173,6 +173,13 @@ from ._feature_store.materialization_store import MaterializationStore
 from ._feature_store_entity.data_column import DataColumn
 from ._feature_store_entity.data_column_type import DataColumnType
 from ._feature_store_entity.feature_store_entity import FeatureStoreEntity
+from ._indexes import (
+    AzureAISearchConfig,
+    IndexDataSource,
+    GitSource,
+    LocalSource,
+)
+from ._indexes import ModelConfiguration as IndexModelConfiguration
 from ._job.command_job import CommandJob
 from ._job.compute_configuration import ComputeConfiguration
 from ._job.input_port import InputPort
@@ -255,7 +262,7 @@ from ._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
 from ._system_data import SystemData
 from ._validation import ValidationResult
 from ._workspace.compute_runtime import ComputeRuntime
-from ._workspace.connections.connection import Connection
+from ._workspace.connections.workspace_connection import WorkspaceConnection
 from ._workspace.connections.connection_subtypes import (
     AzureBlobStoreConnection,
     MicrosoftOneLakeConnection,
@@ -352,7 +359,7 @@ __all__ = [
     "ModelBatchDeploymentSettings",
     "Workspace",
     "WorkspaceKeys",
-    "Connection",
+    "WorkspaceConnection",
     "AzureBlobStoreConnection",
     "MicrosoftOneLakeConnection",
     "AzureOpenAIConnection",
@@ -548,6 +555,11 @@ __all__ = [
     "AadCredentialConfiguration",
     "Index",
     "AzureOpenAIDeployment",
+    "AzureAISearchConfig",
+    "IndexDataSource",
+    "GitSource",
+    "LocalSource",
+    "IndexModelConfiguration",
 ]
 
 # Allow importing these types for backwards compatibility
