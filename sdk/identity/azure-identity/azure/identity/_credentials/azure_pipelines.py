@@ -56,7 +56,7 @@ def validate_env_vars():
 class AzurePipelinesCredential:
     """Authenticates using Microsoft Entra Workload ID in Azure Pipelines.
 
-    This credential enable authentication in Azure Pipelines using workload identity federation for Azure service
+    This credential enables authentication in Azure Pipelines using workload identity federation for Azure service
     connections.
 
     :keyword str service_connection_id: The service connection ID, as found in the querystring's resourceId key.
