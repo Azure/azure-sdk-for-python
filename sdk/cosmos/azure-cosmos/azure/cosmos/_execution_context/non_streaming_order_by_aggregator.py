@@ -74,7 +74,7 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
                     # this logic is necessary so that we only hold 2 * items_per_partition in memory at any time
                     if len(self._orderByPQ._heap) > pq_size:
                         new_heap = []
-                        for i in range(pq_size):
+                        for i in range(pq_size):  # pylint: disable=unused-variable
                             new_heap.append(self._orderByPQ.pop())
                         self._orderByPQ._heap = new_heap
                     break

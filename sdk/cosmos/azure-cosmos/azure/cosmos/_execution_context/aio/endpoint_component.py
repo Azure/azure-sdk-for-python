@@ -55,7 +55,7 @@ class _QueryExecutionOrderByEndpointComponent(_QueryExecutionEndpointComponent):
     """
     async def __anext__(self):
         payload = await self._execution_context.__anext__()
-        return payload._item_result["payload"]
+        return payload["payload"]
 
 class _QueryExecutionNonStreamingEndpointComponent(_QueryExecutionEndpointComponent):
     """Represents an endpoint in handling a non-streaming order by query results.

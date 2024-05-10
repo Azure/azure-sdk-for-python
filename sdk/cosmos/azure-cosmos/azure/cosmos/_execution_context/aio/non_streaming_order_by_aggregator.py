@@ -33,6 +33,9 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
         self._partitioned_query_ex_info = partitioned_query_ex_info
         self._sort_orders = partitioned_query_ex_info.get_order_by()
         self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
+        self._doc_producers = []
+        self._document_producer_comparator = document_producer._NonStreamingOrderByComparator(self._sort_orders)
+
 
     async def __anext__(self):
         """Returns the next result
@@ -66,7 +69,6 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
             targetPartitionQueryExecutionContextList.append(
                 self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
             )
-
         self._doc_producers = []
         for targetQueryExContext in targetPartitionQueryExecutionContextList:
             try:
@@ -110,8 +112,6 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
         # will be a list of (partition_min, partition_max) tuples
         targetPartitionRanges = await self._get_target_partition_key_range()
 
-        self._document_producer_comparator = document_producer._NonStreamingOrderByComparator(self._sort_orders)
-
         targetPartitionQueryExecutionContextList = []
         for partitionTargetRange in targetPartitionRanges:
             # create and add the child execution context for the target range
@@ -146,7 +146,7 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
                     # this logic is necessary so that we only hold 2 * items_per_partition in memory at any time
                     if len(self._orderByPQ._heap) > pq_size:
                         new_heap = []
-                        for i in range(pq_size):
+                        for i in range(pq_size):  # pylint: disable=unused-variable
                             new_heap.append(await self._orderByPQ.pop_async(self._document_producer_comparator))
                         self._orderByPQ._heap = new_heap
                     break
