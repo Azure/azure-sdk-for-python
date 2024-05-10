@@ -24,7 +24,7 @@ testing infrastructure, and demonstrates how to write and run tests for a servic
     - [Update test recordings](#update-test-recordings)
     - [Sanitize secrets](#sanitize-secrets)
       - [Special case: SAS tokens](#special-case-sas-tokens)
-      - [Opting out of specific sanitizers](#opting-out-of-specific-sanitizers)
+      - [Opt out of specific sanitizers](#opt-out-of-specific-sanitizers)
   - [Functional vs. unit tests](#functional-vs-unit-tests)
   - [Further reading](#further-reading)
 

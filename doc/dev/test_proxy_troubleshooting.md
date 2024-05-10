@@ -267,5 +267,5 @@ chmod +x .../azure-sdk-for-python/.proxy/Azure.Sdk.Tools.TestProxy
 [pytest_collection]: https://docs.pytest.org/latest/goodpractices.html#test-discovery
 [pytest_commands]: https://docs.pytest.org/latest/usage.html
 [record_request_failure]: https://github.com/Azure/azure-sdk-for-python/blob/e23d9a6b1edcc1127ded40b9993029495b4ad08c/tools/azure-sdk-tools/devtools_testutils/proxy_testcase.py#L97
-[test_proxy_sanitizers]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/Common/SanitizerDictionary.cs#L65
+[test_proxy_sanitizers]: https://github.com/Azure/azure-sdk-tools/blob/57382d5dc00b10a2f9cfd597293eeee0c2dbd8fd/tools/test-proxy/Azure.Sdk.Tools.TestProxy/Common/SanitizerDictionary.cs#L65
 [wrong_exception]: https://github.com/Azure/azure-sdk-tools/issues/2907
