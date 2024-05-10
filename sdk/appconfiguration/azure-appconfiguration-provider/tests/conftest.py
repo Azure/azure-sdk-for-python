@@ -5,6 +5,7 @@ from devtools_testutils import (
     add_oauth_response_sanitizer,
     set_custom_default_matcher,
     remove_batch_sanitizers,
+    add_remove_header_sanitizer,
 )
 import pytest
 
