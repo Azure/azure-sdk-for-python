@@ -23,6 +23,21 @@ class CatalogConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISCONNECTED = "Disconnected"
 
 
+class CatalogItemSyncEnableStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Catalog item sync types enable or disable status. Indicates whether project catalogs are
+    allowed to sync catalog items under projects associated to this dev center.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
+class CatalogItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates catalog item types."""
+
+    ENVIRONMENT_DEFINITION = "EnvironmentDefinition"
+
+
 class CatalogResourceValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Catalog resource validation status."""
 
@@ -62,14 +77,6 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
-
-
-class CustomizationTaskInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of the input."""
-
-    STRING = "string"
-    NUMBER = "number"
-    BOOLEAN = "boolean"
 
 
 class DomainJoinType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

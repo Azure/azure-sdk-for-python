@@ -149,7 +149,6 @@ class AzureAppConfigurationClient:
         fields: Optional[List[str]] = None,
         **kwargs: Any,
     ) -> AsyncItemPaged[ConfigurationSetting]:
-
         """List the configuration settings stored in the configuration service, optionally filtered by
         key, label and accept_datetime.
 
@@ -246,7 +245,6 @@ class AzureAppConfigurationClient:
         accept_datetime: Optional[Union[datetime, str]] = None,
         **kwargs,
     ) -> Union[None, ConfigurationSetting]:
-
         """Get the matched ConfigurationSetting from Azure App Configuration service
 
         :param key: key of the ConfigurationSetting
@@ -307,7 +305,6 @@ class AzureAppConfigurationClient:
     async def add_configuration_setting(
         self, configuration_setting: ConfigurationSetting, **kwargs
     ) -> ConfigurationSetting:
-
         """Add a ConfigurationSetting instance into the Azure App Configuration service.
 
         :param configuration_setting: the ConfigurationSetting object to be added
@@ -357,7 +354,6 @@ class AzureAppConfigurationClient:
         etag: Optional[str] = None,
         **kwargs,
     ) -> ConfigurationSetting:
-
         """Add or update a ConfigurationSetting.
         If the configuration setting identified by key and label does not exist, this is a create.
         Otherwise this is an update.
@@ -490,7 +486,6 @@ class AzureAppConfigurationClient:
         fields: Optional[List[str]] = None,
         **kwargs,
     ) -> AsyncItemPaged[ConfigurationSetting]:
-
         """
         Find the ConfigurationSetting revision history, optionally filtered by key, label and accept_datetime.
 
@@ -553,7 +548,6 @@ class AzureAppConfigurationClient:
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs,
     ) -> ConfigurationSetting:
-
         """Set a configuration setting read only
 
         :param configuration_setting: the ConfigurationSetting to be set read only
@@ -801,7 +795,6 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
 
     async def update_sync_token(self, token: str) -> None:
-
         """Add a sync token to the internal list of tokens.
 
         :param str token: The sync token to be added to the internal list of tokens
@@ -810,7 +803,6 @@ class AzureAppConfigurationClient:
         await self._sync_token_policy.add_token(token)
 
     async def close(self) -> None:
-
         """Close all connections made by the client"""
         await self._impl._client.close()
 

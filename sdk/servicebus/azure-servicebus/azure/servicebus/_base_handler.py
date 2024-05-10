@@ -385,7 +385,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         except AttributeError:
             pass
 
-    def _do_retryable_operation(
+    def _do_retryable_operation( # pylint: disable=inconsistent-return-statements
         self,
         operation: Callable,
         timeout: Optional[float] = None,
@@ -496,13 +496,15 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
          be service-specific, but common values include READ, CREATE and UPDATE.
          This value will be added as an application property on the message.
         :param message: The message to send in the management request.
-        :paramtype message: Any
+        :type message: Any
         :param callback: The callback which is used to parse the returning message.
-        :paramtype callback: Callable[int, Union[~uamqp.message.Message, Message], str]
-        :param keep_alive_associated_link: A boolean flag for keeping associated amqp sender/receiver link alive when
+        :type callback: Callable[int, Union[~uamqp.message.Message, Message], str]
+        :param bool keep_alive_associated_link: A boolean flag for keeping
+         associated amqp sender/receiver link alive when
          executing operation on mgmt links.
-        :param timeout: timeout in seconds executing the mgmt operation.
-        :rtype: Tuple
+        :param float or None timeout: timeout in seconds executing the mgmt operation.
+        :return: The message response.
+        :rtype: Message
         """
         self._open()
         application_properties = {}

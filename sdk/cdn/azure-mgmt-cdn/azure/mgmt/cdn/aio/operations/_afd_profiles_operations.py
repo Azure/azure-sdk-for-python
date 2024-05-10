@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -87,7 +87,6 @@ class AFDProfilesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckEndpointNameAvailabilityOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.CheckEndpointNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -98,7 +97,7 @@ class AFDProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        check_endpoint_name_availability_input: IO,
+        check_endpoint_name_availability_input: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -112,11 +111,10 @@ class AFDProfilesOperations:
          unique within the resource group. Required.
         :type profile_name: str
         :param check_endpoint_name_availability_input: Input to check. Required.
-        :type check_endpoint_name_availability_input: IO
+        :type check_endpoint_name_availability_input: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckEndpointNameAvailabilityOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.CheckEndpointNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -127,7 +125,7 @@ class AFDProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        check_endpoint_name_availability_input: Union[_models.CheckEndpointNameAvailabilityInput, IO],
+        check_endpoint_name_availability_input: Union[_models.CheckEndpointNameAvailabilityInput, IO[bytes]],
         **kwargs: Any
     ) -> _models.CheckEndpointNameAvailabilityOutput:
         """Check the availability of an afdx endpoint name, and return the globally unique endpoint host
@@ -139,13 +137,9 @@ class AFDProfilesOperations:
          unique within the resource group. Required.
         :type profile_name: str
         :param check_endpoint_name_availability_input: Input to check. Is either a
-         CheckEndpointNameAvailabilityInput type or a IO type. Required.
+         CheckEndpointNameAvailabilityInput type or a IO[bytes] type. Required.
         :type check_endpoint_name_availability_input:
-         ~azure.mgmt.cdn.models.CheckEndpointNameAvailabilityInput or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.cdn.models.CheckEndpointNameAvailabilityInput or IO[bytes]
         :return: CheckEndpointNameAvailabilityOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.CheckEndpointNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -173,7 +167,7 @@ class AFDProfilesOperations:
         else:
             _json = self._serialize.body(check_endpoint_name_availability_input, "CheckEndpointNameAvailabilityInput")
 
-        request = build_check_endpoint_name_availability_request(
+        _request = build_check_endpoint_name_availability_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             subscription_id=self._config.subscription_id,
@@ -181,16 +175,15 @@ class AFDProfilesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.check_endpoint_name_availability.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -203,13 +196,9 @@ class AFDProfilesOperations:
         deserialized = self._deserialize("CheckEndpointNameAvailabilityOutput", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_endpoint_name_availability.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/checkEndpointNameAvailability"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_resource_usage(
@@ -222,7 +211,6 @@ class AFDProfilesOperations:
         :param profile_name: Name of the Azure Front Door Standard or Azure Front Door Premium profile
          which is unique within the resource group. Required.
         :type profile_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Usage or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cdn.models.Usage]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -244,17 +232,16 @@ class AFDProfilesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_resource_usage_request(
+                _request = build_list_resource_usage_request(
                     resource_group_name=resource_group_name,
                     profile_name=profile_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_resource_usage.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -266,13 +253,13 @@ class AFDProfilesOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("UsagesListResult", pipeline_response)
@@ -282,11 +269,11 @@ class AFDProfilesOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -298,10 +285,6 @@ class AFDProfilesOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_resource_usage.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/usages"
-    }
 
     @overload
     async def check_host_name_availability(
@@ -326,7 +309,6 @@ class AFDProfilesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -337,7 +319,7 @@ class AFDProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        check_host_name_availability_input: IO,
+        check_host_name_availability_input: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -351,11 +333,10 @@ class AFDProfilesOperations:
          which is unique within the resource group. Required.
         :type profile_name: str
         :param check_host_name_availability_input: Custom domain to be validated. Required.
-        :type check_host_name_availability_input: IO
+        :type check_host_name_availability_input: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -366,7 +347,7 @@ class AFDProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        check_host_name_availability_input: Union[_models.CheckHostNameAvailabilityInput, IO],
+        check_host_name_availability_input: Union[_models.CheckHostNameAvailabilityInput, IO[bytes]],
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityOutput:
         """Validates the custom domain mapping to ensure it maps to the correct Azure Front Door endpoint
@@ -378,13 +359,9 @@ class AFDProfilesOperations:
          which is unique within the resource group. Required.
         :type profile_name: str
         :param check_host_name_availability_input: Custom domain to be validated. Is either a
-         CheckHostNameAvailabilityInput type or a IO type. Required.
+         CheckHostNameAvailabilityInput type or a IO[bytes] type. Required.
         :type check_host_name_availability_input: ~azure.mgmt.cdn.models.CheckHostNameAvailabilityInput
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         or IO[bytes]
         :return: CheckNameAvailabilityOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -412,7 +389,7 @@ class AFDProfilesOperations:
         else:
             _json = self._serialize.body(check_host_name_availability_input, "CheckHostNameAvailabilityInput")
 
-        request = build_check_host_name_availability_request(
+        _request = build_check_host_name_availability_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             subscription_id=self._config.subscription_id,
@@ -420,16 +397,15 @@ class AFDProfilesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.check_host_name_availability.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -442,13 +418,9 @@ class AFDProfilesOperations:
         deserialized = self._deserialize("CheckNameAvailabilityOutput", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_host_name_availability.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/checkHostNameAvailability"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def validate_secret(
@@ -472,7 +444,6 @@ class AFDProfilesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ValidateSecretOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.ValidateSecretOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -483,7 +454,7 @@ class AFDProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        validate_secret_input: IO,
+        validate_secret_input: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -496,11 +467,10 @@ class AFDProfilesOperations:
          unique within the resource group. Required.
         :type profile_name: str
         :param validate_secret_input: The Secret source. Required.
-        :type validate_secret_input: IO
+        :type validate_secret_input: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ValidateSecretOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.ValidateSecretOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -511,7 +481,7 @@ class AFDProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        validate_secret_input: Union[_models.ValidateSecretInput, IO],
+        validate_secret_input: Union[_models.ValidateSecretInput, IO[bytes]],
         **kwargs: Any
     ) -> _models.ValidateSecretOutput:
         """Validate a Secret in the profile.
@@ -521,13 +491,9 @@ class AFDProfilesOperations:
         :param profile_name: Name of the Azure Front Door Standard or Azure Front Door Premium which is
          unique within the resource group. Required.
         :type profile_name: str
-        :param validate_secret_input: The Secret source. Is either a ValidateSecretInput type or a IO
-         type. Required.
-        :type validate_secret_input: ~azure.mgmt.cdn.models.ValidateSecretInput or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param validate_secret_input: The Secret source. Is either a ValidateSecretInput type or a
+         IO[bytes] type. Required.
+        :type validate_secret_input: ~azure.mgmt.cdn.models.ValidateSecretInput or IO[bytes]
         :return: ValidateSecretOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.ValidateSecretOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -555,7 +521,7 @@ class AFDProfilesOperations:
         else:
             _json = self._serialize.body(validate_secret_input, "ValidateSecretInput")
 
-        request = build_validate_secret_request(
+        _request = build_validate_secret_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             subscription_id=self._config.subscription_id,
@@ -563,16 +529,15 @@ class AFDProfilesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.validate_secret.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -585,19 +550,15 @@ class AFDProfilesOperations:
         deserialized = self._deserialize("ValidateSecretOutput", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    validate_secret.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/validateSecret"
-    }
+        return deserialized  # type: ignore
 
     async def _upgrade_initial(
         self,
         resource_group_name: str,
         profile_name: str,
-        profile_upgrade_parameters: Union[_models.ProfileUpgradeParameters, IO],
+        profile_upgrade_parameters: Union[_models.ProfileUpgradeParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Profile:
         error_map = {
@@ -623,7 +584,7 @@ class AFDProfilesOperations:
         else:
             _json = self._serialize.body(profile_upgrade_parameters, "ProfileUpgradeParameters")
 
-        request = build_upgrade_request(
+        _request = build_upgrade_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             subscription_id=self._config.subscription_id,
@@ -631,16 +592,15 @@ class AFDProfilesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._upgrade_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -664,10 +624,6 @@ class AFDProfilesOperations:
 
         return deserialized  # type: ignore
 
-    _upgrade_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/upgrade"
-    }
-
     @overload
     async def begin_upgrade(
         self,
@@ -690,14 +646,6 @@ class AFDProfilesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Profile or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Profile]
@@ -709,7 +657,7 @@ class AFDProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        profile_upgrade_parameters: IO,
+        profile_upgrade_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -722,18 +670,10 @@ class AFDProfilesOperations:
          unique within the resource group. Required.
         :type profile_name: str
         :param profile_upgrade_parameters: Profile upgrade input parameter. Required.
-        :type profile_upgrade_parameters: IO
+        :type profile_upgrade_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Profile or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Profile]
@@ -745,7 +685,7 @@ class AFDProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        profile_upgrade_parameters: Union[_models.ProfileUpgradeParameters, IO],
+        profile_upgrade_parameters: Union[_models.ProfileUpgradeParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Profile]:
         """Upgrade a profile from Standard_AzureFrontDoor to Premium_AzureFrontDoor.
@@ -756,19 +696,8 @@ class AFDProfilesOperations:
          unique within the resource group. Required.
         :type profile_name: str
         :param profile_upgrade_parameters: Profile upgrade input parameter. Is either a
-         ProfileUpgradeParameters type or a IO type. Required.
-        :type profile_upgrade_parameters: ~azure.mgmt.cdn.models.ProfileUpgradeParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ProfileUpgradeParameters type or a IO[bytes] type. Required.
+        :type profile_upgrade_parameters: ~azure.mgmt.cdn.models.ProfileUpgradeParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either Profile or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Profile]
@@ -800,7 +729,7 @@ class AFDProfilesOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Profile", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -812,14 +741,12 @@ class AFDProfilesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.Profile].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_upgrade.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/upgrade"
-    }
+        return AsyncLROPoller[_models.Profile](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )

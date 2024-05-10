@@ -17,7 +17,7 @@ autorest SWAGGER.md
 
 ```yaml
 tag: package-2024-06-15-preview
-require: https://github.com/Azure/azure-rest-api-specs/blob/278b09bfc74c1b53f26f02a133d6b06ba6f69adf/specification/communication/data-plane/CallAutomation/readme.md
+require: https://github.com/Azure/azure-rest-api-specs/blob/1d243cd0c23974d0f8e0ec49fad0df0183e407e3/specification/communication/data-plane/CallAutomation/readme.md
 output-folder: ../azure/communication/callautomation/_generated
 models-mode: msrest
 namespace: azure.communication.callautomation
@@ -49,10 +49,6 @@ directive:
   where: $.definitions.RecordingFormatType.x-ms-enum
   transform: >
     $["name"] = "RecordingFormat";
-- from: swagger-document
-  where: $.definitions.RecordingStorageType.x-ms-enum
-  transform: >
-    $["name"] = "RecordingStorageKind";
 - from: swagger-document
   where: $.definitions.Tone.x-ms-enum
   transform: >

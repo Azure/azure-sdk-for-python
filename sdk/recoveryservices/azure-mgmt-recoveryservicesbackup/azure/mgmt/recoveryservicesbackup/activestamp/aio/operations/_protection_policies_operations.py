@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -73,7 +73,6 @@ class ProtectionPoliciesOperations:
         :type resource_group_name: str
         :param policy_name: Backup policy information to be fetched. Required.
         :type policy_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProtectionPolicyResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionPolicyResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -92,22 +91,21 @@ class ProtectionPoliciesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ProtectionPolicyResource] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             policy_name=policy_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -119,13 +117,9 @@ class ProtectionPoliciesOperations:
         deserialized = self._deserialize("ProtectionPolicyResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupPolicies/{policyName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def create_or_update(
@@ -134,6 +128,7 @@ class ProtectionPoliciesOperations:
         resource_group_name: str,
         policy_name: str,
         parameters: _models.ProtectionPolicyResource,
+        x_ms_authorization_auxiliary: Optional[str] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -152,10 +147,11 @@ class ProtectionPoliciesOperations:
         :param parameters: resource backup policy. Required.
         :type parameters:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionPolicyResource
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProtectionPolicyResource or None or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionPolicyResource or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -167,7 +163,8 @@ class ProtectionPoliciesOperations:
         vault_name: str,
         resource_group_name: str,
         policy_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
+        x_ms_authorization_auxiliary: Optional[str] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -184,11 +181,12 @@ class ProtectionPoliciesOperations:
         :param policy_name: Backup policy to be created. Required.
         :type policy_name: str
         :param parameters: resource backup policy. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProtectionPolicyResource or None or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionPolicyResource or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -200,7 +198,8 @@ class ProtectionPoliciesOperations:
         vault_name: str,
         resource_group_name: str,
         policy_name: str,
-        parameters: Union[_models.ProtectionPolicyResource, IO],
+        parameters: Union[_models.ProtectionPolicyResource, IO[bytes]],
+        x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[_models.ProtectionPolicyResource]:
         """Creates or modifies a backup policy. This is an asynchronous operation. Status of the operation
@@ -214,14 +213,12 @@ class ProtectionPoliciesOperations:
         :type resource_group_name: str
         :param policy_name: Backup policy to be created. Required.
         :type policy_name: str
-        :param parameters: resource backup policy. Is either a ProtectionPolicyResource type or a IO
-         type. Required.
+        :param parameters: resource backup policy. Is either a ProtectionPolicyResource type or a
+         IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionPolicyResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionPolicyResource or IO[bytes]
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
         :return: ProtectionPolicyResource or None or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionPolicyResource or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -249,25 +246,25 @@ class ProtectionPoliciesOperations:
         else:
             _json = self._serialize.body(parameters, "ProtectionPolicyResource")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             policy_name=policy_name,
             subscription_id=self._config.subscription_id,
+            x_ms_authorization_auxiliary=x_ms_authorization_auxiliary,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -281,13 +278,9 @@ class ProtectionPoliciesOperations:
             deserialized = self._deserialize("ProtectionPolicyResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupPolicies/{policyName}"
-    }
+        return deserialized  # type: ignore
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, vault_name: str, resource_group_name: str, policy_name: str, **kwargs: Any
@@ -306,22 +299,21 @@ class ProtectionPoliciesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             policy_name=policy_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -331,11 +323,7 @@ class ProtectionPoliciesOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupPolicies/{policyName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(
@@ -352,14 +340,6 @@ class ProtectionPoliciesOperations:
         :type resource_group_name: str
         :param policy_name: Backup policy to be deleted. Required.
         :type policy_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -387,7 +367,7 @@ class ProtectionPoliciesOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -396,14 +376,10 @@ class ProtectionPoliciesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupPolicies/{policyName}"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

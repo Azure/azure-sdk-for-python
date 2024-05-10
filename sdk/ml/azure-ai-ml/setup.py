@@ -81,7 +81,7 @@ setup(
         "pyjwt",
         "azure-storage-blob>=12.10.0",
         "azure-storage-file-share",
-        "azure-storage-file-datalake",
+        "azure-storage-file-datalake>=12.2.0",
         "pydash>=6.0.0",
         "isodate",
         "azure-common>=1.1",

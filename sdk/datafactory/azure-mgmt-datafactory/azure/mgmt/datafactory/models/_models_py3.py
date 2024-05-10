@@ -69,7 +69,7 @@ class Activity(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ControlActivity, ExecuteWranglingDataflowActivity, ExecutionActivity
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -163,7 +163,7 @@ class Activity(_serialization.Model):
 class ActivityDependency(_serialization.Model):
     """Activity dependency information.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -382,7 +382,7 @@ class ActivityRun(_serialization.Model):  # pylint: disable=too-many-instance-at
 class ActivityRunsQueryResponse(_serialization.Model):
     """A list activity runs.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of activity runs. Required.
     :vartype value: list[~azure.mgmt.datafactory.models.ActivityRun]
@@ -504,7 +504,7 @@ class LinkedService(_serialization.Model):
     TeradataLinkedService, TwilioLinkedService, VerticaLinkedService, WarehouseLinkedService,
     WebLinkedService, XeroLinkedService, ZendeskLinkedService, ZohoLinkedService
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -695,7 +695,7 @@ class LinkedService(_serialization.Model):
 class AmazonMWSLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Amazon Marketplace Web Service linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -884,7 +884,7 @@ class Dataset(_serialization.Model):
     VerticaTableDataset, WarehouseTableDataset, WebTableDataset, XeroObjectDataset, XmlDataset,
     ZohoObjectDataset
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -1086,7 +1086,7 @@ class Dataset(_serialization.Model):
 class AmazonMWSObjectDataset(Dataset):
     """Amazon Marketplace Web Service dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -1199,7 +1199,7 @@ class CopySource(_serialization.Model):
     SalesforceServiceCloudSource, SalesforceServiceCloudV2Source, SharePointOnlineListSource,
     SnowflakeSource, SnowflakeV2Source, TabularSource, WebSource, XmlSource
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -1332,7 +1332,7 @@ class TabularSource(CopySource):
     SqlSource, SquareSource, SybaseSource, TeradataSource, VerticaSource, WarehouseSource,
     XeroSource, ZohoSource
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -1494,7 +1494,7 @@ class TabularSource(CopySource):
 class AmazonMWSSource(TabularSource):
     """A copy activity Amazon Marketplace Web Service source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -1596,7 +1596,7 @@ class AmazonMWSSource(TabularSource):
 class AmazonRdsForOracleLinkedService(LinkedService):
     """AmazonRdsForOracle database.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -1745,7 +1745,7 @@ class AmazonRdsForOraclePartitionSettings(_serialization.Model):
 class AmazonRdsForOracleSource(CopySource):  # pylint: disable=too-many-instance-attributes
     """A copy activity AmazonRdsForOracle source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -1866,7 +1866,7 @@ class AmazonRdsForOracleSource(CopySource):  # pylint: disable=too-many-instance
 class AmazonRdsForOracleTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The AmazonRdsForOracle database dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -1979,7 +1979,7 @@ class AmazonRdsForOracleTableDataset(Dataset):  # pylint: disable=too-many-insta
 class AmazonRdsForSqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Amazon RDS for SQL Server linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -2092,7 +2092,7 @@ class AmazonRdsForSqlServerLinkedService(LinkedService):  # pylint: disable=too-
 class AmazonRdsForSqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attributes
     """A copy activity Amazon RDS for SQL Server source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -2247,7 +2247,7 @@ class AmazonRdsForSqlServerSource(TabularSource):  # pylint: disable=too-many-in
 class AmazonRdsForSqlServerTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The Amazon RDS for SQL Server dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -2360,7 +2360,7 @@ class AmazonRdsForSqlServerTableDataset(Dataset):  # pylint: disable=too-many-in
 class AmazonRedshiftLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for Amazon Redshift.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -2481,7 +2481,7 @@ class AmazonRedshiftLinkedService(LinkedService):  # pylint: disable=too-many-in
 class AmazonRedshiftSource(TabularSource):
     """A copy activity source for Amazon Redshift Source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -2592,7 +2592,7 @@ class AmazonRedshiftSource(TabularSource):
 class AmazonRedshiftTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The Amazon Redshift table dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -2714,7 +2714,7 @@ class AmazonRedshiftTableDataset(Dataset):  # pylint: disable=too-many-instance-
 class AmazonS3CompatibleLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for Amazon S3 Compatible.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -2836,7 +2836,7 @@ class DatasetLocation(_serialization.Model):
     GoogleCloudStorageLocation, HdfsLocation, HttpServerLocation, LakeHouseLocation,
     OracleCloudStorageLocation, SftpLocation
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -2910,7 +2910,7 @@ class DatasetLocation(_serialization.Model):
 class AmazonS3CompatibleLocation(DatasetLocation):
     """The location of Amazon S3 Compatible dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -2988,7 +2988,7 @@ class StoreReadSettings(_serialization.Model):
     FileServerReadSettings, FtpReadSettings, GoogleCloudStorageReadSettings, HdfsReadSettings,
     HttpReadSettings, LakeHouseReadSettings, OracleCloudStorageReadSettings, SftpReadSettings
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -3062,7 +3062,7 @@ class StoreReadSettings(_serialization.Model):
 class AmazonS3CompatibleReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-attributes
     """Amazon S3 Compatible read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -3211,7 +3211,7 @@ class AmazonS3CompatibleReadSettings(StoreReadSettings):  # pylint: disable=too-
 class AmazonS3Dataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """A single Amazon Simple Storage Service (S3) object or a set of S3 objects.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -3375,7 +3375,7 @@ class AmazonS3Dataset(Dataset):  # pylint: disable=too-many-instance-attributes
 class AmazonS3LinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for Amazon S3.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -3496,7 +3496,7 @@ class AmazonS3LinkedService(LinkedService):  # pylint: disable=too-many-instance
 class AmazonS3Location(DatasetLocation):
     """The location of amazon S3 dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -3568,7 +3568,7 @@ class AmazonS3Location(DatasetLocation):
 class AmazonS3ReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-attributes
     """Amazon S3 read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -3722,7 +3722,7 @@ class ControlActivity(Activity):
     IfConditionActivity, SetVariableActivity, SwitchActivity, UntilActivity, ValidationActivity,
     WaitActivity, WebHookActivity
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -3827,7 +3827,7 @@ class ControlActivity(Activity):
 class AppendVariableActivity(ControlActivity):
     """Append value for a Variable of type Array.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -3931,7 +3931,7 @@ class AppendVariableActivity(ControlActivity):
 class AppFiguresLinkedService(LinkedService):
     """Linked service for AppFigures.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -4047,7 +4047,7 @@ class ArmIdWrapper(_serialization.Model):
 class AsanaLinkedService(LinkedService):
     """Linked service for Asana.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -4131,7 +4131,7 @@ class AsanaLinkedService(LinkedService):
 class AvroDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Avro dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -4253,7 +4253,7 @@ class DatasetStorageFormat(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AvroFormat, JsonFormat, OrcFormat, ParquetFormat, TextFormat
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -4314,7 +4314,7 @@ class DatasetStorageFormat(_serialization.Model):
 class AvroFormat(DatasetStorageFormat):
     """The data stored in Avro format.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -4375,7 +4375,7 @@ class CopySink(_serialization.Model):
     SalesforceServiceCloudV2Sink, SalesforceSink, SalesforceV2Sink, SapCloudForCustomerSink,
     SnowflakeSink, SnowflakeV2Sink, SqlDWSink, SqlMISink, SqlServerSink, SqlSink, WarehouseSink
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -4515,7 +4515,7 @@ class CopySink(_serialization.Model):
 class AvroSink(CopySink):
     """A copy activity Avro sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -4622,7 +4622,7 @@ class AvroSink(CopySink):
 class AvroSource(CopySource):
     """A copy activity Avro source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -4717,7 +4717,7 @@ class FormatWriteSettings(_serialization.Model):
     AvroWriteSettings, DelimitedTextWriteSettings, JsonWriteSettings, OrcWriteSettings,
     ParquetWriteSettings
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -4759,7 +4759,7 @@ class FormatWriteSettings(_serialization.Model):
 class AvroWriteSettings(FormatWriteSettings):
     """Avro write settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -4832,7 +4832,7 @@ class CustomSetupBase(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzPowerShellSetup, CmdkeySetup, ComponentSetup, EnvironmentVariableSetup
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of custom setup. Required.
     :vartype type: str
@@ -4864,7 +4864,7 @@ class CustomSetupBase(_serialization.Model):
 class AzPowerShellSetup(CustomSetupBase):
     """The express custom setup of installing Azure PowerShell.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of custom setup. Required.
     :vartype type: str
@@ -4895,7 +4895,7 @@ class AzPowerShellSetup(CustomSetupBase):
 class AzureBatchLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Azure Batch linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -5023,7 +5023,7 @@ class AzureBatchLinkedService(LinkedService):  # pylint: disable=too-many-instan
 class AzureBlobDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The Azure Blob storage.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -5177,7 +5177,7 @@ class AzureBlobDataset(Dataset):  # pylint: disable=too-many-instance-attributes
 class AzureBlobFSDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The Azure Data Lake Storage Gen2 storage.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -5304,7 +5304,7 @@ class AzureBlobFSDataset(Dataset):  # pylint: disable=too-many-instance-attribut
 class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Azure Data Lake Storage Gen2 linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -5485,7 +5485,7 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
 class AzureBlobFSLocation(DatasetLocation):
     """The location of azure blobFS dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -5548,7 +5548,7 @@ class AzureBlobFSLocation(DatasetLocation):
 class AzureBlobFSReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-attributes
     """Azure blobFS read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -5688,7 +5688,7 @@ class AzureBlobFSReadSettings(StoreReadSettings):  # pylint: disable=too-many-in
 class AzureBlobFSSink(CopySink):
     """A copy activity Azure Data Lake Storage Gen2 sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -5799,7 +5799,7 @@ class AzureBlobFSSink(CopySink):
 class AzureBlobFSSource(CopySource):
     """A copy activity Azure BlobFS source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -5906,7 +5906,7 @@ class StoreWriteSettings(_serialization.Model):
     AzureFileStorageWriteSettings, FileServerWriteSettings, LakeHouseWriteSettings,
     SftpWriteSettings
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -5989,7 +5989,7 @@ class StoreWriteSettings(_serialization.Model):
 class AzureBlobFSWriteSettings(StoreWriteSettings):
     """Azure blobFS write settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -6071,7 +6071,7 @@ class AzureBlobFSWriteSettings(StoreWriteSettings):
 class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """The azure blob storage linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -6266,7 +6266,7 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
 class AzureBlobStorageLocation(DatasetLocation):
     """The location of azure blob dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -6329,7 +6329,7 @@ class AzureBlobStorageLocation(DatasetLocation):
 class AzureBlobStorageReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-attributes
     """Azure blob read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -6478,7 +6478,7 @@ class AzureBlobStorageReadSettings(StoreReadSettings):  # pylint: disable=too-ma
 class AzureBlobStorageWriteSettings(StoreWriteSettings):
     """Azure blob write settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -6560,7 +6560,7 @@ class AzureBlobStorageWriteSettings(StoreWriteSettings):
 class AzureDatabricksDeltaLakeDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Azure Databricks Delta Lake dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -6674,7 +6674,7 @@ class ExportSettings(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureDatabricksDeltaLakeExportCommand, SnowflakeExportCopyCommand
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -6713,7 +6713,7 @@ class ExportSettings(_serialization.Model):
 class AzureDatabricksDeltaLakeExportCommand(ExportSettings):
     """Azure Databricks Delta Lake export command settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -6770,7 +6770,7 @@ class ImportSettings(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureDatabricksDeltaLakeImportCommand, SnowflakeImportCopyCommand
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -6809,7 +6809,7 @@ class ImportSettings(_serialization.Model):
 class AzureDatabricksDeltaLakeImportCommand(ImportSettings):
     """Azure Databricks Delta Lake import command settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -6863,7 +6863,7 @@ class AzureDatabricksDeltaLakeImportCommand(ImportSettings):
 class AzureDatabricksDeltaLakeLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Azure Databricks Delta Lake linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -6985,7 +6985,7 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):  # pylint: disable=t
 class AzureDatabricksDeltaLakeSink(CopySink):
     """A copy activity Azure Databricks Delta Lake sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -7095,7 +7095,7 @@ class AzureDatabricksDeltaLakeSink(CopySink):
 class AzureDatabricksDeltaLakeSource(CopySource):
     """A copy activity Azure Databricks Delta Lake source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -7187,7 +7187,7 @@ class AzureDatabricksDeltaLakeSource(CopySource):
 class AzureDatabricksLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Azure Databricks linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -7454,7 +7454,7 @@ class ExecutionActivity(Activity):
     HDInsightStreamingActivity, LookupActivity, ScriptActivity, SynapseSparkJobDefinitionActivity,
     SqlServerStoredProcedureActivity, SynapseNotebookActivity, WebActivity
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -7587,7 +7587,7 @@ class ExecutionActivity(Activity):
 class AzureDataExplorerCommandActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Azure Data Explorer command activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -7708,7 +7708,7 @@ class AzureDataExplorerCommandActivity(ExecutionActivity):  # pylint: disable=to
 class AzureDataExplorerLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Azure Data Explorer (Kusto) linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -7831,7 +7831,7 @@ class AzureDataExplorerLinkedService(LinkedService):  # pylint: disable=too-many
 class AzureDataExplorerSink(CopySink):  # pylint: disable=too-many-instance-attributes
     """A copy activity Azure Data Explorer sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -7951,7 +7951,7 @@ class AzureDataExplorerSink(CopySink):  # pylint: disable=too-many-instance-attr
 class AzureDataExplorerSource(CopySource):
     """A copy activity Azure Data Explorer (Kusto) source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -8063,7 +8063,7 @@ class AzureDataExplorerSource(CopySource):
 class AzureDataExplorerTableDataset(Dataset):
     """The Azure Data Explorer (Kusto) dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -8167,7 +8167,7 @@ class AzureDataExplorerTableDataset(Dataset):
 class AzureDataLakeAnalyticsLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Azure Data Lake Analytics linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -8308,7 +8308,7 @@ class AzureDataLakeAnalyticsLinkedService(LinkedService):  # pylint: disable=too
 class AzureDataLakeStoreDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Azure Data Lake Store dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -8437,7 +8437,7 @@ class AzureDataLakeStoreDataset(Dataset):  # pylint: disable=too-many-instance-a
 class AzureDataLakeStoreLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Azure Data Lake Store linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -8595,7 +8595,7 @@ class AzureDataLakeStoreLinkedService(LinkedService):  # pylint: disable=too-man
 class AzureDataLakeStoreLocation(DatasetLocation):
     """The location of azure data lake store dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -8649,7 +8649,7 @@ class AzureDataLakeStoreLocation(DatasetLocation):
 class AzureDataLakeStoreReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-attributes
     """Azure data lake store read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -8811,7 +8811,7 @@ class AzureDataLakeStoreReadSettings(StoreReadSettings):  # pylint: disable=too-
 class AzureDataLakeStoreSink(CopySink):
     """A copy activity Azure Data Lake Store sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -8920,7 +8920,7 @@ class AzureDataLakeStoreSink(CopySink):
 class AzureDataLakeStoreSource(CopySource):
     """A copy activity Azure Data Lake source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -9004,7 +9004,7 @@ class AzureDataLakeStoreSource(CopySource):
 class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
     """Azure data lake store write settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -9088,7 +9088,7 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
 class AzureFileStorageLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Azure File Storage linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -9237,7 +9237,7 @@ class AzureFileStorageLinkedService(LinkedService):  # pylint: disable=too-many-
 class AzureFileStorageLocation(DatasetLocation):
     """The location of file server dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -9291,7 +9291,7 @@ class AzureFileStorageLocation(DatasetLocation):
 class AzureFileStorageReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-attributes
     """Azure File Storage read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -9440,7 +9440,7 @@ class AzureFileStorageReadSettings(StoreReadSettings):  # pylint: disable=too-ma
 class AzureFileStorageWriteSettings(StoreWriteSettings):
     """Azure File Storage write settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -9513,7 +9513,7 @@ class AzureFileStorageWriteSettings(StoreWriteSettings):
 class AzureFunctionActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Azure Function activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -9548,7 +9548,7 @@ class AzureFunctionActivity(ExecutionActivity):  # pylint: disable=too-many-inst
     :ivar headers: Represents the headers that will be sent to the request. For example, to set the
      language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
      "application/json" }. Type: string (or Expression with resultType string).
-    :vartype headers: dict[str, str]
+    :vartype headers: dict[str, JSON]
     :ivar body: Represents the payload that will be sent to the endpoint. Required for POST/PUT
      method, not allowed for GET method Type: string (or Expression with resultType string).
     :vartype body: JSON
@@ -9574,7 +9574,7 @@ class AzureFunctionActivity(ExecutionActivity):  # pylint: disable=too-many-inst
         "policy": {"key": "policy", "type": "ActivityPolicy"},
         "method": {"key": "typeProperties.method", "type": "str"},
         "function_name": {"key": "typeProperties.functionName", "type": "object"},
-        "headers": {"key": "typeProperties.headers", "type": "{str}"},
+        "headers": {"key": "typeProperties.headers", "type": "{object}"},
         "body": {"key": "typeProperties.body", "type": "object"},
     }
 
@@ -9592,7 +9592,7 @@ class AzureFunctionActivity(ExecutionActivity):  # pylint: disable=too-many-inst
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
-        headers: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, JSON]] = None,
         body: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -9628,7 +9628,7 @@ class AzureFunctionActivity(ExecutionActivity):  # pylint: disable=too-many-inst
         :keyword headers: Represents the headers that will be sent to the request. For example, to set
          the language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
          "application/json" }. Type: string (or Expression with resultType string).
-        :paramtype headers: dict[str, str]
+        :paramtype headers: dict[str, JSON]
         :keyword body: Represents the payload that will be sent to the endpoint. Required for POST/PUT
          method, not allowed for GET method Type: string (or Expression with resultType string).
         :paramtype body: JSON
@@ -9655,7 +9655,7 @@ class AzureFunctionActivity(ExecutionActivity):  # pylint: disable=too-many-inst
 class AzureFunctionLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Azure Function linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -9775,7 +9775,7 @@ class AzureFunctionLinkedService(LinkedService):  # pylint: disable=too-many-ins
 class AzureKeyVaultLinkedService(LinkedService):
     """Azure Key Vault linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -9862,7 +9862,7 @@ class SecretBase(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureKeyVaultSecretReference, SecureString
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of the secret. Required.
     :vartype type: str
@@ -9887,7 +9887,7 @@ class SecretBase(_serialization.Model):
 class AzureKeyVaultSecretReference(SecretBase):
     """Azure Key Vault secret reference.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of the secret. Required.
     :vartype type: str
@@ -9942,7 +9942,7 @@ class AzureKeyVaultSecretReference(SecretBase):
 class AzureMariaDBLinkedService(LinkedService):
     """Azure Database for MariaDB linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -10034,7 +10034,7 @@ class AzureMariaDBLinkedService(LinkedService):
 class AzureMariaDBSource(TabularSource):
     """A copy activity Azure MariaDB source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -10136,7 +10136,7 @@ class AzureMariaDBSource(TabularSource):
 class AzureMariaDBTableDataset(Dataset):
     """Azure Database for MariaDB dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -10238,7 +10238,7 @@ class AzureMariaDBTableDataset(Dataset):
 class AzureMLBatchExecutionActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Azure ML Batch Execution activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -10378,7 +10378,7 @@ class AzureMLBatchExecutionActivity(ExecutionActivity):  # pylint: disable=too-m
 class AzureMLExecutePipelineActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Azure ML Execute Pipeline activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -10565,7 +10565,7 @@ class AzureMLExecutePipelineActivity(ExecutionActivity):  # pylint: disable=too-
 class AzureMLLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Azure ML Studio Web Service linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -10706,7 +10706,7 @@ class AzureMLLinkedService(LinkedService):  # pylint: disable=too-many-instance-
 class AzureMLServiceLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Azure ML Service linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -10850,7 +10850,7 @@ class AzureMLServiceLinkedService(LinkedService):  # pylint: disable=too-many-in
 class AzureMLUpdateResourceActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Azure ML Update Resource management activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -10989,7 +10989,7 @@ class AzureMLUpdateResourceActivity(ExecutionActivity):  # pylint: disable=too-m
 class AzureMLWebServiceFile(_serialization.Model):
     """Azure ML WebService Input/Output file.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar file_path: The relative file path, including container name, in the Azure Blob Storage
      specified by the LinkedService. Type: string (or Expression with resultType string). Required.
@@ -11028,7 +11028,7 @@ class AzureMLWebServiceFile(_serialization.Model):
 class AzureMySqlLinkedService(LinkedService):
     """Azure MySQL database linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -11121,7 +11121,7 @@ class AzureMySqlLinkedService(LinkedService):
 class AzureMySqlSink(CopySink):
     """A copy activity Azure MySql sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -11223,7 +11223,7 @@ class AzureMySqlSink(CopySink):
 class AzureMySqlSource(TabularSource):
     """A copy activity Azure MySQL source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -11323,7 +11323,7 @@ class AzureMySqlSource(TabularSource):
 class AzureMySqlTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The Azure MySQL database dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -11436,7 +11436,7 @@ class AzureMySqlTableDataset(Dataset):  # pylint: disable=too-many-instance-attr
 class AzurePostgreSqlLinkedService(LinkedService):
     """Azure PostgreSQL linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -11528,7 +11528,7 @@ class AzurePostgreSqlLinkedService(LinkedService):
 class AzurePostgreSqlSink(CopySink):
     """A copy activity Azure PostgreSQL sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -11630,7 +11630,7 @@ class AzurePostgreSqlSink(CopySink):
 class AzurePostgreSqlSource(TabularSource):
     """A copy activity Azure PostgreSQL source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -11732,7 +11732,7 @@ class AzurePostgreSqlSource(TabularSource):
 class AzurePostgreSqlTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Azure PostgreSQL dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -11854,7 +11854,7 @@ class AzurePostgreSqlTableDataset(Dataset):  # pylint: disable=too-many-instance
 class AzureQueueSink(CopySink):
     """A copy activity Azure Queue sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -11947,7 +11947,7 @@ class AzureQueueSink(CopySink):
 class AzureSearchIndexDataset(Dataset):
     """The Azure Search Index.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -12052,7 +12052,7 @@ class AzureSearchIndexDataset(Dataset):
 class AzureSearchIndexSink(CopySink):
     """A copy activity Azure Search Index sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -12156,7 +12156,7 @@ class AzureSearchIndexSink(CopySink):
 class AzureSearchLinkedService(LinkedService):
     """Linked service for Windows Azure Search Service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -12249,7 +12249,7 @@ class AzureSearchLinkedService(LinkedService):
 class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Microsoft Azure SQL Database linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -12398,7 +12398,7 @@ class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-
 class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Azure SQL Data Warehouse linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -12538,7 +12538,7 @@ class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instan
 class AzureSqlDWTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The Azure SQL Data Warehouse dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -12660,7 +12660,7 @@ class AzureSqlDWTableDataset(Dataset):  # pylint: disable=too-many-instance-attr
 class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Azure SQL Managed Instance linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -12809,7 +12809,7 @@ class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instan
 class AzureSqlMITableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The Azure SQL Managed Instance dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -12931,7 +12931,7 @@ class AzureSqlMITableDataset(Dataset):  # pylint: disable=too-many-instance-attr
 class AzureSqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
     """A copy activity Azure SQL sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -13104,7 +13104,7 @@ class AzureSqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
 class AzureSqlSource(TabularSource):  # pylint: disable=too-many-instance-attributes
     """A copy activity Azure SQL source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -13261,7 +13261,7 @@ class AzureSqlSource(TabularSource):  # pylint: disable=too-many-instance-attrib
 class AzureSqlTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The Azure SQL Server database dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -13383,7 +13383,7 @@ class AzureSqlTableDataset(Dataset):  # pylint: disable=too-many-instance-attrib
 class AzureStorageLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """The storage account linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -13491,7 +13491,7 @@ class AzureStorageLinkedService(LinkedService):  # pylint: disable=too-many-inst
 class AzureSynapseArtifactsLinkedService(LinkedService):
     """Azure Synapse Analytics (Artifacts) linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -13513,7 +13513,7 @@ class AzureSynapseArtifactsLinkedService(LinkedService):
      authentication method. Type: string (or Expression with resultType string).
     :vartype authentication: JSON
     :ivar workspace_resource_id: The resource ID of the Synapse workspace. The format should be:
-     /subscriptions/{subscriptionID}/resourceGroups/{resourceGroup}/providers/Microsoft.Synapse/workspaces/{workspaceName}.
+     /subscriptions/{subscriptionID}/resourceGroups/{resourceGroup}/providers/Microsoft.Synapse/workspaces/{workspaceName}.  # pylint: disable=line-too-long
      Type: string (or Expression with resultType string).
     :vartype workspace_resource_id: JSON
     """
@@ -13567,7 +13567,7 @@ class AzureSynapseArtifactsLinkedService(LinkedService):
          authentication method. Type: string (or Expression with resultType string).
         :paramtype authentication: JSON
         :keyword workspace_resource_id: The resource ID of the Synapse workspace. The format should be:
-         /subscriptions/{subscriptionID}/resourceGroups/{resourceGroup}/providers/Microsoft.Synapse/workspaces/{workspaceName}.
+         /subscriptions/{subscriptionID}/resourceGroups/{resourceGroup}/providers/Microsoft.Synapse/workspaces/{workspaceName}.  # pylint: disable=line-too-long
          Type: string (or Expression with resultType string).
         :paramtype workspace_resource_id: JSON
         """
@@ -13588,7 +13588,7 @@ class AzureSynapseArtifactsLinkedService(LinkedService):
 class AzureTableDataset(Dataset):
     """The Azure Table storage dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -13693,7 +13693,7 @@ class AzureTableDataset(Dataset):
 class AzureTableSink(CopySink):  # pylint: disable=too-many-instance-attributes
     """A copy activity Azure Table sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -13822,7 +13822,7 @@ class AzureTableSink(CopySink):  # pylint: disable=too-many-instance-attributes
 class AzureTableSource(TabularSource):
     """A copy activity Azure Table source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -13933,7 +13933,7 @@ class AzureTableSource(TabularSource):
 class AzureTableStorageLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """The azure table storage linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -14041,7 +14041,7 @@ class AzureTableStorageLinkedService(LinkedService):  # pylint: disable=too-many
 class BigDataPoolParametrizationReference(_serialization.Model):
     """Big data pool reference type.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Big data pool reference type. Required. "BigDataPoolReference"
     :vartype type: str or ~azure.mgmt.datafactory.models.BigDataPoolReferenceType
@@ -14078,7 +14078,7 @@ class BigDataPoolParametrizationReference(_serialization.Model):
 class BinaryDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Binary dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -14191,7 +14191,7 @@ class FormatReadSettings(_serialization.Model):
     BinaryReadSettings, DelimitedTextReadSettings, JsonReadSettings, ParquetReadSettings,
     XmlReadSettings
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -14233,7 +14233,7 @@ class FormatReadSettings(_serialization.Model):
 class BinaryReadSettings(FormatReadSettings):
     """Binary read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -14276,7 +14276,7 @@ class BinaryReadSettings(FormatReadSettings):
 class BinarySink(CopySink):
     """A copy activity Binary sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -14376,7 +14376,7 @@ class BinarySink(CopySink):
 class BinarySource(CopySource):
     """A copy activity Binary source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -14470,7 +14470,7 @@ class Trigger(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -14541,7 +14541,7 @@ class MultiplePipelineTrigger(Trigger):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -14614,7 +14614,7 @@ class BlobEventsTrigger(MultiplePipelineTrigger):  # pylint: disable=too-many-in
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -14726,7 +14726,7 @@ class BlobEventsTrigger(MultiplePipelineTrigger):  # pylint: disable=too-many-in
 class BlobSink(CopySink):  # pylint: disable=too-many-instance-attributes
     """A copy activity Azure Blob sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -14862,7 +14862,7 @@ class BlobSink(CopySink):  # pylint: disable=too-many-instance-attributes
 class BlobSource(CopySource):
     """A copy activity Azure Blob source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -14966,7 +14966,7 @@ class BlobTrigger(MultiplePipelineTrigger):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -15058,7 +15058,7 @@ class BlobTrigger(MultiplePipelineTrigger):
 class CassandraLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for Cassandra data source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -15177,7 +15177,7 @@ class CassandraLinkedService(LinkedService):  # pylint: disable=too-many-instanc
 class CassandraSource(TabularSource):
     """A copy activity source for a Cassandra database.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -15298,7 +15298,7 @@ class CassandraSource(TabularSource):
 class CassandraTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The Cassandra database dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -15416,7 +15416,7 @@ class ChainingTrigger(Trigger):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -15519,7 +15519,7 @@ class ChangeDataCaptureFolder(_serialization.Model):
 class ChangeDataCaptureListResponse(_serialization.Model):
     """A list of change data capture resources.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Lists all resources of type change data capture. Required.
     :vartype value: list[~azure.mgmt.datafactory.models.ChangeDataCaptureResource]
@@ -15593,7 +15593,7 @@ class ChangeDataCaptureResource(SubResource):  # pylint: disable=too-many-instan
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource identifier.
     :vartype id: str
@@ -15705,7 +15705,7 @@ class ChangeDataCaptureResource(SubResource):  # pylint: disable=too-many-instan
 class CloudError(_serialization.Model):
     """The object that defines the structure of an Azure Data Factory error response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: Error code. Required.
     :vartype code: str
@@ -15758,7 +15758,7 @@ class CloudError(_serialization.Model):
 class CmdkeySetup(CustomSetupBase):
     """The custom setup of running cmdkey commands.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of custom setup. Required.
     :vartype type: str
@@ -15825,7 +15825,7 @@ class CMKIdentityDefinition(_serialization.Model):
 class CommonDataServiceForAppsEntityDataset(Dataset):
     """The Common Data Service for Apps entity dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -15929,7 +15929,7 @@ class CommonDataServiceForAppsEntityDataset(Dataset):
 class CommonDataServiceForAppsLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Common Data Service for Apps linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -16130,7 +16130,7 @@ class CommonDataServiceForAppsLinkedService(LinkedService):  # pylint: disable=t
 class CommonDataServiceForAppsSink(CopySink):  # pylint: disable=too-many-instance-attributes
     """A copy activity Common Data Service for Apps sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -16251,7 +16251,7 @@ class CommonDataServiceForAppsSink(CopySink):  # pylint: disable=too-many-instan
 class CommonDataServiceForAppsSource(CopySource):
     """A copy activity Common Data Service for Apps source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -16344,7 +16344,7 @@ class CommonDataServiceForAppsSource(CopySource):
 class ComponentSetup(CustomSetupBase):
     """The custom setup of installing 3rd party components.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of custom setup. Required.
     :vartype type: str
@@ -16386,7 +16386,7 @@ class CompressionReadSettings(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     TarGZipReadSettings, TarReadSettings, ZipDeflateReadSettings
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -16426,7 +16426,7 @@ class CompressionReadSettings(_serialization.Model):
 class ConcurLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Concur Service linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -16565,7 +16565,7 @@ class ConcurLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
 class ConcurObjectDataset(Dataset):
     """Concur Service dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -16667,7 +16667,7 @@ class ConcurObjectDataset(Dataset):
 class ConcurSource(TabularSource):
     """A copy activity Concur Service source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -16802,7 +16802,7 @@ class ConnectionStateProperties(_serialization.Model):
 class CopyActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Copy activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -17131,7 +17131,7 @@ class CopyTranslator(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     TabularTranslator
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -17165,7 +17165,7 @@ class CopyTranslator(_serialization.Model):
 class CosmosDbLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Microsoft Azure Cosmos Database (CosmosDB) linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -17347,7 +17347,7 @@ class CosmosDbLinkedService(LinkedService):  # pylint: disable=too-many-instance
 class CosmosDbMongoDbApiCollectionDataset(Dataset):
     """The CosmosDB (MongoDB API) database dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -17452,7 +17452,7 @@ class CosmosDbMongoDbApiCollectionDataset(Dataset):
 class CosmosDbMongoDbApiLinkedService(LinkedService):
     """Linked service for CosmosDB (MongoDB API) data source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -17550,7 +17550,7 @@ class CosmosDbMongoDbApiLinkedService(LinkedService):
 class CosmosDbMongoDbApiSink(CopySink):
     """A copy activity sink for a CosmosDB (MongoDB API) database.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -17654,7 +17654,7 @@ class CosmosDbMongoDbApiSink(CopySink):
 class CosmosDbMongoDbApiSource(CopySource):  # pylint: disable=too-many-instance-attributes
     """A copy activity source for a CosmosDB (MongoDB API) database.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -17778,7 +17778,7 @@ class CosmosDbMongoDbApiSource(CopySource):  # pylint: disable=too-many-instance
 class CosmosDbSqlApiCollectionDataset(Dataset):
     """Microsoft Azure CosmosDB (SQL API) Collection dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -17883,7 +17883,7 @@ class CosmosDbSqlApiCollectionDataset(Dataset):
 class CosmosDbSqlApiSink(CopySink):
     """A copy activity Azure CosmosDB (SQL API) Collection sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -17985,7 +17985,7 @@ class CosmosDbSqlApiSink(CopySink):
 class CosmosDbSqlApiSource(CopySource):  # pylint: disable=too-many-instance-attributes
     """A copy activity Azure CosmosDB (SQL API) Collection source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -18103,7 +18103,7 @@ class CosmosDbSqlApiSource(CopySource):  # pylint: disable=too-many-instance-att
 class CouchbaseLinkedService(LinkedService):
     """Couchbase server linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -18195,7 +18195,7 @@ class CouchbaseLinkedService(LinkedService):
 class CouchbaseSource(TabularSource):
     """A copy activity Couchbase server source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -18297,7 +18297,7 @@ class CouchbaseSource(TabularSource):
 class CouchbaseTableDataset(Dataset):
     """Couchbase server dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -18528,7 +18528,7 @@ class CreateLinkedIntegrationRuntimeRequest(_serialization.Model):
 class CreateRunResponse(_serialization.Model):
     """Response body with a run identifier.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar run_id: Identifier of a run. Required.
     :vartype run_id: str
@@ -18558,7 +18558,7 @@ class Credential(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ManagedIdentityCredential, ServicePrincipalCredential
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -18613,10 +18613,10 @@ class Credential(_serialization.Model):
 class CredentialListResponse(_serialization.Model):
     """A list of credential resources.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of credentials. Required.
-    :vartype value: list[~azure.mgmt.datafactory.models.ManagedIdentityCredentialResource]
+    :vartype value: list[~azure.mgmt.datafactory.models.CredentialResource]
     :ivar next_link: The link to the next page of results, if any remaining results exist.
     :vartype next_link: str
     """
@@ -18626,20 +18626,16 @@ class CredentialListResponse(_serialization.Model):
     }
 
     _attribute_map = {
-        "value": {"key": "value", "type": "[ManagedIdentityCredentialResource]"},
+        "value": {"key": "value", "type": "[CredentialResource]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: List["_models.ManagedIdentityCredentialResource"],
-        next_link: Optional[str] = None,
-        **kwargs: Any
+        self, *, value: List["_models.CredentialResource"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of credentials. Required.
-        :paramtype value: list[~azure.mgmt.datafactory.models.ManagedIdentityCredentialResource]
+        :paramtype value: list[~azure.mgmt.datafactory.models.CredentialResource]
         :keyword next_link: The link to the next page of results, if any remaining results exist.
         :paramtype next_link: str
         """
@@ -18651,7 +18647,7 @@ class CredentialListResponse(_serialization.Model):
 class CredentialReference(_serialization.Model):
     """Credential reference type.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -18701,7 +18697,7 @@ class CredentialResource(SubResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource identifier.
     :vartype id: str
@@ -18743,7 +18739,7 @@ class CredentialResource(SubResource):
 class CustomActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Custom activity type.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -18939,7 +18935,7 @@ class CustomActivityReferenceObject(_serialization.Model):
 class CustomDataset(Dataset):
     """The custom dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -19041,7 +19037,7 @@ class CustomDataset(Dataset):
 class CustomDataSourceLinkedService(LinkedService):
     """Custom linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -19118,7 +19114,7 @@ class CustomEventsTrigger(MultiplePipelineTrigger):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -19217,7 +19213,7 @@ class CustomEventsTrigger(MultiplePipelineTrigger):
 class DatabricksNotebookActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """DatabricksNotebook activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -19348,7 +19344,7 @@ class DatabricksNotebookActivity(ExecutionActivity):  # pylint: disable=too-many
 class DatabricksSparkJarActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """DatabricksSparkJar activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -19477,7 +19473,7 @@ class DatabricksSparkJarActivity(ExecutionActivity):  # pylint: disable=too-many
 class DatabricksSparkPythonActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """DatabricksSparkPython activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -19607,7 +19603,7 @@ class DataFlow(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     Flowlet, MappingDataFlow, WranglingDataFlow
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of data flow. Required.
     :vartype type: str
@@ -19662,7 +19658,7 @@ class DataFlow(_serialization.Model):
 class DataFlowDebugCommandPayload(_serialization.Model):
     """Structure of command payload.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar stream_name: The stream name which is used for preview. Required.
     :vartype stream_name: str
@@ -19916,7 +19912,7 @@ class SubResourceDebugResource(_serialization.Model):
 class DataFlowDebugResource(SubResourceDebugResource):
     """Data flow debug resource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The resource name.
     :vartype name: str
@@ -20059,7 +20055,7 @@ class DataFlowFolder(_serialization.Model):
 class DataFlowListResponse(_serialization.Model):
     """A list of data flow resources.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of data flows. Required.
     :vartype value: list[~azure.mgmt.datafactory.models.DataFlowResource]
@@ -20093,7 +20089,7 @@ class DataFlowListResponse(_serialization.Model):
 class DataFlowReference(_serialization.Model):
     """Data flow reference type.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -20157,7 +20153,7 @@ class DataFlowResource(SubResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource identifier.
     :vartype id: str
@@ -20199,7 +20195,7 @@ class DataFlowResource(SubResource):
 class Transformation(_serialization.Model):
     """A data flow transformation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Transformation name. Required.
     :vartype name: str
@@ -20258,7 +20254,7 @@ class Transformation(_serialization.Model):
 class DataFlowSink(Transformation):
     """Transformation for data flow sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Transformation name. Required.
     :vartype name: str
@@ -20333,7 +20329,7 @@ class DataFlowSink(Transformation):
 class DataFlowSource(Transformation):
     """Transformation for data flow source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Transformation name. Required.
     :vartype name: str
@@ -20476,7 +20472,7 @@ class DataFlowStagingInfo(_serialization.Model):
 class DataLakeAnalyticsUSQLActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Data Lake Analytics U-SQL activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -20697,7 +20693,7 @@ class DataMapperMapping(_serialization.Model):
 class DatasetCompression(_serialization.Model):
     """The compression method used on a dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -20774,7 +20770,7 @@ class DatasetDataElement(_serialization.Model):
 class DatasetDebugResource(SubResourceDebugResource):
     """Dataset debug resource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The resource name.
     :vartype name: str
@@ -20825,7 +20821,7 @@ class DatasetFolder(_serialization.Model):
 class DatasetListResponse(_serialization.Model):
     """A list of dataset resources.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of datasets. Required.
     :vartype value: list[~azure.mgmt.datafactory.models.DatasetResource]
@@ -20859,7 +20855,7 @@ class DatasetListResponse(_serialization.Model):
 class DatasetReference(_serialization.Model):
     """Dataset reference type.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Dataset reference type. Required. "DatasetReference"
     :vartype type: str or ~azure.mgmt.datafactory.models.DatasetReferenceType
@@ -20907,7 +20903,7 @@ class DatasetResource(SubResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource identifier.
     :vartype id: str
@@ -20990,7 +20986,7 @@ class DatasetSchemaDataElement(_serialization.Model):
 class DataworldLinkedService(LinkedService):
     """Linked service for Dataworld.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -21074,7 +21070,7 @@ class DataworldLinkedService(LinkedService):
 class Db2LinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for DB2 data source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -21226,7 +21222,7 @@ class Db2LinkedService(LinkedService):  # pylint: disable=too-many-instance-attr
 class Db2Source(TabularSource):
     """A copy activity source for Db2 databases.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -21326,7 +21322,7 @@ class Db2Source(TabularSource):
 class Db2TableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The Db2 table dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -21446,7 +21442,7 @@ class Db2TableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
 class DeleteActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Delete activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -21620,7 +21616,7 @@ class DeleteDataFlowDebugSessionRequest(_serialization.Model):
 class DelimitedTextDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Delimited text dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -21803,7 +21799,7 @@ class DelimitedTextDataset(Dataset):  # pylint: disable=too-many-instance-attrib
 class DelimitedTextReadSettings(FormatReadSettings):
     """Delimited text read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -21855,7 +21851,7 @@ class DelimitedTextReadSettings(FormatReadSettings):
 class DelimitedTextSink(CopySink):
     """A copy activity DelimitedText sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -21962,7 +21958,7 @@ class DelimitedTextSink(CopySink):
 class DelimitedTextSource(CopySource):
     """A copy activity DelimitedText source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -22060,7 +22056,7 @@ class DelimitedTextSource(CopySource):
 class DelimitedTextWriteSettings(FormatWriteSettings):
     """Delimited text write settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -22138,7 +22134,7 @@ class DependencyReference(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     SelfDependencyTumblingWindowTriggerReference, TriggerDependencyReference
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of dependency reference. Required.
     :vartype type: str
@@ -22168,7 +22164,7 @@ class DependencyReference(_serialization.Model):
 class DistcpSettings(_serialization.Model):
     """Distcp settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar resource_manager_endpoint: Specifies the Yarn ResourceManager endpoint. Type: string (or
      Expression with resultType string). Required.
@@ -22222,7 +22218,7 @@ class DistcpSettings(_serialization.Model):
 class DocumentDbCollectionDataset(Dataset):
     """Microsoft Azure Document Database Collection dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -22327,7 +22323,7 @@ class DocumentDbCollectionDataset(Dataset):
 class DocumentDbCollectionSink(CopySink):
     """A copy activity Document Database Collection sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -22438,7 +22434,7 @@ class DocumentDbCollectionSink(CopySink):
 class DocumentDbCollectionSource(CopySource):
     """A copy activity Document Database Collection source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -22547,7 +22543,7 @@ class DocumentDbCollectionSource(CopySource):
 class DrillLinkedService(LinkedService):
     """Drill server linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -22639,7 +22635,7 @@ class DrillLinkedService(LinkedService):
 class DrillSource(TabularSource):
     """A copy activity Drill server source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -22741,7 +22737,7 @@ class DrillSource(TabularSource):
 class DrillTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Drill server dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -22934,7 +22930,7 @@ class DWCopyCommandSettings(_serialization.Model):
 class DynamicsAXLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Dynamics AX linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -23064,7 +23060,7 @@ class DynamicsAXLinkedService(LinkedService):  # pylint: disable=too-many-instan
 class DynamicsAXResourceDataset(Dataset):
     """The path of the Dynamics AX OData entity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -23169,7 +23165,7 @@ class DynamicsAXResourceDataset(Dataset):
 class DynamicsAXSource(TabularSource):
     """A copy activity Dynamics AX source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -23284,7 +23280,7 @@ class DynamicsAXSource(TabularSource):
 class DynamicsCrmEntityDataset(Dataset):
     """The Dynamics CRM entity dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -23388,7 +23384,7 @@ class DynamicsCrmEntityDataset(Dataset):
 class DynamicsCrmLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Dynamics CRM linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -23582,7 +23578,7 @@ class DynamicsCrmLinkedService(LinkedService):  # pylint: disable=too-many-insta
 class DynamicsCrmSink(CopySink):  # pylint: disable=too-many-instance-attributes
     """A copy activity Dynamics CRM sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -23703,7 +23699,7 @@ class DynamicsCrmSink(CopySink):  # pylint: disable=too-many-instance-attributes
 class DynamicsCrmSource(CopySource):
     """A copy activity Dynamics CRM source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -23796,7 +23792,7 @@ class DynamicsCrmSource(CopySource):
 class DynamicsEntityDataset(Dataset):
     """The Dynamics entity dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -23900,7 +23896,7 @@ class DynamicsEntityDataset(Dataset):
 class DynamicsLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Dynamics linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -24100,7 +24096,7 @@ class DynamicsLinkedService(LinkedService):  # pylint: disable=too-many-instance
 class DynamicsSink(CopySink):  # pylint: disable=too-many-instance-attributes
     """A copy activity Dynamics sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -24221,7 +24217,7 @@ class DynamicsSink(CopySink):  # pylint: disable=too-many-instance-attributes
 class DynamicsSource(CopySource):
     """A copy activity Dynamics source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -24314,7 +24310,7 @@ class DynamicsSource(CopySource):
 class EloquaLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Eloqua server linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -24444,7 +24440,7 @@ class EloquaLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
 class EloquaObjectDataset(Dataset):
     """Eloqua server dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -24546,7 +24542,7 @@ class EloquaObjectDataset(Dataset):
 class EloquaSource(TabularSource):
     """A copy activity Eloqua server source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -24648,7 +24644,7 @@ class EloquaSource(TabularSource):
 class EncryptionConfiguration(_serialization.Model):
     """Definition of CMK for the factory.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_name: The name of the key in Azure Key Vault to use as Customer Managed Key.
      Required.
@@ -24741,7 +24737,7 @@ class EntityReference(_serialization.Model):
 class EnvironmentVariableSetup(CustomSetupBase):
     """The custom setup of setting environment variable.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of custom setup. Required.
     :vartype type: str
@@ -24779,7 +24775,7 @@ class EnvironmentVariableSetup(CustomSetupBase):
 class ExcelDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Excel dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -24934,7 +24930,7 @@ class ExcelDataset(Dataset):  # pylint: disable=too-many-instance-attributes
 class ExcelSource(CopySource):
     """A copy activity excel source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -25025,7 +25021,7 @@ class ExcelSource(CopySource):
 class ExecuteDataFlowActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Execute data flow activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -25194,7 +25190,7 @@ class ExecuteDataFlowActivity(ExecutionActivity):  # pylint: disable=too-many-in
 class ExecuteDataFlowActivityTypeProperties(_serialization.Model):
     """Execute data flow activity properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar data_flow: Data flow reference. Required.
     :vartype data_flow: ~azure.mgmt.datafactory.models.DataFlowReference
@@ -25281,7 +25277,7 @@ class ExecuteDataFlowActivityTypeProperties(_serialization.Model):
         self.source_staging_concurrency = source_staging_concurrency
 
 
-class ExecuteDataFlowActivityTypePropertiesCompute(_serialization.Model):
+class ExecuteDataFlowActivityTypePropertiesCompute(_serialization.Model):  # pylint: disable=name-too-long
     """Compute properties for data flow activity.
 
     :ivar compute_type: Compute type of the cluster which will execute data flow job. Possible
@@ -25319,7 +25315,7 @@ class ExecuteDataFlowActivityTypePropertiesCompute(_serialization.Model):
 class ExecutePipelineActivity(ControlActivity):  # pylint: disable=too-many-instance-attributes
     """Execute pipeline activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -25474,7 +25470,7 @@ class ExecutePipelineActivityPolicy(_serialization.Model):
 class ExecutePowerQueryActivityTypeProperties(ExecuteDataFlowActivityTypeProperties):
     """Execute power query data flow activity properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar data_flow: Data flow reference. Required.
     :vartype data_flow: ~azure.mgmt.datafactory.models.DataFlowReference
@@ -25582,7 +25578,7 @@ class ExecutePowerQueryActivityTypeProperties(ExecuteDataFlowActivityTypePropert
 class ExecuteSSISPackageActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Execute SSIS package activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -25790,7 +25786,7 @@ class ExecuteSSISPackageActivity(ExecutionActivity):  # pylint: disable=too-many
 class ExecuteWranglingDataflowActivity(Activity):  # pylint: disable=too-many-instance-attributes
     """Execute power query activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -25968,7 +25964,7 @@ class ExecuteWranglingDataflowActivity(Activity):  # pylint: disable=too-many-in
 class ExposureControlBatchRequest(_serialization.Model):
     """A list of exposure control features.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar exposure_control_requests: List of exposure control features. Required.
     :vartype exposure_control_requests: list[~azure.mgmt.datafactory.models.ExposureControlRequest]
@@ -25995,7 +25991,7 @@ class ExposureControlBatchRequest(_serialization.Model):
 class ExposureControlBatchResponse(_serialization.Model):
     """A list of exposure control feature values.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar exposure_control_responses: List of exposure control feature values. Required.
     :vartype exposure_control_responses:
@@ -26079,7 +26075,7 @@ class ExposureControlResponse(_serialization.Model):
 class Expression(_serialization.Model):
     """Azure Data Factory expression definition.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Expression type. Required. "Expression"
     :vartype type: str or ~azure.mgmt.datafactory.models.ExpressionType
@@ -26335,7 +26331,7 @@ class FactoryRepoConfiguration(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     FactoryGitHubConfiguration, FactoryVSTSConfiguration
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of repo configuration. Required.
     :vartype type: str
@@ -26418,7 +26414,7 @@ class FactoryRepoConfiguration(_serialization.Model):
 class FactoryGitHubConfiguration(FactoryRepoConfiguration):
     """Factory's GitHub repo information.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of repo configuration. Required.
     :vartype type: str
@@ -26519,7 +26515,7 @@ class FactoryIdentity(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The identity type. Required. Known values are: "SystemAssigned", "UserAssigned",
      and "SystemAssigned,UserAssigned".
@@ -26569,7 +26565,7 @@ class FactoryIdentity(_serialization.Model):
 class FactoryListResponse(_serialization.Model):
     """A list of factory resources.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of factories. Required.
     :vartype value: list[~azure.mgmt.datafactory.models.Factory]
@@ -26674,7 +26670,7 @@ class FactoryUpdateParameters(_serialization.Model):
 class FactoryVSTSConfiguration(FactoryRepoConfiguration):
     """Factory's VSTS repo information.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of repo configuration. Required.
     :vartype type: str
@@ -26770,7 +26766,7 @@ class FailActivity(ControlActivity):
     be evaluated to a string at runtime. The activity scope can be the whole pipeline or a control
     activity (e.g. foreach, switch, until), if the fail activity is contained in it.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -26882,7 +26878,7 @@ class FailActivity(ControlActivity):
 class FileServerLinkedService(LinkedService):
     """File system linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -26984,7 +26980,7 @@ class FileServerLinkedService(LinkedService):
 class FileServerLocation(DatasetLocation):
     """The location of file server dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -27038,7 +27034,7 @@ class FileServerLocation(DatasetLocation):
 class FileServerReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-attributes
     """File server read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -27187,7 +27183,7 @@ class FileServerReadSettings(StoreReadSettings):  # pylint: disable=too-many-ins
 class FileServerWriteSettings(StoreWriteSettings):
     """File server write settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -27260,7 +27256,7 @@ class FileServerWriteSettings(StoreWriteSettings):
 class FileShareDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """An on-premises file system dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -27414,7 +27410,7 @@ class FileShareDataset(Dataset):  # pylint: disable=too-many-instance-attributes
 class FileSystemSink(CopySink):
     """A copy activity file system sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -27514,7 +27510,7 @@ class FileSystemSink(CopySink):
 class FileSystemSource(CopySource):
     """A copy activity file system source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -27607,7 +27603,7 @@ class FileSystemSource(CopySource):
 class FilterActivity(ControlActivity):
     """Filter and return results from input array based on the conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -27711,7 +27707,7 @@ class FilterActivity(ControlActivity):
 class Flowlet(DataFlow):
     """Data flow flowlet.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of data flow. Required.
     :vartype type: str
@@ -27794,7 +27790,7 @@ class Flowlet(DataFlow):
 class ForEachActivity(ControlActivity):  # pylint: disable=too-many-instance-attributes
     """This activity is used for iterating over a collection and execute given activities.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -27915,7 +27911,7 @@ class ForEachActivity(ControlActivity):  # pylint: disable=too-many-instance-att
 class FtpReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-attributes
     """Ftp read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -28055,7 +28051,7 @@ class FtpReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-a
 class FtpServerLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """A FTP server Linked Service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -28198,7 +28194,7 @@ class FtpServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
 class FtpServerLocation(DatasetLocation):
     """The location of ftp server dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -28282,7 +28278,7 @@ class GetDataFactoryOperationStatusResponse(_serialization.Model):
 class GetMetadataActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Activity to get metadata of dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -28433,7 +28429,7 @@ class GetSsisObjectMetadataRequest(_serialization.Model):
 class GitHubAccessTokenRequest(_serialization.Model):
     """Get GitHub access token request definition.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar git_hub_access_code: GitHub access code. Required.
     :vartype git_hub_access_code: str
@@ -28534,7 +28530,7 @@ class GitHubClientSecret(_serialization.Model):
 class GlobalParameterListResponse(_serialization.Model):
     """A list of Global parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of global parameters. Required.
     :vartype value: list[~azure.mgmt.datafactory.models.GlobalParameterResource]
@@ -28570,7 +28566,7 @@ class GlobalParameterResource(SubResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource identifier.
     :vartype id: str
@@ -28612,7 +28608,7 @@ class GlobalParameterResource(SubResource):
 class GlobalParameterSpecification(_serialization.Model):
     """Definition of a single parameter for an entity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Global Parameter type. Required. Known values are: "Object", "String", "Int",
      "Float", "Bool", and "Array".
@@ -28647,7 +28643,7 @@ class GlobalParameterSpecification(_serialization.Model):
 class GoogleAdWordsLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Google AdWords service linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -28879,7 +28875,7 @@ class GoogleAdWordsLinkedService(LinkedService):  # pylint: disable=too-many-ins
 class GoogleAdWordsObjectDataset(Dataset):
     """Google AdWords service dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -28981,7 +28977,7 @@ class GoogleAdWordsObjectDataset(Dataset):
 class GoogleAdWordsSource(TabularSource):
     """A copy activity Google AdWords service source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -29083,7 +29079,7 @@ class GoogleAdWordsSource(TabularSource):
 class GoogleBigQueryLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Google BigQuery service linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -29274,7 +29270,7 @@ class GoogleBigQueryLinkedService(LinkedService):  # pylint: disable=too-many-in
 class GoogleBigQueryObjectDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Google BigQuery service dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -29396,7 +29392,7 @@ class GoogleBigQueryObjectDataset(Dataset):  # pylint: disable=too-many-instance
 class GoogleBigQuerySource(TabularSource):
     """A copy activity Google BigQuery service source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -29498,7 +29494,7 @@ class GoogleBigQuerySource(TabularSource):
 class GoogleBigQueryV2LinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Google BigQuery service linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -29632,7 +29628,7 @@ class GoogleBigQueryV2LinkedService(LinkedService):  # pylint: disable=too-many-
 class GoogleBigQueryV2ObjectDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Google BigQuery service dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -29745,7 +29741,7 @@ class GoogleBigQueryV2ObjectDataset(Dataset):  # pylint: disable=too-many-instan
 class GoogleBigQueryV2Source(TabularSource):
     """A copy activity Google BigQuery service source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -29847,7 +29843,7 @@ class GoogleBigQueryV2Source(TabularSource):
 class GoogleCloudStorageLinkedService(LinkedService):
     """Linked service for Google Cloud Storage.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -29954,7 +29950,7 @@ class GoogleCloudStorageLinkedService(LinkedService):
 class GoogleCloudStorageLocation(DatasetLocation):
     """The location of Google Cloud Storage dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -30026,7 +30022,7 @@ class GoogleCloudStorageLocation(DatasetLocation):
 class GoogleCloudStorageReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-attributes
     """Google Cloud Storage read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -30175,7 +30171,7 @@ class GoogleCloudStorageReadSettings(StoreReadSettings):  # pylint: disable=too-
 class GoogleSheetsLinkedService(LinkedService):
     """Linked service for GoogleSheets.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -30259,7 +30255,7 @@ class GoogleSheetsLinkedService(LinkedService):
 class GreenplumLinkedService(LinkedService):
     """Greenplum Database linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -30351,7 +30347,7 @@ class GreenplumLinkedService(LinkedService):
 class GreenplumSource(TabularSource):
     """A copy activity Greenplum Database source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -30453,7 +30449,7 @@ class GreenplumSource(TabularSource):
 class GreenplumTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Greenplum Database dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -30574,7 +30570,7 @@ class GreenplumTableDataset(Dataset):  # pylint: disable=too-many-instance-attri
 class HBaseLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """HBase server linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -30739,7 +30735,7 @@ class HBaseLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
 class HBaseObjectDataset(Dataset):
     """HBase server dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -30841,7 +30837,7 @@ class HBaseObjectDataset(Dataset):
 class HBaseSource(TabularSource):
     """A copy activity HBase server source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -30943,7 +30939,7 @@ class HBaseSource(TabularSource):
 class HdfsLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Hadoop Distributed File System (HDFS) linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -31054,7 +31050,7 @@ class HdfsLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
 class HdfsLocation(DatasetLocation):
     """The location of HDFS.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -31108,7 +31104,7 @@ class HdfsLocation(DatasetLocation):
 class HdfsReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-attributes
     """HDFS read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -31255,7 +31251,7 @@ class HdfsReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-
 class HdfsSource(CopySource):
     """A copy activity HDFS source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -31346,7 +31342,7 @@ class HdfsSource(CopySource):
 class HDInsightHiveActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """HDInsight Hive activity type.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -31507,7 +31503,7 @@ class HDInsightHiveActivity(ExecutionActivity):  # pylint: disable=too-many-inst
 class HDInsightLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """HDInsight linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -31646,7 +31642,7 @@ class HDInsightLinkedService(LinkedService):  # pylint: disable=too-many-instanc
 class HDInsightMapReduceActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """HDInsight MapReduce activity type.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -31808,7 +31804,7 @@ class HDInsightMapReduceActivity(ExecutionActivity):  # pylint: disable=too-many
 class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """HDInsight ondemand linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -31912,7 +31908,7 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
     :vartype zookeeper_node_size: JSON
     :ivar script_actions: Custom script actions to run on HDI ondemand cluster once it's up. Please
      refer to
-     https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-customize-cluster-linux?toc=%2Fen-us%2Fazure%2Fhdinsight%2Fr-server%2FTOC.json&bc=%2Fen-us%2Fazure%2Fbread%2Ftoc.json#understanding-script-actions.
+     https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-customize-cluster-linux?toc=%2Fen-us%2Fazure%2Fhdinsight%2Fr-server%2FTOC.json&bc=%2Fen-us%2Fazure%2Fbread%2Ftoc.json#understanding-script-actions.  # pylint: disable=line-too-long
     :vartype script_actions: list[~azure.mgmt.datafactory.models.ScriptAction]
     :ivar virtual_network_id: The ARM resource ID for the vNet to which the cluster should be
      joined after creation. Type: string (or Expression with resultType string).
@@ -32130,7 +32126,7 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
         :paramtype zookeeper_node_size: JSON
         :keyword script_actions: Custom script actions to run on HDI ondemand cluster once it's up.
          Please refer to
-         https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-customize-cluster-linux?toc=%2Fen-us%2Fazure%2Fhdinsight%2Fr-server%2FTOC.json&bc=%2Fen-us%2Fazure%2Fbread%2Ftoc.json#understanding-script-actions.
+         https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-customize-cluster-linux?toc=%2Fen-us%2Fazure%2Fhdinsight%2Fr-server%2FTOC.json&bc=%2Fen-us%2Fazure%2Fbread%2Ftoc.json#understanding-script-actions.  # pylint: disable=line-too-long
         :paramtype script_actions: list[~azure.mgmt.datafactory.models.ScriptAction]
         :keyword virtual_network_id: The ARM resource ID for the vNet to which the cluster should be
          joined after creation. Type: string (or Expression with resultType string).
@@ -32189,7 +32185,7 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
 class HDInsightPigActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """HDInsight Pig activity type.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -32336,7 +32332,7 @@ class HDInsightPigActivity(ExecutionActivity):  # pylint: disable=too-many-insta
 class HDInsightSparkActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """HDInsight Spark activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -32505,7 +32501,7 @@ class HDInsightSparkActivity(ExecutionActivity):  # pylint: disable=too-many-ins
 class HDInsightStreamingActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """HDInsight streaming activity type.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -32703,7 +32699,7 @@ class HDInsightStreamingActivity(ExecutionActivity):  # pylint: disable=too-many
 class HiveLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Hive Server linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -32923,7 +32919,7 @@ class HiveLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
 class HiveObjectDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Hive Server dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -33044,7 +33040,7 @@ class HiveObjectDataset(Dataset):  # pylint: disable=too-many-instance-attribute
 class HiveSource(TabularSource):
     """A copy activity Hive Server source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -33146,7 +33142,7 @@ class HiveSource(TabularSource):
 class HttpDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """A file in an HTTP web server.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -33297,7 +33293,7 @@ class HttpDataset(Dataset):  # pylint: disable=too-many-instance-attributes
 class HttpLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for an HTTP source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -33457,7 +33453,7 @@ class HttpLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
 class HttpReadSettings(StoreReadSettings):
     """Http read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -33559,7 +33555,7 @@ class HttpReadSettings(StoreReadSettings):
 class HttpServerLocation(DatasetLocation):
     """The location of http server.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -33622,7 +33618,7 @@ class HttpServerLocation(DatasetLocation):
 class HttpSource(CopySource):
     """A copy activity source for an HTTP file.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -33710,7 +33706,7 @@ class HttpSource(CopySource):
 class HubspotLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Hubspot Service linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -33848,7 +33844,7 @@ class HubspotLinkedService(LinkedService):  # pylint: disable=too-many-instance-
 class HubspotObjectDataset(Dataset):
     """Hubspot Service dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -33950,7 +33946,7 @@ class HubspotObjectDataset(Dataset):
 class HubspotSource(TabularSource):
     """A copy activity Hubspot Service source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -34054,7 +34050,7 @@ class IfConditionActivity(ControlActivity):  # pylint: disable=too-many-instance
     ifTrueActivities property or the ifFalseActivities property depending on the result of the
     expression.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -34172,7 +34168,7 @@ class IfConditionActivity(ControlActivity):  # pylint: disable=too-many-instance
 class ImpalaLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Impala server linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -34339,7 +34335,7 @@ class ImpalaLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
 class ImpalaObjectDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Impala server dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -34460,7 +34456,7 @@ class ImpalaObjectDataset(Dataset):  # pylint: disable=too-many-instance-attribu
 class ImpalaSource(TabularSource):
     """A copy activity Impala server source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -34562,7 +34558,7 @@ class ImpalaSource(TabularSource):
 class InformixLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Informix linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -34686,7 +34682,7 @@ class InformixLinkedService(LinkedService):  # pylint: disable=too-many-instance
 class InformixSink(CopySink):
     """A copy activity Informix sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -34788,7 +34784,7 @@ class InformixSink(CopySink):
 class InformixSource(TabularSource):
     """A copy activity source for Informix.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -34888,7 +34884,7 @@ class InformixSource(TabularSource):
 class InformixTableDataset(Dataset):
     """The Informix table dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -34994,7 +34990,7 @@ class IntegrationRuntime(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ManagedIntegrationRuntime, SelfHostedIntegrationRuntime
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -35252,7 +35248,7 @@ class IntegrationRuntimeCustomerVirtualNetwork(_serialization.Model):
         self.subnet_id = subnet_id
 
 
-class IntegrationRuntimeCustomSetupScriptProperties(_serialization.Model):
+class IntegrationRuntimeCustomSetupScriptProperties(_serialization.Model):  # pylint: disable=name-too-long
     """Custom setup script properties for a managed dedicated integration runtime.
 
     :ivar blob_container_uri: The URI of the Azure blob container that contains the custom setup
@@ -35366,7 +35362,7 @@ class IntegrationRuntimeDataFlowProperties(_serialization.Model):
         self.custom_properties = custom_properties
 
 
-class IntegrationRuntimeDataFlowPropertiesCustomPropertiesItem(_serialization.Model):
+class IntegrationRuntimeDataFlowPropertiesCustomPropertiesItem(_serialization.Model):  # pylint: disable=name-too-long
     """IntegrationRuntimeDataFlowPropertiesCustomPropertiesItem.
 
     :ivar name: Name of custom property.
@@ -35434,7 +35430,7 @@ class IntegrationRuntimeDataProxyProperties(_serialization.Model):
 class IntegrationRuntimeDebugResource(SubResourceDebugResource):
     """Integration runtime debug resource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The resource name.
     :vartype name: str
@@ -35465,7 +35461,7 @@ class IntegrationRuntimeDebugResource(SubResourceDebugResource):
 class IntegrationRuntimeListResponse(_serialization.Model):
     """A list of integration runtime resources.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of integration runtimes. Required.
     :vartype value: list[~azure.mgmt.datafactory.models.IntegrationRuntimeResource]
@@ -35619,7 +35615,9 @@ class IntegrationRuntimeNodeMonitoringData(_serialization.Model):
         self.received_bytes = None
 
 
-class IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint(_serialization.Model):
+class IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """Azure-SSIS integration runtime outbound network dependency endpoints for one category.
 
     :ivar category: The category of outbound network dependency.
@@ -35653,7 +35651,7 @@ class IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint(_serializati
         self.endpoints = endpoints
 
 
-class IntegrationRuntimeOutboundNetworkDependenciesEndpoint(_serialization.Model):
+class IntegrationRuntimeOutboundNetworkDependenciesEndpoint(_serialization.Model):  # pylint: disable=name-too-long
     """The endpoint for Azure-SSIS integration runtime outbound network dependency.
 
     :ivar domain_name: The domain name of endpoint.
@@ -35690,7 +35688,9 @@ class IntegrationRuntimeOutboundNetworkDependenciesEndpoint(_serialization.Model
         self.endpoint_details = endpoint_details
 
 
-class IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails(_serialization.Model):
+class IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """The details of Azure-SSIS integration runtime outbound network dependency endpoint.
 
     :ivar port: The port of endpoint.
@@ -35710,7 +35710,9 @@ class IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails(_serializatio
         self.port = port
 
 
-class IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse(_serialization.Model):
+class IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """Azure-SSIS integration runtime outbound network dependency endpoints.
 
     :ivar value: The list of outbound network dependency endpoints.
@@ -35740,7 +35742,7 @@ class IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse(_serializat
 class IntegrationRuntimeReference(_serialization.Model):
     """Integration runtime reference type.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of integration runtime. Required. "IntegrationRuntimeReference"
     :vartype type: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeReferenceType
@@ -35783,7 +35785,7 @@ class IntegrationRuntimeReference(_serialization.Model):
         self.parameters = parameters
 
 
-class IntegrationRuntimeRegenerateKeyParameters(_serialization.Model):
+class IntegrationRuntimeRegenerateKeyParameters(_serialization.Model):  # pylint: disable=name-too-long
     """Parameters to regenerate the authentication key.
 
     :ivar key_name: The name of the authentication key to regenerate. Known values are: "authKey1"
@@ -35812,7 +35814,7 @@ class IntegrationRuntimeResource(SubResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource identifier.
     :vartype id: str
@@ -36035,7 +36037,7 @@ class IntegrationRuntimeStatus(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -36084,7 +36086,7 @@ class IntegrationRuntimeStatus(_serialization.Model):
 class IntegrationRuntimeStatusListResponse(_serialization.Model):
     """A list of integration runtime status.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of integration runtime status. Required.
     :vartype value: list[~azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse]
@@ -36120,7 +36122,7 @@ class IntegrationRuntimeStatusResponse(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The integration runtime name.
     :vartype name: str
@@ -36209,7 +36211,7 @@ class IntegrationRuntimeVNetProperties(_serialization.Model):
 class JiraLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Jira Service linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -36349,7 +36351,7 @@ class JiraLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
 class JiraObjectDataset(Dataset):
     """Jira Service dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -36451,7 +36453,7 @@ class JiraObjectDataset(Dataset):
 class JiraSource(TabularSource):
     """A copy activity Jira Service source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -36553,7 +36555,7 @@ class JiraSource(TabularSource):
 class JsonDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Json dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -36677,7 +36679,7 @@ class JsonDataset(Dataset):  # pylint: disable=too-many-instance-attributes
 class JsonFormat(DatasetStorageFormat):
     """The data stored in JSON format.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -36784,7 +36786,7 @@ class JsonFormat(DatasetStorageFormat):
 class JsonReadSettings(FormatReadSettings):
     """Json read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -36827,7 +36829,7 @@ class JsonReadSettings(FormatReadSettings):
 class JsonSink(CopySink):
     """A copy activity Json sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -36934,7 +36936,7 @@ class JsonSink(CopySink):
 class JsonSource(CopySource):
     """A copy activity Json source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -37032,7 +37034,7 @@ class JsonSource(CopySource):
 class JsonWriteSettings(FormatWriteSettings):
     """Json write settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -37077,7 +37079,7 @@ class JsonWriteSettings(FormatWriteSettings):
 class LakeHouseLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Microsoft Fabric LakeHouse linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -37224,7 +37226,7 @@ class LakeHouseLinkedService(LinkedService):  # pylint: disable=too-many-instanc
 class LakeHouseLocation(DatasetLocation):
     """The location of Microsoft Fabric LakeHouse Files dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -37278,7 +37280,7 @@ class LakeHouseLocation(DatasetLocation):
 class LakeHouseReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-attributes
     """Microsoft Fabric LakeHouse Files read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -37418,7 +37420,7 @@ class LakeHouseReadSettings(StoreReadSettings):  # pylint: disable=too-many-inst
 class LakeHouseTableDataset(Dataset):
     """Microsoft Fabric LakeHouse Table.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -37522,7 +37524,7 @@ class LakeHouseTableDataset(Dataset):
 class LakeHouseTableSink(CopySink):  # pylint: disable=too-many-instance-attributes
     """A copy activity for Microsoft Fabric LakeHouse Table sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -37644,7 +37646,7 @@ class LakeHouseTableSink(CopySink):  # pylint: disable=too-many-instance-attribu
 class LakeHouseTableSource(CopySource):
     """A copy activity source for Microsoft Fabric LakeHouse Table.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -37746,7 +37748,7 @@ class LakeHouseTableSource(CopySource):
 class LakeHouseWriteSettings(StoreWriteSettings):
     """Microsoft Fabric LakeHouse Files write settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -37867,7 +37869,7 @@ class LinkedIntegrationRuntimeType(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     LinkedIntegrationRuntimeKeyAuthorization, LinkedIntegrationRuntimeRbacAuthorization
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar authorization_type: The authorization type for integration runtime sharing. Required.
     :vartype authorization_type: str
@@ -37897,7 +37899,7 @@ class LinkedIntegrationRuntimeType(_serialization.Model):
 class LinkedIntegrationRuntimeKeyAuthorization(LinkedIntegrationRuntimeType):
     """The key authorization type integration runtime.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar authorization_type: The authorization type for integration runtime sharing. Required.
     :vartype authorization_type: str
@@ -37925,10 +37927,10 @@ class LinkedIntegrationRuntimeKeyAuthorization(LinkedIntegrationRuntimeType):
         self.key = key
 
 
-class LinkedIntegrationRuntimeRbacAuthorization(LinkedIntegrationRuntimeType):
+class LinkedIntegrationRuntimeRbacAuthorization(LinkedIntegrationRuntimeType):  # pylint: disable=name-too-long
     """The role based access control (RBAC) authorization type integration runtime.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar authorization_type: The authorization type for integration runtime sharing. Required.
     :vartype authorization_type: str
@@ -37968,7 +37970,7 @@ class LinkedIntegrationRuntimeRbacAuthorization(LinkedIntegrationRuntimeType):
 class LinkedIntegrationRuntimeRequest(_serialization.Model):
     """Data factory name for linked integration runtime request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar linked_factory_name: The data factory name for linked integration runtime. Required.
     :vartype linked_factory_name: str
@@ -37994,7 +37996,7 @@ class LinkedIntegrationRuntimeRequest(_serialization.Model):
 class LinkedServiceDebugResource(SubResourceDebugResource):
     """Linked service debug resource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The resource name.
     :vartype name: str
@@ -38025,7 +38027,7 @@ class LinkedServiceDebugResource(SubResourceDebugResource):
 class LinkedServiceListResponse(_serialization.Model):
     """A list of linked service resources.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of linked services. Required.
     :vartype value: list[~azure.mgmt.datafactory.models.LinkedServiceResource]
@@ -38059,7 +38061,7 @@ class LinkedServiceListResponse(_serialization.Model):
 class LinkedServiceReference(_serialization.Model):
     """Linked service reference type.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Linked service reference type. Required. "LinkedServiceReference"
     :vartype type: str or ~azure.mgmt.datafactory.models.Type
@@ -38107,7 +38109,7 @@ class LinkedServiceResource(SubResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource identifier.
     :vartype id: str
@@ -38149,7 +38151,7 @@ class LinkedServiceResource(SubResource):
 class LogLocationSettings(_serialization.Model):
     """Log location settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar linked_service_name: Log storage linked service reference. Required.
     :vartype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
@@ -38185,7 +38187,7 @@ class LogLocationSettings(_serialization.Model):
 class LogSettings(_serialization.Model):
     """Log settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enable_copy_activity_log: Specifies whether to enable copy activity log. Type: boolean
      (or Expression with resultType boolean).
@@ -38234,7 +38236,7 @@ class LogSettings(_serialization.Model):
 class LogStorageSettings(_serialization.Model):
     """(Deprecated. Please use LogSettings) Log storage settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -38301,7 +38303,7 @@ class LogStorageSettings(_serialization.Model):
 class LookupActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Lookup activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -38428,7 +38430,7 @@ class LookupActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
 class MagentoLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Magento server linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -38548,7 +38550,7 @@ class MagentoLinkedService(LinkedService):  # pylint: disable=too-many-instance-
 class MagentoObjectDataset(Dataset):
     """Magento server dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -38650,7 +38652,7 @@ class MagentoObjectDataset(Dataset):
 class MagentoSource(TabularSource):
     """A copy activity Magento server source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -38752,7 +38754,7 @@ class MagentoSource(TabularSource):
 class ManagedIdentityCredential(Credential):
     """Managed identity credential.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -38763,8 +38765,6 @@ class ManagedIdentityCredential(Credential):
     :vartype description: str
     :ivar annotations: List of tags that can be used for describing the Credential.
     :vartype annotations: list[JSON]
-    :ivar resource_id: The resource id of user assigned managed identity.
-    :vartype resource_id: str
     """
 
     _validation = {
@@ -38776,7 +38776,6 @@ class ManagedIdentityCredential(Credential):
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
         "annotations": {"key": "annotations", "type": "[object]"},
-        "resource_id": {"key": "typeProperties.resourceId", "type": "str"},
     }
 
     def __init__(
@@ -38785,7 +38784,6 @@ class ManagedIdentityCredential(Credential):
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
         annotations: Optional[List[JSON]] = None,
-        resource_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -38796,22 +38794,19 @@ class ManagedIdentityCredential(Credential):
         :paramtype description: str
         :keyword annotations: List of tags that can be used for describing the Credential.
         :paramtype annotations: list[JSON]
-        :keyword resource_id: The resource id of user assigned managed identity.
-        :paramtype resource_id: str
         """
         super().__init__(
             additional_properties=additional_properties, description=description, annotations=annotations, **kwargs
         )
         self.type: str = "ManagedIdentity"
-        self.resource_id = resource_id
 
 
-class ManagedIdentityCredentialResource(SubResource):
+class ManagedIdentityCredentialResource(CredentialResource):
     """Credential resource type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource identifier.
     :vartype id: str
@@ -38856,7 +38851,7 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -39102,7 +39097,7 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -39237,7 +39232,7 @@ class ManagedPrivateEndpoint(_serialization.Model):
 class ManagedPrivateEndpointListResponse(_serialization.Model):
     """A list of managed private endpoint resources.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of managed private endpoints. Required.
     :vartype value: list[~azure.mgmt.datafactory.models.ManagedPrivateEndpointResource]
@@ -39273,7 +39268,7 @@ class ManagedPrivateEndpointResource(SubResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource identifier.
     :vartype id: str
@@ -39352,7 +39347,7 @@ class ManagedVirtualNetwork(_serialization.Model):
 class ManagedVirtualNetworkListResponse(_serialization.Model):
     """A list of managed Virtual Network resources.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of managed Virtual Networks. Required.
     :vartype value: list[~azure.mgmt.datafactory.models.ManagedVirtualNetworkResource]
@@ -39386,7 +39381,7 @@ class ManagedVirtualNetworkListResponse(_serialization.Model):
 class ManagedVirtualNetworkReference(_serialization.Model):
     """Managed Virtual Network reference type.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Managed Virtual Network reference type. Required. "ManagedVirtualNetworkReference"
     :vartype type: str or ~azure.mgmt.datafactory.models.ManagedVirtualNetworkReferenceType
@@ -39424,7 +39419,7 @@ class ManagedVirtualNetworkResource(SubResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource identifier.
     :vartype id: str
@@ -39596,7 +39591,7 @@ class MapperAttributeReference(_serialization.Model):
 class MapperConnection(_serialization.Model):
     """Source connection details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar linked_service: Linked service reference.
     :vartype linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
@@ -39934,7 +39929,7 @@ class MapperTargetConnectionsInfo(_serialization.Model):
 class MappingDataFlow(DataFlow):
     """Mapping data flow.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of data flow. Required.
     :vartype type: str
@@ -40017,7 +40012,7 @@ class MappingDataFlow(DataFlow):
 class MariaDBLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """MariaDB server linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -40148,7 +40143,7 @@ class MariaDBLinkedService(LinkedService):  # pylint: disable=too-many-instance-
 class MariaDBSource(TabularSource):
     """A copy activity MariaDB server source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -40250,7 +40245,7 @@ class MariaDBSource(TabularSource):
 class MariaDBTableDataset(Dataset):
     """MariaDB server dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -40352,7 +40347,7 @@ class MariaDBTableDataset(Dataset):
 class MarketoLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Marketo server linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -40481,7 +40476,7 @@ class MarketoLinkedService(LinkedService):  # pylint: disable=too-many-instance-
 class MarketoObjectDataset(Dataset):
     """Marketo server dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -40583,7 +40578,7 @@ class MarketoObjectDataset(Dataset):
 class MarketoSource(TabularSource):
     """A copy activity Marketo server source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -40711,7 +40706,7 @@ class MetadataItem(_serialization.Model):
 class MicrosoftAccessLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Microsoft Access linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -40835,7 +40830,7 @@ class MicrosoftAccessLinkedService(LinkedService):  # pylint: disable=too-many-i
 class MicrosoftAccessSink(CopySink):
     """A copy activity Microsoft Access sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -40937,7 +40932,7 @@ class MicrosoftAccessSink(CopySink):
 class MicrosoftAccessSource(CopySource):
     """A copy activity source for Microsoft Access.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -41028,7 +41023,7 @@ class MicrosoftAccessSource(CopySource):
 class MicrosoftAccessTableDataset(Dataset):
     """The Microsoft Access table dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -41132,7 +41127,7 @@ class MicrosoftAccessTableDataset(Dataset):
 class MongoDbAtlasCollectionDataset(Dataset):
     """The MongoDB Atlas database dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -41237,7 +41232,7 @@ class MongoDbAtlasCollectionDataset(Dataset):
 class MongoDbAtlasLinkedService(LinkedService):
     """Linked service for MongoDB Atlas data source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -41335,7 +41330,7 @@ class MongoDbAtlasLinkedService(LinkedService):
 class MongoDbAtlasSink(CopySink):
     """A copy activity MongoDB Atlas sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -41439,7 +41434,7 @@ class MongoDbAtlasSink(CopySink):
 class MongoDbAtlasSource(CopySource):  # pylint: disable=too-many-instance-attributes
     """A copy activity source for a MongoDB Atlas database.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -41563,7 +41558,7 @@ class MongoDbAtlasSource(CopySource):  # pylint: disable=too-many-instance-attri
 class MongoDbCollectionDataset(Dataset):
     """The MongoDB database dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -41737,7 +41732,7 @@ class MongoDbCursorMethodsProperties(_serialization.Model):
 class MongoDbLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for MongoDb data source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -41896,7 +41891,7 @@ class MongoDbLinkedService(LinkedService):  # pylint: disable=too-many-instance-
 class MongoDbSource(CopySource):
     """A copy activity source for a MongoDB database.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -41989,7 +41984,7 @@ class MongoDbSource(CopySource):
 class MongoDbV2CollectionDataset(Dataset):
     """The MongoDB database dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -42094,7 +42089,7 @@ class MongoDbV2CollectionDataset(Dataset):
 class MongoDbV2LinkedService(LinkedService):
     """Linked service for MongoDB data source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -42183,7 +42178,7 @@ class MongoDbV2LinkedService(LinkedService):
 class MongoDbV2Sink(CopySink):
     """A copy activity MongoDB sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -42287,7 +42282,7 @@ class MongoDbV2Sink(CopySink):
 class MongoDbV2Source(CopySource):  # pylint: disable=too-many-instance-attributes
     """A copy activity source for a MongoDB database.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -42411,7 +42406,7 @@ class MongoDbV2Source(CopySource):  # pylint: disable=too-many-instance-attribut
 class MySqlLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for MySQL data source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -42560,7 +42555,7 @@ class MySqlLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
 class MySqlSource(TabularSource):
     """A copy activity source for MySQL databases.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -42660,7 +42655,7 @@ class MySqlSource(TabularSource):
 class MySqlTableDataset(Dataset):
     """The MySQL table dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -42762,7 +42757,7 @@ class MySqlTableDataset(Dataset):
 class NetezzaLinkedService(LinkedService):
     """Netezza linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -42903,7 +42898,7 @@ class NetezzaPartitionSettings(_serialization.Model):
 class NetezzaSource(TabularSource):  # pylint: disable=too-many-instance-attributes
     """A copy activity Netezza source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -43022,7 +43017,7 @@ class NetezzaSource(TabularSource):  # pylint: disable=too-many-instance-attribu
 class NetezzaTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Netezza dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -43176,7 +43171,7 @@ class NotebookParameter(_serialization.Model):
 class ODataLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Open Data Protocol (OData) linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -43386,7 +43381,7 @@ class ODataLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
 class ODataResourceDataset(Dataset):
     """The Open Data Protocol (OData) resource dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -43488,7 +43483,7 @@ class ODataResourceDataset(Dataset):
 class ODataSource(CopySource):
     """A copy activity source for OData source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -43594,7 +43589,7 @@ class ODataSource(CopySource):
 class OdbcLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Open Database Connectivity (ODBC) linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -43716,7 +43711,7 @@ class OdbcLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
 class OdbcSink(CopySink):
     """A copy activity ODBC sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -43818,7 +43813,7 @@ class OdbcSink(CopySink):
 class OdbcSource(TabularSource):
     """A copy activity source for ODBC databases.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -43918,7 +43913,7 @@ class OdbcSource(TabularSource):
 class OdbcTableDataset(Dataset):
     """The ODBC table dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -44020,7 +44015,7 @@ class OdbcTableDataset(Dataset):
 class Office365Dataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The Office365 account.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -44134,7 +44129,7 @@ class Office365Dataset(Dataset):  # pylint: disable=too-many-instance-attributes
 class Office365LinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Office365 linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -44248,7 +44243,7 @@ class Office365LinkedService(LinkedService):  # pylint: disable=too-many-instanc
 class Office365Source(CopySource):  # pylint: disable=too-many-instance-attributes
     """A copy activity source for an Office 365 service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -44727,7 +44722,7 @@ class OperationServiceSpecification(_serialization.Model):
 class OracleCloudStorageLinkedService(LinkedService):
     """Linked service for Oracle Cloud Storage.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -44834,7 +44829,7 @@ class OracleCloudStorageLinkedService(LinkedService):
 class OracleCloudStorageLocation(DatasetLocation):
     """The location of Oracle Cloud Storage dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -44906,7 +44901,7 @@ class OracleCloudStorageLocation(DatasetLocation):
 class OracleCloudStorageReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-attributes
     """Oracle Cloud Storage read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -45055,7 +45050,7 @@ class OracleCloudStorageReadSettings(StoreReadSettings):  # pylint: disable=too-
 class OracleLinkedService(LinkedService):
     """Oracle database.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -45204,7 +45199,7 @@ class OraclePartitionSettings(_serialization.Model):
 class OracleServiceCloudLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Oracle Service Cloud linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -45337,7 +45332,7 @@ class OracleServiceCloudLinkedService(LinkedService):  # pylint: disable=too-man
 class OracleServiceCloudObjectDataset(Dataset):
     """Oracle Service Cloud dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -45439,7 +45434,7 @@ class OracleServiceCloudObjectDataset(Dataset):
 class OracleServiceCloudSource(TabularSource):
     """A copy activity Oracle Service Cloud source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -45541,7 +45536,7 @@ class OracleServiceCloudSource(TabularSource):
 class OracleSink(CopySink):
     """A copy activity Oracle sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -45643,7 +45638,7 @@ class OracleSink(CopySink):
 class OracleSource(CopySource):  # pylint: disable=too-many-instance-attributes
     """A copy activity Oracle source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -45762,7 +45757,7 @@ class OracleSource(CopySource):  # pylint: disable=too-many-instance-attributes
 class OracleTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The on-premises Oracle database dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -45884,7 +45879,7 @@ class OracleTableDataset(Dataset):  # pylint: disable=too-many-instance-attribut
 class OrcDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """ORC dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -45995,7 +45990,7 @@ class OrcDataset(Dataset):  # pylint: disable=too-many-instance-attributes
 class OrcFormat(DatasetStorageFormat):
     """The data stored in Optimized Row Columnar (ORC) format.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -46045,7 +46040,7 @@ class OrcFormat(DatasetStorageFormat):
 class OrcSink(CopySink):
     """A copy activity ORC sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -46152,7 +46147,7 @@ class OrcSink(CopySink):
 class OrcSource(CopySource):
     """A copy activity ORC source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -46243,7 +46238,7 @@ class OrcSource(CopySource):
 class OrcWriteSettings(FormatWriteSettings):
     """Orc write settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -46319,7 +46314,7 @@ class OutputColumn(_serialization.Model):
 class PackageStore(_serialization.Model):
     """Package store for the SSIS integration runtime.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the package store. Required.
     :vartype name: str
@@ -46352,7 +46347,7 @@ class PackageStore(_serialization.Model):
 class ParameterSpecification(_serialization.Model):
     """Definition of a single parameter for an entity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Parameter type. Required. Known values are: "Object", "String", "Int", "Float",
      "Bool", "Array", and "SecureString".
@@ -46388,7 +46383,7 @@ class ParameterSpecification(_serialization.Model):
 class ParquetDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Parquet dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -46499,7 +46494,7 @@ class ParquetDataset(Dataset):  # pylint: disable=too-many-instance-attributes
 class ParquetFormat(DatasetStorageFormat):
     """The data stored in Parquet format.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -46549,7 +46544,7 @@ class ParquetFormat(DatasetStorageFormat):
 class ParquetReadSettings(FormatReadSettings):
     """Parquet read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -46592,7 +46587,7 @@ class ParquetReadSettings(FormatReadSettings):
 class ParquetSink(CopySink):
     """A copy activity Parquet sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -46699,7 +46694,7 @@ class ParquetSink(CopySink):
 class ParquetSource(CopySource):
     """A copy activity Parquet source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -46797,7 +46792,7 @@ class ParquetSource(CopySource):
 class ParquetWriteSettings(FormatWriteSettings):
     """Parquet write settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -46853,7 +46848,7 @@ class ParquetWriteSettings(FormatWriteSettings):
 class PaypalLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Paypal Service linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -46981,7 +46976,7 @@ class PaypalLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
 class PaypalObjectDataset(Dataset):
     """Paypal Service dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -47083,7 +47078,7 @@ class PaypalObjectDataset(Dataset):
 class PaypalSource(TabularSource):
     """A copy activity Paypal Service source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -47185,7 +47180,7 @@ class PaypalSource(TabularSource):
 class PhoenixLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Phoenix server linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -47364,7 +47359,7 @@ class PhoenixLinkedService(LinkedService):  # pylint: disable=too-many-instance-
 class PhoenixObjectDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Phoenix server dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -47486,7 +47481,7 @@ class PhoenixObjectDataset(Dataset):  # pylint: disable=too-many-instance-attrib
 class PhoenixSource(TabularSource):
     """A copy activity Phoenix server source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -47688,7 +47683,7 @@ class PipelineFolder(_serialization.Model):
 class PipelineListResponse(_serialization.Model):
     """A list of pipeline resources.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of pipelines. Required.
     :vartype value: list[~azure.mgmt.datafactory.models.PipelineResource]
@@ -47744,7 +47739,7 @@ class PipelinePolicy(_serialization.Model):
 class PipelineReference(_serialization.Model):
     """Pipeline reference type.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Pipeline reference type. Required. "PipelineReference"
     :vartype type: str or ~azure.mgmt.datafactory.models.PipelineReferenceType
@@ -48041,7 +48036,7 @@ class PipelineRunInvokedBy(_serialization.Model):
 class PipelineRunsQueryResponse(_serialization.Model):
     """A list pipeline runs.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of pipeline runs. Required.
     :vartype value: list[~azure.mgmt.datafactory.models.PipelineRun]
@@ -48142,7 +48137,7 @@ class PolybaseSettings(_serialization.Model):
 class PostgreSqlLinkedService(LinkedService):
     """Linked service for PostgreSQL data source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -48235,7 +48230,7 @@ class PostgreSqlLinkedService(LinkedService):
 class PostgreSqlSource(TabularSource):
     """A copy activity source for PostgreSQL databases.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -48335,7 +48330,7 @@ class PostgreSqlSource(TabularSource):
 class PostgreSqlTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The PostgreSQL table dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -48455,7 +48450,7 @@ class PostgreSqlTableDataset(Dataset):  # pylint: disable=too-many-instance-attr
 class PostgreSqlV2LinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for PostgreSQLV2 data source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -48683,7 +48678,7 @@ class PostgreSqlV2LinkedService(LinkedService):  # pylint: disable=too-many-inst
 class PostgreSqlV2Source(TabularSource):
     """A copy activity source for PostgreSQL databases.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -48783,7 +48778,7 @@ class PostgreSqlV2Source(TabularSource):
 class PostgreSqlV2TableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The PostgreSQLV2 table dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -48894,7 +48889,7 @@ class PostgreSqlV2TableDataset(Dataset):  # pylint: disable=too-many-instance-at
 class PowerQuerySink(DataFlowSink):
     """Power query sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Transformation name. Required.
     :vartype name: str
@@ -49008,7 +49003,7 @@ class PowerQuerySinkMapping(_serialization.Model):
 class PowerQuerySource(DataFlowSource):
     """Power query source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Transformation name. Required.
     :vartype name: str
@@ -49083,7 +49078,7 @@ class PowerQuerySource(DataFlowSource):
 class PrestoLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Presto server linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -49273,7 +49268,7 @@ class PrestoLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
 class PrestoObjectDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Presto server dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -49394,7 +49389,7 @@ class PrestoObjectDataset(Dataset):  # pylint: disable=too-many-instance-attribu
 class PrestoSource(TabularSource):
     """A copy activity Presto server source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -49516,7 +49511,7 @@ class PrivateEndpoint(_serialization.Model):
 class PrivateEndpointConnectionListResponse(_serialization.Model):
     """A list of linked service resources.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of Private Endpoint Connections. Required.
     :vartype value: list[~azure.mgmt.datafactory.models.PrivateEndpointConnectionResource]
@@ -49631,7 +49626,7 @@ class PrivateLinkConnectionApprovalRequest(_serialization.Model):
         self.private_endpoint = private_endpoint
 
 
-class PrivateLinkConnectionApprovalRequestResource(SubResource):
+class PrivateLinkConnectionApprovalRequestResource(SubResource):  # pylint: disable=name-too-long
     """Private Endpoint Connection Approval ARM resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -49790,7 +49785,7 @@ class PrivateLinkResourceProperties(_serialization.Model):
 class PrivateLinkResourcesWrapper(_serialization.Model):
     """Wrapper for a collection of private link resources.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Required.
     :vartype value: list[~azure.mgmt.datafactory.models.PrivateLinkResource]
@@ -49868,7 +49863,7 @@ class QueryDataFlowDebugSessionsResponse(_serialization.Model):
 class QuickbaseLinkedService(LinkedService):
     """Linked service for Quickbase.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -49962,7 +49957,7 @@ class QuickbaseLinkedService(LinkedService):
 class QuickBooksLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """QuickBooks server linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -50098,7 +50093,7 @@ class QuickBooksLinkedService(LinkedService):  # pylint: disable=too-many-instan
 class QuickBooksObjectDataset(Dataset):
     """QuickBooks server dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -50200,7 +50195,7 @@ class QuickBooksObjectDataset(Dataset):
 class QuickBooksSource(TabularSource):
     """A copy activity QuickBooks server source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -50408,7 +50403,7 @@ class RecurrenceScheduleOccurrence(_serialization.Model):
 class RedirectIncompatibleRowSettings(_serialization.Model):
     """Redirect incompatible row settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -50465,7 +50460,7 @@ class RedshiftUnloadSettings(_serialization.Model):
     unload. With this, data from Amazon Redshift source will be unloaded into S3 first and then
     copied into the targeted sink from the interim S3.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar s3_linked_service_name: The name of the Amazon S3 linked service which will be used for
      the unload operation when copying from the Amazon Redshift source. Required.
@@ -50506,7 +50501,7 @@ class RedshiftUnloadSettings(_serialization.Model):
 class RelationalSource(CopySource):
     """A copy activity source for various relational databases.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -50597,7 +50592,7 @@ class RelationalSource(CopySource):
 class RelationalTableDataset(Dataset):
     """The relational table dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -50751,7 +50746,7 @@ class RerunTumblingWindowTrigger(Trigger):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -50844,7 +50839,7 @@ class RerunTumblingWindowTrigger(Trigger):
 class ResponsysLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Responsys linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -50978,7 +50973,7 @@ class ResponsysLinkedService(LinkedService):  # pylint: disable=too-many-instanc
 class ResponsysObjectDataset(Dataset):
     """Responsys dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -51080,7 +51075,7 @@ class ResponsysObjectDataset(Dataset):
 class ResponsysSource(TabularSource):
     """A copy activity Responsys source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -51182,7 +51177,7 @@ class ResponsysSource(TabularSource):
 class RestResourceDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """A Rest service dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -51318,7 +51313,7 @@ class RestResourceDataset(Dataset):  # pylint: disable=too-many-instance-attribu
 class RestServiceLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Rest Service linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -51556,7 +51551,7 @@ class RestServiceLinkedService(LinkedService):  # pylint: disable=too-many-insta
 class RestSink(CopySink):  # pylint: disable=too-many-instance-attributes
     """A copy activity Rest service Sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -51698,7 +51693,7 @@ class RestSink(CopySink):  # pylint: disable=too-many-instance-attributes
 class RestSource(CopySource):  # pylint: disable=too-many-instance-attributes
     """A copy activity Rest service source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -51872,7 +51867,7 @@ class RetryPolicy(_serialization.Model):
 class RunFilterParameters(_serialization.Model):
     """Query parameters for listing runs.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar continuation_token: The continuation token for getting the next page of results. Null for
      first page.
@@ -51938,7 +51933,7 @@ class RunFilterParameters(_serialization.Model):
 class RunQueryFilter(_serialization.Model):
     """Query filter option for listing runs.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operand: Parameter name to be used for filter. The allowed operands to query pipeline
      runs are PipelineName, RunStart, RunEnd and Status; to query activity runs are ActivityName,
@@ -51948,7 +51943,7 @@ class RunQueryFilter(_serialization.Model):
      "ActivityType", "TriggerName", "TriggerRunTimestamp", "RunGroupId", and "LatestOnly".
     :vartype operand: str or ~azure.mgmt.datafactory.models.RunQueryFilterOperand
     :ivar operator: Operator to be used for filter. Required. Known values are: "Equals",
-     "NotEquals", "In", "NotIn", and "In".
+     "NotEquals", "In", and "NotIn".
     :vartype operator: str or ~azure.mgmt.datafactory.models.RunQueryFilterOperator
     :ivar values: List of filter values. Required.
     :vartype values: list[str]
@@ -51983,7 +51978,7 @@ class RunQueryFilter(_serialization.Model):
          "ActivityType", "TriggerName", "TriggerRunTimestamp", "RunGroupId", and "LatestOnly".
         :paramtype operand: str or ~azure.mgmt.datafactory.models.RunQueryFilterOperand
         :keyword operator: Operator to be used for filter. Required. Known values are: "Equals",
-         "NotEquals", "In", "NotIn", and "In".
+         "NotEquals", "In", and "NotIn".
         :paramtype operator: str or ~azure.mgmt.datafactory.models.RunQueryFilterOperator
         :keyword values: List of filter values. Required.
         :paramtype values: list[str]
@@ -51997,7 +51992,7 @@ class RunQueryFilter(_serialization.Model):
 class RunQueryOrderBy(_serialization.Model):
     """An object to provide order by options for listing runs.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar order_by: Parameter name to be used for order by. The allowed parameters to order by for
      pipeline runs are PipelineName, RunStart, RunEnd and Status; for activity runs are
@@ -52046,7 +52041,7 @@ class RunQueryOrderBy(_serialization.Model):
 class SalesforceLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for Salesforce.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -52167,7 +52162,7 @@ class SalesforceLinkedService(LinkedService):  # pylint: disable=too-many-instan
 class SalesforceMarketingCloudLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Salesforce Marketing Cloud linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -52301,7 +52296,7 @@ class SalesforceMarketingCloudLinkedService(LinkedService):  # pylint: disable=t
 class SalesforceMarketingCloudObjectDataset(Dataset):
     """Salesforce Marketing Cloud dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -52403,7 +52398,7 @@ class SalesforceMarketingCloudObjectDataset(Dataset):
 class SalesforceMarketingCloudSource(TabularSource):
     """A copy activity Salesforce Marketing Cloud source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -52505,7 +52500,7 @@ class SalesforceMarketingCloudSource(TabularSource):
 class SalesforceObjectDataset(Dataset):
     """The Salesforce object dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -52609,7 +52604,7 @@ class SalesforceObjectDataset(Dataset):
 class SalesforceServiceCloudLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for Salesforce Service Cloud.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -52739,7 +52734,7 @@ class SalesforceServiceCloudLinkedService(LinkedService):  # pylint: disable=too
 class SalesforceServiceCloudObjectDataset(Dataset):
     """The Salesforce Service Cloud object dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -52843,7 +52838,7 @@ class SalesforceServiceCloudObjectDataset(Dataset):
 class SalesforceServiceCloudSink(CopySink):  # pylint: disable=too-many-instance-attributes
     """A copy activity Salesforce Service Cloud sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -52972,7 +52967,7 @@ class SalesforceServiceCloudSink(CopySink):  # pylint: disable=too-many-instance
 class SalesforceServiceCloudSource(CopySource):
     """A copy activity Salesforce Service Cloud source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -53072,7 +53067,7 @@ class SalesforceServiceCloudSource(CopySource):
 class SalesforceServiceCloudV2LinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for Salesforce Service Cloud V2.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -53195,7 +53190,7 @@ class SalesforceServiceCloudV2LinkedService(LinkedService):  # pylint: disable=t
 class SalesforceServiceCloudV2ObjectDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The Salesforce Service Cloud V2 object dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -53308,7 +53303,7 @@ class SalesforceServiceCloudV2ObjectDataset(Dataset):  # pylint: disable=too-man
 class SalesforceServiceCloudV2Sink(CopySink):  # pylint: disable=too-many-instance-attributes
     """A copy activity Salesforce Service Cloud V2 sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -53437,7 +53432,7 @@ class SalesforceServiceCloudV2Sink(CopySink):  # pylint: disable=too-many-instan
 class SalesforceServiceCloudV2Source(CopySource):
     """A copy activity Salesforce Service Cloud V2 source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -53537,7 +53532,7 @@ class SalesforceServiceCloudV2Source(CopySource):
 class SalesforceSink(CopySink):  # pylint: disable=too-many-instance-attributes
     """A copy activity Salesforce sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -53666,7 +53661,7 @@ class SalesforceSink(CopySink):  # pylint: disable=too-many-instance-attributes
 class SalesforceSource(TabularSource):
     """A copy activity Salesforce source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -53775,7 +53770,7 @@ class SalesforceSource(TabularSource):
 class SalesforceV2LinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for Salesforce V2.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -53898,7 +53893,7 @@ class SalesforceV2LinkedService(LinkedService):  # pylint: disable=too-many-inst
 class SalesforceV2ObjectDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The Salesforce V2 object dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -54011,7 +54006,7 @@ class SalesforceV2ObjectDataset(Dataset):  # pylint: disable=too-many-instance-a
 class SalesforceV2Sink(CopySink):  # pylint: disable=too-many-instance-attributes
     """A copy activity Salesforce V2 sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -54140,7 +54135,7 @@ class SalesforceV2Sink(CopySink):  # pylint: disable=too-many-instance-attribute
 class SalesforceV2Source(TabularSource):
     """A copy activity Salesforce V2 source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -54249,7 +54244,7 @@ class SalesforceV2Source(TabularSource):
 class SapBwCubeDataset(Dataset):
     """The SAP BW cube dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -54344,7 +54339,7 @@ class SapBwCubeDataset(Dataset):
 class SapBWLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """SAP Business Warehouse Linked Service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -54466,7 +54461,7 @@ class SapBWLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
 class SapBwSource(TabularSource):
     """A copy activity source for SapBW server via MDX.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -54566,7 +54561,7 @@ class SapBwSource(TabularSource):
 class SapCloudForCustomerLinkedService(LinkedService):
     """Linked service for SAP Cloud for Customer.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -54672,7 +54667,7 @@ class SapCloudForCustomerLinkedService(LinkedService):
 class SapCloudForCustomerResourceDataset(Dataset):
     """The path of the SAP Cloud for Customer OData entity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -54777,7 +54772,7 @@ class SapCloudForCustomerResourceDataset(Dataset):
 class SapCloudForCustomerSink(CopySink):
     """A copy activity SAP Cloud for Customer sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -54894,7 +54889,7 @@ class SapCloudForCustomerSink(CopySink):
 class SapCloudForCustomerSource(TabularSource):
     """A copy activity source for SAP Cloud for Customer source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -55009,7 +55004,7 @@ class SapCloudForCustomerSource(TabularSource):
 class SapEccLinkedService(LinkedService):
     """Linked service for SAP ERP Central Component(SAP ECC).
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -55115,7 +55110,7 @@ class SapEccLinkedService(LinkedService):
 class SapEccResourceDataset(Dataset):
     """The path of the SAP ECC OData entity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -55220,7 +55215,7 @@ class SapEccResourceDataset(Dataset):
 class SapEccSource(TabularSource):
     """A copy activity source for SAP ECC source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -55335,7 +55330,7 @@ class SapEccSource(TabularSource):
 class SapHanaLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """SAP HANA Linked Service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -55476,7 +55471,7 @@ class SapHanaPartitionSettings(_serialization.Model):
 class SapHanaSource(TabularSource):  # pylint: disable=too-many-instance-attributes
     """A copy activity source for SAP HANA source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -55602,7 +55597,7 @@ class SapHanaSource(TabularSource):  # pylint: disable=too-many-instance-attribu
 class SapHanaTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """SAP HANA Table properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -55714,7 +55709,7 @@ class SapHanaTableDataset(Dataset):  # pylint: disable=too-many-instance-attribu
 class SapOdpLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """SAP ODP Linked Service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -55945,7 +55940,7 @@ class SapOdpLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
 class SapOdpResourceDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """SAP ODP Resource properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -56060,7 +56055,7 @@ class SapOdpResourceDataset(Dataset):  # pylint: disable=too-many-instance-attri
 class SapOdpSource(TabularSource):  # pylint: disable=too-many-instance-attributes
     """A copy activity source for SAP ODP source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -56189,7 +56184,7 @@ class SapOdpSource(TabularSource):  # pylint: disable=too-many-instance-attribut
 class SapOpenHubLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """SAP Business Warehouse Open Hub Destination Linked Service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -56358,7 +56353,7 @@ class SapOpenHubLinkedService(LinkedService):  # pylint: disable=too-many-instan
 class SapOpenHubSource(TabularSource):  # pylint: disable=too-many-instance-attributes
     """A copy activity source for SAP Business Warehouse Open Hub Destination source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -56491,7 +56486,7 @@ class SapOpenHubSource(TabularSource):  # pylint: disable=too-many-instance-attr
 class SapOpenHubTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Sap Business Warehouse Open Hub Destination Table properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -56616,7 +56611,7 @@ class SapOpenHubTableDataset(Dataset):  # pylint: disable=too-many-instance-attr
 class SapTableLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """SAP Table Linked Service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -56887,7 +56882,7 @@ class SapTablePartitionSettings(_serialization.Model):
 class SapTableResourceDataset(Dataset):
     """SAP Table Resource properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -56992,7 +56987,7 @@ class SapTableResourceDataset(Dataset):
 class SapTableSource(TabularSource):  # pylint: disable=too-many-instance-attributes
     """A copy activity source for SAP Table source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -57172,7 +57167,7 @@ class ScheduleTrigger(MultiplePipelineTrigger):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -57316,7 +57311,7 @@ class ScheduleTriggerRecurrence(_serialization.Model):
 class ScriptAction(_serialization.Model):
     """Custom script action to run on HDI ondemand cluster once it's up.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The user provided name of the script action. Required.
     :vartype name: str
@@ -57362,7 +57357,7 @@ class ScriptAction(_serialization.Model):
 class ScriptActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Script activity type.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -57549,7 +57544,7 @@ class ScriptActivityParameter(_serialization.Model):
 class ScriptActivityScriptBlock(_serialization.Model):
     """Script block of scripts.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar text: The query text. Type: string (or Expression with resultType string). Required.
     :vartype text: JSON
@@ -57597,7 +57592,7 @@ class ScriptActivityScriptBlock(_serialization.Model):
 class ScriptActivityTypePropertiesLogSettings(_serialization.Model):
     """Log settings of script activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar log_destination: The destination of logs. Type: string. Required. Known values are:
      "ActivityOutput" and "ExternalStore".
@@ -57671,7 +57666,7 @@ class SecureString(SecretBase):
     """Azure Data Factory secure string definition. The string value will be masked with asterisks '*'
     during Get or List API calls.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of the secret. Required.
     :vartype type: str
@@ -57699,10 +57694,10 @@ class SecureString(SecretBase):
         self.value = value
 
 
-class SelfDependencyTumblingWindowTriggerReference(DependencyReference):
+class SelfDependencyTumblingWindowTriggerReference(DependencyReference):  # pylint: disable=name-too-long
     """Self referenced tumbling window trigger dependency.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of dependency reference. Required.
     :vartype type: str
@@ -57749,7 +57744,7 @@ class SelfDependencyTumblingWindowTriggerReference(DependencyReference):
 class SelfHostedIntegrationRuntime(IntegrationRuntime):
     """Self-hosted integration runtime.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -57938,7 +57933,7 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):  # pylint: d
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -58088,7 +58083,7 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):  # pylint: d
 class ServiceNowLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """ServiceNow server linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -58247,7 +58242,7 @@ class ServiceNowLinkedService(LinkedService):  # pylint: disable=too-many-instan
 class ServiceNowObjectDataset(Dataset):
     """ServiceNow server dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -58349,7 +58344,7 @@ class ServiceNowObjectDataset(Dataset):
 class ServiceNowSource(TabularSource):
     """A copy activity ServiceNow server source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -58451,7 +58446,7 @@ class ServiceNowSource(TabularSource):
 class ServiceNowV2LinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """ServiceNowV2 server linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -58588,7 +58583,7 @@ class ServiceNowV2LinkedService(LinkedService):  # pylint: disable=too-many-inst
 class ServiceNowV2ObjectDataset(Dataset):
     """ServiceNowV2 server dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -58690,7 +58685,7 @@ class ServiceNowV2ObjectDataset(Dataset):
 class ServiceNowV2Source(TabularSource):
     """A copy activity ServiceNowV2 server source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -58790,7 +58785,7 @@ class ServiceNowV2Source(TabularSource):
 class ServicePrincipalCredential(Credential):
     """Service principal credential.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -58858,10 +58853,54 @@ class ServicePrincipalCredential(Credential):
         self.tenant = tenant
 
 
+class ServicePrincipalCredentialResource(CredentialResource):
+    """Credential resource type.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: The resource identifier.
+    :vartype id: str
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar etag: Etag identifies change in the resource.
+    :vartype etag: str
+    :ivar properties: Service Principal Credential properties. Required.
+    :vartype properties: ~azure.mgmt.datafactory.models.ServicePrincipalCredential
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "properties": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "properties": {"key": "properties", "type": "ServicePrincipalCredential"},
+    }
+
+    def __init__(self, *, properties: "_models.ServicePrincipalCredential", **kwargs: Any) -> None:
+        """
+        :keyword properties: Service Principal Credential properties. Required.
+        :paramtype properties: ~azure.mgmt.datafactory.models.ServicePrincipalCredential
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
 class SetVariableActivity(ControlActivity):  # pylint: disable=too-many-instance-attributes
     """Set value for a Variable.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -58977,7 +59016,7 @@ class SetVariableActivity(ControlActivity):  # pylint: disable=too-many-instance
 class SftpLocation(DatasetLocation):
     """The location of SFTP dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -59031,7 +59070,7 @@ class SftpLocation(DatasetLocation):
 class SftpReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-attributes
     """Sftp read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -59180,7 +59219,7 @@ class SftpReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-
 class SftpServerLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """A linked service for an SSH File Transfer Protocol (SFTP) server.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -59353,7 +59392,7 @@ class SftpServerLinkedService(LinkedService):  # pylint: disable=too-many-instan
 class SftpWriteSettings(StoreWriteSettings):
     """Sftp write settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -59446,7 +59485,7 @@ class SftpWriteSettings(StoreWriteSettings):
 class SharePointOnlineListLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """SharePoint Online List linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -59568,7 +59607,7 @@ class SharePointOnlineListLinkedService(LinkedService):  # pylint: disable=too-m
 class SharePointOnlineListResourceDataset(Dataset):
     """The sharepoint online list resource dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -59672,7 +59711,7 @@ class SharePointOnlineListResourceDataset(Dataset):
 class SharePointOnlineListSource(CopySource):
     """A copy activity source for sharePoint online list source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -59767,7 +59806,7 @@ class SharePointOnlineListSource(CopySource):
 class ShopifyLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Shopify Service linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -59889,7 +59928,7 @@ class ShopifyLinkedService(LinkedService):  # pylint: disable=too-many-instance-
 class ShopifyObjectDataset(Dataset):
     """Shopify Service dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -59991,7 +60030,7 @@ class ShopifyObjectDataset(Dataset):
 class ShopifySource(TabularSource):
     """A copy activity Shopify Service source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -60125,7 +60164,7 @@ class SkipErrorFile(_serialization.Model):
 class SmartsheetLinkedService(LinkedService):
     """Linked service for Smartsheet.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -60209,7 +60248,7 @@ class SmartsheetLinkedService(LinkedService):
 class SnowflakeDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The snowflake dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -60322,7 +60361,7 @@ class SnowflakeDataset(Dataset):  # pylint: disable=too-many-instance-attributes
 class SnowflakeExportCopyCommand(ExportSettings):
     """Snowflake export command settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -60384,7 +60423,7 @@ class SnowflakeExportCopyCommand(ExportSettings):
 class SnowflakeImportCopyCommand(ImportSettings):
     """Snowflake import command settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -60446,7 +60485,7 @@ class SnowflakeImportCopyCommand(ImportSettings):
 class SnowflakeLinkedService(LinkedService):
     """Snowflake linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -60539,7 +60578,7 @@ class SnowflakeLinkedService(LinkedService):
 class SnowflakeSink(CopySink):
     """A copy activity snowflake sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -60648,7 +60687,7 @@ class SnowflakeSink(CopySink):
 class SnowflakeSource(CopySource):
     """A copy activity snowflake source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -60738,7 +60777,7 @@ class SnowflakeSource(CopySource):
 class SnowflakeV2Dataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The snowflake dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -60851,7 +60890,7 @@ class SnowflakeV2Dataset(Dataset):  # pylint: disable=too-many-instance-attribut
 class SnowflakeV2LinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Snowflake linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -61029,7 +61068,7 @@ class SnowflakeV2LinkedService(LinkedService):  # pylint: disable=too-many-insta
 class SnowflakeV2Sink(CopySink):
     """A copy activity snowflake sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -61138,7 +61177,7 @@ class SnowflakeV2Sink(CopySink):
 class SnowflakeV2Source(CopySource):
     """A copy activity snowflake source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -61225,10 +61264,10 @@ class SnowflakeV2Source(CopySource):
         self.export_settings = export_settings
 
 
-class SparkConfigurationParametrizationReference(_serialization.Model):
+class SparkConfigurationParametrizationReference(_serialization.Model):  # pylint: disable=name-too-long
     """Spark configuration reference.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Spark configuration reference type. Required. "SparkConfigurationReference"
     :vartype type: str or ~azure.mgmt.datafactory.models.SparkConfigurationReferenceType
@@ -61265,7 +61304,7 @@ class SparkConfigurationParametrizationReference(_serialization.Model):
 class SparkLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Spark Server linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -61460,7 +61499,7 @@ class SparkLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
 class SparkObjectDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Spark Server dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -61581,7 +61620,7 @@ class SparkObjectDataset(Dataset):  # pylint: disable=too-many-instance-attribut
 class SparkSource(TabularSource):
     """A copy activity Spark Server source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -61683,7 +61722,7 @@ class SparkSource(TabularSource):
 class SqlAlwaysEncryptedProperties(_serialization.Model):
     """Sql always encrypted properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar always_encrypted_akv_auth_type: Sql always encrypted AKV authentication type. Type:
      string. Required. Known values are: "ServicePrincipal", "ManagedIdentity", and
@@ -61745,7 +61784,7 @@ class SqlAlwaysEncryptedProperties(_serialization.Model):
 class SqlDWSink(CopySink):  # pylint: disable=too-many-instance-attributes
     """A copy activity SQL Data Warehouse sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -61915,7 +61954,7 @@ class SqlDWSink(CopySink):  # pylint: disable=too-many-instance-attributes
 class SqlDWSource(TabularSource):  # pylint: disable=too-many-instance-attributes
     """A copy activity SQL Data Warehouse source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -62100,7 +62139,7 @@ class SqlDWUpsertSettings(_serialization.Model):
 class SqlMISink(CopySink):  # pylint: disable=too-many-instance-attributes
     """A copy activity Azure SQL Managed Instance sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -62273,7 +62312,7 @@ class SqlMISink(CopySink):  # pylint: disable=too-many-instance-attributes
 class SqlMISource(TabularSource):  # pylint: disable=too-many-instance-attributes
     """A copy activity Azure SQL Managed Instance source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -62487,7 +62526,7 @@ class SqlPartitionSettings(_serialization.Model):
 class SqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """SQL Server linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -62600,7 +62639,7 @@ class SqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
 class SqlServerSink(CopySink):  # pylint: disable=too-many-instance-attributes
     """A copy activity SQL server sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -62773,7 +62812,7 @@ class SqlServerSink(CopySink):  # pylint: disable=too-many-instance-attributes
 class SqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attributes
     """A copy activity SQL server source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -62930,7 +62969,7 @@ class SqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attri
 class SqlServerStoredProcedureActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """SQL stored procedure activity type.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -63051,7 +63090,7 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):  # pylint: disable=to
 class SqlServerTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The on-premises SQL Server dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -63173,7 +63212,7 @@ class SqlServerTableDataset(Dataset):  # pylint: disable=too-many-instance-attri
 class SqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
     """A copy activity SQL sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -63346,7 +63385,7 @@ class SqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
 class SqlSource(TabularSource):  # pylint: disable=too-many-instance-attributes
     """A copy activity SQL source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -63541,7 +63580,7 @@ class SqlUpsertSettings(_serialization.Model):
 class SquareLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Square Service linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -63685,7 +63724,7 @@ class SquareLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
 class SquareObjectDataset(Dataset):
     """Square Service dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -63787,7 +63826,7 @@ class SquareObjectDataset(Dataset):
 class SquareSource(TabularSource):
     """A copy activity Square Service source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -63889,7 +63928,7 @@ class SquareSource(TabularSource):
 class SSISAccessCredential(_serialization.Model):
     """SSIS access credential.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar domain: Domain for windows authentication. Type: string (or Expression with resultType
      string). Required.
@@ -63933,7 +63972,7 @@ class SSISAccessCredential(_serialization.Model):
 class SSISChildPackage(_serialization.Model):
     """SSIS embedded child package.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar package_path: Path for embedded child package. Type: string (or Expression with
      resultType string). Required.
@@ -63993,7 +64032,7 @@ class SsisObjectMetadata(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     SsisEnvironment, SsisFolder, SsisPackage, SsisProject
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of metadata. Required. Known values are: "Folder", "Project", "Package", and
      "Environment".
@@ -64052,7 +64091,7 @@ class SsisObjectMetadata(_serialization.Model):
 class SsisEnvironment(SsisObjectMetadata):
     """Ssis environment.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of metadata. Required. Known values are: "Folder", "Project", "Package", and
      "Environment".
@@ -64159,7 +64198,7 @@ class SsisEnvironmentReference(_serialization.Model):
 class SSISExecutionCredential(_serialization.Model):
     """SSIS package execution credential.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar domain: Domain for windows authentication. Type: string (or Expression with resultType
      string). Required.
@@ -64203,7 +64242,7 @@ class SSISExecutionCredential(_serialization.Model):
 class SSISExecutionParameter(_serialization.Model):
     """SSIS execution parameter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: SSIS package execution parameter value. Type: string (or Expression with
      resultType string). Required.
@@ -64231,7 +64270,7 @@ class SSISExecutionParameter(_serialization.Model):
 class SsisFolder(SsisObjectMetadata):
     """Ssis folder.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of metadata. Required. Known values are: "Folder", "Project", "Package", and
      "Environment".
@@ -64278,7 +64317,7 @@ class SsisFolder(SsisObjectMetadata):
 class SSISLogLocation(_serialization.Model):
     """SSIS package execution log location.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar log_path: The SSIS package execution log path. Type: string (or Expression with
      resultType string). Required.
@@ -64415,7 +64454,7 @@ class SsisObjectMetadataStatusResponse(_serialization.Model):
 class SsisPackage(SsisObjectMetadata):
     """Ssis Package.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of metadata. Required. Known values are: "Folder", "Project", "Package", and
      "Environment".
@@ -64690,7 +64729,7 @@ class SsisParameter(_serialization.Model):  # pylint: disable=too-many-instance-
 class SsisProject(SsisObjectMetadata):
     """Ssis project.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of metadata. Required. Known values are: "Folder", "Project", "Package", and
      "Environment".
@@ -64765,7 +64804,7 @@ class SsisProject(SsisObjectMetadata):
 class SSISPropertyOverride(_serialization.Model):
     """SSIS property override.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: SSIS package property override value. Type: string (or Expression with resultType
      string). Required.
@@ -64868,7 +64907,7 @@ class SsisVariable(_serialization.Model):
 class StagingSettings(_serialization.Model):
     """Staging settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -64963,7 +65002,7 @@ class SwitchActivity(ControlActivity):  # pylint: disable=too-many-instance-attr
     """This activity evaluates an expression and executes activities under the cases property that
     correspond to the expression evaluation expected in the equals property.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -65109,7 +65148,7 @@ class SwitchCase(_serialization.Model):
 class SybaseLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for Sybase data source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -65238,7 +65277,7 @@ class SybaseLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
 class SybaseSource(TabularSource):
     """A copy activity source for Sybase databases.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -65338,7 +65377,7 @@ class SybaseSource(TabularSource):
 class SybaseTableDataset(Dataset):
     """The Sybase table dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -65441,7 +65480,7 @@ class SybaseTableDataset(Dataset):
 class SynapseNotebookActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Execute Synapse notebook activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -65638,7 +65677,7 @@ class SynapseNotebookActivity(ExecutionActivity):  # pylint: disable=too-many-in
 class SynapseNotebookReference(_serialization.Model):
     """Synapse notebook reference type.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Synapse notebook reference type. Required. "NotebookReference"
     :vartype type: str or ~azure.mgmt.datafactory.models.NotebookReferenceType
@@ -65675,7 +65714,7 @@ class SynapseNotebookReference(_serialization.Model):
 class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Execute spark job activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -65943,7 +65982,7 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=t
 class SynapseSparkJobReference(_serialization.Model):
     """Synapse spark job reference type.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Synapse spark job reference type. Required. "SparkJobDefinitionReference"
     :vartype type: str or ~azure.mgmt.datafactory.models.SparkJobReferenceType
@@ -65978,7 +66017,7 @@ class SynapseSparkJobReference(_serialization.Model):
 class TabularTranslator(CopyTranslator):
     """A copy activity tabular translator.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -66001,9 +66040,9 @@ class TabularTranslator(CopyTranslator):
      strings in json format. Type: boolean (or Expression with resultType boolean).
     :vartype map_complex_values_to_string: JSON
     :ivar mappings: Column mappings with logical types. Tabular->tabular example:
-     [{"source":{"name":"CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"name":"CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].
+     [{"source":{"name":"CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"name":"CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].  # pylint: disable=line-too-long
      Hierarchical->tabular example:
-     [{"source":{"path":"$.CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"path":"$.CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].
+     [{"source":{"path":"$.CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"path":"$.CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].  # pylint: disable=line-too-long
      Type: object (or Expression with resultType object).
     :vartype mappings: JSON
     :ivar type_conversion: Whether to enable the advanced type conversion feature in the Copy
@@ -66062,9 +66101,9 @@ class TabularTranslator(CopyTranslator):
          simple strings in json format. Type: boolean (or Expression with resultType boolean).
         :paramtype map_complex_values_to_string: JSON
         :keyword mappings: Column mappings with logical types. Tabular->tabular example:
-         [{"source":{"name":"CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"name":"CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].
+         [{"source":{"name":"CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"name":"CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].  # pylint: disable=line-too-long
          Hierarchical->tabular example:
-         [{"source":{"path":"$.CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"path":"$.CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].
+         [{"source":{"path":"$.CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"path":"$.CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].  # pylint: disable=line-too-long
          Type: object (or Expression with resultType object).
         :paramtype mappings: JSON
         :keyword type_conversion: Whether to enable the advanced type conversion feature in the Copy
@@ -66087,7 +66126,7 @@ class TabularTranslator(CopyTranslator):
 class TarGZipReadSettings(CompressionReadSettings):
     """The TarGZip compression read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -66132,7 +66171,7 @@ class TarGZipReadSettings(CompressionReadSettings):
 class TarReadSettings(CompressionReadSettings):
     """The Tar compression read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -66177,7 +66216,7 @@ class TarReadSettings(CompressionReadSettings):
 class TeamDeskLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for TeamDesk.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -66297,7 +66336,7 @@ class TeamDeskLinkedService(LinkedService):  # pylint: disable=too-many-instance
 class TeradataLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for Teradata data source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -66465,7 +66504,7 @@ class TeradataPartitionSettings(_serialization.Model):
 class TeradataSource(TabularSource):  # pylint: disable=too-many-instance-attributes
     """A copy activity Teradata source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -66582,7 +66621,7 @@ class TeradataSource(TabularSource):  # pylint: disable=too-many-instance-attrib
 class TeradataTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The Teradata database dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -66694,7 +66733,7 @@ class TeradataTableDataset(Dataset):  # pylint: disable=too-many-instance-attrib
 class TextFormat(DatasetStorageFormat):  # pylint: disable=too-many-instance-attributes
     """The data stored in text format.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -66830,7 +66869,7 @@ class TriggerDependencyReference(DependencyReference):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     TumblingWindowTriggerDependencyReference
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of dependency reference. Required.
     :vartype type: str
@@ -66895,7 +66934,7 @@ class TriggerFilterParameters(_serialization.Model):
 class TriggerListResponse(_serialization.Model):
     """A list of trigger resources.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of triggers. Required.
     :vartype value: list[~azure.mgmt.datafactory.models.TriggerResource]
@@ -66961,7 +67000,7 @@ class TriggerPipelineReference(_serialization.Model):
 class TriggerQueryResponse(_serialization.Model):
     """A query of triggers.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of triggers. Required.
     :vartype value: list[~azure.mgmt.datafactory.models.TriggerResource]
@@ -66997,7 +67036,7 @@ class TriggerQueryResponse(_serialization.Model):
 class TriggerReference(_serialization.Model):
     """Trigger reference type.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Trigger reference type. Required. "TriggerReference"
     :vartype type: str or ~azure.mgmt.datafactory.models.TriggerReferenceType
@@ -67032,7 +67071,7 @@ class TriggerResource(SubResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource identifier.
     :vartype id: str
@@ -67152,7 +67191,7 @@ class TriggerRun(_serialization.Model):  # pylint: disable=too-many-instance-att
 class TriggerRunsQueryResponse(_serialization.Model):
     """A list of trigger runs.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of trigger runs. Required.
     :vartype value: list[~azure.mgmt.datafactory.models.TriggerRun]
@@ -67220,7 +67259,7 @@ class TumblingWindowTrigger(Trigger):  # pylint: disable=too-many-instance-attri
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -67361,7 +67400,7 @@ class TumblingWindowTrigger(Trigger):  # pylint: disable=too-many-instance-attri
 class TumblingWindowTriggerDependencyReference(TriggerDependencyReference):
     """Referenced tumbling window trigger dependency.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of dependency reference. Required.
     :vartype type: str
@@ -67420,7 +67459,7 @@ class TumblingWindowTriggerDependencyReference(TriggerDependencyReference):
 class TwilioLinkedService(LinkedService):
     """Linked service for Twilio.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -67578,7 +67617,7 @@ class UntilActivity(ControlActivity):  # pylint: disable=too-many-instance-attri
     """This activity executes inner activities until the specified boolean expression results to true
     or timeout is reached, whichever is earlier.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -67821,7 +67860,7 @@ class UserAccessPolicy(_serialization.Model):
 class UserProperty(_serialization.Model):
     """User property.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: User property name. Required.
     :vartype name: str
@@ -67856,7 +67895,7 @@ class UserProperty(_serialization.Model):
 class ValidationActivity(ControlActivity):  # pylint: disable=too-many-instance-attributes
     """This activity verifies that an external resource exists.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -67994,7 +68033,7 @@ class ValidationActivity(ControlActivity):  # pylint: disable=too-many-instance-
 class VariableSpecification(_serialization.Model):
     """Definition of a single variable for a Pipeline.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Variable type. Required. Known values are: "String", "Bool", and "Array".
     :vartype type: str or ~azure.mgmt.datafactory.models.VariableType
@@ -68028,7 +68067,7 @@ class VariableSpecification(_serialization.Model):
 class VerticaLinkedService(LinkedService):
     """Vertica linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -68120,7 +68159,7 @@ class VerticaLinkedService(LinkedService):
 class VerticaSource(TabularSource):
     """A copy activity Vertica source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -68222,7 +68261,7 @@ class VerticaSource(TabularSource):
 class VerticaTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Vertica dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -68344,7 +68383,7 @@ class VerticaTableDataset(Dataset):  # pylint: disable=too-many-instance-attribu
 class WaitActivity(ControlActivity):
     """This activity suspends pipeline execution for the specified interval.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -68442,7 +68481,7 @@ class WaitActivity(ControlActivity):
 class WarehouseLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Microsoft Fabric Warehouse linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -68600,7 +68639,7 @@ class WarehouseLinkedService(LinkedService):  # pylint: disable=too-many-instanc
 class WarehouseSink(CopySink):  # pylint: disable=too-many-instance-attributes
     """A copy activity Microsoft Fabric Warehouse sink.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -68738,7 +68777,7 @@ class WarehouseSink(CopySink):  # pylint: disable=too-many-instance-attributes
 class WarehouseSource(TabularSource):  # pylint: disable=too-many-instance-attributes
     """A copy activity Microsoft Fabric Warehouse source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -68891,7 +68930,7 @@ class WarehouseSource(TabularSource):  # pylint: disable=too-many-instance-attri
 class WarehouseTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Microsoft Fabric Warehouse dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -69004,7 +69043,7 @@ class WarehouseTableDataset(Dataset):  # pylint: disable=too-many-instance-attri
 class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Web activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -69039,7 +69078,7 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
     :ivar headers: Represents the headers that will be sent to the request. For example, to set the
      language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
      "application/json" }. Type: string (or Expression with resultType string).
-    :vartype headers: dict[str, str]
+    :vartype headers: dict[str, JSON]
     :ivar body: Represents the payload that will be sent to the endpoint. Required for POST/PUT
      method, not allowed for GET method Type: string (or Expression with resultType string).
     :vartype body: JSON
@@ -69084,7 +69123,7 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
         "policy": {"key": "policy", "type": "ActivityPolicy"},
         "method": {"key": "typeProperties.method", "type": "str"},
         "url": {"key": "typeProperties.url", "type": "object"},
-        "headers": {"key": "typeProperties.headers", "type": "{str}"},
+        "headers": {"key": "typeProperties.headers", "type": "{object}"},
         "body": {"key": "typeProperties.body", "type": "object"},
         "authentication": {"key": "typeProperties.authentication", "type": "WebActivityAuthentication"},
         "disable_cert_validation": {"key": "typeProperties.disableCertValidation", "type": "bool"},
@@ -69109,7 +69148,7 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
-        headers: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, JSON]] = None,
         body: Optional[JSON] = None,
         authentication: Optional["_models.WebActivityAuthentication"] = None,
         disable_cert_validation: Optional[bool] = None,
@@ -69152,7 +69191,7 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
         :keyword headers: Represents the headers that will be sent to the request. For example, to set
          the language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
          "application/json" }. Type: string (or Expression with resultType string).
-        :paramtype headers: dict[str, str]
+        :paramtype headers: dict[str, JSON]
         :keyword body: Represents the payload that will be sent to the endpoint. Required for POST/PUT
          method, not allowed for GET method Type: string (or Expression with resultType string).
         :paramtype body: JSON
@@ -69285,7 +69324,7 @@ class WebLinkedServiceTypeProperties(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     WebAnonymousAuthentication, WebBasicAuthentication, WebClientCertificateAuthentication
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar url: The URL of the web service endpoint, e.g. https://www.microsoft.com . Type: string
      (or Expression with resultType string). Required.
@@ -69327,7 +69366,7 @@ class WebLinkedServiceTypeProperties(_serialization.Model):
 class WebAnonymousAuthentication(WebLinkedServiceTypeProperties):
     """A WebLinkedService that uses anonymous authentication to communicate with an HTTP endpoint.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar url: The URL of the web service endpoint, e.g. https://www.microsoft.com . Type: string
      (or Expression with resultType string). Required.
@@ -69360,7 +69399,7 @@ class WebAnonymousAuthentication(WebLinkedServiceTypeProperties):
 class WebBasicAuthentication(WebLinkedServiceTypeProperties):
     """A WebLinkedService that uses basic authentication to communicate with an HTTP endpoint.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar url: The URL of the web service endpoint, e.g. https://www.microsoft.com . Type: string
      (or Expression with resultType string). Required.
@@ -69411,7 +69450,7 @@ class WebClientCertificateAuthentication(WebLinkedServiceTypeProperties):
     HTTP endpoint. This scheme follows mutual authentication; the server must also provide valid
     credentials to the client.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar url: The URL of the web service endpoint, e.g. https://www.microsoft.com . Type: string
      (or Expression with resultType string). Required.
@@ -69458,7 +69497,7 @@ class WebClientCertificateAuthentication(WebLinkedServiceTypeProperties):
 class WebHookActivity(ControlActivity):  # pylint: disable=too-many-instance-attributes
     """WebHook activity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -69494,7 +69533,7 @@ class WebHookActivity(ControlActivity):  # pylint: disable=too-many-instance-att
     :ivar headers: Represents the headers that will be sent to the request. For example, to set the
      language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
      "application/json" }. Type: string (or Expression with resultType string).
-    :vartype headers: dict[str, str]
+    :vartype headers: dict[str, JSON]
     :ivar body: Represents the payload that will be sent to the endpoint. Required for POST/PUT
      method, not allowed for GET method Type: string (or Expression with resultType string).
     :vartype body: JSON
@@ -69527,7 +69566,7 @@ class WebHookActivity(ControlActivity):  # pylint: disable=too-many-instance-att
         "method": {"key": "typeProperties.method", "type": "str"},
         "url": {"key": "typeProperties.url", "type": "object"},
         "timeout": {"key": "typeProperties.timeout", "type": "str"},
-        "headers": {"key": "typeProperties.headers", "type": "{str}"},
+        "headers": {"key": "typeProperties.headers", "type": "{object}"},
         "body": {"key": "typeProperties.body", "type": "object"},
         "authentication": {"key": "typeProperties.authentication", "type": "WebActivityAuthentication"},
         "report_status_on_call_back": {"key": "typeProperties.reportStatusOnCallBack", "type": "object"},
@@ -69547,7 +69586,7 @@ class WebHookActivity(ControlActivity):  # pylint: disable=too-many-instance-att
         user_properties: Optional[List["_models.UserProperty"]] = None,
         policy: Optional["_models.SecureInputOutputPolicy"] = None,
         timeout: Optional[str] = None,
-        headers: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, JSON]] = None,
         body: Optional[JSON] = None,
         authentication: Optional["_models.WebActivityAuthentication"] = None,
         report_status_on_call_back: Optional[JSON] = None,
@@ -69586,7 +69625,7 @@ class WebHookActivity(ControlActivity):  # pylint: disable=too-many-instance-att
         :keyword headers: Represents the headers that will be sent to the request. For example, to set
          the language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
          "application/json" }. Type: string (or Expression with resultType string).
-        :paramtype headers: dict[str, str]
+        :paramtype headers: dict[str, JSON]
         :keyword body: Represents the payload that will be sent to the endpoint. Required for POST/PUT
          method, not allowed for GET method Type: string (or Expression with resultType string).
         :paramtype body: JSON
@@ -69622,7 +69661,7 @@ class WebHookActivity(ControlActivity):  # pylint: disable=too-many-instance-att
 class WebLinkedService(LinkedService):
     """Web linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -69697,7 +69736,7 @@ class WebLinkedService(LinkedService):
 class WebSource(CopySource):
     """A copy activity source for web page table.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -69781,7 +69820,7 @@ class WebSource(CopySource):
 class WebTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """The dataset points to a HTML table in the web page.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -69895,7 +69934,7 @@ class WebTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
 class WranglingDataFlow(DataFlow):
     """Power Query data flow.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of data flow. Required.
     :vartype type: str
@@ -69964,7 +70003,7 @@ class WranglingDataFlow(DataFlow):
 class XeroLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Xero Service linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -70104,7 +70143,7 @@ class XeroLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
 class XeroObjectDataset(Dataset):
     """Xero Service dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -70206,7 +70245,7 @@ class XeroObjectDataset(Dataset):
 class XeroSource(TabularSource):
     """A copy activity Xero Service source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -70308,7 +70347,7 @@ class XeroSource(TabularSource):
 class XmlDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Xml dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -70440,7 +70479,7 @@ class XmlDataset(Dataset):  # pylint: disable=too-many-instance-attributes
 class XmlReadSettings(FormatReadSettings):
     """Xml read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -70523,7 +70562,7 @@ class XmlReadSettings(FormatReadSettings):
 class XmlSource(CopySource):
     """A copy activity Xml source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -70621,7 +70660,7 @@ class XmlSource(CopySource):
 class ZendeskLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for Zendesk.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -70740,7 +70779,7 @@ class ZendeskLinkedService(LinkedService):  # pylint: disable=too-many-instance-
 class ZipDeflateReadSettings(CompressionReadSettings):
     """The ZipDeflate compression read settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -70785,7 +70824,7 @@ class ZipDeflateReadSettings(CompressionReadSettings):
 class ZohoLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Zoho server linked service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -70913,7 +70952,7 @@ class ZohoLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
 class ZohoObjectDataset(Dataset):
     """Zoho server dataset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -71015,7 +71054,7 @@ class ZohoObjectDataset(Dataset):
 class ZohoSource(TabularSource):
     """A copy activity Zoho server source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.

@@ -266,6 +266,91 @@ print("----------------------------------------")
 
 <!-- END SNIPPET -->
 
+### Using the General Document Model
+
+Analyze key-value pairs, tables, styles, and selection marks from documents using the general document model provided by the Document Intelligence service.
+Select the General Document Model by passing `model_id="prebuilt-document"` into the `begin_analyze_document` method:
+
+<!-- SNIPPET:sample_analyze_general_documents.analyze_general_documents -->
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.documentintelligence import DocumentIntelligenceClient
+from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
+
+endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
+key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
+
+document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+with open(path_to_sample_documents, "rb") as f:
+    poller = document_intelligence_client.begin_analyze_document(
+        "prebuilt-layout",
+        analyze_request=f,
+        features=[DocumentAnalysisFeature.KEY_VALUE_PAIRS],
+        content_type="application/octet-stream",
+    )
+result: AnalyzeResult = poller.result()
+
+if result.styles:
+    for style in result.styles:
+        if style.is_handwritten:
+            print("Document contains handwritten content: ")
+            print(",".join([result.content[span.offset : span.offset + span.length] for span in style.spans]))
+
+print("----Key-value pairs found in document----")
+if result.key_value_pairs:
+    for kv_pair in result.key_value_pairs:
+        if kv_pair.key:
+            print(f"Key '{kv_pair.key.content}' found within " f"'{kv_pair.key.bounding_regions}' bounding regions")
+        if kv_pair.value:
+            print(
+                f"Value '{kv_pair.value.content}' found within "
+                f"'{kv_pair.value.bounding_regions}' bounding regions\n"
+            )
+
+for page in result.pages:
+    print(f"----Analyzing document from page #{page.page_number}----")
+    print(f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}")
+
+    if page.lines:
+        for line_idx, line in enumerate(page.lines):
+            words = get_words(page.words, line)
+            print(
+                f"...Line #{line_idx} has {len(words)} words and text '{line.content}' within "
+                f"bounding polygon '{line.polygon}'"
+            )
+
+            for word in words:
+                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
+
+    if page.selection_marks:
+        for selection_mark in page.selection_marks:
+            print(
+                f"Selection mark is '{selection_mark.state}' within bounding polygon "
+                f"'{selection_mark.polygon}' and has a confidence of "
+                f"{selection_mark.confidence}"
+            )
+
+if result.tables:
+    for table_idx, table in enumerate(result.tables):
+        print(f"Table # {table_idx} has {table.row_count} rows and {table.column_count} columns")
+        if table.bounding_regions:
+            for region in table.bounding_regions:
+                print(f"Table # {table_idx} location on page: {region.page_number} is {region.polygon}")
+        for cell in table.cells:
+            print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
+            if cell.bounding_regions:
+                for region in cell.bounding_regions:
+                    print(
+                        f"...content on page {region.page_number} is within bounding polygon '{region.polygon}'\n"
+                    )
+print("----------------------------------------")
+```
+
+<!-- END SNIPPET -->
+
+- Read more about the features provided by the `prebuilt-document` model [here][service_prebuilt_document].
+
 ### Using Prebuilt Models
 
 Extract fields from select document types such as receipts, invoices, business cards, identity documents, and U.S. W-2 tax documents using prebuilt models provided by the Document Intelligence service.
@@ -467,8 +552,7 @@ if result.documents:
                             value_obj = obj[KEY_OF_VALUE_OBJECT]
                             extract_value_by_col_name = lambda key: (
                                 value_obj[key].get(KEY_OF_CELL_CONTENT)
-                                if key in value_obj
-                                and KEY_OF_CELL_CONTENT in value_obj[key]
+                                if key in value_obj and KEY_OF_CELL_CONTENT in value_obj[key]
                                 else "None"
                             )
                             row_data = list(map(extract_value_by_col_name, col_names))
@@ -720,3 +804,4 @@ additional questions or comments.
 [addon_languages_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_languages.py
 [query_fields_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_query_fields.py
 [service-rename]: https://techcommunity.microsoft.com/t5/azure-ai-services-blog/azure-form-recognizer-is-now-azure-ai-document-intelligence-with/ba-p/3875765
+[service_prebuilt_document]: https://docs.microsoft.com/azure/ai-services/document-intelligence/concept-general-document#general-document-features

@@ -12,9 +12,9 @@ from azure.core.polling import AsyncPollingMethod
 from azure.core.exceptions import HttpResponseError, ODataV4Format
 
 from .._generated.aio import RemoteRenderingRestClient
-from .._generated.models import (AssetConversion, AssetConversionInputSettings,
+from .._generated.models import (AssetConversion,
                                  AssetConversionStatus,
-                                 RenderingSession, RenderingSessionSize,
+                                 RenderingSession,
                                  RenderingSessionStatus)
 
 if TYPE_CHECKING:
@@ -41,7 +41,7 @@ class RemoteRenderingPollingAsync(AsyncPollingMethod):
     async def _update_status(self):
         # type: () -> None
         if self._query_status is None:
-            raise Exception("this poller has not been initialized")
+            raise RuntimeError("this poller has not been initialized")
         self._response = await self._query_status()  # pylint: disable=E1102
         if self._response is not None and self._response.error is not None:
             error = HttpResponseError("Polling returned a status indicating an error state.", model=self._response)

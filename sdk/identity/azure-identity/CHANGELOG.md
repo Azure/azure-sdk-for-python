@@ -1,12 +1,20 @@
 # Release History
 
-## 1.16.0 (Unreleased)
+## 1.16.1 (Unreleased)
 
 ### Features Added
+
+- Added environment variable `AZURE_CLIENT_SEND_CERTIFICATE_CHAIN` support for `EnvironmentCredential`.
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- Fixed typing errors when certain credentials are used as context managers. ([#35415](https://github.com/Azure/azure-sdk-for-python/pull/35415))
+
+### Other Changes
+
+## 1.16.0 (2024-04-09)
 
 ### Other Changes
 

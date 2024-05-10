@@ -119,7 +119,7 @@ class MediaStreamingStatusDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class MediaStreamingSubscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Media streaming subscription state."""
+    """Gets or Sets media streaming subscription state."""
 
     DISABLED = "disabled"
     INACTIVE = "inactive"
@@ -213,6 +213,14 @@ class TranscriptionResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     FINAL = "final"
     INTERMEDIATE = "intermediate"
+
+
+class TranscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets the state of the current transcription subscription for the call."""
+
+    DISABLED = "disabled"
+    INACTIVE = "inactive"
+    ACTIVE = "active"
 
 
 class TranscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -25,6 +25,8 @@ class Action(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SAVEPOINT = "SAVEPOINT"
     LIST_SAVEPOINT = "LIST_SAVEPOINT"
     DELETE = "DELETE"
+    LAST_STATE_UPDATE = "LAST_STATE_UPDATE"
+    RE_LAUNCH = "RE_LAUNCH"
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -38,6 +40,34 @@ class AutoscaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SCHEDULE_BASED = "ScheduleBased"
     LOAD_BASED = "LoadBased"
+
+
+class ClusterAvailableUpgradeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of upgrade."""
+
+    AKS_PATCH_UPGRADE = "AKSPatchUpgrade"
+    HOTFIX_UPGRADE = "HotfixUpgrade"
+
+
+class ClusterPoolAvailableUpgradeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of upgrade."""
+
+    AKS_PATCH_UPGRADE = "AKSPatchUpgrade"
+    NODE_OS_UPGRADE = "NodeOsUpgrade"
+
+
+class ClusterPoolUpgradeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of upgrade."""
+
+    AKS_PATCH_UPGRADE = "AKSPatchUpgrade"
+    NODE_OS_UPGRADE = "NodeOsUpgrade"
+
+
+class ClusterUpgradeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of upgrade."""
+
+    AKS_PATCH_UPGRADE = "AKSPatchUpgrade"
+    HOTFIX_UPGRADE = "HotfixUpgrade"
 
 
 class ComparisonOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -68,6 +98,51 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
+class CurrentClusterAksVersionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current AKS version's status: whether it is deprecated or supported."""
+
+    DEPRECATED = "Deprecated"
+    SUPPORTED = "Supported"
+
+
+class CurrentClusterPoolAksVersionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current AKS version's status: whether it is deprecated or supported."""
+
+    DEPRECATED = "Deprecated"
+    SUPPORTED = "Supported"
+
+
+class DataDiskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Managed Disk Type."""
+
+    STANDARD_HDD_LRS = "Standard_HDD_LRS"
+    STANDARD_SSD_LRS = "Standard_SSD_LRS"
+    STANDARD_SSD_ZRS = "Standard_SSD_ZRS"
+    PREMIUM_SSD_LRS = "Premium_SSD_LRS"
+    PREMIUM_SSD_ZRS = "Premium_SSD_ZRS"
+    PREMIUM_SSD_V2_LRS = "Premium_SSD_v2_LRS"
+
+
+class DbConnectionAuthenticationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication mode to connect to your Hive metastore database. More details:
+    https://learn.microsoft.com/en-us/azure/azure-sql/database/logins-create-manage?view=azuresql#authentication-and-authorization.
+    """
+
+    SQL_AUTH = "SqlAuth"
+    """The password-based authentication to connect to your Hive metastore database."""
+    IDENTITY_AUTH = "IdentityAuth"
+    """The managed-identity-based authentication to connect to your Hive metastore database."""
+
+
+class DeploymentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A string property that indicates the deployment mode of Flink cluster. It can have one of the
+    following enum values => Application, Session. Default value is Session.
+    """
+
+    APPLICATION = "Application"
+    SESSION = "Session"
+
+
 class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of cluster job."""
 
@@ -82,6 +157,17 @@ class KeyVaultObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CERTIFICATE = "Certificate"
 
 
+class MetastoreDbConnectionAuthenticationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication mode to connect to your Hive metastore database. More details:
+    https://learn.microsoft.com/en-us/azure/azure-sql/database/logins-create-manage?view=azuresql#authentication-and-authorization.
+    """
+
+    SQL_AUTH = "SqlAuth"
+    """The password-based authentication to connect to your Hive metastore database."""
+    IDENTITY_AUTH = "IdentityAuth"
+    """The managed-identity-based authentication to connect to your Hive metastore database."""
+
+
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system".
@@ -92,6 +178,17 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER_SYSTEM = "user,system"
 
 
+class OutboundType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This can only be set at cluster pool creation time and cannot be changed later."""
+
+    LOAD_BALANCER = "loadBalancer"
+    """The load balancer is used for egress through an AKS assigned public IP. This supports
+    Kubernetes services of type 'loadBalancer'."""
+    USER_DEFINED_ROUTING = "userDefinedRouting"
+    """Egress paths must be defined by the user. This is an advanced scenario and requires proper
+    network configuration."""
+
+
 class ProvisioningStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the resource."""
 
@@ -99,6 +196,13 @@ class ProvisioningStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUCCEEDED = "Succeeded"
     CANCELED = "Canceled"
     FAILED = "Failed"
+
+
+class RangerUsersyncMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """User & groups can be synced automatically or via a static list that's refreshed."""
+
+    STATIC = "static"
+    AUTOMATIC = "automatic"
 
 
 class ScaleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -118,3 +222,22 @@ class ScheduleDay(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     THURSDAY = "Thursday"
     FRIDAY = "Friday"
     SATURDAY = "Saturday"
+
+
+class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Severity of this upgrade."""
+
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+    CRITICAL = "critical"
+
+
+class UpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A string property that indicates the upgrade mode to be performed on the Flink job. It can have
+    one of the following enum values => STATELESS_UPDATE, UPDATE, LAST_STATE_UPDATE.
+    """
+
+    STATELESS_UPDATE = "STATELESS_UPDATE"
+    UPDATE = "UPDATE"
+    LAST_STATE_UPDATE = "LAST_STATE_UPDATE"

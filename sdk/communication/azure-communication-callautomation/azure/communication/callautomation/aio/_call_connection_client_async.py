@@ -48,6 +48,11 @@ from .._generated.models import (
     MuteParticipantsRequest,
     CancelAddParticipantRequest,
     CustomCallingContext,
+    StartTranscriptionRequest,
+    StopTranscriptionRequest,
+    UpdateTranscriptionRequest,
+    HoldRequest,
+    UnholdRequest
 )
 from .._generated.models._enums import RecognizeInputType
 from .._shared.auth_policy_utils import get_authentication_policy
@@ -240,6 +245,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         transferee: Optional['CommunicationIdentifier'] = None,
         sip_headers: Optional[Dict[str, str]] = None,
         voip_headers: Optional[Dict[str, str]] = None,
+        source_caller_id_number: Optional['PhoneNumberIdentifier'] = None,
         **kwargs
     ) -> TransferCallResult:
         """Transfer this call to another participant.
@@ -259,6 +265,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :paramtype sip_headers: dict[str, str]
         :keyword voip_headers: Custom context for VOIP
         :paramtype voip_headers: dict[str, str]
+         ivar source_caller_id_number: The source caller Id, a phone number, that's will be used as the
+         transferor's(Contoso) caller id when transfering a call a pstn target.
         :return: TransferCallResult
         :rtype: ~azure.communication.callautomation.TransferCallResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -271,8 +279,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             target_participant=serialize_identifier(target_participant),
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
-            custom_calling_context=user_custom_context
-        )
+            custom_calling_context=user_custom_context,
+            source_caller_id_number=serialize_phone_identifier(source_caller_id_number)
+            )
         process_repeatability_first_sent(kwargs)
         if transferee:
             request.transferee = serialize_identifier(transferee)
@@ -787,6 +796,148 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             **kwargs
         )
         return CancelAddParticipantOperationResult._from_generated(response) # pylint:disable=protected-access
+
+    @distributed_trace_async
+    async def start_transcription(
+        self,
+        *,
+        locale: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        """Starts transcription in the call.
+
+        :keyword locale: Defines Locale for the transcription e,g en-US.
+        :paramtype locale: str
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        start_transcription_request = StartTranscriptionRequest(
+            locale=locale,
+            operation_context=operation_context,
+            **kwargs
+        )
+        await self._call_media_client.start_transcription(self._call_connection_id, start_transcription_request)
+
+    @distributed_trace_async
+    async def stop_transcription(
+        self,
+        *,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        """Stops transcription in the call.
+
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        stop_transcription_request = StopTranscriptionRequest(
+            operation_context=operation_context,
+            **kwargs
+        )
+        await self._call_media_client.stop_transcription(self._call_connection_id, stop_transcription_request)
+
+    @distributed_trace_async
+    async def update_transcription(
+        self,
+        locale: str,
+        **kwargs
+    ) -> None:
+        """API to change transcription language.
+
+        :param locale: Defines new locale for transcription.
+        :type locale: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        update_transcription_request = UpdateTranscriptionRequest(
+            locale=locale,
+            **kwargs
+        )
+        await self._call_media_client.update_transcription(self._call_connection_id, update_transcription_request)
+
+    @distributed_trace_async
+    async def hold(
+        self,
+        target_participant: 'CommunicationIdentifier',
+        *,
+        play_source: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None,
+        operation_context: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
+        **kwargs
+    )-> None:
+        # pylint: disable=docstring-should-be-keyword
+        """Play media to specific participant(s) in this call.
+
+        :param target_participant: The participant being added.
+        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
+        :param play_source: A PlaySource representing the source to play.
+        :type play_source: ~azure.communication.callautomation.FileSource or
+         ~azure.communication.callautomation.TextSource or
+         ~azure.communication.callautomation.SsmlSource
+        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str or None
+        :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        play_source_single: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None
+        if isinstance(play_source, list):
+            warnings.warn("Currently only single play source per request is supported.")
+            if play_source:  # Check if the list is not empty
+                play_source_single = play_source[0]
+        else:
+            play_source_single = play_source
+
+        hold_request=HoldRequest(
+            target_participant=serialize_identifier(target_participant),
+            play_source_info=play_source_single._to_generated() if play_source_single else None,  # pylint:disable=protected-access
+            operation_context=operation_context,
+            operation_callback_uri=operation_callback_uri,
+            kwargs=kwargs
+        )
+
+        await self._call_media_client.hold(self._call_connection_id, hold_request)
+
+    @distributed_trace_async
+    async def unhold(
+        self,
+        target_participant: 'CommunicationIdentifier',
+        *,
+        operation_context: Optional[str] = None,
+        **kwargs
+    )-> None:
+        """Play media to specific participant(s) in this call.
+
+        :param target_participant: The participant being added.
+        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
+        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str or None
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        unhold_request=UnholdRequest(
+            target_participant=serialize_identifier(target_participant),
+            operation_context=operation_context,
+            kwargs=kwargs
+        )
+
+        await self._call_media_client.unhold(self._call_connection_id, unhold_request)
 
     async def __aenter__(self) -> "CallConnectionClient":
         await self._client.__aenter__()

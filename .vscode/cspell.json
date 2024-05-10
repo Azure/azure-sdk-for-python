@@ -100,6 +100,8 @@
     "sdk/ml/azure-ai-ml/swagger/**",
     "sdk/ml/azure-ai-ml/NOTICE.txt",
     "sdk/ml/azure-ai-ml/.pre-commit-config.yaml",
+    "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_autogen_entities/_model_base.py",
+    "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_autogen_entities/_serialization.py",
     "sdk/monitor/azure-monitor-opentelemetry/samples/tracing/django/sample/db.sqlite3",
     "sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/django/sample/db.sqlite3",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
@@ -1712,9 +1714,15 @@
       ]
     },
     {
-      "filename": "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_client.py",
+      "filename": "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/**/_client.py",
       "words": [
         "awps"
+      ]
+    },
+    {
+      "filename": "sdk/webpubsub/azure-messaging-webpubsubclient/stress/*.py",
+      "words": [
+        "psutil"
       ]
     },
     {

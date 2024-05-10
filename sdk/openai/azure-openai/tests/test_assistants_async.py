@@ -40,7 +40,6 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             assert retrieved_assistant.created_at == assistant.created_at
             assert retrieved_assistant.description == assistant.description
             assert retrieved_assistant.metadata == assistant.metadata
-            assert retrieved_assistant.file_ids == assistant.file_ids
             assert retrieved_assistant.object == assistant.object
 
             list_assistants = client_async.beta.assistants.list()
@@ -53,69 +52,6 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             )
             assert modify_assistant.metadata == {"key": "value"}
         finally:
-            delete_assistant = await client_async.beta.assistants.delete(
-                assistant_id=assistant.id
-            )
-            assert delete_assistant.id == assistant.id
-            assert delete_assistant.deleted is True
-
-    @configure_async
-    @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
-    async def test_assistants_files_crud(self, client_async, api_type, api_version, **kwargs):
-        file_name = f"test{uuid.uuid4()}.txt"
-        with open(file_name, "w") as f:
-            f.write("test")
-
-        path = pathlib.Path(file_name)
-
-        file1 = await client_async.files.create(
-            file=open(path, "rb"),
-            purpose="assistants"
-        )
-
-        file2 = await client_async.files.create(
-            file=open(path, "rb"),
-            purpose="assistants"
-        )
-
-        try:
-            assistant = await client_async.beta.assistants.create(
-                name="python test",
-                instructions="You are a personal math tutor. Write and run code to answer math questions.",
-                tools=[{"type": "code_interpreter"}],
-                file_ids=[file1.id],
-                **kwargs
-            )
-            assert assistant.file_ids == [file1.id]
-            created_assistant_file = await client_async.beta.assistants.files.create(
-                assistant_id=assistant.id,
-                file_id=file2.id
-            )
-
-            retrieved_assistant_file = await client_async.beta.assistants.files.retrieve(
-                assistant_id=assistant.id,
-                file_id=file2.id
-            )
-            assert retrieved_assistant_file.id == created_assistant_file.id
-            assert retrieved_assistant_file.object == created_assistant_file.object
-            assert retrieved_assistant_file.created_at == created_assistant_file.created_at
-            assert retrieved_assistant_file.assistant_id == created_assistant_file.assistant_id
-
-            list_assistants_files = client_async.beta.assistants.files.list(
-                assistant_id=assistant.id
-            )
-            async for asst_file in list_assistants_files:
-                assert asst_file.id
-
-            delete_assistant_file = await client_async.beta.assistants.files.delete(
-                assistant_id=assistant.id,
-                file_id=file2.id
-            )
-            assert delete_assistant_file.id == retrieved_assistant_file.id
-            assert delete_assistant_file.deleted is True
-        finally:
-            os.remove(path)
             delete_assistant = await client_async.beta.assistants.delete(
                 assistant_id=assistant.id
             )
@@ -158,6 +94,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             assert delete_thread.id == thread.id
             assert delete_thread.deleted is True
 
+    @pytest.mark.skip(reason="AOAI doesn't support assistants v2 yet")
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
@@ -189,7 +126,12 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                 role="user",
                 content="what is 2+2?",
                 metadata={"math": "addition"},
-                file_ids=[file.id]
+                attachments=[
+                    {
+                        "file_id": file.id,
+                        "tools": [{"type": "code_interpreter"}]
+                    }
+                ]
             )
             retrieved_message = await client_async.beta.threads.messages.retrieve(
                 thread_id=thread.id,
@@ -203,27 +145,11 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             assert retrieved_message.role == message.role
             assert retrieved_message.content == message.content
 
-            retrieved_message_file = await client_async.beta.threads.messages.files.retrieve(
-                thread_id=thread.id,
-                message_id=message.id,
-                file_id=file.id
-            )
-            assert retrieved_message_file.id
-            assert retrieved_message_file.message_id
-            assert retrieved_message_file.created_at
-
             list_messages = client_async.beta.threads.messages.list(
                 thread_id=thread.id
             )
             async for msg in list_messages:
                 assert msg.id
-
-            list_message_files = client_async.beta.threads.messages.files.list(
-                thread_id=thread.id,
-                message_id=message.id
-            )
-            async for msg_file in list_message_files:
-                assert msg_file.id
 
             modify_message = await client_async.beta.threads.messages.update(
                 thread_id=thread.id,

@@ -453,7 +453,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
                 rest_obj[key] = base_dict.get(key)
 
         rest_obj.update(
-            dict(
+            dict(  # pylint: disable=use-dict-literal
                 name=self.name,
                 type=self.type,
                 display_name=self.display_name,
@@ -494,7 +494,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
     def __str__(self) -> str:
         try:
             return str(self._to_yaml())
-        except BaseException:  # pylint: disable=broad-except
+        except BaseException:  # pylint: disable=W0718
             # add try catch in case component job failed in schema parse
             _obj: _AttrDict = _AttrDict()
             return _obj.__str__()

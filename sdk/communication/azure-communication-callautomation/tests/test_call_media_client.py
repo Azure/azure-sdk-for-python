@@ -24,6 +24,11 @@ from azure.communication.callautomation._generated.models import (
     DtmfOptions,
     ContinuousDtmfRecognitionRequest,
     SendDtmfTonesRequest,
+    StartTranscriptionRequest,
+    StopTranscriptionRequest,
+    UpdateTranscriptionRequest,
+    HoldRequest,
+    UnholdRequest
 )
 from azure.communication.callautomation._generated.models._enums import (
     RecognizeInputType,
@@ -318,3 +323,133 @@ class TestCallMediaClient(unittest.TestCase):
                          actual_send_dtmf_tones_request.tones)
         self.assertEqual(expected_send_dtmf_tones_request.operation_context,
                          actual_send_dtmf_tones_request.operation_context)
+
+    def test_start_transcription(self):
+        mock_start_transcription = Mock()
+        self.call_media_operations.start_transcription = mock_start_transcription
+        self.call_connection_client.start_transcription(locale=self.locale,
+                                                        operation_context=self.operation_context)
+
+        expected_start_transcription_request = StartTranscriptionRequest(
+            locale=self.locale,
+            operation_context=self.operation_context)
+
+        mock_start_transcription.assert_called_once()
+        actual_call_connection_id = mock_start_transcription.call_args[0][0]
+        actual_start_transcription_request = mock_start_transcription.call_args[0][1]
+
+        self.assertEqual(self.call_connection_id, actual_call_connection_id)
+        self.assertEqual(expected_start_transcription_request.locale,
+                         actual_start_transcription_request.locale)
+        self.assertEqual(expected_start_transcription_request.operation_context,
+                         actual_start_transcription_request.operation_context)
+
+    def test_stop_transcription(self):
+        mock_stop_transcription = Mock()
+        self.call_media_operations.stop_transcription = mock_stop_transcription
+        self.call_connection_client.stop_transcription(operation_context=self.operation_context)
+
+        expected_stop_transcription_request = StopTranscriptionRequest(operation_context=self.operation_context)
+
+        mock_stop_transcription.assert_called_once()
+        actual_call_connection_id = mock_stop_transcription.call_args[0][0]
+        actual_stop_transcription_request = mock_stop_transcription.call_args[0][1]
+
+        self.assertEqual(self.call_connection_id, actual_call_connection_id)
+        self.assertEqual(expected_stop_transcription_request.operation_context,
+                         actual_stop_transcription_request.operation_context)
+
+    def test_update_transcription(self):
+        mock_update_transcription = Mock()
+        self.call_media_operations.update_transcription = mock_update_transcription
+        self.call_connection_client.update_transcription(locale=self.locale)
+
+        expected_update_transcription_request = UpdateTranscriptionRequest(locale=self.locale)
+
+        mock_update_transcription.assert_called_once()
+        actual_call_connection_id = mock_update_transcription.call_args[0][0]
+        actual_update_transcription_request = mock_update_transcription.call_args[0][1]
+
+        self.assertEqual(self.call_connection_id, actual_call_connection_id)
+        self.assertEqual(expected_update_transcription_request.locale,
+                         actual_update_transcription_request.locale)
+
+    def test_hold_with_file_source(self):
+        mock_hold = Mock()
+        self.call_media_operations.hold = mock_hold
+        play_source = FileSource(url=self.url)
+        operation_context='context'
+
+        self.call_connection_client.hold(target_participant=self.target_user,
+                                          play_source=play_source,
+                                          operation_context=operation_context)
+
+        expected_hold_request = HoldRequest(
+            target_participant=[serialize_identifier(self.target_user)],
+            play_source_info=play_source._to_generated(),
+            operation_context=operation_context
+        )
+        mock_hold.assert_called_once()
+        actual_hold_request = mock_hold.call_args[0][1]
+
+        self.assertEqual(expected_hold_request.play_source_info.file.uri, actual_hold_request.play_source_info.file.uri)
+        self.assertEqual(expected_hold_request.play_source_info.kind, actual_hold_request.play_source_info.kind)
+        self.assertEqual(expected_hold_request.operation_context, actual_hold_request.operation_context)
+
+    def test_hold_with_text_source(self):
+        mock_hold = Mock()
+        self.call_media_operations.hold = mock_hold
+        play_source = TextSource(text='test test test')
+        operation_context='with_operation_context'
+
+        self.call_connection_client.hold(target_participant=self.target_user,
+                                          play_source=play_source,
+                                          operation_context=operation_context)
+
+        expected_hold_request = HoldRequest(
+            target_participant=[serialize_identifier(self.target_user)],
+            play_source_info=play_source._to_generated(),
+            operation_context=operation_context
+        )
+        mock_hold.assert_called_once()
+        actual_hold_request = mock_hold.call_args[0][1]
+
+        self.assertEqual(expected_hold_request.play_source_info.text.text, actual_hold_request.play_source_info.text.text)
+        self.assertEqual(expected_hold_request.play_source_info.kind, actual_hold_request.play_source_info.kind)
+        self.assertEqual(expected_hold_request.operation_context, actual_hold_request.operation_context)
+
+    def test_hold_without_text_source(self):
+        mock_hold = Mock()
+        self.call_media_operations.hold = mock_hold
+        operation_context='context'
+
+        self.call_connection_client.hold(target_participant=self.target_user,
+                                          operation_context=operation_context)
+
+        expected_hold_request = HoldRequest(
+            target_participant=[serialize_identifier(self.target_user)],
+            operation_context=operation_context
+        )
+        mock_hold.assert_called_once()
+        actual_hold_request = mock_hold.call_args[0][1]
+
+        self.assertEqual(expected_hold_request.operation_context, actual_hold_request.operation_context)
+        self.assertEqual(expected_hold_request.play_source_info, actual_hold_request.play_source_info)
+        self.assertEqual(expected_hold_request.operation_context, actual_hold_request.operation_context)
+
+    def test_unhold(self):
+        mock_unhold = Mock()
+        self.call_media_operations.unhold = mock_unhold
+        operation_context='context'
+
+        self.call_connection_client.unhold(target_participant=self.target_user,
+                                          operation_context=operation_context)
+
+        expected_hold_request = UnholdRequest(
+            target_participant=[serialize_identifier(self.target_user)],
+            operation_context=operation_context
+        )
+        mock_unhold.assert_called_once()
+        actual_hold_request = mock_unhold.call_args[0][1]
+
+        self.assertEqual(expected_hold_request.operation_context, actual_hold_request.operation_context)

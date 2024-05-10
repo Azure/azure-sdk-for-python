@@ -439,3 +439,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         await polling_method.run()
 
         return polling_method.resource()
+
+    async def __aenter__(self) -> "SecretClient":
+        await self._client.__aenter__()
+        return self

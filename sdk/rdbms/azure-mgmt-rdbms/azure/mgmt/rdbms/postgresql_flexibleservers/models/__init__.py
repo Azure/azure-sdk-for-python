@@ -120,6 +120,7 @@ from ._postgre_sql_management_client_enums import HighAvailabilityMode
 from ._postgre_sql_management_client_enums import IdentityType
 from ._postgre_sql_management_client_enums import KeyStatusEnum
 from ._postgre_sql_management_client_enums import LogicalReplicationOnSourceDbEnum
+from ._postgre_sql_management_client_enums import MigrateRolesEnum
 from ._postgre_sql_management_client_enums import MigrationDbState
 from ._postgre_sql_management_client_enums import MigrationDetailsLevel
 from ._postgre_sql_management_client_enums import MigrationListFilter
@@ -277,6 +278,7 @@ __all__ = [
     "IdentityType",
     "KeyStatusEnum",
     "LogicalReplicationOnSourceDbEnum",
+    "MigrateRolesEnum",
     "MigrationDbState",
     "MigrationDetailsLevel",
     "MigrationListFilter",

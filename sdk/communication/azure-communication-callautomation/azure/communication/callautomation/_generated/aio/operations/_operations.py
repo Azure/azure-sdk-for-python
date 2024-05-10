@@ -53,6 +53,7 @@ from ...operations._operations import (
     build_call_media_stop_continuous_dtmf_recognition_request,
     build_call_media_stop_media_streaming_request,
     build_call_media_stop_transcription_request,
+    build_call_media_transcription_state_request,
     build_call_media_unhold_request,
     build_call_media_update_transcription_request,
     build_call_recording_get_recording_properties_request,
@@ -2002,6 +2003,63 @@ class CallMediaOperations:
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    async def transcription_state(self, call_connection_id: str, **kwargs: Any) -> _models.TranscriptionStateResponse:
+        """Returns the current state of the transcription.
+
+        Returns the current state of the transcription.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :return: TranscriptionStateResponse
+        :rtype: ~azure.communication.callautomation.models.TranscriptionStateResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TranscriptionStateResponse] = kwargs.pop("cls", None)
+
+        _request = build_call_media_transcription_state_request(
+            call_connection_id=call_connection_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize("TranscriptionStateResponse", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def cancel_all_media_operations(  # pylint: disable=inconsistent-return-statements

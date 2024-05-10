@@ -21,6 +21,7 @@ AUTO_PARSE_LABEL = 'auto-link'
 AUTO_CLOSE_LABEL = 'auto-close'
 MULTI_LINK_LABEL = 'MultiLink'
 INCONSISTENT_TAG = 'Inconsistent tag'
+TYPESPEC_LABEL = 'TypeSpec'
 
 _LOG = logging.getLogger(__name__)
 
