@@ -989,6 +989,7 @@ class TestComponent:
                 "mock_param1": {"type": "AnyFile", "optional": False},
                 "mock_param2": {"type": "AnyFile", "optional": False},
             },
+            "aether": {"module_type": "ScrapingCloud", "ref_id": "mock_ref_id"},
             "outputs": {"job_info": {"type": "AnyFile"}},
             "type": "AetherBridgeComponent",
             "command": "mock.exe {inputs.mock_param1} {inputs.mock_param2} {outputs.job_info}",

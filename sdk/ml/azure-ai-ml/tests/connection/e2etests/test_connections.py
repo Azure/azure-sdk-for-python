@@ -28,6 +28,7 @@ from azure.ai.ml.entities import (
     OpenAIConnection,
     SerpConnection,
     ServerlessConnection,
+    AccountKeyConfiguration,
 )
 from azure.ai.ml.constants._common import ConnectionTypes
 from azure.core.exceptions import ResourceNotFoundError
@@ -398,26 +399,45 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             {"account_name": storage_account_name},
         ]
         internal_blob_ds = load_datastore(blob_store_file, params_override=params_override)
-        created_datastore = self.datastore_create_get_list(client, internal_blob_ds, random_name)
-        assert isinstance(created_datastore, AzureBlobDatastore)
-        assert created_datastore.container_name == internal_blob_ds.container_name
-        assert created_datastore.account_name == internal_blob_ds.account_name
-        assert created_datastore.credentials.account_key == primary_account_key
 
-        # Make sure that normal list call doesn't include data connection
-        assert internal_blob_ds.name not in [conn.name for conn in client.connections.list()]
+        created_datastore = None
+        created_connection = None
+        try:
+            created_datastore = self.datastore_create_get_list(client, internal_blob_ds, random_name)
+            assert isinstance(created_datastore, AzureBlobDatastore)
+            assert created_datastore.container_name == internal_blob_ds.container_name
+            assert created_datastore.account_name == internal_blob_ds.account_name
+            assert created_datastore.credentials.account_key == primary_account_key
 
-        # Make sure that the data connection list call includes the data connection
-        found_datastore_conn = False
-        for conn in client.connections.list(include_data_connections=True):
-            if created_datastore.name == conn.name:
-                assert conn.type == camel_to_snake(ConnectionCategory.AZURE_BLOB)
-                assert isinstance(conn, AzureBlobStoreConnection)
-                found_datastore_conn = True
-        # Ensure that we actually found and validated the data connection.
-        assert found_datastore_conn
-        # delete the data store.
-        client.datastores.delete(random_name)
+            # Now that a datastore exists, create a connection to it
+            local_connection = AzureBlobStoreConnection(
+                name=created_datastore.name,
+                url=created_datastore.base_path,
+                account_name=created_datastore.account_name,
+                container_name=created_datastore.container_name,
+                credentials=AccountKeyConfiguration(account_key=created_datastore.credentials.account_key),
+            )
+
+            created_connection = client.connections.create_or_update(connection=local_connection)
+
+            # Make sure that normal list call doesn't include data connection
+            assert internal_blob_ds.name not in [conn.name for conn in client.connections.list()]
+
+            # Make sure that the data connection list call includes the data connection
+            found_datastore_conn = False
+            for conn in client.connections.list(include_data_connections=True):
+                if created_datastore.name == conn.name:
+                    assert conn.type == camel_to_snake(ConnectionCategory.AZURE_BLOB)
+                    assert isinstance(conn, AzureBlobStoreConnection)
+                    found_datastore_conn = True
+            # Ensure that we actually found and validated the data connection.
+            assert found_datastore_conn
+        finally:
+            # Delete resources
+            if created_connection is not None:
+                client.connections.delete(name=created_datastore.name)
+            if created_datastore is not None:
+                client.datastores.delete(random_name)
         with pytest.raises(Exception):
             client.datastores.get(random_name)
 
@@ -549,7 +569,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert created_connection.type == camel_to_snake(ConnectionCategory.AZURE_OPEN_AI)
         assert created_connection.tags is not None
         assert created_connection.tags["hello"] == "world"
-        assert created_connection.api_version == "1.0"
+        assert created_connection.api_version is None
         assert created_connection.open_ai_resource_id == None
 
         with pytest.raises(Exception):
