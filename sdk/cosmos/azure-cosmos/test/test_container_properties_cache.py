@@ -28,19 +28,6 @@ class TestContainerPropertiesCache(unittest.TestCase):
     last_headers = []
     client: cosmos_client.CosmosClient = None
 
-    def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
-        """Assert HTTP failure with status.
-
-                :Parameters:
-                    - `status_code`: int
-                    - `func`: function
-                """
-        try:
-            func(*args, **kwargs)
-            self.assertFalse(True, 'function should fail.')
-        except exceptions.CosmosHttpResponseError as inst:
-            self.assertEqual(inst.status_code, status_code)
-
     @classmethod
     def setUpClass(cls):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
