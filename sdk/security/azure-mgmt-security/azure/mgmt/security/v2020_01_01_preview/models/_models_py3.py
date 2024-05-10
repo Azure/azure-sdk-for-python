@@ -25,7 +25,7 @@ class AuthenticationDetailsProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar authentication_provisioning_state: State of the multi-cloud connector. Known values are:
      "Valid", "Invalid", "Expired", and "IncorrectPolicy".
@@ -69,7 +69,7 @@ class AuthenticationDetailsProperties(_serialization.Model):
         self.authentication_type: Optional[str] = None
 
 
-class AwAssumeRoleAuthenticationDetailsProperties(AuthenticationDetailsProperties):
+class AwAssumeRoleAuthenticationDetailsProperties(AuthenticationDetailsProperties):  # pylint: disable=name-too-long
     """AWS cloud account connector based assume role, the role enables delegating access to your AWS
     resources. The role is composed of role Amazon Resource Name (ARN) and external ID. For more
     details, refer to :code:`<a
@@ -78,7 +78,7 @@ class AwAssumeRoleAuthenticationDetailsProperties(AuthenticationDetailsPropertie
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar authentication_provisioning_state: State of the multi-cloud connector. Known values are:
      "Valid", "Invalid", "Expired", and "IncorrectPolicy".
@@ -144,7 +144,7 @@ class AwsCredsAuthenticationDetailsProperties(AuthenticationDetailsProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar authentication_provisioning_state: State of the multi-cloud connector. Known values are:
      "Valid", "Invalid", "Expired", and "IncorrectPolicy".
@@ -406,7 +406,7 @@ class GcpCredentialsDetailsProperties(AuthenticationDetailsProperties):  # pylin
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar authentication_provisioning_state: State of the multi-cloud connector. Known values are:
      "Valid", "Invalid", "Expired", and "IncorrectPolicy".
@@ -542,7 +542,7 @@ class HybridComputeSettingsProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar hybrid_compute_provisioning_state: State of the service principal and its secret. Known
      values are: "Valid", "Invalid", and "Expired".
@@ -748,7 +748,7 @@ class SecurityContactList(_serialization.Model):
         self.next_link = None
 
 
-class SecurityContactPropertiesAlertNotifications(_serialization.Model):
+class SecurityContactPropertiesAlertNotifications(_serialization.Model):  # pylint: disable=name-too-long
     """Defines whether to send email notifications about new security alerts.
 
     :ivar state: Defines if email notifications will be sent about new security alerts. Known
@@ -786,7 +786,7 @@ class SecurityContactPropertiesAlertNotifications(_serialization.Model):
         self.minimal_severity = minimal_severity
 
 
-class SecurityContactPropertiesNotificationsByRole(_serialization.Model):
+class SecurityContactPropertiesNotificationsByRole(_serialization.Model):  # pylint: disable=name-too-long
     """Defines whether to send email notifications from Microsoft Defender for Cloud to persons with
     specific RBAC roles on the subscription.
 
