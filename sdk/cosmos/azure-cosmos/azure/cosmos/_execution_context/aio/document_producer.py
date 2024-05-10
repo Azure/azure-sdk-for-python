@@ -281,6 +281,8 @@ class _NonStreamingItemResultProducer:
     def __init__(self, item_result, sort_order):
         """
         Constructor
+        :param dict[str, Any] item_result: The item result extracted from the document producer
+        :param list[str] sort_order: List of sort orders (i.e., Ascending, Descending)
         """
         self._item_result = item_result
         self._doc_producer_comp = _NonStreamingOrderByComparator(sort_order)
@@ -294,8 +296,6 @@ class _NonStreamingOrderByComparator(object):
     def __init__(self, sort_order):
         """Instantiates this class
         :param list sort_order:
-            List of sort orders (i.e., Ascending, Descending)
-        :ivar list sort_order:
             List of sort orders (i.e., Ascending, Descending)
         """
         self._sort_order = sort_order

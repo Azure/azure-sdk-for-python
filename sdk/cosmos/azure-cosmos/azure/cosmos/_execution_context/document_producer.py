@@ -222,10 +222,6 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProducerCompa
 
         :param list sort_order:
             List of sort orders (i.e., Ascending, Descending)
-
-        :ivar list sort_order:
-            List of sort orders (i.e., Ascending, Descending)
-
         """
         self._sort_order = sort_order
 

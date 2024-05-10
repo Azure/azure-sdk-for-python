@@ -122,10 +122,9 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         if query_execution_info.get_non_streaming_order_by():
             if query_execution_info.get_top() is None and query_execution_info.get_limit() is None:
                 # TODO: missing one last if statement here to check for the system variable bypass - need name
-                raise CosmosHttpResponseError(StatusCodes.BAD_REQUEST,
-                                              "Executing a vector search query without TOP or LIMIT can consume many" +
-                                              " RUs very fast and have long runtimes. Please ensure you are using one" +
-                                              " of the two filters with your vector search query.")
+                raise ValueError("Executing a vector search query without TOP or LIMIT can consume many" +
+                                 " RUs very fast and have long runtimes. Please ensure you are using one" +
+                                 " of the two filters with your vector search query.")
             execution_context_aggregator =\
                 non_streaming_order_by_aggregator._NonStreamingOrderByContextAggregator(self._client,
                                                                                         self._resource_link,
