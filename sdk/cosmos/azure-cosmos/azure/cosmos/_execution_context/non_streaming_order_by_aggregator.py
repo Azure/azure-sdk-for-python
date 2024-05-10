@@ -4,37 +4,13 @@
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
 
-import heapq
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
+from azure.cosmos._execution_context.multi_execution_aggregator import _MultiExecutionContextAggregator
 from azure.cosmos._execution_context import document_producer
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
 
-
 # pylint: disable=protected-access
-
-class FixedSizePriorityQueue:
-    """Provides a Fixed Size Priority Queue abstraction data structure"""
-
-    def __init__(self, max_size):
-        self._heap = []
-        self.max_size = max_size
-
-    def pop(self):
-        return heapq.heappop(self._heap)
-
-    def push(self, item):
-        if len(self._heap) < self.max_size:
-            heapq.heappush(self._heap, item)
-        else:
-            heapq.heappushpop(self._heap, item)
-
-    def peek(self):
-        return self._heap[0]
-
-    def size(self):
-        return len(self._heap)
-
 
 class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
     """This class is a subclass of the query execution context base and serves for
@@ -56,9 +32,11 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
         self._query = query
         self._partitioned_query_ex_info = partitioned_query_ex_info
         self._sort_orders = partitioned_query_ex_info.get_order_by()
+        self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
 
         # will be a list of (partition_min, partition_max) tuples
         targetPartitionRanges = self._get_target_partition_key_range()
+        print(self._sort_orders)
 
         self._document_producer_comparator = document_producer._OrderByDocumentProducerComparator(self._sort_orders)
 
@@ -85,15 +63,20 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
                 continue
 
         pq_size = partitioned_query_ex_info.get_top() or partitioned_query_ex_info.get_limit()
-        self._orderByPQ = FixedSizePriorityQueue(pq_size)
         for doc_producer in self._doc_producers:
             while True:
                 try:
                     result = doc_producer.peek()
-                    item_result = document_producer._NonStreamingDocumentProducer(result, self._sort_orders)
+                    item_result = document_producer._NonStreamingItemResultProducer(result, self._sort_orders)
                     self._orderByPQ.push(item_result)
                     next(doc_producer)
                 except StopIteration:
+                    # this logic is necessary so that we only hold 2 * items_per_partition in memory at any time
+                    if len(self._orderByPQ._heap) > pq_size:
+                        new_heap = []
+                        for i in range(pq_size):
+                            new_heap.append(self._orderByPQ.pop())
+                        self._orderByPQ._heap = new_heap
                     break
 
     def __next__(self):

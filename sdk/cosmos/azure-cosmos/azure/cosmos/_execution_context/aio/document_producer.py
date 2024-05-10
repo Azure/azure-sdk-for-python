@@ -272,7 +272,7 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProducerCompa
             if type1 != type2:
                 raise ValueError("Expected {}, but got {}.".format(type1, type2))
 
-class _NonStreamingDocumentProducer(object):
+class _NonStreamingItemResultProducer:
     """This class takes care of handling of the items to be sorted in a non-streaming context.
     One instance of this document producer goes attached to every item coming in for the priority queue to be able
     to properly sort items as they get inserted.
@@ -281,6 +281,8 @@ class _NonStreamingDocumentProducer(object):
     def __init__(self, item_result, sort_order):
         """
         Constructor
+        :param dict[str, Any] item_result: The item result extracted from the document producer
+        :param list[str] sort_order: List of sort orders (i.e., Ascending, Descending)
         """
         self._item_result = item_result
         self._doc_producer_comp = _NonStreamingOrderByComparator(sort_order)
@@ -291,11 +293,9 @@ class _NonStreamingOrderByComparator(object):
     """Provide a Comparator for item results which respects orderby sort order.
     """
 
-    def __init__(self, sort_order):  # pylint: disable=super-init-not-called
+    def __init__(self, sort_order):
         """Instantiates this class
         :param list sort_order:
-            List of sort orders (i.e., Ascending, Descending)
-        :ivar list sort_order:
             List of sort orders (i.e., Ascending, Descending)
         """
         self._sort_order = sort_order
@@ -312,8 +312,8 @@ class _NonStreamingOrderByComparator(object):
                 negative integer if doc_producers1 < doc_producers2
         :rtype: int
         """
-        rank1 = doc_producer1._item_result["orderByItems"][0]  # pylint: disable=protected-access
-        rank2 = doc_producer2._item_result["orderByItems"][0]  # pylint: disable=protected-access
+        rank1 = doc_producer1._item_result["orderByItems"][0]
+        rank2 = doc_producer2._item_result["orderByItems"][0]
         res = await _OrderByHelper.compare(rank1, rank2)
         if res != 0:
             if self._sort_order[0] == "Descending":
