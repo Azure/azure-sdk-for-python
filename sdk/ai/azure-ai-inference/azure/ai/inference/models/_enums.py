@@ -85,38 +85,17 @@ class EmbeddingInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """to do"""
 
 
-class ImageGenerationQuality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """An image generation configuration that specifies how the model should prioritize quality, cost,
-    and speed.
-    """
-
-    STANDARD = "standard"
-    """Requests image generation with standard, balanced characteristics of quality, cost, and speed."""
-    HD = "hd"
-    """Requests image generation with higher quality, higher cost and lower speed relative to
-    standard."""
-
-
-class ImageGenerationResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The format in which the generated images are returned."""
-
-    URL = "url"
-    """Image generation response items should provide a URL from which the image may be retrieved."""
-    BASE64 = "b64_json"
-    """Image generation response items should provide image data as a base64-encoded string."""
-
-
 class ModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of AI model."""
 
     EMBEDDINGS = "embeddings"
     """Embeddings."""
     IMAGE_GENERATION = "image_generation"
-    """Image generation."""
+    """Image generation"""
     TEXT_GENERATION = "text_generation"
     """Text generation"""
     IMAGE_EMBEDDINGS = "image_embeddings"
-    """Image embeddings."""
+    """Image embeddings"""
     AUDIO_GENERATION = "audio_generation"
     """Audio generation"""
     CHAT = "chat"

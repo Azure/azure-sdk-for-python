@@ -18,6 +18,7 @@ from .. import models as _models
 
 logger = logging.getLogger(__name__)
 
+
 class BaseStreamingChatCompletions:
     """A base class for the sync and async streaming chat completions responses, holding any common code
     to deserializes the Server Sent Events (SSE) response stream into chat completions updates, each one
@@ -174,7 +175,7 @@ class AsyncStreamingChatCompletions(BaseStreamingChatCompletions):
 
 __all__: List[str] = [
     "StreamingChatCompletions",
-    "AsyncStreamingChatCompletions"
+    "AsyncStreamingChatCompletions",
 ]  # Add all objects you want publicly available to users at this package level
 
 

@@ -42,12 +42,16 @@ _SERIALIZER.client_side_validation = False
 
 class ClientGenerator:
     @staticmethod
-    def from_endpoint(endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> Union[ChatCompletionsClientGenerated, EmbeddingsClient]:
-        client = ChatCompletionsClient(endpoint, credential, **kwargs) # Pick any of the clients, it does not matter...
+    def from_endpoint(
+        endpoint: str, credential: AzureKeyCredential, **kwargs: Any
+    ) -> Union[ChatCompletionsClientGenerated, EmbeddingsClient]:
+        client = ChatCompletionsClient(endpoint, credential, **kwargs)  # Pick any of the clients, it does not matter...
         model_info = client.get_model_info()
         print(model_info)
         if model_info.model_type == None or model_info.model_type == "":
-            raise ValueError("The AI model information is missing a value for `model type`. Cannot create an appropriate client.")
+            raise ValueError(
+                "The AI model information is missing a value for `model type`. Cannot create an appropriate client."
+            )
         elif model_info.model_type == _models.ModelType.CHAT:
             return client
         elif model_info.model_type == _models.ModelType.EMBEDDINGS:
@@ -65,7 +69,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         *,
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.StreamingChatCompletions:
         # pylint: disable=line-too-long
         """Gets streaming chat completions for the provided chat messages.
@@ -109,7 +113,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
             Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
         ] = None,
         seed: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.StreamingChatCompletions:
         # pylint: disable=line-too-long
         """Gets streaming chat completions for the provided chat messages.
@@ -202,7 +206,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         *,
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.StreamingChatCompletions:
         # pylint: disable=line-too-long
         """Gets streaming chat completions for the provided chat messages.
@@ -246,7 +250,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
             Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
         ] = None,
         seed: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.StreamingChatCompletions:
         # pylint: disable=line-too-long
         """Gets streaming chat completions for the provided chat messages.
@@ -399,7 +403,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
 __all__: List[str] = [
     "ClientGenerator",
-    "ChatCompletionsClient"
+    "ChatCompletionsClient",
 ]  # Add all objects you want publicly available to users at this package level
 
 

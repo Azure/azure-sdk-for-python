@@ -44,7 +44,7 @@ class TestModelClient(ModelClientTestBase):
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
     def test_chat_completions_with_tool_error_free(self, **kwargs):
-        forecast_tool=sdk.models.ChatCompletionsFunctionToolDefinition(
+        forecast_tool = sdk.models.ChatCompletionsFunctionToolDefinition(
             function=sdk.models.FunctionDefinition(
                 name="get_max_temperature",
                 description="A function that returns the forecasted maximum temperature IN a given city, a given few days from now, in Fahrenheit. It returns `unknown` if the forecast is not known.",
@@ -65,9 +65,9 @@ class TestModelClient(ModelClientTestBase):
             )
         )
         client = self._create_chat_client(**kwargs)
-        messages=[
+        messages = [
             sdk.models.SystemMessage(content="You are an assistant that helps users find weather information."),
-            sdk.models.UserMessage(content="what's the maximum temperature in Seattle two days from now?")
+            sdk.models.UserMessage(content="what's the maximum temperature in Seattle two days from now?"),
         ]
         result = client.create(
             messages=messages,
@@ -75,13 +75,13 @@ class TestModelClient(ModelClientTestBase):
         )
         self._print_chat_completions_result(result)
         self._validate_chat_completions_tool_result(result)
-        messages.append(sdk.models.AssistantMessage(
-            tool_calls=result.choices[0].message.tool_calls
-        ))
-        messages.append(sdk.models.ToolMessage(
-            content="62",
-            tool_call_id=result.choices[0].message.tool_calls[0].id,
-        ))
+        messages.append(sdk.models.AssistantMessage(tool_calls=result.choices[0].message.tool_calls))
+        messages.append(
+            sdk.models.ToolMessage(
+                content="62",
+                tool_call_id=result.choices[0].message.tool_calls[0].id,
+            )
+        )
         result = client.create(
             messages=messages,
             tools=[forecast_tool],
@@ -131,7 +131,7 @@ class TestModelClient(ModelClientTestBase):
             exception_caught = True
             print(e)
             assert hasattr(e, "status_code")
-            assert e.status_code == 404 or e.status_code == 405 # `404 - not found` or `405 - method not allowed`
+            assert e.status_code == 404 or e.status_code == 405  # `404 - not found` or `405 - method not allowed`
             assert "not found" in e.message.lower() or "not allowed" in e.message.lower()
         client.close()
         assert exception_caught

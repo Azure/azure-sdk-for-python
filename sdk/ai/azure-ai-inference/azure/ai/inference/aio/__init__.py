@@ -6,9 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._patch import ChatCompletionsClient
+from ._client import ChatCompletionsClient
 from ._client import EmbeddingsClient
-from ._client import ImageGenerationClient
 
 try:
     from ._patch import __all__ as _patch_all
@@ -20,7 +19,6 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "ChatCompletionsClient",
     "EmbeddingsClient",
-    "ImageGenerationClient",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 

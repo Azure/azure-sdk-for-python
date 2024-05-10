@@ -31,6 +31,7 @@ def sample_chat_completions_with_tools():
     # Enable unredacted logging, including full request and response payloads (delete me!)
     import sys
     import logging
+
     logger = logging.getLogger("azure")
     logger.setLevel(logging.DEBUG)
     logger.addHandler(logging.StreamHandler(stream=sys.stdout))
@@ -76,13 +77,13 @@ def sample_chat_completions_with_tools():
         """
         if origin_city == "Seattle" and destination_city == "Miami":
             return "Delta airlines flight number 123 from Seattle to Miami, departing May 7th, 2024 at 10:00 AM."
-            #return '{"info": "Delta airlines flight number 123 from Seattle to Miami, departing May 7th, 2024 at 10:00 AM."}'
+            # return '{"info": "Delta airlines flight number 123 from Seattle to Miami, departing May 7th, 2024 at 10:00 AM."}'
         elif origin_city == "Seattle" and destination_city == "Orlando":
             return "American Airlines flight number 456 from Seattle to Orlando, departing May 8th, 2024 at 2:45 PM."
-            #return '{"info": "American Airlines flight number 456 from Seattle to Orlando, departing May 8th, 2024 at 2:45 PM."}'
+            # return '{"info": "American Airlines flight number 456 from Seattle to Orlando, departing May 8th, 2024 at 2:45 PM."}'
         else:
             return "I don't have that information."
-            #return '{"into": "I don\'t have that information."}'
+            # return '{"into": "I don\'t have that information."}'
 
     # Define a 'tool' that the model can use to retrieves flight information
     flight_info = ChatCompletionsFunctionToolDefinition(
@@ -115,7 +116,7 @@ def sample_chat_completions_with_tools():
     result = client.create(
         messages=messages,
         tools=[flight_info],
-        #tool_choice=ChatCompletionsNamedToolSelection(type="function")  # Cohere model does not support
+        # tool_choice=ChatCompletionsNamedToolSelection(type="function")  # Cohere model does not support
     )
 
     # As long as the model keeps requesting tool calls, make tool calls and provide the tool outputs to the model
@@ -124,7 +125,7 @@ def sample_chat_completions_with_tools():
         # Append the previous model response to the chat history
         if result.choices[0].message.tool_calls is not None:
             # TODO: Remove the need to set content=""
-            messages.append(AssistantMessage(content="", tool_calls=result.choices[0].message.tool_calls)) 
+            messages.append(AssistantMessage(content="", tool_calls=result.choices[0].message.tool_calls))
 
         # Make new function call(s) as needed. If parallel function calling is supported by the model,
         # we may have more than one tool call request.
@@ -141,14 +142,14 @@ def sample_chat_completions_with_tools():
 
                     # Provide the tool response to the model, by appending it to the chat history
                     messages.append(
-                        ToolMessage(tool_call_id=tool_call_id, content=function_response)  # json.dumps(function_response)
+                        ToolMessage(
+                            tool_call_id=tool_call_id, content=function_response
+                        )  # json.dumps(function_response)
                     )
 
         # With the additional tools information on hand, get another response from the model
         result = client.create(
-            messages=messages,
-            tools=[flight_info],
-            tool_choice=ChatCompletionsToolSelectionPreset.AUTO
+            messages=messages, tools=[flight_info], tool_choice=ChatCompletionsToolSelectionPreset.AUTO
         )
 
     # Print the final response

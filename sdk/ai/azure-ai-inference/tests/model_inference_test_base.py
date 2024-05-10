@@ -54,7 +54,9 @@ class ModelClientTestBase(AzureRecordedTestCase):
 
     # Regular expression describing the pattern of a result ID. Format allowed are:
     # "183b56eb-8512-484d-be50-5d8df82301a2", "26ef25aa45424781865a2d38a4484274" and "Sanitized"
-    REGEX_RESULT_ID = re.compile(r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$|^[0-9a-fA-F]{32}$|^Sanitized$")
+    REGEX_RESULT_ID = re.compile(
+        r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$|^[0-9a-fA-F]{32}$|^Sanitized$"
+    )
 
     # Methods to load credentials from environment variables
     def _load_chat_credentials(self, *, bad_key: bool, **kwargs):
@@ -122,7 +124,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         assert result.created is not None
         assert result.created != ""
         assert result.model is not None
-        #assert result.model != ""
+        # assert result.model != ""
         assert result.object == "chat.completion"
         assert result.usage.prompt_tokens > 0
         assert result.usage.completion_tokens > 0

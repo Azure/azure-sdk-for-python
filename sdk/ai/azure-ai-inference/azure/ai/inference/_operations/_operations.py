@@ -27,7 +27,7 @@ from azure.core.utils import case_insensitive_dict
 from .. import models as _models
 from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Serializer
-from .._vendor import ChatCompletionsClientMixinABC, EmbeddingsClientMixinABC, ImageGenerationClientMixinABC
+from .._vendor import ChatCompletionsClientMixinABC, EmbeddingsClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -110,49 +110,6 @@ def build_embeddings_create_request(*, model_deployment: Optional[str] = None, *
 
 
 def build_embeddings_get_model_info_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/info"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_image_generation_create_request(*, model_deployment: Optional[str] = None, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/images/generations"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if model_deployment is not None:
-        _headers["azureml-model-deployment"] = _SERIALIZER.header("model_deployment", model_deployment, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_image_generation_get_model_info_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -527,7 +484,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         """
 
     @distributed_trace
-    def create(  # pylint: disable=too-many-locals
+    def create(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -816,10 +773,13 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
 
                 # response body for status code(s): 200
                 response == {
-                    "model_name": "str",  # The name of the AI model. Required.
-                    "model_provider": "str",  # The model provider. Required.
-                    "model_type": "str"  # The type of the AI model. Required. Known values are:
-                      "embeddings", "custom", "chat", "text_generation", and "image_generation".
+                    "model_name": "str",  # The name of the AI model. For example: ``Phi21``.
+                      Required.
+                    "model_provider_name": "str",  # The model provider name. For example:
+                      ``Microsoft Research``. Required.
+                    "model_type": "str"  # The type of the AI model. A Unique identifier for the
+                      profile. Required. Known values are: "embeddings", "image_generation",
+                      "text_generation", "image_embeddings", "audio_generation", and "chat".
                 }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -881,7 +841,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         **kwargs: Any
     ) -> _models.EmbeddingsResult:
         # pylint: disable=line-too-long
-        """Return the embeddings for a given prompt.
+        """Return the embeddings for a given text prompt.
 
         :param body: Required.
         :type body: JSON
@@ -964,7 +924,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         **kwargs: Any
     ) -> _models.EmbeddingsResult:
         # pylint: disable=line-too-long
-        """Return the embeddings for a given prompt.
+        """Return the embeddings for a given text prompt.
 
         :keyword input: Input texts to get embeddings for, encoded as a an array of strings. Required.
         :paramtype input: list[str]
@@ -1038,7 +998,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         **kwargs: Any
     ) -> _models.EmbeddingsResult:
         # pylint: disable=line-too-long
-        """Return the embeddings for a given prompt.
+        """Return the embeddings for a given text prompt.
 
         :param body: Required.
         :type body: IO[bytes]
@@ -1104,7 +1064,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         **kwargs: Any
     ) -> _models.EmbeddingsResult:
         # pylint: disable=line-too-long
-        """Return the embeddings for a given prompt.
+        """Return the embeddings for a given text prompt.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
@@ -1259,10 +1219,13 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
 
                 # response body for status code(s): 200
                 response == {
-                    "model_name": "str",  # The name of the AI model. Required.
-                    "model_provider": "str",  # The model provider. Required.
-                    "model_type": "str"  # The type of the AI model. Required. Known values are:
-                      "embeddings", "custom", "chat", "text_generation", and "image_generation".
+                    "model_name": "str",  # The name of the AI model. For example: ``Phi21``.
+                      Required.
+                    "model_provider_name": "str",  # The model provider name. For example:
+                      ``Microsoft Research``. Required.
+                    "model_type": "str"  # The type of the AI model. A Unique identifier for the
+                      profile. Required. Known values are: "embeddings", "image_generation",
+                      "text_generation", "image_embeddings", "audio_generation", and "chat".
                 }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -1279,434 +1242,6 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         cls: ClsType[_models.ModelInfo] = kwargs.pop("cls", None)
 
         _request = build_embeddings_get_model_info_request(
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.ModelInfo, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class ImageGenerationClientOperationsMixin(ImageGenerationClientMixinABC):
-
-    @overload
-    def create(
-        self,
-        body: JSON,
-        *,
-        model_deployment: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ImageGenerations:
-        # pylint: disable=line-too-long
-        """Creates images given a prompt.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword model_deployment: Name of the deployment to which you would like to route the request.
-         Relevant only to Model-as-a-Platform (MaaP) deployments.
-         Typically used when you want to target a test environment instead of production environment.
-         Default value is None.
-        :paramtype model_deployment: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ImageGenerations. The ImageGenerations is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.ImageGenerations
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "prompt": "str",  # A description of the desired images. Required.
-                    "size": "str",  # The desired dimension in pixels of the generated images, in
-                      the format ":code:`<Width>`x:code:`<Hight>`". For example: "1024x1024",
-                      "1792x1024". Required.
-                    "extras": {
-                        "str": "str"  # Optional. Extra parameters (in the form of string
-                          key-value pairs) that are not in the standard request payload. They will be
-                          passed to the service as-is in the root of the JSON request payload. How the
-                          service handles these extra parameters depends on the value of the
-                          ``extra-parameters`` HTTP request header.
-                    },
-                    "quality": "str",  # Optional. The desired image generation quality level to
-                      use. Known values are: "standard" and "hd".
-                    "response_format": "str",  # Optional. The format in which image generation
-                      response items should be presented. Known values are: "url" and "b64_json".
-                    "seed": 0  # Optional. If specified, the system will make a best effort to
-                      sample deterministically such that repeated requests with the same seed and
-                      parameters should return the same result. Determinism is not guaranteed.".
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created": "2020-02-20 00:00:00",  # A timestamp representing when this
-                      operation was started. Represented as seconds since the beginning of the Unix
-                      epoch of 00:00 on 1 Jan 1970. Required.
-                    "data": [
-                        {
-                            "b64_json": "str",  # Optional. The complete data for an
-                              image, represented as a base64-encoded string.
-                            "url": "str"  # Optional. The URL that provides temporary
-                              access to download the generated image.
-                        }
-                    ],
-                    "id": "str",  # A unique identifier associated with this image generation
-                      response. Required.
-                    "model": "str"  # The model used for the image generation. Required.
-                }
-        """
-
-    @overload
-    def create(
-        self,
-        *,
-        prompt: str,
-        size: str,
-        model_deployment: Optional[str] = None,
-        content_type: str = "application/json",
-        extras: Optional[Dict[str, str]] = None,
-        quality: Optional[Union[str, _models.ImageGenerationQuality]] = None,
-        response_format: Optional[Union[str, _models.ImageGenerationResponseFormat]] = None,
-        seed: Optional[int] = None,
-        **kwargs: Any
-    ) -> _models.ImageGenerations:
-        # pylint: disable=line-too-long
-        """Creates images given a prompt.
-
-        :keyword prompt: A description of the desired images. Required.
-        :paramtype prompt: str
-        :keyword size: The desired dimension in pixels of the generated images, in the format
-         ":code:`<Width>`x:code:`<Hight>`".
-         For example: "1024x1024", "1792x1024". Required.
-        :paramtype size: str
-        :keyword model_deployment: Name of the deployment to which you would like to route the request.
-         Relevant only to Model-as-a-Platform (MaaP) deployments.
-         Typically used when you want to target a test environment instead of production environment.
-         Default value is None.
-        :paramtype model_deployment: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
-         standard request payload.
-         They will be passed to the service as-is in the root of the JSON request payload.
-         How the service handles these extra parameters depends on the value of the
-         ``extra-parameters``
-         HTTP request header. Default value is None.
-        :paramtype extras: dict[str, str]
-        :keyword quality: The desired image generation quality level to use. Known values are:
-         "standard" and "hd". Default value is None.
-        :paramtype quality: str or ~azure.ai.inference.models.ImageGenerationQuality
-        :keyword response_format: The format in which image generation response items should be
-         presented. Known values are: "url" and "b64_json". Default value is None.
-        :paramtype response_format: str or ~azure.ai.inference.models.ImageGenerationResponseFormat
-        :keyword seed: If specified, the system will make a best effort to sample deterministically
-         such that repeated requests with the
-         same seed and parameters should return the same result. Determinism is not guaranteed.".
-         Default value is None.
-        :paramtype seed: int
-        :return: ImageGenerations. The ImageGenerations is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.ImageGenerations
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "created": "2020-02-20 00:00:00",  # A timestamp representing when this
-                      operation was started. Represented as seconds since the beginning of the Unix
-                      epoch of 00:00 on 1 Jan 1970. Required.
-                    "data": [
-                        {
-                            "b64_json": "str",  # Optional. The complete data for an
-                              image, represented as a base64-encoded string.
-                            "url": "str"  # Optional. The URL that provides temporary
-                              access to download the generated image.
-                        }
-                    ],
-                    "id": "str",  # A unique identifier associated with this image generation
-                      response. Required.
-                    "model": "str"  # The model used for the image generation. Required.
-                }
-        """
-
-    @overload
-    def create(
-        self,
-        body: IO[bytes],
-        *,
-        model_deployment: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ImageGenerations:
-        # pylint: disable=line-too-long
-        """Creates images given a prompt.
-
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword model_deployment: Name of the deployment to which you would like to route the request.
-         Relevant only to Model-as-a-Platform (MaaP) deployments.
-         Typically used when you want to target a test environment instead of production environment.
-         Default value is None.
-        :paramtype model_deployment: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ImageGenerations. The ImageGenerations is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.ImageGenerations
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "created": "2020-02-20 00:00:00",  # A timestamp representing when this
-                      operation was started. Represented as seconds since the beginning of the Unix
-                      epoch of 00:00 on 1 Jan 1970. Required.
-                    "data": [
-                        {
-                            "b64_json": "str",  # Optional. The complete data for an
-                              image, represented as a base64-encoded string.
-                            "url": "str"  # Optional. The URL that provides temporary
-                              access to download the generated image.
-                        }
-                    ],
-                    "id": "str",  # A unique identifier associated with this image generation
-                      response. Required.
-                    "model": "str"  # The model used for the image generation. Required.
-                }
-        """
-
-    @distributed_trace
-    def create(
-        self,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        prompt: str = _Unset,
-        size: str = _Unset,
-        model_deployment: Optional[str] = None,
-        extras: Optional[Dict[str, str]] = None,
-        quality: Optional[Union[str, _models.ImageGenerationQuality]] = None,
-        response_format: Optional[Union[str, _models.ImageGenerationResponseFormat]] = None,
-        seed: Optional[int] = None,
-        **kwargs: Any
-    ) -> _models.ImageGenerations:
-        # pylint: disable=line-too-long
-        """Creates images given a prompt.
-
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword prompt: A description of the desired images. Required.
-        :paramtype prompt: str
-        :keyword size: The desired dimension in pixels of the generated images, in the format
-         ":code:`<Width>`x:code:`<Hight>`".
-         For example: "1024x1024", "1792x1024". Required.
-        :paramtype size: str
-        :keyword model_deployment: Name of the deployment to which you would like to route the request.
-         Relevant only to Model-as-a-Platform (MaaP) deployments.
-         Typically used when you want to target a test environment instead of production environment.
-         Default value is None.
-        :paramtype model_deployment: str
-        :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
-         standard request payload.
-         They will be passed to the service as-is in the root of the JSON request payload.
-         How the service handles these extra parameters depends on the value of the
-         ``extra-parameters``
-         HTTP request header. Default value is None.
-        :paramtype extras: dict[str, str]
-        :keyword quality: The desired image generation quality level to use. Known values are:
-         "standard" and "hd". Default value is None.
-        :paramtype quality: str or ~azure.ai.inference.models.ImageGenerationQuality
-        :keyword response_format: The format in which image generation response items should be
-         presented. Known values are: "url" and "b64_json". Default value is None.
-        :paramtype response_format: str or ~azure.ai.inference.models.ImageGenerationResponseFormat
-        :keyword seed: If specified, the system will make a best effort to sample deterministically
-         such that repeated requests with the
-         same seed and parameters should return the same result. Determinism is not guaranteed.".
-         Default value is None.
-        :paramtype seed: int
-        :return: ImageGenerations. The ImageGenerations is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.ImageGenerations
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "prompt": "str",  # A description of the desired images. Required.
-                    "size": "str",  # The desired dimension in pixels of the generated images, in
-                      the format ":code:`<Width>`x:code:`<Hight>`". For example: "1024x1024",
-                      "1792x1024". Required.
-                    "extras": {
-                        "str": "str"  # Optional. Extra parameters (in the form of string
-                          key-value pairs) that are not in the standard request payload. They will be
-                          passed to the service as-is in the root of the JSON request payload. How the
-                          service handles these extra parameters depends on the value of the
-                          ``extra-parameters`` HTTP request header.
-                    },
-                    "quality": "str",  # Optional. The desired image generation quality level to
-                      use. Known values are: "standard" and "hd".
-                    "response_format": "str",  # Optional. The format in which image generation
-                      response items should be presented. Known values are: "url" and "b64_json".
-                    "seed": 0  # Optional. If specified, the system will make a best effort to
-                      sample deterministically such that repeated requests with the same seed and
-                      parameters should return the same result. Determinism is not guaranteed.".
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created": "2020-02-20 00:00:00",  # A timestamp representing when this
-                      operation was started. Represented as seconds since the beginning of the Unix
-                      epoch of 00:00 on 1 Jan 1970. Required.
-                    "data": [
-                        {
-                            "b64_json": "str",  # Optional. The complete data for an
-                              image, represented as a base64-encoded string.
-                            "url": "str"  # Optional. The URL that provides temporary
-                              access to download the generated image.
-                        }
-                    ],
-                    "id": "str",  # A unique identifier associated with this image generation
-                      response. Required.
-                    "model": "str"  # The model used for the image generation. Required.
-                }
-        """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ImageGenerations] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if prompt is _Unset:
-                raise TypeError("missing required argument: prompt")
-            if size is _Unset:
-                raise TypeError("missing required argument: size")
-            body = {
-                "extras": extras,
-                "prompt": prompt,
-                "quality": quality,
-                "response_format": response_format,
-                "seed": seed,
-                "size": size,
-            }
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_image_generation_create_request(
-            model_deployment=model_deployment,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.ImageGenerations, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
-        # pylint: disable=line-too-long
-        """Returns information about the AI model.
-
-        :return: ModelInfo. The ModelInfo is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.ModelInfo
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "model_name": "str",  # The name of the AI model. Required.
-                    "model_provider": "str",  # The model provider. Required.
-                    "model_type": "str"  # The type of the AI model. Required. Known values are:
-                      "embeddings", "custom", "chat", "text_generation", and "image_generation".
-                }
-        """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ModelInfo] = kwargs.pop("cls", None)
-
-        _request = build_image_generation_get_model_info_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
