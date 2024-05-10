@@ -19,7 +19,7 @@ from azure.ai.ml._restclient.v2024_04_01_preview.models import (
     AADAuthTypeWorkspaceConnectionProperties,
 )
 
-from azure.ai.ml._schema.workspace.connections.connection import ConnectionSchema
+from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import (
@@ -73,7 +73,7 @@ CONNECTION_ALTERNATE_TARGET_NAMES = ["target", "api_base", "url", "azure_endpoin
 # In the rest client enum defined at _azure_machine_learning_services_enums.ConnectionCategory.
 # We avoid directly referencing it in the docs to avoid restclient references.
 @experimental
-class Connection(Resource):
+class WorkspaceConnection(Resource):
     """Azure ML connection provides a secure way to store authentication and configuration information needed
     to connect and interact with the external resources.
 
@@ -138,8 +138,8 @@ class Connection(Resource):
         # The additional undocumented kwarg "strict_typing" turns the warning into a value error.
         from_child = kwargs.pop("from_child", False)
         strict_typing = kwargs.pop("strict_typing", False)
-        correct_class = Connection._get_entity_class_from_type(type)
-        if not from_child and correct_class != Connection:
+        correct_class = WorkspaceConnection._get_entity_class_from_type(type)
+        if not from_child and correct_class != WorkspaceConnection:
             if strict_typing:
                 raise ValueError(
                     f"Cannot instantiate a base Connection with a type of {type}. "
@@ -360,7 +360,7 @@ class Connection(Resource):
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
         **kwargs: Any,
-    ) -> "Connection":
+    ) -> "WorkspaceConnection":
         data = data or {}
         params_override = params_override or []
         context = {
@@ -370,15 +370,15 @@ class Connection(Resource):
         return cls._load_from_dict(data=data, context=context, **kwargs)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs: Any) -> "Connection":
+    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs: Any) -> "WorkspaceConnection":
         conn_type = data["type"] if "type" in data else None
         schema_class = cls._get_schema_class_from_type(conn_type)
-        loaded_data: Connection = load_from_dict(schema_class, data, context, **kwargs)
+        loaded_data: WorkspaceConnection = load_from_dict(schema_class, data, context, **kwargs)
         return loaded_data
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        schema_class = Connection._get_schema_class_from_type(self.type)
+        schema_class = WorkspaceConnection._get_schema_class_from_type(self.type)
         # Not sure what this pylint complaint was about, probably due to the polymorphic
         # tricks at play. Disabling since testing indicates no issue.
         # pylint: disable-next=missing-kwoa
@@ -386,7 +386,7 @@ class Connection(Resource):
         return res
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspaceConnection) -> Optional["Connection"]:
+    def _from_rest_object(cls, rest_obj: RestWorkspaceConnection) -> Optional["WorkspaceConnection"]:
         if not rest_obj:
             return None
 
@@ -420,7 +420,7 @@ class Connection(Resource):
             # No default in pop, this should fail if we somehow don't get a resource ID
             rest_kwargs["ai_services_resource_id"] = rest_kwargs.pop(camel_to_snake(CONNECTION_RESOURCE_ID_KEY))
         connection = conn_class(**rest_kwargs)
-        return cast(Optional["Connection"], connection)
+        return cast(Optional["WorkspaceConnection"], connection)
 
     def _validate(self) -> str:
         return str(self.name)
@@ -544,7 +544,7 @@ class Connection(Resource):
 
         conn_type = _snake_to_camel(type).lower()
         if conn_type is None:
-            return Connection
+            return WorkspaceConnection
 
         # Connection categories don't perfectly follow perfect camel casing, so lower
         # case everything to avoid problems.
@@ -563,7 +563,7 @@ class Connection(Resource):
             _snake_to_camel(ConnectionTypes.AZURE_AI_SERVICES).lower(): AzureAIServicesConnection,
             ConnectionTypes.AI_SERVICES_REST_PLACEHOLDER.lower(): AzureAIServicesConnection,
         }
-        return CONNECTION_CATEGORY_TO_SUBCLASS_MAP.get(conn_type, Connection)
+        return CONNECTION_CATEGORY_TO_SUBCLASS_MAP.get(conn_type, WorkspaceConnection)
 
     @classmethod
     def _get_entity_class_from_rest_obj(cls, rest_obj: RestWorkspaceConnection) -> Type:
@@ -580,7 +580,7 @@ class Connection(Resource):
         conn_type = rest_obj.properties.category
         conn_type = _snake_to_camel(conn_type).lower()
         if conn_type is None:
-            return Connection
+            return WorkspaceConnection
 
         # Imports are done here to avoid circular imports on load.
         from .connection_subtypes import (
@@ -599,7 +599,7 @@ class Connection(Resource):
                 return AzureContentSafetyConnection
             if kind == CognitiveServiceKinds.SPEECH.lower():
                 return AzureSpeechServicesConnection
-            return Connection
+            return WorkspaceConnection
 
         return cls._get_entity_class_from_type(type=conn_type)
 
@@ -616,7 +616,7 @@ class Connection(Resource):
         :rtype: Type
         """
         if conn_type is None:
-            return ConnectionSchema
+            return WorkspaceConnectionSchema
         entity_class = cls._get_entity_class_from_type(conn_type)
         return entity_class._get_schema_class()
 
@@ -640,4 +640,4 @@ class Connection(Resource):
         :return: The appropriate schema class to use with this entity class.
         :rtype: Type
         """
-        return ConnectionSchema
+        return WorkspaceConnectionSchema
