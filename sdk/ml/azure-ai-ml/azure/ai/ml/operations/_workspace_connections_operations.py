@@ -16,7 +16,7 @@ from azure.ai.ml._scope_dependent_operations import (
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _snake_to_camel
-from azure.ai.ml.entities._workspace.connections.connection import Connection
+from azure.ai.ml.entities._workspace.connections.connection import WorkspaceConnection
 from azure.core.credentials import TokenCredential
 from azure.ai.ml.entities._credentials import (
     ApiKeyConfiguration,
@@ -49,7 +49,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         self._credentials = credentials
         self._init_kwargs = kwargs
 
-    def _try_fill_api_key(self, connection: Connection) -> None:
+    def _try_fill_api_key(self, connection: WorkspaceConnection) -> None:
         """Try to fill in a connection's credentials with it's actual values.
         Connection data retrievals normally return an empty credential object that merely includes the
         connection's credential type, but not the actual secrets of that credential.
@@ -71,7 +71,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
                 connection.credentials.key = list_secrets_response.properties.credentials.key
 
     @monitor_with_activity(ops_logger, "WorkspaceConnections.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, *, populate_secrets: bool = False, **kwargs: Dict) -> Connection:
+    def get(self, name: str, *, populate_secrets: bool = False, **kwargs: Dict) -> WorkspaceConnection:
         """Get a connection by name.
 
         :param name: Name of the connection.
@@ -85,7 +85,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.Connection
         """
 
-        connection = Connection._from_rest_object(
+        connection = WorkspaceConnection._from_rest_object(
             rest_obj=self._operation.get(
                 workspace_name=self._workspace_name,
                 connection_name=name,
@@ -100,8 +100,8 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(ops_logger, "WorkspaceConnections.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
-        self, connection: Connection, *, populate_secrets: bool = False, **kwargs: Any
-    ) -> Optional[Connection]:
+        self, connection: WorkspaceConnection, *, populate_secrets: bool = False, **kwargs: Any
+    ) -> Optional[WorkspaceConnection]:
         """Create or update a connection.
 
         :param connection: Connection definition
@@ -121,7 +121,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
             **self._scope_kwargs,
             **kwargs,
         )
-        conn = Connection._from_rest_object(rest_obj=response)
+        conn = WorkspaceConnection._from_rest_object(rest_obj=response)
         if populate_secrets and conn is not None:
             self._try_fill_api_key(conn)
         return conn
@@ -148,7 +148,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         populate_secrets: bool = False,
         include_data_connections: bool = False,
         **kwargs: Any,
-    ) -> Iterable[Connection]:
+    ) -> Iterable[WorkspaceConnection]:
         """List all connections for a workspace.
 
         :param connection_type: Type of connection to list.
@@ -169,7 +169,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
                 kwargs["params"] = {"includeAll": "true"}
 
         def post_process_conn(rest_obj):
-            result = Connection._from_rest_object(rest_obj)
+            result = WorkspaceConnection._from_rest_object(rest_obj)
             if populate_secrets and result is not None:
                 self._try_fill_api_key(result)
             return result
@@ -182,4 +182,4 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-        return cast(Iterable[Connection], result)
+        return cast(Iterable[WorkspaceConnection], result)

@@ -11,7 +11,7 @@ from azure.ai.ml import MLClient, load_connection, load_datastore
 from azure.ai.ml._restclient.v2024_04_01_preview.models import ConnectionAuthType, ConnectionCategory
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import (
-    Connection,
+    WorkspaceConnection,
     Workspace,
     Hub,
     ApiKeyConfiguration,
@@ -305,27 +305,27 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         # Create 4 connections, 2 in the hub, and 2 in one of the lean workspaces, toggling
         # the "is_shared" property.
         # Names don't need randomization since the containers are transient
-        hub_conn_shared = Connection(
+        hub_conn_shared = WorkspaceConnection(
             name="sharedHubConn",
             type=ConnectionTypes.CUSTOM,
             target="notReal",
             credentials=ApiKeyConfiguration(key="1111"),
         )
         # Hubs can't actually have is_shared be false, make sure this is overridden upon creation.
-        hub_conn_closed = Connection(
+        hub_conn_closed = WorkspaceConnection(
             name="closedHubConn",
             type=ConnectionTypes.CUSTOM,
             target="notReal",
             credentials=ApiKeyConfiguration(key="2222"),
             is_shared=False,
         )
-        lean_conn_shared = Connection(
+        lean_conn_shared = WorkspaceConnection(
             name="sharedLeanConn",
             type=ConnectionTypes.CUSTOM,
             target="notReal",
             credentials=ApiKeyConfiguration(key="3333"),
         )
-        lean_conn_closed = Connection(
+        lean_conn_closed = WorkspaceConnection(
             name="closedLeanConn",
             type=ConnectionTypes.CUSTOM,
             target="notReal",
@@ -464,7 +464,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         created_connection = client.connections.create_or_update(connection=local_connection)
         client.connections.delete(name=wps_connection_name)
 
-        assert isinstance(created_connection, Connection)
+        assert isinstance(created_connection, WorkspaceConnection)
         assert created_connection.name == wps_connection_name
         assert created_connection.type == ConnectionTypes.AZURE_DATA_LAKE_GEN_2
         assert created_connection.credentials.type == camel_to_snake(ConnectionAuthType.SERVICE_PRINCIPAL)
@@ -481,7 +481,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         created_connection = client.connections.create_or_update(connection=local_connection)
         client.connections.delete(name=wps_connection_name)
 
-        assert isinstance(created_connection, Connection)
+        assert isinstance(created_connection, WorkspaceConnection)
         assert created_connection.name == wps_connection_name
         assert created_connection.type == ConnectionTypes.AZURE_DATA_LAKE_GEN_2
         assert created_connection.credentials.type == ConnectionAuthType.AAD.lower()
@@ -760,7 +760,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         created_connection = client.connections.create_or_update(connection=local_connection)
         client.connections.delete(name=wps_connection_name)
 
-        assert isinstance(created_connection, Connection)
+        assert isinstance(created_connection, WorkspaceConnection)
         assert created_connection.name == wps_connection_name
         assert created_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
         assert created_connection.type == camel_to_snake(ConnectionTypes.CUSTOM)
@@ -827,7 +827,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         created_connection = client.connections.create_or_update(connection=local_connection)
         client.connections.delete(name=wps_connection_name)
 
-        assert isinstance(created_connection, Connection)
+        assert isinstance(created_connection, WorkspaceConnection)
         assert created_connection.name == wps_connection_name
         assert created_connection.credentials.type == ConnectionAuthType.NONE
         assert created_connection.type == camel_to_snake(ConnectionCategory.GIT)

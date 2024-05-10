@@ -4,7 +4,7 @@
 from dataclasses import dataclass
 from typing import Any, Dict, Optional
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities._workspace.connections.connection import Connection
+from azure.ai.ml.entities._workspace.connections.connection import WorkspaceConnection
 from azure.ai.ml.entities._workspace.connections.connection_subtypes import (
     AzureOpenAIConnection,
     AadCredentialConfiguration,
@@ -44,7 +44,10 @@ class ModelConfiguration:
 
     @staticmethod
     def from_connection(
-        connection: Connection, model_name: Optional[str] = None, deployment_name: Optional[str] = None, **model_kwargs
+        connection: WorkspaceConnection,
+        model_name: Optional[str] = None,
+        deployment_name: Optional[str] = None,
+        **model_kwargs
     ) -> "ModelConfiguration":
         """Create an model configuration from a Connection.
 

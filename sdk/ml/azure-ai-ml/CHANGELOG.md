@@ -33,7 +33,6 @@
 
 ### Breaking Changes
 
-- WorkspaceConnection and subclasses renamed to just Connection
 - Removed WorkspaceHubConfig entity, and renamed WorkspaceHub to Hub.
 - workspace_hub input of Workspace class hidden, renamed to hub_id, and re-surfaced in child class Project.
 - Removed Workspace Hub Operations from ML Client.
