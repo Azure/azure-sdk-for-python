@@ -223,7 +223,7 @@ class WorkspaceConfigurationOptions(object):
             target="jdbc:snowflake://<myaccount>.snowflakecomputing.com/?db=<mydb>&warehouse=<mywarehouse>&role=<myrole>",  # cspell:disable-line
             credentials=UsernamePasswordConfiguration(username="XXXXX", password="XXXXXX"),
         )
-        connection = ml_client_ws.connections.create_or_update(connection=wps_connection)
+        connection = ml_client_ws.connections.create_or_update(workspace_connection=wps_connection)
         # [END create_or_update_connection]
 
         # [START delete_connection]

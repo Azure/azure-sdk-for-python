@@ -51,8 +51,8 @@ class ModelConfiguration:
     ) -> "ModelConfiguration":
         """Create an model configuration from a Connection.
 
-        :param connection: The Connection object.
-        :type connection: ~azure.ai.ml.entities.Connection
+        :param connection: The WorkspaceConnection object.
+        :type connection: ~azure.ai.ml.entities.WorkspaceConnection
         :param model_name: The name of the model.
         :type model_name: Optional[str]
         :param deployment_name: The name of the deployment.

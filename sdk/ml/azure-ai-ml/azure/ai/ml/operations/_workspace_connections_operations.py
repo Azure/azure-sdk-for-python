@@ -59,7 +59,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         and it only works on api key-based credentials.
 
         :param connection: The connection to try to fill in the credentials for.
-        :type connection: ~azure.ai.ml.entities.Connection
+        :type connection: ~azure.ai.ml.entities.WorkspaceConnection
         """
         if hasattr(connection, "credentials") and isinstance(connection.credentials, ApiKeyConfiguration):
             list_secrets_response = self._operation.list_secrets(
@@ -82,7 +82,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         :raises ~azure.core.exceptions.HttpResponseError: Raised if the corresponding name and version cannot be
             retrieved from the service.
         :return: The connection with the provided name.
-        :rtype: ~azure.ai.ml.entities.Connection
+        :rtype: ~azure.ai.ml.entities.WorkspaceConnection
         """
 
         connection = WorkspaceConnection._from_rest_object(
@@ -100,23 +100,23 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(ops_logger, "WorkspaceConnections.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
-        self, connection: WorkspaceConnection, *, populate_secrets: bool = False, **kwargs: Any
+        self, workspace_connection: WorkspaceConnection, *, populate_secrets: bool = False, **kwargs: Any
     ) -> Optional[WorkspaceConnection]:
         """Create or update a connection.
 
-        :param connection: Connection definition
+        :param workspace_connection: Definition of a Workspace Connection or one of its subclasses
             or object which can be translated to a connection.
-        :type connection: ~azure.ai.ml.entities.Connection
+        :type workspace_connection: ~azure.ai.ml.entities.WorkspaceConnection
         :keyword populate_secrets: If true, make a secondary API call to try filling in the workspace
             connections credentials. Currently only works for api key-based credentials. Defaults to False.
         :paramtype populate_secrets: bool
         :return: Created or update connection.
-        :rtype: ~azure.ai.ml.entities.Connection
+        :rtype: ~azure.ai.ml.entities.WorkspaceConnection
         """
-        rest_workspace_connection = connection._to_rest_object()
+        rest_workspace_connection = workspace_connection._to_rest_object()
         response = self._operation.create(
             workspace_name=self._workspace_name,
-            connection_name=connection.name,
+            connection_name=workspace_connection.name,
             body=rest_workspace_connection,
             **self._scope_kwargs,
             **kwargs,
@@ -159,7 +159,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         :keyword include_data_connections: If true, also return data connections. Defaults to False.
         :paramtype include_data_connections: bool
         :return: An iterator like instance of connection objects
-        :rtype: Iterable[~azure.ai.ml.entities.Connection]
+        :rtype: Iterable[~azure.ai.ml.entities.WorkspaceConnection]
         """
 
         if include_data_connections:

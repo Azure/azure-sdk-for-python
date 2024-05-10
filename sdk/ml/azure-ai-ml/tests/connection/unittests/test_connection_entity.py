@@ -46,9 +46,9 @@ class TestWorkspaceConnectionEntity:
         that are specific to some connection subclasses.
 
         :param conn1: The first connection to compare.
-        :type conn1: ~azure.ai.ml.entities.Connection
+        :type conn1: ~azure.ai.ml.entities.WorkspaceConnection
         :param conn2: The second connection to compare.
-        :type conn2: ~azure.ai.ml.entities.Connection
+        :type conn2: ~azure.ai.ml.entities.WorkspaceConnection
         """
 
         # Check them individually to simplify debugging.
@@ -66,7 +66,7 @@ class TestWorkspaceConnectionEntity:
         equivalent and back again, then checks that they're still the same.
 
         :param conn: The connection to check
-        :type conn: ~azure.ai.ml.entities.Connection
+        :type conn: ~azure.ai.ml.entities.WorkspaceConnection
         """
 
         rest_conn = conn._to_rest_object()
@@ -80,7 +80,7 @@ class TestWorkspaceConnectionEntity:
         equivalent and back again, then checks that they're still the same.
 
         :param conn: The connection to check
-        :type conn: ~azure.ai.ml.entities.Connection
+        :type conn: ~azure.ai.ml.entities.WorkspaceConnection
         """
 
         conn_dictionary = conn._to_dict()
@@ -92,7 +92,7 @@ class TestWorkspaceConnectionEntity:
         to and from rest and dictionary representations.
 
         :param conn: The connection to check
-        :type conn: ~azure.ai.ml.entities.Connection
+        :type conn: ~azure.ai.ml.entities.WorkspaceConnection
         """
 
         self.check_rest_conversion_stable(conn)
