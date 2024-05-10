@@ -291,7 +291,7 @@ class _NonStreamingOrderByComparator(object):
     """Provide a Comparator for item results which respects orderby sort order.
     """
 
-    def __init__(self, sort_order):  # pylint: disable=super-init-not-called
+    def __init__(self, sort_order):
         """Instantiates this class
         :param list sort_order:
             List of sort orders (i.e., Ascending, Descending)
