@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import sys
+import os
 
 import pytest
 from devtools_testutils import test_proxy
@@ -13,6 +14,12 @@ from devtools_testutils.sanitizers import (
     add_oauth_response_sanitizer,
     set_custom_default_matcher
 )
+
+from azure.servicebus import ServiceBusClient
+from azure.servicebus.aio import ServiceBusClient as ServiceBusClientAsync
+from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential as DefaultAzureCredentialAsync
+
 collect_ignore = []
 
 @pytest.fixture(scope="session", autouse=True)
@@ -26,6 +33,28 @@ def add_sanitizers(test_proxy):
         regex="(?<=\\/\\/)[a-z-]+(?=\\.servicebus\\.windows\\.net)"
     )
     add_oauth_response_sanitizer()
+
+@pytest.fixture(scope="session", autouse=True)
+def sb_client(request):
+    if hasattr(request, "param"):
+        uamqp_transport = request.param
+        credential = DefaultAzureCredential()
+        fqn = os.environ.get('SERVICEBUS_FULLY_QUALIFIED_NAMESPACE')
+        with ServiceBusClient(fqn, credential, uamqp_transport=uamqp_transport, logging_enable=False) as client:
+            yield client
+    else:
+        yield None
+
+@pytest.fixture(scope="session")
+async def sb_client_async(request):
+    if hasattr(request, "param"):
+        uamqp_transport = request.param
+        credential = DefaultAzureCredentialAsync()
+        fqn = os.environ.get('SERVICEBUS_FULLY_QUALIFIED_NAMESPACE')
+        async with ServiceBusClientAsync(fqn, credential, uamqp_transport=uamqp_transport, logging_enable=False) as client:
+            yield client
+    else:
+        yield None
 
 # Only run stress tests on request.
 if not any([arg.startswith('test_stress') or arg.endswith('StressTest') for arg in sys.argv]):
