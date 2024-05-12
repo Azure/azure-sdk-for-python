@@ -10,8 +10,6 @@ from azure.mgmt.resource import ResourceManagementClient
 
 from azure.mgmt.servicebus import ServiceBusManagementClient
 from azure.mgmt.servicebus.models import SBQueue, SBSubscription, AccessRights, SBAuthorizationRule
-from azure.mgmt.authorization import AuthorizationManagementClient
-from azure.mgmt.authorization.models import RoleAssignmentCreateParameters
 
 from azure.identity import DefaultAzureCredential
 
