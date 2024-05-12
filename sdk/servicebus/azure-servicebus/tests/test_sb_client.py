@@ -414,7 +414,7 @@ class TestServiceBusClient(AzureMgmtRecordedTestCase):
             with client.get_queue_sender(servicebus_queue.name) as sender:
                 sender.send_messages(ServiceBusMessage("foo"))
 
-        hostname = hostname = f"sb://{servicebus_fully_qualified_namespace}"
+        hostname = f"sb://{servicebus_fully_qualified_namespace}"
 
         client = ServiceBusClient(hostname, credential, uamqp_transport=uamqp_transport)
         with client:
