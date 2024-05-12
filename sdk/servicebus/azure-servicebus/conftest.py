@@ -7,6 +7,7 @@ import sys
 import os
 
 import pytest
+import pytest_asyncio
 from devtools_testutils import test_proxy
 from devtools_testutils.sanitizers import (
     add_remove_header_sanitizer,
@@ -45,7 +46,7 @@ def sb_client(request):
     else:
         yield None
 
-@pytest.fixture(scope="session")
+@pytest_asyncio.fixture(scope="session")
 async def sb_client_async(request):
     if hasattr(request, "param"):
         uamqp_transport = request.param
