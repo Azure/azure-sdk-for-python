@@ -8,12 +8,21 @@ import logging
 import sys
 import time
 import os
+from urllib.parse import urlparse
+import functools
+
 try:
     import uamqp
     uamqp_available = True
 except (ModuleNotFoundError, ImportError):
     uamqp_available = False
 from azure.servicebus._common.utils import utc_now
+from azure.servicebus import ServiceBusClient
+from azure.servicebus.aio import ServiceBusClient as ServiceBusClientAsync
+from azure.identity import DefaultAzureCredential, AzurePowerShellCredential
+from azure.identity.aio import DefaultAzureCredential as DefaultAzureCredentialAsync
+
+
 
 # temporary - disable uamqp if China b/c of 8+ hr runtime
 uamqp_available = uamqp_available and os.environ.get('SERVICEBUS_ENDPOINT_SUFFIX') != '.servicebus.chinacloudapi.cn'
@@ -60,6 +69,8 @@ def sleep_until_expired(entity):
     time.sleep(max(0,(entity.locked_until_utc - utc_now()).total_seconds()+1))
 
 
+
+    
 def uamqp_transport(use_uamqp=uamqp_available, use_pyamqp=True):
     uamqp_transport_params = []
     uamqp_transport_ids = []
@@ -73,13 +84,13 @@ def uamqp_transport(use_uamqp=uamqp_available, use_pyamqp=True):
 
 class ArgPasser:
     def __call__(self, fn):
-        def _preparer(test_class, uamqp_transport, **kwargs):
-            fn(test_class, uamqp_transport=uamqp_transport, **kwargs)
+        def _preparer(test_class, sb_client, uamqp_transport, **kwargs):
+            fn(test_class, sb_client=sb_client, uamqp_transport=uamqp_transport, **kwargs)
         return _preparer
 
 class ArgPasserAsync:
     def __call__(self, fn):
-        async def _preparer(test_class, uamqp_transport, **kwargs):
-            await fn(test_class, uamqp_transport=uamqp_transport, **kwargs)
+        async def _preparer(test_class, sb_client, uamqp_transport, **kwargs):
+            await fn(test_class, sb_client=sb_client, uamqp_transport=uamqp_transport, **kwargs)
         return _preparer
     
