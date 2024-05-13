@@ -36,7 +36,8 @@ from ._base import (
     validate_cache_staleness_value,
     _deserialize_throughput,
     _replace_throughput,
-    GenerateGuidId
+    GenerateGuidId,
+    _set_properties_cache
 )
 from .exceptions import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
@@ -83,17 +84,19 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self.id = id
         self.container_link = "{}/colls/{}".format(database_link, self.id)
         self.client_connection = client_connection
-        self._properties = properties
         self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
+        if properties:
+            self.client_connection._set_container_properties_cache(self.container_link,
+                                                                   _set_properties_cache(properties))  # pylint: disable=protected-access, line-too-long
 
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
 
     def _get_properties(self) -> Dict[str, Any]:
-        if self._properties is None:
-            self._properties = self.read()
-        return self._properties
+        if self.container_link not in self.client_connection._container_properties_cache:  # pylint: disable=protected-access, line-too-long
+            self.read()
+        return self.client_connection._container_properties_cache[self.container_link]  # pylint: disable=protected-access, line-too-long
 
     @property
     def is_system_key(self) -> bool:
@@ -173,11 +176,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
         if populate_quota_info is not None:
             request_options["populateQuotaInfo"] = populate_quota_info
-        collection_link = self.container_link
-        self._properties = self.client_connection.ReadContainer(
-            collection_link, options=request_options, **kwargs
-        )
-        return self._properties
+        container = self.client_connection.ReadContainer(self.container_link, options=request_options, **kwargs)
+        # Only cache Container Properties that will not change in the lifetime of the container
+        self.client_connection._set_container_properties_cache(self.container_link, _set_properties_cache(container))  # pylint: disable=protected-access, line-too-long
+        return container
 
     @distributed_trace
     def read_item(  # pylint:disable=docstring-missing-param
@@ -307,10 +309,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self,
         partition_key_range_id: Optional[str] = None,
         is_start_from_beginning: bool = False,
-        start_time: Optional[datetime] = None,
         continuation: Optional[str] = None,
         max_item_count: Optional[int] = None,
         *,
+        start_time: Optional[datetime] = None,
         partition_key: Optional[PartitionKeyType] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
@@ -321,11 +323,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             This is used to process the change feed in parallel across multiple consumers.
         :param bool is_start_from_beginning: Get whether change feed should start from
             beginning (true) or from current (false). By default, it's start from current (false).
-        :param datetime start_time: Specifies a point of time to start change feed. Start time in
-            '%a, %d %b %Y %H:%M:%S GMT' format. Converts datetime to UTC regardless of timezone.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param str continuation: e_tag value to be used as continuation for reading change feed.
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword ~datetime.datetime start_time: Specifies a point of time to start change feed. Provided value will be
+            converted to UTC. This value will be ignored if `is_start_from_beginning` is set to true.
         :keyword partition_key: partition key at which ChangeFeed requests are targeted.
         :paramtype partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -345,7 +347,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
         if is_start_from_beginning is not None:
             feed_options["isStartFromBeginning"] = is_start_from_beginning
-        if start_time is not None and is_start_from_beginning is False and isinstance(start_time, datetime):
+        if start_time is not None and is_start_from_beginning is False:
             feed_options["startTime"] = start_time.astimezone(timezone.utc).strftime('%a, %d %b %Y %H:%M:%S GMT')
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count

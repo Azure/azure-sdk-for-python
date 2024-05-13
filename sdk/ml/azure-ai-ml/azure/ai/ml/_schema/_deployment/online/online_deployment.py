@@ -15,6 +15,7 @@ from azure.ai.ml._schema._utils.utils import exit_if_registry_assets
 from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PublicNetworkAccess
+from azure.ai.ml._schema.job.creation_context import CreationContextSchema
 
 from .data_collector_schema import DataCollectorSchema
 from .liveness_probe import LivenessProbeSchema
@@ -69,6 +70,7 @@ class ManagedOnlineDeploymentSchema(OnlineDeploymentSchema):
     )
     private_network_connection = ExperimentalField(fields.Bool())
     data_collector = NestedField(DataCollectorSchema)
+    creation_context = NestedField(CreationContextSchema, dump_only=True)
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:

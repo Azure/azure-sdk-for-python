@@ -26,14 +26,6 @@ testing infrastructure, and demonstrates how to write and run tests for a servic
       - [Special case: SAS tokens](#special-case-sas-tokens)
   - [Functional vs. unit tests](#functional-vs-unit-tests)
   - [Further reading](#further-reading)
-  - [Deprecated testing instructions](#deprecated-testing-instructions)
-    - [Define credentials (deprecated)](#define-credentials-deprecated)
-    - [Create live test resources (deprecated)](#create-live-test-resources-deprecated)
-    - [Write your tests (deprecated)](#write-your-tests-deprecated)
-    - [An example test (deprecated)](#an-example-test-deprecated)
-    - [Run and record the test (deprecated)](#run-and-record-the-test-deprecated)
-    - [Purging secrets (deprecated)](#purging-secrets-deprecated)
-      - [Special case: Shared Access Signature (deprecated)](#special-case-shared-access-signature-deprecated)
 
 ## Set up your development environment
 
@@ -191,6 +183,9 @@ User-based authentication is preferred when using test resources. To enable this
 - Ensure you're logged into the tool you choose -- if
 you used `New-TestResources.ps1` to deploy resources, you'll already have logged in with Azure PowerShell.
 
+**Important:** these environment variables will only be successfully used if test credentials are fetched with the
+[`AzureRecordedTestCase.get_credential`][get_credential] method. See [Write your tests](#write-your-tests) for details.
+
 If you haven't yet set up a `test-resources` file for test resource deployment and/or want to use test resources of
 your own, you can just configure credentials to target these resources instead.
 
@@ -225,6 +220,9 @@ authenticate with by setting an `AZURE_TEST_USE_*_AUTH` environment variable to 
   2. Azure CLI (`az`): set `AZURE_TEST_USE_CLI_AUTH`.
   3. Visual Studio Code: set `AZURE_TEST_USE_VSCODE_AUTH`.
   4. Azure Developer CLI (`azd`): set `AZURE_TEST_USE_AZD_AUTH`.
+
+**Important:** these environment variables will only be successfully used if test credentials are fetched with the
+[`AzureRecordedTestCase.get_credential`][get_credential] method. See [Write your tests](#write-your-tests) for details.
 
 If your service doesn't have a `test-resources` file for test deployment, you'll need to set environment variables
 for authentication at minimum. For user-based authentication, use `AZURE_TEST_USE_*_AUTH` as described above.
@@ -327,6 +325,9 @@ AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy`.
   - The signature of your test method will always contain `self`, and following `self` will be all the keys that you
     need from your preparer. A test does not need to accept every key from the preparer; the test framework will only pass
     in the parameters specifically requested in the test method signature.
+- Fetch a credential for your service client with [`self.get_credential`][get_credential]. This is necessary for the
+  credential to be usable in playback tests, and for it to make use of the authentication method selected by
+  `AZURE_TEST_USE_*_AUTH` environment variables.
 - Within tests, use the `assert` keyword to assert conditions that you expect to be true.
 
 If you need logging functionality for your testing, pytest also offers [logging][pytest_logging] capabilities either
@@ -561,6 +562,7 @@ For information about more advanced testing scenarios, refer to the [advanced te
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
 [generate_sas]: https://github.com/Azure/azure-sdk-for-python/blob/bf4749babb363e2dc972775f4408036e31f361b4/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L196
 [generate_sas_example]: https://github.com/Azure/azure-sdk-for-python/blob/3e3fbe818eb3c80ffdf6f9f1a86affd7e879b6ce/sdk/tables/azure-data-tables/tests/test_table_entity.py#L1691
+[get_credential]: https://github.com/Azure/azure-sdk-for-python/blob/20cf5b0bd9b87f90bd5ad4fd36358d3b257f95c5/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L96
 [git_setup]: https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
 [kv_test_resources]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/test-resources.json
 [kv_test_resources_outputs]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json#L255

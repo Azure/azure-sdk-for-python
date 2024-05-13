@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Literal, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -16,10 +16,6 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -199,7 +195,7 @@ class Dependency(_serialization.Model):
 class Deployment(_serialization.Model):
     """Deployment operation parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar properties: The deployment properties. Required.
     :vartype properties: ~azure.mgmt.resource.resources.v2017_05_10.models.DeploymentProperties
@@ -247,7 +243,7 @@ class DeploymentExtended(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The ID of the deployment.
     :vartype id: str
@@ -463,7 +459,7 @@ class DeploymentOperationsListResult(_serialization.Model):
 class DeploymentProperties(_serialization.Model):
     """Deployment properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar template: The template content. You use this element when you want to pass the template
      syntax directly in the request rather than link to an existing template. It can be a JObject or
@@ -1152,7 +1148,7 @@ class Identity(_serialization.Model):
 class ParametersLink(_serialization.Model):
     """Entity representing the reference to the deployment parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar uri: The URI of the parameters file. Required.
     :vartype uri: str
@@ -1370,7 +1366,7 @@ class ResourceGroup(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The ID of the resource group.
     :vartype id: str
@@ -1664,7 +1660,7 @@ class ResourceManagementErrorWithDetails(_serialization.Model):
         self.details = None
 
 
-class ResourceProviderOperationDisplayProperties(_serialization.Model):
+class ResourceProviderOperationDisplayProperties(_serialization.Model):  # pylint: disable=name-too-long
     """Resource provider operation's display properties.
 
     :ivar publisher: Operation description.
@@ -2041,7 +2037,7 @@ class TemplateHashResult(_serialization.Model):
 class TemplateLink(_serialization.Model):
     """Entity representing the reference to the template.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar uri: The URI of the template to deploy. Required.
     :vartype uri: str

@@ -211,7 +211,7 @@ class TestSubpartitionCrud(unittest.TestCase):
         # create document without partition key being specified
         created_document = created_collection.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEqual(self.last_headers[1], '["WA","Redmond"]')
+        self.assertEqual(self.last_headers[0], '["WA","Redmond"]')
         del self.last_headers[:]
 
         self.assertEqual(created_document.get('id'), document_definition.get('id'))

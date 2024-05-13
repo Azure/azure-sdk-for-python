@@ -1,0 +1,4 @@
+name: just_api
+type: api_key
+api_base: this_is_a_target
+api_key: "3232"

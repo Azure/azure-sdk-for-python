@@ -6,6 +6,15 @@ extends:
       ServiceDirectory: monitor
       TestTimeoutInMinutes: 300
       BuildTargetingString: azure-monitor-*
+      SupportedClouds: 'Public,UsGov,China'
+      CloudConfig:
+        Public:
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+        UsGov:
+          SubscriptionConfiguration: $(sub-config-gov-test-resources)
+        China:
+          SubscriptionConfiguration: $(sub-config-cn-test-resources)
+          Location: chinanorth3
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(MONITOR_SUBSCRIPTION_ID)
         AZURE_TENANT_ID: $(MONITOR_TENANT_ID)
