@@ -12,37 +12,34 @@ from urllib.parse import quote
 from datetime import datetime, timezone
 
 from azure.core.exceptions import HttpResponseError
-from azure.data.tables import TableClient, EdmType, EntityProperty, UpdateMode
+from azure.data.tables import EdmType, EntityProperty, UpdateMode
+from azure.data.tables.aio import TableClient
 from azure.data.tables._common_conversion import _encode_base64, _to_utc_datetime
 
-from _shared.testcase import TableTestCase
+from _shared.asynctestcase import AsyncTableTestCase
 
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, set_custom_default_matcher
-from preparers import cosmos_decorator
-from test_encoder import (
-    EnumBasicOptions,
-    EnumStrOptions,
-    EnumIntOptions,
-    EncoderVerificationTransport,
-    _check_backcompat,
-)
+from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher
+from devtools_testutils.aio import recorded_by_proxy_async
+from async_preparers import cosmos_decorator_async
+from test_encoder import EnumBasicOptions, EnumStrOptions, EnumIntOptions, _check_backcompat
+from test_encoder_async import EncoderVerificationTransport
 
 
-class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_create_entity_basic(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_create_entity_basic(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         table_name = self.get_resource_name("uttable01")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Test basic string, int32 and bool data
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data1": 1, "Data2": True}
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
-            resp = client.create_entity(
+            resp = await client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
@@ -54,7 +51,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK", "RowKey": "RK'@*$!%"}
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
-            resp = client.create_entity(
+            resp = await client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
@@ -67,7 +64,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(HttpResponseError) as error:
-                client.create_entity(
+                await client.create_entity(
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
@@ -83,7 +80,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(HttpResponseError) as error:
-                client.create_entity(
+                await client.create_entity(
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
@@ -103,7 +100,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(HttpResponseError) as error:
-                client.create_entity(
+                await client.create_entity(
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
@@ -114,11 +111,11 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
                 in str(error.value)
             )
-            client.delete_table()
+            await client.delete_table()
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_create_entity_complex_keys(
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_create_entity_complex_keys(
         self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs
     ):
         recorded_variables = kwargs.pop("variables", {})
@@ -126,10 +123,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         table_name = self.get_resource_name("uttable02")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Test complex PartitionKey and RowKey (datetime, GUID and binary)
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             test_entity = {
                 "PartitionKey": self.get_datetime(),
                 "RowKey": recorded_uuid,
@@ -142,7 +139,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(HttpResponseError) as error:
-                client.create_entity(
+                await client.create_entity(
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
@@ -165,7 +162,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(HttpResponseError) as error:
-                client.create_entity(
+                await client.create_entity(
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
@@ -176,12 +173,12 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
                 in str(error.value)
             )
-            client.delete_table()
+            await client.delete_table()
         return recorded_variables
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_create_entity_type_conversion(
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_create_entity_type_conversion(
         self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs
     ):
         recorded_variables = kwargs.pop("variables", {})
@@ -189,10 +186,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         table_name = self.get_resource_name("uttable03")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         # All automatically detected data types
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             test_entity = {
                 "PartitionKey": "PK",
                 "RowKey": "RK",
@@ -222,7 +219,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data8": None,
             }
             _check_backcompat(test_entity, expected_entity)
-            resp = client.create_entity(
+            resp = await client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
@@ -233,23 +230,23 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 ),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            client.delete_table()
+            await client.delete_table()
         return recorded_variables
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_create_entity_tuples(
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_create_entity_tuples(
         self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs
     ):
         recorded_variables = kwargs.pop("variables", {})
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable04")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
-        # Explicit datatypes using Tuple definition
-        with TableClient(
+        # Explicit datatypes using Tuple async definition
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             test_entity = {
                 "PartitionKey": "PK1",
                 "RowKey": "RK1",
@@ -298,7 +295,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data8": EntityProperty(2**60, EdmType.INT64),
             }
             _check_backcompat(test_entity, expected_entity)
-            resp = client.create_entity(
+            resp = await client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
@@ -352,7 +349,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data8": (9223372036854775807, "Edm.Int64"),
             }
             _check_backcompat(test_entity, expected_entity)
-            resp = client.create_entity(
+            resp = await client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
@@ -360,21 +357,23 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK2", "RK2"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            client.delete_table()
+            await client.delete_table()
         return recorded_variables
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_create_entity_raw(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_create_entity_raw(
+        self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs
+    ):
         recorded_variables = kwargs.pop("variables", {})
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable05")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Raw payload with existing EdmTypes
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             dt = self.get_datetime()
             guid = recorded_uuid
             test_entity = {
@@ -466,7 +465,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data8": (1152921504606846976, "Edm.Int64"),
             }
             # _check_backcompat(test_entity, expected_entity) # will fail
-            resp = client.create_entity(
+            resp = await client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
@@ -474,24 +473,26 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "RK"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            client.delete_table()
+            await client.delete_table()
         return recorded_variables
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_create_entity_atypical_values(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_create_entity_atypical_values(
+        self, tables_cosmos_account_name, tables_primary_cosmos_account_key
+    ):
         table_name = self.get_resource_name("uttable06")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             # Non-UTF8 characters in both keys and properties
             non_utf8_char = "你好"
             test_entity = {"PartitionKey": "PK", "RowKey": non_utf8_char, "Data": non_utf8_char}
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
-            resp = client.create_entity(
+            resp = await client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
@@ -511,7 +512,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
 
             assert "is too large to be cast to" in str(error.value)
             with pytest.raises(HttpResponseError) as error:
-                resp = client.create_entity(
+                resp = await client.create_entity(
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
@@ -529,7 +530,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data@odata.type": "Edm.Int64",
             }
             _check_backcompat(test_entity, expected_entity)
-            resp = client.create_entity(
+            resp = await client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
@@ -549,7 +550,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 _check_backcompat(test_entity, expected_entity)
             assert "is too large to be cast to" in str(error.value)
             with pytest.raises(HttpResponseError) as error:
-                resp = client.create_entity(
+                resp = await client.create_entity(
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
@@ -580,7 +581,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data3@odata.type": "Edm.Double",
             }
             _check_backcompat(test_entity, expected_entity)
-            resp = client.create_entity(
+            resp = await client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
@@ -592,14 +593,14 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             # Non-string keys
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", 123: 456}
             expected_entity = test_entity
-            expected_payload_entity = expected_payload_entity = {
+            expected_payload_entity = {
                 "PartitionKey": "PK",
                 "RowKey": "RK",
                 "123": 456,  # "123" is an invalid property name
             }
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(HttpResponseError) as error:
-                client.create_entity(
+                await client.create_entity(
                     test_entity,
                     verify_payload=json.dumps(expected_payload_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
@@ -618,7 +619,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "RowKey": "One",
                 "Data": "Two",
             }
-            resp = client.create_entity(
+            resp = await client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
@@ -633,7 +634,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "RowKey": "Two",
                 "Data": "Two",
             }
-            resp = client.create_entity(
+            resp = await client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
@@ -649,7 +650,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data": 2,
             }
             with pytest.raises(HttpResponseError) as error:
-                resp = client.create_entity(
+                resp = await client.create_entity(
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
@@ -661,22 +662,22 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
                 in str(error.value)
             )
-            client.delete_table()
+            await client.delete_table()
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_upsert_entity_basic(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_upsert_entity_basic(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         table_name = self.get_resource_name("uttable07")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Test basic string, int32 and bool data
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data1": 1, "Data2": True}
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode="merge",
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -685,7 +686,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode="replace",
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -698,7 +699,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK", "RowKey": "RK'@*$!%"}
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode="merge",
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -707,7 +708,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "RK'@*$!%"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode="replace",
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -721,20 +722,20 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
-                client.upsert_entity(test_entity, mode="merge")
+                await client.upsert_entity(test_entity, mode="merge")
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
             with pytest.raises(TypeError) as error:
-                client.upsert_entity(test_entity, mode="replace")
+                await client.upsert_entity(test_entity, mode="replace")
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
 
             test_entity = {"PartitionKey": "PK", "RowKey": True}
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
-                client.upsert_entity(test_entity, mode="merge")
+                await client.upsert_entity(test_entity, mode="merge")
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
             with pytest.raises(TypeError) as error:
-                client.upsert_entity(test_entity, mode="replace")
+                await client.upsert_entity(test_entity, mode="replace")
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
 
             test_entity = {"PartitionKey": "PK", "RowKey": 3.14}
@@ -745,16 +746,16 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
-                client.upsert_entity(test_entity, mode="merge")
+                await client.upsert_entity(test_entity, mode="merge")
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
             with pytest.raises(TypeError) as error:
-                client.upsert_entity(test_entity, mode="replace")
+                await client.upsert_entity(test_entity, mode="replace")
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
-            client.delete_table()
+            await client.delete_table()
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_upsert_entity_complex_keys(
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_upsert_entity_complex_keys(
         self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs
     ):
         recorded_variables = kwargs.pop("variables", {})
@@ -762,10 +763,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         table_name = self.get_resource_name("uttable08")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Test complex PartitionKey and RowKey (datetime, GUID and binary)
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             test_entity = {
                 "PartitionKey": self.get_datetime(),
                 "RowKey": recorded_uuid,
@@ -782,7 +783,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(HttpResponseError) as error:
-                resp = client.upsert_entity(
+                resp = await client.upsert_entity(
                     test_entity,
                     mode=UpdateMode.MERGE,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -797,7 +798,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 in str(error.value)
             )
             with pytest.raises(HttpResponseError) as error:
-                resp = client.upsert_entity(
+                resp = await client.upsert_entity(
                     test_entity,
                     mode=UpdateMode.REPLACE,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -823,7 +824,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(HttpResponseError) as error:
-                resp = client.upsert_entity(
+                resp = await client.upsert_entity(
                     test_entity,
                     mode=UpdateMode.MERGE,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -838,7 +839,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 in str(error.value)
             )
             with pytest.raises(HttpResponseError) as error:
-                resp = client.upsert_entity(
+                resp = await client.upsert_entity(
                     test_entity,
                     mode=UpdateMode.REPLACE,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -852,12 +853,12 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
                 in str(error.value)
             )
-            client.delete_table()
+            await client.delete_table()
         return recorded_variables
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_upsert_entity_type_conversion(
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_upsert_entity_type_conversion(
         self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs
     ):
         recorded_variables = kwargs.pop("variables", {})
@@ -865,10 +866,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         table_name = self.get_resource_name("uttable09")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         # All automatically detected data types
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             test_entity = {
                 "PartitionKey": "PK",
                 "RowKey": "RK",
@@ -897,7 +898,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
             _check_backcompat(test_entity, expected_entity)
             verification = json.dumps(expected_entity, sort_keys=True)
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
@@ -909,7 +910,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
@@ -921,23 +922,23 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            client.delete_table()
+            await client.delete_table()
         return recorded_variables
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_upsert_entity_tuples(
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_upsert_entity_tuples(
         self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs
     ):
         recorded_variables = kwargs.pop("variables", {})
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable10")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
-        # Explicit datatypes using Tuple definition
-        with TableClient(
+        # Explicit datatypes using Tuple async definition
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             dt = datetime(year=2022, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc)
             guid = recorded_uuid
             test_entity = {
@@ -986,7 +987,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
             _check_backcompat(test_entity, expected_entity)
             verification = json.dumps(expected_entity, sort_keys=True)
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
@@ -998,7 +999,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK1", "RK1"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
@@ -1055,7 +1056,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
             _check_backcompat(test_entity, expected_entity)
             verification = json.dumps(expected_entity, sort_keys=True)
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
@@ -1067,7 +1068,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK2", "RK2"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
@@ -1079,21 +1080,23 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK2", "RK2"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            client.delete_table()
+            await client.delete_table()
         return recorded_variables
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_upsert_entity_raw(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_upsert_entity_raw(
+        self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs
+    ):
         recorded_variables = kwargs.pop("variables", {})
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable11")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Raw payload with existing EdmTypes
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             dt = self.get_datetime()
             guid = recorded_uuid
             test_entity = {
@@ -1210,7 +1213,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
             # _check_backcompat(test_entity, expected_entity) # will fail
             verification = json.dumps(expected_entity, sort_keys=True)
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
@@ -1222,7 +1225,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "RK"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
@@ -1234,12 +1237,14 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "RK"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            client.delete_table()
+            await client.delete_table()
         return recorded_variables
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_upsert_entity_atypical_values(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_upsert_entity_atypical_values(
+        self, tables_cosmos_account_name, tables_primary_cosmos_account_key
+    ):
         table_name = self.get_resource_name("uttable12")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Non-UTF8 characters in both keys and properties
@@ -1247,17 +1252,17 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         # Infinite float values
         # Non-string keys
         # Test enums
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             # Non-UTF8 characters in both keys and properties
             non_utf8_char = "你好"
             test_entity = {"PartitionKey": "PK", "RowKey": non_utf8_char, "Data": non_utf8_char}
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
             verification = json.dumps(expected_entity, sort_keys=True)
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
@@ -1269,7 +1274,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", non_utf8_char), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
@@ -1292,7 +1297,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 _check_backcompat(test_entity, expected_entity)
             assert "is too large to be cast to" in str(error.value)
             with pytest.raises(HttpResponseError) as error:
-                resp = client.upsert_entity(
+                resp = await client.upsert_entity(
                     test_entity,
                     mode=UpdateMode.MERGE,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -1308,7 +1313,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 in str(error.value)
             )
             with pytest.raises(HttpResponseError) as error:
-                resp = client.upsert_entity(
+                resp = await client.upsert_entity(
                     test_entity,
                     mode=UpdateMode.REPLACE,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -1332,7 +1337,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data@odata.type": "Edm.Int64",
             }
             _check_backcompat(test_entity, expected_entity)
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -1344,7 +1349,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK2", "RK2"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -1368,7 +1373,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 _check_backcompat(test_entity, expected_entity)
             assert "is too large to be cast to" in str(error.value)
             with pytest.raises(HttpResponseError) as error:
-                client.upsert_entity(
+                await client.upsert_entity(
                     test_entity,
                     mode=UpdateMode.REPLACE,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -1381,7 +1386,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             assert "One of the input values is invalid." in str(error.value)
             assert error.value.error_code == "InvalidInput"
             with pytest.raises(HttpResponseError) as error:
-                client.upsert_entity(
+                await client.upsert_entity(
                     test_entity,
                     mode=UpdateMode.REPLACE,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -1414,7 +1419,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
             _check_backcompat(test_entity, expected_entity)
             verification = json.dumps(expected_entity, sort_keys=True)
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
@@ -1426,7 +1431,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK4", "RK4"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
@@ -1446,7 +1451,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             expected_payload_entity = {"PartitionKey": "PK", "RowKey": "RK", "123": 456}
             verification = json.dumps(expected_payload_entity, sort_keys=True)
             with pytest.raises(HttpResponseError) as error:
-                client.upsert_entity(
+                await client.upsert_entity(
                     test_entity,
                     mode=UpdateMode.MERGE,
                     verify_payload=verification,
@@ -1459,7 +1464,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             assert "The property name '123' is invalid" in str(error.value)
             assert error.value.error_code.value == "PropertyNameInvalid"
             with pytest.raises(HttpResponseError) as error:
-                client.upsert_entity(
+                await client.upsert_entity(
                     test_entity,
                     mode=UpdateMode.REPLACE,
                     verify_payload=verification,
@@ -1480,7 +1485,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data": "Two",
             }
             verification = json.dumps(expected_entity, sort_keys=True)
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
@@ -1492,7 +1497,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "One"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
@@ -1512,7 +1517,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data": "Two",
             }
             verification = json.dumps(expected_entity, sort_keys=True)
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
@@ -1524,7 +1529,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
@@ -1544,7 +1549,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data": 2,
             }
             verification = json.dumps(expected_entity, sort_keys=True)
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
@@ -1556,7 +1561,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "RK"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.upsert_entity(
+            resp = await client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
@@ -1567,23 +1572,23 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 },
                 verify_response=(lambda: client.get_entity("PK", "RK"), expected_entity),
             )
-            client.delete_table()
+            await client.delete_table()
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_update_entity_basic(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_update_entity_basic(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         table_name = self.get_resource_name("uttable13")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Test basic string, int32 and bool data
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data1": 1, "Data2": True}
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
-            client.upsert_entity({"PartitionKey": "PK", "RowKey": "RK"})
-            resp = client.update_entity(
+            await client.upsert_entity({"PartitionKey": "PK", "RowKey": "RK"})
+            resp = await client.update_entity(
                 test_entity,
                 mode="merge",
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -1592,7 +1597,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.update_entity(
+            resp = await client.update_entity(
                 test_entity,
                 mode="replace",
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -1605,8 +1610,8 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK", "RowKey": "RK'@*$!%", "Data": True}
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
-            client.upsert_entity({"PartitionKey": "PK", "RowKey": "RK'@*$!%"})
-            resp = client.update_entity(
+            await client.upsert_entity({"PartitionKey": "PK", "RowKey": "RK'@*$!%"})
+            resp = await client.update_entity(
                 test_entity,
                 mode="merge",
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -1615,7 +1620,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "RK'@*$!%"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.update_entity(
+            resp = await client.update_entity(
                 test_entity,
                 mode="replace",
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -1629,20 +1634,20 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
-                client.update_entity(test_entity, mode="merge")
+                await client.update_entity(test_entity, mode="merge")
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
             with pytest.raises(TypeError) as error:
-                client.update_entity(test_entity, mode="replace")
+                await client.update_entity(test_entity, mode="replace")
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
 
             test_entity = {"PartitionKey": "PK", "RowKey": True}
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
-                client.update_entity(test_entity, mode="merge")
+                await client.update_entity(test_entity, mode="merge")
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
             with pytest.raises(TypeError) as error:
-                client.update_entity(test_entity, mode="replace")
+                await client.update_entity(test_entity, mode="replace")
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
 
             test_entity = {"PartitionKey": "PK", "RowKey": 3.14}
@@ -1653,16 +1658,16 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
-                client.update_entity(test_entity, mode="merge")
+                await client.update_entity(test_entity, mode="merge")
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
             with pytest.raises(TypeError) as error:
-                client.update_entity(test_entity, mode="replace")
+                await client.update_entity(test_entity, mode="replace")
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
-            client.delete_table()
+            await client.delete_table()
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_update_entity_complex_keys(
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_update_entity_complex_keys(
         self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs
     ):
         recorded_variables = kwargs.pop("variables", {})
@@ -1670,10 +1675,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         table_name = self.get_resource_name("uttable14")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Test complex PartitionKey and RowKey (datetime, GUID and binary)
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             test_entity = {
                 "PartitionKey": self.get_datetime(),
                 "RowKey": recorded_uuid,
@@ -1690,9 +1695,9 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
             response_entity = {"PartitionKey": pk, "RowKey": rk, "Data": True}
             _check_backcompat(test_entity, expected_entity)
-            client.upsert_entity({"PartitionKey": pk, "RowKey": rk})
+            await client.upsert_entity({"PartitionKey": pk, "RowKey": rk})
             with pytest.raises(HttpResponseError) as error:
-                resp = client.update_entity(
+                resp = await client.update_entity(
                     test_entity,
                     mode=UpdateMode.MERGE,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -1704,7 +1709,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 in str(error.value)
             )
             with pytest.raises(HttpResponseError) as error:
-                resp = client.update_entity(
+                resp = await client.update_entity(
                     test_entity,
                     mode=UpdateMode.REPLACE,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -1728,9 +1733,9 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
             response_entity = {"PartitionKey": pk, "RowKey": rk, "Data": 1}
             _check_backcompat(test_entity, expected_entity)
-            client.upsert_entity({"PartitionKey": pk, "RowKey": rk})
+            await client.upsert_entity({"PartitionKey": pk, "RowKey": rk})
             with pytest.raises(HttpResponseError) as error:
-                resp = client.update_entity(
+                resp = await client.update_entity(
                     test_entity,
                     mode=UpdateMode.MERGE,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -1742,7 +1747,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 in str(error.value)
             )
             with pytest.raises(HttpResponseError) as error:
-                resp = client.update_entity(
+                resp = await client.update_entity(
                     test_entity,
                     mode=UpdateMode.REPLACE,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -1753,12 +1758,12 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
                 in str(error.value)
             )
-            client.delete_table()
+            await client.delete_table()
         return recorded_variables
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_update_entity_type_conversion(
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_update_entity_type_conversion(
         self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs
     ):
         recorded_variables = kwargs.pop("variables", {})
@@ -1766,10 +1771,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         table_name = self.get_resource_name("uttable15")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         # All automatically detected data types
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             test_entity = {
                 "PartitionKey": "PK",
                 "RowKey": "RK",
@@ -1797,9 +1802,9 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data7@odata.type": "Edm.Double",
             }
             _check_backcompat(test_entity, expected_entity)
-            client.upsert_entity({"PartitionKey": "PK", "RowKey": "RK"})
+            await client.upsert_entity({"PartitionKey": "PK", "RowKey": "RK"})
             verification = json.dumps(expected_entity, sort_keys=True)
-            resp = client.update_entity(
+            resp = await client.update_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
@@ -1808,7 +1813,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.update_entity(
+            resp = await client.update_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
@@ -1817,23 +1822,23 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            client.delete_table()
+            await client.delete_table()
         return recorded_variables
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_update_entity_tuples(
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_update_entity_tuples(
         self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs
     ):
         recorded_variables = kwargs.pop("variables", {})
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable16")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
-        # Explicit datatypes using Tuple definition
-        with TableClient(
+        # Explicit datatypes using Tuple async definition
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             dt = datetime(year=2022, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc)
             guid = recorded_uuid
             test_entity = {
@@ -1881,9 +1886,9 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data8": (2**60, "Edm.Int64"),
             }
             _check_backcompat(test_entity, expected_entity)
-            client.upsert_entity({"PartitionKey": "PK1", "RowKey": "RK1"})
+            await client.upsert_entity({"PartitionKey": "PK1", "RowKey": "RK1"})
             verification = json.dumps(expected_entity, sort_keys=True)
-            resp = client.update_entity(
+            resp = await client.update_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
@@ -1892,7 +1897,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK1", "RK1"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.update_entity(
+            resp = await client.update_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
@@ -1945,9 +1950,9 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data8": EntityProperty(value=9223372036854775807, edm_type="Edm.Int64"),
             }
             _check_backcompat(test_entity, expected_entity)
-            client.upsert_entity({"PartitionKey": "PK2", "RowKey": "RK2"})
+            await client.upsert_entity({"PartitionKey": "PK2", "RowKey": "RK2"})
             verification = json.dumps(expected_entity, sort_keys=True)
-            resp = client.update_entity(
+            resp = await client.update_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
@@ -1956,7 +1961,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK2", "RK2"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.update_entity(
+            resp = await client.update_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
@@ -1965,21 +1970,23 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK2", "RK2"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            client.delete_table()
+            await client.delete_table()
         return recorded_variables
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_update_entity_raw(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_update_entity_raw(
+        self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs
+    ):
         recorded_variables = kwargs.pop("variables", {})
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable17")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Raw payload with existing EdmTypes
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             dt = self.get_datetime()
             guid = recorded_uuid
             test_entity = {
@@ -2095,9 +2102,9 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data11": guid,
             }
             # _check_backcompat(test_entity, expected_entity) # will fail
-            client.upsert_entity({"PartitionKey": "PK", "RowKey": "RK"})
+            await client.upsert_entity({"PartitionKey": "PK", "RowKey": "RK"})
             verification = json.dumps(expected_entity, sort_keys=True)
-            resp = client.update_entity(
+            resp = await client.update_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
@@ -2106,7 +2113,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "RK"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.update_entity(
+            resp = await client.update_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
@@ -2115,12 +2122,14 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "RK"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            client.delete_table()
+            await client.delete_table()
         return recorded_variables
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_update_entity_atypical_values(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_update_entity_atypical_values(
+        self, tables_cosmos_account_name, tables_primary_cosmos_account_key
+    ):
         table_name = self.get_resource_name("uttable18")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Non-UTF8 characters in both keys and properties
@@ -2128,18 +2137,18 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         # Infinite float values
         # Non-string keys
         # Test enums
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             # Non-UTF8 characters in both keys and properties
             non_utf8_char = "你好"
             test_entity = {"PartitionKey": "PK", "RowKey": non_utf8_char, "Data": non_utf8_char}
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
-            client.upsert_entity({"PartitionKey": "PK", "RowKey": non_utf8_char})
+            await client.upsert_entity({"PartitionKey": "PK", "RowKey": non_utf8_char})
             verification = json.dumps(expected_entity, sort_keys=True)
-            resp = client.update_entity(
+            resp = await client.update_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
@@ -2148,7 +2157,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", non_utf8_char), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.update_entity(
+            resp = await client.update_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
@@ -2164,12 +2173,12 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             max_int64 = 9223372036854775808
             test_entity = {"PartitionKey": "PK1", "RowKey": "RK1", "Data": int(max_int64 * 1000)}
             expected_entity = test_entity
-            client.upsert_entity({"PartitionKey": "PK1", "RowKey": "RK1"})
+            await client.upsert_entity({"PartitionKey": "PK1", "RowKey": "RK1"})
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
             assert "is too large to be cast to" in str(error.value)
             with pytest.raises(HttpResponseError) as error:
-                resp = client.update_entity(
+                resp = await client.update_entity(
                     test_entity,
                     mode=UpdateMode.MERGE,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -2181,7 +2190,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 in str(error.value)
             )
             with pytest.raises(HttpResponseError) as error:
-                resp = client.update_entity(
+                resp = await client.update_entity(
                     test_entity,
                     mode=UpdateMode.REPLACE,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -2201,8 +2210,8 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data@odata.type": "Edm.Int64",
             }
             _check_backcompat(test_entity, expected_entity)
-            client.upsert_entity({"PartitionKey": "PK2", "RowKey": "RK2"})
-            resp = client.update_entity(
+            await client.upsert_entity({"PartitionKey": "PK2", "RowKey": "RK2"})
+            resp = await client.update_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -2211,7 +2220,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK2", "RK2"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.update_entity(
+            resp = await client.update_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -2231,9 +2240,9 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
             assert "is too large to be cast to" in str(error.value)
-            client.upsert_entity({"PartitionKey": "PK3", "RowKey": "RK3"})
+            await client.upsert_entity({"PartitionKey": "PK3", "RowKey": "RK3"})
             with pytest.raises(HttpResponseError) as error:
-                client.update_entity(
+                await client.update_entity(
                     test_entity,
                     mode=UpdateMode.REPLACE,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -2243,7 +2252,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             assert "One of the input values is invalid." in str(error.value)
             assert error.value.error_code == "InvalidInput"
             with pytest.raises(HttpResponseError) as error:
-                client.update_entity(
+                await client.update_entity(
                     test_entity,
                     mode=UpdateMode.REPLACE,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -2272,9 +2281,9 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data3@odata.type": "Edm.Double",
             }
             _check_backcompat(test_entity, expected_entity)
-            client.upsert_entity({"PartitionKey": "PK4", "RowKey": "RK4"})
+            await client.upsert_entity({"PartitionKey": "PK4", "RowKey": "RK4"})
             verification = json.dumps(expected_entity, sort_keys=True)
-            resp = client.update_entity(
+            resp = await client.update_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
@@ -2283,7 +2292,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK4", "RK4"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.update_entity(
+            resp = await client.update_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
@@ -2298,10 +2307,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             expected_entity = test_entity
             # _check_backcompat(test_entity, expected_entity) # will fail, TypeError: argument of type 'int' is not iterable
             expected_payload_entity = {"PartitionKey": "PK", "RowKey": "RK", "123": 456}
-            client.upsert_entity({"PartitionKey": "PK", "RowKey": "RK"})
+            await client.upsert_entity({"PartitionKey": "PK", "RowKey": "RK"})
             verification = json.dumps(expected_payload_entity, sort_keys=True)
             with pytest.raises(HttpResponseError) as error:
-                client.update_entity(
+                await client.update_entity(
                     test_entity,
                     mode=UpdateMode.MERGE,
                     verify_payload=verification,
@@ -2311,7 +2320,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             assert "The property name '123' is invalid." in str(error.value)
             assert error.value.error_code.value == "PropertyNameInvalid"
             with pytest.raises(HttpResponseError) as error:
-                client.update_entity(
+                await client.update_entity(
                     test_entity,
                     mode=UpdateMode.REPLACE,
                     verify_payload=verification,
@@ -2328,9 +2337,9 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "RowKey": "One",
                 "Data": "Two",
             }
-            client.upsert_entity({"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE})
+            await client.upsert_entity({"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE})
             verification = json.dumps(expected_entity, sort_keys=True)
-            resp = client.update_entity(
+            resp = await client.update_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
@@ -2339,7 +2348,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "One"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.update_entity(
+            resp = await client.update_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
@@ -2355,9 +2364,9 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "RowKey": "Two",
                 "Data": "Two",
             }
-            client.upsert_entity({"PartitionKey": "PK", "RowKey": "Two"})
+            await client.upsert_entity({"PartitionKey": "PK", "RowKey": "Two"})
             verification = json.dumps(expected_entity, sort_keys=True)
-            resp = client.update_entity(
+            resp = await client.update_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
@@ -2366,7 +2375,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.update_entity(
+            resp = await client.update_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
@@ -2382,9 +2391,9 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "RowKey": "RK",
                 "Data": 2,
             }
-            client.upsert_entity({"PartitionKey": "PK", "RowKey": "RK"})
+            await client.upsert_entity({"PartitionKey": "PK", "RowKey": "RK"})
             verification = json.dumps(expected_entity, sort_keys=True)
-            resp = client.update_entity(
+            resp = await client.update_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
@@ -2393,7 +2402,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "RK"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.update_entity(
+            resp = await client.update_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
@@ -2402,20 +2411,20 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "RK"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-            client.delete_table()
+            await client.delete_table()
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_delete_entity_basic(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_delete_entity_basic(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         table_name = self.get_resource_name("uttable19")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Test basic string, int32 and bool data
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
-            client.upsert_entity({"PartitionKey": "foo", "RowKey": "bar"})
-            resp = client.delete_entity(
+            await client.create_table()
+            await client.upsert_entity({"PartitionKey": "foo", "RowKey": "bar"})
+            resp = await client.delete_entity(
                 "foo",
                 "bar",
                 verify_payload=None,
@@ -2424,8 +2433,8 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             )
             assert resp is None
 
-            client.upsert_entity({"PartitionKey": "foo", "RowKey": "bar"})
-            resp = client.delete_entity(
+            await client.upsert_entity({"PartitionKey": "foo", "RowKey": "bar"})
+            resp = await client.delete_entity(
                 {"PartitionKey": "foo", "RowKey": "bar"},
                 verify_payload=None,
                 verify_url=f"/{table_name}(PartitionKey='foo',RowKey='bar')",
@@ -2433,8 +2442,8 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             )
             assert resp is None
 
-            client.upsert_entity({"PartitionKey": "foo", "RowKey": "RK'@*$!%"})
-            resp = client.delete_entity(
+            await client.upsert_entity({"PartitionKey": "foo", "RowKey": "RK'@*$!%"})
+            resp = await client.delete_entity(
                 "foo",
                 "RK'@*$!%",  # cspell:disable-line
                 verify_payload=None,
@@ -2443,8 +2452,8 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             )
             assert resp is None
 
-            client.upsert_entity({"PartitionKey": "foo", "RowKey": "RK'@*$!%"})
-            resp = client.delete_entity(
+            await client.upsert_entity({"PartitionKey": "foo", "RowKey": "RK'@*$!%"})
+            resp = await client.delete_entity(
                 {"PartitionKey": "foo", "RowKey": "RK'@*$!%"},  # cspell:disable-line
                 verify_payload=None,
                 verify_url=f"/{table_name}(PartitionKey='foo',RowKey='RK%27%27%40%2A%24%21%25')",
@@ -2453,29 +2462,29 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             assert resp is None
 
             with pytest.raises(TypeError) as error:
-                client.delete_entity("foo", 1)
+                await client.delete_entity("foo", 1)
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
             with pytest.raises(TypeError) as error:
-                client.delete_entity({"PartitionKey": "foo", "RowKey": 1})
+                await client.delete_entity({"PartitionKey": "foo", "RowKey": 1})
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
             with pytest.raises(TypeError) as error:
-                client.delete_entity("foo", True)
+                await client.delete_entity("foo", True)
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
             with pytest.raises(TypeError) as error:
-                client.delete_entity({"PartitionKey": "foo", "RowKey": True})
+                await client.delete_entity({"PartitionKey": "foo", "RowKey": True})
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
             with pytest.raises(TypeError) as error:
-                client.delete_entity("foo", 3.14)
+                await client.delete_entity("foo", 3.14)
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
             with pytest.raises(TypeError) as error:
-                client.delete_entity({"PartitionKey": "foo", "RowKey": 3.14})
+                await client.delete_entity({"PartitionKey": "foo", "RowKey": 3.14})
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
 
-            client.delete_table()
+            await client.delete_table()
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_delete_entity_complex_keys(
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_delete_entity_complex_keys(
         self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs
     ):
         recorded_variables = kwargs.pop("variables", {})
@@ -2483,54 +2492,56 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         table_name = self.get_resource_name("uttable20")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Test complex PartitionKey and RowKey (datetime, GUID and binary)
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
 
             with pytest.raises(TypeError) as error:
-                client.delete_entity("foo", self.get_datetime())
+                await client.delete_entity("foo", self.get_datetime())
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
-            client.delete_entity({"PartitionKey": "foo", "RowKey": self.get_datetime()})
+            await client.delete_entity({"PartitionKey": "foo", "RowKey": self.get_datetime()})
             with pytest.raises(TypeError) as error:
-                client.delete_entity("foo", recorded_uuid)
+                await client.delete_entity("foo", recorded_uuid)
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
-            client.delete_entity({"PartitionKey": "foo", "RowKey": recorded_uuid})
+            await client.delete_entity({"PartitionKey": "foo", "RowKey": recorded_uuid})
             with pytest.raises(TypeError) as error:
-                client.delete_entity("foo", b"binarydata")
+                await client.delete_entity("foo", b"binarydata")
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
-            client.delete_entity({"PartitionKey": "foo", "RowKey": b"binarydata"})
+            await client.delete_entity({"PartitionKey": "foo", "RowKey": b"binarydata"})
         return recorded_variables
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_delete_entity_tuples(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_delete_entity_tuples(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         table_name = self.get_resource_name("uttable21")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
-        # Explicit datatypes using Tuple definition
-        with TableClient(
+        # Explicit datatypes using Tuple async definition
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
 
             with pytest.raises(TypeError) as error:
-                client.delete_entity("foo", EntityProperty("bar", "Edm.String"))
+                await client.delete_entity("foo", EntityProperty("bar", "Edm.String"))
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
-            client.delete_entity({"PartitionKey": "foo", "RowKey": ("bar", EdmType.STRING)})
+            await client.delete_entity({"PartitionKey": "foo", "RowKey": ("bar", EdmType.STRING)})
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_delete_entity_atypical_values(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_delete_entity_atypical_values(
+        self, tables_cosmos_account_name, tables_primary_cosmos_account_key
+    ):
         table_name = self.get_resource_name("uttable22")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Non-UTF8 characters in both keys and properties
         # Test enums in both keys and properties
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             # Non-UTF8 characters in both keys and properties
             non_utf8_char = "你好"
-            client.upsert_entity({"PartitionKey": "PK", "RowKey": non_utf8_char})
-            resp = client.delete_entity(
+            await client.upsert_entity({"PartitionKey": "PK", "RowKey": non_utf8_char})
+            resp = await client.delete_entity(
                 "PK",
                 non_utf8_char,
                 verify_payload=None,
@@ -2539,8 +2550,8 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             )
             assert resp is None
 
-            client.upsert_entity({"PartitionKey": "PK", "RowKey": non_utf8_char})
-            resp = client.delete_entity(
+            await client.upsert_entity({"PartitionKey": "PK", "RowKey": non_utf8_char})
+            resp = await client.delete_entity(
                 {"PartitionKey": "PK", "RowKey": non_utf8_char},
                 verify_payload=None,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote(non_utf8_char)}')",
@@ -2549,18 +2560,18 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             assert resp is None
 
             with pytest.raises(TypeError) as error:
-                client.delete_entity("foo", EnumBasicOptions.ONE)
+                await client.delete_entity("foo", EnumBasicOptions.ONE)
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
-            client.delete_entity({"PartitionKey": "foo", "RowKey": EnumBasicOptions.ONE})
+            await client.delete_entity({"PartitionKey": "foo", "RowKey": EnumBasicOptions.ONE})
             with pytest.raises(TypeError) as error:
-                client.delete_entity("foo", EnumIntOptions.ONE)
+                await client.delete_entity("foo", EnumIntOptions.ONE)
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
             with pytest.raises(TypeError) as error:
-                client.delete_entity({"PartitionKey": "foo", "RowKey": EnumIntOptions.ONE})
+                await client.delete_entity({"PartitionKey": "foo", "RowKey": EnumIntOptions.ONE})
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
 
-            client.upsert_entity({"PartitionKey": "foo", "RowKey": "One"})
-            resp = client.delete_entity(
+            await client.upsert_entity({"PartitionKey": "foo", "RowKey": "One"})
+            resp = await client.delete_entity(
                 "foo",
                 EnumStrOptions.ONE,
                 verify_payload=None,
@@ -2569,29 +2580,29 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             )
             assert resp is None
 
-            client.upsert_entity({"PartitionKey": "foo", "RowKey": "One"})
-            resp = client.delete_entity(
+            await client.upsert_entity({"PartitionKey": "foo", "RowKey": "One"})
+            resp = await client.delete_entity(
                 {"PartitionKey": "foo", "RowKey": EnumStrOptions.ONE},
                 verify_payload=None,
                 verify_url=f"/{table_name}(PartitionKey='foo',RowKey='One')",
                 verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
             )
             assert resp is None
-            client.delete_table()
+            await client.delete_table()
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_get_entity_basic(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_get_entity_basic(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         table_name = self.get_resource_name("uttable23")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Test basic string, int32 and bool data
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             test_entity = {"PartitionKey": "foo", "RowKey": "bar"}
-            client.upsert_entity(test_entity)
-            resp = client.get_entity(
+            await client.upsert_entity(test_entity)
+            resp = await client.get_entity(
                 "foo",
                 "bar",
                 verify_payload=None,
@@ -2601,8 +2612,8 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             assert resp == test_entity
 
             test_entity = {"PartitionKey": "foo", "RowKey": "RK'@*$!%"}
-            client.upsert_entity(test_entity)
-            resp = client.get_entity(
+            await client.upsert_entity(test_entity)
+            resp = await client.get_entity(
                 "foo",
                 "RK'@*$!%",  # cspell:disable-line
                 verify_payload=None,
@@ -2612,20 +2623,20 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             assert resp == test_entity
 
             with pytest.raises(TypeError) as error:
-                client.get_entity("foo", 1)
+                await client.get_entity("foo", 1)
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
             with pytest.raises(TypeError) as error:
-                client.get_entity("foo", True)
+                await client.get_entity("foo", True)
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
             with pytest.raises(TypeError) as error:
-                client.get_entity("foo", 3.14)
+                await client.get_entity("foo", 3.14)
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
 
-            client.delete_table()
+            await client.delete_table()
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_get_entity_complex_keys(
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_get_entity_complex_keys(
         self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs
     ):
         recorded_variables = kwargs.pop("variables", {})
@@ -2633,51 +2644,53 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         table_name = self.get_resource_name("uttable24")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Test complex PartitionKey and RowKey (datetime, GUID and binary)
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
 
             with pytest.raises(TypeError) as error:
-                client.get_entity("foo", self.get_datetime())
+                await client.get_entity("foo", self.get_datetime())
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
             with pytest.raises(TypeError) as error:
-                client.get_entity("foo", recorded_uuid)
+                await client.get_entity("foo", recorded_uuid)
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
             with pytest.raises(TypeError) as error:
-                client.get_entity("foo", b"binarydata")
+                await client.get_entity("foo", b"binarydata")
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
         return recorded_variables
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_get_entity_tuples(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_get_entity_tuples(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         table_name = self.get_resource_name("uttable25")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
-        # Explicit datatypes using Tuple definition
-        with TableClient(
+        # Explicit datatypes using Tuple async definition
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
 
             with pytest.raises(TypeError) as error:
-                client.get_entity("foo", EntityProperty("bar", "Edm.String"))
+                await client.get_entity("foo", EntityProperty("bar", "Edm.String"))
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
 
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_get_entity_atypical_values(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_get_entity_atypical_values(
+        self, tables_cosmos_account_name, tables_primary_cosmos_account_key
+    ):
         table_name = self.get_resource_name("uttable26")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Non-UTF8 characters in both keys and properties
         # Test enums in both keys and properties
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             # Non-UTF8 characters in both keys and properties
             non_utf8_char = "你好"
             test_entity = {"PartitionKey": "PK", "RowKey": non_utf8_char}
-            client.upsert_entity(test_entity)
-            resp = client.get_entity(
+            await client.upsert_entity(test_entity)
+            resp = await client.get_entity(
                 "PK",
                 non_utf8_char,
                 verify_payload=None,
@@ -2687,15 +2700,15 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             assert resp == test_entity
 
             with pytest.raises(TypeError) as error:
-                client.get_entity("foo", EnumBasicOptions.ONE)
+                await client.get_entity("foo", EnumBasicOptions.ONE)
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
             with pytest.raises(TypeError) as error:
-                client.get_entity("foo", EnumIntOptions.ONE)
+                await client.get_entity("foo", EnumIntOptions.ONE)
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
 
             test_entity = {"PartitionKey": "foo", "RowKey": "One"}
-            client.upsert_entity(test_entity)
-            resp = client.get_entity(
+            await client.upsert_entity(test_entity)
+            resp = await client.get_entity(
                 "foo",
                 EnumStrOptions.ONE,
                 verify_payload=None,
@@ -2703,12 +2716,12 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_headers={"Accept": "application/json;odata=minimalmetadata"},
             )
             assert resp == test_entity
-            client.delete_table()
+            await client.delete_table()
 
     @pytest.mark.live_test_only
-    @cosmos_decorator
-    @recorded_by_proxy
-    def test_encoder_batch(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_encoder_batch(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
         )
@@ -2716,10 +2729,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable27")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
-        with TableClient(
+        async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
-            client.create_table()
+            await client.create_table()
             test_entity1 = {
                 "PartitionKey": "PK",
                 "RowKey": "RK'@*$!%",
@@ -2737,7 +2750,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data3": b"testdata",
                 "Data4": self.get_datetime(),
             }
-            resp = client.submit_transaction(
+            resp = await client.submit_transaction(
                 [("create", test_entity1)],
                 verify_response=(lambda: client.get_entity("PK", "RK'@*$!%"), response_entity),
             )
@@ -2767,12 +2780,12 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data7": 3.14,
                 "Data8": (2**60, "Edm.Int64"),
             }
-            resp = client.submit_transaction(
+            resp = await client.submit_transaction(
                 [("upsert", test_entity2, {"mode": "merge"})],
                 verify_response=(lambda: client.get_entity("PK", "RK"), response_entity),
             )
             assert list(resp[0].keys()) == ["etag"]
-            resp = client.submit_transaction(
+            resp = await client.submit_transaction(
                 [("upsert", test_entity2, {"mode": "replace"})],
                 verify_response=(lambda: client.get_entity("PK", "RK"), response_entity),
             )
@@ -2806,18 +2819,18 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data7": "One",
                 "Data8": "One",
             }
-            resp = client.submit_transaction(
+            resp = await client.submit_transaction(
                 [("update", test_entity3, {"mode": "merge"})],
                 verify_response=(lambda: client.get_entity("PK", "RK"), response_entity),
             )
             assert list(resp[0].keys()) == ["etag"]
-            resp = client.submit_transaction(
+            resp = await client.submit_transaction(
                 [("update", test_entity3, {"mode": "replace"})],
                 verify_response=(lambda: client.get_entity("PK", "RK"), response_entity),
             )
             assert list(resp[0].keys()) == ["etag"]
 
-            client.submit_transaction([("delete", test_entity1), ("delete", test_entity3)])
+            await client.submit_transaction([("delete", test_entity1), ("delete", test_entity3)])
 
-            client.delete_table()
+            await client.delete_table()
         return recorded_variables
