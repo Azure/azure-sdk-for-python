@@ -35,6 +35,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
+from queue import Queue
 import errno
 import re
 import socket
@@ -185,6 +186,8 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         self.socket_timeout = socket_timeout
         self.socket_settings = socket_settings
         self.socket_lock = Lock()
+        self.outgoing_queue = Queue()
+        self.incoming_queue = Queue()
 
     def connect(self):
         try:
@@ -406,57 +409,57 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
 
     def read(self, verify_frame_type=0):
         with self.socket_lock:
-            read = self._read
-            read_frame_buffer = BytesIO()
-            try:
-                frame_header = memoryview(bytearray(8))
-                read_frame_buffer.write(read(8, buffer=frame_header, initial=True))
+            # read = self._read
+            # read_frame_buffer = BytesIO()
+            # try:
+            #     frame_header = memoryview(bytearray(8))
+            #     read_frame_buffer.write(read(8, buffer=frame_header, initial=True))
 
-                channel = struct.unpack(">H", frame_header[6:])[0]
-                size = frame_header[0:4]
-                if size == AMQP_FRAME:  # Empty frame or AMQP header negotiation TODO
-                    return frame_header, channel, None
-                size = struct.unpack(">I", size)[0]
-                offset = frame_header[4]
-                frame_type = frame_header[5]
-                if verify_frame_type is not None and frame_type != verify_frame_type:
-                    _LOGGER.debug(
-                        "Received invalid frame type: %r, expected: %r",
-                        frame_type,
-                        verify_frame_type,
-                        extra=self.network_trace_params
-                    )
-                    raise ValueError(
-                            f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
-                    )
+            #     channel = struct.unpack(">H", frame_header[6:])[0]
+            #     size = frame_header[0:4]
+            #     if size == AMQP_FRAME:  # Empty frame or AMQP header negotiation TODO
+            #         return frame_header, channel, None
+            #     size = struct.unpack(">I", size)[0]
+            #     offset = frame_header[4]
+            #     frame_type = frame_header[5]
+            #     if verify_frame_type is not None and frame_type != verify_frame_type:
+            #         _LOGGER.debug(
+            #             "Received invalid frame type: %r, expected: %r",
+            #             frame_type,
+            #             verify_frame_type,
+            #             extra=self.network_trace_params
+            #         )
+            #         raise ValueError(
+            #                 f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
+            #         )
 
-                # >I is an unsigned int, but the argument to sock.recv is signed,
-                # so we know the size can be at most 2 * SIGNED_INT_MAX
-                payload_size = size - len(frame_header)
-                payload = memoryview(bytearray(payload_size))
-                if size > SIGNED_INT_MAX:
-                    read_frame_buffer.write(read(SIGNED_INT_MAX, buffer=payload))
-                    read_frame_buffer.write(
-                        read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:])
-                    )
-                else:
-                    read_frame_buffer.write(read(payload_size, buffer=payload))
-            except (socket.timeout, TimeoutError):
-                read_frame_buffer.write(self._read_buffer.getvalue())
-                self._read_buffer = read_frame_buffer
-                self._read_buffer.seek(0)
-                raise
-            except (OSError, IOError, SSLError, socket.error) as exc:
-                # Don't disconnect for ssl read time outs
-                # http://bugs.python.org/issue10272
-                if isinstance(exc, SSLError) and "timed out" in str(exc):
-                    raise socket.timeout()
-                if get_errno(exc) not in _UNAVAIL:
-                    self.connected = False
-                _LOGGER.debug("Transport read failed: %r", exc, extra=self.network_trace_params)
-                raise
-            offset -= 2
-        return frame_header, channel, payload[offset:]
+            #     # >I is an unsigned int, but the argument to sock.recv is signed,
+            #     # so we know the size can be at most 2 * SIGNED_INT_MAX
+            #     payload_size = size - len(frame_header)
+            #     payload = memoryview(bytearray(payload_size))
+            #     if size > SIGNED_INT_MAX:
+            #         read_frame_buffer.write(read(SIGNED_INT_MAX, buffer=payload))
+            #         read_frame_buffer.write(
+            #             read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:])
+            #         )
+            #     else:
+            #         read_frame_buffer.write(read(payload_size, buffer=payload))
+            # except (socket.timeout, TimeoutError):
+            #     read_frame_buffer.write(self._read_buffer.getvalue())
+            #     self._read_buffer = read_frame_buffer
+            #     self._read_buffer.seek(0)
+            #     raise
+            # except (OSError, IOError, SSLError, socket.error) as exc:
+            #     # Don't disconnect for ssl read time outs
+            #     # http://bugs.python.org/issue10272
+            #     if isinstance(exc, SSLError) and "timed out" in str(exc):
+            #         raise socket.timeout()
+            #     if get_errno(exc) not in _UNAVAIL:
+            #         self.connected = False
+            #     _LOGGER.debug("Transport read failed: %r", exc, extra=self.network_trace_params)
+            #     raise
+            # offset -= 2
+            return self.incoming_queue.get()
 
     def write(self, s):
         with self.socket_lock:
@@ -645,26 +648,27 @@ class SSLTransport(_AbstractTransport):
         return view
 
     def _write(self, s):
-        """Write a string out to the SSL socket fully.
-        :param str s: The string to write.
-        """
-        try:
-            write = self.sock.send
-        except AttributeError:
-            raise IOError("Socket has already been closed.") from None
+        self.outgoing_queue.put(s)
+        # """Write a string out to the SSL socket fully.
+        # :param str s: The string to write.
+        # """
+        # try:
+        #     write = self.sock.send
+        # except AttributeError:
+        #     raise IOError("Socket has already been closed.") from None
 
-        while s:
-            try:
-                n = write(s)
-            except ValueError:
-                # AG: sock._sslobj might become null in the meantime if the
-                # remote connection has hung up.
-                # In python 3.4, a ValueError is raised is self._sslobj is
-                # None.
-                n = 0
-            if not n:
-                raise IOError("Socket closed.")
-            s = s[n:]
+        # while s:
+        #     try:
+        #         n = write(s)
+        #     except ValueError:
+        #         # AG: sock._sslobj might become null in the meantime if the
+        #         # remote connection has hung up.
+        #         # In python 3.4, a ValueError is raised is self._sslobj is
+        #         # None.
+        #         n = 0
+        #     if not n:
+        #         raise IOError("Socket closed.")
+        #     s = s[n:]
 
     def negotiate(self):
         with self.block():

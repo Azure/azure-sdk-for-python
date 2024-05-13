@@ -91,69 +91,70 @@ class AsyncTransportMixin:
 
     async def read(self, verify_frame_type=0):
         async with self.socket_lock:
-            read_frame_buffer = BytesIO()
-            try:
-                frame_header = memoryview(bytearray(8))
-                read_frame_buffer.write(
-                    await self._read(8, buffer=frame_header, initial=True)
-                )
+        #     read_frame_buffer = BytesIO()
+        #     try:
+        #         frame_header = memoryview(bytearray(8))
+        #         read_frame_buffer.write(
+        #             await self._read(8, buffer=frame_header, initial=True)
+        #         )
 
-                channel = struct.unpack(">H", frame_header[6:])[0]
-                size = frame_header[0:4]
-                if size == AMQP_FRAME:  # Empty frame or AMQP header negotiation
-                    return frame_header, channel, None
-                size = struct.unpack(">I", size)[0]
-                offset = frame_header[4]
-                frame_type = frame_header[5]
-                if verify_frame_type is not None and frame_type != verify_frame_type:
-                    _LOGGER.debug(
-                        "Received invalid frame type: %r, expected: %r",
-                        frame_type,
-                        verify_frame_type,
-                        extra=self.network_trace_params
-                    )
-                    raise ValueError(
-                        f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
-                    )
-                # >I is an unsigned int, but the argument to sock.recv is signed,
-                # so we know the size can be at most 2 * SIGNED_INT_MAX
-                payload_size = size - len(frame_header)
-                payload = memoryview(bytearray(payload_size))
-                if size > SIGNED_INT_MAX:
-                    read_frame_buffer.write(
-                        await self._read(SIGNED_INT_MAX, buffer=payload)
-                    )
-                    read_frame_buffer.write(
-                        await self._read(
-                            size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:]
-                        )
-                    )
-                else:
-                    read_frame_buffer.write(
-                        await self._read(payload_size, buffer=payload)
-                    )
-            except (
-                asyncio.CancelledError,
-                asyncio.TimeoutError,
-                TimeoutError,
-                socket.timeout,
-                asyncio.IncompleteReadError
-            ):
-                read_frame_buffer.write(self._read_buffer.getvalue())
-                self._read_buffer = read_frame_buffer
-                self._read_buffer.seek(0)
-                raise
-            except (OSError, IOError, SSLError, socket.error) as exc:
-                # Don't disconnect for ssl read time outs
-                # http://bugs.python.org/issue10272
-                if isinstance(exc, SSLError) and "timed out" in str(exc):
-                    raise socket.timeout()
-                if get_errno(exc) not in _UNAVAIL:
-                    self.connected = False
-                _LOGGER.debug("Transport read failed: %r", exc, extra=self.network_trace_params)
-                raise
-            offset -= 2
-        return frame_header, channel, payload[offset:]
+        #         channel = struct.unpack(">H", frame_header[6:])[0]
+        #         size = frame_header[0:4]
+        #         if size == AMQP_FRAME:  # Empty frame or AMQP header negotiation
+        #             return frame_header, channel, None
+        #         size = struct.unpack(">I", size)[0]
+        #         offset = frame_header[4]
+        #         frame_type = frame_header[5]
+        #         if verify_frame_type is not None and frame_type != verify_frame_type:
+        #             _LOGGER.debug(
+        #                 "Received invalid frame type: %r, expected: %r",
+        #                 frame_type,
+        #                 verify_frame_type,
+        #                 extra=self.network_trace_params
+        #             )
+        #             raise ValueError(
+        #                 f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
+        #             )
+        #         # >I is an unsigned int, but the argument to sock.recv is signed,
+        #         # so we know the size can be at most 2 * SIGNED_INT_MAX
+        #         payload_size = size - len(frame_header)
+        #         payload = memoryview(bytearray(payload_size))
+        #         if size > SIGNED_INT_MAX:
+        #             read_frame_buffer.write(
+        #                 await self._read(SIGNED_INT_MAX, buffer=payload)
+        #             )
+        #             read_frame_buffer.write(
+        #                 await self._read(
+        #                     size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:]
+        #                 )
+        #             )
+        #         else:
+        #             read_frame_buffer.write(
+        #                 await self._read(payload_size, buffer=payload)
+        #             )
+        #     except (
+        #         asyncio.CancelledError,
+        #         asyncio.TimeoutError,
+        #         TimeoutError,
+        #         socket.timeout,
+        #         asyncio.IncompleteReadError
+        #     ):
+        #         read_frame_buffer.write(self._read_buffer.getvalue())
+        #         self._read_buffer = read_frame_buffer
+        #         self._read_buffer.seek(0)
+        #         raise
+        #     except (OSError, IOError, SSLError, socket.error) as exc:
+        #         # Don't disconnect for ssl read time outs
+        #         # http://bugs.python.org/issue10272
+        #         if isinstance(exc, SSLError) and "timed out" in str(exc):
+        #             raise socket.timeout()
+        #         if get_errno(exc) not in _UNAVAIL:
+        #             self.connected = False
+        #         _LOGGER.debug("Transport read failed: %r", exc, extra=self.network_trace_params)
+        #         raise
+        #     offset -= 2
+        # return frame_header, channel, payload[offset:]
+            return await self.outgoing_queue.get()
 
     async def write(self, s):
         async with self.socket_lock:
@@ -260,6 +261,8 @@ class AsyncTransport(
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl_opts
         self.network_trace_params = kwargs.get('network_trace_params')
+        self.outgoing_queue = asyncio.Queue()
+        self.incoming_queue = asyncio.Queue()
 
     async def connect(self):
         try:
@@ -391,11 +394,12 @@ class AsyncTransport(
         """Write a string out to the SSL socket fully.
         :param str s: The string to write.
         """
-        try:
-            self.writer.write(s)
-            await self.writer.drain()
-        except AttributeError:
-            raise IOError("Connection has already been closed") from None
+        self.outgoing_queue.put(s)
+        # try:
+        #     self.writer.write(s)
+        #     await self.writer.drain()
+        # except AttributeError:
+        #     raise IOError("Connection has already been closed") from None
 
     async def close(self):
         async with self.socket_lock:
