@@ -148,5 +148,6 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
                         new_heap = []
                         for i in range(pq_size):  # pylint: disable=unused-variable
                             new_heap.append(await self._orderByPQ.pop_async(self._document_producer_comparator))
+                        del self._orderByPQ._heap
                         self._orderByPQ._heap = new_heap
                     break
