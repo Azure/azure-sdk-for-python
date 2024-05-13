@@ -49,8 +49,8 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
                 )
         client.send(eg_event)
 
+    @pytest.mark.live_test_only
     @EventGridPreparer()
-    @recorded_by_proxy
     def test_send_event_grid_event_fails_without_full_url(self, eventgrid_topic_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_key)
         parsed_url = urlparse(eventgrid_topic_endpoint)
@@ -269,8 +269,8 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
         }
         client.send(cloud_event1)
 
+    @pytest.mark.live_test_only
     @EventGridPreparer()
-    @recorded_by_proxy
     def test_send_signature_credential(self, eventgrid_topic_key, eventgrid_topic_endpoint):
         expiration_date_utc = dt.datetime.now(UTC()) + timedelta(hours=1)
         signature = generate_sas(eventgrid_topic_endpoint, eventgrid_topic_key, expiration_date_utc)

@@ -42,8 +42,8 @@ class TestEventGridPublisherClientExceptions(AzureMgmtRecordedTestCase):
         client = self.create_client_from_credential(EventGridPublisherClient, credential=credential, endpoint=endpoint)
         return client
 
+    @pytest.mark.live_test_only
     @EventGridPreparer()
-    @recorded_by_proxy
     def test_raise_on_auth_error(self, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential("bad credential")
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
