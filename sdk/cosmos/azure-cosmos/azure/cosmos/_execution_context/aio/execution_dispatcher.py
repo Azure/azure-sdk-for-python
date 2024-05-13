@@ -109,7 +109,10 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                   "Cross partition query only supports 'VALUE <AggregateFunc>' for aggregates")
 
         # throw exception here for vector search query without limit filter or limit > max_limit
-        if query_execution_info.get_non_streaming_order_by() and os.environ.get('COSMOS_ENABLE_VECTOR_SEARCH_QUERIES'):
+        if query_execution_info.get_non_streaming_order_by():
+            if not os.environ.get('COSMOS_ENABLE_VECTOR_SEARCH_QUERIES', False):
+                raise ValueError("You need to enable the 'COSMOS_ENABLE_VECTOR_SEARCH_QUERIES' in order to use " +
+                                 "vector search queries.")
             total_item_number = query_execution_info.get_top() or query_execution_info.get_limit()
             if total_item_number is None:
                 raise ValueError("Executing a vector search query without TOP or LIMIT can consume many" +

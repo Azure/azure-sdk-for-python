@@ -699,8 +699,9 @@ database.create_container(id=container_id, partition_key=PartitionKey(path="/id"
 With the addition of the vector indexing and vector embedding capabilities, the SDK can now perform order by vector search queries.
 These queries specify the VectorDistance to use as a metric within the query text. These must always use a TOP or LIMIT clause within the query though,
 since vector search queries have to look through a lot of data otherwise and may become too expensive or long-running.
-If you'd still like to skip setting a limit on your query - which is *not* recommended - you can do so by setting the
-environment variable `NO_ITEM_LIMIT_FOR_VECTOR_SEARCH` to True.
+In order to use vector search queries, you must set the environment variable `COSMOS_ENABLE_VECTOR_SEARCH_QUERIES` to True.
+Since these queries are very expensive, the SDK default max limit is 50000 items - if you'd like to raise that further, you
+can use the `COSMOS_MAX_ITEMS_VECTOR_SEARCH` environment variable to do so.
 The query syntax for these operations looks like this:
 ```python
 VectorDistance(<embedding1>, <embedding2>, [,<exact_search>], [,<specification>])
