@@ -331,7 +331,11 @@ def _get_param_with_standard_annotation(
     skip_params = skip_params or []
     inherited_fields = _get_inherited_fields()
     # From annotations get field with type
-    annotations: Dict[str, Annotation] = get_type_hints(cls_or_func, include_extras=True)
+    try:
+        annotations: Dict[str, Annotation] = get_type_hints(cls_or_func, include_extras=True)
+    # `include_extras` parameter was added in Python 3.9 as part of PEP 593
+    except TypeError:
+        annotations: Dict[str, Annotation] = get_type_hints(cls_or_func)
     annotations = {k: v for k, v in annotations.items() if k not in skip_params}
     annotations = _update_io_from_mldesigner(annotations)
     annotation_fields = _get_fields(annotations)
