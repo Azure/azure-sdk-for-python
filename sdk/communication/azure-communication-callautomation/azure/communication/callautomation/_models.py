@@ -576,6 +576,9 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     :paramtype correlation_id: str
     :keyword answered_by: The identifier that answered the call
     :paramtype answered_by: ~azure.communication.callautomation.CommunicationUserIdentifier
+    :keyword answered_for: Identity of the original Pstn target of an incoming Call. Only populated
+     when the original target is a Pstn number.
+    :paramtype answered_for: ~azure.communication.callautomation.PhoneNumberIdentifier
     """
 
     call_connection_id: Optional[str]
@@ -602,6 +605,8 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     """Correlation ID of the call"""
     answered_by: Optional[CommunicationIdentifier]
     """The identifier that answered the call"""
+    answered_for: Optional[PhoneNumberIdentifier]
+    """The phone identifier that answered the call"""
 
     def __init__(
         self,
@@ -616,7 +621,8 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
         source_display_name: Optional[str] = None,
         source: Optional[CommunicationIdentifier] = None,
         correlation_id: Optional[str] = None,
-        answered_by: Optional[CommunicationUserIdentifier] = None
+        answered_by: Optional[CommunicationUserIdentifier] = None,
+        answered_for: Optional[PhoneNumberIdentifier] = None,
     ):
         self.call_connection_id = call_connection_id
         self.server_call_id = server_call_id
@@ -629,6 +635,7 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
         self.source = source
         self.correlation_id = correlation_id
         self.answered_by = answered_by
+        self.answered_for = answered_for
 
     @classmethod
     def _from_generated(cls, call_connection_properties_generated: 'CallConnectionPropertiesRest'):
@@ -655,7 +662,11 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
             answered_by=deserialize_comm_user_identifier(
                 call_connection_properties_generated.answered_by)
             if call_connection_properties_generated.answered_by
-            else None
+            else None,
+            answered_for=deserialize_phone_identifier(
+            call_connection_properties_generated.answered_for)
+            if call_connection_properties_generated.answered_for
+            else None,
         )
 
 
