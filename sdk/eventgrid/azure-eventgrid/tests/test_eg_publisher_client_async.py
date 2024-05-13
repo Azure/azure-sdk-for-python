@@ -338,8 +338,8 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_partner_namespace(self, eventgrid_partner_namespace_endpoint, eventgrid_channel_name):
-        client = self.create_eg_publisher_client(eventgrid_partner_namespace_endpoint)
+    async def test_send_partner_namespace(self, eventgrid_partner_namespace_topic_endpoint, eventgrid_partner_channel_name):
+        client = self.create_eg_publisher_client(eventgrid_partner_namespace_topic_endpoint)
         cloud_event = CloudEvent(
                 source = "http://samplesource.dev",
                 data = "cloudevent",
@@ -347,6 +347,6 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
                 )
         def callback(request):
             req = request.http_request.headers
-            assert req.get("aeg-channel-name") == eventgrid_channel_name
+            assert req.get("aeg-channel-name") == eventgrid_partner_channel_name
 
-        await client.send(cloud_event, channel_name=eventgrid_channel_name, raw_request_hook=callback)
+        await client.send(cloud_event, channel_name=eventgrid_partner_channel_name, raw_request_hook=callback)

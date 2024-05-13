@@ -27,8 +27,8 @@ EventGridPreparer = functools.partial(
     eventgrid_cloud_event_domain_key="fakekeyfakekeyfakekeyfakekeyfakekeyfakekeyA=",
     eventgrid_custom_event_topic_endpoint="https://fakeresource.westus2-1.eventgrid.azure.net/api/events",
     eventgrid_custom_event_topic_key="fakekeyfakekeyfakekeyfakekeyfakekeyfakekeyA=",
-    eventgrid_partner_namespace_endpoint="https://fakeresource.westus2-1.eventgrid.azure.net/api/events",
-    eventgrid_partner_namespace_key="fakekeyfakekeyfakekeyfakekeyfakekeyfakekeyA=",
+    eventgrid_partner_namespace_topic_endpoint="https://fakeresource.westus2-1.eventgrid.azure.net/api/events",
+    eventgrid_partner_namespace_topic_key="fakekeyfakekeyfakekeyfakekeyfakekeyfakekeyA=",
     eventgrid_partner_topic_endpoint="https://fakeresource.westus2-1.eventgrid.azure.net/api/events",
-    eventgrid_channel_name="fake_channel_name"
+    eventgrid_Partner_channel_name="fake_channel_name"
 )
