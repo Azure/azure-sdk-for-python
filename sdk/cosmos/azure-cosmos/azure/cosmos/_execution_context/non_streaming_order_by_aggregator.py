@@ -76,6 +76,7 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
                         new_heap = []
                         for i in range(pq_size):
                             new_heap.append(self._orderByPQ.pop())
+                        del self._orderByPQ._heap
                         self._orderByPQ._heap = new_heap
                     break
 
