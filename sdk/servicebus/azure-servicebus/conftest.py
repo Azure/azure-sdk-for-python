@@ -61,7 +61,7 @@ async def sb_client_async(request):
         elif 'AZURE_TEST_USE_POWERSHELL_AUTH' in os.environ and os.environ['AZURE_TEST_USE_POWERSHELL_AUTH'].lower() == 'true':
             credential = AzurePowerShellCredentialAsync()
         else:
-            credential = ManagedIdentityCredentialAsync(os.environ.get('SERVICEBUS_CLIENT_ID'))
+            credential = ManagedIdentityCredentialAsync(client_id=os.environ.get('SERVICEBUS_CLIENT_ID'))
         fqn = os.environ.get('SERVICEBUS_FULLY_QUALIFIED_NAMESPACE')
         async with ServiceBusClientAsync(fqn, credential, uamqp_transport=uamqp_transport, logging_enable=False) as client:
             yield client
