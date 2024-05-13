@@ -49,13 +49,12 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
                 )
         client.send(eg_event)
 
-    @pytest.mark.live_test_only
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_event_grid_event_fails_without_full_url(self, eventgrid_topic_key, eventgrid_topic_endpoint):
-        akc_credential = AzureKeyCredential(eventgrid_topic_key)
+    def test_send_event_grid_event_fails_without_full_url(self,eventgrid_topic_endpoint):
+        credential = self.get_credential(EventGridPublisherClient)
         parsed_url = urlparse(eventgrid_topic_endpoint)
-        client = EventGridPublisherClient(parsed_url.netloc, akc_credential)
+        client = EventGridPublisherClient(parsed_url.netloc, credential)
         eg_event = EventGridEvent(
                 subject="sample", 
                 data={"sample": "eventgridevent"}, 
