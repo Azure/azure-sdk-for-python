@@ -67,14 +67,14 @@ class TestVectorSimilarityQuery(unittest.TestCase):
             vector_embedding_policy=test_config.get_vector_embedding_policy(data_type="float32",
                                                                             distance_function="euclidean",
                                                                             dimensions=128))
-        self.created_diskANN_dotproduct_container = self.created_db.create_container(
-            id="diskANN" + self.TEST_CONTAINER_ID,
-            partition_key=PartitionKey(path="/pk"),
-            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS,
-            indexing_policy=test_config.get_vector_indexing_policy(embedding_type="diskANN"),
-            vector_embedding_policy=test_config.get_vector_embedding_policy(data_type="float32",
-                                                                            distance_function="dotproduct",
-                                                                            dimensions=128))
+        # self.created_diskANN_dotproduct_container = self.created_db.create_container(
+        #     id="diskANN" + self.TEST_CONTAINER_ID,
+        #     partition_key=PartitionKey(path="/pk"),
+        #     offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS,
+        #     indexing_policy=test_config.get_vector_indexing_policy(embedding_type="diskANN"),
+        #     vector_embedding_policy=test_config.get_vector_embedding_policy(data_type="float32",
+        #                                                                     distance_function="dotproduct",
+        #                                                                     dimensions=128))
         self.created_large_container = self.created_db.create_container(
             id="large_container" + self.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
@@ -86,13 +86,13 @@ class TestVectorSimilarityQuery(unittest.TestCase):
         for item in vector_test_data.get_vector_items():
             self.created_quantized_cosine_container.create_item(item)
             self.created_flat_euclidean_container.create_item(item)
-            self.created_diskANN_dotproduct_container.create_item(item)
+            # self.created_diskANN_dotproduct_container.create_item(item)
 
     def tearDown(self):
         try:
             self.created_db.delete_container("quantized" + self.TEST_CONTAINER_ID)
             self.created_db.delete_container("flat" + self.TEST_CONTAINER_ID)
-            self.created_db.delete_container("diskANN" + self.TEST_CONTAINER_ID)
+            # self.created_db.delete_container("diskANN" + self.TEST_CONTAINER_ID)
         except exceptions.CosmosHttpResponseError:
             pass
 
@@ -144,10 +144,10 @@ class TestVectorSimilarityQuery(unittest.TestCase):
                                                                     enable_cross_partition_query=True))
             verify_ordering(quantized_list, "euclidean")
 
-            disk_ann_list = list(
-                self.created_diskANN_dotproduct_container.query_items(query=specs_query,
-                                                                      enable_cross_partition_query=True))
-            verify_ordering(disk_ann_list, "euclidean")
+            # disk_ann_list = list(
+            #     self.created_diskANN_dotproduct_container.query_items(query=specs_query,
+            #                                                           enable_cross_partition_query=True))
+            # verify_ordering(disk_ann_list, "euclidean")
         # test cosine distance
         for i in range(1, 11):
             vanilla_query = "SELECT TOP {} c.text, VectorDistance(c.embedding, [{}]) AS " \
@@ -167,10 +167,10 @@ class TestVectorSimilarityQuery(unittest.TestCase):
                                                                     enable_cross_partition_query=True))
             verify_ordering(quantized_list, "cosine")
 
-            disk_ann_list = list(
-                self.created_diskANN_dotproduct_container.query_items(query=specs_query,
-                                                                      enable_cross_partition_query=True))
-            verify_ordering(disk_ann_list, "cosine")
+            # disk_ann_list = list(
+            #     self.created_diskANN_dotproduct_container.query_items(query=specs_query,
+            #                                                           enable_cross_partition_query=True))
+            # verify_ordering(disk_ann_list, "cosine")
         # test dot product distance
         for i in range(1, 11):
             vanilla_query = "SELECT TOP {} c.text, VectorDistance(c.embedding, [{}]) AS " \
@@ -190,10 +190,10 @@ class TestVectorSimilarityQuery(unittest.TestCase):
                                                                     enable_cross_partition_query=True))
             verify_ordering(quantized_list, "dotproduct")
 
-            disk_ann_list = list(
-                self.created_diskANN_dotproduct_container.query_items(query=vanilla_query,
-                                                                      enable_cross_partition_query=True))
-            verify_ordering(disk_ann_list, "dotproduct")
+            # disk_ann_list = list(
+            #     self.created_diskANN_dotproduct_container.query_items(query=vanilla_query,
+            #                                                           enable_cross_partition_query=True))
+            # verify_ordering(disk_ann_list, "dotproduct")
 
     def test_vector_query_pagination(self):
         # load up previously calculated embedding for the given string

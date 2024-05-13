@@ -662,7 +662,7 @@ vector_embedding_policy = {
 ```
 
 Separately, vector indexes have been added to the already existing indexing_policy and only require two fields per index:
-the path to the relevant field to be used, and the type of index from the possible options (flat, quantizedFlat, or diskANN).
+the path to the relevant field to be used, and the type of index from the possible options (flat or quantizedFlat).
 A sample indexing policy with vector indexes would look like this:
 ```python
 indexing_policy = {
@@ -681,8 +681,7 @@ indexing_policy = {
         ],
         "vectorIndexes": [
             {"path": "/vector1", "type": "flat"},
-            {"path": "/vector2", "type": "quantizedFlat"},
-            {"path": "/vector3", "type": "diskANN"}
+            {"path": "/vector2", "type": "quantizedFlat"}
         ]
     }
 ```

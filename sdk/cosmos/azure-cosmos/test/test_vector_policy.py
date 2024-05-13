@@ -35,7 +35,7 @@ class TestVectorPolicy(unittest.TestCase):
             "vectorIndexes": [
                 {"path": "/vector1", "type": "flat"},
                 {"path": "/vector2", "type": "quantizedFlat"},
-                {"path": "/vector3", "type": "diskANN"}
+                {"path": "/vector3", "type": "flat"}
             ]
         }
         vector_embedding_policy = {
