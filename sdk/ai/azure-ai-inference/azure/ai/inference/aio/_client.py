@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable
+from typing import Any, Awaitable, TYPE_CHECKING, Union
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -18,21 +18,29 @@ from .._serialization import Deserializer, Serializer
 from ._configuration import ChatCompletionsClientConfiguration, EmbeddingsClientConfiguration
 from ._operations import ChatCompletionsClientOperationsMixin, EmbeddingsClientOperationsMixin
 
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
+
 
 class ChatCompletionsClient(ChatCompletionsClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """ChatCompletionsClient.
 
     :param endpoint: Service host. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :param credential: Credential used to authenticate requests to the service. Is either a
+     AzureKeyCredential type or a TokenCredential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2024-04-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
+    ) -> None:
         _endpoint = "{endpoint}"
         self._config = ChatCompletionsClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
@@ -102,15 +110,19 @@ class EmbeddingsClient(EmbeddingsClientOperationsMixin):  # pylint: disable=clie
 
     :param endpoint: Service host. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :param credential: Credential used to authenticate requests to the service. Is either a
+     AzureKeyCredential type or a TokenCredential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2024-04-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
+    ) -> None:
         _endpoint = "{endpoint}"
         self._config = EmbeddingsClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
