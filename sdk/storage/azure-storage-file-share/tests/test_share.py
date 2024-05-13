@@ -1001,7 +1001,7 @@ class TestStorageShare(StorageRecordedTestCase):
 
         # Assert
         assert e.value.error_code == StorageErrorCode.AUTHENTICATION_FAILED
-        assert "authenticationerrordetail" in e.value.message
+        assert "AuthenticationErrorDetail" in e.value.message
 
     @FileSharePreparer()
     @recorded_by_proxy

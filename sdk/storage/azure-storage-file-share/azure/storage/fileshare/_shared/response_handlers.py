@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import logging
-from typing import NoReturn
+from typing import Dict, NoReturn, Optional
 from xml.etree.ElementTree import Element
 
 from azure.core.exceptions import (
@@ -81,7 +81,7 @@ def return_raw_deserialized(response, *_):
     return response.http_response.location_mode, response.context[ContentDecodePolicy.CONTEXT_NAME]
 
 
-def process_storage_error(storage_error) -> NoReturn: # type: ignore [misc] # pylint:disable=too-many-statements
+def process_storage_error(storage_error) -> NoReturn: # type: ignore [misc] # pylint:disable=too-many-statements, too-many-branches
     raise_error = HttpResponseError
     serialized = False
     if not storage_error.response or storage_error.response.status_code in [200, 204]:
@@ -92,8 +92,8 @@ def process_storage_error(storage_error) -> NoReturn: # type: ignore [misc] # py
         serialized = True
     error_code = storage_error.response.headers.get('x-ms-error-code')
     error_message = storage_error.message
-    additional_data = {}
-    error_dict = {}
+    additional_data: Dict[str, Optional[str]] = {}
+    error_dict: Dict[str, Optional[str]] = {}
     try:
         error_body = ContentDecodePolicy.deserialize_from_http_generics(storage_error.response)
         try:
@@ -104,7 +104,7 @@ def process_storage_error(storage_error) -> NoReturn: # type: ignore [misc] # py
         # If it is an XML response
         if isinstance(error_body, Element):
             error_dict = {
-                child.tag.lower(): child.text
+                child.tag: child.text
                 for child in error_body
             }
         # If it is a JSON response
@@ -118,9 +118,14 @@ def process_storage_error(storage_error) -> NoReturn: # type: ignore [misc] # py
         # If we extracted from a Json or XML response
         # There is a chance error_dict is just a string
         if error_dict and isinstance(error_dict, dict):
-            error_code = error_dict.get('code')
-            error_message = error_dict.get('message')
-            additional_data = {k: v for k, v in error_dict.items() if k not in {'code', 'message'}}
+            for k, v in error_dict.items():
+                k_lower = k.lower()
+                if k_lower == 'code':
+                    error_code = v
+                elif k_lower == 'message':
+                    error_message = v
+                else:
+                    additional_data[k] = v
     except DecodeError:
         pass
 

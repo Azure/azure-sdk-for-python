@@ -511,6 +511,27 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
+    async def test_upload_blob_from_url_sync_copy_source_error_and_status_code(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        source_blob_name = "sourceblob"
+        source_blob = self.bsc.get_blob_client(self.container_name, source_blob_name)
+        target_blob_name = "targetblob"
+        target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
+
+        # Act
+        with pytest.raises(HttpResponseError) as e:
+            await target_blob.upload_blob_from_url(source_blob.url)
+
+        # Assert
+        assert e.value.response.headers["x-ms-copy-source-status-code"] == "409"
+        assert e.value.response.headers["x-ms-copy-source-error-code"] == "PublicAccessNotPermitted"
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_put_block(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -575,6 +596,32 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         committed, uncommitted = await dest_blob.get_block_list('all')
         assert len(uncommitted) == 0
         assert len(committed) == 2
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_stage_block_from_url_copy_source_error_and_status_code(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        source_blob_name = "sourceblob"
+        source_blob = self.bsc.get_blob_client(self.container_name, source_blob_name)
+        target_blob_name = "targetblob"
+        target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
+        split = 4 * 1024
+
+        # Act
+        with pytest.raises(HttpResponseError) as e:
+            await target_blob.stage_block_from_url(
+                block_id=1,
+                source_url=source_blob.url,
+                source_offset=0,
+                source_length=split)
+
+        # Assert
+        assert e.value.response.headers["x-ms-copy-source-status-code"] == "409"
+        assert e.value.response.headers["x-ms-copy-source-error-code"] == "PublicAccessNotPermitted"
 
     @BlobPreparer()
     @recorded_by_proxy_async
