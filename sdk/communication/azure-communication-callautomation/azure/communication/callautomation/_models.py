@@ -466,7 +466,7 @@ class TranscriptionOptions:
     """Defines the locale for the data."""
     start_transcription: bool
     """Determines if the transcription should be started immediately after call is answered or not."""
-    speech_recognition_model_endpoint_id: Optional[str] = None,
+    speech_recognition_model_endpoint_id: Optional[str] = None
     """Determines endpoint where the custom model was deployed."""
     enable_intermediate_results: Optional[bool] = None
     """Determines if the intermediate results should be enabled for transcribed speech or not."""

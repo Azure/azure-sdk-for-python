@@ -110,7 +110,7 @@ class CallAutomationClient:
         custom_url = get_custom_url()
         if custom_enabled and custom_url is not None:
             self._client = AzureCommunicationCallAutomationService(
-                custom_url, 
+                custom_url,
                 credential,
                 api_version=api_version or DEFAULT_VERSION,
                 authentication_policy=get_call_automation_auth_policy(
