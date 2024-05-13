@@ -9,11 +9,9 @@
 from ._patch import TextTranslationClient
 
 
-from ._patch import AsyncTranslatorAADCredential
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AsyncTranslatorAADCredential",
     "TextTranslationClient",
 ]
 

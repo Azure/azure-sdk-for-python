@@ -17,7 +17,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
     @overload
     async def translate(
         self,
-        request_body: List[str],
+        body: List[str],
         *,
         target_languages: List[str],
         client_trace_id: Optional[str] = None,
@@ -40,8 +40,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
         Translate Text.
 
-        :param request_body: Defines the content of the request. Required.
-        :type request_body: list[str]
+        :param body: Defines the content of the request. Required.
+        :type body: list[str]
         :keyword target_languages: Specifies the language of the output text. The target language must be one of the
          supported languages included
          in the translation scope. For example, use to=de to translate to German.
@@ -125,7 +125,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                request_body = [
+                body = [
                     str"  # Text to translate. Required.
                 ]
 
@@ -191,7 +191,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
     @overload
     async def translate(
         self,
-        request_body: List[_models.InputTextItem],
+        body: List[_models.InputTextItem],
         *,
         target_languages: List[str],
         client_trace_id: Optional[str] = None,
@@ -214,8 +214,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
         Translate Text.
 
-        :param request_body: Defines the content of the request. Required.
-        :type request_body: list[~azure.ai.translation.text.models.InputTextItem]
+        :param body: Defines the content of the request. Required.
+        :type body: list[~azure.ai.translation.text.models.InputTextItem]
         :keyword target_languages: Specifies the language of the output text. The target language must be one of the
          supported languages included
          in the translation scope. For example, use to=de to translate to German.
@@ -299,7 +299,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                request_body = [
+                body = [
                     {
                         "text": "str"  # Text to translate. Required.
                     }
@@ -367,7 +367,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
     @overload
     async def translate(
         self,
-        request_body: IO[bytes],
+        body: IO[bytes],
         *,
         target_languages: List[str],
         client_trace_id: Optional[str] = None,
@@ -390,8 +390,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
         Translate Text.
 
-        :param request_body: Defines the content of the request. Required.
-        :type request_body: IO[bytes]
+        :param body: Defines the content of the request. Required.
+        :type body: IO[bytes]
         :keyword target_languages: Specifies the language of the output text. The target language must be one of the
          supported languages included
          in the translation scope. For example, use to=de to translate to German.
@@ -535,7 +535,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
     async def translate(
         self,
-        request_body: Union[List[str], List[_models.InputTextItem], IO[bytes]],
+        body: Union[List[str], List[_models.InputTextItem], IO[bytes]],
         *,
         target_languages: List[str],
         client_trace_id: Optional[str] = None,
@@ -553,16 +553,16 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         **kwargs: Any
     ) -> List[_models.TranslatedTextItem]:
         body: Union[List[_models.InputTextItem], IO[bytes]]
-        if isinstance(request_body, list) and all(isinstance(item, str) for item in request_body):
+        if isinstance(body, list) and all(isinstance(item, str) for item in body):
             input_text_items: List[_models.InputTextItem] = []
-            for text in request_body:
+            for text in body:
                 input_text_items.append(_models.InputTextItem(text=cast(str, text)))
             body = input_text_items
         else:
-            body = cast(Union[List[_models.InputTextItem], IO[bytes]], request_body)
+            body = cast(Union[List[_models.InputTextItem], IO[bytes]], body)
 
         return await super().translate(
-            request_body=body,
+            body=body,
             target_languages=target_languages,
             client_trace_id=client_trace_id,
             source_language=source_language,
@@ -582,7 +582,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
     @overload
     async def transliterate(
         self,
-        request_body: List[str],
+        body: List[str],
         *,
         language: str,
         source_language_script: str,
@@ -595,8 +595,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
         Transliterate Text.
 
-        :param request_body: Defines the content of the request. Required.
-        :type request_body: list[str]
+        :param body: Defines the content of the request. Required.
+        :type body: list[str]
         :keyword language: Specifies the language of the text to convert from one script to another.
          Possible languages are listed in the transliteration scope obtained by querying the service
          for its supported languages. Required.
@@ -623,7 +623,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                request_body = [
+                body = [
                     {
                         "text": "str"  # Text to translate. Required.
                     }
@@ -643,7 +643,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
     @overload
     async def transliterate(
         self,
-        request_body: List[_models.InputTextItem],
+        body: List[_models.InputTextItem],
         *,
         language: str,
         source_language_script: str,
@@ -656,8 +656,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
         Transliterate Text.
 
-        :param request_body: Defines the content of the request. Required.
-        :type request_body: list[~azure.ai.translation.text.models.InputTextItem]
+        :param body: Defines the content of the request. Required.
+        :type body: list[~azure.ai.translation.text.models.InputTextItem]
         :keyword language: Specifies the language of the text to convert from one script to another.
          Possible languages are listed in the transliteration scope obtained by querying the service
          for its supported languages. Required.
@@ -684,7 +684,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                request_body = [
+                body = [
                     {
                         "text": "str"  # Text to translate. Required.
                     }
@@ -704,7 +704,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
     @overload
     async def transliterate(
         self,
-        request_body: IO[bytes],
+        body: IO[bytes],
         *,
         language: str,
         source_language_script: str,
@@ -717,8 +717,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
         Transliterate Text.
 
-        :param request_body: Defines the content of the request. Required.
-        :type request_body: IO[bytes]
+        :param body: Defines the content of the request. Required.
+        :type body: IO[bytes]
         :keyword language: Specifies the language of the text to convert from one script to another.
          Possible languages are listed in the transliteration scope obtained by querying the service
          for its supported languages. Required.
@@ -757,7 +757,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
     async def transliterate(
         self,
-        request_body: Union[List[str], List[_models.InputTextItem], IO[bytes]],
+        body: Union[List[str], List[_models.InputTextItem], IO[bytes]],
         *,
         language: str,
         source_language_script: str,
@@ -766,16 +766,16 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         **kwargs: Any
     ) -> List[_models.TransliteratedText]:
         body: Union[List[_models.InputTextItem], IO[bytes]]
-        if isinstance(request_body, list) and all(isinstance(item, str) for item in request_body):
+        if isinstance(body, list) and all(isinstance(item, str) for item in body):
             input_text_items: List[_models.InputTextItem] = []
-            for text in request_body:
+            for text in body:
                 input_text_items.append(_models.InputTextItem(text=cast(str, text)))
             body = input_text_items
         else:
-            body = cast(Union[List[_models.InputTextItem], IO[bytes]], request_body)
+            body = cast(Union[List[_models.InputTextItem], IO[bytes]], body)
 
         return await super().transliterate(
-            request_body=body,
+            body=body,
             language=language,
             source_language_script=source_language_script,
             target_language_script=target_language_script,
@@ -786,7 +786,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
     @overload
     async def find_sentence_boundaries(
         self,
-        request_body: List[str],
+        body: List[str],
         *,
         client_trace_id: Optional[str] = None,
         language: Optional[str] = None,
@@ -799,8 +799,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
         Find Sentence Boundaries.
 
-        :param request_body: Defines the content of the request. Required.
-        :type request_body: list[str]
+        :param body: Defines the content of the request. Required.
+        :type body: list[str]
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
@@ -823,7 +823,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                request_body = [
+                body = [
                     {
                         "text": "str"  # Text to translate. Required.
                     }
@@ -851,7 +851,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
     @overload
     async def find_sentence_boundaries(
         self,
-        request_body: List[_models.InputTextItem],
+        body: List[_models.InputTextItem],
         *,
         client_trace_id: Optional[str] = None,
         language: Optional[str] = None,
@@ -864,8 +864,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
         Find Sentence Boundaries.
 
-        :param request_body: Defines the content of the request. Required.
-        :type request_body: list[~azure.ai.translation.text.models.InputTextItem]
+        :param body: Defines the content of the request. Required.
+        :type body: list[~azure.ai.translation.text.models.InputTextItem]
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
@@ -888,7 +888,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                request_body = [
+                body = [
                     {
                         "text": "str"  # Text to translate. Required.
                     }
@@ -916,7 +916,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
     @overload
     async def find_sentence_boundaries(
         self,
-        request_body: IO[bytes],
+        body: IO[bytes],
         *,
         client_trace_id: Optional[str] = None,
         language: Optional[str] = None,
@@ -929,8 +929,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
         Find Sentence Boundaries.
 
-        :param request_body: Defines the content of the request. Required.
-        :type request_body: IO[bytes]
+        :param body: Defines the content of the request. Required.
+        :type body: IO[bytes]
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
@@ -973,7 +973,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
     async def find_sentence_boundaries(
         self,
-        request_body: Union[List[str], List[_models.InputTextItem], IO[bytes]],
+        body: Union[List[str], List[_models.InputTextItem], IO[bytes]],
         *,
         client_trace_id: Optional[str] = None,
         language: Optional[str] = None,
@@ -981,23 +981,23 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         **kwargs: Any
     ) -> List[_models.BreakSentenceItem]:
         body: Union[List[_models.InputTextItem], IO[bytes]]
-        if isinstance(request_body, list) and all(isinstance(item, str) for item in request_body):
+        if isinstance(body, list) and all(isinstance(item, str) for item in body):
             input_text_items: List[_models.InputTextItem] = []
-            for text in request_body:
+            for text in body:
                 input_text_items.append(_models.InputTextItem(text=cast(str, text)))
             body = input_text_items
 
         else:
-            body = cast(Union[List[_models.InputTextItem], IO[bytes]], request_body)
+            body = cast(Union[List[_models.InputTextItem], IO[bytes]], body)
 
         return await super().find_sentence_boundaries(
-            request_body=body, language=language, script=script, client_trace_id=client_trace_id, **kwargs
+            body=body, language=language, script=script, client_trace_id=client_trace_id, **kwargs
         )
 
     @overload
     async def lookup_dictionary_entries(
         self,
-        request_body: List[str],
+        body: List[str],
         *,
         source_language: str,
         target_language: str,
@@ -1010,8 +1010,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
         Lookup Dictionary Entries.
 
-        :param request_body: Defines the content of the request. Required.
-        :type request_body: list[str]
+        :param body: Defines the content of the request. Required.
+        :type body: list[str]
         :keyword source_language: Specifies the language of the input text.
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
@@ -1034,7 +1034,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                request_body = [
+                body = [
                     {
                         "text": "str"  # Text to translate. Required.
                     }
@@ -1112,7 +1112,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
     @overload
     async def lookup_dictionary_entries(
         self,
-        request_body: List[_models.InputTextItem],
+        body: List[_models.InputTextItem],
         *,
         source_language: str,
         target_language: str,
@@ -1125,8 +1125,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
         Lookup Dictionary Entries.
 
-        :param request_body: Defines the content of the request. Required.
-        :type request_body: list[~azure.ai.translation.text.models.InputTextItem]
+        :param body: Defines the content of the request. Required.
+        :type body: list[~azure.ai.translation.text.models.InputTextItem]
         :keyword source_language: Specifies the language of the input text.
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
@@ -1149,7 +1149,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                request_body = [
+                body = [
                     {
                         "text": "str"  # Text to translate. Required.
                     }
@@ -1227,7 +1227,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
     @overload
     async def lookup_dictionary_entries(
         self,
-        request_body: IO[bytes],
+        body: IO[bytes],
         *,
         source_language: str,
         target_language: str,
@@ -1240,8 +1240,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
         Lookup Dictionary Entries.
 
-        :param request_body: Defines the content of the request. Required.
-        :type request_body: IO[bytes]
+        :param body: Defines the content of the request. Required.
+        :type body: IO[bytes]
         :keyword source_language: Specifies the language of the input text.
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
@@ -1334,7 +1334,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
     async def lookup_dictionary_entries(
         self,
-        request_body: Union[List[str], List[_models.InputTextItem], IO[bytes]],
+        body: Union[List[str], List[_models.InputTextItem], IO[bytes]],
         *,
         source_language: str,
         target_language: str,
@@ -1342,16 +1342,16 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         **kwargs: Any
     ) -> List[_models.DictionaryLookupItem]:
         body: Union[List[_models.InputTextItem], IO[bytes]]
-        if isinstance(request_body, list) and all(isinstance(item, str) for item in request_body):
+        if isinstance(body, list) and all(isinstance(item, str) for item in body):
             input_text_items: List[_models.InputTextItem] = []
-            for text in request_body:
+            for text in body:
                 input_text_items.append(_models.InputTextItem(text=cast(str, text)))
             body = input_text_items
         else:
-            body = cast(Union[List[_models.InputTextItem], IO[bytes]], request_body)
+            body = cast(Union[List[_models.InputTextItem], IO[bytes]], body)
 
         return await super().lookup_dictionary_entries(
-            request_body=body,
+            body=body,
             source_language=source_language,
             target_language=target_language,
             client_trace_id=client_trace_id,

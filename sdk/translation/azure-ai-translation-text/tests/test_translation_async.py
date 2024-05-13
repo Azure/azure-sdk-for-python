@@ -25,7 +25,7 @@ class TestTranslationAsync(TextTranslationTest):
         input_text_elements = ["Hola mundo"]
         async with client:
             response = await client.translate(
-                request_body=input_text_elements, target_languages=target_languages, source_language=source_language
+                body=input_text_elements, target_languages=target_languages, source_language=source_language
             )
 
         assert len(response) == 1
@@ -44,7 +44,7 @@ class TestTranslationAsync(TextTranslationTest):
         target_languages = ["cs"]
         input_text_elements = ["This is a test."]
         async with client:
-            response = await client.translate(request_body=input_text_elements, target_languages=target_languages)
+            response = await client.translate(body=input_text_elements, target_languages=target_languages)
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -66,7 +66,7 @@ class TestTranslationAsync(TextTranslationTest):
         input_text_elements = ["<span class=notranslate>今天是怎么回事是</span>非常可怕的"]
         async with client:
             response = await client.translate(
-                request_body=input_text_elements,
+                body=input_text_elements,
                 target_languages=target_languages,
                 source_language=source_language,
                 text_type=TextType.HTML,
@@ -91,7 +91,7 @@ class TestTranslationAsync(TextTranslationTest):
         ]
         async with client:
             response = await client.translate(
-                request_body=input_text_elements, target_languages=target_languages, source_language=source_language
+                body=input_text_elements, target_languages=target_languages, source_language=source_language
             )
 
         assert len(response) == 1
@@ -112,7 +112,7 @@ class TestTranslationAsync(TextTranslationTest):
         input_text_elements = ["hudha akhtabar."]
         async with client:
             response = await client.translate(
-                request_body=input_text_elements,
+                body=input_text_elements,
                 target_languages=target_languages,
                 source_language=source_language,
                 source_language_script="Latn",
@@ -138,7 +138,7 @@ class TestTranslationAsync(TextTranslationTest):
         input_text_elements = ["ap kaise ho"]
         async with client:
             response = await client.translate(
-                request_body=input_text_elements,
+                body=input_text_elements,
                 target_languages=target_languages,
                 source_language=source_language,
                 source_language_script="Latn",
@@ -165,7 +165,7 @@ class TestTranslationAsync(TextTranslationTest):
             "Dies ist ein Test.",
         ]
         async with client:
-            response = await client.translate(request_body=input_text_elements, target_languages=target_languages)
+            response = await client.translate(body=input_text_elements, target_languages=target_languages)
 
         assert len(response) == 3
         assert response[0].detected_language.language == "en"
@@ -190,7 +190,7 @@ class TestTranslationAsync(TextTranslationTest):
         target_languages = ["cs", "es", "de"]
         input_text_elements = ["This is a test."]
         async with client:
-            response = await client.translate(request_body=input_text_elements, target_languages=target_languages)
+            response = await client.translate(body=input_text_elements, target_languages=target_languages)
 
         assert len(response) == 1
         assert len(response[0].translations) == 3
@@ -212,7 +212,7 @@ class TestTranslationAsync(TextTranslationTest):
         input_text_elements = ["<html><body>This <b>is</b> a test.</body></html>"]
         async with client:
             response = await client.translate(
-                request_body=input_text_elements, target_languages=target_languages, text_type=TextType.HTML
+                body=input_text_elements, target_languages=target_languages, text_type=TextType.HTML
             )
 
         assert len(response) == 1
@@ -232,7 +232,7 @@ class TestTranslationAsync(TextTranslationTest):
         input_text_elements = ["shit this is fucking crazy"]
         async with client:
             response = await client.translate(
-                request_body=input_text_elements,
+                body=input_text_elements,
                 target_languages=target_languages,
                 profanity_action=ProfanityAction.MARKED,
                 profanity_marker=ProfanityMarker.ASTERISK,
@@ -256,7 +256,7 @@ class TestTranslationAsync(TextTranslationTest):
         input_text_elements = ["It is a beautiful morning"]
         async with client:
             response = await client.translate(
-                request_body=input_text_elements, target_languages=target_languages, include_alignment=True
+                body=input_text_elements, target_languages=target_languages, include_alignment=True
             )
 
         assert len(response) == 1
@@ -279,7 +279,7 @@ class TestTranslationAsync(TextTranslationTest):
         ]
         async with client:
             response = await client.translate(
-                request_body=input_text_elements, target_languages=target_languages, include_sentence_length=True
+                body=input_text_elements, target_languages=target_languages, include_sentence_length=True
             )
 
         assert len(response) == 1
@@ -300,7 +300,7 @@ class TestTranslationAsync(TextTranslationTest):
         target_languages = ["fr"]
         input_text_elements = ["It is a beautiful morning"]
         async with client:
-            response = await client.translate(request_body=input_text_elements, target_languages=target_languages)
+            response = await client.translate(body=input_text_elements, target_languages=target_languages)
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -319,7 +319,7 @@ class TestTranslationAsync(TextTranslationTest):
         target_languages = ["cs"]
         input_text_elements = ["This is a test."]
         async with client:
-            response = await client.translate(request_body=input_text_elements, target_languages=target_languages)
+            response = await client.translate(body=input_text_elements, target_languages=target_languages)
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -339,7 +339,7 @@ class TestTranslationAsync(TextTranslationTest):
         target_languages = ["cs"]
         input_text_elements = ["Hola mundo"]
         response = await client.translate(
-            request_body=input_text_elements, target_languages=target_languages, source_language=source_language
+            body=input_text_elements, target_languages=target_languages, source_language=source_language
         )
 
         assert len(response) == 1

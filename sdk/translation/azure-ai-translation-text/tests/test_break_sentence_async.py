@@ -19,7 +19,7 @@ class TestBreakSentenceAsync(TextTranslationTest):
         input_text_elements = ["Hello world"]
 
         async with client:
-            response = await client.find_sentence_boundaries(request_body=input_text_elements)
+            response = await client.find_sentence_boundaries(body=input_text_elements)
         assert response is not None
         assert response[0].detected_language.language == "en"
         assert response[0].detected_language.confidence > 0.9
@@ -38,7 +38,7 @@ class TestBreakSentenceAsync(TextTranslationTest):
         ]
 
         async with client:
-            response = await client.find_sentence_boundaries(request_body=input_text_elements, language="th")
+            response = await client.find_sentence_boundaries(body=input_text_elements, language="th")
         assert response is not None
         expected_lengths = [78, 41, 110, 46]
         for i, expected_length in enumerate(expected_lengths):
@@ -56,7 +56,7 @@ class TestBreakSentenceAsync(TextTranslationTest):
 
         async with client:
             response = await client.find_sentence_boundaries(
-                request_body=input_text_elements, language="zh-Hans", script="Latn"
+                body=input_text_elements, language="zh-Hans", script="Latn"
             )
         assert response is not None
         assert response[0].sentences_lengths[0] == 18
@@ -75,7 +75,7 @@ class TestBreakSentenceAsync(TextTranslationTest):
         ]
 
         async with client:
-            response = await client.find_sentence_boundaries(request_body=input_text_elements)
+            response = await client.find_sentence_boundaries(body=input_text_elements)
         assert response is not None
         assert response[0].detected_language.language == "en"
         assert response[1].detected_language.language == "ar"

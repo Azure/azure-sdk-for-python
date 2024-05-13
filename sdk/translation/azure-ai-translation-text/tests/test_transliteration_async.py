@@ -21,7 +21,7 @@ class TestTransliterationAsync(TextTranslationTest, TestHelper):
         input_text_elements = ["这里怎么一回事?"]
         async with client:
             response = await client.transliterate(
-                request_body=input_text_elements,
+                body=input_text_elements,
                 language="zh-Hans",
                 source_language_script="Hans",
                 target_language_script="Latn",
@@ -41,7 +41,7 @@ class TestTransliterationAsync(TextTranslationTest, TestHelper):
         input_text_elements = ["यहएककसौटीहैयहएककसौटीहै", "यहएककसौटीहै"]
         async with client:
             response = await client.transliterate(
-                request_body=input_text_elements,
+                body=input_text_elements,
                 language="hi",
                 source_language_script="Deva",
                 target_language_script="Latn",
@@ -66,7 +66,7 @@ class TestTransliterationAsync(TextTranslationTest, TestHelper):
         ]
         async with client:
             response = await client.transliterate(
-                request_body=input_text_elements,
+                body=input_text_elements,
                 language="gu",
                 source_language_script="Latn",
                 target_language_script="Gujr",

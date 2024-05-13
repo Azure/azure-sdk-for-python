@@ -23,7 +23,7 @@ class TestTranslation(TextTranslationTest):
         target_languages = ["cs"]
         input_text_elements = ["Hola mundo"]
         response = client.translate(
-            request_body=input_text_elements, target_languages=target_languages, source_language=source_language
+            body=input_text_elements, target_languages=target_languages, source_language=source_language
         )
 
         assert len(response) == 1
@@ -41,7 +41,7 @@ class TestTranslation(TextTranslationTest):
 
         target_languages = ["cs"]
         input_text_elements = ["This is a test."]
-        response = client.translate(request_body=input_text_elements, target_languages=target_languages)
+        response = client.translate(body=input_text_elements, target_languages=target_languages)
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -62,7 +62,7 @@ class TestTranslation(TextTranslationTest):
         target_languages = ["en"]
         input_text_elements = ["<span class=notranslate>今天是怎么回事是</span>非常可怕的"]
         response = client.translate(
-            request_body=input_text_elements,
+            body=input_text_elements,
             target_languages=target_languages,
             source_language=source_language,
             text_type=TextType.HTML,
@@ -86,7 +86,7 @@ class TestTranslation(TextTranslationTest):
             'The word < mstrans:dictionary translation ="wordomatic">wordomatic</mstrans:dictionary> is a dictionary entry.'
         ]
         response = client.translate(
-            request_body=input_text_elements, target_languages=target_languages, source_language=source_language
+            body=input_text_elements, target_languages=target_languages, source_language=source_language
         )
 
         assert len(response) == 1
@@ -106,7 +106,7 @@ class TestTranslation(TextTranslationTest):
         target_languages = ["zh-Hans"]
         input_text_elements = ["hudha akhtabar."]
         response = client.translate(
-            request_body=input_text_elements,
+            body=input_text_elements,
             target_languages=target_languages,
             source_language=source_language,
             source_language_script="Latn",
@@ -131,7 +131,7 @@ class TestTranslation(TextTranslationTest):
         target_languages = ["ta"]
         input_text_elements = ["ap kaise ho"]
         response = client.translate(
-            request_body=input_text_elements,
+            body=input_text_elements,
             target_languages=target_languages,
             source_language=source_language,
             source_language_script="Latn",
@@ -157,7 +157,7 @@ class TestTranslation(TextTranslationTest):
             "Esto es una prueba.",
             "Dies ist ein Test.",
         ]
-        response = client.translate(request_body=input_text_elements, target_languages=target_languages)
+        response = client.translate(body=input_text_elements, target_languages=target_languages)
 
         assert len(response) == 3
         assert response[0].detected_language.language == "en"
@@ -181,7 +181,7 @@ class TestTranslation(TextTranslationTest):
 
         target_languages = ["cs", "es", "de"]
         input_text_elements = ["This is a test."]
-        response = client.translate(request_body=input_text_elements, target_languages=target_languages)
+        response = client.translate(body=input_text_elements, target_languages=target_languages)
 
         assert len(response) == 1
         assert len(response[0].translations) == 3
@@ -202,7 +202,7 @@ class TestTranslation(TextTranslationTest):
         target_languages = ["cs"]
         input_text_elements = ["<html><body>This <b>is</b> a test.</body></html>"]
         response = client.translate(
-            request_body=input_text_elements, target_languages=target_languages, text_type=TextType.HTML
+            body=input_text_elements, target_languages=target_languages, text_type=TextType.HTML
         )
 
         assert len(response) == 1
@@ -221,7 +221,7 @@ class TestTranslation(TextTranslationTest):
         target_languages = ["zh-cn"]
         input_text_elements = ["shit this is fucking crazy"]
         response = client.translate(
-            request_body=input_text_elements,
+            body=input_text_elements,
             target_languages=target_languages,
             profanity_action=ProfanityAction.MARKED,
             profanity_marker=ProfanityMarker.ASTERISK,
@@ -243,9 +243,7 @@ class TestTranslation(TextTranslationTest):
 
         target_languages = ["cs"]
         input_text_elements = ["It is a beautiful morning"]
-        response = client.translate(
-            request_body=input_text_elements, target_languages=target_languages, include_alignment=True
-        )
+        response = client.translate(body=input_text_elements, target_languages=target_languages, include_alignment=True)
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -266,7 +264,7 @@ class TestTranslation(TextTranslationTest):
             "La réponse se trouve dans la traduction automatique. La meilleure technologie de traduction automatique ne peut pas toujours fournir des traductions adaptées à un site ou des utilisateurs comme un être humain. Il suffit de copier et coller un extrait de code n'importe où."
         ]
         response = client.translate(
-            request_body=input_text_elements, target_languages=target_languages, include_sentence_length=True
+            body=input_text_elements, target_languages=target_languages, include_sentence_length=True
         )
 
         assert len(response) == 1
@@ -286,7 +284,7 @@ class TestTranslation(TextTranslationTest):
 
         target_languages = ["fr"]
         input_text_elements = ["It is a beautiful morning"]
-        response = client.translate(request_body=input_text_elements, target_languages=target_languages)
+        response = client.translate(body=input_text_elements, target_languages=target_languages)
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -304,7 +302,7 @@ class TestTranslation(TextTranslationTest):
 
         target_languages = ["cs"]
         input_text_elements = ["This is a test."]
-        response = client.translate(request_body=input_text_elements, target_languages=target_languages)
+        response = client.translate(body=input_text_elements, target_languages=target_languages)
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -324,7 +322,7 @@ class TestTranslation(TextTranslationTest):
         target_languages = ["cs"]
         input_text_elements = ["Hola mundo"]
         response = client.translate(
-            request_body=input_text_elements, target_languages=target_languages, source_language=source_language
+            body=input_text_elements, target_languages=target_languages, source_language=source_language
         )
 
         assert len(response) == 1

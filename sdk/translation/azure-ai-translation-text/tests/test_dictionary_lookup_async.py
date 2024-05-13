@@ -23,7 +23,7 @@ class TestDictionaryLookupAsync(TextTranslationTest):
 
         async with client:
             response = await client.lookup_dictionary_entries(
-                request_body=input_text_elements, source_language=source_language, target_language=target_language
+                body=input_text_elements, source_language=source_language, target_language=target_language
             )
         assert response is not None
         assert response[0].normalized_source == "fly"
@@ -43,7 +43,7 @@ class TestDictionaryLookupAsync(TextTranslationTest):
 
         async with client:
             response = await client.lookup_dictionary_entries(
-                request_body=input_text_elements, source_language=source_language, target_language=target_language
+                body=input_text_elements, source_language=source_language, target_language=target_language
             )
         assert response is not None
         assert len(response) == 2

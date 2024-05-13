@@ -18,7 +18,7 @@ class TestBreakSentence(TextTranslationTest):
         client = self.create_client(endpoint, apikey, region)
         input_text_elements = ["Hello world"]
 
-        response = client.find_sentence_boundaries(request_body=input_text_elements)
+        response = client.find_sentence_boundaries(body=input_text_elements)
         assert response is not None
         assert response[0].detected_language.language == "en"
         assert response[0].detected_language.confidence > 0.9
@@ -36,7 +36,7 @@ class TestBreakSentence(TextTranslationTest):
             "รวบรวมแผ่นคำตอบ ระยะเวลาของโครงการ วิธีเลือกชายในฝัน หมายเลขซีเรียลของระเบียน วันที่สิ้นสุดของโครงการเมื่อเสร็จสมบูรณ์ ปีที่มีการรวบรวม ทุกคนมีวัฒนธรรมและวิธีคิดเหมือนกัน ได้รับโทษจำคุกตลอดชีวิตใน ฉันลดได้ถึง 55 ปอนด์ได้อย่างไร  ฉันคิดว่าใครๆ ก็ต้องการกำหนดเมนูอาหารส่วนบุคคล"
         ]
 
-        response = client.find_sentence_boundaries(request_body=input_text_elements, language="th")
+        response = client.find_sentence_boundaries(body=input_text_elements, language="th")
         assert response is not None
         expected_lengths = [78, 41, 110, 46]
         for i, expected_length in enumerate(expected_lengths):
@@ -52,7 +52,7 @@ class TestBreakSentence(TextTranslationTest):
 
         input_text_elements = ["zhè shì gè cè shì。"]
 
-        response = client.find_sentence_boundaries(request_body=input_text_elements, language="zh-Hans", script="Latn")
+        response = client.find_sentence_boundaries(body=input_text_elements, language="zh-Hans", script="Latn")
         assert response is not None
         assert response[0].sentences_lengths[0] == 18
 
@@ -69,7 +69,7 @@ class TestBreakSentence(TextTranslationTest):
             "العالم هو مكان مثير جدا للاهتمام",
         ]
 
-        response = client.find_sentence_boundaries(request_body=input_text_elements)
+        response = client.find_sentence_boundaries(body=input_text_elements)
         assert response is not None
         assert response[0].detected_language.language == "en"
         assert response[1].detected_language.language == "ar"

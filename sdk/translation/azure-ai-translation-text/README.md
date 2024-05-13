@@ -55,7 +55,7 @@ az cognitiveservices account keys list --resource-group <your-resource-group-nam
 
 #### Create a `TextTranslationClient` using an API key and Region credential
 
-Once you have the value for the API key and Region, create an `TranslatorCredential`. This will allow you to
+Once you have the value for the API key and Region, create an `AzureKeyCredential`. This will allow you to
 update the API key without creating a new client.
 
 With the value of the `endpoint`, `credential` and a `region`, you can create the [TextTranslationClient][client_sample]:
@@ -63,8 +63,8 @@ With the value of the `endpoint`, `credential` and a `region`, you can create th
 <!-- SNIPPET: sample_text_translation_client.create_text_translation_client_with_credential -->
 
 ```python
-credential = TranslatorCredential(apikey, region)
-text_translator = TextTranslationClient(credential=credential, endpoint=endpoint)
+credential = AzureKeyCredential(apikey)
+text_translator = TextTranslationClient(credential=credential, endpoint=endpoint, region=region)
 ```
 
 <!-- END SNIPPET -->
@@ -143,7 +143,7 @@ try:
     target_languages = ["cs", "es", "de"]
     input_text_elements = ["This is a test"]
 
-    response = text_translator.translate(request_body=input_text_elements, to=target_languages)
+    response = text_translator.translate(body=input_text_elements, to=target_languages)
     translation = response[0] if response else None
 
     if translation:
@@ -182,7 +182,7 @@ try:
     input_text_elements = ["这是个测试。"]
 
     response = text_translator.transliterate(
-        request_body=input_text_elements,
+        body=input_text_elements,
         language=language,
         source_language_script=source_language_script,
         target_language_script=target_language_script,
@@ -219,7 +219,7 @@ try:
     input_text_elements = ["The answer lies in machine translation. This is a test."]
 
     response = text_translator.translate(
-        request_body=input_text_elements, to=target_languages, include_sentence_length=include_sentence_length
+        body=input_text_elements, to=target_languages, include_sentence_length=include_sentence_length
     )
     translation = response[0] if response else None
 
@@ -262,7 +262,7 @@ try:
     input_text_elements = ["fly"]
 
     response = text_translator.lookup_dictionary_entries(
-        request_body=input_text_elements, source_language=source_language, to=target_language
+        body=input_text_elements, source_language=source_language, to=target_language
     )
     dictionary_entry = response[0] if response else None
 

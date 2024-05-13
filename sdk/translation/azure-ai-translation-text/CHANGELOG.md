@@ -7,7 +7,7 @@
 
 ### Breaking Changes
 
-  - All calls to the client using parameter 'content' have been changed to use parameter 'request_body'.
+  - All calls to the client using parameter 'content' have been changed to use parameter 'body'.
   - Users can call methods using just a string type instead of complex objects.
 
 ### Bugs Fixed
