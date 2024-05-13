@@ -124,6 +124,7 @@ class TestVectorSimilarityQuery(unittest.TestCase):
                    " function is not supported." in e.message
 
     async def test_ordering_distances_async(self):
+        # Besides ordering distances, we also verify that the query text properly replaces any set embedding policies
         # load up previously calculated embedding for the given string
         vector_string = vector_test_data.get_embedding_string("I am having a wonderful day.")
         # test euclidean distance

@@ -119,13 +119,16 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                 raise CosmosHttpResponseError(StatusCodes.BAD_REQUEST,
                                   "Cross partition query only supports 'VALUE <AggregateFunc>' for aggregates")
 
-        # throw exception here for vector search query without limit filter
-        if query_execution_info.get_non_streaming_order_by():
-            if query_execution_info.get_top() is None and query_execution_info.get_limit() is None:
-                if os.environ.get('NO_ITEM_LIMIT_FOR_VECTOR_SEARCH', None) is None:
-                    raise ValueError("Executing a vector search query without TOP or LIMIT can consume many" +
-                                     " RUs very fast and have long runtimes. Please ensure you are using one" +
-                                     " of the two filters with your vector search query.")
+        # throw exception here for vector search query without limit filter or limit > max_limit
+        if query_execution_info.get_non_streaming_order_by() and os.environ.get('COSMOS_ENABLE_VECTOR_SEARCH_QUERIES'):
+            total_item_number = query_execution_info.get_top() or query_execution_info.get_limit()
+            if total_item_number is None:
+                raise ValueError("Executing a vector search query without TOP or LIMIT can consume many" +
+                                 " RUs very fast and have long runtimes. Please ensure you are using one" +
+                                 " of the two filters with your vector search query.")
+            if total_item_number > os.environ.get('COSMOS_MAX_ITEMS_VECTOR_SEARCH', 50000):
+                raise ValueError("Executing a vector search query with more items than the max is not allowed." +
+                                 "Please ensure you are using a limit smaller than the max, or change the max.")
             execution_context_aggregator =\
                 non_streaming_order_by_aggregator._NonStreamingOrderByContextAggregator(self._client,
                                                                                         self._resource_link,
