@@ -864,18 +864,21 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         :raises ValueError: If `wait` is set to `False` and `allow_pipelined_open` is disabled.
         :rtype: None
         """
-        self._connect()
-        self._outgoing_open()
-        if self.state == ConnectionState.HDR_EXCH:
-            self._set_state(ConnectionState.OPEN_SENT)
-        elif self.state == ConnectionState.HDR_SENT:
-            self._set_state(ConnectionState.OPEN_PIPE)
-        if wait:
-            self._wait_for_response(wait, ConnectionState.OPENED)
-        elif not self._allow_pipelined_open:
-            raise ValueError(
-                "Connection has been configured to not allow piplined-open. Please set 'wait' parameter."
-            )
+        with self._connection_lock:
+            if self.state in [ConnectionState.OPENED]:
+                return
+            self._connect()
+            self._outgoing_open()
+            if self.state == ConnectionState.HDR_EXCH:
+                self._set_state(ConnectionState.OPEN_SENT)
+            elif self.state == ConnectionState.HDR_SENT:
+                self._set_state(ConnectionState.OPEN_PIPE)
+            if wait:
+                self._wait_for_response(wait, ConnectionState.OPENED)
+            elif not self._allow_pipelined_open:
+                raise ValueError(
+                    "Connection has been configured to not allow piplined-open. Please set 'wait' parameter."
+                )
 
 
     def close(self, error: Optional[AMQPError] = None, wait: bool = False) -> None:
@@ -887,32 +890,33 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         :param bool wait: Whether to wait for a service Close response. Default is `False`.
         :rtype: None
         """
-        try:
-            if self.state in [
-                ConnectionState.END,
-                ConnectionState.CLOSE_SENT,
-                ConnectionState.DISCARDING,
-            ]:
-                return
-            self._outgoing_close(error=error)
-            if error:
-                self._error = AMQPConnectionError(
-                    condition=error.condition,
-                    description=error.description,
-                    info=error.info,
-                )
-            if self.state == ConnectionState.OPEN_PIPE:
-                self._set_state(ConnectionState.OC_PIPE)
-            elif self.state == ConnectionState.OPEN_SENT:
-                self._set_state(ConnectionState.CLOSE_PIPE)
-            elif error:
-                self._set_state(ConnectionState.DISCARDING)
-            else:
-                self._set_state(ConnectionState.CLOSE_SENT)
-            self._wait_for_response(wait, ConnectionState.END)
-        except Exception as exc:  # pylint:disable=broad-except
-            # If error happened during closing, ignore the error and set state to END
-            _LOGGER.info("An error occurred when closing the connection: %r", exc, extra=self._network_trace_params)
-            self._set_state(ConnectionState.END)
-        finally:
-            self._disconnect()
+        with self._connection_lock:
+            try:
+                if self.state in [
+                    ConnectionState.END,
+                    ConnectionState.CLOSE_SENT,
+                    ConnectionState.DISCARDING,
+                ]:
+                    return
+                self._outgoing_close(error=error)
+                if error:
+                    self._error = AMQPConnectionError(
+                        condition=error.condition,
+                        description=error.description,
+                        info=error.info,
+                    )
+                if self.state == ConnectionState.OPEN_PIPE:
+                    self._set_state(ConnectionState.OC_PIPE)
+                elif self.state == ConnectionState.OPEN_SENT:
+                    self._set_state(ConnectionState.CLOSE_PIPE)
+                elif error:
+                    self._set_state(ConnectionState.DISCARDING)
+                else:
+                    self._set_state(ConnectionState.CLOSE_SENT)
+                self._wait_for_response(wait, ConnectionState.END)
+            except Exception as exc:  # pylint:disable=broad-except
+                # If error happened during closing, ignore the error and set state to END
+                _LOGGER.info("An error occurred when closing the connection: %r", exc, extra=self._network_trace_params)
+                self._set_state(ConnectionState.END)
+            finally:
+                self._disconnect()
