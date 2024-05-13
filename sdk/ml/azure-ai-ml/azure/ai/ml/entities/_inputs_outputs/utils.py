@@ -10,7 +10,7 @@ from collections import OrderedDict
 from enum import Enum as PyEnum
 from enum import EnumMeta
 from inspect import Parameter, getmro, signature
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Type, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Type, Union, cast, get_type_hints
 
 from typing_extensions import Annotated, Literal, TypeAlias
 
@@ -331,7 +331,7 @@ def _get_param_with_standard_annotation(
     skip_params = skip_params or []
     inherited_fields = _get_inherited_fields()
     # From annotations get field with type
-    annotations: Dict[str, Annotation] = getattr(cls_or_func, "__annotations__", {})
+    annotations: Dict[str, Annotation] = get_type_hints(cls_or_func, include_extras=True)
     annotations = {k: v for k, v in annotations.items() if k not in skip_params}
     annotations = _update_io_from_mldesigner(annotations)
     annotation_fields = _get_fields(annotations)
