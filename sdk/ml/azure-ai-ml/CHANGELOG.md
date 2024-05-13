@@ -1,6 +1,6 @@
 # Release History
 
-## 1.16.0 (unreleased)
+## 1.16.0 (2024-05-14)
 
 ### Features Added
 - Add experimental support for working with Promptflow evaluators: `ml_client.evaluators`.
