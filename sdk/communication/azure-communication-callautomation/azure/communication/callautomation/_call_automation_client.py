@@ -236,7 +236,6 @@ class CallAutomationClient:
             call_intelligence_options=call_intelligence_options,
             media_streaming_options=media_config,
             transcription_options=transcription_config,
-            cognitive_services_endpoint=cognitive_services_endpoint,
             custom_calling_context=user_custom_context
         )
         process_repeatability_first_sent(kwargs)
@@ -343,7 +342,6 @@ class CallAutomationClient:
             ) if media_streaming_options else None,
             transcription_options=transcription_options.to_generated()
             if transcription_options else None,
-            cognitive_services_endpoint=cognitive_services_endpoint,
             operation_context=operation_context
         )
 

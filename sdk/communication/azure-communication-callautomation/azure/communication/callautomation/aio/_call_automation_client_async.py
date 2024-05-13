@@ -230,7 +230,6 @@ class CallAutomationClient:
             operation_context=operation_context,
             media_streaming_options=media_config,
             transcription_options=transcription_config,
-            cognitive_services_endpoint=cognitive_services_endpoint,
             CustomCallingContext=user_custom_context,
             call_intelligence_options=call_intelligence_options
         )
@@ -337,7 +336,6 @@ class CallAutomationClient:
             ) if media_streaming_options else None,
             transcription_options=transcription_options.to_generated()
             if transcription_options else None,
-            cognitive_services_endpoint=cognitive_services_endpoint,
             answered_by=serialize_communication_user_identifier(
                 self.source) if self.source else None,
             call_intelligence_options=call_intelligence_options,
