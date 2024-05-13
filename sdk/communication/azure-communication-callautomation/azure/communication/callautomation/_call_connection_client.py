@@ -500,7 +500,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         play_request = PlayRequest(
             play_sources=[play_source_single._to_generated()],  # pylint:disable=protected-access
             play_to=audience,
-            play_options=PlayOptions(loop=loop, interrupt_call_media_operation=interrupt_call_media_operation),
+            play_options=PlayOptions(loop=loop),
+            interrupt_call_media_operation=interrupt_call_media_operation,
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
             **kwargs
