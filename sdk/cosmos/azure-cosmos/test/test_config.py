@@ -167,13 +167,13 @@ def get_vector_indexing_policy(embedding_type):
     }
 
 
-def get_vector_embedding_policy(distance_function, data_type):
+def get_vector_embedding_policy(distance_function, data_type, dimensions):
     return {
         "vectorEmbeddings": [
             {
                 "path": "/embedding",
                 "dataType": f"{data_type}",
-                "dimensions": 1536,
+                "dimensions": dimensions,
                 "distanceFunction": f"{distance_function}"
             }
         ]
