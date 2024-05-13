@@ -187,40 +187,6 @@ class ServiceBusNamespacePreparer(AzureMgmtPreparer):
             self.connection_string = key.primary_connection_string
             self.key_name = key.key_name
             self.primary_key = key.primary_key
-
-            # assign service bus data owner to this namespace
-            try:
-                subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
-            except KeyError:
-                raise ValueError("AZURE_SUBSCRIPTION_ID environment variable is not set")
-            
-            try:
-                principal_id = os.environ['SERVICEBUS_CLIENT_ID']
-            except KeyError:
-                raise ValueError("SERVICEBUS_CLIENT_ID environment variable is not set")
-            
-            principal_type = 'ServicePrincipal'
-            
-            if 'AZURE_TEST_USE_CLI_AUTH' in os.environ or 'AZURE_TEST_USE_CLI_AUTH' in os.environ:
-                principal_type = 'User'
-
-            
-            auth_client = AuthorizationManagementClient(credential = DefaultAzureCredential(), subscription_id=subscription_id,)
-            sb_data_owner_role_id = '090c5cfd-751d-490a-894a-3ce6f1109419'
-            role_assignment_id = str(uuid.uuid4())
-
-            response = auth_client.role_assignments.create_by_id(
-                role_assignment_id=f"subscriptions/{subscription_id}/resourcegroups/{group.name}/providers/Microsoft.Authorization/roleAssignments/{role_assignment_id}",
-                parameters={
-                    "properties":{
-                        "principalId": principal_id,
-                        "principalType": principal_type,
-                        "roleDefinitionId": f"/providers/Microsoft.Authorization/roleDefinitions/{sb_data_owner_role_id}",
-                    }
-                }
-            )
-            
-            
         else:
             self.resource = FakeResource(name=name, id=name)
             self.connection_string = f"Endpoint=sb://{name}{SERVICEBUS_ENDPOINT_SUFFIX}/;SharedAccessKeyName=test;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="

@@ -239,8 +239,8 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
-    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
+    #@CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
+    #@CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
     @ServiceBusQueuePreparer(
         name_prefix="servicebustest", dead_lettering_on_message_expiration=True, lock_duration="PT10S"
     )
