@@ -63,7 +63,6 @@ from azure.monitor.opentelemetry._utils.configurations import (
 _logger = getLogger(__name__)
 
 
-
 def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     """This function works as a configuration layer that allows the
     end user to configure OpenTelemetry and Azure monitor components. The
