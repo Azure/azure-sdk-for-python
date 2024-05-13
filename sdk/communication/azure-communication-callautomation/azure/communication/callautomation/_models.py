@@ -350,14 +350,14 @@ class MediaStreamingSubscription:
     :paramtype subscribed_content_types: list[str or
      ~azure.communication.callautomation.models.MediaStreamingContentType]
     """
-    
+
     id: Optional[str]
     """subscription id."""
     state: Optional[Union[str, 'MediaStreamingSubscriptionState']]
     """media streaming subscription state."""
     subscribed_content_types: Optional[List[Union[str, 'MediaStreamingContentType']]]
     """subscribed media streaming content types."""
-    
+
     def __init__(
         self,
         *,
@@ -376,11 +376,11 @@ class MediaStreamingSubscription:
         :paramtype subscribed_content_types: list[str or
          ~azure.communication.callautomation.models.MediaStreamingContentType]
         """
-        
+
         self.id = id
         self.state = state
         self.subscribed_content_types = subscribed_content_types
-    
+
     def to_generated(self):
         return MediaStreamingSubscriptionInternal(
             id=self.id,
@@ -510,14 +510,14 @@ class TranscriptionSubscription:
     :paramtype subscribed_result_types: list[str or
      ~azure.communication.callautomation.models.TranscriptionResultType]
     """
-    
+
     id: Optional[str]
     """subscription id."""
     state: Optional[Union[str, 'TranscriptionSubscriptionState']]
     """transcription subscription state."""
     subscribed_result_types: Optional[List[Union[str, 'TranscriptionResultType']]]
     """subscribed transcription result types."""
-    
+
     def __init__(
         self,
         *,
@@ -536,11 +536,11 @@ class TranscriptionSubscription:
         :paramtype subscribed_result_types: list[str or
         ~azure.communication.callautomation.models.TranscriptionResultType]
         """
-        
+
         self.id = id
         self.state = state
         self.subscribed_result_types = subscribed_result_types
-    
+
     def to_generated(self):
         return TranscriptionSubscriptionInternal(
             id=self.id,
