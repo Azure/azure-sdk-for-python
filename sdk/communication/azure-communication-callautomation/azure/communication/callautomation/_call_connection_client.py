@@ -925,8 +925,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
         :param locale: Defines new locale for transcription.
         :type locale: str
-        :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
-        :paramtype speech_recognition_model_endpoint_id: str
+        :param speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
+        :type speech_recognition_model_endpoint_id: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
