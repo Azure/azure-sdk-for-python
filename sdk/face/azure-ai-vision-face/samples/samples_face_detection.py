@@ -5,8 +5,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# mypy: disable_error_code=attr-defined
-# pyright: reportAttributeAccessIssue=false
 """
 FILE: sample_face_detection.py
 

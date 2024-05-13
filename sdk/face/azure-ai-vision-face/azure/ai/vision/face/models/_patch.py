@@ -8,37 +8,42 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+from azure.core import CaseInsensitiveEnumMeta
 from enum import Enum
 from typing import List
 
 from ._enums import FaceAttributeType
 
-FaceAttributeTypeDetection01 = Enum("FaceAttributeTypeDetection01", [
-    (a.name, a.value) for a in FaceAttributeType if a in [
-        FaceAttributeType.ACCESSORIES,
-        FaceAttributeType.BLUR,
-        FaceAttributeType.EXPOSURE,
-        FaceAttributeType.GLASSES,
-        FaceAttributeType.HEAD_POSE,
-        FaceAttributeType.NOISE,
-        FaceAttributeType.OCCLUSION]])
-"""Available attribute options for detection_01 model."""
 
-FaceAttributeTypeDetection03 = Enum("FaceAttributeTypeDetection03", [
-    (a.name, a.value) for a in FaceAttributeType if a in [
-        FaceAttributeType.HEAD_POSE,
-        FaceAttributeType.MASK]])
-"""Available attribute options for detection_03 model."""
+class FaceAttributeTypeDetection01(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Available attribute options for detection_01 model."""
 
-FaceAttributeTypeRecognition03 = Enum("FaceAttributeTypeRecognition03", [
-    (a.name, a.value) for a in FaceAttributeType if a in [
-        FaceAttributeType.QUALITY_FOR_RECOGNITION]])
-"""Available attribute options for recognition_03 model."""
+    ACCESSORIES = FaceAttributeType.ACCESSORIES.value
+    BLUR = FaceAttributeType.BLUR.value
+    EXPOSURE = FaceAttributeType.EXPOSURE.value
+    GLASSES = FaceAttributeType.GLASSES.value
+    HEAD_POSE = FaceAttributeType.HEAD_POSE.value
+    NOISE = FaceAttributeType.NOISE.value
+    OCCLUSION = FaceAttributeType.OCCLUSION.value
 
-FaceAttributeTypeRecognition04 = Enum("FaceAttributeTypeRecognition04", [
-    (a.name, a.value) for a in FaceAttributeType if a in [
-        FaceAttributeType.QUALITY_FOR_RECOGNITION]])
-"""Available attribute options for recognition_04 model."""
+
+class FaceAttributeTypeDetection03(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Available attribute options for detection_03 model."""
+
+    HEAD_POSE = FaceAttributeType.HEAD_POSE.value
+    MASK = FaceAttributeType.MASK.value
+
+
+class FaceAttributeTypeRecognition03(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Available attribute options for recognition_03 model."""
+
+    QUALITY_FOR_RECOGNITION = FaceAttributeType.QUALITY_FOR_RECOGNITION.value
+
+
+class FaceAttributeTypeRecognition04(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Available attribute options for recognition_04 model."""
+
+    QUALITY_FOR_RECOGNITION = FaceAttributeType.QUALITY_FOR_RECOGNITION.value
 
 
 __all__: List[str] = [
