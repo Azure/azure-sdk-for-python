@@ -18,8 +18,8 @@ from devtools_testutils.sanitizers import (
 
 from azure.servicebus import ServiceBusClient
 from azure.servicebus.aio import ServiceBusClient as ServiceBusClientAsync
-from azure.identity import DefaultAzureCredential
-from azure.identity.aio import DefaultAzureCredential as DefaultAzureCredentialAsync
+from azure.identity import AzureCliCredential, AzurePowerShellCredential, ManagedIdentityCredential
+from azure.identity.aio import AzureCliCredential as AzureCliCredentialAsync , AzurePowerShellCredential as AzurePowerShellCredentialAsync , ManagedIdentityCredential as ManagedIdentityCredentialAsync
 
 collect_ignore = []
 
@@ -39,7 +39,13 @@ def add_sanitizers(test_proxy):
 def sb_client(request):
     if hasattr(request, "param"):
         uamqp_transport = request.param
-        credential = DefaultAzureCredential()
+        if 'AZURE_TEST_USE_CLI_AUTH' in os.environ and os.environ['AZURE_TEST_USE_CLI_AUTH'].lower() == 'true':
+            credential = AzureCliCredential()
+        elif 'AZURE_TEST_USE_POWERSHELL_AUTH' in os.environ and os.environ['AZURE_TEST_USE_POWERSHELL_AUTH'].lower() == 'true':
+            credential = AzurePowerShellCredential()
+        else:
+            credential = ManagedIdentityCredential(os.environ.get('SERVICEBUS_CLIENT_ID'))
+                                                   
         fqn = os.environ.get('SERVICEBUS_FULLY_QUALIFIED_NAMESPACE')
         with ServiceBusClient(fqn, credential, uamqp_transport=uamqp_transport, logging_enable=False) as client:
             yield client
@@ -50,7 +56,12 @@ def sb_client(request):
 async def sb_client_async(request):
     if hasattr(request, "param"):
         uamqp_transport = request.param
-        credential = DefaultAzureCredentialAsync()
+        if 'AZURE_TEST_USE_CLI_AUTH' in os.environ and os.environ['AZURE_TEST_USE_CLI_AUTH'].lower() == 'true':
+            credential = AzureCliCredentialAsync()
+        elif 'AZURE_TEST_USE_POWERSHELL_AUTH' in os.environ and os.environ['AZURE_TEST_USE_POWERSHELL_AUTH'].lower() == 'true':
+            credential = AzurePowerShellCredentialAsync()
+        else:
+            credential = ManagedIdentityCredentialAsync(os.environ.get('SERVICEBUS_CLIENT_ID'))
         fqn = os.environ.get('SERVICEBUS_FULLY_QUALIFIED_NAMESPACE')
         async with ServiceBusClientAsync(fqn, credential, uamqp_transport=uamqp_transport, logging_enable=False) as client:
             yield client
