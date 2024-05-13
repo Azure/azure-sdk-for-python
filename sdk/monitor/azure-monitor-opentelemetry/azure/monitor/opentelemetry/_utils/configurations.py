@@ -99,8 +99,7 @@ def _default_disable_tracing(configurations):
 
 
 def _default_logger_name(configurations):
-    if LOGGER_NAME_ARG not in configurations:
-        configurations[LOGGER_NAME_ARG] = ""
+    configurations.setdefault(LOGGER_NAME_ARG, "")
 
 
 def _default_resource(configurations):
@@ -149,13 +148,11 @@ def _default_instrumentation_options(configurations):
 
 
 def _default_span_processors(configurations):
-    if SPAN_PROCESSORS_ARG not in configurations:
-        configurations[SPAN_PROCESSORS_ARG] = []
+    configurations.setdefault(SPAN_PROCESSORS_ARG, [])
 
 
 def _default_enable_live_metrics(configurations):
-    if ENABLE_LIVE_METRICS_ARG not in configurations:
-        configurations[ENABLE_LIVE_METRICS_ARG] = False
+    configurations.setdefault(ENABLE_LIVE_METRICS_ARG, False)
 
 
 def _get_otel_disabled_instrumentations():
