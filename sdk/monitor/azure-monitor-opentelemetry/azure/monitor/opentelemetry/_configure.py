@@ -134,7 +134,7 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
         get_tracer_provider().add_span_processor(span_processor) # type: ignore
     if configurations.get(ENABLE_LIVE_METRICS_ARG):
         qsp = _QuickpulseSpanProcessor()
-        get_tracer_provider().add_span_processor(qsp) # type: ignore
+        get_tracer_provider().add_span_processor(qsp)
     trace_exporter = AzureMonitorTraceExporter(**configurations)
     bsp = BatchSpanProcessor(
         trace_exporter,
