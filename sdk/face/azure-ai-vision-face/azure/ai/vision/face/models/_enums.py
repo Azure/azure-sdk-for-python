@@ -103,8 +103,11 @@ class FaceImageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of image."""
 
     COLOR = "Color"
+    """Color image."""
     INFRARED = "Infrared"
+    """Infrared image."""
     DEPTH = "Depth"
+    """Depth image."""
 
 
 class FaceLivenessDecision(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -112,9 +115,9 @@ class FaceLivenessDecision(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     UNCERTAIN = "uncertain"
     """The algorithm could not classify the target face as either real or spoof."""
-    REALFACE = "realface"
+    REAL_FACE = "realface"
     """The algorithm has classified the target face as real."""
-    SPOOFFACE = "spoofface"
+    SPOOF_FACE = "spoofface"
     """The algorithm has classified the target face as a spoof."""
 
 
@@ -203,10 +206,10 @@ class HairColorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class LivenessModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The model version used for liveness classification."""
 
-    ENUM_2020_02_15_PREVIEW_01 = "2020-02-15-preview.01"
-    ENUM_2021_11_12_PREVIEW_03 = "2021-11-12-preview.03"
-    ENUM_2022_10_15_PREVIEW_04 = "2022-10-15-preview.04"
-    ENUM_2023_03_02_PREVIEW_05 = "2023-03-02-preview.05"
+    V2020_02_15_PREVIEW_01 = "2020-02-15-preview.01"
+    V2021_11_12_PREVIEW_03 = "2021-11-12-preview.03"
+    V2022_10_15_PREVIEW_04 = "2022-10-15-preview.04"
+    V2023_03_02_PREVIEW_05 = "2023-03-02-preview.05"
 
 
 class LivenessOperationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

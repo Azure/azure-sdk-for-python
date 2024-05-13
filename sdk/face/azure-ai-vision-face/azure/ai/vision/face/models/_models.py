@@ -291,50 +291,6 @@ class CreateLivenessSessionContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateLivenessSessionContentForMultipart(_model_base.Model):
-    """Dedicated parameter model for multipart/form-data.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar liveness_operation_mode: Type of liveness mode the client should follow. Required.
-     "Passive"
-    :vartype liveness_operation_mode: str or ~azure.ai.vision.face.models.LivenessOperationMode
-    :ivar send_results_to_client: Whether or not to allow a '200 - Success' response body to be
-     sent to the client, which may be undesirable for security reasons. Default is false, clients
-     will receive a '204 - NoContent' empty body response. Regardless of selection, calling Session
-     GetResult will always contain a response body enabling business logic to be implemented.
-    :vartype send_results_to_client: bool
-    :ivar device_correlation_id_set_in_client: Whether or not to allow client to set their own
-     'deviceCorrelationId' via the Vision SDK. Default is false, and 'deviceCorrelationId' must be
-     set in this request body.
-    :vartype device_correlation_id_set_in_client: bool
-    :ivar device_correlation_id: Unique Guid per each end-user device. This is to provide rate
-     limiting and anti-hammering. If 'deviceCorrelationIdSetInClient' is true in this request, this
-     'deviceCorrelationId' must be null.
-    :vartype device_correlation_id: str
-    :ivar auth_token_time_to_live_in_seconds: Seconds the session should last for. Range is 60 to
-     86400 seconds. Default value is 600.
-    :vartype auth_token_time_to_live_in_seconds: int
-    """
-
-    liveness_operation_mode: Union[str, "_models.LivenessOperationMode"] = rest_field(name="livenessOperationMode")
-    """Type of liveness mode the client should follow. Required. \"Passive\""""
-    send_results_to_client: Optional[bool] = rest_field(name="sendResultsToClient")
-    """Whether or not to allow a '200 - Success' response body to be sent to the client, which may be
-     undesirable for security reasons. Default is false, clients will receive a '204 - NoContent'
-     empty body response. Regardless of selection, calling Session GetResult will always contain a
-     response body enabling business logic to be implemented."""
-    device_correlation_id_set_in_client: Optional[bool] = rest_field(name="deviceCorrelationIdSetInClient")
-    """Whether or not to allow client to set their own 'deviceCorrelationId' via the Vision SDK.
-     Default is false, and 'deviceCorrelationId' must be set in this request body."""
-    device_correlation_id: Optional[str] = rest_field(name="deviceCorrelationId")
-    """Unique Guid per each end-user device. This is to provide rate limiting and anti-hammering. If
-     'deviceCorrelationIdSetInClient' is true in this request, this 'deviceCorrelationId' must be
-     null."""
-    auth_token_time_to_live_in_seconds: Optional[int] = rest_field(name="authTokenTimeToLiveInSeconds")
-    """Seconds the session should last for. Range is 60 to 86400 seconds. Default value is 600."""
-
-
 class CreateLivenessSessionResult(_model_base.Model):
     """Response of liveness session creation.
 
@@ -383,14 +339,13 @@ class CreateLivenessWithVerifySessionContent(_model_base.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar parameters: The parameters for creating session. Required.
-    :vartype parameters:
-     ~azure.ai.vision.face.models._models.CreateLivenessSessionContentForMultipart
+    :vartype parameters: ~azure.ai.vision.face.models.CreateLivenessSessionContent
     :ivar verify_image: The image stream for verify. Content-Disposition header field for this part
      must have filename. Required.
     :vartype verify_image: bytes
     """
 
-    parameters: "_models._models.CreateLivenessSessionContentForMultipart" = rest_field(name="Parameters")
+    parameters: "_models.CreateLivenessSessionContent" = rest_field(name="Parameters")
     """The parameters for creating session. Required."""
     verify_image: FileType = rest_field(name="VerifyImage", is_multipart_file_input=True)
     """The image stream for verify. Content-Disposition header field for this part must have filename.

@@ -2600,7 +2600,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
            To mitigate potential misuse that can subject people to stereotyping, discrimination, or
         unfair denial of services, we are retiring Face API attributes that predict emotion, gender,
         age, smile, facial hair, hair, and makeup. Read more about this decision
-        https://azure.microsoft.com/en-us/blog/responsible-ai-investments-and-safeguards-for-facial-recognition/.
+        https://azure.microsoft.com/blog/responsible-ai-investments-and-safeguards-for-facial-recognition/.
 
 
         *
@@ -2625,7 +2625,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         (100 pixels between eyes).
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model
 
           * 'detection_02': Face attributes and landmarks are disabled if you choose this detection
         model.
@@ -2638,7 +2638,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         latest model needed, please explicitly specify the model you need in this parameter. Once
         specified, the detected faceIds will be associated with the specified recognition model. More
         details, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-recognition-model.
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-recognition-model.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
@@ -3057,7 +3057,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
            To mitigate potential misuse that can subject people to stereotyping, discrimination, or
         unfair denial of services, we are retiring Face API attributes that predict emotion, gender,
         age, smile, facial hair, hair, and makeup. Read more about this decision
-        https://azure.microsoft.com/en-us/blog/responsible-ai-investments-and-safeguards-for-facial-recognition/.
+        https://azure.microsoft.com/blog/responsible-ai-investments-and-safeguards-for-facial-recognition/.
 
 
         *
@@ -3082,7 +3082,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         (100 pixels between eyes).
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model
 
           * 'detection_02': Face attributes and landmarks are disabled if you choose this detection
         model.
@@ -3095,7 +3095,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         latest model needed, please explicitly specify the model you need in this parameter. Once
         specified, the detected faceIds will be associated with the specified recognition model. More
         details, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-recognition-model.
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-recognition-model.
 
         :param image_content: The input image binary. Required.
         :type image_content: bytes
@@ -5263,6 +5263,8 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         For each face in the faceIds array, Face Identify will compute similarities between the query
         face and all the faces in the Person Directory Persons (given by personIds), and return
         candidate person(s) for that face ranked by similarity confidence.
+        Passing personIds with an array with one element "*" can perform the operation over entire
+        person directory.
 
         ..
 
@@ -5350,6 +5352,8 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         For each face in the faceIds array, Face Identify will compute similarities between the query
         face and all the faces in the Person Directory Persons (given by personIds), and return
         candidate person(s) for that face ranked by similarity confidence.
+        Passing personIds with an array with one element "*" can perform the operation over entire
+        person directory.
 
         ..
 
@@ -5422,6 +5426,8 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         For each face in the faceIds array, Face Identify will compute similarities between the query
         face and all the faces in the Person Directory Persons (given by personIds), and return
         candidate person(s) for that face ranked by similarity confidence.
+        Passing personIds with an array with one element "*" can perform the operation over entire
+        person directory.
 
         ..
 
@@ -5489,6 +5495,8 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         For each face in the faceIds array, Face Identify will compute similarities between the query
         face and all the faces in the Person Directory Persons (given by personIds), and return
         candidate person(s) for that face ranked by similarity confidence.
+        Passing personIds with an array with one element "*" can perform the operation over entire
+        person directory.
 
         ..
 
@@ -8078,7 +8086,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model.
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model.
 
         :param face_list_id: Valid character is letter in lower case or digit or '-' or '_', maximum
          length is 64. Required.
@@ -8159,7 +8167,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model.
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model.
 
         :param face_list_id: Valid character is letter in lower case or digit or '-' or '_', maximum
          length is 64. Required.
@@ -8235,7 +8243,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model.
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model.
 
         :param face_list_id: Valid character is letter in lower case or digit or '-' or '_', maximum
          length is 64. Required.
@@ -8311,7 +8319,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model.
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model.
 
         :param face_list_id: Valid character is letter in lower case or digit or '-' or '_', maximum
          length is 64. Required.
@@ -8455,7 +8463,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model.
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model.
 
         :param face_list_id: Valid character is letter in lower case or digit or '-' or '_', maximum
          length is 64. Required.
@@ -9550,7 +9558,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model
 
         ..
 
@@ -9641,7 +9649,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model
 
         ..
 
@@ -9727,7 +9735,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model
 
         ..
 
@@ -9813,7 +9821,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model
 
         ..
 
@@ -9967,7 +9975,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model
 
         ..
 
@@ -12130,7 +12138,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model.
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model.
 
         :param person_group_id: ID of the container. Required.
         :type person_group_id: str
@@ -12213,7 +12221,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model.
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model.
 
         :param person_group_id: ID of the container. Required.
         :type person_group_id: str
@@ -12291,7 +12299,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model.
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model.
 
         :param person_group_id: ID of the container. Required.
         :type person_group_id: str
@@ -12369,7 +12377,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model.
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model.
 
         :param person_group_id: ID of the container. Required.
         :type person_group_id: str
@@ -12516,7 +12524,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model.
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model.
 
         :param person_group_id: ID of the container. Required.
         :type person_group_id: str
@@ -14599,7 +14607,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model.
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model.
 
         :param large_person_group_id: ID of the container. Required.
         :type large_person_group_id: str
@@ -14683,7 +14691,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model.
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model.
 
         :param large_person_group_id: ID of the container. Required.
         :type large_person_group_id: str
@@ -14762,7 +14770,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model.
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model.
 
         :param large_person_group_id: ID of the container. Required.
         :type large_person_group_id: str
@@ -14841,7 +14849,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model.
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model.
 
         :param large_person_group_id: ID of the container. Required.
         :type large_person_group_id: str
@@ -14989,7 +14997,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model.
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model.
 
         :param large_person_group_id: ID of the container. Required.
         :type large_person_group_id: str
@@ -16321,7 +16329,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model
           *
         * Adding/deleting faces to/from a same person will be processed sequentially. Adding/deleting
         faces to/from different persons are processed in parallel.
@@ -16413,7 +16421,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model
           *
         * Adding/deleting faces to/from a same person will be processed sequentially. Adding/deleting
         faces to/from different persons are processed in parallel.
@@ -16500,7 +16508,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model
           *
         * Adding/deleting faces to/from a same person will be processed sequentially. Adding/deleting
         faces to/from different persons are processed in parallel.
@@ -16587,7 +16595,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model
           *
         * Adding/deleting faces to/from a same person will be processed sequentially. Adding/deleting
         faces to/from different persons are processed in parallel.
@@ -16807,7 +16815,7 @@ class FaceAdministrationClientOperationsMixin(  # pylint: disable=too-many-publi
         face size.
         * Different 'detectionModel' values can be provided. To use and compare different detection
         models, please refer to
-        https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/how-to/specify-detection-model
+        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model
           *
         * Adding/deleting faces to/from a same person will be processed sequentially. Adding/deleting
         faces to/from different persons are processed in parallel.
