@@ -11,8 +11,6 @@ from typing import (
     Union, Optional, Any, Dict, List,
     TYPE_CHECKING
 )
-from urllib.parse import urlparse
-
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
@@ -24,6 +22,7 @@ from ._shared.response_handlers import process_storage_error
 from ._generated import AzureFileStorage
 from ._generated.models import StorageServiceProperties
 from ._share_client import ShareClient
+from ._share_service_client_helpers import _parse_url
 from ._serialize import get_api_version
 from ._models import (
     SharePropertiesPaged,
@@ -105,23 +104,15 @@ class ShareServiceClient(StorageAccountHostsMixin):
             :caption: Create the share service client with url and credential.
     """
     def __init__(
-            self, account_url: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            *,
-            token_intent: Optional[Literal['backup']] = None,
-            **kwargs: Any
-        ) -> None:
+        self, account_url: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        *,
+        token_intent: Optional[Literal['backup']] = None,
+        **kwargs: Any
+    ) -> None:
         if hasattr(credential, 'get_token') and not token_intent:
             raise ValueError("'token_intent' keyword is required when 'credential' is an TokenCredential.")
-        try:
-            if not account_url.lower().startswith('http'):
-                account_url = "https://" + account_url
-        except AttributeError as exc:
-            raise ValueError("Account URL must be a string.") from exc
-        parsed_url = urlparse(account_url.rstrip('/'))
-        if not parsed_url.netloc:
-            raise ValueError(f"Invalid URL: {account_url}")
-
+        parsed_url = _parse_url(account_url=account_url)
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError(
@@ -137,9 +128,16 @@ class ShareServiceClient(StorageAccountHostsMixin):
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
                                         file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location mode hostname.
+
+        :param str hostname:
+            The hostname of the current location mode.
+        :returns: A formatted endpoint URL including current location mode hostname.
+        :rtype: str
+        """
         return f"{self.scheme}://{hostname}/{self._query_str}"
 
     @classmethod
@@ -217,12 +215,12 @@ class ShareServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def set_service_properties(
-            self, hour_metrics=None,  # type: Optional[Metrics]
-            minute_metrics=None,  # type: Optional[Metrics]
-            cors=None,  # type: Optional[List[CorsRule]]
-            protocol=None,  # type: Optional[ShareProtocolSettings]
-            **kwargs
-        ):
+        self, hour_metrics=None,  # type: Optional[Metrics]
+        minute_metrics=None,  # type: Optional[Metrics]
+        cors=None,  # type: Optional[List[CorsRule]]
+        protocol=None,  # type: Optional[ShareProtocolSettings]
+        **kwargs
+    ):
         # type: (...) -> None
         """Sets the properties of a storage account's File Share service, including
         Azure Storage Analytics. If an element (e.g. hour_metrics) is left as None, the
@@ -275,11 +273,11 @@ class ShareServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def list_shares(
-            self, name_starts_with=None,  # type: Optional[str]
-            include_metadata=False,  # type: Optional[bool]
-            include_snapshots=False, # type: Optional[bool]
-            **kwargs
-        ):
+        self, name_starts_with=None,  # type: Optional[str]
+        include_metadata=False,  # type: Optional[bool]
+        include_snapshots=False, # type: Optional[bool]
+        **kwargs
+    ):
         # type: (...) -> ItemPaged[ShareProperties]
         """Returns auto-paging iterable of dict-like ShareProperties under the specified account.
         The generator will lazily follow the continuation tokens returned by
@@ -335,19 +333,18 @@ class ShareServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def create_share(
-            self, share_name,  # type: str
-            **kwargs
-        ):
+        self, share_name,  # type: str
+        **kwargs
+    ):
         # type: (...) -> ShareClient
         """Creates a new share under the specified account. If the share
         with the same name already exists, the operation fails. Returns a client with
         which to interact with the newly created share.
 
         :param str share_name: The name of the share to create.
-        :keyword metadata:
+        :keyword dict[str, str] metadata:
             A dict with name_value pairs to associate with the
             share as metadata. Example:{'Category':'test'}
-        :paramtype metadata: Optional[dict[str, str]]
         :keyword int quota:
             Quota in bytes.
         :keyword int timeout:
@@ -378,10 +375,10 @@ class ShareServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def delete_share(
-            self, share_name,  # type: Union[ShareProperties, str]
-            delete_snapshots=False, # type: Optional[bool]
-            **kwargs
-        ):
+        self, share_name,  # type: Union[ShareProperties, str]
+        delete_snapshots=False, # type: Optional[bool]
+        **kwargs
+    ):
         # type: (...) -> None
         """Marks the specified share for deletion. The share is
         later deleted during garbage collection.
@@ -416,7 +413,11 @@ class ShareServiceClient(StorageAccountHostsMixin):
             delete_snapshots=delete_snapshots, timeout=timeout, **kwargs)
 
     @distributed_trace
-    def undelete_share(self, deleted_share_name, deleted_share_version, **kwargs):
+    def undelete_share(
+        self, deleted_share_name,
+        deleted_share_version,
+        **kwargs
+    ):
         # type: (str, str, **Any) -> ShareClient
         """Restores soft-deleted share.
 
@@ -442,14 +443,17 @@ class ShareServiceClient(StorageAccountHostsMixin):
         share = self.get_share_client(deleted_share_name)
 
         try:
-            share._client.share.restore(deleted_share_name=deleted_share_name,  # pylint: disable = protected-access
+            share._client.share.restore(deleted_share_name=deleted_share_name,  # pylint: disable=protected-access
                                         deleted_share_version=deleted_share_version,
                                         timeout=kwargs.pop('timeout', None), **kwargs)
             return share
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def get_share_client(self, share, snapshot=None):
+    def get_share_client(
+        self, share,
+        snapshot=None
+    ):
         # type: (Union[ShareProperties, str],Optional[Union[Dict[str, Any], str]]) -> ShareClient
         """Get a client to interact with the specified share.
         The share need not already exist.
@@ -479,8 +483,8 @@ class ShareServiceClient(StorageAccountHostsMixin):
             share_name = share
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies # pylint: disable=protected-access
         )
         return ShareClient(
             self.url, share_name=share_name, snapshot=snapshot, credential=self.credential,
