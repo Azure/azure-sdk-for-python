@@ -21,7 +21,7 @@ except ImportError:
 
 from devtools_testutils import  AzureRecordedTestCase, recorded_by_proxy
 
-from azure.core.credentials import AzureKeyCredential, AzureSasCredential
+from azure.core.credentials import AzureSasCredential
 from azure.core.messaging import CloudEvent
 from azure.core.serialization import NULL
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent, generate_sas

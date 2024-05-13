@@ -18,7 +18,7 @@ import datetime as dt
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
-from azure.core.credentials import AzureKeyCredential, AzureSasCredential
+from azure.core.credentials import AzureSasCredential
 from azure.core.messaging import CloudEvent
 from azure.core.serialization import NULL
 from azure.eventgrid import EventGridEvent, generate_sas

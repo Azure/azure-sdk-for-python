@@ -1,10 +1,9 @@
 
 import json
 import pytest
-from devtools_testutils import AzureRecordedTestCase, CachedResourceGroupPreparer
+from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
-from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.eventgrid.aio import EventGridPublisherClient
 from cloudevents.http import CloudEvent
 
