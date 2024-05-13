@@ -44,7 +44,7 @@ def sb_client(request):
         elif 'AZURE_TEST_USE_POWERSHELL_AUTH' in os.environ and os.environ['AZURE_TEST_USE_POWERSHELL_AUTH'].lower() == 'true':
             credential = AzurePowerShellCredential()
         else:
-            credential = ManagedIdentityCredential(os.environ.get('SERVICEBUS_CLIENT_ID'))
+            credential = ManagedIdentityCredential(client_id=os.environ.get('SERVICEBUS_CLIENT_ID'))
                                                    
         fqn = os.environ.get('SERVICEBUS_FULLY_QUALIFIED_NAMESPACE')
         with ServiceBusClient(fqn, credential, uamqp_transport=uamqp_transport, logging_enable=False) as client:
@@ -52,7 +52,7 @@ def sb_client(request):
     else:
         yield None
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture(scope="session", autouse=True)
 async def sb_client_async(request):
     if hasattr(request, "param"):
         uamqp_transport = request.param
