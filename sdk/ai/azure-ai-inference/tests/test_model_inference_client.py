@@ -44,7 +44,7 @@ class TestModelClient(ModelClientTestBase):
         result = client.create_streaming(
             messages=[
                 sdk.models.SystemMessage(content="You are a helpful assistant."),
-                sdk.models.UserMessage(content="Give me 5 good reasons why I should exercise every day."),
+                sdk.models.UserMessage(content="Give me 3 good reasons why I should exercise every day."),
             ]
         )
         self._validate_chat_completions_streaming_result(result)

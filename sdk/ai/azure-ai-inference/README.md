@@ -84,13 +84,13 @@ client = ChatCompletionsClient(
 
 TODO: Add overview and link to explain chat completions.
 
-Chat completion operations target the URL route `/v1/chat/completions` on the provided endpoint.
+Chat completion operations target the URL route `/chat/completions` on the provided endpoint.
 
 ### Embeddings
 
 TODO: Add overview and link to explain embeddings.
 
-Embeddings operations target the URL route `/v1/embeddings` on the provided endpoint.
+Embeddings operations target the URL route `/embeddings` on the provided endpoint.
 
 ### Client generator
 
@@ -277,7 +277,8 @@ Operation returned an invalid status 'Unauthorized'
 Content: {"status": "Invalid auth token"}
 ```v
 
-Or for example when you call `get_embeddings` on a model that does not support the `/v1/embeddings` route:
+Or for example when you created an `EmbeddingsClient` and called `create` on the client, but the endpoint does not
+support the `/embeddings` route:
 
 ```text
 Status code: 424 (Failed Dependency)
