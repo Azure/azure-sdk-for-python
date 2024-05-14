@@ -7,6 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import json
+import logging
 import sys
 
 from io import IOBase
@@ -39,6 +40,7 @@ _Unset: Any = object()
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
+logger = logging.getLogger(__name__)
 
 class ClientGenerator:
     @staticmethod
@@ -47,7 +49,7 @@ class ClientGenerator:
     ) -> Union[ChatCompletionsClientGenerated, EmbeddingsClient]:
         client = ChatCompletionsClient(endpoint, credential, **kwargs)  # Pick any of the clients, it does not matter...
         model_info = client.get_model_info()
-        print(model_info)
+        logger.info("model_info=%s", model_info)
         if model_info.model_type == None or model_info.model_type == "":
             raise ValueError(
                 "The AI model information is missing a value for `model type`. Cannot create an appropriate client."
@@ -57,7 +59,7 @@ class ClientGenerator:
         elif model_info.model_type == _models.ModelType.EMBEDDINGS:
             return EmbeddingsClient(endpoint, credential, **kwargs)
         else:
-            raise ValueError(f"No client available to support AI model type {model_info.model_type}")
+            raise ValueError(f"No client available to support AI model type `{model_info.model_type}`")
 
 
 class ChatCompletionsClient(ChatCompletionsClientGenerated):

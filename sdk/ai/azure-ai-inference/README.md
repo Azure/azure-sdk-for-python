@@ -92,6 +92,10 @@ TODO: Add overview and link to explain embeddings.
 
 Embeddings operations target the URL route `/v1/embeddings` on the provided endpoint.
 
+### Client generator
+
+TODO
+
 ## Examples
 
 In the following sections you will find simple examples of:
@@ -100,6 +104,7 @@ In the following sections you will find simple examples of:
 * [Streaming chat completions](#streaming-chat-completions-example)
 * [Embeddings](#embeddings-example)
 * [Get model information](#get-model-information-example)
+* [Create a client using the ClientGenerator](#create-a-client-using-the-clientgenerator)
 
 The examples create a synchronous client as mentioned in [Create and authenticate clients](#create-and-authenticate-clients). Only mandatory input settings are shown for simplicity.
 
@@ -217,6 +222,31 @@ model_info = client.get_model_info()
 print(f"Model name: {model_info.model_name}")
 print(f"Model provider name: {model_info.model_provider_name}")
 print(f"Model type: {model_info.model_type}")
+```
+
+<!-- END SNIPPET -->
+
+### Create a client using the ClientGenerator
+
+Instead of creating a specific client directly (`ChatCompletionsClient`, `EmbeddingsClient`) you can use the `ClientGenerator.from_endpoint` method to create the appropriate client associated with the provided endpoint URL. In this example we use it to create a `ChatCompletionsClient`:
+
+<!-- SNIPPET:sample_chat_completions_with_client_generator.chat_completions_with_client_generator -->
+
+```python
+from azure.ai.inference import ClientGenerator
+from azure.ai.inference.models import SystemMessage, UserMessage
+from azure.core.credentials import AzureKeyCredential
+
+client = ClientGenerator.from_endpoint(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+result = client.create(
+    messages=[
+        SystemMessage(content="You are a helpful assistant."),
+        UserMessage(content="How many feet are in a mile?"),
+    ]
+)
+
+print(result.choices[0].message.content)
 ```
 
 <!-- END SNIPPET -->
