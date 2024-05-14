@@ -464,11 +464,11 @@ class TranscriptionOptions:
     """The type of transport to be used for live transcription."""
     locale: str
     """Defines the locale for the data."""
-    speech_recognition_model_endpoint_id: str
-    """Determines endpoint where the custom model was deployed."""
     start_transcription: bool
     """Determines if the transcription should be started immediately after call is answered or not."""
-    enable_intermediate_results: bool
+    speech_recognition_model_endpoint_id: Optional[str] = None
+    """Determines endpoint where the custom model was deployed."""
+    enable_intermediate_results: Optional[bool] = None
     """Determines if the intermediate results should be enabled for transcribed speech or not."""
 
     def __init__(
@@ -476,9 +476,9 @@ class TranscriptionOptions:
         transport_url: str,
         transport_type: Union[str, 'TranscriptionTransportType'],
         locale: str,
-        speech_recognition_model_endpoint_id: str,
         start_transcription: bool,
-        enable_intermediate_results: bool
+        speech_recognition_model_endpoint_id: Optional[str] = None,
+        enable_intermediate_results: Optional[bool] = None
     ):
         self.transport_url = transport_url
         self.transport_type = transport_type
