@@ -7,7 +7,7 @@ These libraries follow the [Azure SDK Design Guidelines for Python](https://azur
 If you are a client library developer, please reference [client library developer reference](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md) for more information.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/)
-| [Package (Pypi)][package]
+| [Package (PyPI)][package]
 | [Package (Conda)](https://anaconda.org/microsoft/azure-core/)
 | [API reference documentation](https://docs.microsoft.com/python/api/overview/azure/core-readme)
 
