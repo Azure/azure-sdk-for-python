@@ -64,10 +64,9 @@ def _format_url(container_name: Union[bytes, str], hostname: str, scheme: str, q
         container_name = container_name.encode('UTF-8')
     return f"{scheme}://{hostname}/{quote(container_name)}{query_str}"
 
-def _get_blob_name(blob):
+def _get_blob_name(blob: Union[str, BlobProperties]):
     """Return the blob name.
-    :param blob: A blob string or BlobProperties
-    :paramtype blob: str or BlobProperties
+    :param Union[str, BlobProperties] blob: A blob string or BlobProperties
     :returns: The name of the blob.
     :rtype: str
     """
