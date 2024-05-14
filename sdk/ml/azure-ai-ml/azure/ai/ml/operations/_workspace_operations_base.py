@@ -740,13 +740,6 @@ class WorkspaceOperationsBase(ABC):
                 _set_val(param["endpoint_resource_id"], endpoint_resource_id)
                 _set_val(param["endpoint_kind"], endpoint_kind)
 
-            # Hubs must have an azure container registry on-provision. If none was provided, create one.
-            if not workspace.container_registry:
-                _set_val(param["containerRegistryOption"], "new")
-                container_registry = _generate_container_registry(workspace.name, resources_being_deployed)
-                _set_val(param["containerRegistryName"], container_registry)
-                _set_val(param["containerRegistryResourceGroupName"], self._resource_group_name)
-
         # Lean related param
         if (
             hasattr(workspace, "_kind")

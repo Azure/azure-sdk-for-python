@@ -274,10 +274,6 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
             The applicable coordinates as (lat, lon)
         :type coordinates:
             LatLon
-        :param language:
-            Language in which search results should be returned.
-        :type language:
-            str
         :keyword bool include_speed_limit:
             Boolean. To enable return of the posted speed limit.
         :keyword int heading:

@@ -100,7 +100,7 @@ class ErrorResponse(_serialization.Model):
 class PolicyVariableColumn(_serialization.Model):
     """The variable column.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar column_name: The name of this policy variable column. Required.
     :vartype column_name: str
@@ -126,7 +126,7 @@ class PolicyVariableColumn(_serialization.Model):
 class PolicyVariableValueColumnValue(_serialization.Model):
     """The name value tuple for this variable value column.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar column_name: Column name for the variable value. Required.
     :vartype column_name: str
@@ -231,7 +231,7 @@ class Variable(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
@@ -312,7 +312,7 @@ class VariableValue(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.

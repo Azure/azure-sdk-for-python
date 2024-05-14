@@ -9,6 +9,7 @@ import uuid
 import time
 import functools
 import collections
+import re
 from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
 from datetime import timedelta
 from urllib.parse import urlparse
@@ -68,6 +69,8 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
 
+def _is_local_endpoint(endpoint: str) -> bool:
+    return re.match("^(127\\.[\\d.]+|[0:]+1|localhost)", endpoint.lower()) is not None
 
 def _parse_conn_str(
         conn_str: str,  # pylint:disable=unused-argument
@@ -75,13 +78,14 @@ def _parse_conn_str(
         eventhub_name: Optional[str] = None,
         check_case: bool = False,
         **kwargs: Any
-    ) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]:
+    ) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int], bool]:
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
     entity_path: Optional[str] = None
     shared_access_signature: Optional[str] = None
     shared_access_signature_expiry = None
+    use_emulator: Optional[str] = None
     conn_settings = core_parse_connection_string(
         conn_str, case_sensitive_keys=check_case
     )
@@ -95,6 +99,7 @@ def _parse_conn_str(
             # only sas check is non case sensitive for both conn str properties and internal use
             if key.lower() == "sharedaccesssignature":
                 shared_access_signature = value
+        use_emulator = conn_settings.get("UseDevelopmentEmulator")
 
     if not check_case:
         endpoint = conn_settings.get("endpoint") or conn_settings.get("hostname")
@@ -104,6 +109,7 @@ def _parse_conn_str(
         shared_access_key = conn_settings.get("sharedaccesskey")
         entity_path = conn_settings.get("entitypath")
         shared_access_signature = conn_settings.get("sharedaccesssignature")
+        use_emulator = conn_settings.get("usedevelopmentemulator")
 
     if shared_access_signature:
         try:
@@ -124,10 +130,20 @@ def _parse_conn_str(
     # check that endpoint is valid
     if not endpoint:
         raise ValueError("Connection string is either blank or malformed.")
+
     parsed = urlparse(endpoint)
     if not parsed.netloc:
         raise ValueError("Invalid Endpoint on the Connection String.")
     host = cast(str, parsed.netloc.strip())
+
+    emulator = use_emulator=="true"
+    if emulator and not _is_local_endpoint(host):
+        raise ValueError(
+            "Invalid endpoint on the connection string. "
+            "For development connection strings, should be in the format: "
+            "Endpoint=sb://localhost;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>;"
+            "UseDevelopmentEmulator=true;"
+        )
 
     if any([shared_access_key, shared_access_key_name]) and not all(
         [shared_access_key, shared_access_key_name]
@@ -154,6 +170,7 @@ def _parse_conn_str(
         entity,
         str(shared_access_signature) if shared_access_signature else None,
         shared_access_signature_expiry,
+        emulator
     )
 
 
@@ -327,11 +344,15 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
 
     @staticmethod
     def _from_connection_string(conn_str: str, **kwargs: Any) -> Dict[str, Any]:
-        host, policy, key, entity, token, token_expiry = _parse_conn_str(
+        host, policy, key, entity, token, token_expiry, emulator = _parse_conn_str(
             conn_str, **kwargs
         )
+
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
+        # Check if emulator is in use, unset tls if it is
+        if emulator:
+            kwargs["use_tls"] = False
         if token and token_expiry:
             kwargs["credential"] = EventHubSASTokenCredential(token, token_expiry)
         elif policy and key:

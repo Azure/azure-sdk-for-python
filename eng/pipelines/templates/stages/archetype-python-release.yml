@@ -131,13 +131,17 @@ stages:
                           Get-ChildItem $esrpDirectory
                         displayName: Isolate files for ESRP Publish
 
-                      - task: EsrpRelease@2
+                      - task: EsrpRelease@7
                         displayName: 'Publish to ESRP'
                         inputs:
-                          ConnectedServiceName: 'ESRP Release Service'
+                          ConnectedServiceName: 'Azure SDK Engineering System'
+                          ClientId: '5f81938c-2544-4f1f-9251-dd9de5b8a81b'
+                          KeyVaultName: 'AzureSDKEngKeyVault'
+                          AuthCertName: 'azure-sdk-esrp-release-auth-certificate'
+                          SignCertName: 'azure-sdk-esrp-release-sign-certificate'
                           Intent: 'PackageDistribution'
                           ContentType: 'PyPI'
-                          PackageLocation: $(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}
+                          FolderLocation: $(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}
                           Owners: $(Build.RequestedForEmail)
                           Approvers: $(Build.RequestedForEmail)
                           ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
