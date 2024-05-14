@@ -15,6 +15,9 @@ parameters:
   InjectedPackages: ''
   DevFeedName: 'public/azure-sdk-for-python'
   TestProxy: false
+  UseFederatedAuth: false
+  ServiceConnection: ''
+
 
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
@@ -61,20 +64,40 @@ steps:
 
   - template: /eng/pipelines/templates/steps/seed-virtualenv-wheels.yml
 
-  - task: PythonScript@0
-    displayName: 'Run Tests'
-    inputs:
-      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-      arguments: >-
-        "$(TargetingString)"
-        ${{ parameters.AdditionalTestArgs }}
-        ${{ parameters.CoverageArg }}
-        --mark_arg="${{ parameters.TestMarkArgument }}"
-        --service="${{ parameters.ServiceDirectory }}"
-        --toxenv="${{ parameters.ToxTestEnv }}"
-        --injected-packages="${{ parameters.InjectedPackages }}"
-        ${{ parameters.ToxEnvParallel }}
-    env: ${{ parameters.EnvVars }}
+  - ${{ if eq('true', parameters.UseFederatedAuth) }}:
+    - task: AzurePowerShell@5
+      displayName: Run Tests (AzurePowerShell@5)
+      env: ${{ parameters.EnvVars }}
+      inputs:
+        azureSubscription: ${{ parameters.ServiceConnection }}
+        azurePowerShellVersion: LatestVersion
+        ScriptType: InlineScript
+        Inline: |
+          python scripts/devops_tasks/dispatch_tox.py `
+            "$(TargetingString)" `
+            ${{ parameters.AdditionalTestArgs }} `
+            ${{ parameters.CoverageArg }} `
+            --mark_arg="${{ parameters.TestMarkArgument }}" `
+            --service="${{ parameters.ServiceDirectory }}" `
+            --toxenv="${{ parameters.ToxTestEnv }}" `
+            --injected-packages="${{ parameters.InjectedPackages }}" `
+            ${{ parameters.ToxEnvParallel }}
+
+  - ${{ else }}:
+    - task: PythonScript@0
+      displayName: 'Run Tests'
+      inputs:
+        scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+        arguments: >-
+          "$(TargetingString)"
+          ${{ parameters.AdditionalTestArgs }}
+          ${{ parameters.CoverageArg }}
+          --mark_arg="${{ parameters.TestMarkArgument }}"
+          --service="${{ parameters.ServiceDirectory }}"
+          --toxenv="${{ parameters.ToxTestEnv }}"
+          --injected-packages="${{ parameters.InjectedPackages }}"
+          ${{ parameters.ToxEnvParallel }}
+      env: ${{ parameters.EnvVars }}
 
   - ${{if eq(parameters.TestProxy, true) }}:
     - pwsh: |
