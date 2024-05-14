@@ -41,6 +41,7 @@ from .models import (
     TargetInput as _TargetInput,
     DocumentFilter as _DocumentFilter,
     StartTranslationDetails as _StartTranslationDetails,
+    Glossary as _Glossary,
 )
 from .models._models import (
     TranslationStatus as _TranslationStatus,
