@@ -27,7 +27,7 @@ from azure.ai.ml.constants._common import ConnectionTypes
 from azure.ai.ml.entities import NoneCredentialConfiguration, AadCredentialConfiguration
 
 
-class ConnectionSchema(ResourceSchema):
+class WorkspaceConnectionSchema(ResourceSchema):
     # Inherits name, id, tags, and description fields from ResourceSchema
     creation_context = NestedField(CreationContextSchema, dump_only=True)
     type = StringTransformedEnum(
@@ -73,7 +73,7 @@ class ConnectionSchema(ResourceSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import Connection
+        from azure.ai.ml.entities import WorkspaceConnection
 
         # Most non-subclassed connections default to a none credential if none
         # is provided. ALDS Gen 2 connections default to AAD with this code.
@@ -82,4 +82,4 @@ class ConnectionSchema(ResourceSchema):
             and data.get("credentials", None) == NoneCredentialConfiguration()
         ):
             data["credentials"] = AadCredentialConfiguration()
-        return Connection(**data)
+        return WorkspaceConnection(**data)
