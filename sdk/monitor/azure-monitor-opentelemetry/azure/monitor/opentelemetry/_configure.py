@@ -129,17 +129,17 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
         sampler=ApplicationInsightsSampler(sampling_ratio=cast(float, sampling_ratio)),
         resource=resource
     )
-    set_tracer_provider(tracer_provider)
     for span_processor in configurations[SPAN_PROCESSORS_ARG]: # type: ignore
-        get_tracer_provider().add_span_processor(span_processor) # type: ignore
+        tracer_provider.add_span_processor(span_processor)
     if configurations.get(ENABLE_LIVE_METRICS_ARG):
         qsp = _QuickpulseSpanProcessor()
-        get_tracer_provider().add_span_processor(qsp)
+        tracer_provider.add_span_processor(qsp)
     trace_exporter = AzureMonitorTraceExporter(**configurations)
     bsp = BatchSpanProcessor(
         trace_exporter,
     )
-    get_tracer_provider().add_span_processor(bsp) # type: ignore
+    tracer_provider.add_span_processor(bsp)
+    set_tracer_provider(tracer_provider)
     if _is_instrumentation_enabled(configurations, _AZURE_SDK_INSTRUMENTATION_NAME):
         settings.tracing_implementation = OpenTelemetrySpan
 
@@ -147,16 +147,16 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
 def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG] # type: ignore
     logger_provider = LoggerProvider(resource=resource)
-    set_logger_provider(logger_provider)
     if configurations.get(ENABLE_LIVE_METRICS_ARG):
         qlp = _QuickpulseLogRecordProcessor()
-        get_logger_provider().add_log_record_processor(qlp) # type: ignore
+        logger_provider.add_log_record_processor(qlp)
     log_exporter = AzureMonitorLogExporter(**configurations)
     log_record_processor = BatchLogRecordProcessor(
         log_exporter,
     )
-    get_logger_provider().add_log_record_processor(log_record_processor) # type: ignore
-    handler = LoggingHandler(logger_provider=get_logger_provider())
+    logger_provider.add_log_record_processor(log_record_processor)
+    set_logger_provider(logger_provider)
+    handler = LoggingHandler(logger_provider=logger_provider)
     logger_name: str = configurations[LOGGER_NAME_ARG] # type: ignore
     getLogger(logger_name).addHandler(handler)
 
