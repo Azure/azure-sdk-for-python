@@ -92,12 +92,12 @@ class CallInvite:
         self.source_display_name = source_display_name
 
 class RoomCallLocator:
-    """The locator to locate ongoing call, using server call id.
+    """The locator to locate ongoing call, using room id.
 
     **DEPRECATED**: This model has been deprecated and will be removed from future releases.
     Please pass in the `room_id` directly.
 
-    :param room_id: The server call id of ongoing call.
+    :param room_id: The room id of ongoing call.
     :type room_id: str
     """
     room_id: str

@@ -26,6 +26,7 @@ if TYPE_CHECKING:
     from ._models import (
         ServerCallLocator,
         GroupCallLocator,
+        RoomCallLocator,
         AzureBlobContainerRecordingStorage,
         AzureCommunicationsRecordingStorage
         )
@@ -49,8 +50,8 @@ def build_external_storage(
     return request
 
 def build_call_locator(
-    args: List[Union['ServerCallLocator', 'GroupCallLocator']],
-    call_locator: Optional[Union['ServerCallLocator', 'GroupCallLocator', 'R']],
+    args: List[Union['ServerCallLocator', 'GroupCallLocator', 'RoomCallLocator']],
+    call_locator: Optional[Union['ServerCallLocator', 'GroupCallLocator', 'RoomCallLocator']],
     server_call_id: Optional[str],
     group_call_id: Optional[str],
     room_id: Optional[str],
