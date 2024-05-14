@@ -45,7 +45,7 @@ def sample_synchronous_document_translation():
     document_translate_content = DocumentTranslateContent(document=document_content)
 
     response_stream = client.document_translate(body=document_translate_content, target_language=target_languages)
-    translated_response = response_stream.decode("utf-8-sig") # type: ignore[attr-defined]
+    translated_response = response_stream.decode("utf-8-sig")  # type: ignore[attr-defined]
     print(f"Translated response: {translated_response}")
 
     # [END synchronous_document_translation]

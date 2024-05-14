@@ -22,10 +22,7 @@ from azure.storage.blob import BlobServiceClient
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     add_remove_header_sanitizer(headers="Ocp-Apim-Subscription-Key,Retry-After,Cookie")
-    add_general_regex_sanitizer(
-        value="fakeendpoint",
-        regex="(?<=\\/\\/)[a-z-]+(?=\\.cognitiveservices\\.azure\\.com)"
-    )
+    add_general_regex_sanitizer(value="fakeendpoint", regex="(?<=\\/\\/)[a-z-]+(?=\\.cognitiveservices\\.azure\\.com)")
     add_general_regex_sanitizer(
         regex="(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)",
         value="fakeendpoint",

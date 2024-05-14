@@ -43,15 +43,15 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # type: ignore[misc] # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[ # type: ignore[misc]
+ClsType = Optional[  # type: ignore[misc]
     Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
-    ] 
+]
 
 
 class DocumentTranslationClientOperationsMixin(GeneratedDocumentTranslationClientOperationsMixin):
 
     @distributed_trace
-    async def begin_start_translation( # type: ignore[override]
+    async def begin_start_translation(  # type: ignore[override]
         self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[_models.TranslationStatus]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -63,7 +63,7 @@ class DocumentTranslationClientOperationsMixin(GeneratedDocumentTranslationClien
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._start_translation_initial( # type: ignore[func-returns-value]
+            raw_result = await self._start_translation_initial(  # type: ignore[func-returns-value]
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
         kwargs.pop("error_map", None)

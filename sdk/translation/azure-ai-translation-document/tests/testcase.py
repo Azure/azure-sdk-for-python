@@ -9,7 +9,7 @@ import datetime
 import uuid
 from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher
 from azure.storage.blob import generate_container_sas, ContainerClient
-from azure.ai.translation.document.models import DocumentTranslationInput, TranslationTarget
+from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
 
 
 class Document:

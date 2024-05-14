@@ -13,8 +13,7 @@ from preparer import (
 )
 from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import HttpResponseError
-from azure.ai.translation.document import DocumentTranslationClient
-from azure.ai.translation.document.models._patch import DocumentTranslationInput, TranslationTarget
+from azure.ai.translation.document import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
 
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 

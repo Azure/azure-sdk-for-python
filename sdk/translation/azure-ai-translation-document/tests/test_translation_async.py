@@ -17,7 +17,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import ContainerClient
 from azure.ai.translation.document.models import StartTranslationDetails as _StartTranslationDetails
-from azure.ai.translation.document.models import DocumentTranslationInput, TranslationTarget, TranslationGlossary
+from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget, TranslationGlossary
 from azure.ai.translation.document.aio import DocumentTranslationClient
 
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)

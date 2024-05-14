@@ -10,7 +10,7 @@ from preparer import (
     DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer,
 )
 from devtools_testutils import recorded_by_proxy
-from azure.ai.translation.document.models._patch import DocumentTranslationInput, TranslationTarget
+from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
 from azure.ai.translation.document import DocumentTranslationClient
 
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)

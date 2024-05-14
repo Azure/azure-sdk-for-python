@@ -8,7 +8,7 @@
 
 from ._models import BatchRequest
 from ._models import DocumentFilter
-from ._patch import DocumentStatus
+from ._models import DocumentStatus
 from ._models import DocumentTranslateContent
 from ._models import DocumentsStatus
 from ._models import FileFormat
@@ -20,7 +20,7 @@ from ._models import StatusSummary
 from ._models import SupportedFileFormats
 from ._models import TargetInput
 from ._models import TranslationError
-from ._patch import TranslationStatus
+from ._models import TranslationStatus
 from ._models import TranslationsStatus
 
 from ._enums import FileFormatType
@@ -28,20 +28,11 @@ from ._enums import Status
 from ._enums import StorageInputType
 from ._enums import StorageSource
 from ._enums import TranslationErrorCode
-
-from ._patch import TranslationGlossary
-from ._patch import TranslationTarget
-from ._patch import DocumentTranslationInput
-from ._patch import DocumentTranslationError
-from ._patch import DocumentTranslationFileFormat
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "TranslationGlossary",
-    "TranslationTarget",
-    "DocumentTranslationInput",
-    "DocumentTranslationError",
-    "DocumentTranslationFileFormat",
     "BatchRequest",
     "DocumentFilter",
     "DocumentStatus",
@@ -64,5 +55,5 @@ __all__ = [
     "StorageSource",
     "TranslationErrorCode",
 ]
-
+__all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

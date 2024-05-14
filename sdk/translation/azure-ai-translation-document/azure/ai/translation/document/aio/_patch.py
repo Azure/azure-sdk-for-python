@@ -19,16 +19,17 @@ from azure.core.polling.base_polling import (
     _raise_if_bad_http_status_and_method,
 )
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
-
-from ..models import (
-    TranslationStatus,
-    DocumentStatus,
+from azure.ai.translation.document import (
     DocumentTranslationInput,
     DocumentTranslationFileFormat,
-    StorageInputType,
     TranslationGlossary,
     TranslationTarget,
     DocumentTranslationError,
+)
+from ..models import (
+    TranslationStatus,
+    DocumentStatus,
+    StorageInputType,
     StartTranslationDetails,
 )
 from ..models._models import (
@@ -48,6 +49,7 @@ POLLING_INTERVAL = 1
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 _FINISHED = frozenset(["succeeded", "cancelled", "cancelling", "failed"])
 _FAILED = frozenset(["validationfailed"])
+
 
 class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType_co]):
     """An async custom poller implementation for Document Translation. Call `result()` on the poller to return
@@ -106,7 +108,7 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
         try:
             return _TranslationStatus(self._pipeline_response.http_response.json())
         except json.decoder.JSONDecodeError:
-            return _TranslationStatus() # type: ignore[call-overload]
+            return _TranslationStatus()  # type: ignore[call-overload]
 
     def _get_id_from_headers(self) -> str:
         # return self._initial_response.http_response.headers["Operation-Location"].split("/batches/")[1]
@@ -142,7 +144,7 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
         return self._get_id_from_headers()
 
     # pylint: disable=arguments-differ
-    def from_continuation_token(self, continuation_token: str, **kwargs: Any) -> Tuple: # type: ignore[override]
+    def from_continuation_token(self, continuation_token: str, **kwargs: Any) -> Tuple:  # type: ignore[override]
         try:
             client = kwargs["client"]
         except KeyError as exc:
@@ -198,7 +200,7 @@ class DocumentTranslationClient:
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, AsyncTokenCredential],# pylint: disable=used-before-assignment
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],  # pylint: disable=used-before-assignment
         **kwargs: Any
     ) -> None:
         """DocumentTranslationClient is your interface to the Document Translation service.
@@ -433,7 +435,7 @@ class DocumentTranslationClient:
 
         translation_status = await self._client.get_translation_status(translation_id, **kwargs)
         return TranslationStatus._from_generated(  # pylint: disable=protected-access
-            _TranslationStatus(translation_status) # type: ignore[call-overload]
+            _TranslationStatus(translation_status)  # type: ignore[call-overload]
         )
 
     @distributed_trace_async
@@ -615,7 +617,7 @@ class DocumentTranslationClient:
         """
         document_status = await self._client.get_document_status(translation_id, document_id, **kwargs)
         # pylint: disable=protected-access
-        return DocumentStatus._from_generated(_DocumentStatus(document_status)) # type: ignore[call-overload]
+        return DocumentStatus._from_generated(_DocumentStatus(document_status))  # type: ignore[call-overload]
 
     @distributed_trace_async
     async def get_supported_glossary_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:
