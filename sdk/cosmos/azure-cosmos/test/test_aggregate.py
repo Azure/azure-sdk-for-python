@@ -57,7 +57,7 @@ class TestAggregateQuery(unittest.TestCase):
         cls.client = cosmos_client.CosmosClient(_config.host, _config.master_key)
         cls.created_db = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
         cls.created_collection = cls._create_collection(cls.created_db)
-        if cls.host == "https://localhost:8081/":
+        if _config.host == "https://localhost:8081/":
             os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
 
         # test documents
