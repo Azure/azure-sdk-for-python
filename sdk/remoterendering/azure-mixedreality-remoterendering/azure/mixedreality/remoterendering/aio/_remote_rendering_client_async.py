@@ -172,7 +172,7 @@ class RemoteRenderingClient(object):
                                                                   **kwargs)
 
     @distributed_trace_async
-    async def get_asset_conversion_poller(self, **kwargs: Any) -> AsyncLROPoller[AssetConversion]: # pylint:disable=docstring-keyword-should-match-keyword-only
+    async def get_asset_conversion_poller(self, **kwargs) -> AsyncLROPoller[AssetConversion]: # pylint:disable=docstring-keyword-should-match-keyword-only
         """
         Returns a poller for an existing conversion by conversion id or a continuation token retrieved from a previous
         poller.
@@ -214,7 +214,7 @@ class RemoteRenderingClient(object):
                               polling_method=polling_method)
 
     @distributed_trace_async
-    async def list_asset_conversions(self, **kwargs: Any) -> AsyncItemPaged[AssetConversion]:
+    async def list_asset_conversions(self, **kwargs) -> AsyncItemPaged[AssetConversion]:
         """
         Returns list of conversions for the remote rendering account.
         :rtype: AsyncItemPaged[AssetConversion]
@@ -259,7 +259,7 @@ class RemoteRenderingClient(object):
                               polling_method=polling_method)
 
     @distributed_trace_async
-    async def get_rendering_session(self, session_id: str, **kwargs: Any) -> RenderingSession:
+    async def get_rendering_session(self, session_id: str, **kwargs) -> RenderingSession:
         '''
         Returns the properties of a previously generated rendering session.
         :param str session_id: The identifier of the rendering session.
@@ -269,7 +269,7 @@ class RemoteRenderingClient(object):
         return await self._client.remote_rendering.get_session(self._account_id, session_id=session_id, **kwargs)
 
     @distributed_trace_async
-    async def get_rendering_session_poller(self, **kwargs: Any) -> AsyncLROPoller[RenderingSession]: # pylint:disable=docstring-keyword-should-match-keyword-only
+    async def get_rendering_session_poller(self, **kwargs) -> AsyncLROPoller[RenderingSession]: # pylint:disable=docstring-keyword-should-match-keyword-only
         """
         Returns a poller for an existing rendering session by session id or a continuation token retrieved from a
         previous poller.

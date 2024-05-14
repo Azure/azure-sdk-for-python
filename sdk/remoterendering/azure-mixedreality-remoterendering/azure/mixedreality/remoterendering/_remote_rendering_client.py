@@ -125,7 +125,7 @@ class RemoteRenderingClient:
                                conversion_id: str,
                                input_settings: AssetConversionInputSettings,
                                output_settings: AssetConversionOutputSettings,
-                               **kwargs: Any) -> LROPoller[AssetConversion]:
+                               **kwargs) -> LROPoller[AssetConversion]:
         """
         Start a new asset conversion with the given options.
         :param str conversion_id:
@@ -159,7 +159,7 @@ class RemoteRenderingClient:
                          polling_method=polling_method)
 
     @distributed_trace
-    def get_asset_conversion(self, conversion_id: str, **kwargs: Any) -> AssetConversion:
+    def get_asset_conversion(self, conversion_id: str, **kwargs) -> AssetConversion:
         """
         Retrieve the state of a previously created conversion.
         :param str conversion_id:
@@ -172,7 +172,7 @@ class RemoteRenderingClient:
             account_id=self._account_id, conversion_id=conversion_id, **kwargs)
 
     @distributed_trace
-    def get_asset_conversion_poller(self, **kwargs: Any) -> LROPoller[AssetConversion]: # pylint:disable=docstring-keyword-should-match-keyword-only
+    def get_asset_conversion_poller(self, **kwargs) -> LROPoller[AssetConversion]: # pylint:disable=docstring-keyword-should-match-keyword-only
         """
         Returns a poller for an existing conversion by conversion id or a continuation token retrieved from a previous
         poller.
@@ -215,7 +215,7 @@ class RemoteRenderingClient:
                          polling_method=polling_method)
 
     @distributed_trace
-    def list_asset_conversions(self, **kwargs: Any) -> ItemPaged[AssetConversion]:
+    def list_asset_conversions(self, **kwargs) -> ItemPaged[AssetConversion]:
         """ Returns list of conversions for the remote rendering account.
         :rtype: ItemPaged[AssetConversion]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -228,7 +228,7 @@ class RemoteRenderingClient:
                                 session_id: str,
                                 size: Union[str, RenderingSessionSize],
                                 lease_time_minutes: int,
-                                **kwargs: Any) -> LROPoller[RenderingSession]:
+                                **kwargs) -> LROPoller[RenderingSession]:
         """
         :param str session_id: An ID uniquely identifying the rendering session for the given account. The ID is case
             sensitive, can contain any combination of alphanumeric characters including hyphens and underscores, and
@@ -258,7 +258,7 @@ class RemoteRenderingClient:
                          polling_method=polling_method)
 
     @distributed_trace
-    def get_rendering_session(self, session_id: str, **kwargs: Any) -> RenderingSession:
+    def get_rendering_session(self, session_id: str, **kwargs) -> RenderingSession:
         '''
         Returns the properties of a previously generated rendering session.
         :param str session_id: The identifier of the rendering session.
@@ -272,7 +272,7 @@ class RemoteRenderingClient:
             **kwargs)
 
     @distributed_trace
-    def get_rendering_session_poller(self, **kwargs: Any) -> LROPoller[RenderingSession]: # pylint:disable=docstring-keyword-should-match-keyword-only
+    def get_rendering_session_poller(self, **kwargs) -> LROPoller[RenderingSession]: # pylint:disable=docstring-keyword-should-match-keyword-only
         """
         Returns a poller for an existing rendering session by session id or a continuation token retrieved from a
         previous poller.
@@ -315,7 +315,7 @@ class RemoteRenderingClient:
                          polling_method=polling_method)
 
     @distributed_trace
-    def stop_rendering_session(self, session_id: str, **kwargs: Any) -> None:
+    def stop_rendering_session(self, session_id: str, **kwargs) -> None:
         """
         :param str session_id: The identifier of the session to be stopped.
         :return: None
@@ -326,7 +326,7 @@ class RemoteRenderingClient:
             account_id=self._account_id, session_id=session_id, **kwargs)
 
     @distributed_trace
-    def update_rendering_session(self, session_id: str, **kwargs: Any) -> RenderingSession: # pylint:disable=docstring-keyword-should-match-keyword-only
+    def update_rendering_session(self, session_id: str, **kwargs) -> RenderingSession: # pylint:disable=docstring-keyword-should-match-keyword-only
         """
         Updates an already existing rendering session.
         :param str session_id: The identifier of the session to be updated.
@@ -351,7 +351,7 @@ class RemoteRenderingClient:
                                                          **kwargs)
 
     @distributed_trace
-    def list_rendering_sessions(self, **kwargs: Any) -> ItemPaged[RenderingSession]:
+    def list_rendering_sessions(self, **kwargs) -> ItemPaged[RenderingSession]:
         """
         Returns list of rendering sessions in the 'Ready' or 'Starting' state.
         Does not return stopped or failed rendering sessions.
