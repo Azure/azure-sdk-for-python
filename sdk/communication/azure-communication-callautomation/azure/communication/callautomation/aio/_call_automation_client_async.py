@@ -592,7 +592,8 @@ class CallAutomationClient:
             args,
             kwargs.pop("call_locator", None),
             kwargs.pop("server_call_id", None),
-            kwargs.pop("group_call_id", None)
+            kwargs.pop("group_call_id", None),
+            kwargs.pop("room_id", None)
         )
 
         external_storage = build_external_storage(kwargs.pop("recording_storage", None))

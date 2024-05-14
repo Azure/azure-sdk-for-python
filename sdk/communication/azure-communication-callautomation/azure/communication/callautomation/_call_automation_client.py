@@ -25,8 +25,7 @@ from ._generated.models import (
     StartCallRecordingRequest,
     CallIntelligenceOptions,
     CustomCallingContext,
-    ConnectRequest,
-    CallLocator
+    ConnectRequest
 )
 from ._models import (
     CallConnectionProperties,
@@ -49,6 +48,7 @@ if TYPE_CHECKING:
     from ._models  import (
         ServerCallLocator,
         GroupCallLocator,
+        RoomCallLocator,
         MediaStreamingOptions,
         TranscriptionOptions
     )
@@ -171,17 +171,65 @@ class CallAutomationClient:
             **kwargs
         )
 
-    @distributed_trace
+    @overload
     def connect(
-            self,
-            callback_url: str,
-            room_id: str,
-            *,
-            cognitive_services_endpoint: Optional[str] = None,
-            **kwargs
+        self,
+        callback_url: str,
+        server_call_id: str,
+        *,
+        cognitive_services_endpoint: Optional[str] = None,
+        **kwargs
     ) -> CallConnectionProperties:
         """The request payload for creating a connection to a room CallLocator.
 
+        All required parameters must be populated in order to send to server.
+
+        :param callback_url: The call back url where callback events are sent. Required
+        :type callback_url: str
+        :param server_call_id: The server call ID to locate ongoing call.
+        :type server_call_id: str
+        :keyword cognitive_services_endpoint:
+         The identifier of the Cognitive Service resource assigned to this call.
+        :paramtype cognitive_services_endpoint: str or None
+        :return: CallConnectionProperties
+        :rtype: ~azure.communication.callautomation.CallConnectionProperties
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def connect(
+        self,
+        callback_url: str,
+        group_call_id: str,
+        *,
+        cognitive_services_endpoint: Optional[str] = None,
+        **kwargs
+    ) -> CallConnectionProperties:
+        """The request payload for creating a connection to a room CallLocator.
+        All required parameters must be populated in order to send to server.
+
+        :param callback_url: The call back url where callback events are sent. Required
+        :type callback_url: str
+        :param group_call_id: The group call ID to locate ongoing call.
+        :type group_call_id: str
+        :keyword cognitive_services_endpoint:
+         The identifier of the Cognitive Service resource assigned to this call.
+        :paramtype cognitive_services_endpoint: str or None
+        :return: CallConnectionProperties
+        :rtype: ~azure.communication.callautomation.CallConnectionProperties
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def connect(
+        self,
+        callback_url: str,
+        room_id: str,
+        *,
+        cognitive_services_endpoint: Optional[str] = None,
+        **kwargs
+    ) -> CallConnectionProperties:
+        """The request payload for creating a connection to a room CallLocator.
         All required parameters must be populated in order to send to server.
 
         :param callback_url: The call back url where callback events are sent. Required
@@ -196,14 +244,27 @@ class CallAutomationClient:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        call_intelligence_options = CallIntelligenceOptions(
-            cognitive_services_endpoint=cognitive_services_endpoint
-            ) if cognitive_services_endpoint else None
+    @distributed_trace
+    def connect(
+        self,
+        *args: Union['ServerCallLocator', 'GroupCallLocator', 'RoomCallLocator'],
+        **kwargs
+    ) -> CallConnectionProperties:
 
-        call_locator = CallLocator(room_id=room_id, kind="roomCallLocator")
+        call_intelligence_options = CallIntelligenceOptions(
+            cognitive_services_endpoint=kwargs.pop("cognitive_services_endpoint")
+            ) if kwargs.pop("cognitive_services_endpoint") else None
+
+        call_locator = build_call_locator(
+            args,
+            kwargs.pop("call_locator", None),
+            kwargs.pop("server_call_id", None),
+            kwargs.pop("group_call_id", None),
+            kwargs.pop("room_id", None)
+        )
         create_call_request = ConnectRequest(
             call_locator=call_locator,
-            callback_uri=callback_url,
+            callback_uri=kwargs.pop("callback_url", None),
             call_intelligence_options=call_intelligence_options
         )
 
@@ -593,10 +654,61 @@ class CallAutomationClient:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    @overload
+    def start_recording(
+        self,
+        *,
+        room_id: str,
+        recording_state_callback_url: Optional[str] = None,
+        recording_content_type: Optional[Union[str, 'RecordingContent']] = None,
+        recording_channel_type: Optional[Union[str, 'RecordingChannel']] = None,
+        recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
+        audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
+        channel_affinity: Optional[List['ChannelAffinity']] = None,
+        recording_storage: Optional[Union['AzureCommunicationsRecordingStorage',
+                                          'AzureBlobContainerRecordingStorage']] = None,
+        pause_on_start: Optional[bool] = None,
+        **kwargs
+    ) -> RecordingProperties:
+        """Start recording for a ongoing call. Locate the call with call locator.
+
+        :keyword str room_id: The acs room id to locate ongoing call.
+        :keyword recording_state_callback_url: The url to send notifications to.
+        :paramtype recording_state_callback_url: str or None
+        :keyword recording_content_type: The content type of call recording.
+        :paramtype recording_content_type: str or ~azure.communication.callautomation.RecordingContent or None
+        :keyword recording_channel_type: The channel type of call recording.
+        :paramtype recording_channel_type: str or ~azure.communication.callautomation.RecordingChannel or None
+        :keyword recording_format_type: The format type of call recording.
+        :paramtype recording_format_type: str or ~azure.communication.callautomation.RecordingFormat or None
+        :keyword audio_channel_participant_ordering:
+         The sequential order in which audio channels are assigned to participants in the unmixed recording.
+         When 'recordingChannelType' is set to 'unmixed' and `audioChannelParticipantOrdering is not specified,
+         the audio channel to participant mapping will be automatically assigned based on the order in
+         which participant first audio was detected.
+         Channel to participant mapping details can be found in the metadata of the recording.
+        :paramtype audio_channel_participant_ordering:
+         list[~azure.communication.callautomation.CommunicationIdentifier] or None
+        :keyword channel_affinity: The channel affinity of call recording
+         When 'recordingChannelType' is set to 'unmixed', if channelAffinity is not specified,
+         'channel' will be automatically assigned.
+         Channel-Participant mapping details can be found in the metadata of the recording.
+        :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
+        :keyword recording_storage: Defines the kind of external storage. Known values are:
+          ``AzureCommunicationsRecordingStorage`` and ``AzureBlobContainerRecordingStorage``.
+          If no storage option is provided, the default is Azure Communications recording storage.
+        :paramtype recording_storage: AzureCommunicationsRecordingStorage or AzureBlobContainerRecordingStorage or None
+        :keyword pause_on_start: The state of the pause on start option.
+        :paramtype pause_on_start: bool or None
+        :return: RecordingProperties
+        :rtype: ~azure.communication.callautomation.RecordingProperties
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @distributed_trace
     def start_recording(
         self,
-        *args: Union['ServerCallLocator', 'GroupCallLocator'],
+        *args: Union['ServerCallLocator', 'GroupCallLocator', 'RoomCallLocator'],
         **kwargs
     ) -> RecordingProperties:
         # pylint:disable=protected-access
@@ -606,7 +718,8 @@ class CallAutomationClient:
             args,
             kwargs.pop("call_locator", None),
             kwargs.pop("server_call_id", None),
-            kwargs.pop("group_call_id", None)
+            kwargs.pop("group_call_id", None),
+            kwargs.pop("room_id", None)
         )
         external_storage = build_external_storage(kwargs.pop("recording_storage", None))
 
