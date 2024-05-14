@@ -264,9 +264,6 @@ class TestConfigure(unittest.TestCase):
         "azure.monitor.opentelemetry._configure.AzureMonitorTraceExporter",
     )
     @patch(
-        "azure.monitor.opentelemetry._configure.get_tracer_provider",
-    )
-    @patch(
         "azure.monitor.opentelemetry._configure.set_tracer_provider",
     )
     @patch(
@@ -281,7 +278,6 @@ class TestConfigure(unittest.TestCase):
         sampler_mock,
         tp_mock,
         set_tracer_provider_mock,
-        get_tracer_provider_mock,
         trace_exporter_mock,
         bsp_mock,
         azure_core_mock,
@@ -290,7 +286,6 @@ class TestConfigure(unittest.TestCase):
         sampler_mock.return_value = sampler_init_mock
         tp_init_mock = Mock()
         tp_mock.return_value = tp_init_mock
-        get_tracer_provider_mock.return_value = tp_init_mock
         trace_exp_init_mock = Mock()
         trace_exporter_mock.return_value = trace_exp_init_mock
         bsp_init_mock = Mock()
@@ -313,7 +308,6 @@ class TestConfigure(unittest.TestCase):
             resource=TEST_RESOURCE
         )
         set_tracer_provider_mock.assert_called_once_with(tp_init_mock)
-        get_tracer_provider_mock.assert_called()
         trace_exporter_mock.assert_called_once_with(**configurations)
         bsp_mock.assert_called_once_with(trace_exp_init_mock)
         self.assertEqual(tp_init_mock.add_span_processor.call_count, 2)
@@ -335,9 +329,6 @@ class TestConfigure(unittest.TestCase):
         "azure.monitor.opentelemetry._configure.AzureMonitorLogExporter",
     )
     @patch(
-        "azure.monitor.opentelemetry._configure.get_logger_provider",
-    )
-    @patch(
         "azure.monitor.opentelemetry._configure.set_logger_provider",
     )
     @patch(
@@ -348,7 +339,6 @@ class TestConfigure(unittest.TestCase):
         self,
         lp_mock,
         set_logger_provider_mock,
-        get_logger_provider_mock,
         log_exporter_mock,
         blrp_mock,
         logging_handler_mock,
@@ -356,7 +346,6 @@ class TestConfigure(unittest.TestCase):
     ):
         lp_init_mock = Mock()
         lp_mock.return_value = lp_init_mock
-        get_logger_provider_mock.return_value = lp_init_mock
         log_exp_init_mock = Mock()
         log_exporter_mock.return_value = log_exp_init_mock
         blrp_init_mock = Mock()
@@ -375,7 +364,6 @@ class TestConfigure(unittest.TestCase):
 
         lp_mock.assert_called_once_with(resource=TEST_RESOURCE)
         set_logger_provider_mock.assert_called_once_with(lp_init_mock)
-        get_logger_provider_mock.assert_called()
         log_exporter_mock.assert_called_once_with(**configurations)
         blrp_mock.assert_called_once_with(
             log_exp_init_mock,
