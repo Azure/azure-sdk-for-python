@@ -21,6 +21,15 @@ class TestModelAsyncClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy_async
+    async def test_async_get_model_info_error_free(self, **kwargs):
+        client = self._create_async_chat_client(**kwargs)
+        result = await client.get_model_info()
+        self._print_model_info_result(result)
+        self._validate_model_info_result(result)
+        await client.close()
+
+    @ServicePreparerChatCompletions()
+    @recorded_by_proxy_async
     async def test_async_chat_completions_error_free(self, **kwargs):
         messages = [
             sdk.models.SystemMessage(content="You are a helpful assistant answering questions regarding length units."),

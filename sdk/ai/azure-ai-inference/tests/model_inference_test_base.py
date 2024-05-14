@@ -95,6 +95,23 @@ class ModelClientTestBase(AzureRecordedTestCase):
         return sdk.EmbeddingsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
 
     @staticmethod
+    def _print_model_info_result(model_info: sdk.models.ModelInfo):
+        if ModelClientTestBase.PRINT_RESULT:
+            print(" Model info result:")
+            print("\tmodel_name: {}".format(model_info.model_name))
+            print("\tmodel_type: {}".format(model_info.model_type))
+            print("\tmodel_provider_name: {}".format(model_info.model_provider_name))
+
+    @staticmethod
+    def _validate_model_info_result(model_info: sdk.models.ModelInfo):
+        assert model_info.model_name is not None
+        assert len(model_info.model_name) > 0
+        assert model_info.model_provider_name is not None
+        assert len(model_info.model_provider_name) > 0
+        assert model_info.model_type is not None
+        assert model_info.model_type == "completion" # This should be sdk.models.ModelType.CHAT_COMPLETION once the model is fixed
+
+    @staticmethod
     def _validate_chat_completions_result(result: sdk.models.ChatCompletions, contains: List[str]):
         assert any(item in result.choices[0].message.content for item in contains)
         assert result.choices[0].message.role == sdk.models.ChatRole.ASSISTANT

@@ -21,6 +21,15 @@ class TestModelClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
+    def test_get_model_info_error_free(self, **kwargs):
+        client = self._create_chat_client(**kwargs)
+        result = client.get_model_info()
+        self._print_model_info_result(result)
+        self._validate_model_info_result(result)
+        client.close()
+
+    @ServicePreparerChatCompletions()
+    @recorded_by_proxy
     def test_chat_completions_error_free(self, **kwargs):
         client = self._create_chat_client(**kwargs)
         result = client.create(messages=[sdk.models.UserMessage(content="How many feet are in a mile?")])
