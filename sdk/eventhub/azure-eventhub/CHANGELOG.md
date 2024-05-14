@@ -1,14 +1,10 @@
 # Release History
 
-## 5.11.8 (Unreleased)
+## 5.11.8 (2024-05-16)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added support for EventHub Emulator
 
 ## 5.11.7 (2024-04-10)
 
