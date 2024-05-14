@@ -5,24 +5,28 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-few-public-methods, too-many-instance-attributes, super-init-not-called, too-many-lines
 
-from urllib.parse import unquote
 from enum import Enum
+from typing import (
+    Any, Dict,
+)
+from urllib.parse import unquote
 
 from azure.core import CaseInsensitiveEnumMeta
-from azure.core.paging import PageIterator
 from azure.core.exceptions import HttpResponseError
+from azure.core.paging import PageIterator
 
-from ._parser import _parse_datetime_from_str
-from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
-from ._shared.models import DictMixin, get_enum_value
+from ._generated.models import AccessPolicy as GenAccessPolicy
+from ._generated.models import CorsRule as GeneratedCorsRule
+from ._generated.models import DirectoryItem
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
-from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import ShareProtocolSettings as GeneratedShareProtocolSettings
 from ._generated.models import ShareSmbSettings as GeneratedShareSmbSettings
 from ._generated.models import SmbMultichannel as GeneratedSmbMultichannel
-from ._generated.models import AccessPolicy as GenAccessPolicy
-from ._generated.models import DirectoryItem
+from ._generated.models import StorageServiceProperties as GeneratedStorageServiceProperties
+from ._parser import _parse_datetime_from_str
+from ._shared.models import DictMixin, get_enum_value
+from ._shared.response_handlers import process_storage_error, return_context_and_deserialized
 
 
 def _wrap_item(item):
@@ -1017,10 +1021,10 @@ class NTFSAttributes(object):
         return parsed
 
 
-def service_properties_deserialize(generated):
+def service_properties_deserialize(generated: GeneratedStorageServiceProperties) -> Dict[str, Any]:
     return {
         'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
         'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
-        'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
-        'protocol': ShareProtocolSettings._from_generated(generated.protocol), # pylint: disable=protected-access
+        'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # type: ignore [union-attr] # pylint: disable=protected-access, line-too-long
+        'protocol': ShareProtocolSettings._from_generated(generated.protocol),  # pylint: disable=protected-access
     }
