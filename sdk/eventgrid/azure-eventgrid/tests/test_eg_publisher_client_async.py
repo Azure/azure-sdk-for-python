@@ -244,7 +244,6 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @EventGridPreparer()
-    @recorded_by_proxy_async
     @pytest.mark.asyncio
     async def test_send_signature_credential(self, eventgrid_topic_key, eventgrid_topic_endpoint):
         expiration_date_utc = dt.datetime.now(UTC()) + timedelta(hours=1)
@@ -319,7 +318,6 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
         with pytest.raises(ValueError, match="Parameter 'self._credential' must not be None."):
             client = EventGridPublisherClient(eventgrid_topic_endpoint, None)
 
-    @pytest.mark.live_test_only
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
