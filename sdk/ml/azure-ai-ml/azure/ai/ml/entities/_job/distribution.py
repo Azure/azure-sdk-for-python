@@ -60,6 +60,9 @@ class DistributionConfiguration(RestTranslatableMixin):
         if obj is None:
             return None
 
+        if isinstance(obj, DistributionConfiguration):
+            return obj
+
         data = obj
         if isinstance(obj, RestDistributionConfiguration):
             data = obj.as_dict()
