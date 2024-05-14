@@ -1,18 +1,12 @@
 # Release History
 
-## 7.12.3 (Unreleased)
+## 7.13.0b1 (2024-05-16)
 
 ### Features Added
 
 - `ServiceBusReceiver` now supports the ability to delete all messages from an entity using the `purge_messages` method.  Callers may optionally request to limit the target messages to those earlier than a given date.
 
 - `ServiceBusReceiver` now supports the ability to delete messages from an entity in batches using the `delete_messages` method.  The messages selected for deletion will be the oldest in the entity, based on the enqueued date and callers may optionally request to limit them to only those earlier than a given date.
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 7.12.2 (2024-05-08)
 
