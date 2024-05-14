@@ -6,7 +6,7 @@
 from logging import getLogger
 from typing import Dict, cast
 
-from opentelemetry._logs import get_logger_provider, set_logger_provider
+from opentelemetry._logs import set_logger_provider
 from opentelemetry.instrumentation.dependencies import (
     get_dist_dependency_conflicts,
 )
@@ -19,9 +19,9 @@ from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace import SpanProcessor, TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
-from opentelemetry.trace import get_tracer_provider, set_tracer_provider
+from opentelemetry.trace import set_tracer_provider
 from pkg_resources import iter_entry_points  # type: ignore
 
 from azure.core.settings import settings
@@ -130,6 +130,7 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
         resource=resource
     )
     for span_processor in configurations[SPAN_PROCESSORS_ARG]: # type: ignore
+        span_processor: SpanProcessor
         tracer_provider.add_span_processor(span_processor)
     if configurations.get(ENABLE_LIVE_METRICS_ARG):
         qsp = _QuickpulseSpanProcessor()
