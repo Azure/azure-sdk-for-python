@@ -13,7 +13,8 @@ from devtools_testutils.sanitizers import (
     add_body_key_sanitizer,
     add_general_regex_sanitizer,
     add_remove_header_sanitizer,
-    is_live
+    is_live,
+    remove_batch_sanitizers,
 )
 
 # Environment variable keys
@@ -57,6 +58,10 @@ def add_sanitizers(test_proxy, environment_variables):
         regex=f"{TEST_ID_PLACEHOLDER}[a-z0-9-]+",
         value=TEST_ID_PLACEHOLDER
     )
+
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3430: $..id
+    remove_batch_sanitizers(["AZSDK3430"])
 
 
 @pytest.fixture(scope="session")
