@@ -98,6 +98,9 @@ parameters:
   - name: Packages
     type: object
     default: []
+  - name: UseFederatedAuth
+    type: boolean
+    default: false
 
 
 extends:
@@ -141,6 +144,7 @@ extends:
                                 TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
                                 TestProxy: ${{ parameters.TestProxy }}
                                 ToxTestEnv: ${{ parameters.ToxTestEnv }}
+                                UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
                               MatrixConfigs:
                                 # Enumerate platforms and additional platforms based on supported clouds (sparse platform<-->cloud matrix).
                                 - ${{ each config in parameters.MatrixConfigs }}:
@@ -160,6 +164,7 @@ extends:
                                 SubscriptionConfigurations: ${{ cloud.value.SubscriptionConfigurations }}
                                 Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
                                 Cloud: ${{ cloud.key }}
+                                ServiceConnection: ${{ cloud.value.ServiceConnection }}
       - ${{ else }}:
         - ${{ each cloud in parameters.CloudConfig }}:
             - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
@@ -195,6 +200,7 @@ extends:
                               TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
                               TestProxy: ${{ parameters.TestProxy }}
                               ToxTestEnv: ${{ parameters.ToxTestEnv }}
+                              UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
                             MatrixConfigs:
                               # Enumerate platforms and additional platforms based on supported clouds (sparse platform<-->cloud matrix).
                               - ${{ each config in parameters.MatrixConfigs }}:
@@ -214,6 +220,7 @@ extends:
                               SubscriptionConfigurations: ${{ cloud.value.SubscriptionConfigurations }}
                               Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
                               Cloud: ${{ cloud.key }}
+                              ServiceConnection: ${{ cloud.value.ServiceConnection }}
       - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
