@@ -20,7 +20,7 @@ from azure.cosmos.partition_key import PartitionKey
 from azure.cosmos._retry_options import RetryOptions
 
 
-# @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosEmulator
 class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
