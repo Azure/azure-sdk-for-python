@@ -130,8 +130,8 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
         resource=resource
     )
     for span_processor in configurations[SPAN_PROCESSORS_ARG]: # type: ignore
-        span_processor: SpanProcessor
-        tracer_provider.add_span_processor(span_processor)
+        sp: SpanProcessor = span_processor
+        tracer_provider.add_span_processor(sp)
     if configurations.get(ENABLE_LIVE_METRICS_ARG):
         qsp = _QuickpulseSpanProcessor()
         tracer_provider.add_span_processor(qsp)
