@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any
 from azure.core.credentials import AccessToken, TokenCredential
 
 from azure.mixedreality.authentication import MixedRealityStsClient
@@ -14,7 +13,7 @@ def get_mixedreality_credential(account_id: str,
                                 account_domain: str,
                                 endpoint_url: str,
                                 credential: TokenCredential,
-                                **kwargs: Any) -> TokenCredential:
+                                **kwargs) -> TokenCredential:
     if isinstance(credential, StaticAccessTokenCredential):
         return credential
 
@@ -39,7 +38,7 @@ class MixedRealityTokenCredential(object):
                  account_domain: str,
                  endpoint_url: str,
                  credential: TokenCredential,
-                 **kwargs: Any) -> None:
+                 **kwargs) -> None:
         self.stsClient = MixedRealityStsClient(
             account_id=account_id,
             account_domain=account_domain,
@@ -47,5 +46,5 @@ class MixedRealityTokenCredential(object):
             credential=credential,
             **kwargs)
 
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint: disable=unused-argument
+    def get_token(self, *scopes: str, **kwargs) -> AccessToken:  # pylint: disable=unused-argument
         return self.stsClient.get_token(**kwargs)

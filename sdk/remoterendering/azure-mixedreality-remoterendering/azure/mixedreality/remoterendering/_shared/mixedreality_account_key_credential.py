@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any
 from datetime import date, datetime
 import time
 
@@ -22,7 +21,7 @@ class MixedRealityAccountKeyCredential(object):
         self.account_id = account_id
         self.account_key = account_key
 
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken: #pylint: disable=unused-argument
+    def get_token(self, *scopes: str, **kwargs) -> AccessToken: #pylint: disable=unused-argument
         token = self.account_id + ":" + self.account_key.key
 
         # No way to know when an account key might expire, so we'll set the

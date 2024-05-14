@@ -102,7 +102,7 @@ class ConversionPollingAsync(RemoteRenderingPollingAsync):
     async def initial_response_from_continuation_token(cls,
                                                        continuation_token: str,
                                                        client: RemoteRenderingRestClient,
-                                                       **kwargs: Any) -> AssetConversion:
+                                                       **kwargs) -> AssetConversion:
 
         version, account_id, conversion_id = base64.b64decode(
             continuation_token.encode('ascii')).decode('ascii').split(":")
@@ -149,7 +149,7 @@ class SessionPollingAsync(RemoteRenderingPollingAsync):
     async def initial_response_from_continuation_token(cls,
                                                        continuation_token: str,
                                                        client: RemoteRenderingRestClient,
-                                                       **kwargs: Any) -> RenderingSession:
+                                                       **kwargs) -> RenderingSession:
 
         version, account_id, session_id = base64.b64decode(
             continuation_token.encode('ascii')).decode('ascii').split(":")

@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any
 from azure.core.credentials import AccessToken
 
 class StaticAccessTokenCredential(object):
@@ -16,5 +15,5 @@ class StaticAccessTokenCredential(object):
     def __init__(self, access_token: AccessToken) -> None:
         self._access_token = access_token
 
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken: #pylint: disable=unused-argument
+    def get_token(self, *scopes: str, **kwargs) -> AccessToken: #pylint: disable=unused-argument
         return self._access_token
