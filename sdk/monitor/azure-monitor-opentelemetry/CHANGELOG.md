@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Add diagnostics for sdk detection and backoff
+    ([#35610](https://github.com/Azure/azure-sdk-for-python/pull/35610))
+
 ### Breaking Changes
 
 ### Bugs Fixed
