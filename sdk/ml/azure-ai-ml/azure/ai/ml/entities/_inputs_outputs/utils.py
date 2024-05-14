@@ -4,6 +4,7 @@
 
 # pylint: disable=protected-access
 # enable protected access for protected helper functions
+# cspell:words globalns, localns
 
 import copy
 from collections import OrderedDict
@@ -29,11 +30,20 @@ SUPPORTED_RETURN_TYPES_PRIMITIVE = list(IOConstants.PRIMITIVE_TYPE_2_STR.keys())
 Annotation: TypeAlias = Union[str, Type, Annotated, None]  # type: ignore
 
 @overload
-def get_type_hints(obj: Callable[..., Any], globalns: Union[Dict[str, Any],None] = None, localns: Union[Dict[str, Any],None] = None) -> Dict[str, Any]:
+def get_type_hints(
+    obj: Callable[..., Any],
+    globalns: Union[Dict[str, Any], None] = None,
+    localns: Union[Dict[str, Any], None] = None,
+) -> Dict[str, Any]:
     ...
 
 @overload
-def get_type_hints(obj: Callable[..., Any], globalns: Union[Dict[str, Any],None] = None, localns: Union[Dict[str, Any],None] = None, include_extras: bool = False,) -> Dict[str, Any]:
+def get_type_hints(
+    obj: Callable[..., Any],
+    globalns: Union[Dict[str, Any], None] = None,
+    localns: Union[Dict[str, Any], None] = None,
+    include_extras: bool = False,
+) -> Dict[str, Any]:
     ...
 
 def get_type_hints(*args, **kwargs):
