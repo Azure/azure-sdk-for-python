@@ -64,6 +64,18 @@ def _format_url(container_name: Union[bytes, str], hostname: str, scheme: str, q
         container_name = container_name.encode('UTF-8')
     return f"{scheme}://{hostname}/{quote(container_name)}{query_str}"
 
+def _get_blob_name(blob):
+    """Return the blob name.
+    :param blob: A blob string or BlobProperties
+    :paramtype blob: str or BlobProperties
+    :returns: The name of the blob.
+    :rtype: str
+    """
+    try:
+        return blob.get('name')
+    except AttributeError:
+        return blob
+
 # This code is a copy from _generated.
 # Once Autorest is able to provide request preparation this code should be removed.
 def _generate_delete_blobs_subrequest_options(
@@ -212,39 +224,38 @@ def _generate_delete_blobs_options(
 
     reqs = []
     for blob in blobs:
-        if isinstance(blob, BlobProperties):
-            blob_name = blob.get('name')
-            options = _generic_delete_blob_options(  # pylint: disable=protected-access
-                snapshot=blob.get('snapshot'),
-                version_id=blob.get('version_id'),
-                delete_snapshots=delete_snapshots or blob.get('delete_snapshots'),
-                lease=blob.get('lease_id'),
-                if_modified_since=if_modified_since or blob.get('if_modified_since'),
-                if_unmodified_since=if_unmodified_since or blob.get('if_unmodified_since'),
-                etag=blob.get('etag'),
-                if_tags_match_condition=if_tags_match_condition or blob.get('if_tags_match_condition'),
-                match_condition=blob.get('match_condition') or MatchConditions.IfNotModified if blob.get('etag')
-                else None,
-                timeout=blob.get('timeout'),
-            )
-        else:
-            blob_name = blob
-            options = _generic_delete_blob_options(  # pylint: disable=protected-access
-                delete_snapshots=delete_snapshots,
-                if_modified_since=if_modified_since,
-                if_unmodified_since=if_unmodified_since,
-                if_tags_match_condition=if_tags_match_condition
-            )
+            blob_name = _get_blob_name(blob)
+            if not isinstance(blob, str):
+                options = _generic_delete_blob_options(  # pylint: disable=protected-access
+                    snapshot=blob.get('snapshot'),
+                    version_id=blob.get('version_id'),
+                    delete_snapshots=delete_snapshots or blob.get('delete_snapshots'),
+                    lease=blob.get('lease_id'),
+                    if_modified_since=if_modified_since or blob.get('if_modified_since'),
+                    if_unmodified_since=if_unmodified_since or blob.get('if_unmodified_since'),
+                    etag=blob.get('etag'),
+                    if_tags_match_condition=if_tags_match_condition or blob.get('if_tags_match_condition'),
+                    match_condition=blob.get('match_condition') or MatchConditions.IfNotModified if blob.get('etag')
+                    else None,
+                    timeout=blob.get('timeout'),
+                )
+            else:
+                options = _generic_delete_blob_options(  # pylint: disable=protected-access
+                    delete_snapshots=delete_snapshots,
+                    if_modified_since=if_modified_since,
+                    if_unmodified_since=if_unmodified_since,
+                    if_tags_match_condition=if_tags_match_condition
+                )
 
-        query_parameters, header_parameters = _generate_delete_blobs_subrequest_options(client, **options)
+            query_parameters, header_parameters = _generate_delete_blobs_subrequest_options(client, **options)
 
-        req = HttpRequest(
-            "DELETE",
-            f"/{quote(container_name)}/{quote(blob_name, safe='/~')}{query_str}",
-            headers=header_parameters
-        )
-        req.format_parameters(query_parameters)
-        reqs.append(req)
+            req = HttpRequest(
+                "DELETE",
+                f"/{quote(container_name)}/{quote(blob_name, safe='/~')}{query_str}",
+                headers=header_parameters
+            )
+            req.format_parameters(query_parameters)
+            reqs.append(req)
 
     return reqs, kwargs
 
