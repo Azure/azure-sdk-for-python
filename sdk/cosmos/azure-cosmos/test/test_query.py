@@ -19,7 +19,7 @@ from azure.cosmos.documents import _DistinctType
 from azure.cosmos.partition_key import PartitionKey
 
 
-@pytest.mark.cosmosEmulator
+# @pytest.mark.cosmosEmulator
 class TestQuery(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
