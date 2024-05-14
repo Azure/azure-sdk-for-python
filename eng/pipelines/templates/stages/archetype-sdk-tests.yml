@@ -58,6 +58,7 @@ parameters:
     default:
       Public:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+        ServiceConnection: azure-sdk-tests
       Preview:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
       Canary:
