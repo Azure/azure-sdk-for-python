@@ -59,37 +59,38 @@ async def dev_box_action_async():
     # Build a client through AAD
     client = DevCenterClient(endpoint, credential=DefaultAzureCredential())
 
-    # List Dev Boxes
-    dev_boxes = []
-    async for dev_box in client.list_all_dev_boxes_by_user("me"):
-        dev_boxes.append(dev_box)
-    if dev_boxes:
-        print("List of dev boxes: ")
-        for dev_box in dev_boxes:
-            print(f"{dev_box.name}")
+    async with client:
+        # List Dev Boxes
+        dev_boxes = []
+        async for dev_box in client.list_all_dev_boxes_by_user("me"):
+            dev_boxes.append(dev_box)
+        if dev_boxes:
+            print("List of dev boxes: ")
+            for dev_box in dev_boxes:
+                print(f"{dev_box.name}")
 
-        # Select first dev box in the list
-        target_dev_box = dev_boxes[0]
-    else:
-        raise ValueError("Missing Dev Box - please create one before running the example.")
+            # Select first dev box in the list
+            target_dev_box = dev_boxes[0]
+        else:
+            raise ValueError("Missing Dev Box - please create one before running the example.")
 
-    # Get the schedule default action. This action should exist for dev boxes created with auto-stop enabled
-    action = await client.get_dev_box_action(target_dev_box.project_name, "me", target_dev_box.name, "schedule-default")
-    next_action_time = action.next.scheduled_time
-    print(f"\nAction {action.Name} is schedule to {action.ActionType} at {next_action_time}.")
+        # Get the schedule default action. This action should exist for dev boxes created with auto-stop enabled
+        action = await client.get_dev_box_action(target_dev_box.project_name, "me", target_dev_box.name, "schedule-default")
+        next_action_time = action.next.scheduled_time
+        print(f"\nAction {action.Name} is schedule to {action.ActionType} at {next_action_time}.")
 
-    # Delay the action in 1hr
-    delay_until = next_action_time + timedelta(hours=1)
-    delayed_action = await client.delay_dev_box_action(
-        target_dev_box.project_name, "me", target_dev_box.name, action.name, delay_until=delay_until
-    )
-    print(
-        f"\nAction {delayed_action.Name} has been delayed and is now schedule to {delayed_action.ActionType} at {delayed_action.NextAction.ScheduledTime}."
-    )
+        # Delay the action in 1hr
+        delay_until = next_action_time + timedelta(hours=1)
+        delayed_action = await client.delay_dev_box_action(
+            target_dev_box.project_name, "me", target_dev_box.name, action.name, delay_until=delay_until
+        )
+        print(
+            f"\nAction {delayed_action.Name} has been delayed and is now schedule to {delayed_action.ActionType} at {delayed_action.NextAction.ScheduledTime}."
+        )
 
-    # Skip the default schedule action
-    await client.skip_dev_box_action(target_dev_box.project_name, "me", target_dev_box.name, "schedule-default")
-    print(f"\nThe scheduled auto-stop action in dev box {target_dev_box.name} has been skipped")
+        # Skip the default schedule action
+        await client.skip_dev_box_action(target_dev_box.project_name, "me", target_dev_box.name, "schedule-default")
+        print(f"\nThe scheduled auto-stop action in dev box {target_dev_box.name} has been skipped")
 
 async def main():
     await dev_box_action_async()

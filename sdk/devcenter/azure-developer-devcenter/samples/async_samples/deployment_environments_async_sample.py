@@ -48,7 +48,7 @@ from azure.identity import DefaultAzureCredential
 
 
 async def environment_create_and_delete_async():
-    # [START environment_create_and_delete]
+    # [START environment_create_and_delete_async]
     # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
     # DEVCENTER_ENDPOINT, AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
     try:
@@ -59,86 +59,87 @@ async def environment_create_and_delete_async():
     # Build a client through AAD
     client = DevCenterClient(endpoint, credential=DefaultAzureCredential())
 
-    # List available Projects
-    projects = []
-    async for project in client.list_projects():
-        projects.append(project)
-    if projects:
-        print("\nList of projects: ")
-        for project in projects:
-            print(f"{project.name}")
+    async with client:
+        # List available Projects
+        projects = []
+        async for project in client.list_projects():
+            projects.append(project)
+        if projects:
+            print("\nList of projects: ")
+            for project in projects:
+                print(f"{project.name}")
 
-        # Select first project in the list
-        target_project_name = projects[0].name
-    else:
-        raise ValueError("Missing Project - please create one before running the example")
+            # Select first project in the list
+            target_project_name = projects[0].name
+        else:
+            raise ValueError("Missing Project - please create one before running the example")
 
-    # List available Catalogs
-    catalogs = []
-    async for catalog in client.list_catalogs(target_project_name):
-        catalogs.append(catalog)
-    if catalogs:
-        print("\nList of catalogs: ")
-        for catalog in catalogs:
-            print(f"{catalog.name}")
+        # List available Catalogs
+        catalogs = []
+        async for catalog in client.list_catalogs(target_project_name):
+            catalogs.append(catalog)
+        if catalogs:
+            print("\nList of catalogs: ")
+            for catalog in catalogs:
+                print(f"{catalog.name}")
 
-        # Select first catalog in the list
-        target_catalog_name = catalogs[0].name
-    else:
-        raise ValueError("Missing Catalog - please create one before running the example")
+            # Select first catalog in the list
+            target_catalog_name = catalogs[0].name
+        else:
+            raise ValueError("Missing Catalog - please create one before running the example")
 
-    # List available Environment Definitions
-    environment_definitions = []
-    async for environment_definition in client.list_environment_definitions_by_catalog(target_project_name, target_catalog_name):
-        environment_definitions.append(environment_definition)
-    if environment_definitions:
-        print("\nList of environment definitions: ")
-        for environment_definition in environment_definitions:
-            print(f"{environment_definition.name}")
+        # List available Environment Definitions
+        environment_definitions = []
+        async for environment_definition in client.list_environment_definitions_by_catalog(target_project_name, target_catalog_name):
+            environment_definitions.append(environment_definition)
+        if environment_definitions:
+            print("\nList of environment definitions: ")
+            for environment_definition in environment_definitions:
+                print(f"{environment_definition.name}")
 
-        # Select first environment definition in the list
-        target_environment_definition_name = environment_definitions[0].name
-    else:
-        raise ValueError("Missing Environment Definition - please create one before running the example")
+            # Select first environment definition in the list
+            target_environment_definition_name = environment_definitions[0].name
+        else:
+            raise ValueError("Missing Environment Definition - please create one before running the example")
 
-    # List available Environment Types
-    environment_types = []
-    async for environment_type in client.list_environment_types(target_project_name):
-        environment_types.append(environment_type)
-    if environment_types:
-        print("\nList of environment types: ")
-        for environment_type in environment_types:
-            print(f"{environment_type.name}")
+        # List available Environment Types
+        environment_types = []
+        async for environment_type in client.list_environment_types(target_project_name):
+            environment_types.append(environment_type)
+        if environment_types:
+            print("\nList of environment types: ")
+            for environment_type in environment_types:
+                print(f"{environment_type.name}")
 
-        # Select first environment type in the list
-        target_environment_type_name = environment_types[0].name
-    else:
-        raise ValueError("Missing Environment Type - please create one before running the example")
+            # Select first environment type in the list
+            target_environment_type_name = environment_types[0].name
+        else:
+            raise ValueError("Missing Environment Type - please create one before running the example")
 
-    print(
-        f"\nStarting to create environment in project {target_project_name} with catalog {target_catalog_name}, environment definition {target_environment_definition_name}, and environment type {target_environment_type_name}."
-    )
+        print(
+            f"\nStarting to create environment in project {target_project_name} with catalog {target_catalog_name}, environment definition {target_environment_definition_name}, and environment type {target_environment_type_name}."
+        )
 
-    # Stand up a new environment
-    environment_name = "MyDevEnv"
-    environment = {
-        "environmentType": target_environment_type_name,
-        "catalogName": target_catalog_name,
-        "environmentDefinitionName": target_environment_definition_name,
-    }
+        # Stand up a new environment
+        environment_name = "MyDevEnv"
+        environment = {
+            "environmentType": target_environment_type_name,
+            "catalogName": target_catalog_name,
+            "environmentDefinitionName": target_environment_definition_name,
+        }
 
-    environment_poller = await client.begin_create_or_update_environment(
-        target_project_name, "me", environment_name, environment
-    )
-    environment_result = await environment_poller.result()
-    print(f"Provisioned environment with status {environment_result.provisioning_state}.")
+        environment_poller = await client.begin_create_or_update_environment(
+            target_project_name, "me", environment_name, environment
+        )
+        environment_result = await environment_poller.result()
+        print(f"Provisioned environment with status {environment_result.provisioning_state}.")
 
-    # Tear down the environment when finished
-    print(f"Starting to delete environment.")
-    delete_poller = await client.begin_delete_environment(target_project_name, "me", environment_name)
-    delete_result = await delete_poller.result()
-    print(f"Completed deletion for the environment with status {delete_result.status}")
-    # [END environment_create_and_delete]
+        # Tear down the environment when finished
+        print(f"Starting to delete environment.")
+        delete_poller = await client.begin_delete_environment(target_project_name, "me", environment_name)
+        delete_result = await delete_poller.result()
+        print(f"Completed deletion for the environment with status {delete_result.status}")
+    # [END environment_create_and_delete_async]
 
 async def main():
     await environment_create_and_delete_async()
