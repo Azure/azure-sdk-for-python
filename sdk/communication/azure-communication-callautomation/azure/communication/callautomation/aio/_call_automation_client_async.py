@@ -20,7 +20,9 @@ from .._generated.models import (
     RejectCallRequest,
     StartCallRecordingRequest,
     CallIntelligenceOptions,
-    CustomCallingContext
+    CustomCallingContext,
+    ConnectRequest,
+    CallLocator
 )
 from .._models import (
     CallConnectionProperties,
@@ -154,6 +156,51 @@ class CallAutomationClient:
             call_connection_id=call_connection_id,
             **kwargs
         )
+
+    @distributed_trace_async
+    async def connect(
+            self,
+            callback_url: str,
+            room_id: str,
+            *,
+            cognitive_services_endpoint: Optional[str] = None,
+            **kwargs
+    ) -> CallConnectionProperties:
+        """The request payload for creating a connection to a room CallLocator.
+
+        All required parameters must be populated in order to send to server.
+
+        :param callback_url: The call back url where callback events are sent. Required
+        :type callback_url: str
+        :param room_id: Acs room id. Required
+        :type room_id: str
+        :keyword cognitive_services_endpoint:
+         The identifier of the Cognitive Service resource assigned to this call.
+        :paramtype cognitive_services_endpoint: str or None
+        :return: CallConnectionProperties
+        :rtype: ~azure.communication.callautomation.CallConnectionProperties
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        call_intelligence_options = CallIntelligenceOptions(
+            cognitive_services_endpoint=cognitive_services_endpoint
+            ) if cognitive_services_endpoint else None
+
+        call_locator = CallLocator(room_id=room_id, kind="roomCallLocator")
+        connect_call_request = ConnectRequest(
+            call_locator=call_locator,
+            callback_uri=callback_url,
+            call_intelligence_options=call_intelligence_options
+        )
+
+        process_repeatability_first_sent(kwargs)
+
+        result = await self._client.connect(
+            connect_call_request=connect_call_request,
+            **kwargs
+        )
+
+        return CallConnectionProperties._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def create_call(
