@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 class AnalysisCreate(_serialization.Model):
     """The request body for creating an analysis for an NGINX configuration.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar config: Required.
     :vartype config: ~azure.mgmt.nginx.models.AnalysisCreateConfig
@@ -94,7 +94,7 @@ class AnalysisCreateConfig(_serialization.Model):
 class AnalysisDiagnostic(_serialization.Model):
     """An error object found during the analysis of an NGINX configuration.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Unique identifier for the error.
     :vartype id: str
@@ -172,7 +172,7 @@ class AnalysisDiagnostic(_serialization.Model):
 class AnalysisResult(_serialization.Model):
     """The response body for an analysis request. Contains the status of the analysis and any errors.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar status: The status of the analysis. Required.
     :vartype status: str
@@ -224,7 +224,7 @@ class AnalysisResultData(_serialization.Model):
 class AutoUpgradeProfile(_serialization.Model):
     """Autoupgrade settings of a deployment.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar upgrade_channel: Channel used for autoupgrade. Required.
     :vartype upgrade_channel: str
@@ -1444,7 +1444,7 @@ class ResourceProviderDefaultErrorResponse(_serialization.Model):
 class ResourceSku(_serialization.Model):
     """ResourceSku.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the SKU. Required.
     :vartype name: str
@@ -1470,7 +1470,7 @@ class ResourceSku(_serialization.Model):
 class ScaleProfile(_serialization.Model):
     """The autoscale profile.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Required.
     :vartype name: str
@@ -1503,7 +1503,7 @@ class ScaleProfile(_serialization.Model):
 class ScaleProfileCapacity(_serialization.Model):
     """The capacity parameters of the profile.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar min: The minimum number of NCUs the deployment can be autoscaled to. Required.
     :vartype min: int
