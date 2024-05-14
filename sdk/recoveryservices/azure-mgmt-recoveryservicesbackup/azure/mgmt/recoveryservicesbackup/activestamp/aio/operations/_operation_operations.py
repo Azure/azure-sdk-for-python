@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -75,7 +75,6 @@ class OperationOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ValidateOperationsResponse or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ValidateOperationsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -86,7 +85,7 @@ class OperationOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -99,11 +98,10 @@ class OperationOperations:
          present. Required.
         :type resource_group_name: str
         :param parameters: resource validate operation request. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ValidateOperationsResponse or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ValidateOperationsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -114,7 +112,7 @@ class OperationOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Union[_models.ValidateOperationRequestResource, IO],
+        parameters: Union[_models.ValidateOperationRequestResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.ValidateOperationsResponse:
         """Validate operation for specified backed up item. This is a synchronous operation.
@@ -125,13 +123,10 @@ class OperationOperations:
          present. Required.
         :type resource_group_name: str
         :param parameters: resource validate operation request. Is either a
-         ValidateOperationRequestResource type or a IO type. Required.
+         ValidateOperationRequestResource type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.recoveryservicesbackup.activestamp.models.ValidateOperationRequestResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.ValidateOperationRequestResource or
+         IO[bytes]
         :return: ValidateOperationsResponse or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ValidateOperationsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -159,7 +154,7 @@ class OperationOperations:
         else:
             _json = self._serialize.body(parameters, "ValidateOperationRequestResource")
 
-        request = build_validate_request(
+        _request = build_validate_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
@@ -167,16 +162,15 @@ class OperationOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.validate.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -188,10 +182,6 @@ class OperationOperations:
         deserialized = self._deserialize("ValidateOperationsResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    validate.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupValidateOperation"
-    }
+        return deserialized  # type: ignore

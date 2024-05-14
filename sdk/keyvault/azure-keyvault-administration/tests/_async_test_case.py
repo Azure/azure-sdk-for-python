@@ -30,7 +30,13 @@ class BaseClientPreparer(AzureRecordedTestCase):
             self.container_uri = container_playback_uri
             self.sas_token = playback_sas_token
 
-        self._set_mgmt_settings_real_values()
+        use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH", "false")
+        use_cli = os.environ.get("AZURE_TEST_USE_CLI_AUTH", "false")
+        use_vscode = os.environ.get("AZURE_TEST_USE_VSCODE_AUTH", "false")
+        use_azd = os.environ.get("AZURE_TEST_USE_AZD_AUTH", "false")
+        # Only set service principal credentials if user-based auth is not requested
+        if use_pwsh == use_cli == use_vscode == use_azd == "false":
+            self._set_mgmt_settings_real_values()
     
     def _skip_if_not_configured(self, api_version, **kwargs):
         if self.is_live and api_version != DEFAULT_VERSION:

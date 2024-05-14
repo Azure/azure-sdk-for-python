@@ -31,7 +31,7 @@ import sys
 
 from dotenv import load_dotenv
 
-from devtools_testutils import test_proxy, add_general_regex_sanitizer
+from devtools_testutils import test_proxy, add_general_regex_sanitizer, remove_batch_sanitizers
 from devtools_testutils import add_header_regex_sanitizer, add_general_string_sanitizer, add_body_key_sanitizer
 
 # Ignore async tests for Python < 3.5
@@ -54,3 +54,9 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
+
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3430: $..id
+    #  - AZSDK3493: $..name
+    #  - AZSDK2003: Location
+    remove_batch_sanitizers(["AZSDK3430", "AZSDK3493", "AZSDK2003"])

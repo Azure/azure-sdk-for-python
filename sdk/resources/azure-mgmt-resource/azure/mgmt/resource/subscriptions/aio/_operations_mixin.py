@@ -19,7 +19,7 @@ class SubscriptionClientOperationsMixin(object):
 
     async def check_resource_name(
         self,
-        resource_name_definition: Optional[Union[_models.ResourceName, IO]] = None,
+        resource_name_definition: Optional[Union[_models.ResourceName, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.CheckResourceNameResult:
         """Checks resource name validity.
@@ -28,13 +28,9 @@ class SubscriptionClientOperationsMixin(object):
         does not start with a reserved word.
 
         :param resource_name_definition: Resource object with values for resource name and resource
-         type. Is either a ResourceName type or a IO type. Default value is None.
+         type. Is either a ResourceName type or a IO[bytes] type. Default value is None.
         :type resource_name_definition:
-         ~azure.mgmt.resource.subscriptions.v2022_12_01.models.ResourceName or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.resource.subscriptions.v2022_12_01.models.ResourceName or IO[bytes]
         :return: CheckResourceNameResult or the result of cls(response)
         :rtype: ~azure.mgmt.resource.subscriptions.v2022_12_01.models.CheckResourceNameResult
         :raises ~azure.core.exceptions.HttpResponseError:

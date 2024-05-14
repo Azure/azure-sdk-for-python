@@ -162,7 +162,7 @@ class ResourceLink(_serialization.Model):
 class ResourceLinkFilter(_serialization.Model):
     """Resource link filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_id: The ID of the target resource. Required.
     :vartype target_id: str
@@ -190,7 +190,7 @@ class ResourceLinkProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source_id: The fully qualified ID of the source resource in the link.
     :vartype source_id: str
@@ -229,7 +229,7 @@ class ResourceLinkResult(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: An array of resource links. Required.
     :vartype value: list[~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink]

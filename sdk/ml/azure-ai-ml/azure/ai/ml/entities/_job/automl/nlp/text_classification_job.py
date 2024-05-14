@@ -185,9 +185,9 @@ class TextClassificationJob(AutoMLNLPJob):
             training_parameters=training_parameters,
             search_space=cls._get_search_space_from_str(task_details.search_space),
             featurization=featurization,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(properties.identity)
-            if properties.identity
-            else None,
+            identity=(
+                _BaseJobIdentityConfiguration._from_rest_object(properties.identity) if properties.identity else None
+            ),
             queue_settings=properties.queue_settings,
         )
 

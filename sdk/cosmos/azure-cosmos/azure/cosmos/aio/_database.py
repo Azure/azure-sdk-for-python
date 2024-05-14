@@ -224,7 +224,7 @@ class DatabaseProxy(object):
                 :caption: Create a container with specific settings; in this case, a custom partition key:
                 :name: create_container_with_settings
         """
-        definition: Dict[str, Any] = dict(id=id)
+        definition: Dict[str, Any] = {"id": id}
         if partition_key is not None:
             definition["partitionKey"] = partition_key
         if indexing_policy is not None:
@@ -426,7 +426,7 @@ class DatabaseProxy(object):
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List the properties for containers in the current database.
 
-        :keyword Union[str, Dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
+        :param str query: The Azure Cosmos DB SQL query to execute.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
         :paramtype parameters: Optional[List[Dict[str, Any]]]
@@ -449,7 +449,7 @@ class DatabaseProxy(object):
 
         result = self.client_connection.QueryContainers(
             database_link=self.database_link,
-            query=query if parameters is None else dict(query=query, parameters=parameters),
+            query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,
             **kwargs
         )
@@ -700,7 +700,7 @@ class DatabaseProxy(object):
 
         result = self.client_connection.QueryUsers(
             database_link=self.database_link,
-            query=query if parameters is None else dict(query=query, parameters=parameters),
+            query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,
             **kwargs
         )

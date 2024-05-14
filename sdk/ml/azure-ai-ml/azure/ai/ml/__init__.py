@@ -21,21 +21,24 @@ from .entities._load_functions import (
     load_batch_endpoint,
     load_component,
     load_compute,
+    load_connection,
     load_data,
     load_datastore,
     load_environment,
     load_feature_set,
     load_feature_store,
     load_feature_store_entity,
+    load_index,
     load_job,
+    load_marketplace_subscription,
     load_model,
     load_model_package,
     load_online_deployment,
     load_online_endpoint,
     load_registry,
+    load_serverless_endpoint,
     load_workspace,
     load_workspace_connection,
-    load_workspace_hub,
 )
 
 module_logger = logging.getLogger(__name__)
@@ -61,6 +64,7 @@ __all__ = [
     "load_feature_set",
     "load_feature_store",
     "load_feature_store_entity",
+    "load_index",
     "load_model",
     "load_environment",
     "load_job",
@@ -68,9 +72,11 @@ __all__ = [
     "load_online_endpoint",
     "load_workspace",
     "load_registry",
+    "load_connection",
     "load_workspace_connection",
-    "load_workspace_hub",
     "load_model_package",
+    "load_marketplace_subscription",
+    "load_serverless_endpoint",
 ]
 
 __version__ = VERSION

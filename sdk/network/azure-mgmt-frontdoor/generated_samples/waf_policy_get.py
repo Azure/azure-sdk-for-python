@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.frontdoor import FrontDoorManagementClient
 
 """
@@ -36,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/frontdoor/resource-manager/Microsoft.Network/stable/2022-05-01/examples/WafPolicyGet.json
+# x-ms-original-file: specification/frontdoor/resource-manager/Microsoft.Network/stable/2024-02-01/examples/WafPolicyGet.json
 if __name__ == "__main__":
     main()

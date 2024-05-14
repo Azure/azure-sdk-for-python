@@ -7,6 +7,7 @@ import functools
 import os
 from typing import Any, Optional
 
+from azure.ai.ml.exceptions import MlException
 from azure.core.pipeline.transport import HttpRequest
 
 from .._internal.managed_identity_base import ManagedIdentityBase
@@ -37,14 +38,16 @@ def _get_client_args(**kwargs: Any) -> Optional[dict]:
             if env_key in kwargs:
                 os.environ[env_key] = kwargs[env_key]
             else:
-                raise Exception("Unable to initialize AzureMLHoboSparkOBOCredential due to invalid arguments")
+                msg = "Unable to initialize AzureMLHoboSparkOBOCredential due to invalid arguments"
+                raise MlException(message=msg, no_personal_data_message=msg)
     else:
         from pyspark.sql import SparkSession  # cspell:disable-line # pylint: disable=import-error
 
         try:
             spark = SparkSession.builder.getOrCreate()
         except Exception as e:
-            raise Exception("Fail to get spark session, please check if spark environment is set up.") from e
+            msg = "Fail to get spark session, please check if spark environment is set up."
+            raise MlException(message=msg, no_personal_data_message=msg) from e
 
         spark_conf = spark.sparkContext.getConf()
         spark_conf_vars = {

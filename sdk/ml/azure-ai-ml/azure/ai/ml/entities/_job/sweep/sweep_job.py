@@ -228,15 +228,19 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         if self.trial is not None:
             trial_component = TrialComponent(
                 code_id=self.trial.code,
-                distribution=self.trial.distribution._to_rest_object()
-                if self.trial.distribution and not isinstance(self.trial.distribution, Dict)
-                else None,
+                distribution=(
+                    self.trial.distribution._to_rest_object()
+                    if self.trial.distribution and not isinstance(self.trial.distribution, Dict)
+                    else None
+                ),
                 environment_id=self.trial.environment,
                 command=self.trial.command,
                 environment_variables=self.trial.environment_variables,
-                resources=self.trial.resources._to_rest_object()
-                if self.trial.resources and not isinstance(self.trial.resources, Dict)
-                else None,
+                resources=(
+                    self.trial.resources._to_rest_object()
+                    if self.trial.resources and not isinstance(self.trial.resources, Dict)
+                    else None
+                ),
             )
 
         sweep_job = RestSweepJob(
@@ -246,9 +250,11 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             search_space=search_space,
             sampling_algorithm=self._get_rest_sampling_algorithm() if self.sampling_algorithm else None,
             limits=self.limits._to_rest_object() if self.limits else None,
-            early_termination=self.early_termination._to_rest_object()
-            if self.early_termination and not isinstance(self.early_termination, str)
-            else None,
+            early_termination=(
+                self.early_termination._to_rest_object()
+                if self.early_termination and not isinstance(self.early_termination, str)
+                else None
+            ),
             properties=self.properties,
             compute_id=self.compute,
             objective=self.objective._to_rest_object() if self.objective else None,
@@ -258,9 +264,9 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             outputs=to_rest_data_outputs(self.outputs),
             identity=self.identity._to_job_rest_object() if self.identity else None,
             queue_settings=self.queue_settings._to_rest_object() if self.queue_settings else None,
-            resources=self.resources._to_rest_object()
-            if self.resources and not isinstance(self.resources, dict)
-            else None,
+            resources=(
+                self.resources._to_rest_object() if self.resources and not isinstance(self.resources, dict) else None
+            ),
         )
         sweep_job_resource = JobBase(properties=sweep_job)
         sweep_job_resource.name = self.name
@@ -320,9 +326,9 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             objective=properties.objective,
             inputs=from_rest_inputs_to_dataset_literal(properties.inputs),
             outputs=from_rest_data_outputs(properties.outputs),
-            identity=_BaseJobIdentityConfiguration._from_rest_object(properties.identity)
-            if properties.identity
-            else None,
+            identity=(
+                _BaseJobIdentityConfiguration._from_rest_object(properties.identity) if properties.identity else None
+            ),
             queue_settings=properties.queue_settings,
             resources=properties.resources if hasattr(properties, "resources") else None,
         )
