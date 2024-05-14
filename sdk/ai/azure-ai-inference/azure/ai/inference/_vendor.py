@@ -8,7 +8,11 @@
 from abc import ABC
 from typing import TYPE_CHECKING
 
-from ._configuration import ChatCompletionsClientConfiguration, EmbeddingsClientConfiguration
+from ._configuration import (
+    ChatCompletionsClientConfiguration,
+    EmbeddingsClientConfiguration,
+    ImageEmbeddingsClientConfiguration,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -31,5 +35,14 @@ class EmbeddingsClientMixinABC(ABC):
 
     _client: "PipelineClient"
     _config: EmbeddingsClientConfiguration
+    _serialize: "Serializer"
+    _deserialize: "Deserializer"
+
+
+class ImageEmbeddingsClientMixinABC(ABC):
+    """DO NOT use this class. It is for internal typing use only."""
+
+    _client: "PipelineClient"
+    _config: ImageEmbeddingsClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"

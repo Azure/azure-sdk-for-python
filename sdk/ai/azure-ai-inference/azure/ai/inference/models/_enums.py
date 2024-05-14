@@ -74,6 +74,25 @@ class CompletionsFinishReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Completion ended with the model calling a provided tool for output."""
 
 
+class EmbeddingEncodingFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The format of the embeddings result.
+    Returns a 422 error if the model doesn't support the value or parameter.
+    """
+
+    BASE64 = "base64"
+    """Base64"""
+    BINARY = "binary"
+    """Binary"""
+    FLOAT = "float"
+    """Floating point"""
+    INT8 = "int8"
+    """Signed 8-bit integer"""
+    UBINARY = "ubinary"
+    """ubinary"""
+    UINT8 = "uint8"
+    """Unsigned 8-bit integer"""
+
+
 class EmbeddingInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the input types used for embedding search."""
 

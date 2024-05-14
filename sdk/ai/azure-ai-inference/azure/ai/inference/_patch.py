@@ -42,6 +42,7 @@ _SERIALIZER.client_side_validation = False
 
 logger = logging.getLogger(__name__)
 
+
 class ClientGenerator:
     @staticmethod
     def from_endpoint(

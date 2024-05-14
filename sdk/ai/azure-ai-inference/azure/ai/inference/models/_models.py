@@ -598,6 +598,43 @@ class CompletionsUsage(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class EmbeddingInput(_model_base.Model):
+    """Represents an image with optional text.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar image: The input image, in PNG format. Required.
+    :vartype image: str
+    :ivar text: Optional. The text input to feed into the model (like DINO, CLIP).
+     Returns a 422 error if the model doesn't support the value or parameter.
+    :vartype text: str
+    """
+
+    image: str = rest_field()
+    """The input image, in PNG format. Required."""
+    text: Optional[str] = rest_field()
+    """Optional. The text input to feed into the model (like DINO, CLIP).
+     Returns a 422 error if the model doesn't support the value or parameter."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        image: str,
+        text: Optional[str] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class EmbeddingItem(_model_base.Model):
     """Representation of a single embeddings relatedness comparison.
 

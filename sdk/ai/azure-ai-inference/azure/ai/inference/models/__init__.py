@@ -19,6 +19,7 @@ from ._models import ChatCompletionsUpdate
 from ._models import ChatRequestMessage
 from ._models import ChatResponseMessage
 from ._models import CompletionsUsage
+from ._models import EmbeddingInput
 from ._models import EmbeddingItem
 from ._models import EmbeddingsResult
 from ._models import EmbeddingsUsage
@@ -34,6 +35,7 @@ from ._enums import ChatCompletionsResponseFormat
 from ._enums import ChatCompletionsToolSelectionPreset
 from ._enums import ChatRole
 from ._enums import CompletionsFinishReason
+from ._enums import EmbeddingEncodingFormat
 from ._enums import EmbeddingInputType
 from ._enums import ModelType
 from ._patch import __all__ as _patch_all
@@ -54,6 +56,7 @@ __all__ = [
     "ChatRequestMessage",
     "ChatResponseMessage",
     "CompletionsUsage",
+    "EmbeddingInput",
     "EmbeddingItem",
     "EmbeddingsResult",
     "EmbeddingsUsage",
@@ -68,6 +71,7 @@ __all__ = [
     "ChatCompletionsToolSelectionPreset",
     "ChatRole",
     "CompletionsFinishReason",
+    "EmbeddingEncodingFormat",
     "EmbeddingInputType",
     "ModelType",
 ]

@@ -31,8 +31,10 @@ from ..._operations._operations import (
     build_chat_completions_get_model_info_request,
     build_embeddings_create_request,
     build_embeddings_get_model_info_request,
+    build_image_embeddings_create_request,
+    build_image_embeddings_get_model_info_request,
 )
-from .._vendor import ChatCompletionsClientMixinABC, EmbeddingsClientMixinABC
+from .._vendor import ChatCompletionsClientMixinABC, EmbeddingsClientMixinABC, ImageEmbeddingsClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -779,9 +781,19 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
                 # JSON input template you can fill out and use as your body input.
                 body = {
                     "input": [
-                        "str"  # Input texts to get embeddings for, encoded as a an array of
-                          strings. Required.
+                        "str"  # Input text to embed, encoded as a string or array of tokens.
+                          To embed multiple inputs in a single request, pass an array of strings or
+                          array of token arrays. Required.
                     ],
+                    "dimensions": 0,  # Optional. Optional. The number of dimensions the
+                      resulting output embeddings should have. Passing null causes the model to use its
+                      default value. Returns a 422 error if the model doesn't support the value or
+                      parameter.
+                    "encoding_format": "str",  # Optional. Optional. The number of dimensions the
+                      resulting output embeddings should have. Passing null causes the model to use its
+                      default value. Returns a 422 error if the model doesn't support the value or
+                      parameter. Known values are: "base64", "binary", "float", "int8", "ubinary", and
+                      "uint8".
                     "extras": {
                         "str": "str"  # Optional. Extra parameters (in the form of string
                           key-value pairs) that are not in the standard request payload. They will be
@@ -789,8 +801,9 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
                           service handles these extra parameters depends on the value of the
                           ``extra-parameters`` HTTP request header.
                     },
-                    "input_type": "str"  # Optional. Specifies the input type to use for
-                      embedding search. Known values are: "text", "query", and "document".
+                    "input_type": "str"  # Optional. Optional. The type of the input. Returns a
+                      422 error if the model doesn't support the value or parameter. Known values are:
+                      "text", "query", and "document".
                 }
 
                 # response body for status code(s): 200
@@ -836,13 +849,17 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         extras: Optional[Dict[str, str]] = None,
+        dimensions: Optional[int] = None,
+        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
         **kwargs: Any
     ) -> _models.EmbeddingsResult:
         # pylint: disable=line-too-long
         """Return the embeddings for a given text prompt.
 
-        :keyword input: Input texts to get embeddings for, encoded as a an array of strings. Required.
+        :keyword input: Input text to embed, encoded as a string or array of tokens.
+         To embed multiple inputs in a single request, pass an array
+         of strings or array of token arrays. Required.
         :paramtype input: list[str]
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
@@ -859,7 +876,20 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
          ``extra-parameters``
          HTTP request header. Default value is None.
         :paramtype extras: dict[str, str]
-        :keyword input_type: Specifies the input type to use for embedding search. Known values are:
+        :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
+         have.
+         Passing null causes the model to use its default value.
+         Returns a 422 error if the model doesn't support the value or parameter. Default value is
+         None.
+        :paramtype dimensions: int
+        :keyword encoding_format: Optional. The number of dimensions the resulting output embeddings
+         should have.
+         Passing null causes the model to use its default value.
+         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+         "base64", "binary", "float", "int8", "ubinary", and "uint8". Default value is None.
+        :paramtype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
+        :keyword input_type: Optional. The type of the input.
+         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
          "text", "query", and "document". Default value is None.
         :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
@@ -976,6 +1006,8 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         input: List[str] = _Unset,
         model_deployment: Optional[str] = None,
         extras: Optional[Dict[str, str]] = None,
+        dimensions: Optional[int] = None,
+        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
         **kwargs: Any
     ) -> _models.EmbeddingsResult:
@@ -984,7 +1016,9 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword input: Input texts to get embeddings for, encoded as a an array of strings. Required.
+        :keyword input: Input text to embed, encoded as a string or array of tokens.
+         To embed multiple inputs in a single request, pass an array
+         of strings or array of token arrays. Required.
         :paramtype input: list[str]
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
@@ -998,7 +1032,20 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
          ``extra-parameters``
          HTTP request header. Default value is None.
         :paramtype extras: dict[str, str]
-        :keyword input_type: Specifies the input type to use for embedding search. Known values are:
+        :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
+         have.
+         Passing null causes the model to use its default value.
+         Returns a 422 error if the model doesn't support the value or parameter. Default value is
+         None.
+        :paramtype dimensions: int
+        :keyword encoding_format: Optional. The number of dimensions the resulting output embeddings
+         should have.
+         Passing null causes the model to use its default value.
+         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+         "base64", "binary", "float", "int8", "ubinary", and "uint8". Default value is None.
+        :paramtype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
+        :keyword input_type: Optional. The type of the input.
+         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
          "text", "query", and "document". Default value is None.
         :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
@@ -1011,9 +1058,19 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
                 # JSON input template you can fill out and use as your body input.
                 body = {
                     "input": [
-                        "str"  # Input texts to get embeddings for, encoded as a an array of
-                          strings. Required.
+                        "str"  # Input text to embed, encoded as a string or array of tokens.
+                          To embed multiple inputs in a single request, pass an array of strings or
+                          array of token arrays. Required.
                     ],
+                    "dimensions": 0,  # Optional. Optional. The number of dimensions the
+                      resulting output embeddings should have. Passing null causes the model to use its
+                      default value. Returns a 422 error if the model doesn't support the value or
+                      parameter.
+                    "encoding_format": "str",  # Optional. Optional. The number of dimensions the
+                      resulting output embeddings should have. Passing null causes the model to use its
+                      default value. Returns a 422 error if the model doesn't support the value or
+                      parameter. Known values are: "base64", "binary", "float", "int8", "ubinary", and
+                      "uint8".
                     "extras": {
                         "str": "str"  # Optional. Extra parameters (in the form of string
                           key-value pairs) that are not in the standard request payload. They will be
@@ -1021,8 +1078,9 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
                           service handles these extra parameters depends on the value of the
                           ``extra-parameters`` HTTP request header.
                     },
-                    "input_type": "str"  # Optional. Specifies the input type to use for
-                      embedding search. Known values are: "text", "query", and "document".
+                    "input_type": "str"  # Optional. Optional. The type of the input. Returns a
+                      422 error if the model doesn't support the value or parameter. Known values are:
+                      "text", "query", and "document".
                 }
 
                 # response body for status code(s): 200
@@ -1076,7 +1134,13 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         if body is _Unset:
             if input is _Unset:
                 raise TypeError("missing required argument: input")
-            body = {"extras": extras, "input": input, "input_type": input_type}
+            body = {
+                "dimensions": dimensions,
+                "encoding_format": encoding_format,
+                "extras": extras,
+                "input": input,
+                "input_type": input_type,
+            }
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -1158,6 +1222,520 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         cls: ClsType[_models.ModelInfo] = kwargs.pop("cls", None)
 
         _request = build_embeddings_get_model_info_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ModelInfo, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
+
+    @overload
+    async def create(
+        self,
+        body: JSON,
+        *,
+        model_deployment: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EmbeddingsResult:
+        # pylint: disable=line-too-long
+        """Return the embeddings for given images.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.EmbeddingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "input": [
+                        {
+                            "image": "str",  # The input image, in PNG format. Required.
+                            "text": "str"  # Optional. Optional. The text input to feed
+                              into the model (like DINO, CLIP). Returns a 422 error if the model
+                              doesn't support the value or parameter.
+                        }
+                    ],
+                    "dimensions": 0,  # Optional. Optional. The number of dimensions the
+                      resulting output embeddings should have. Passing null causes the model to use its
+                      default value. Returns a 422 error if the model doesn't support the value or
+                      parameter.
+                    "encoding_format": "str",  # Optional. Optional. The number of dimensions the
+                      resulting output embeddings should have. Passing null causes the model to use its
+                      default value. Returns a 422 error if the model doesn't support the value or
+                      parameter. Known values are: "base64", "binary", "float", "int8", "ubinary", and
+                      "uint8".
+                    "extras": {
+                        "str": "str"  # Optional. Extra parameters (in the form of string
+                          key-value pairs) that are not in the standard request payload. They will be
+                          passed to the service as-is in the root of the JSON request payload. How the
+                          service handles these extra parameters depends on the value of the
+                          ``extra-parameters`` HTTP request header.
+                    },
+                    "input_type": "str"  # Optional. Optional. The type of the input. Returns a
+                      422 error if the model doesn't support the value or parameter. Known values are:
+                      "text", "query", and "document".
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "data": [
+                        {
+                            "embedding": [
+                                0.0  # List of embeddings value for the input prompt.
+                                  These represent a measurement of the vector-based relatedness of the
+                                  provided input. Required.
+                            ],
+                            "index": 0,  # Index of the prompt to which the EmbeddingItem
+                              corresponds. Required.
+                            "object": "str"  # The object type of this embeddings item.
+                              Will always be ``embedding``. Required.
+                        }
+                    ],
+                    "id": "str",  # Unique identifier for the embeddings result. Required.
+                    "model": "str",  # The model ID used to generate this result. Required.
+                    "object": "str",  # The object type of the embeddings result. Will always be
+                      ``list``. Required.
+                    "usage": {
+                        "capacity_type": "str",  # Indicates whether your capacity has been
+                          affected by the usage amount (token count) reported here. Required. Known
+                          values are: "usage" and "fixed".
+                        "input_tokens": 0,  # Number of tokens in the request prompt.
+                          Required.
+                        "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
+                          the AI model. Typically identical to ``input_tokens``. However, certain AI
+                          models may add extra tokens to the input hence the number can be higher. (for
+                          example when input_type="query"). Required.
+                        "total_tokens": 0  # Total number of tokens transacted in this
+                          request/response. Required.
+                    }
+                }
+        """
+
+    @overload
+    async def create(
+        self,
+        *,
+        input: List[_models.EmbeddingInput],
+        model_deployment: Optional[str] = None,
+        content_type: str = "application/json",
+        extras: Optional[Dict[str, str]] = None,
+        dimensions: Optional[int] = None,
+        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
+        input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
+        **kwargs: Any
+    ) -> _models.EmbeddingsResult:
+        # pylint: disable=line-too-long
+        """Return the embeddings for given images.
+
+        :keyword input: Input image to embed. To embed multiple inputs in a single request, pass an
+         array.
+         The input must not exceed the max input tokens for the model. Required.
+        :paramtype input: list[~azure.ai.inference.models.EmbeddingInput]
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
+         standard request payload.
+         They will be passed to the service as-is in the root of the JSON request payload.
+         How the service handles these extra parameters depends on the value of the
+         ``extra-parameters``
+         HTTP request header. Default value is None.
+        :paramtype extras: dict[str, str]
+        :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
+         have.
+         Passing null causes the model to use its default value.
+         Returns a 422 error if the model doesn't support the value or parameter. Default value is
+         None.
+        :paramtype dimensions: int
+        :keyword encoding_format: Optional. The number of dimensions the resulting output embeddings
+         should have.
+         Passing null causes the model to use its default value.
+         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+         "base64", "binary", "float", "int8", "ubinary", and "uint8". Default value is None.
+        :paramtype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
+        :keyword input_type: Optional. The type of the input.
+         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+         "text", "query", and "document". Default value is None.
+        :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
+        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.EmbeddingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "data": [
+                        {
+                            "embedding": [
+                                0.0  # List of embeddings value for the input prompt.
+                                  These represent a measurement of the vector-based relatedness of the
+                                  provided input. Required.
+                            ],
+                            "index": 0,  # Index of the prompt to which the EmbeddingItem
+                              corresponds. Required.
+                            "object": "str"  # The object type of this embeddings item.
+                              Will always be ``embedding``. Required.
+                        }
+                    ],
+                    "id": "str",  # Unique identifier for the embeddings result. Required.
+                    "model": "str",  # The model ID used to generate this result. Required.
+                    "object": "str",  # The object type of the embeddings result. Will always be
+                      ``list``. Required.
+                    "usage": {
+                        "capacity_type": "str",  # Indicates whether your capacity has been
+                          affected by the usage amount (token count) reported here. Required. Known
+                          values are: "usage" and "fixed".
+                        "input_tokens": 0,  # Number of tokens in the request prompt.
+                          Required.
+                        "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
+                          the AI model. Typically identical to ``input_tokens``. However, certain AI
+                          models may add extra tokens to the input hence the number can be higher. (for
+                          example when input_type="query"). Required.
+                        "total_tokens": 0  # Total number of tokens transacted in this
+                          request/response. Required.
+                    }
+                }
+        """
+
+    @overload
+    async def create(
+        self,
+        body: IO[bytes],
+        *,
+        model_deployment: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EmbeddingsResult:
+        # pylint: disable=line-too-long
+        """Return the embeddings for given images.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.EmbeddingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "data": [
+                        {
+                            "embedding": [
+                                0.0  # List of embeddings value for the input prompt.
+                                  These represent a measurement of the vector-based relatedness of the
+                                  provided input. Required.
+                            ],
+                            "index": 0,  # Index of the prompt to which the EmbeddingItem
+                              corresponds. Required.
+                            "object": "str"  # The object type of this embeddings item.
+                              Will always be ``embedding``. Required.
+                        }
+                    ],
+                    "id": "str",  # Unique identifier for the embeddings result. Required.
+                    "model": "str",  # The model ID used to generate this result. Required.
+                    "object": "str",  # The object type of the embeddings result. Will always be
+                      ``list``. Required.
+                    "usage": {
+                        "capacity_type": "str",  # Indicates whether your capacity has been
+                          affected by the usage amount (token count) reported here. Required. Known
+                          values are: "usage" and "fixed".
+                        "input_tokens": 0,  # Number of tokens in the request prompt.
+                          Required.
+                        "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
+                          the AI model. Typically identical to ``input_tokens``. However, certain AI
+                          models may add extra tokens to the input hence the number can be higher. (for
+                          example when input_type="query"). Required.
+                        "total_tokens": 0  # Total number of tokens transacted in this
+                          request/response. Required.
+                    }
+                }
+        """
+
+    @distributed_trace_async
+    async def create(
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        input: List[_models.EmbeddingInput] = _Unset,
+        model_deployment: Optional[str] = None,
+        extras: Optional[Dict[str, str]] = None,
+        dimensions: Optional[int] = None,
+        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
+        input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
+        **kwargs: Any
+    ) -> _models.EmbeddingsResult:
+        # pylint: disable=line-too-long
+        """Return the embeddings for given images.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword input: Input image to embed. To embed multiple inputs in a single request, pass an
+         array.
+         The input must not exceed the max input tokens for the model. Required.
+        :paramtype input: list[~azure.ai.inference.models.EmbeddingInput]
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
+         standard request payload.
+         They will be passed to the service as-is in the root of the JSON request payload.
+         How the service handles these extra parameters depends on the value of the
+         ``extra-parameters``
+         HTTP request header. Default value is None.
+        :paramtype extras: dict[str, str]
+        :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
+         have.
+         Passing null causes the model to use its default value.
+         Returns a 422 error if the model doesn't support the value or parameter. Default value is
+         None.
+        :paramtype dimensions: int
+        :keyword encoding_format: Optional. The number of dimensions the resulting output embeddings
+         should have.
+         Passing null causes the model to use its default value.
+         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+         "base64", "binary", "float", "int8", "ubinary", and "uint8". Default value is None.
+        :paramtype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
+        :keyword input_type: Optional. The type of the input.
+         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+         "text", "query", and "document". Default value is None.
+        :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
+        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.EmbeddingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "input": [
+                        {
+                            "image": "str",  # The input image, in PNG format. Required.
+                            "text": "str"  # Optional. Optional. The text input to feed
+                              into the model (like DINO, CLIP). Returns a 422 error if the model
+                              doesn't support the value or parameter.
+                        }
+                    ],
+                    "dimensions": 0,  # Optional. Optional. The number of dimensions the
+                      resulting output embeddings should have. Passing null causes the model to use its
+                      default value. Returns a 422 error if the model doesn't support the value or
+                      parameter.
+                    "encoding_format": "str",  # Optional. Optional. The number of dimensions the
+                      resulting output embeddings should have. Passing null causes the model to use its
+                      default value. Returns a 422 error if the model doesn't support the value or
+                      parameter. Known values are: "base64", "binary", "float", "int8", "ubinary", and
+                      "uint8".
+                    "extras": {
+                        "str": "str"  # Optional. Extra parameters (in the form of string
+                          key-value pairs) that are not in the standard request payload. They will be
+                          passed to the service as-is in the root of the JSON request payload. How the
+                          service handles these extra parameters depends on the value of the
+                          ``extra-parameters`` HTTP request header.
+                    },
+                    "input_type": "str"  # Optional. Optional. The type of the input. Returns a
+                      422 error if the model doesn't support the value or parameter. Known values are:
+                      "text", "query", and "document".
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "data": [
+                        {
+                            "embedding": [
+                                0.0  # List of embeddings value for the input prompt.
+                                  These represent a measurement of the vector-based relatedness of the
+                                  provided input. Required.
+                            ],
+                            "index": 0,  # Index of the prompt to which the EmbeddingItem
+                              corresponds. Required.
+                            "object": "str"  # The object type of this embeddings item.
+                              Will always be ``embedding``. Required.
+                        }
+                    ],
+                    "id": "str",  # Unique identifier for the embeddings result. Required.
+                    "model": "str",  # The model ID used to generate this result. Required.
+                    "object": "str",  # The object type of the embeddings result. Will always be
+                      ``list``. Required.
+                    "usage": {
+                        "capacity_type": "str",  # Indicates whether your capacity has been
+                          affected by the usage amount (token count) reported here. Required. Known
+                          values are: "usage" and "fixed".
+                        "input_tokens": 0,  # Number of tokens in the request prompt.
+                          Required.
+                        "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
+                          the AI model. Typically identical to ``input_tokens``. However, certain AI
+                          models may add extra tokens to the input hence the number can be higher. (for
+                          example when input_type="query"). Required.
+                        "total_tokens": 0  # Total number of tokens transacted in this
+                          request/response. Required.
+                    }
+                }
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EmbeddingsResult] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if input is _Unset:
+                raise TypeError("missing required argument: input")
+            body = {
+                "dimensions": dimensions,
+                "encoding_format": encoding_format,
+                "extras": extras,
+                "input": input,
+                "input_type": input_type,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_image_embeddings_create_request(
+            model_deployment=model_deployment,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EmbeddingsResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
+        # pylint: disable=line-too-long
+        """Returns information about the AI model.
+
+        :return: ModelInfo. The ModelInfo is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.ModelInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "model_name": "str",  # The name of the AI model. For example: ``Phi21``.
+                      Required.
+                    "model_provider_name": "str",  # The model provider name. For example:
+                      ``Microsoft Research``. Required.
+                    "model_type": "str"  # The type of the AI model. A Unique identifier for the
+                      profile. Required. Known values are: "embeddings", "image_generation",
+                      "text_generation", "image_embeddings", "audio_generation", and "chat".
+                }
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ModelInfo] = kwargs.pop("cls", None)
+
+        _request = build_image_embeddings_get_model_info_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

@@ -1,6 +1,6 @@
 # Azure model inference client library for Python
 
-The client Library allows you to do inference using AI models you deployed to Azure. It supports both serverless endpoints (aka "model as a service" (MaaS) or "pay as you go") and selfhosted endpoints (aka "model as a platform" (MaaP) or "real-time endpoints"). The client library makes services calls using REST AP version `2024-04-01-preview` [specificed here](https://review.learn.microsoft.com/en-us/azure/ai-studio/reference/reference-model-inference-api?branch=release-build-azure-ai-studio&tabs=azure-studio). For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
+The client Library allows you to do inference using AI models you deployed to Azure. It supports both serverless endpoints (aka "model as a service" (MaaS) or "pay as you go") and selfhosted endpoints (aka "model as a platform" (MaaP) or "real-time endpoints"). The client library makes services calls using REST AP version `2024-05-01-preview` [specificed here](https://review.learn.microsoft.com/en-us/azure/ai-studio/reference/reference-model-inference-api?branch=release-build-azure-ai-studio&tabs=azure-studio). For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
 
 Use the model inference client library to:
 
@@ -80,17 +80,30 @@ client = ChatCompletionsClient(
 
 ## Key concepts
 
+### AI Model information
+
+TODO: Add overview and link to explain AI model info
+
+The operation to get AI model information targets the URL route `/info` on the provided endpoint.
+
+
 ### Chat Completions
 
 TODO: Add overview and link to explain chat completions.
 
 Chat completion operations target the URL route `/chat/completions` on the provided endpoint.
 
-### Embeddings
+### Text Embeddings
 
 TODO: Add overview and link to explain embeddings.
 
 Embeddings operations target the URL route `/embeddings` on the provided endpoint.
+
+### Image Embeddings
+
+TODO: Add overview and link to explain image embeddings.
+
+Embeddings operations target the URL route `images/embeddings` on the provided endpoint.
 
 ### Client generator
 
@@ -102,7 +115,8 @@ In the following sections you will find simple examples of:
 
 * [Chat completions](#chat-completions-example)
 * [Streaming chat completions](#streaming-chat-completions-example)
-* [Embeddings](#embeddings-example)
+* [Text Embeddings](#embeddings-example)
+* [Image Embeddings](#image-embeddings-example)
 * [Get model information](#get-model-information-example)
 * [Create a client using the ClientGenerator](#create-a-client-using-the-clientgenerator)
 
@@ -172,7 +186,7 @@ The printed result of course depends on the model, but you should see the answer
 
 To generate completions for additional messages, simply call `client.create_streaming` multiple times using the same `client`.
 
-### Embeddings example
+### Text Embeddings example
 
 This example demonstrates how to get embeddings.
 
@@ -201,6 +215,47 @@ The printed result of course depends on the model, but you should see something 
 data[0]: length=1024, [0.0013399124, -0.01576233, ..., 0.007843018, 0.000238657]
 data[1]: length=1024, [0.036590576, -0.0059547424, ..., 0.011405945, 0.004863739]
 data[2]: length=1024, [0.04196167, 0.029083252, ..., -0.0027484894, 0.0073127747]
+```
+
+To generate embeddings for additional phrases, simply call `client.create` multiple times using the same `client`.
+
+### Image Embeddings example
+
+This example demonstrates how to get image embeddings.
+
+<!-- SNIPPET:sample_image_embeddings.image_embeddings -->
+
+```python
+from azure.ai.inference import ImageEmbeddingsClient
+from azure.ai.inference.models import EmbeddingInput
+from azure.core.credentials import AzureKeyCredential
+
+with open("sample1.png", "rb") as f:
+    image1:str = base64.b64encode(f.read()).decode('utf-8')
+with open("sample2.png", "rb") as f:
+    image2:str = base64.b64encode(f.read()).decode('utf-8')
+
+client = ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+result = client.create(input=[
+    EmbeddingInput(image=image1),
+    EmbeddingInput(image=image2)
+])
+
+for item in result.data:
+    length = len(item.embedding)
+    print(
+        f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
+        f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+    )
+```
+
+<!-- END SNIPPET -->
+
+The printed result of course depends on the model, but you should see something like this:
+
+```txt
+TBD
 ```
 
 To generate embeddings for additional phrases, simply call `client.create` multiple times using the same `client`.

@@ -109,7 +109,9 @@ class ModelClientTestBase(AzureRecordedTestCase):
         assert model_info.model_provider_name is not None
         assert len(model_info.model_provider_name) > 0
         assert model_info.model_type is not None
-        assert model_info.model_type == "completion" # This should be sdk.models.ModelType.CHAT_COMPLETION once the model is fixed
+        assert (
+            model_info.model_type == "completion"
+        )  # This should be sdk.models.ModelType.CHAT_COMPLETION once the model is fixed
 
     @staticmethod
     def _validate_chat_completions_result(result: sdk.models.ChatCompletions, contains: List[str]):
