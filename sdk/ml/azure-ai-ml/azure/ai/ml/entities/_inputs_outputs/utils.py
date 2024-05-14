@@ -10,9 +10,10 @@ from collections import OrderedDict
 from enum import Enum as PyEnum
 from enum import EnumMeta
 from inspect import Parameter, getmro, signature
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Type, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Type, Union, cast, overload
+from typing_extensions import get_type_hints as _get_type_hints
 
-from typing_extensions import Annotated, Literal, TypeAlias, get_type_hints
+from typing_extensions import Annotated, Literal, TypeAlias
 
 from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.exceptions import UserErrorException
@@ -27,6 +28,16 @@ SUPPORTED_RETURN_TYPES_PRIMITIVE = list(IOConstants.PRIMITIVE_TYPE_2_STR.keys())
 
 Annotation: TypeAlias = Union[str, Type, Annotated, None]  # type: ignore
 
+@overload
+def get_type_hints(obj: Callable[..., Any], globalns: Union[Dict[str, Any],None] = None, localns: Union[Dict[str, Any],None] = None) -> Dict[str, Any]:
+    ...
+
+@overload
+def get_type_hints(obj: Callable[..., Any], globalns: Union[Dict[str, Any],None] = None, localns: Union[Dict[str, Any],None] = None, include_extras: bool = False,) -> Dict[str, Any]:
+    ...
+
+def get_type_hints(*args, **kwargs):
+    return _get_type_hints(*args, **kwargs)
 
 def is_group(obj: object) -> bool:
     """Return True if obj is a group or an instance of a parameter group class.
