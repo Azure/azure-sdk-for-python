@@ -225,8 +225,8 @@ class TestVectorSimilarityQuery(unittest.TestCase):
             embedding_value += 0.0001
 
         query = "SELECT c.id, VectorDistance(c.embedding, [0.0001, 0.0001], false," \
-                " {{'distanceFunction': 'cosine'}}) AS SimilarityScore FROM c ORDER BY" \
-                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {{'distanceFunction': 'cosine'}})" \
+                " {'distanceFunction': 'cosine'}) AS SimilarityScore FROM c ORDER BY" \
+                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {'distanceFunction': 'cosine'})" \
                 "OFFSET 0 LIMIT 1000"
 
         query_iterable = self.created_large_container.query_items(query=query,
@@ -235,8 +235,8 @@ class TestVectorSimilarityQuery(unittest.TestCase):
         assert len(result_list) == 1000
 
         query = "SELECT DISTINCT c.id, VectorDistance(c.embedding, [0.0001, 0.0001], false," \
-                " {{'distanceFunction': 'cosine'}}) AS SimilarityScore FROM c ORDER BY" \
-                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {{'distanceFunction': 'cosine'}})" \
+                " {'distanceFunction': 'cosine'}) AS SimilarityScore FROM c ORDER BY" \
+                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {'distanceFunction': 'cosine'})" \
                 "OFFSET 0 LIMIT 1000"
 
         query_iterable = self.created_large_container.query_items(query=query,
@@ -245,8 +245,8 @@ class TestVectorSimilarityQuery(unittest.TestCase):
         assert len(result_list) == 1000
 
         query = "SELECT TOP 750 c.id, VectorDistance(c.embedding, [0.0001, 0.0001], false," \
-                " {{'distanceFunction': 'cosine'}}) AS SimilarityScore FROM c ORDER BY" \
-                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {{'distanceFunction': 'cosine'}})"
+                " {'distanceFunction': 'cosine'}) AS SimilarityScore FROM c ORDER BY" \
+                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {'distanceFunction': 'cosine'})"
 
         query_iterable = self.created_large_container.query_items(query=query,
                                                                   enable_cross_partition_query=True)
@@ -254,8 +254,8 @@ class TestVectorSimilarityQuery(unittest.TestCase):
         assert len(result_list) == 750
 
         query = "SELECT DISTINCT TOP 750 c.id, VectorDistance(c.embedding, [0.0001, 0.0001], false," \
-                " {{'distanceFunction': 'cosine'}}) AS SimilarityScore FROM c ORDER BY" \
-                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {{'distanceFunction': 'cosine'}})"
+                " {'distanceFunction': 'cosine'}) AS SimilarityScore FROM c ORDER BY" \
+                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {'distanceFunction': 'cosine'})"
 
         query_iterable = self.created_large_container.query_items(query=query,
                                                                   enable_cross_partition_query=True)
@@ -263,9 +263,9 @@ class TestVectorSimilarityQuery(unittest.TestCase):
         assert len(result_list) == 750
 
         query = "SELECT c.id, VectorDistance(c.embedding, [0.0001, 0.0001], false," \
-                " {{'distanceFunction': 'cosine'}}) AS SimilarityScore FROM c ORDER BY" \
-                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {{'distanceFunction': 'cosine'}})" \
-                "OFFSET 1000 LIMIT 500"
+                " {'distanceFunction': 'cosine'}) AS SimilarityScore FROM c ORDER BY" \
+                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {'distanceFunction': 'cosine'})" \
+                " OFFSET 1000 LIMIT 500"
 
         query_iterable = self.created_large_container.query_items(query=query,
                                                                   enable_cross_partition_query=True)
@@ -273,9 +273,9 @@ class TestVectorSimilarityQuery(unittest.TestCase):
         assert len(result_list) == 500
 
         query = "SELECT DISTINCT c.id, VectorDistance(c.embedding, [0.0001, 0.0001], false," \
-                " {{'distanceFunction': 'cosine'}}) AS SimilarityScore FROM c ORDER BY" \
-                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {{'distanceFunction': 'cosine'}})" \
-                "OFFSET 1000 LIMIT 500"
+                " {'distanceFunction': 'cosine'}) AS SimilarityScore FROM c ORDER BY" \
+                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {'distanceFunction': 'cosine'})" \
+                " OFFSET 1000 LIMIT 500"
 
         query_iterable = self.created_large_container.query_items(query=query,
                                                                   enable_cross_partition_query=True)

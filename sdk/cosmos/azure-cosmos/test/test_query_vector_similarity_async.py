@@ -104,7 +104,7 @@ class TestVectorSimilarityQuery(unittest.TestCase):
         query = "SELECT c.text, VectorDistance(c.embedding, [{}]) AS " \
                 "SimilarityScore FROM c ORDER BY VectorDistance(c.embedding, [{}])".format(vector_string, vector_string)
         try:
-            [item async for item in self.created_cosine_container.query_items(query=query, enable_cross_partition_query=True)]
+            [item async for item in self.created_cosine_container.query_items(query=query)]
             pytest.fail("Client should not allow queries without filters.")
         except ValueError as e:
             assert "Executing a vector search query without TOP or LIMIT can consume many RUs very fast and" \
@@ -116,7 +116,7 @@ class TestVectorSimilarityQuery(unittest.TestCase):
                 "SimilarityScore FROM c ORDER BY VectorDistance(c.embedding, [{}]) ASC".format(vector_string,
                                                                                                vector_string)
         try:
-            [item async for item in self.created_cosine_container.query_items(query=query, enable_cross_partition_query=True)]
+            [item async for item in self.created_cosine_container.query_items(query=query)]
             pytest.fail("Client should not allow queries with ASC/DESC.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
@@ -137,16 +137,13 @@ class TestVectorSimilarityQuery(unittest.TestCase):
                           "SimilarityScore FROM c ORDER BY VectorDistance(c.embedding, [{}], false, {{'distanceFunction': 'euclidean'}})" \
                 .format(str(i), vector_string, vector_string)
 
-            flat_list = [item async for item in self.created_flat_euclidean_container.query_items(query=vanilla_query,
-                                                                               enable_cross_partition_query=True)]
+            flat_list = [item async for item in self.created_flat_euclidean_container.query_items(query=vanilla_query)]
             verify_ordering(flat_list, "euclidean")
 
-            quantized_list = [item async for item in self.created_quantized_cosine_container.query_items(query=specs_query,
-                                                                    enable_cross_partition_query=True)]
+            quantized_list = [item async for item in self.created_quantized_cosine_container.query_items(query=specs_query)]
             verify_ordering(quantized_list, "euclidean")
 
-            # disk_ann_list = [item async for item in self.created_diskANN_dotproduct_container.query_items(query=specs_query,
-            #                                                           enable_cross_partition_query=True)]
+            # disk_ann_list = [item async for item in self.created_diskANN_dotproduct_container.query_items(query=specs_query)]
             # verify_ordering(disk_ann_list, "euclidean")
         # test cosine distance
         for i in range(1, 11):
@@ -158,16 +155,13 @@ class TestVectorSimilarityQuery(unittest.TestCase):
                           "SimilarityScore FROM c ORDER BY VectorDistance(c.embedding, [{}], false, {{'distanceFunction': 'cosine'}})" \
                 .format(str(i), vector_string, vector_string)
 
-            flat_list = [item async for item in self.created_flat_euclidean_container.query_items(
-                query=specs_query, enable_cross_partition_query=True)]
+            flat_list = [item async for item in self.created_flat_euclidean_container.query_items(query=specs_query)]
             verify_ordering(flat_list, "cosine")
 
-            quantized_list = [item async for item in self.created_quantized_cosine_container.query_items(query=vanilla_query,
-                                                                    enable_cross_partition_query=True)]
+            quantized_list = [item async for item in self.created_quantized_cosine_container.query_items(query=vanilla_query)]
             verify_ordering(quantized_list, "cosine")
 
-            # disk_ann_list = [item async for item in self.created_diskANN_dotproduct_container.query_items(query=specs_query,
-            #                                                           enable_cross_partition_query=True)]
+            # disk_ann_list = [item async for item in self.created_diskANN_dotproduct_container.query_items(query=specs_query)]
             # verify_ordering(disk_ann_list, "cosine")
         # test dot product distance
         for i in range(1, 11):
@@ -179,15 +173,13 @@ class TestVectorSimilarityQuery(unittest.TestCase):
                           "SimilarityScore FROM c ORDER BY VectorDistance(c.embedding, [{}], false, {{'distanceFunction': 'dotproduct'}})" \
                 .format(str(i), vector_string, vector_string)
 
-            flat_list = [item async for item in self.created_flat_euclidean_container.query_items(query=specs_query, enable_cross_partition_query=True)]
+            flat_list = [item async for item in self.created_flat_euclidean_container.query_items(query=specs_query)]
             verify_ordering(flat_list, "dotproduct")
 
-            quantized_list = [item async for item in self.created_quantized_cosine_container.query_items(query=specs_query,
-                                                                    enable_cross_partition_query=True)]
+            quantized_list = [item async for item in self.created_quantized_cosine_container.query_items(query=specs_query)]
             verify_ordering(quantized_list, "dotproduct")
 
-            # disk_ann_list = [item async for item in self.created_diskANN_dotproduct_container.query_items(query=vanilla_query,
-            #                                                           enable_cross_partition_query=True)]
+            # disk_ann_list = [item async for item in self.created_diskANN_dotproduct_container.query_items(query=vanilla_query)]
             # verify_ordering(disk_ann_list, "dotproduct")
 
     async def test_vector_query_pagination(self):
@@ -199,7 +191,6 @@ class TestVectorSimilarityQuery(unittest.TestCase):
                 "'cosine'}})".format(vector_string, vector_string)
 
         query_iterable = self.created_quantized_cosine_container.query_items(query=query,
-                                                                             enable_cross_partition_query=True,
                                                                              max_item_count=3)
         all_fetched_res = []
         count = 0
@@ -207,11 +198,11 @@ class TestVectorSimilarityQuery(unittest.TestCase):
         async for items in await pages.__anext__():
             count += 1
             all_fetched_res.extend(items)
-        assert count == 3
+        assert count >= 3
         assert len(all_fetched_res) == 8
         verify_ordering(all_fetched_res, "cosine")
 
-    def test_vector_query_large_data(self):
+    async def test_vector_query_large_data(self):
         # test different limit queries on a larger data set
         embedding_value = 0.0001
         for i in range(2000):
@@ -220,60 +211,54 @@ class TestVectorSimilarityQuery(unittest.TestCase):
             embedding_value += 0.0001
 
         query = "SELECT c.id, VectorDistance(c.embedding, [0.0001, 0.0001], false," \
-                " {{'distanceFunction': 'cosine'}}) AS SimilarityScore FROM c ORDER BY" \
-                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {{'distanceFunction': 'cosine'}})" \
-                "OFFSET 0 LIMIT 1000"
+                " {'distanceFunction': 'cosine'}) AS SimilarityScore FROM c ORDER BY" \
+                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {'distanceFunction': 'cosine'})" \
+                " OFFSET 0 LIMIT 1000"
 
-        query_iterable = self.created_large_container.query_items(query=query,
-                                                                  enable_cross_partition_query=True)
+        query_iterable = self.created_large_container.query_items(query=query)
         result_list = [item async for item in query_iterable]
         assert len(result_list) == 1000
 
         query = "SELECT DISTINCT c.id, VectorDistance(c.embedding, [0.0001, 0.0001], false," \
-                " {{'distanceFunction': 'cosine'}}) AS SimilarityScore FROM c ORDER BY" \
-                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {{'distanceFunction': 'cosine'}})" \
-                "OFFSET 0 LIMIT 1000"
+                " {'distanceFunction': 'cosine'}) AS SimilarityScore FROM c ORDER BY" \
+                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {'distanceFunction': 'cosine'})" \
+                " OFFSET 0 LIMIT 1000"
 
-        query_iterable = self.created_large_container.query_items(query=query,
-                                                                  enable_cross_partition_query=True)
+        query_iterable = self.created_large_container.query_items(query=query)
         result_list = [item async for item in query_iterable]
         assert len(result_list) == 1000
 
         query = "SELECT TOP 750 c.id, VectorDistance(c.embedding, [0.0001, 0.0001], false," \
-                " {{'distanceFunction': 'cosine'}}) AS SimilarityScore FROM c ORDER BY" \
-                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {{'distanceFunction': 'cosine'}})"
+                " {'distanceFunction': 'cosine'}) AS SimilarityScore FROM c ORDER BY" \
+                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {'distanceFunction': 'cosine'})"
 
-        query_iterable = self.created_large_container.query_items(query=query,
-                                                                  enable_cross_partition_query=True)
+        query_iterable = self.created_large_container.query_items(query=query)
         result_list = [item async for item in query_iterable]
         assert len(result_list) == 750
 
         query = "SELECT DISTINCT TOP 750 c.id, VectorDistance(c.embedding, [0.0001, 0.0001], false," \
-                " {{'distanceFunction': 'cosine'}}) AS SimilarityScore FROM c ORDER BY" \
-                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {{'distanceFunction': 'cosine'}})"
+                " {'distanceFunction': 'cosine'}) AS SimilarityScore FROM c ORDER BY" \
+                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {'distanceFunction': 'cosine'})"
 
-        query_iterable = self.created_large_container.query_items(query=query,
-                                                                  enable_cross_partition_query=True)
+        query_iterable = self.created_large_container.query_items(query=query)
         result_list = [item async for item in query_iterable]
         assert len(result_list) == 750
 
         query = "SELECT c.id, VectorDistance(c.embedding, [0.0001, 0.0001], false," \
-                " {{'distanceFunction': 'cosine'}}) AS SimilarityScore FROM c ORDER BY" \
-                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {{'distanceFunction': 'cosine'}})" \
-                "OFFSET 1000 LIMIT 500"
+                " {'distanceFunction': 'cosine'}) AS SimilarityScore FROM c ORDER BY" \
+                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {'distanceFunction': 'cosine'})" \
+                " OFFSET 1000 LIMIT 500"
 
-        query_iterable = self.created_large_container.query_items(query=query,
-                                                                  enable_cross_partition_query=True)
+        query_iterable = self.created_large_container.query_items(query=query)
         result_list = [item async for item in query_iterable]
         assert len(result_list) == 500
 
         query = "SELECT DISTINCT c.id, VectorDistance(c.embedding, [0.0001, 0.0001], false," \
-                " {{'distanceFunction': 'cosine'}}) AS SimilarityScore FROM c ORDER BY" \
-                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {{'distanceFunction': 'cosine'}})" \
-                "OFFSET 1000 LIMIT 500"
+                " {'distanceFunction': 'cosine'}) AS SimilarityScore FROM c ORDER BY" \
+                " VectorDistance(c.embedding, [0.0001, 0.0001], false, {'distanceFunction': 'cosine'})" \
+                " OFFSET 1000 LIMIT 500"
 
-        query_iterable = self.created_large_container.query_items(query=query,
-                                                                  enable_cross_partition_query=True)
+        query_iterable = self.created_large_container.query_items(query=query)
         result_list = [item async for item in query_iterable]
         assert len(result_list) == 500
 

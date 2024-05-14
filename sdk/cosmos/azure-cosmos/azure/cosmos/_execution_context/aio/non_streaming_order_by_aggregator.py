@@ -134,7 +134,8 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
             except StopAsyncIteration:
                 continue
 
-        pq_size = self._partitioned_query_ex_info.get_top() or self._partitioned_query_ex_info.get_limit()
+        pq_size = self._partitioned_query_ex_info.get_top() or\
+                  self._partitioned_query_ex_info.get_limit() + self._partitioned_query_ex_info.get_offset()
         for doc_producer in self._doc_producers:
             while True:
                 try:

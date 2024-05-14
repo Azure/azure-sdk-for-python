@@ -126,7 +126,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                 raise ValueError("Executing a vector search query without TOP or LIMIT can consume many" +
                                  " RUs very fast and have long runtimes. Please ensure you are using one" +
                                  " of the two filters with your vector search query.")
-            if total_item_number > os.environ.get('AZURE_COSMOS_MAX_ITEMS_VECTOR_SEARCH', 50000):
+            if total_item_number > os.environ.get('AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH', 50000):
                 raise ValueError("Executing a vector search query with more items than the max is not allowed." +
                                  "Please ensure you are using a limit smaller than the max, or change the max.")
             execution_context_aggregator =\

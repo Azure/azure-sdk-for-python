@@ -699,7 +699,8 @@ With the addition of the vector indexing and vector embedding capabilities, the 
 These queries specify the VectorDistance to use as a metric within the query text. These must always use a TOP or LIMIT clause within the query though,
 since vector search queries have to look through a lot of data otherwise and may become too expensive or long-running.
 Since these queries are relatively expensive, the SDK sets a default limit of 50000 max items per query - if you'd like to raise that further, you
-can use the `AZURE_COSMOS_MAX_ITEMS_VECTOR_SEARCH` environment variable to do so.
+can use the `AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH` environment variable to do so. However, be advised that queries with too many vector results
+may have additional latencies associated with searching in the service.
 The query syntax for these operations looks like this:
 ```python
 VectorDistance(<embedding1>, <embedding2>, [,<exact_search>], [,<specification>])
