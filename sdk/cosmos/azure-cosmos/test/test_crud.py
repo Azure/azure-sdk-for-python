@@ -89,6 +89,8 @@ class TestCRUDOperations(unittest.TestCase):
         database_id = str(uuid.uuid4())
         created_db = self.client.create_database(database_id)
         self.assertEqual(created_db.id, database_id)
+        # TODO: This is a dummy change to enable the live CI run
+        self.assertEqual(created_db.id, database_id)
         # Read databases after creation.
         databases = list(self.client.query_databases({
             'query': 'SELECT * FROM root r WHERE r.id=@id',
