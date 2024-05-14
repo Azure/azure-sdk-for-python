@@ -329,7 +329,7 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
         else:
             self._credential = credential  # type: ignore
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
-        self._auth_uri = f"sb://{self._address.hostname}{self._address.path}"
+        self._auth_uri: str
         self._config = Configuration(
             amqp_transport=self._amqp_transport,
             hostname=self._address.hostname,
