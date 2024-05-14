@@ -725,7 +725,7 @@ You can find our sync samples [here][cosmos_index_sample] and our async samples 
 
 *Note: For a limited time, if your query operates against a region or emulator that has not yet been updated the client might run into some issues
 not being able to recognize the new NonStreamingOrderBy capability that makes vector search possible.
-If this happens, you can set the `AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY` environment variable to `True` to opt out of this
+If this happens, you can set the `AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY` environment variable to `"True"` to opt out of this
 functionality and continue operating as usual.*
 
 ## Troubleshooting
