@@ -4,8 +4,7 @@
 
 ### Features Added
 
-- Added sovereign cloud support for `MetricsClient`. ([#33752](https://github.com/Azure/azure-sdk-for-python/pull/33752))
-  - The audience for sovereign cloud authentication will be determined based on the provided endpoint. However, the `audience` parameter is provided as an override.
+- An `audience` keyword argument can now be passed to the `MetricsClient` constructor to specify the audience for the authentication token. This is useful when querying metrics in sovereign clouds. ([#35502](https://github.com/Azure/azure-sdk-for-python/pull/35502))
 
 ### Breaking Changes
 

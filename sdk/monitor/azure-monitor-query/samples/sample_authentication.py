@@ -69,7 +69,11 @@ def create_metrics_client_sovereign_cloud():
     from azure.monitor.query import MetricsClient
 
     credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_GOVERNMENT)
-    client = MetricsClient("https://usgovvirginia.metrics.monitor.azure.us", credential)
+    client = MetricsClient(
+        "https://usgovvirginia.metrics.monitor.azure.us",
+        credential,
+        audience="https://metrics.monitor.azure.us",
+    )
     # [END create_metrics_client_sovereign_cloud]
 
 
