@@ -24,17 +24,17 @@ from azure.ai.translation.document import (
     DocumentTranslationFileFormat,
     TranslationGlossary,
     TranslationTarget,
-    DocumentTranslationError,
+    DocumentTranslationError,    
 )
-from ..models import (
+from azure.ai.translation.document._patch import (
     TranslationStatus,
-    DocumentStatus,
+    DocumentStatus,    
     StorageInputType,
-    StartTranslationDetails,
 )
 from ..models._models import (
     TranslationStatus as _TranslationStatus,
     DocumentStatus as _DocumentStatus,
+    StartTranslationDetails,
 )
 from ...document._patch import (
     get_http_logging_policy,
@@ -647,14 +647,6 @@ class DocumentTranslationClient:
 __all__: List[str] = [
     "DocumentTranslationClient",
     "AsyncDocumentTranslationLROPoller",
-    # re-export models at this level for backwards compatibility
-    "TranslationGlossary",
-    "TranslationTarget",
-    "DocumentTranslationInput",
-    "TranslationStatus",
-    "DocumentStatus",
-    "DocumentTranslationError",
-    "DocumentTranslationFileFormat",
 ]  # Add all objects you want publicly available to users at this package level
 
 
