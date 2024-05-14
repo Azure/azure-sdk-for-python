@@ -3,11 +3,13 @@
 > see https://aka.ms/autorest
 
 ### Setup
+
 ```ps
 npm install -g autorest
 ```
 
 ### Generation
+
 ```ps
 cd <swagger-folder>
 autorest SWAGGER.md
@@ -17,7 +19,7 @@ autorest SWAGGER.md
 
 ```yaml
 tag: package-2024-06-15-preview
-require: https://github.com/Azure/azure-rest-api-specs/blob/e044bbed098dcaa5aadce0b65df238ba34d224ea/specification/communication/data-plane/CallAutomation/readme.md
+require: https://github.com/Azure/azure-rest-api-specs/blob/2c0eb12fe6bbd0f30424c1e32427f2f8c3c3d14e/specification/communication/data-plane/CallAutomation/readme.md
 output-folder: ../azure/communication/callautomation/_generated
 models-mode: msrest
 namespace: azure.communication.callautomation
@@ -34,6 +36,7 @@ title: Azure Communication Call Automation Service
 ```
 
 ### Rename response to result
+
 ```yaml
 directive:
 - from: swagger-document

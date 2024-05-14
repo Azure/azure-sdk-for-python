@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Union, Optional, TYPE_CHECKING, Iterable, overload, Dict
+from typing import List, Union, Optional, TYPE_CHECKING, Iterable, overload
 from urllib.parse import urlparse
 import warnings
 
@@ -23,8 +23,7 @@ from ._generated.models import (
     RedirectCallRequest,
     RejectCallRequest,
     StartCallRecordingRequest,
-    CallIntelligenceOptions,
-    CustomCallingContext
+    CallIntelligenceOptions
 )
 from ._models import (
     CallConnectionProperties,
@@ -179,8 +178,6 @@ class CallAutomationClient:
         source_display_name: Optional[str] = None,
         operation_context: Optional[str] = None,
         cognitive_services_endpoint: Optional[str] = None,
-        sip_headers: Optional[Dict[str, str]] = None,
-        voip_headers: Optional[Dict[str, str]] = None,
         media_streaming_options: Optional['MediaStreamingOptions'] = None,
         transcription_options: Optional['TranscriptionOptions'] = None,
         **kwargs
@@ -203,10 +200,6 @@ class CallAutomationClient:
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str or None
-        :keyword sip_headers: Sip Headers for PSTN Call
-        :paramtype sip_headers: Dict[str, str] or None
-        :keyword voip_headers: Voip Headers for Voip Call
-        :paramtype voip_headers: Dict[str, str] or None
         :keyword media_streaming_options: Media Streaming Configuration.
         :paramtype media_streaming_options: ~azure.communication.callautomation.MediaStreamingOptions
          or None
@@ -222,13 +215,6 @@ class CallAutomationClient:
             source_caller_id_number = source_caller_id_number or target_participant.source_caller_id_number
             source_display_name = source_display_name or target_participant.source_display_name
             target_participant = target_participant.target
-
-        user_custom_context = None
-        if sip_headers or voip_headers:
-            user_custom_context = CustomCallingContext(
-                voip_headers=voip_headers,
-                sip_headers=sip_headers
-            )
 
         call_intelligence_options = CallIntelligenceOptions(
             cognitive_services_endpoint=cognitive_services_endpoint
@@ -249,9 +235,7 @@ class CallAutomationClient:
             operation_context=operation_context,
             call_intelligence_options=call_intelligence_options,
             media_streaming_options=media_config,
-            transcription_options=transcription_config,
-            cognitive_services_endpoint=cognitive_services_endpoint,
-            custom_calling_context=user_custom_context
+            transcription_options=transcription_config
         )
         process_repeatability_first_sent(kwargs)
         result = self._client.create_call(
@@ -357,7 +341,6 @@ class CallAutomationClient:
             ) if media_streaming_options else None,
             transcription_options=transcription_options.to_generated()
             if transcription_options else None,
-            cognitive_services_endpoint=cognitive_services_endpoint,
             operation_context=operation_context
         )
 
@@ -374,9 +357,6 @@ class CallAutomationClient:
         self,
         incoming_call_context: str,
         target_participant: 'CommunicationIdentifier',
-        *,
-        sip_headers: Optional[Dict[str, str]] = None,
-        voip_headers: Optional[Dict[str, str]] = None,
         **kwargs,
     ) -> None:
         """Redirect incoming call to a specific target.
@@ -386,10 +366,6 @@ class CallAutomationClient:
         :type incoming_call_context: str
         :param target_participant: The target identity to redirect the call to.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
-        :keyword sip_headers: Sip Headers for PSTN Call
-        :paramtype sip_headers: Dict[str, str] or None
-        :keyword voip_headers: Voip Headers for Voip Call
-        :paramtype voip_headers: Dict[str, str] or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -398,16 +374,9 @@ class CallAutomationClient:
         if isinstance(target_participant, CallInvite):
             target_participant = target_participant.target
 
-        user_custom_context = None
-        if sip_headers or voip_headers:
-            user_custom_context = CustomCallingContext(
-                voip_headers=voip_headers,
-                sip_headers=sip_headers
-            )
         redirect_call_request = RedirectCallRequest(
             incoming_call_context=incoming_call_context,
-            target=serialize_identifier(target_participant),
-            custom_calling_context=user_custom_context
+            target=serialize_identifier(target_participant)
         )
         process_repeatability_first_sent(kwargs)
         self._client.redirect_call(

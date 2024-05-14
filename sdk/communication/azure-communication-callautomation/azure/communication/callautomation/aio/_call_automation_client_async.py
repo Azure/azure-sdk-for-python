@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Union, Optional, TYPE_CHECKING, AsyncIterable, overload, Dict
+from typing import List, Union, Optional, TYPE_CHECKING, AsyncIterable, overload
 from urllib.parse import urlparse
 import warnings
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -19,8 +19,7 @@ from .._generated.models import (
     RedirectCallRequest,
     RejectCallRequest,
     StartCallRecordingRequest,
-    CallIntelligenceOptions,
-    CustomCallingContext
+    CallIntelligenceOptions
 )
 from .._models import (
     CallConnectionProperties,
@@ -165,8 +164,6 @@ class CallAutomationClient:
         source_display_name: Optional[str] = None,
         operation_context: Optional[str] = None,
         cognitive_services_endpoint: Optional[str] = None,
-        sip_headers: Optional[Dict[str, str]] = None,
-        voip_headers: Optional[Dict[str, str]] = None,
         media_streaming_options: Optional['MediaStreamingOptions'] = None,
         transcription_options: Optional['TranscriptionOptions'] = None,
         **kwargs
@@ -209,12 +206,6 @@ class CallAutomationClient:
             cognitive_services_endpoint=cognitive_services_endpoint
         ) if cognitive_services_endpoint else None
 
-        user_custom_context = None
-        if sip_headers or voip_headers:
-            user_custom_context = CustomCallingContext(
-                voip_headers=voip_headers,
-                sip_headers=sip_headers
-            )
         try:
             targets = [serialize_identifier(p) for p in target_participant]
         except TypeError:
@@ -230,8 +221,6 @@ class CallAutomationClient:
             operation_context=operation_context,
             media_streaming_options=media_config,
             transcription_options=transcription_config,
-            cognitive_services_endpoint=cognitive_services_endpoint,
-            CustomCallingContext=user_custom_context,
             call_intelligence_options=call_intelligence_options
         )
         process_repeatability_first_sent(kwargs)
@@ -337,7 +326,6 @@ class CallAutomationClient:
             ) if media_streaming_options else None,
             transcription_options=transcription_options.to_generated()
             if transcription_options else None,
-            cognitive_services_endpoint=cognitive_services_endpoint,
             answered_by=serialize_communication_user_identifier(
                 self.source) if self.source else None,
             call_intelligence_options=call_intelligence_options,
@@ -357,9 +345,6 @@ class CallAutomationClient:
         self,
         incoming_call_context: str,
         target_participant: 'CommunicationIdentifier',
-        *,
-        sip_headers: Optional[Dict[str, str]] = None,
-        voip_headers: Optional[Dict[str, str]] = None,
         **kwargs
     ) -> None:
         """Redirect incoming call to a specific target.
@@ -369,10 +354,6 @@ class CallAutomationClient:
         :type incoming_call_context: str
         :param target_participant: The target identity to redirect the call to.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
-        :keyword sip_headers: Sip Headers for PSTN Call
-        :paramtype sip_headers: Dict[str, str] or None
-        :keyword voip_headers: Voip Headers for Voip Call
-        :paramtype voip_headers: Dict[str, str] or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -382,16 +363,9 @@ class CallAutomationClient:
         if isinstance(target_participant, CallInvite):
             target_participant = target_participant.target
 
-        user_custom_context = None
-        if sip_headers or voip_headers:
-            user_custom_context = CustomCallingContext(
-                voip_headers=voip_headers,
-                sip_headers=sip_headers
-            )
         redirect_call_request = RedirectCallRequest(
             incoming_call_context=incoming_call_context,
-            target=serialize_identifier(target_participant),
-            custom_calling_context=user_custom_context
+            target=serialize_identifier(target_participant)
         )
 
         process_repeatability_first_sent(kwargs)
