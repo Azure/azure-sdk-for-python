@@ -23,8 +23,8 @@
 Cosmos database service.
 """
 
-from azure.cosmos._execution_context.aio import endpoint_component
-from azure.cosmos._execution_context.aio import multi_execution_aggregator
+from azure.cosmos._execution_context.aio import endpoint_component, multi_execution_aggregator
+from azure.cosmos._execution_context.aio import non_streaming_order_by_aggregator
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQueryExecutionContext
 from azure.cosmos._execution_context.execution_dispatcher import _is_partitioned_execution_info
@@ -106,13 +106,28 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                   and self._options["enableCrossPartitionQuery"]):
                 raise CosmosHttpResponseError(StatusCodes.BAD_REQUEST,
                                   "Cross partition query only supports 'VALUE <AggregateFunc>' for aggregates")
-
-        execution_context_aggregator = multi_execution_aggregator._MultiExecutionContextAggregator(self._client,
+        # throw exception here for vector search query without limit filter
+        if query_execution_info.has_non_streaming_order_by():
+            if query_execution_info.get_top() is None and query_execution_info.get_limit() is None:
+                # TODO: missing one last if statement here to check for the system variable bypass - need name
+                raise CosmosHttpResponseError(StatusCodes.BAD_REQUEST,
+                                              "Executing a vector search query without TOP or LIMIT can consume many" +
+                                              " RUs very fast and have long runtimes. Please ensure you are using one" +
+                                              " of the two filters with your vector search query.")
+            execution_context_aggregator =\
+                non_streaming_order_by_aggregator._NonStreamingOrderByContextAggregator(self._client,
+                                                                                        self._resource_link,
+                                                                                        self._query,
+                                                                                        self._options,
+                                                                                        query_execution_info)
+            await execution_context_aggregator._configure_partition_ranges()
+        else:
+            execution_context_aggregator = multi_execution_aggregator._MultiExecutionContextAggregator(self._client,
                                                                                                    self._resource_link,
                                                                                                    self._query,
                                                                                                    self._options,
                                                                                                    query_execution_info)
-        await execution_context_aggregator._configure_partition_ranges()
+            await execution_context_aggregator._configure_partition_ranges()
         return _PipelineExecutionContext(self._client, self._options, execution_context_aggregator,
                                          query_execution_info)
 
@@ -134,7 +149,9 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):  # pylint: disable=
         self._endpoint = endpoint_component._QueryExecutionEndpointComponent(execution_context)
 
         order_by = query_execution_info.get_order_by()
-        if order_by:
+        if query_execution_info.has_non_streaming_order_by():
+            self._endpoint = endpoint_component._QueryExecutionNonStreamingEndpointComponent(self._endpoint)
+        elif order_by:
             self._endpoint = endpoint_component._QueryExecutionOrderByEndpointComponent(self._endpoint)
 
         aggregates = query_execution_info.get_aggregates()

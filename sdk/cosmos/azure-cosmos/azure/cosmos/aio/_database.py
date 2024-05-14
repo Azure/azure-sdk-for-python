@@ -162,7 +162,7 @@ class DatabaseProxy(object):
         id: str,
         partition_key: PartitionKey,
         *,
-        indexing_policy: Optional[Dict[str, str]] = None,
+        indexing_policy: Optional[Dict[str, Any]] = None,
         default_ttl: Optional[int] = None,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         unique_key_policy: Optional[Dict[str, str]] = None,
@@ -172,6 +172,7 @@ class DatabaseProxy(object):
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         analytical_storage_ttl: Optional[int] = None,
+        vector_embedding_policy: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a new container with the given ID (name).
@@ -181,7 +182,7 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
+        :keyword Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
         :keyword offer_throughput: The provisioned throughput for this offer.
@@ -202,6 +203,9 @@ class DatabaseProxy(object):
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
+        :keyword Dict[str, Any] vector_embedding_policy: **provisional** The vector embedding policy for the container.
+            Each vector embedding possesses a predetermined number of dimensions, is associated with an underlying data
+            type, and is generated for a particular distance function.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :returns: A `ContainerProxy` instance representing the new container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
@@ -243,8 +247,10 @@ class DatabaseProxy(object):
         if analytical_storage_ttl is not None:
             definition["analyticalStorageTtl"] = analytical_storage_ttl
         computed_properties = kwargs.pop('computed_properties', None)
-        if computed_properties:
+        if computed_properties is not None:
             definition["computedProperties"] = computed_properties
+        if vector_embedding_policy is not None:
+            definition["vectorEmbeddingPolicy"] = vector_embedding_policy
 
         if session_token is not None:
             kwargs['session_token'] = session_token
@@ -268,7 +274,7 @@ class DatabaseProxy(object):
         id: str,
         partition_key: PartitionKey,
         *,
-        indexing_policy: Optional[Dict[str, str]] = None,
+        indexing_policy: Optional[Dict[str, Any]] = None,
         default_ttl: Optional[int] = None,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         unique_key_policy: Optional[Dict[str, str]] = None,
@@ -278,6 +284,7 @@ class DatabaseProxy(object):
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         analytical_storage_ttl: Optional[int] = None,
+        vector_embedding_policy: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a container if it does not exist already.
@@ -289,7 +296,7 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
+        :keyword Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
         :keyword offer_throughput: The provisioned throughput for this offer.
@@ -310,6 +317,9 @@ class DatabaseProxy(object):
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
+        :keyword Dict[str, Any] vector_embedding_policy: **provisional** The vector embedding policy for the container.
+            Each vector embedding possesses a predetermined number of dimensions, is associated with an underlying
+            data type, and is generated for a particular distance function.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :returns: A `ContainerProxy` instance representing the new container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
@@ -338,6 +348,7 @@ class DatabaseProxy(object):
                 match_condition=match_condition,
                 session_token=session_token,
                 initial_headers=initial_headers,
+                vector_embedding_policy=vector_embedding_policy,
                 **kwargs
             )
 
@@ -463,7 +474,7 @@ class DatabaseProxy(object):
         container: Union[str, ContainerProxy, Mapping[str, Any]],
         partition_key: PartitionKey,
         *,
-        indexing_policy: Optional[Dict[str, str]] = None,
+        indexing_policy: Optional[Dict[str, Any]] = None,
         default_ttl: Optional[int] = None,
         conflict_resolution_policy: Optional[Dict[str, str]] = None,
         session_token: Optional[str] = None,
@@ -483,7 +494,7 @@ class DatabaseProxy(object):
         :type container: Union[str, Dict[str, Any], ~azure.cosmos.aio.ContainerProxy]
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
+        :keyword Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
         :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.

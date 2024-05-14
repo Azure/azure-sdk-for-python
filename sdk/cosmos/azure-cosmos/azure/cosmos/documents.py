@@ -407,6 +407,7 @@ class _QueryFeature:
     OffsetAndLimit: Literal["OffsetAndLimit"] = "OffsetAndLimit"
     OrderBy: Literal["OrderBy"] = "OrderBy"
     Top: Literal["Top"] = "Top"
+    NonStreamingOrderBy: Literal["NonStreamingOrderBy"] = "NonStreamingOrderBy"
 
 
 class _DistinctType:

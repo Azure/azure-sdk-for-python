@@ -680,7 +680,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         :param str database_link:
             The link to the database.
-        :param dict[str, Any] options:
+        :param dict options:
             The request options for the request.
         :return:
             Query iterable of Users.
@@ -3127,7 +3127,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                     documents._QueryFeature.MultipleOrderBy + "," +
                                     documents._QueryFeature.OffsetAndLimit + "," +
                                     documents._QueryFeature.OrderBy + "," +
-                                    documents._QueryFeature.Top)
+                                    documents._QueryFeature.Top + "," +
+                                    documents._QueryFeature.NonStreamingOrderBy)
 
         options = {
             "contentType": runtime_constants.MediaTypes.Json,
