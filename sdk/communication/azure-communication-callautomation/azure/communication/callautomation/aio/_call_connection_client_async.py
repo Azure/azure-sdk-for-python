@@ -877,6 +877,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         *,
         locale: Optional[str] = None,
         operation_context: Optional[str] = None,
+        speech_recognition_model_endpoint_id: Optional[str] = None,
         **kwargs
     ) -> None:
         """Starts transcription in the call.
@@ -885,12 +886,15 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :paramtype locale: str
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
+        :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
+        :paramtype speech_recognition_model_endpoint_id: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         start_transcription_request = StartTranscriptionRequest(
             locale=locale,
+            speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
             operation_context=operation_context,
             **kwargs
         )
@@ -921,18 +925,22 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     async def update_transcription(
         self,
         locale: str,
+        speech_recognition_model_endpoint_id: Optional[str] = None,
         **kwargs
     ) -> None:
         """API to change transcription language.
 
         :param locale: Defines new locale for transcription.
         :type locale: str
+        :param speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
+        :type speech_recognition_model_endpoint_id: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         update_transcription_request = UpdateTranscriptionRequest(
             locale=locale,
+            speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
             **kwargs
         )
         await self._call_media_client.update_transcription(self._call_connection_id, update_transcription_request)
@@ -944,7 +952,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         *,
         play_source: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None,
         operation_context: Optional[str] = None,
-        operation_callback_uri: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
         **kwargs
     )-> None:
         # pylint: disable=docstring-should-be-keyword
@@ -980,7 +988,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             target_participant=serialize_identifier(target_participant),
             play_source_info=play_source_single._to_generated() if play_source_single else None,  # pylint:disable=protected-access
             operation_context=operation_context,
-            operation_callback_uri=operation_callback_uri,
+            operation_callback_uri=operation_callback_url,
             kwargs=kwargs
         )
 
