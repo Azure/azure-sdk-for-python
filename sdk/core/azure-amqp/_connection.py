@@ -207,17 +207,19 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         :param ~pyamqp.constants.ConnectionState new_state: The new state of the connection.
         """
         if new_state is None:
-            return
-        previous_state = self.state
-        self.state = new_state
-        _LOGGER.info(
-            "Connection state changed: %r -> %r",
-            previous_state,
-            new_state,
-            extra=self._network_trace_params
-        )
-        for session in self._outgoing_endpoints.values():
-            session._on_connection_state_change()  # pylint:disable=protected-access
+                return
+        
+        with self._connection_lock:
+            previous_state = self.state
+            self.state = new_state
+            _LOGGER.info(
+                "Connection state changed: %r -> %r",
+                previous_state,
+                new_state,
+                extra=self._network_trace_params
+            )
+            for session in self._outgoing_endpoints.values():
+                session._on_connection_state_change()  # pylint:disable=protected-access
 
     def _connect(self) -> None:
         """Initiate the connection.
