@@ -4,9 +4,15 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Optional, Union, Any
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.core.async_paging import AsyncItemPaged
+from azure.core.polling import AsyncLROPoller
+
 from .._generated.aio._client import PhoneNumbersClient as PhoneNumbersClientGen
 from .._generated.models import (
     PhoneNumberSearchRequest,
@@ -22,22 +28,20 @@ from .._shared.utils import parse_connection_str
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
 
+
+from .._generated.models import (
+    PhoneNumberCapabilities,
+    PhoneNumberCountry,
+    PhoneNumberOffering,
+    PhoneNumberLocality,
+    PhoneNumberSearchResult,
+    PurchasedPhoneNumber,
+)
+
 _DEFAULT_POLLING_INTERVAL_IN_SECONDS = 2
 
 if TYPE_CHECKING:
-    from typing import Any
-    from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.credentials import AzureKeyCredential
-    from azure.core.async_paging import AsyncItemPaged
-    from azure.core.polling import AsyncLROPoller
-    from .._generated.models import (
-        PhoneNumberCapabilities,
-        PhoneNumberCountry,
-        PhoneNumberOffering,
-        PhoneNumberLocality,
-        PhoneNumberSearchResult,
-        PurchasedPhoneNumber,
-    )
+    pass
 
 class PhoneNumbersClient(object):
     """A client to interact with the AzureCommunicationService Phone Numbers gateway.
@@ -108,12 +112,7 @@ class PhoneNumbersClient(object):
 
         :param search_id: The search id.
         :type search_id: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
-            False for no polling, or your own initialized polling object for a personal polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time (seconds) between two polls
-            for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns None.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         """
         purchase_request = PhoneNumberPurchaseRequest(search_id=search_id)
@@ -137,12 +136,7 @@ class PhoneNumbersClient(object):
 
         :param phone_number: Phone number to be released, e.g. +11234567890.
         :type phone_number: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
-            False for no polling, or your own initialized polling object for a personal polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time (seconds) between two polls
-            for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns None.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         """
         polling_interval = kwargs.pop(
@@ -177,15 +171,7 @@ class PhoneNumbersClient(object):
             ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
         :param capabilities: Required. Capabilities of a phone number.
         :type capabilities: ~azure.communication.phonenumbers.models.PhoneNumberCapabilities
-        :keyword str area_code: The area code of the desired phone number, e.g. 425. If not set,
-            any area code could be used in the final search.
-        :keyword int quantity: The quantity of phone numbers in the search. Default is 1.
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time (seconds) between two polls
-            for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns PhoneNumberSearchResult.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.phonenumbers.models.PhoneNumberSearchResult]
         """
         search_request = PhoneNumberSearchRequest(
@@ -222,12 +208,7 @@ class PhoneNumbersClient(object):
         :type calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
         :param sms: Capability value for SMS.
         :type sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
-            False for no polling, or your own initialized polling object for a personal polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time (seconds) between two polls
-            for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns PurchasedPhoneNumber.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
         """
         capabilities_request = PhoneNumberCapabilitiesRequest(
@@ -274,14 +255,6 @@ class PhoneNumbersClient(object):
         # type: (...) -> AsyncItemPaged[PurchasedPhoneNumber]
         """Gets the list of all purchased phone numbers.
 
-        Gets the list of all purchased phone numbers.
-
-        :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
-         default value is 0. Default value is 0.
-        :paramtype skip: int
-        :keyword top: An optional parameter for how many entries to return, for pagination purposes.
-         The default value is 100. Default value is 100.
-        :paramtype top: int
         :return: An iterator like instance of PurchasedPhoneNumber
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
@@ -299,11 +272,6 @@ class PhoneNumbersClient(object):
         # type: (...) -> AsyncItemPaged[PhoneNumberCountry]
         """Gets the list of supported countries.
 
-        Gets the list of supported countries.
-
-        :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
-         default value is 0. Default value is 0.
-        :paramtype skip: int
         :return: An iterator like instance of PhoneNumberCountry
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.models.PhoneNumberCountry]
@@ -327,12 +295,6 @@ class PhoneNumbersClient(object):
 
         :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
         :type country_code: str
-        :param administrative_division: An optional parameter for the name of the state or province
-         in which to search for the area code. e.g. California. Default value is None.
-        :type administrative_division: str
-        :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
-         default value is 0. Default value is 0.
-        :paramtype skip: int
         :return: An iterator like instance of PhoneNumberLocality
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.models.PhoneNumberLocality]
@@ -359,15 +321,6 @@ class PhoneNumbersClient(object):
 
         :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
         :type country_code: str
-        :param phone_number_type: Filter by phoneNumberType, e.g. Geographic, TollFree. Known values
-         are: "geographic" and "tollFree". Default value is None.
-        :type phone_number_type: ~azure.communication.phonenumbers.models.PhoneNumberType
-        :param assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
-         "person" and "application". Default value is None.
-        :type assignment_type: ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
-        :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
-         default value is 0. Default value is 0.
-        :paramtype skip: int
         :return: An iterator like instance of PhoneNumberOffering
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.models.PhoneNumberOffering]
@@ -395,18 +348,6 @@ class PhoneNumbersClient(object):
         :param phone_number_type: Filter by phone number type, e.g. Geographic, TollFree. Known values are:
         "geographic" and "tollFree". Required.
         :type phone_number_type: ~azure.communication.phonenumbers.models.PhoneNumberType
-        :param assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
-        "person" and "application". Default value is None.
-        :type assignment_type: ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
-        :param locality: The name of locality in which to search for the area code. e.g. Seattle.
-        This is required if the phone number type is Geographic. Default value is None.
-        :type locality: str
-        :keyword administrative_division: The name of the state or province in which to search for the
-        area code. e.g. California. Default value is None.
-        :type administrative_division: str
-        :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
-        default value is 0. Default value is 0.
-        :paramtype skip: int
         :return: An iterator like instance of PhoneNumberAreaCode
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.PhoneNumberAreaCode]
         :raises ~azure.core.exceptions.HttpResponseError:
