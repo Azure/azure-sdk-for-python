@@ -2111,9 +2111,9 @@ class MediaStreamingFailed(_serialization.Model):
     :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
      services.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
-    :ivar media_streaming_update_result: Defines the result for MediaStreamingUpdate with the
-     current status and the details about the status.
-    :vartype media_streaming_update_result:
+    :ivar media_streaming_update: Defines the result for MediaStreamingUpdate with the current
+     status and the details about the status.
+    :vartype media_streaming_update:
      ~azure.communication.callautomation.models.MediaStreamingUpdate
     """
 
@@ -2121,7 +2121,7 @@ class MediaStreamingFailed(_serialization.Model):
         "call_connection_id": {"readonly": True},
         "operation_context": {"readonly": True},
         "result_information": {"readonly": True},
-        "media_streaming_update_result": {"readonly": True},
+        "media_streaming_update": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2130,7 +2130,7 @@ class MediaStreamingFailed(_serialization.Model):
         "correlation_id": {"key": "correlationId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
-        "media_streaming_update_result": {"key": "mediaStreamingUpdateResult", "type": "MediaStreamingUpdate"},
+        "media_streaming_update": {"key": "mediaStreamingUpdate", "type": "MediaStreamingUpdate"},
     }
 
     def __init__(
@@ -2149,7 +2149,7 @@ class MediaStreamingFailed(_serialization.Model):
         self.correlation_id = correlation_id
         self.operation_context = None
         self.result_information = None
-        self.media_streaming_update_result = None
+        self.media_streaming_update = None
 
 
 class MediaStreamingOptions(_serialization.Model):
@@ -2244,9 +2244,9 @@ class MediaStreamingStarted(_serialization.Model):
     :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
      services.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
-    :ivar media_streaming_update_result: Defines the result for MediaStreamingUpdate with the
-     current status and the details about the status.
-    :vartype media_streaming_update_result:
+    :ivar media_streaming_update: Defines the result for MediaStreamingUpdate with the current
+     status and the details about the status.
+    :vartype media_streaming_update:
      ~azure.communication.callautomation.models.MediaStreamingUpdate
     """
 
@@ -2254,7 +2254,7 @@ class MediaStreamingStarted(_serialization.Model):
         "call_connection_id": {"readonly": True},
         "operation_context": {"readonly": True},
         "result_information": {"readonly": True},
-        "media_streaming_update_result": {"readonly": True},
+        "media_streaming_update": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2263,7 +2263,7 @@ class MediaStreamingStarted(_serialization.Model):
         "correlation_id": {"key": "correlationId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
-        "media_streaming_update_result": {"key": "mediaStreamingUpdateResult", "type": "MediaStreamingUpdate"},
+        "media_streaming_update": {"key": "mediaStreamingUpdate", "type": "MediaStreamingUpdate"},
     }
 
     def __init__(
@@ -2282,7 +2282,7 @@ class MediaStreamingStarted(_serialization.Model):
         self.correlation_id = correlation_id
         self.operation_context = None
         self.result_information = None
-        self.media_streaming_update_result = None
+        self.media_streaming_update = None
 
 
 class MediaStreamingStopped(_serialization.Model):
@@ -2303,9 +2303,9 @@ class MediaStreamingStopped(_serialization.Model):
     :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
      services.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
-    :ivar media_streaming_update_result: Defines the result for MediaStreamingUpdate with the
-     current status and the details about the status.
-    :vartype media_streaming_update_result:
+    :ivar media_streaming_update: Defines the result for MediaStreamingUpdate with the current
+     status and the details about the status.
+    :vartype media_streaming_update:
      ~azure.communication.callautomation.models.MediaStreamingUpdate
     """
 
@@ -2313,7 +2313,7 @@ class MediaStreamingStopped(_serialization.Model):
         "call_connection_id": {"readonly": True},
         "operation_context": {"readonly": True},
         "result_information": {"readonly": True},
-        "media_streaming_update_result": {"readonly": True},
+        "media_streaming_update": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2322,7 +2322,7 @@ class MediaStreamingStopped(_serialization.Model):
         "correlation_id": {"key": "correlationId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
-        "media_streaming_update_result": {"key": "mediaStreamingUpdateResult", "type": "MediaStreamingUpdate"},
+        "media_streaming_update": {"key": "mediaStreamingUpdate", "type": "MediaStreamingUpdate"},
     }
 
     def __init__(
@@ -2341,7 +2341,7 @@ class MediaStreamingStopped(_serialization.Model):
         self.correlation_id = correlation_id
         self.operation_context = None
         self.result_information = None
-        self.media_streaming_update_result = None
+        self.media_streaming_update = None
 
 
 class MediaStreamingSubscription(_serialization.Model):

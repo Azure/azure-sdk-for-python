@@ -51,7 +51,9 @@ from ._generated.models import (
     StopTranscriptionRequest,
     UpdateTranscriptionRequest,
     HoldRequest,
-    UnholdRequest
+    UnholdRequest,
+    StartMediaStreamingRequest,
+    StopMediaStreamingRequest
 )
 from ._generated.models._enums import RecognizeInputType
 from ._shared.auth_policy_utils import get_authentication_policy
@@ -867,6 +869,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         *,
         locale: Optional[str] = None,
         operation_context: Optional[str] = None,
+        speech_recognition_model_endpoint_id: Optional[str] = None,
         **kwargs
     ) -> None:
         """Starts transcription in the call.
@@ -875,6 +878,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :paramtype locale: str
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
+        :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
+        :paramtype speech_recognition_model_endpoint_id: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -883,6 +888,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         start_transcription_request = StartTranscriptionRequest(
             locale=locale,
             operation_context=operation_context,
+            speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
             **kwargs
         )
         self._call_media_client.start_transcription(self._call_connection_id, start_transcription_request)
@@ -914,12 +920,15 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     def update_transcription(
         self,
         locale: str,
+        speech_recognition_model_endpoint_id: Optional[str] = None,
         **kwargs
     ) -> None:
         """API to change transcription language.
 
         :param locale: Defines new locale for transcription.
         :type locale: str
+        :param speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
+        :type speech_recognition_model_endpoint_id: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -927,6 +936,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
         update_transcription_request = UpdateTranscriptionRequest(
             locale=locale,
+            speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
             **kwargs
         )
         self._call_media_client.update_transcription(self._call_connection_id, update_transcription_request)
@@ -938,7 +948,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         *,
         play_source: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None,
         operation_context: Optional[str] = None,
-        operation_callback_uri: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
         **kwargs
     )-> None:
         # pylint: disable=docstring-should-be-keyword
@@ -974,7 +984,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             target_participant=serialize_identifier(target_participant),
             play_source_info=play_source_single._to_generated() if play_source_single else None,  # pylint:disable=protected-access
             operation_context=operation_context,
-            operation_callback_uri=operation_callback_uri,
+            operation_callback_uri=operation_callback_url,
             kwargs=kwargs
         )
 
@@ -1006,4 +1016,58 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         )
 
         self._call_media_client.unhold(self._call_connection_id, unhold_request)
+
+    @distributed_trace
+    def start_media_streaming(
+        self,
+        operation_callback_url: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        """Starts media streaming in the call.
         
+        :param operation_callback_url: (Optional) Set a callback URL that overrides the default 
+         callback URL set by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :type operation_callback_url: str or None
+        :param operation_context: (Optional) Value that can be used to track this call and its associated events.
+        :type operation_context: str or None
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError: If there's an HTTP response error.
+        """
+        start_media_streaming_request=StartMediaStreamingRequest(
+            operation_callback_uri=operation_callback_url,
+            operation_context=operation_context
+        )
+        self._call_media_client.start_media_streaming(
+            self._call_connection_id,
+            start_media_streaming_request,
+            **kwargs)
+
+    @distributed_trace
+    def stop_media_streaming(
+        self,
+        operation_callback_url: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        """Stops media streaming in the call.
+        
+        :param operation_callback_url: (Optional) Set a callback URL that overrides the default 
+         callback URL set by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :type operation_callback_url: str or None
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError: If there's an HTTP response error.
+        """
+        stop_media_streaming_request=StopMediaStreamingRequest(
+            operation_callback_uri=operation_callback_url
+            )
+        self._call_media_client.stop_media_streaming(
+            self._call_connection_id,
+            stop_media_streaming_request,
+            **kwargs
+            )

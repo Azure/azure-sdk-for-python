@@ -3,11 +3,13 @@
 > see https://aka.ms/autorest
 
 ### Setup
+
 ```ps
 npm install -g autorest
 ```
 
 ### Generation
+
 ```ps
 cd <swagger-folder>
 autorest SWAGGER.md
@@ -34,6 +36,7 @@ title: Azure Communication Call Automation Service
 ```
 
 ### Rename response to result
+
 ```yaml
 directive:
 - from: swagger-document
@@ -61,3 +64,4 @@ directive:
   transform: >
     $["name"] = "CallConnectionState";
 ```
+

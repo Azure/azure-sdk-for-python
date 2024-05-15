@@ -488,11 +488,11 @@ class TranscriptionOptions:
     """The type of transport to be used for live transcription."""
     locale: str
     """Defines the locale for the data."""
-    speech_recognition_model_endpoint_id: str
-    """Determines endpoint where the custom model was deployed."""
     start_transcription: bool
     """Determines if the transcription should be started immediately after call is answered or not."""
-    enable_intermediate_results: bool
+    speech_recognition_model_endpoint_id: Optional[str] = None
+    """Determines endpoint where the custom model was deployed."""
+    enable_intermediate_results: Optional[bool] = None
     """Determines if the intermediate results should be enabled for transcribed speech or not."""
 
     def __init__(
@@ -500,9 +500,9 @@ class TranscriptionOptions:
         transport_url: str,
         transport_type: Union[str, 'TranscriptionTransportType'],
         locale: str,
-        speech_recognition_model_endpoint_id: str,
         start_transcription: bool,
-        enable_intermediate_results: bool
+        speech_recognition_model_endpoint_id: Optional[str] = None,
+        enable_intermediate_results: Optional[bool] = None
     ):
         self.transport_url = transport_url
         self.transport_type = transport_type
@@ -522,7 +522,7 @@ class TranscriptionOptions:
         )
 
 class TranscriptionSubscription:
-    """Media streaming Subscription Object.
+    """Transcription Subscription Object.
 
     :keyword id: Subscription Id.
     :paramtype id: str
@@ -587,6 +587,8 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     :paramtype callback_url: str
     :keyword media_streaming_subscription: media_streaming_subscription for media streaming.
     :paramtype media_streaming_subscription: ~azure.communication.callautomation.MediaStreamingSubscription
+    :keyword transcription_subscription: transcription_subscription for transcription.
+    :paramtype transcription_subscription: ~azure.communication.callautomation.TranscriptionSubscription
     :keyword source_caller_id_number:
      The source caller Id, a phone number, that's shown to the
      PSTN participant being invited.
@@ -600,6 +602,9 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     :paramtype correlation_id: str
     :keyword answered_by: The identifier that answered the call
     :paramtype answered_by: ~azure.communication.callautomation.CommunicationUserIdentifier
+    :keyword answered_for: Identity of the original Pstn target of an incoming Call. Only populated
+     when the original target is a Pstn number.
+    :paramtype answered_for: ~azure.communication.callautomation.PhoneNumberIdentifier
     """
 
     call_connection_id: Optional[str]
@@ -613,7 +618,9 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     callback_url: Optional[str]
     """The callback URL."""
     media_streaming_subscription: Optional[MediaStreamingSubscription]
-    """SubscriptionId for media streaming."""
+    """Media streaming subscription."""
+    transcription_subscription: Optional[TranscriptionSubscription]
+    """Transcription subscription."""
     source_caller_id_number: Optional[PhoneNumberIdentifier]
     """The source caller Id, a phone number, that's shown to the
      PSTN participant being invited.
@@ -626,6 +633,8 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     """Correlation ID of the call"""
     answered_by: Optional[CommunicationIdentifier]
     """The identifier that answered the call"""
+    answered_for: Optional[PhoneNumberIdentifier]
+    """The phone identifier that answered the call"""
 
     def __init__(
         self,
@@ -636,11 +645,13 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
         call_connection_state: Optional[Union[str, 'CallConnectionState']] = None,
         callback_url: Optional[str] = None,
         media_streaming_subscription: Optional[MediaStreamingSubscription] = None,
+        transcription_subscription: Optional[TranscriptionSubscription] = None,
         source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
         source_display_name: Optional[str] = None,
         source: Optional[CommunicationIdentifier] = None,
         correlation_id: Optional[str] = None,
-        answered_by: Optional[CommunicationUserIdentifier] = None
+        answered_by: Optional[CommunicationUserIdentifier] = None,
+        answered_for: Optional[PhoneNumberIdentifier] = None,
     ):
         self.call_connection_id = call_connection_id
         self.server_call_id = server_call_id
@@ -648,11 +659,13 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
         self.call_connection_state = call_connection_state
         self.callback_url = callback_url
         self.media_streaming_subscription = media_streaming_subscription
+        self.transcription_subscription = transcription_subscription
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
         self.source = source
         self.correlation_id = correlation_id
         self.answered_by = answered_by
+        self.answered_for = answered_for
 
     @classmethod
     def _from_generated(cls, call_connection_properties_generated: 'CallConnectionPropertiesRest'):
@@ -667,6 +680,7 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
             call_connection_state=call_connection_properties_generated.call_connection_state,
             callback_url=call_connection_properties_generated.callback_uri,
             media_streaming_subscription=call_connection_properties_generated.media_streaming_subscription,
+            transcription_subscription=call_connection_properties_generated.transcription_subscription,
             source_caller_id_number=deserialize_phone_identifier(
             call_connection_properties_generated.source_caller_id_number)
             if call_connection_properties_generated.source_caller_id_number
@@ -679,7 +693,11 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
             answered_by=deserialize_comm_user_identifier(
                 call_connection_properties_generated.answered_by)
             if call_connection_properties_generated.answered_by
-            else None
+            else None,
+            answered_for=deserialize_phone_identifier(
+            call_connection_properties_generated.answered_for)
+            if call_connection_properties_generated.answered_for
+            else None,
         )
 
 
