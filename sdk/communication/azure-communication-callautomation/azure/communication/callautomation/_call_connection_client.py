@@ -414,7 +414,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def play_media(
         self,
-        play_source: Union['FileSource', 'TextSource', 'SsmlSource'],
+        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'], 
+                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
         play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
         *,
         loop: bool = False,
@@ -456,7 +457,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def _play_media(
         self,
-        play_source: Union['FileSource', 'TextSource', 'SsmlSource'],
+        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'], 
+                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
         play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
         *,
         loop: bool = False,
@@ -491,16 +493,16 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         play_source_single: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None
+        play_sources: Optional[List[Union['FileSource', 'TextSource', 'SsmlSource']]] = None
         if isinstance(play_source, list):
-            warnings.warn("Currently only single play source per request is supported.")
             if play_source:  # Check if the list is not empty
-                play_source_single = play_source[0]
+                play_sources = play_source
         else:
             play_source_single = play_source
 
         audience = [] if play_to == "all" else [serialize_identifier(i) for i in play_to]
         play_request = PlayRequest(
-            play_sources=[play_source_single._to_generated()],  # pylint:disable=protected-access
+            play_sources=[play_source_single._to_generated()] if play_source_single else play_sources,  # pylint:disable=protected-access
             play_to=audience,
             play_options=PlayOptions(loop=loop),
             interrupt_call_media_operation=interrupt_call_media_operation,
@@ -513,7 +515,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def play_media_to_all(
         self,
-        play_source: Union['FileSource', 'TextSource', 'SsmlSource'],
+        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'], 
+                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
@@ -563,7 +566,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         target_participant: 'CommunicationIdentifier',
         *,
         initial_silence_timeout: Optional[int] = None,
-        play_prompt: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None,
+        play_prompt: Optional[Union[Union['FileSource', 'TextSource', 'SsmlSource'], 
+                                    List[Union['FileSource', 'TextSource', 'SsmlSource']]]] = None,
         interrupt_call_media_operation: bool = False,
         operation_context: Optional[str] = None,
         interrupt_prompt: bool = False,
@@ -632,10 +636,10 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         )
 
         play_source_single: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None
+        play_sources: Optional[List[Union['FileSource', 'TextSource', 'SsmlSource']]] = None
         if isinstance(play_prompt, list):
-            warnings.warn("Currently only single play source per request is supported.")
             if play_prompt:  # Check if the list is not empty
-                play_source_single = play_prompt[0]
+                play_sources = play_prompt
         else:
             play_source_single = play_prompt
 
@@ -667,7 +671,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
         recognize_request = RecognizeRequest(
             recognize_input_type=input_type,
-            play_prompt=play_source_single._to_generated() if play_source_single else None,  # pylint:disable=protected-access
+            play_prompts= [play_source_single._to_generated()] if play_source_single else play_sources,  # pylint:disable=protected-access
             interrupt_call_media_operation=interrupt_call_media_operation,
             operation_context=operation_context,
             recognize_options=options,
