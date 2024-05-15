@@ -171,7 +171,7 @@ class TestVectorPolicy(unittest.TestCase):
             "vectorEmbeddings": [
                 {
                     "path": "/vector1",
-                    "dataType": "float33",
+                    "dataType": "float32",
                     "dimensions": 1000,
                     "distanceFunction": "euclidean"
                 }]}
