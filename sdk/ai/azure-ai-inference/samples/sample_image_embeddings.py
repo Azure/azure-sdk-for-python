@@ -43,12 +43,12 @@ def sample_image_embeddings():
 
     client = ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    result = client.create(input=[
+    response = client.create(input=[
         EmbeddingInput(image=image1),
         EmbeddingInput(image=image2)
     ])
 
-    for item in result.data:
+    for item in response.data:
         length = len(item.embedding)
         print(
             f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "

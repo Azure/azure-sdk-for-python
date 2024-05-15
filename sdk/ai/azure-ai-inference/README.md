@@ -139,14 +139,14 @@ from azure.core.credentials import AzureKeyCredential
 
 client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-result = client.create(
+response = client.create(
     messages=[
         SystemMessage(content="You are a helpful assistant."),
         UserMessage(content="How many feet are in a mile?"),
     ]
 )
 
-print(result.choices[0].message.content)
+print(response.choices[0].message.content)
 ```
 
 <!-- END SNIPPET -->
@@ -168,18 +168,18 @@ from azure.core.credentials import AzureKeyCredential
 
 client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-result = client.create_streaming(
+response = client.create_streaming(
     messages=[
         SystemMessage(content="You are a helpful assistant."),
         UserMessage(content="Give me 5 good reasons why I should exercise every day."),
     ]
 )
 
-for update in result:
+for update in response:
     if update.choices[0].delta.content:
         print(update.choices[0].delta.content, end="")
 
-result.close()
+response.close()
 ```
 
 <!-- END SNIPPET -->
@@ -200,9 +200,9 @@ from azure.core.credentials import AzureKeyCredential
 
 client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-result = client.create(input=["first phrase", "second phrase", "third phrase"])
+response = client.create(input=["first phrase", "second phrase", "third phrase"])
 
-for item in result.data:
+for item in response.data:
     length = len(item.embedding)
     print(
         f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
@@ -239,12 +239,12 @@ with open("sample2.png", "rb") as f:
 
 client = ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-result = client.create(input=[
+response = client.create(input=[
     EmbeddingInput(image=image1),
     EmbeddingInput(image=image2)
 ])
 
-for item in result.data:
+for item in response.data:
     length = len(item.embedding)
     print(
         f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
@@ -297,14 +297,14 @@ from azure.core.credentials import AzureKeyCredential
 client = ClientGenerator.from_endpoint(endpoint=endpoint, credential=AzureKeyCredential(key))
 
 if isinstance(client, ChatCompletionsClient):
-    result = client.create(
+    response = client.create(
         messages=[
             SystemMessage(content="You are a helpful assistant."),
             UserMessage(content="How many feet are in a mile?"),
         ]
     )
 
-    print(result.choices[0].message.content)
+    print(response.choices[0].message.content)
 ```
 
 <!-- END SNIPPET -->

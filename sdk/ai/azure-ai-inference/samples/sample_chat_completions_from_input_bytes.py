@@ -40,9 +40,9 @@ def sample_chat_completions_from_input_bytes():
 
     # Make a chat completion call, by directly providing the
     # HTTP request body as IO[bytes], containing chat messages.
-    result = client.create(read_text_file("example_chat.json"))
+    response = client.create(read_text_file("example_chat.json"))
 
-    print(result.choices[0].message.content)
+    print(response.choices[0].message.content)
 
 
 def read_text_file(file_path: str) -> io.BytesIO:

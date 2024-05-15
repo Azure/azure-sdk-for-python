@@ -60,13 +60,12 @@ async def sample_chat_completions_streaming_async():
         await asyncio.sleep(0.1)
         print("Waiting...")
 
-    # Get the result
-    result = future.result()
+    # Get the response
+    response = future.result()
 
-    # Iterate on the result to get chat completion updates, as they arrive from the service
-    async for update in result:
-        if update.choices[0].delta.content:
-            print(update.choices[0].delta.content, end="")
+    # Iterate on the response to get chat completion updates, as they arrive from the service
+    async for update in response:
+        print(update.choices[0].delta.content or "", end="")
 
     # Remember to always close the asynchronous client when you are done with it
     await client.close()

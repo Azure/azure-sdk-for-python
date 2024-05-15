@@ -57,11 +57,11 @@ async def sample_image_embeddings_async():
         await asyncio.sleep(0.1)
         print("Waiting...")
 
-    # Get the result
-    result = future.result()
+    # Get the response
+    response = future.result()
     await client.close()
 
-    for item in result.data:
+    for item in response.data:
         length = len(item.embedding)
         print(
             f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "

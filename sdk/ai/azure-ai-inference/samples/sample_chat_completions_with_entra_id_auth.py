@@ -39,14 +39,14 @@ def sample_chat_completions_with_entra_id_auth():
 
     client = ChatCompletionsClient(endpoint=endpoint, credential=default_azure_credential)
 
-    result = client.create(
+    response = client.create(
         messages=[
             SystemMessage(content="You are a helpful assistant."),
             UserMessage(content="How many feet are in a mile?"),
         ]
     )
 
-    print(result.choices[0].message.content)
+    print(response.choices[0].message.content)
 
 
 if __name__ == "__main__":

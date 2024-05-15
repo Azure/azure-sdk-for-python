@@ -39,14 +39,14 @@ def sample_chat_completions_with_client_generator():
     client = ClientGenerator.from_endpoint(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     if isinstance(client, ChatCompletionsClient):
-        result = client.create(
+        response = client.create(
             messages=[
                 SystemMessage(content="You are a helpful assistant."),
                 UserMessage(content="How many feet are in a mile?"),
             ]
         )
 
-        print(result.choices[0].message.content)
+        print(response.choices[0].message.content)
     # [END chat_completions_with_client_generator]
 
 

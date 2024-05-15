@@ -44,14 +44,14 @@ def sample_chat_completions_with_history():
         UserMessage(content="What year was construction of the international space station mostly done?"),
     ]
 
-    result = client.create(messages=messages)
-    print(result.choices[0].message.content)
+    response = client.create(messages=messages)
+    print(response.choices[0].message.content)
 
-    messages.append(AssistantMessage(content=result.choices[0].message.content))
+    messages.append(AssistantMessage(content=response.choices[0].message.content))
     messages.append(UserMessage(content="And what was the estimated cost to build it?"))
 
-    result = client.create(messages=messages)
-    print(result.choices[0].message.content)
+    response = client.create(messages=messages)
+    print(response.choices[0].message.content)
 
 
 if __name__ == "__main__":

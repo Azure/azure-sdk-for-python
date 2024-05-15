@@ -113,24 +113,24 @@ def sample_chat_completions_with_tools():
         UserMessage(content="What are the next flights from Seattle to Miami and from Seattle to Orlando?"),
     ]
 
-    result = client.create(
+    response = client.create(
         messages=messages,
         tools=[flight_info],
         # tool_choice=ChatCompletionsNamedToolSelection(type="function")  # Cohere model does not support
     )
 
     # As long as the model keeps requesting tool calls, make tool calls and provide the tool outputs to the model
-    while result.choices[0].finish_reason == CompletionsFinishReason.TOOL_CALLS:
+    while response.choices[0].finish_reason == CompletionsFinishReason.TOOL_CALLS:
 
         # Append the previous model response to the chat history
-        if result.choices[0].message.tool_calls is not None:
+        if response.choices[0].message.tool_calls is not None:
             # TODO: Remove the need to set content=""
-            messages.append(AssistantMessage(content="", tool_calls=result.choices[0].message.tool_calls))
+            messages.append(AssistantMessage(content="", tool_calls=response.choices[0].message.tool_calls))
 
         # Make new function call(s) as needed. If parallel function calling is supported by the model,
         # we may have more than one tool call request.
-        if result.choices[0].message.tool_calls is not None:
-            for tool_call in result.choices[0].message.tool_calls:
+        if response.choices[0].message.tool_calls is not None:
+            for tool_call in response.choices[0].message.tool_calls:
                 if hasattr(tool_call, "function"):
                     function_name = tool_call.function.name
                     function_args = json.loads(tool_call.function.arguments.replace("'", '"'))
@@ -148,12 +148,12 @@ def sample_chat_completions_with_tools():
                     )
 
         # With the additional tools information on hand, get another response from the model
-        result = client.create(
+        response = client.create(
             messages=messages, tools=[flight_info], tool_choice=ChatCompletionsToolSelectionPreset.AUTO
         )
 
     # Print the final response
-    print(result.choices[0].message.content)
+    print(response.choices[0].message.content)
 
 
 if __name__ == "__main__":

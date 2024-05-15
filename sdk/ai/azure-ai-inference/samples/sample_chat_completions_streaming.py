@@ -37,18 +37,17 @@ def sample_chat_completions_streaming():
 
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    result = client.create_streaming(
+    response = client.create_streaming(
         messages=[
             SystemMessage(content="You are a helpful assistant."),
             UserMessage(content="Give me 5 good reasons why I should exercise every day."),
         ]
     )
 
-    for update in result:
-        if update.choices[0].delta.content:
-            print(update.choices[0].delta.content, end="")
+    for update in response:
+        print(update.choices[0].delta.content or "", end="")
 
-    result.close()
+    response.close()
     # [END chat_completions_streaming]
 
 

@@ -53,24 +53,24 @@ async def sample_chat_completions_async():
         await asyncio.sleep(0.1)
         print("Waiting...")
 
-    # Get the result
-    result = future.result()
+    # Get the response
+    response = future.result()
     await client.close()
 
     # Print results the the console
     print("Chat Completions:")
-    print(f"choices[0].message.content: {result.choices[0].message.content}")
-    print(f"choices[0].message.role: {result.choices[0].message.role}")
-    print(f"choices[0].finish_reason: {result.choices[0].finish_reason}")
-    print(f"choices[0].index: {result.choices[0].index}")
-    print(f"id: {result.id}")
-    print(f"created: {result.created}")
-    print(f"model: {result.model}")
-    print(f"object: {result.object}")
-    print(f"usage.capacity_type: {result.usage.capacity_type}")
-    print(f"usage.prompt_tokens: {result.usage.prompt_tokens}")
-    print(f"usage.completion_tokens: {result.usage.completion_tokens}")
-    print(f"usage.total_tokens: {result.usage.total_tokens}")
+    print(f"choices[0].message.content: {response.choices[0].message.content}")
+    print(f"choices[0].message.role: {response.choices[0].message.role}")
+    print(f"choices[0].finish_reason: {response.choices[0].finish_reason}")
+    print(f"choices[0].index: {response.choices[0].index}")
+    print(f"id: {response.id}")
+    print(f"created: {response.created}")
+    print(f"model: {response.model}")
+    print(f"object: {response.object}")
+    print(f"usage.capacity_type: {response.usage.capacity_type}")
+    print(f"usage.prompt_tokens: {response.usage.prompt_tokens}")
+    print(f"usage.completion_tokens: {response.usage.completion_tokens}")
+    print(f"usage.total_tokens: {response.usage.total_tokens}")
 
 
 async def main():

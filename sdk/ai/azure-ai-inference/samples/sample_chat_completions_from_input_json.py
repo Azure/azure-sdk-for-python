@@ -54,9 +54,9 @@ def sample_chat_completions_from_input_json():
 
     # Make a chat completion call, by directly providing the
     # HTTP request body as IO[bytes], containing chat messages.
-    result = client.create(json_messages)
+    response = client.create(json_messages)
 
-    print(result.choices[0].message.content)
+    print(response.choices[0].message.content)
 
 
 if __name__ == "__main__":

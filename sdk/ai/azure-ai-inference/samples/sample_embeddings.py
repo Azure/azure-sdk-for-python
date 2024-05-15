@@ -36,9 +36,9 @@ def sample_embeddings():
 
     client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    result = client.create(input=["first phrase", "second phrase", "third phrase"])
+    response = client.create(input=["first phrase", "second phrase", "third phrase"])
 
-    for item in result.data:
+    for item in response.data:
         length = len(item.embedding)
         print(
             f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
