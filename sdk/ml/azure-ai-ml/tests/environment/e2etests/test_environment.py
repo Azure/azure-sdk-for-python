@@ -89,7 +89,6 @@ class TestEnvironment(AzureRecordedTestCase):
         assert env_dump["id"] == ARM_ID_PREFIX + environment_id
         assert env_dump["image"] == environment.image
 
-    @pytest.mark.live_test_only("Needs re-recording to work with new test proxy sanitizers")
     def test_environment_create_or_update_docker_context(
         self, client: MLClient, env_name: Callable[[str], str]
     ) -> None:
@@ -219,7 +218,6 @@ class TestEnvironment(AzureRecordedTestCase):
             sleep_if_live(2)
             assert client.environments.get(name, label="latest").version == version
 
-    @pytest.mark.live_test_only("Needs re-recording to work with new test proxy sanitizers")
     def test_registry_environment_create_conda_and_get(
         self, only_registry_client: MLClient, env_name: Callable[[str], str]
     ) -> None:
@@ -228,22 +226,25 @@ class TestEnvironment(AzureRecordedTestCase):
             source="./tests/test_configs/environment/environment_conda.yml", params_override=params_override
         )
 
-        environment = only_registry_client._environments.create_or_update(env)
+        try:
+            environment = only_registry_client._environments.create_or_update(env)
 
-        environment_id = f"azureml://registries/testFeed/environments/{env.name}/versions/{env.version}"
+            environment_id = f"azureml://registries/testfeed/environments/{env.name}/versions/{env.version}"
 
-        assert environment.conda_file
-        assert environment.id == environment_id
+            assert environment.conda_file
+            assert environment.id == environment_id
 
-        env_dump = environment._to_dict()
-        assert env_dump
-        assert env_dump["id"] == environment_id
-        assert env_dump["conda_file"]
-        assert env_dump["description"]
+            env_dump = environment._to_dict()
+            assert env_dump
+            assert env_dump["id"] == environment_id
+            assert env_dump["conda_file"]
+            assert env_dump["description"]
 
-        environment = only_registry_client._environments.get(name=env.name, version=env.version)
-        assert environment
-        assert environment.id == environment_id
+            environment = only_registry_client._environments.get(name=env.name, version=env.version)
+            assert environment
+            assert environment.id == environment_id
+        finally:
+            only_registry_client._environments.archive(name=env.name, version=env.version)
 
     def test_registry_environment_list(self, only_registry_client: MLClient) -> None:
         environment_list = only_registry_client._environments.list()

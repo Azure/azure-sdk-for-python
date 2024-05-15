@@ -318,7 +318,7 @@ class TestCommandJob(AzureRecordedTestCase):
         """Checks that dependencies of the form azureml:name@label are resolved to a version"""
         from uuid import uuid4
 
-        job_name = randstr("job_name")
+        job_name = randstr("Job_name")
         environment_name = randstr("environment_name")
         environment_versions = ["foo", "bar"]
         data_name = randstr("data_name")
