@@ -25,7 +25,6 @@ def verify_ordering(item_list, distance_function):
             assert item_list[i]["SimilarityScore"] >= item_list[i + 1]["SimilarityScore"]
 
 
-@pytest.mark.skip  # skipping these while we get an emulator
 class TestVectorSimilarityQuery(unittest.TestCase):
     """Test to check vector similarity queries behavior."""
 

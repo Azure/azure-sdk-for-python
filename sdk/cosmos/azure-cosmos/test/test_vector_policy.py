@@ -11,7 +11,6 @@ import test_config
 from azure.cosmos import CosmosClient, PartitionKey
 
 
-@pytest.mark.skip  # Skipping tests until emulator supports
 class TestVectorPolicy(unittest.TestCase):
     client: CosmosClient = None
     host = test_config.TestConfig.host
