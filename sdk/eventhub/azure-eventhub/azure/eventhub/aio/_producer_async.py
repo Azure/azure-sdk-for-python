@@ -9,6 +9,7 @@ import logging
 from typing import Iterable, Union, Optional, Any, AnyStr, List, TYPE_CHECKING, cast
 
 from .._common import EventData, EventDataBatch
+from .._constants import GEOREPLICATION_SYMBOL
 from .._producer import _set_partition_key
 from .._utils import (
     create_properties,
@@ -119,6 +120,7 @@ class EventHubProducer(
     def _create_handler(
         self, auth: Union["uamqp_JWTTokenAsync", JWTTokenAuthAsync]
     ) -> None:
+        desired_capabilities = [GEOREPLICATION_SYMBOL]
         self._handler = self._amqp_transport.create_send_client(
             config=self._client._config,  # pylint:disable=protected-access
             target=self._target,
@@ -129,6 +131,7 @@ class EventHubProducer(
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
             link_properties=self._link_properties,
+            desired_capabilities=desired_capabilities,
             properties=create_properties(
                 self._client._config.user_agent,  # pylint: disable=protected-access
                 amqp_transport=self._amqp_transport,
