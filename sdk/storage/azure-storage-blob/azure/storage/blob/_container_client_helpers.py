@@ -64,17 +64,6 @@ def _format_url(container_name: Union[bytes, str], hostname: str, scheme: str, q
         container_name = container_name.encode('UTF-8')
     return f"{scheme}://{hostname}/{quote(container_name)}{query_str}"
 
-def _get_blob_name(blob: Union[str, BlobProperties]):
-    """Return the blob name.
-    :param Union[str, BlobProperties] blob: A blob string or BlobProperties
-    :returns: The name of the blob.
-    :rtype: str
-    """
-    try:
-        return blob.get('name')
-    except AttributeError:
-        return blob
-
 # This code is a copy from _generated.
 # Once Autorest is able to provide request preparation this code should be removed.
 def _generate_delete_blobs_subrequest_options(
@@ -223,8 +212,8 @@ def _generate_delete_blobs_options(
 
     reqs = []
     for blob in blobs:
-        blob_name = _get_blob_name(blob)
         if not isinstance(blob, str):
+            blob_name = blob.get('name')
             options = _generic_delete_blob_options(  # pylint: disable=protected-access
                 snapshot=blob.get('snapshot'),
                 version_id=blob.get('version_id'),
@@ -239,6 +228,7 @@ def _generate_delete_blobs_options(
                 timeout=blob.get('timeout'),
             )
         else:
+            blob_name = blob
             options = _generic_delete_blob_options(  # pylint: disable=protected-access
                 delete_snapshots=delete_snapshots,
                 if_modified_since=if_modified_since,
@@ -250,7 +240,7 @@ def _generate_delete_blobs_options(
 
         req = HttpRequest(
             "DELETE",
-            f"/{quote(container_name)}/{quote(blob_name, safe='/~')}{query_str}",
+            f"/{quote(container_name)}/{quote(str(blob_name), safe='/~')}{query_str}",
             headers=header_parameters
         )
         req.format_parameters(query_parameters)
