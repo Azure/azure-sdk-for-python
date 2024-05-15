@@ -634,7 +634,7 @@ search utilizing our Cosmos SDK. These two container-level configurations have t
 before you can use them.
 
 Each vector embedding should have a path to the relevant vector field in your items being stored, a supported data type
-(float32, int8, uint8), the vector's dimensions (positive int <=1536), and the distance function being used for that embedding.
+(float32, int8, uint8), the vector's dimensions (positive int <=505), and the distance function being used for that embedding.
 A sample vector embedding policy would look like this:
 ```python
 vector_embedding_policy = {
@@ -642,7 +642,7 @@ vector_embedding_policy = {
         {
             "path": "/vector1",
             "dataType": "float32",
-            "dimensions": 1000,
+            "dimensions": 256,
             "distanceFunction": "euclidean"
         },
         {
