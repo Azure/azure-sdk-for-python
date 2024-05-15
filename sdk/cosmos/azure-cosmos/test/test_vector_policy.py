@@ -168,23 +168,23 @@ class TestVectorPolicy(unittest.TestCase):
 
     def test_fail_create_vector_embedding_policy(self):
         # Using invalid data type
-        # vector_embedding_policy = {
-        #     "vectorEmbeddings": [
-        #         {
-        #             "path": "/vector1",
-        #             "dataType": "cubic_meters",
-        #             "dimensions": 256,
-        #             "distanceFunction": "euclidean"
-        #         }]}
-        # try:
-        #     self.test_db.create_container(
-        #         id='vector_container',
-        #         partition_key=PartitionKey(path="/id"),
-        #         vector_embedding_policy=vector_embedding_policy)
-        #     pytest.fail("Container creation should have failed but succeeded.")
-        # except exceptions.CosmosHttpResponseError as e:
-        #     assert e.status_code == 400
-        #     assert "Vector Embedding Policy has an invalid DataType" in e.http_error_message
+        vector_embedding_policy = {
+            "vectorEmbeddings": [
+                {
+                    "path": "/vector1",
+                    "dataType": "float33",
+                    "dimensions": 256,
+                    "distanceFunction": "euclidean"
+                }]}
+        try:
+            self.test_db.create_container(
+                id='vector_container',
+                partition_key=PartitionKey(path="/id"),
+                vector_embedding_policy=vector_embedding_policy)
+            pytest.fail("Container creation should have failed but succeeded.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == 400
+            assert "Vector Embedding Policy has an invalid DataType" in e.http_error_message
 
         # Using too many dimensions
         vector_embedding_policy = {
@@ -203,7 +203,7 @@ class TestVectorPolicy(unittest.TestCase):
             pytest.fail("Container creation should have failed but succeeded.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "Vector Embedding Policy has Dimensions:1000 which is more than the maximum" \
+            assert "Vector Embedding Policy has Dimensions:2000 which is more than the maximum" \
                    " supported value:505" in e.http_error_message
 
         # Using negative dimensions
@@ -223,7 +223,7 @@ class TestVectorPolicy(unittest.TestCase):
             pytest.fail("Container creation should have failed but succeeded.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "Vector Embedding Policy has invalid Dimensions:-1, it should be positive integer" in e.http_error_message
+            assert "The Vector Embedding Policy has Dimensions:-1" in e.http_error_message
 
         # Using invalid distance function
         vector_embedding_policy = {
