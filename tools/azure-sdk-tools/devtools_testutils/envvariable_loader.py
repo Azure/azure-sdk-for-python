@@ -54,49 +54,10 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
 
         self.needed_keys = needed_keys
 
-    def _set_mgmt_settings_real_values(self):
-        if self.is_live:
-            tenant = os.environ.get(f"{self.directory.upper()}_TENANT_ID")
-            client = os.environ.get(f"{self.directory.upper()}_CLIENT_ID")
-            secret = os.environ.get(f"{self.directory.upper()}_CLIENT_SECRET")
-
-            # If environment variables are not all set, check if user-based authentication is requested
-            if not all(x is not None for x in [tenant, client, secret]):
-                use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH", "false")
-                use_cli = os.environ.get("AZURE_TEST_USE_CLI_AUTH", "false")
-                user_auth = use_pwsh.lower() == "true" or use_cli.lower() == "true"
-                if not user_auth:
-                    # All variables are required for service principal authentication
-                    raise AzureTestError(
-                        f"Environment variables for service principal credentials are not all set. "
-                        "Please either set the variables or request user-based authentication by setting "
-                        "'AZURE_TEST_USE_PWSH_AUTH' or 'AZURE_TEST_USE_CLI_AUTH' to 'true'."
-                    )
-
-                _logger.debug(
-                    "Environment variables for service principal credentials are not all set but user-based "
-                    f"authentication was requested. Updating 'AZURE_*' variables to match '{self.directory.upper()}_*'."
-                )
-
-            # Set environment vars to directory values (and unset vars if directory vars are missing)
-            if tenant is not None:
-                os.environ["AZURE_TENANT_ID"] = tenant
-            else:
-                os.environ.pop("AZURE_TENANT_ID", None)
-            if client is not None:
-                os.environ["AZURE_CLIENT_ID"] = client
-            else:
-                os.environ.pop("AZURE_CLIENT_ID", None)
-            if secret is not None:
-                os.environ["AZURE_CLIENT_SECRET"] = secret
-            else:
-                os.environ.pop("AZURE_CLIENT_SECRET", None)
-
     def create_resource(self, name, **kwargs):
         load_dotenv(find_dotenv())
 
         if self.is_live:
-            self._set_mgmt_settings_real_values()
             try:
                 for key in self.needed_keys:
 

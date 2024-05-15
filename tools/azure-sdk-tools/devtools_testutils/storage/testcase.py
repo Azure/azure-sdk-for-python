@@ -181,13 +181,9 @@ class StorageRecordedTestCase(AzureRecordedTestCase):
 
     def generate_oauth_token(self):
         if self.is_live:
-            from azure.identity import ClientSecretCredential
+            from azure.identity import DefaultAzureCredential
 
-            return ClientSecretCredential(
-                self.get_settings_value("TENANT_ID"),
-                self.get_settings_value("CLIENT_ID"),
-                self.get_settings_value("CLIENT_SECRET"),
-            )
+            return DefaultAzureCredential(exclude_environment_credential=True)
         return self.generate_fake_token()
 
     def generate_fake_token(self):
