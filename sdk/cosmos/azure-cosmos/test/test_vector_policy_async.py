@@ -34,8 +34,10 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)
         self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
+        self.test_db = await self.client.create_database(str(uuid.uuid4()))
 
     async def tearDown(self):
+        await self.client.delete_database(self.test_db.id)
         await self.client.close()
 
     async def test_create_vector_embedding_container(self):
@@ -69,7 +71,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
             ]
         }
         container_id = "vector_container" + str(uuid.uuid4())
-        created_container = await self.created_database.create_container(
+        created_container = await self.test_db.create_container(
             id=container_id,
             partition_key=PartitionKey(path="/id"),
             vector_embedding_policy=vector_embedding_policy,
@@ -77,7 +79,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         )
         properties = await created_container.read()
         assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
-        await self.created_database.delete_container(container_id)
+        await self.test_db.delete_container(container_id)
 
     async def test_fail_create_vector_indexing_policy(self):
         vector_embedding_policy = {
@@ -95,7 +97,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 {"path": "/vector1", "type": "flat"}]
         }
         try:
-            await self.created_database.create_container(
+            await self.test_db.create_container(
                 id='vector_container',
                 partition_key=PartitionKey(path="/id"),
                 indexing_policy=indexing_policy
@@ -111,7 +113,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 {"path": "/vector1", "type": "notFlat"}]
         }
         try:
-            await self.created_database.create_container(
+            await self.test_db.create_container(
                 id='vector_container',
                 partition_key=PartitionKey(path="/id"),
                 indexing_policy=indexing_policy,
@@ -128,7 +130,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 {"path": "/vector2", "type": "flat"}]
         }
         try:
-            await self.created_database.create_container(
+            await self.test_db.create_container(
                 id='vector_container',
                 partition_key=PartitionKey(path="/id"),
                 indexing_policy=indexing_policy,
@@ -153,7 +155,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 {"path": "/vector1", "type": "flat"}]
         }
         container_id = "vector_container" + str(uuid.uuid4())
-        created_container = await self.created_database.create_container(
+        created_container = await self.test_db.create_container(
             id=container_id,
             partition_key=PartitionKey(path="/id"),
             indexing_policy=indexing_policy,
@@ -164,7 +166,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 {"path": "/vector1", "type": "quantizedFlat"}]
         }
         try:
-            await self.created_database.replace_container(
+            await self.test_db.replace_container(
                 created_container,
                 PartitionKey(path="/id"),
                 indexing_policy=new_indexing_policy)
@@ -172,7 +174,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
             assert "Vector Indexing Policy cannot be changed in Collection Replace" in e.http_error_message
-        await self.created_database.delete_container(container_id)
+        await self.test_db.delete_container(container_id)
 
     async def test_fail_create_vector_embedding_policy(self):
         # Using invalid data type
@@ -185,7 +187,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                     "distanceFunction": "euclidean"
                 }]}
         try:
-            await self.created_database.create_container(
+            await self.test_db.create_container(
                 id='vector_container',
                 partition_key=PartitionKey(path="/id"),
                 vector_embedding_policy=vector_embedding_policy)
@@ -204,7 +206,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                     "distanceFunction": "euclidean"
                 }]}
         try:
-            await self.created_database.create_container(
+            await self.test_db.create_container(
                 id='vector_container',
                 partition_key=PartitionKey(path="/id"),
                 vector_embedding_policy=vector_embedding_policy)
@@ -224,7 +226,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                     "distanceFunction": "euclidean"
                 }]}
         try:
-            await self.created_database.create_container(
+            await self.test_db.create_container(
                 id='vector_container',
                 partition_key=PartitionKey(path="/id"),
                 vector_embedding_policy=vector_embedding_policy)
@@ -243,7 +245,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                     "distanceFunction": "handMeasured"
                 }]}
         try:
-            await self.created_database.create_container(
+            await self.test_db.create_container(
                 id='vector_container',
                 partition_key=PartitionKey(path="/id"),
                 vector_embedding_policy=vector_embedding_policy

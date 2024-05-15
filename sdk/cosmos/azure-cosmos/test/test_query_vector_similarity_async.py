@@ -50,7 +50,8 @@ class TestVectorSimilarityQueryAsync(unittest.TestCase):
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 
     async def asyncSetUp(self):
-        self.created_quantized_cosine_container = await self.created_db.create_container(
+        self.test_db = await self.client.create_database(str(uuid.uuid4()))
+        self.created_quantized_cosine_container = await self.test_db.create_container(
             id="quantized" + self.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS,
@@ -58,7 +59,7 @@ class TestVectorSimilarityQueryAsync(unittest.TestCase):
             vector_embedding_policy=test_config.get_vector_embedding_policy(data_type="float32",
                                                                             distance_function="cosine",
                                                                             dimensions=128))
-        self.created_flat_euclidean_container = await self.created_db.create_container(
+        self.created_flat_euclidean_container = await self.test_db.create_container(
             id="flat" + self.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS,
@@ -66,7 +67,7 @@ class TestVectorSimilarityQueryAsync(unittest.TestCase):
             vector_embedding_policy=test_config.get_vector_embedding_policy(data_type="float32",
                                                                             distance_function="euclidean",
                                                                             dimensions=128))
-        # self.created_diskANN_dotproduct_container = await self.created_db.create_container(
+        # self.created_diskANN_dotproduct_container = await self.test_db.create_container(
         #     id="diskANN" + self.TEST_CONTAINER_ID,
         #     partition_key=PartitionKey(path="/pk"),
         #     offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS,
@@ -74,7 +75,7 @@ class TestVectorSimilarityQueryAsync(unittest.TestCase):
         #     vector_embedding_policy=test_config.get_vector_embedding_policy(data_type="float32",
         #                                                                     distance_function="dotproduct",
         #                                                                     dimensions=128))
-        self.created_large_container = await self.created_db.create_container(
+        self.created_large_container = await self.test_db.create_container(
             id="large_container" + self.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS,
@@ -89,10 +90,11 @@ class TestVectorSimilarityQueryAsync(unittest.TestCase):
 
     async def tearDown(self):
         try:
-            await self.created_db.delete_container("quantized" + self.TEST_CONTAINER_ID)
-            await self.created_db.delete_container("flat" + self.TEST_CONTAINER_ID)
-            await self.created_db.delete_container("large_container" + self.TEST_CONTAINER_ID)
-            # await self.created_db.delete_container("diskANN" + self.TEST_CONTAINER_ID)
+            await self.test_db.delete_container("quantized" + self.TEST_CONTAINER_ID)
+            await self.test_db.delete_container("flat" + self.TEST_CONTAINER_ID)
+            await self.test_db.delete_container("large_container" + self.TEST_CONTAINER_ID)
+            # await self.test_db.delete_container("diskANN" + self.TEST_CONTAINER_ID)
+            await self.client.delete_database(self.test_db.id)
         except exceptions.CosmosHttpResponseError:
             pass
         await self.client.close()
@@ -103,7 +105,7 @@ class TestVectorSimilarityQueryAsync(unittest.TestCase):
         query = "SELECT c.text, VectorDistance(c.embedding, [{}]) AS " \
                 "SimilarityScore FROM c ORDER BY VectorDistance(c.embedding, [{}])".format(vector_string, vector_string)
         try:
-            [item async for item in self.created_cosine_container.query_items(query=query)]
+            [item async for item in self.created_large_container.query_items(query=query)]
             pytest.fail("Client should not allow queries without filters.")
         except ValueError as e:
             assert "Executing a vector search query without TOP or LIMIT can consume many RUs very fast and" \
@@ -115,7 +117,7 @@ class TestVectorSimilarityQueryAsync(unittest.TestCase):
                 "SimilarityScore FROM c ORDER BY VectorDistance(c.embedding, [{}]) ASC".format(vector_string,
                                                                                                vector_string)
         try:
-            [item async for item in self.created_cosine_container.query_items(query=query)]
+            [item async for item in self.created_large_container.query_items(query=query)]
             pytest.fail("Client should not allow queries with ASC/DESC.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST

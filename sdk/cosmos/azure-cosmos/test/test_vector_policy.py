@@ -28,6 +28,7 @@ class TestVectorPolicy(unittest.TestCase):
 
         cls.client = CosmosClient(cls.host, cls.masterKey)
         cls.created_database = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
+        cls.test_db = cls.client.create_database(str(uuid.uuid4()))
 
     def test_create_vector_embedding_container(self):
         indexing_policy = {
@@ -60,7 +61,7 @@ class TestVectorPolicy(unittest.TestCase):
             ]
         }
         container_id = "vector_container" + str(uuid.uuid4())
-        created_container = self.created_database.create_container(
+        created_container = self.test_db.create_container(
             id=container_id,
             partition_key=PartitionKey(path="/id"),
             vector_embedding_policy=vector_embedding_policy,
@@ -68,7 +69,7 @@ class TestVectorPolicy(unittest.TestCase):
         )
         properties = created_container.read()
         assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
-        self.created_database.delete_container(container_id)
+        self.test_db.delete_container(container_id)
 
     def test_fail_create_vector_indexing_policy(self):
         vector_embedding_policy = {
@@ -86,7 +87,7 @@ class TestVectorPolicy(unittest.TestCase):
                 {"path": "/vector1", "type": "flat"}]
         }
         try:
-            self.created_database.create_container(
+            self.test_db.create_container(
                 id='vector_container',
                 partition_key=PartitionKey(path="/id"),
                 indexing_policy=indexing_policy
@@ -102,7 +103,7 @@ class TestVectorPolicy(unittest.TestCase):
                 {"path": "/vector1", "type": "notFlat"}]
         }
         try:
-            self.created_database.create_container(
+            self.test_db.create_container(
                 id='vector_container',
                 partition_key=PartitionKey(path="/id"),
                 indexing_policy=indexing_policy,
@@ -119,7 +120,7 @@ class TestVectorPolicy(unittest.TestCase):
                 {"path": "/vector2", "type": "flat"}]
         }
         try:
-            self.created_database.create_container(
+            self.test_db.create_container(
                 id='vector_container',
                 partition_key=PartitionKey(path="/id"),
                 indexing_policy=indexing_policy,
@@ -144,7 +145,7 @@ class TestVectorPolicy(unittest.TestCase):
                 {"path": "/vector1", "type": "flat"}]
         }
         container_id = "vector_container" + str(uuid.uuid4())
-        created_container = self.created_database.create_container(
+        created_container = self.test_db.create_container(
             id=container_id,
             partition_key=PartitionKey(path="/id"),
             indexing_policy=indexing_policy,
@@ -155,7 +156,7 @@ class TestVectorPolicy(unittest.TestCase):
                 {"path": "/vector1", "type": "quantizedFlat"}]
         }
         try:
-            self.created_database.replace_container(
+            self.test_db.replace_container(
                 created_container,
                 PartitionKey(path="/id"),
                 indexing_policy=new_indexing_policy)
@@ -163,7 +164,7 @@ class TestVectorPolicy(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
             assert "Vector Indexing Policy cannot be changed in Collection Replace" in e.http_error_message
-        self.created_database.delete_container(container_id)
+        self.test_db.delete_container(container_id)
 
     def test_fail_create_vector_embedding_policy(self):
         # Using invalid data type
@@ -176,7 +177,7 @@ class TestVectorPolicy(unittest.TestCase):
                     "distanceFunction": "euclidean"
                 }]}
         try:
-            self.created_database.create_container(
+            self.test_db.create_container(
                 id='vector_container',
                 partition_key=PartitionKey(path="/id"),
                 vector_embedding_policy=vector_embedding_policy)
@@ -195,7 +196,7 @@ class TestVectorPolicy(unittest.TestCase):
                     "distanceFunction": "euclidean"
                 }]}
         try:
-            self.created_database.create_container(
+            self.test_db.create_container(
                 id='vector_container',
                 partition_key=PartitionKey(path="/id"),
                 vector_embedding_policy=vector_embedding_policy)
@@ -215,7 +216,7 @@ class TestVectorPolicy(unittest.TestCase):
                     "distanceFunction": "euclidean"
                 }]}
         try:
-            self.created_database.create_container(
+            self.test_db.create_container(
                 id='vector_container',
                 partition_key=PartitionKey(path="/id"),
                 vector_embedding_policy=vector_embedding_policy)
@@ -234,7 +235,7 @@ class TestVectorPolicy(unittest.TestCase):
                     "distanceFunction": "handMeasured"
                 }]}
         try:
-            self.created_database.create_container(
+            self.test_db.create_container(
                 id='vector_container',
                 partition_key=PartitionKey(path="/id"),
                 vector_embedding_policy=vector_embedding_policy
