@@ -4,7 +4,7 @@
 
 ### Packages included
 
-- msal-1.26.0
+- msal-1.28.0
 
 ## 2024.03.01
 

@@ -4,7 +4,7 @@
 
 ### Packages included
 
-- azure-appconfiguration-1.5.0
+- azure-appconfiguration-1.6.0
 
 ## 2024.03.01
 
