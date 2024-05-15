@@ -27,10 +27,6 @@ parameters:
     displayName: 'azure-storage'
     type: boolean
     default: true
-  - name: release_azure_ai_contentsafety
-    displayName: 'azure-ai-contentsafety'
-    type: boolean
-    default: true
   - name: release_azure_ai_formrecognizer
     displayName: 'azure-ai-formrecognizer'
     type: boolean
@@ -252,13 +248,6 @@ extends:
                       checkout:
                         - package: azure-ai-ml
                           version: 1.16.0
-                    - name: azure-ai-contentsafety
-                      common_root: azure
-                      service: contentsafety
-                      in_batch: ${{ parameters.release_azure_ai_contentsafety }}
-                      checkout:
-                        - package: azure-ai-contentsafety
-                          version: 1.0.0
                     - name: azure-ai-formrecognizer
                       common_root: azure
                       service: formrecognizer
