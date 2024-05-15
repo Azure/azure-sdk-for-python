@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential, AzureKeyCredential
     from azure.core.paging import ItemPaged
     from azure.core.polling import LROPoller
-    from models.models import (
+    from .models import (
         PhoneNumberCapabilities,
         PurchasedPhoneNumber,
     )
