@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from devtools_testutils import test_proxy, add_body_key_sanitizer, add_oauth_response_sanitizer, remove_batch_sanitizers
+from devtools_testutils import test_proxy, add_body_key_sanitizer, add_oauth_response_sanitizer, remove_batch_sanitizers, add_uri_regex_sanitizer
 import pytest
 
 
@@ -14,6 +14,7 @@ def start_proxy(test_proxy):
     add_body_key_sanitizer(json_path="$..id_token", value="Sanitized")
     add_body_key_sanitizer(json_path="$..client_info", value="Sanitized")
     add_oauth_response_sanitizer()
+    add_uri_regex_sanitizer(regex="\\.(?<location>.*)\\.devcenter\\.azure\\.com", group_for_replace="location", value="location")
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK2003: Location
     #  - AZSDK3493: $..name
