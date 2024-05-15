@@ -41,4 +41,3 @@ class KeyVaultTestCase(AzureRecordedTestCase):
     def tear_down(self):
         HttpChallengeCache.clear()
         assert len(HttpChallengeCache._cache) == 0
-
