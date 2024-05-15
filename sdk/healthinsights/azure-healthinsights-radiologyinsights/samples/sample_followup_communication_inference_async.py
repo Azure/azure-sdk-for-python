@@ -17,12 +17,10 @@ FILE: sample_followup_communication_inference_async.py
 DESCRIPTION:
 The sample_followup_communication_inference_async.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize an asynchronous RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, build a Radiology Insights job request with the sample document,
-submit it to the client and display 
+submit it to the client, RadiologyInsightsClient, and display
 -the date and time of the follow-up communication,
 -the recipient of the follow-up communication, and
--whether the follow-up communication was acknowledged
-extracted by the Radiology Insights service.    
+-whether the follow-up communication was acknowledged 
 
 
 USAGE:
@@ -141,8 +139,9 @@ class HealthInsightsSamples:
                     else:
                         print(f"Follow-up Communication: Recipient: Unknown")
                     print(f"Follow-up Communication: Was Acknowledged: {ri_inference.was_acknowledged}")
-        
+
         # [END display_followup_communication]
+
 
 async def main():
     sample = HealthInsightsSamples()

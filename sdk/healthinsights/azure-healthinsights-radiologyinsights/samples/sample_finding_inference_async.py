@@ -17,8 +17,7 @@ FILE: sample_finding_inference_async.py
 DESCRIPTION:
 The sample_finding_inference_async.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize an asynchronous RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, build a Radiology Insights job request with the sample document,
-submit it to the client and display 
+submit it to the client, RadiologyInsightsClient, and display
 -the Finding resource type,
 -the Finding ID,
 -the Finding status,
@@ -34,8 +33,7 @@ submit it to the client and display
 -the Inference extensions,
 -the Inference extension URL,
 -the Inference extension value string,
--the Inference extension section
-extracted by the Radiology Insights service.    
+-the Inference extension section  
 
 
 USAGE:
@@ -64,7 +62,7 @@ class HealthInsightsSamples:
         A lobulated soft tissue mass is identified in the superior right lower lobe abutting the major fissure measuring 5.4 x 4.3 x 3.7 cm (series 3 image 94, coronal image 110).
         A 4 mm nodule in the right lower lobe (series 3, image 72) is increased dating back to 6/29/2012. This may represent lower lobe metastasis.
         IMPRESSION: 4 cm pulmonary nodule posterior aspect of the right upper lobe necessitating additional imaging as described."""
-        
+
         # Create ordered procedure
         procedure_coding = models.Coding(
             system="Https://loinc.org",
@@ -140,7 +138,7 @@ class HealthInsightsSamples:
                     print(f"Finding {counter} Inference found")
                     fin = ri_inference.finding
                     for attribute in dir(fin):
-                        if attribute.startswith('_') or callable(getattr(fin, attribute)):
+                        if attribute.startswith("_") or callable(getattr(fin, attribute)):
                             continue
                         elif attribute == "resource_type" and fin.resource_type is not None:
                             print(f"Finding {counter}: Resource Type: {fin.resource_type}")
@@ -153,62 +151,101 @@ class HealthInsightsSamples:
                                 if cat.coding is not None:
                                     for code in cat.coding:
                                         if code.code is not None and code.display is not None:
-                                            print(f"Finding {counter}: Category Code: {code.system} {code.code} {code.display}")
+                                            print(
+                                                f"Finding {counter}: Category Code: {code.system} {code.code} {code.display}"
+                                            )
                         elif attribute == "code" and fin.code is not None:
                             for code in fin.code.coding:
                                 if code.code is not None and code.display is not None:
                                     print(f"Finding {counter}: Code: {code.system} {code.code} {code.display}")
                         elif attribute == "interpretation" and fin.interpretation is not None:
-                            for interpretation in fin.interpretation:  
-                                for code in interpretation.coding:                                          
+                            for interpretation in fin.interpretation:
+                                for code in interpretation.coding:
                                     if code.code is not None and code.display is not None:
-                                        print(f"Finding {counter}: Interpretation: {code.system} {code.code} {code.display}")
+                                        print(
+                                            f"Finding {counter}: Interpretation: {code.system} {code.code} {code.display}"
+                                        )
                         elif attribute == "component" and fin.component is not None:
                             print(f"Finding {counter}: COMPONENTS:")
                             for component in fin.component:
                                 for attribute in dir(component):
-                                    if attribute.startswith('_') or callable(getattr(component, attribute)):
+                                    if attribute.startswith("_") or callable(getattr(component, attribute)):
                                         continue
                                     if attribute == "code" and component.code is not None:
                                         for code in component.code.coding:
                                             if code.code is not None and code.display is not None:
-                                                print(f"Finding {counter}: COMPONENTS: Code: {code.system} {code.code} {code.display}")
-                                    elif attribute == "value_codeable_concept" and component.value_codeable_concept is not None:
+                                                print(
+                                                    f"Finding {counter}: COMPONENTS: Code: {code.system} {code.code} {code.display}"
+                                                )
+                                    elif (
+                                        attribute == "value_codeable_concept"
+                                        and component.value_codeable_concept is not None
+                                    ):
                                         for code in component.value_codeable_concept.coding:
                                             if code.code is not None and code.display is not None:
-                                                print(f"Finding {counter}: COMPONENTS: Value Codeable Concept: {code.system} {code.code} {code.display}")
+                                                print(
+                                                    f"Finding {counter}: COMPONENTS: Value Codeable Concept: {code.system} {code.code} {code.display}"
+                                                )
                                     elif attribute == "value_coding" and component.value_coding is not None:
                                         for code in component.value_coding.coding:
                                             if code.code is not None and code.display is not None:
-                                                print(f"Finding {counter}: COMPONENTS: Value Coding: {code.system} {code.code} {code.display}")
+                                                print(
+                                                    f"Finding {counter}: COMPONENTS: Value Coding: {code.system} {code.code} {code.display}"
+                                                )
                                     elif attribute == "value_boolean" and component.value_boolean is not None:
-                                        print(f"Finding {counter}: COMPONENTS: Value Boolean: {component.value_boolean}")
+                                        print(
+                                            f"Finding {counter}: COMPONENTS: Value Boolean: {component.value_boolean}"
+                                        )
                                     elif attribute == "value_quantity" and component.value_quantity is not None:
                                         for attribute in dir(component.value_quantity):
-                                            if not attribute.startswith('_') and not callable(getattr(component.value_quantity, attribute)) and getattr(component.value_quantity, attribute) is not None:
-                                                print(f"Finding {counter}: COMPONENTS: Value Quantity: {attribute.capitalize()}: {getattr(component.value_quantity, attribute)}")       
+                                            if (
+                                                not attribute.startswith("_")
+                                                and not callable(getattr(component.value_quantity, attribute))
+                                                and getattr(component.value_quantity, attribute) is not None
+                                            ):
+                                                print(
+                                                    f"Finding {counter}: COMPONENTS: Value Quantity: {attribute.capitalize()}: {getattr(component.value_quantity, attribute)}"
+                                                )
                     inference_extension = ri_inference.extension
                     if inference_extension is not None:
                         print(f"Finding {counter}: INFERENCE EXTENSIONS:")
                         for extension in inference_extension:
                             for attribute in dir(extension):
-                                if attribute.startswith('_') or callable(getattr(extension, attribute)):
+                                if attribute.startswith("_") or callable(getattr(extension, attribute)):
                                     continue
                                 elif attribute == "extension" and extension.extension is not None:
                                     for sub_extension in extension.extension:
                                         for sub_attribute in dir(sub_extension):
-                                            if sub_attribute.startswith('_') or callable(getattr(sub_extension, sub_attribute)):
+                                            if sub_attribute.startswith("_") or callable(
+                                                getattr(sub_extension, sub_attribute)
+                                            ):
                                                 continue
                                             elif sub_attribute == "url":
-                                                if sub_extension.url == "code" or sub_extension.url == "codingSystem" or sub_extension.url == "codeSystemName" or sub_extension.url == "displayName":
-                                                    print(f"Finding {counter}: INFERENCE EXTENSIONS: EXTENSION: {sub_attribute.capitalize()}: {sub_extension.url}")
-                                            elif sub_attribute == "value_string" and sub_extension.value_string is not None:
-                                                print(f"Finding {counter}: INFERENCE EXTENSIONS: EXTENSION: {sub_attribute.capitalize()}: {sub_extension.value_string}")
+                                                if (
+                                                    sub_extension.url == "code"
+                                                    or sub_extension.url == "codingSystem"
+                                                    or sub_extension.url == "codeSystemName"
+                                                    or sub_extension.url == "displayName"
+                                                ):
+                                                    print(
+                                                        f"Finding {counter}: INFERENCE EXTENSIONS: EXTENSION: {sub_attribute.capitalize()}: {sub_extension.url}"
+                                                    )
+                                            elif (
+                                                sub_attribute == "value_string"
+                                                and sub_extension.value_string is not None
+                                            ):
+                                                print(
+                                                    f"Finding {counter}: INFERENCE EXTENSIONS: EXTENSION: {sub_attribute.capitalize()}: {sub_extension.value_string}"
+                                                )
                                 elif attribute == "url" and extension.url is not None:
                                     if extension.url == "section":
-                                        print(f"Finding {counter}: INFERENCE EXTENSIONS: {attribute.capitalize()}: {extension.url}")
-                                    
+                                        print(
+                                            f"Finding {counter}: INFERENCE EXTENSIONS: {attribute.capitalize()}: {extension.url}"
+                                        )
+
         # [END display_finding]
+
+
 async def main():
     sample = HealthInsightsSamples()
     await sample.radiology_insights_async()

@@ -16,8 +16,7 @@ FILE: sample_limited_order_discrepancy_inference.py
 DESCRIPTION:
 The sample_limited_order_discrepancy_inference.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, build a Radiology Insights job request with the sample document,
-submit it to the client and display the Order Type code, Present Body Part code and measurement extracted by the Radiology Insights service.     
+submit it to the client, RadiologyInsightsClient, and display the Order Type code, Present Body Part code and measurement.     
     
 
 
@@ -132,14 +131,18 @@ class HealthInsightsSyncSamples:
                     else:
                         for presentbodypart in ri_inference.present_body_parts:
                             for coding in presentbodypart.coding:
-                                print(f"Limited Order Discrepancy: Present Body Part: {coding.system} {coding.code} {coding.display}")
+                                print(
+                                    f"Limited Order Discrepancy: Present Body Part: {coding.system} {coding.code} {coding.display}"
+                                )
                     if not ri_inference.present_body_part_measurements:
                         print(f"Limited Order Discrepancy: Present Body Part Measurements: empty list")
                     else:
                         for presentbodypartmeasurement in ri_inference.present_body_part_measurements:
                             for coding in presentbodypartmeasurement.coding:
-                                print(f"Limited Order Discrepancy: Present Body Part Measurement: {coding.system} {coding.code} {coding.display}")
-        
+                                print(
+                                    f"Limited Order Discrepancy: Present Body Part Measurement: {coding.system} {coding.code} {coding.display}"
+                                )
+
 
 def main():
     sample = HealthInsightsSyncSamples()

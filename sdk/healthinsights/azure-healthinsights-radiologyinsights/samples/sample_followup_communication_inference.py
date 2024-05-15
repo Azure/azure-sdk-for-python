@@ -16,12 +16,10 @@ FILE: sample_followup_communication_inference.py
 DESCRIPTION:
 The sample_followup_communication_inference.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, build a Radiology Insights job request with the sample document,
-submit it to the client and display 
+submit it to the client, RadiologyInsightsClient, and display
 -the date and time of the follow-up communication,
 -the recipient of the follow-up communication, and
--whether the follow-up communication was acknowledged
-extracted by the Radiology Insights service.        
+-whether the follow-up communication was acknowledged    
 
 
 USAGE:
@@ -122,7 +120,7 @@ class HealthInsightsSyncSamples:
             print(str(ex))
             return
 
-    def display_followup_communication(self,radiology_insights_result):
+    def display_followup_communication(self, radiology_insights_result):
         for patient_result in radiology_insights_result.patient_results:
             for ri_inference in patient_result.inferences:
                 if ri_inference.kind == models.RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION:

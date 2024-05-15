@@ -75,6 +75,7 @@ def build_radiology_insights_infer_radiology_insights_request(  # pylint: disabl
 
 
 class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
+
     def _infer_radiology_insights_initial(
         self,
         id: str,

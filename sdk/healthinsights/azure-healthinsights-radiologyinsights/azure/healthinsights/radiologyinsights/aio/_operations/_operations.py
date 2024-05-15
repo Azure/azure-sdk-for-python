@@ -41,6 +41,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 
 
 class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
+
     async def _infer_radiology_insights_initial(
         self,
         id: str,

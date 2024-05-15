@@ -16,12 +16,10 @@ FILE: sample_radiology_procedure_inference.py
 DESCRIPTION:
 The sample_radiology_procedure_inference.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, build a Radiology Insights job request with the sample document,
-submit it to the client and display
+submit it to the client, RadiologyInsightsClient, and display
 - the Procedure code, 
 - the Imaging Procedure anatomy and modality, 
-- Ordered Procedure code and description 
-extracted by the Radiology Insights service.     
+- Ordered Procedure code and description  
 
 
 USAGE:
@@ -53,7 +51,7 @@ class HealthInsightsSyncSamples:
         However, there is no evidence of enhancing lesion in either internal auditory canal.
         Impression: Negative CT of the brain without IV contrast.
         I recommend a new brain CT within nine months."""
-        
+
         # Create ordered procedure
         procedure_coding = models.Coding(
             system="Https://loinc.org",
@@ -127,31 +125,43 @@ class HealthInsightsSyncSamples:
                     for proccod in ri_inference.procedure_codes:
                         print(f"\nRadiology Procedure: PROCEDURE CODES:")
                         for coding in proccod.coding:
-                            print(f"Radiology Procedure: PROCEDURE CODES: Code: {coding.system} {coding.code} {coding.display}")  
+                            print(
+                                f"Radiology Procedure: PROCEDURE CODES: Code: {coding.system} {coding.code} {coding.display}"
+                            )
                     for improc in ri_inference.imaging_procedures:
                         print(f"\nRadiology Procedure: IMAGING PROCEDURE:")
                         for attribute in improc:
-                            if hasattr(improc, attribute) and not attribute.startswith("_") and not callable(getattr(improc, attribute)):
+                            if (
+                                hasattr(improc, attribute)
+                                and not attribute.startswith("_")
+                                and not callable(getattr(improc, attribute))
+                            ):
                                 if attribute == "anatomy":
                                     if improc.anatomy is not None:
                                         for coding in improc.anatomy.coding:
-                                            print(f"Radiology Procedure: IMAGING PROCEDURE: Anatomy Code: {coding.system} {coding.code} {coding.display}")
+                                            print(
+                                                f"Radiology Procedure: IMAGING PROCEDURE: Anatomy Code: {coding.system} {coding.code} {coding.display}"
+                                            )
                                     else:
                                         print(f"Radiology Procedure: IMAGING PROCEDURE: Anatomy: none")
                                 elif attribute == "modality":
                                     if improc.modality is not None:
                                         for coding in improc.modality.coding:
-                                            print(f"Radiology Procedure: IMAGING PROCEDURE: Modality Code: {coding.system} {coding.code} {coding.display}")
+                                            print(
+                                                f"Radiology Procedure: IMAGING PROCEDURE: Modality Code: {coding.system} {coding.code} {coding.display}"
+                                            )
                                     else:
-                                        print(f"Radiology Procedure: IMAGING PROCEDURE: Modality: none") 
+                                        print(f"Radiology Procedure: IMAGING PROCEDURE: Modality: none")
                     ordered_procedure = ri_inference.ordered_procedure
                     print(f"\nRadiology Procedure: ORDERED PROCEDURE:")
                     if ordered_procedure.description is not None:
                         print(f"Radiology Procedure: ORDERED PROCEDURE: Description: {ordered_procedure.description}")
                     if ordered_procedure.code is not None:
                         for coding in ordered_procedure.code.coding:
-                            print(f"Radiology Procedure: ORDERED PROCEDURE: Code: {coding.system} {coding.code} {coding.display}")
-        
+                            print(
+                                f"Radiology Procedure: ORDERED PROCEDURE: Code: {coding.system} {coding.code} {coding.display}"
+                            )
+
 
 def main():
     sample = HealthInsightsSyncSamples()

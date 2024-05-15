@@ -84,11 +84,11 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
 
         data = models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
         jobdata = models.RadiologyInsightsJob(job_data=data)
-        
+
         radiology_insights_client = RadiologyInsightsClient(
             healthinsights_endpoint, AzureKeyCredential(healthinsights_key)
         )
-        
+
         poller = radiology_insights_client.begin_infer_radiology_insights(
             id="JobIDS2",
             resource=jobdata,

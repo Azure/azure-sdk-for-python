@@ -16,14 +16,12 @@ FILE: sample_age_mismatch_inference.py
 DESCRIPTION:
 The sample_age_mismatch_inference.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, build a Radiology Insights job request with the sample document,
-submit it to the client and display 
+submit it to the client, RadiologyInsightsClient, and display
 -the Age Mismatch patient ID,
 -the Age Mismatch url extension,
 -the Age Mismatch offset extension,
 -the Age Mismatch length extension, and
--the Age Mismatch evidence
-extracted by the Radiology Insights service.     
+-the Age Mismatch evidence     
 
 
 USAGE:
@@ -119,12 +117,12 @@ class HealthInsightsSyncSamples:
             )
             job_response = poller.result()
             radiology_insights_result = models.RadiologyInsightsInferenceResult(job_response)
-            self.display_age_mismatch(radiology_insights_result,doc_content1)
+            self.display_age_mismatch(radiology_insights_result, doc_content1)
         except Exception as ex:
             print(str(ex))
             return
 
-    def display_age_mismatch(self,radiology_insights_result,doc_content1):
+    def display_age_mismatch(self, radiology_insights_result, doc_content1):
         for patient_result in radiology_insights_result.patient_results:
             for ri_inference in patient_result.inferences:
                 if ri_inference.kind == models.RadiologyInsightsInferenceType.AGE_MISMATCH:
@@ -146,10 +144,11 @@ class HealthInsightsSyncSamples:
                                             elif sub_extension.url == "length":
                                                 length = sub_extension.value_integer
                                         if offset > 0 and length > 0:
-                                            evidence = doc_content1[offset:offset+length]
+                                            evidence = doc_content1[offset : offset + length]
                                             if not evidence in Tokens:
                                                 Tokens = Tokens + " " + evidence
                     print(f"Age Mismatch: Evidence: {Tokens}")
+
 
 def main():
     sample = HealthInsightsSyncSamples()

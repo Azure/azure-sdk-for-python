@@ -16,8 +16,7 @@ FILE: sample_laterality_discrepancy_inference.py
 DESCRIPTION:
 The sample_laterality_discrepancy_inference.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, build a Radiology Insights job request with the sample document,
-submit it to the client and display the Laterality Mismatch indication and discrepancy type extracted by the Radiology Insights service.     
+submit it to the client, RadiologyInsightsClient, and display the Laterality Mismatch indication and discrepancy type.     
 
 
 USAGE:
@@ -39,14 +38,14 @@ class HealthInsightsSyncSamples:
         job_id = str(uuid.uuid4())
 
         radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
-        
+
         doc_content1 = """Exam:   US LT BREAST TARGETED
         Technique:  Targeted imaging of the  right breast  is performed.
         Findings:
         Targeted imaging of the left breast is performed from the 6:00 to the 9:00 position.
         At the 6:00 position, 5 cm from the nipple, there is a 3 x 2 x 4 mm minimally hypoechoic mass with a peripheral calcification. 
         This may correspond to the mammographic finding. No other cystic or solid masses visualized."""
-        
+
         # Create ordered procedure
         procedure_coding = models.Coding(
             system="Https://loinc.org",
@@ -117,11 +116,14 @@ class HealthInsightsSyncSamples:
             for ri_inference in patient_result.inferences:
                 if ri_inference.kind == models.RadiologyInsightsInferenceType.LATERALITY_DISCREPANCY:
                     print(f"Laterality Discrepancy Inference found")
-                    indication = ri_inference.laterality_indication 
+                    indication = ri_inference.laterality_indication
                     for code in indication.coding:
-                         print(f"Laterality Discrepancy: Laterality Indication: {code.system} {code.code} {code.display}")
+                        print(
+                            f"Laterality Discrepancy: Laterality Indication: {code.system} {code.code} {code.display}"
+                        )
                     print(f"Laterality Discrepancy: Discrepancy Type: {ri_inference.discrepancy_type}")
-        
+
+
 def main():
     sample = HealthInsightsSyncSamples()
     sample.radiology_insights_sync()

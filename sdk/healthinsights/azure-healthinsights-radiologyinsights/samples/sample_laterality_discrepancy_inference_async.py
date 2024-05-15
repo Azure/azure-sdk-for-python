@@ -17,8 +17,7 @@ FILE: sample_laterality_discrepancy_inference_async.py
 DESCRIPTION:
 The sample_laterality_discrepancy_inference_async.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize an asynchronous RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, build a Radiology Insights job request with the sample document,
-submit it to the client and display the Laterality Mismatch indication and discrepancy type extracted by the Radiology Insights service.     
+submit it to the client, RadiologyInsightsClient, and display the Laterality Mismatch indication and discrepancy type.     
 
 
 USAGE:
@@ -48,7 +47,7 @@ class HealthInsightsSamples:
         Targeted imaging of the left breast is performed from the 6:00 to the 9:00 position.
         At the 6:00 position, 5 cm from the nipple, there is a 3 x 2 x 4 mm minimally hypoechoic mass with a peripheral calcification. 
         This may correspond to the mammographic finding. No other cystic or solid masses visualized."""
-        
+
         # Create ordered procedure
         procedure_coding = models.Coding(
             system="Https://loinc.org",
@@ -120,11 +119,13 @@ class HealthInsightsSamples:
             for ri_inference in patient_result.inferences:
                 if ri_inference.kind == models.RadiologyInsightsInferenceType.LATERALITY_DISCREPANCY:
                     print(f"Laterality Discrepancy Inference found")
-                    indication = ri_inference.laterality_indication 
+                    indication = ri_inference.laterality_indication
                     for code in indication.coding:
-                         print(f"Laterality Discrepancy: Laterality Indication: {code.system} {code.code} {code.display}")
+                        print(
+                            f"Laterality Discrepancy: Laterality Indication: {code.system} {code.code} {code.display}"
+                        )
                     print(f"Laterality Discrepancy: Discrepancy Type: {ri_inference.discrepancy_type}")
-        
+
         # [END display_laterality_discrepancy]
 
 

@@ -65,8 +65,7 @@ class RadiologyInsightsInference(_model_base.Model):
         *,
         kind: str,
         extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -99,8 +98,7 @@ class AgeMismatchInference(RadiologyInsightsInference, discriminator="ageMismatc
         self,
         *,
         extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -134,8 +132,7 @@ class Element(_model_base.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -182,8 +179,7 @@ class Annotation(Element):
         extension: Optional[List["_models.Extension"]] = None,
         author_string: Optional[str] = None,
         time: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -217,8 +213,7 @@ class CodeableConcept(Element):
         *,
         coding: Optional[List["_models.Coding"]] = None,
         text: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -268,8 +263,7 @@ class Coding(Element):
         version: Optional[str] = None,
         code: Optional[str] = None,
         display: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -283,7 +277,6 @@ class Coding(Element):
 
 
 class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminator="completeOrderDiscrepancy"):
-     # pylint: disable=line-too-long
     """A complete order discrepancy is shown when one or more body parts and/or measurements that
     should be in the document (because there is a complete order) are not present.
 
@@ -326,8 +319,7 @@ class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminato
         extension: Optional[List["_models.Extension"]] = None,
         missing_body_parts: Optional[List["_models.CodeableConcept"]] = None,
         missing_body_part_measurements: Optional[List["_models.CodeableConcept"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -379,8 +371,7 @@ class Resource(_model_base.Model):
         meta: Optional["_models.Meta"] = None,
         implicit_rules: Optional[str] = None,
         language: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -398,7 +389,7 @@ class DomainResource(Resource):
     Based on `FHIR DomainResource <https://www.hl7.org/fhir/domainresource.html>`_.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    Condition, ResearchStudy
+    Condition, Observation, ResearchStudy
 
     All required parameters must be populated in order to send to server.
 
@@ -447,8 +438,7 @@ class DomainResource(Resource):
         contained: Optional[List["_models.Resource"]] = None,
         extension: Optional[List["_models.Extension"]] = None,
         modifier_extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -576,7 +566,7 @@ class Condition(DomainResource, discriminator="Condition"):  # pylint: disable=t
     """Additional information about the Condition."""
 
     @overload
-    def __init__(# pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
@@ -608,8 +598,7 @@ class Condition(DomainResource, discriminator="Condition"):  # pylint: disable=t
         recorded_date: Optional[str] = None,
         stage: Optional[List["_models.ConditionStage"]] = None,
         note: Optional[List["_models.Annotation"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -643,8 +632,7 @@ class ConditionStage(_model_base.Model):
         *,
         summary: Optional["_models.CodeableConcept"] = None,
         type: Optional["_models.CodeableConcept"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -683,8 +671,7 @@ class ContactDetail(Element):
         extension: Optional[List["_models.Extension"]] = None,
         name: Optional[str] = None,
         telecom: Optional[List["_models.ContactPoint"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -738,8 +725,7 @@ class ContactPoint(_model_base.Model):
         use: Optional[Union[str, "_models.ContactPointUse"]] = None,
         rank: Optional[int] = None,
         period: Optional["_models.Period"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -774,8 +760,7 @@ class CriticalResult(_model_base.Model):
         *,
         description: str,
         finding: Optional["_models.Observation"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -815,8 +800,7 @@ class CriticalResultInference(RadiologyInsightsInference, discriminator="critica
         *,
         result: "_models.CriticalResult",
         extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -850,8 +834,7 @@ class DocumentAdministrativeMetadata(_model_base.Model):
         *,
         ordered_procedures: Optional[List["_models.OrderedProcedure"]] = None,
         encounter_id: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -884,8 +867,7 @@ class DocumentAuthor(_model_base.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         full_name: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -929,8 +911,7 @@ class DocumentContent(_model_base.Model):
         *,
         source_type: Union[str, "_models.DocumentContentSourceType"],
         value: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -981,8 +962,7 @@ class Error(_model_base.Model):
         target: Optional[str] = None,
         details: Optional[List["_models.Error"]] = None,
         innererror: Optional["_models.InnerError"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1073,8 +1053,7 @@ class Extension(Element):  # pylint: disable=too-many-instance-attributes
         value_date_time: Optional[str] = None,
         value_period: Optional["_models.Period"] = None,
         value_reference: Optional["_models.Reference"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1113,8 +1092,7 @@ class FindingInference(RadiologyInsightsInference, discriminator="finding"):
         *,
         finding: "_models.Observation",
         extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1147,8 +1125,7 @@ class FindingOptions(_model_base.Model):
         self,
         *,
         provide_focused_sentence_evidence: Optional[bool] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1162,7 +1139,6 @@ class FindingOptions(_model_base.Model):
 
 
 class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="followupCommunication"):
-     # pylint: disable=line-too-long
     """Follow-up communication involves the exchange of important information, recommendations, or
     updates between radiologists and other healthcare professionals involved in a patient's care.
 
@@ -1198,8 +1174,7 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="
         extension: Optional[List["_models.Extension"]] = None,
         communicated_at: Optional[List[datetime.datetime]] = None,
         recipient: Optional[List[Union[str, "_models.MedicalProfessionalType"]]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1213,7 +1188,6 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="
 
 
 class FollowupRecommendationInference(RadiologyInsightsInference, discriminator="followupRecommendation"):
-    # pylint: disable=line-too-long
     """Follow-up recommendations offer guidance to healthcare providers on managing and monitoring
     patients based on the findings of imaging studies.
 
@@ -1290,8 +1264,7 @@ class FollowupRecommendationInference(RadiologyInsightsInference, discriminator=
         effective_at: Optional[str] = None,
         effective_period: Optional["_models.Period"] = None,
         findings: Optional[List["_models.RecommendationFinding"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1339,8 +1312,7 @@ class FollowupRecommendationOptions(_model_base.Model):
         include_recommendations_with_no_specified_modality: Optional[bool] = None,
         include_recommendations_in_references: Optional[bool] = None,
         provide_focused_sentence_evidence: Optional[bool] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1379,8 +1351,7 @@ class ProcedureRecommendation(_model_base.Model):
         *,
         kind: str,
         extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1425,8 +1396,7 @@ class GenericProcedureRecommendation(ProcedureRecommendation, discriminator="gen
         code: "_models.CodeableConcept",
         extension: Optional[List["_models.Extension"]] = None,
         description: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1463,8 +1433,7 @@ class HealthInsightsErrorResponse(_model_base.Model):
         *,
         error: "_models.Error",
         request_id: "_models.HealthInsightsErrorResponseRequestId",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1494,8 +1463,7 @@ class HealthInsightsErrorResponseRequestId(_model_base.Model):
         self,
         *,
         response: "_models.RequestIdResponseHeader",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1549,8 +1517,7 @@ class Identifier(Element):
         value: Optional[str] = None,
         period: Optional["_models.Period"] = None,
         assigner: Optional["_models.Reference"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1600,8 +1567,7 @@ class ImagingProcedure(_model_base.Model):
         laterality: Optional["_models.CodeableConcept"] = None,
         contrast: Optional["_models.RadiologyCodeWithTypes"] = None,
         view: Optional["_models.RadiologyCodeWithTypes"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1645,8 +1611,7 @@ class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator="ima
         imaging_procedures: List["_models.ImagingProcedure"],
         extension: Optional[List["_models.Extension"]] = None,
         procedure_codes: Optional[List["_models.CodeableConcept"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1681,8 +1646,7 @@ class InnerError(_model_base.Model):
         *,
         code: Optional[str] = None,
         innererror: Optional["_models.InnerError"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1696,7 +1660,6 @@ class InnerError(_model_base.Model):
 
 
 class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator="lateralityDiscrepancy"):
-     # pylint: disable=line-too-long
     """A laterality mismatch occurs when there is a discrepancy between the clinical documentation and
     the ordered procedure (orderLateralityMismatch), a contradiction within the clinical document
     (textLateralityContradiction), or when no laterality is mentioned (textLateralityMissing).
@@ -1733,8 +1696,7 @@ class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator="
         discrepancy_type: Union[str, "_models.LateralityDiscrepancyType"],
         extension: Optional[List["_models.Extension"]] = None,
         laterality_indication: Optional["_models.CodeableConcept"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1748,7 +1710,6 @@ class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator="
 
 
 class LimitedOrderDiscrepancyInference(RadiologyInsightsInference, discriminator="limitedOrderDiscrepancy"):
-     # pylint: disable=line-too-long
     """A limited order discrepancy occurs when there is a limited order, but all body parts and
     measurements that are needed for a complete order are present in the document.
 
@@ -1790,8 +1751,7 @@ class LimitedOrderDiscrepancyInference(RadiologyInsightsInference, discriminator
         extension: Optional[List["_models.Extension"]] = None,
         present_body_parts: Optional[List["_models.CodeableConcept"]] = None,
         present_body_part_measurements: Optional[List["_models.CodeableConcept"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1864,8 +1824,7 @@ class Meta(_model_base.Model):
         profile: Optional[List[str]] = None,
         security: Optional[List["_models.Coding"]] = None,
         tag: Optional[List["_models.Coding"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1909,8 +1868,7 @@ class Narrative(Element):
         div: str,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1923,11 +1881,9 @@ class Narrative(Element):
         super().__init__(*args, **kwargs)
 
 
-class Observation(DomainResource):  # pylint: disable=too-many-instance-attributes
+class Observation(DomainResource, discriminator="Observation"):  # pylint: disable=too-many-instance-attributes
     """Detailed information about observations
     Based on `FHIR Observation <https://www.hl7.org/fhir/R4/observation.html>`_.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
@@ -2015,7 +1971,7 @@ class Observation(DomainResource):  # pylint: disable=too-many-instance-attribut
     :vartype component: list[~azure.healthinsights.radiologyinsights.models.ObservationComponent]
     """
 
-    resource_type: Literal["Observation"] = rest_field(name="resourceType")
+    resource_type: Literal["Observation"] = rest_discriminator(name="resourceType")  # type: ignore
     """resourceType. Required. Default value is \"Observation\"."""
     identifier: Optional[List["_models.Identifier"]] = rest_field()
     """Business Identifier for observation."""
@@ -2081,7 +2037,7 @@ class Observation(DomainResource):  # pylint: disable=too-many-instance-attribut
     """Component results."""
 
     @overload
-    def __init__(# pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         status: Union[str, "_models.ObservationStatusCodeType"],
@@ -2122,8 +2078,7 @@ class Observation(DomainResource):  # pylint: disable=too-many-instance-attribut
         has_member: Optional[List["_models.Reference"]] = None,
         derived_from: Optional[List["_models.Reference"]] = None,
         component: Optional[List["_models.ObservationComponent"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2132,9 +2087,8 @@ class Observation(DomainResource):  # pylint: disable=too-many-instance-attribut
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.resource_type: Literal["Observation"] = "Observation"  # pyright: ignore[reportIncompatibleVariableOverride] # pylint: disable=line-too-long
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, resource_type="Observation", **kwargs)
 
 
 class ObservationComponent(Element):  # pylint: disable=too-many-instance-attributes
@@ -2237,8 +2191,7 @@ class ObservationComponent(Element):  # pylint: disable=too-many-instance-attrib
         data_absent_reason: Optional["_models.CodeableConcept"] = None,
         interpretation: Optional[List["_models.CodeableConcept"]] = None,
         reference_range: Optional[List["_models.ObservationReferenceRange"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2292,8 +2245,7 @@ class ObservationReferenceRange(_model_base.Model):
         applies_to: Optional[List["_models.CodeableConcept"]] = None,
         age: Optional["_models.Range"] = None,
         text: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2331,8 +2283,7 @@ class OrderedProcedure(_model_base.Model):
         code: Optional["_models.CodeableConcept"] = None,
         description: Optional[str] = None,
         extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2371,8 +2322,7 @@ class PatientDetails(_model_base.Model):
         sex: Optional[Union[str, "_models.PatientSex"]] = None,
         birth_date: Optional[datetime.date] = None,
         clinical_info: Optional[List["_models.Resource"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2458,8 +2408,7 @@ class PatientDocument(_model_base.Model):
         authors: Optional[List["_models.DocumentAuthor"]] = None,
         specialty_type: Optional[Union[str, "_models.SpecialtyType"]] = None,
         administrative_metadata: Optional["_models.DocumentAdministrativeMetadata"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2505,8 +2454,7 @@ class PatientEncounter(_model_base.Model):
         id: str,  # pylint: disable=redefined-builtin
         period: Optional["_models.TimePeriod"] = None,
         class_property: Optional[Union[str, "_models.EncounterClass"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2556,8 +2504,7 @@ class PatientRecord(_model_base.Model):
         details: Optional["_models.PatientDetails"] = None,
         encounters: Optional[List["_models.PatientEncounter"]] = None,
         patient_documents: Optional[List["_models.PatientDocument"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2591,8 +2538,7 @@ class Period(Element):
         *,
         start: Optional[str] = None,
         end: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2641,8 +2587,7 @@ class Quantity(Element):
         unit: Optional[str] = None,
         system: Optional[str] = None,
         code: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2683,8 +2628,7 @@ class RadiologyCodeWithTypes(_model_base.Model):
         *,
         code: "_models.CodeableConcept",
         types: List["_models.CodeableConcept"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2720,8 +2664,7 @@ class RadiologyInsightsData(_model_base.Model):
         *,
         patients: List["_models.PatientRecord"],
         configuration: Optional["_models.RadiologyInsightsModelConfiguration"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2757,8 +2700,7 @@ class RadiologyInsightsInferenceOptions(_model_base.Model):
         *,
         followup_recommendation_options: Optional["_models.FollowupRecommendationOptions"] = None,
         finding_options: Optional["_models.FindingOptions"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2796,8 +2738,7 @@ class RadiologyInsightsInferenceResult(_model_base.Model):
         *,
         patient_results: List["_models.RadiologyInsightsPatientResult"],
         model_version: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2860,8 +2801,7 @@ class RadiologyInsightsJob(_model_base.Model):
         self,
         *,
         job_data: Optional["_models.RadiologyInsightsData"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2920,8 +2860,7 @@ class RadiologyInsightsModelConfiguration(_model_base.Model):
         inference_types: Optional[List[Union[str, "_models.RadiologyInsightsInferenceType"]]] = None,
         inference_options: Optional["_models.RadiologyInsightsInferenceOptions"] = None,
         locale: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2957,8 +2896,7 @@ class RadiologyInsightsPatientResult(_model_base.Model):
         *,
         patient_id: str,
         inferences: List["_models.RadiologyInsightsInference"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3008,8 +2946,7 @@ class RadiologyProcedureInference(RadiologyInsightsInference, discriminator="rad
         ordered_procedure: "_models.OrderedProcedure",
         extension: Optional[List["_models.Extension"]] = None,
         procedure_codes: Optional[List["_models.CodeableConcept"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3043,8 +2980,7 @@ class Range(Element):
         *,
         low: Optional["_models.Quantity"] = None,
         high: Optional["_models.Quantity"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3078,8 +3014,7 @@ class Ratio(Element):
         *,
         numerator: Optional["_models.Quantity"] = None,
         denominator: Optional["_models.Quantity"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3129,8 +3064,7 @@ class RecommendationFinding(_model_base.Model):
         finding: Optional["_models.Observation"] = None,
         critical_finding: Optional["_models.CriticalResult"] = None,
         extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3174,8 +3108,7 @@ class Reference(Element):
         type: Optional[str] = None,
         identifier: Optional["_models.Identifier"] = None,
         display: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3333,7 +3266,7 @@ class ResearchStudy(DomainResource, discriminator="ResearchStudy"):  # pylint: d
     """A goal for the study."""
 
     @overload
-    def __init__(# pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         status: Union[str, "_models.ResearchStudyStatusCodeType"],
@@ -3367,8 +3300,7 @@ class ResearchStudy(DomainResource, discriminator="ResearchStudy"):  # pylint: d
         note: Optional[List["_models.Annotation"]] = None,
         arm: Optional[List["_models.ResearchStudyArm"]] = None,
         objective: Optional[List["_models.ResearchStudyObjective"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3408,8 +3340,7 @@ class ResearchStudyArm(_model_base.Model):
         name: str,
         type: Optional["_models.CodeableConcept"] = None,
         description: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3444,8 +3375,7 @@ class ResearchStudyObjective(_model_base.Model):
         *,
         name: str,
         type: Optional["_models.CodeableConcept"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3506,8 +3436,7 @@ class SampledData(Element):
         lower_limit: Optional[float] = None,
         upper_limit: Optional[float] = None,
         data: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3547,8 +3476,7 @@ class SexMismatchInference(RadiologyInsightsInference, discriminator="sexMismatc
         *,
         sex_indication: "_models.CodeableConcept",
         extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3581,8 +3509,7 @@ class TimePeriod(_model_base.Model):
         *,
         start: Optional[datetime.datetime] = None,
         end: Optional[datetime.datetime] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):

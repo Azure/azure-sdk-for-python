@@ -17,14 +17,12 @@ FILE: sample_age_mismatch_inference_async.py
 DESCRIPTION:
 The sample_age_mismatch_inference_async.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize an asynchronous RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, build a Radiology Insights job request with the sample document,
-submit it to the client and display 
+submit it to the client, RadiologyInsightsClient, and display 
 -the Age Mismatch patient ID,
 -the Age Mismatch url extension,
 -the Age Mismatch offset extension,
 -the Age Mismatch length extension, and
 -the Age Mismatch evidence
-extracted by the Radiology Insights service.   
 
 
 USAGE:
@@ -148,13 +146,14 @@ class HealthInsightsSamples:
                                             elif sub_extension.url == "length":
                                                 length = sub_extension.value_integer
                                         if offset > 0 and length > 0:
-                                            evidence = doc_content1[offset:offset+length]
+                                            evidence = doc_content1[offset : offset + length]
                                             if not evidence in Tokens:
                                                 Tokens = Tokens + " " + evidence
                     print(f"Age Mismatch: Evidence: {Tokens}")
 
-     # [END display_age_mismatch]
-         
+    # [END display_age_mismatch]
+
+
 async def main():
     sample = HealthInsightsSamples()
     await sample.radiology_insights_async()

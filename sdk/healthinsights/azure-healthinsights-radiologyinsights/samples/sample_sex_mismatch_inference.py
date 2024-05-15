@@ -16,8 +16,7 @@ FILE: sample_sex_mismatch_inference.py
 DESCRIPTION:
 The sample_sex_mismatch_inference.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, build a Radiology Insights job request with the sample document,
-submit it to the client and display the Sex Mismatch indication extracted by the Radiology Insights service.     
+submit it to the client, RadiologyInsightsClient, and display the Sex Mismatch indication.     
 
 
 USAGE:
@@ -117,7 +116,7 @@ class HealthInsightsSyncSamples:
             print(str(ex))
             return
 
-    def display_sex_mismatch(self,radiology_insights_result):
+    def display_sex_mismatch(self, radiology_insights_result):
         for patient_result in radiology_insights_result.patient_results:
             for ri_inference in patient_result.inferences:
                 if ri_inference.kind == models.RadiologyInsightsInferenceType.SEX_MISMATCH:
@@ -125,7 +124,8 @@ class HealthInsightsSyncSamples:
                     indication = ri_inference.sex_indication
                     for code in indication.coding:
                         print(f"Sex Mismatch: Sex Indication: {code.system} {code.code} {code.display}")
-        
+
+
 def main():
     sample = HealthInsightsSyncSamples()
     sample.radiology_insights_sync()

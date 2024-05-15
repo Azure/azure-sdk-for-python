@@ -16,8 +16,7 @@ FILE: sample_critical_result_inference.py
 DESCRIPTION:
 The sample_critical_result_inference.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, build a Radiology Insights job request with the sample document,
-submit it to the client and display the Critical Results description extracted by the Radiology Insights service.     
+submit it to the client, RadiologyInsightsClient, and display the Critical Results description.     
 
 
 USAGE:

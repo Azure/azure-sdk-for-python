@@ -16,8 +16,7 @@ FILE: sample_followup_recommendation_inference.py
 DESCRIPTION:
 The sample_followup_recommendation_inference.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, build a Radiology Insights job request with the sample document,
-submit it to the client and display 
+submit it to the client, RadiologyInsightsClient, and display
 - the Finding category code
 - the Finding code
 - the Finding ID
@@ -36,8 +35,7 @@ submit it to the client and display
 - the Imaging procedure modality extension url
 - the Imaging procedure modality extension reference
 - the Imaging procedure modality extension offset
-- the Imaging procedure modality extension length
- extracted by the Radiology Insights service.        
+- the Imaging procedure modality extension length       
 
 
 USAGE:
@@ -126,10 +124,7 @@ class HealthInsightsSyncSamples:
         job_data = models.RadiologyInsightsJob(job_data=radiology_insights_data)
         # Health Insights Radiology Insights
         try:
-            poller = radiology_insights_client.begin_infer_radiology_insights(
-                id=job_id,
-                resource=job_data
-            )
+            poller = radiology_insights_client.begin_infer_radiology_insights(id=job_id, resource=job_data)
             job_response = poller.result()
             radiology_insights_result = models.RadiologyInsightsInferenceResult(job_response)
             self.display_followup_recommendation(radiology_insights_result)
@@ -141,27 +136,41 @@ class HealthInsightsSyncSamples:
         for patient_result in radiology_insights_result.patient_results:
             for ri_inference in patient_result.inferences:
                 if ri_inference.kind == models.RadiologyInsightsInferenceType.FOLLOWUP_RECOMMENDATION:
-                    print(f"Follow-up Recommendation Inference found") 
+                    print(f"Follow-up Recommendation Inference found")
                     for finding in ri_inference.findings:
                         for attribute in dir(finding):
-                            if hasattr(finding, attribute) and not attribute.startswith("_") and not callable(getattr(finding, attribute)):
-                                if attribute == "finding":  
-                                    print (f"\nFollow-up Recommendation: FINDING :" )
+                            if (
+                                hasattr(finding, attribute)
+                                and not attribute.startswith("_")
+                                and not callable(getattr(finding, attribute))
+                            ):
+                                if attribute == "finding":
+                                    print(f"\nFollow-up Recommendation: FINDING :")
                                     find = finding.finding
                                     for attr in dir(find):
-                                        if hasattr(find, attr) and not attr.startswith("_") and not callable(getattr(find, attr)):
+                                        if (
+                                            hasattr(find, attr)
+                                            and not attr.startswith("_")
+                                            and not callable(getattr(find, attr))
+                                        ):
                                             if getattr(find, attr) is not None:
                                                 if attr == "category":
                                                     for category in find.category:
                                                         for code in category.coding:
-                                                            print(f"Follow-up Recommendation: FINDING: Category: {code.system} {code.code} {code.display}")
+                                                            print(
+                                                                f"Follow-up Recommendation: FINDING: Category: {code.system} {code.code} {code.display}"
+                                                            )
                                                 elif attr == "code":
                                                     for code in find.code.coding:
-                                                        print(f"Follow-up Recommendation: FINDING: Code: {code.system} {code.code} {code.display}")
+                                                        print(
+                                                            f"Follow-up Recommendation: FINDING: Code: {code.system} {code.code} {code.display}"
+                                                        )
                                                 elif attr == "id":
                                                     print(f"Follow-up Recommendation: FINDING: ID: {find.id}")
                                                 elif attr == "resource_type":
-                                                    print(f"Follow-up Recommendation: FINDING: Resource Type: {find.resource_type}")
+                                                    print(
+                                                        f"Follow-up Recommendation: FINDING: Resource Type: {find.resource_type}"
+                                                    )
                     print(f"\nFollow-up Recommendation: BOOLEANS:")
                     condition = ri_inference.is_conditional
                     print(f"Follow-up Recommendation: BOOLEANS: is_conditional: {condition}")
@@ -175,41 +184,68 @@ class HealthInsightsSyncSamples:
                     for proccod in recproc.procedure_codes:
                         print(f"\nFollow-up Recommendation: PROCEDURE CODES:")
                         for coding in proccod.coding:
-                            print(f"Follow-up Recommendation: PROCEDURE CODES: {coding.system} {coding.code} {coding.display}")  
+                            print(
+                                f"Follow-up Recommendation: PROCEDURE CODES: {coding.system} {coding.code} {coding.display}"
+                            )
                     for improc in recproc.imaging_procedures:
                         print(f"\nFollow-up Recommendation: IMAGING PROCEDURE:")
                         for attribute in improc:
-                            if hasattr(improc, attribute) and not attribute.startswith("_") and not callable(getattr(improc, attribute)):
+                            if (
+                                hasattr(improc, attribute)
+                                and not attribute.startswith("_")
+                                and not callable(getattr(improc, attribute))
+                            ):
                                 if attribute == "anatomy":
                                     if improc.anatomy is not None:
                                         for coding in improc.anatomy.coding:
-                                            print(f"Follow-up Recommendation: IMAGING PROCEDURE: Anatomy Code: {coding.system} {coding.code} {coding.display}")
+                                            print(
+                                                f"Follow-up Recommendation: IMAGING PROCEDURE: Anatomy Code: {coding.system} {coding.code} {coding.display}"
+                                            )
                                         for extension in improc.anatomy.extension:
-                                            print(f"Follow-up Recommendation: IMAGING PROCEDURE: Anatomy Url: {extension.url}")
+                                            print(
+                                                f"Follow-up Recommendation: IMAGING PROCEDURE: Anatomy Url: {extension.url}"
+                                            )
                                             for subext in extension.extension:
                                                 if subext.url == "reference":
-                                                    print(f"Follow-up Recommendation: IMAGING PROCEDURE: Anatomy Url: {subext.url} {subext.value_reference}")
+                                                    print(
+                                                        f"Follow-up Recommendation: IMAGING PROCEDURE: Anatomy Url: {subext.url} {subext.value_reference}"
+                                                    )
                                                 elif subext.url == "offset":
-                                                    print(f"Follow-up Recommendation: IMAGING PROCEDURE: Anatomy Url: {subext.url} {subext.value_integer}")
+                                                    print(
+                                                        f"Follow-up Recommendation: IMAGING PROCEDURE: Anatomy Url: {subext.url} {subext.value_integer}"
+                                                    )
                                                 elif subext.url == "length":
-                                                    print(f"Follow-up Recommendation: IMAGING PROCEDURE: Anatomy Url: {subext.url} {subext.value_integer}")
+                                                    print(
+                                                        f"Follow-up Recommendation: IMAGING PROCEDURE: Anatomy Url: {subext.url} {subext.value_integer}"
+                                                    )
                                     else:
                                         print(f"Follow-up Recommendation: IMAGING PROCEDURE: Anatomy: none")
                                 elif attribute == "modality":
                                     if improc.modality is not None:
                                         for coding in improc.modality.coding:
-                                            print(f"Follow-up Recommendation: IMAGING PROCEDURE: Modality Code: {coding.system} {coding.code} {coding.display}")
+                                            print(
+                                                f"Follow-up Recommendation: IMAGING PROCEDURE: Modality Code: {coding.system} {coding.code} {coding.display}"
+                                            )
                                         for extension in improc.modality.extension:
-                                            print(f"Follow-up Recommendation: IMAGING PROCEDURE: Modality Url: {extension.url}")
+                                            print(
+                                                f"Follow-up Recommendation: IMAGING PROCEDURE: Modality Url: {extension.url}"
+                                            )
                                             for subext in extension.extension:
                                                 if subext.url == "reference":
-                                                    print(f"Follow-up Recommendation: IMAGING PROCEDURE: Modality Url: {subext.url} {subext.value_reference}")
+                                                    print(
+                                                        f"Follow-up Recommendation: IMAGING PROCEDURE: Modality Url: {subext.url} {subext.value_reference}"
+                                                    )
                                                 elif subext.url == "offset":
-                                                    print(f"Follow-up Recommendation: IMAGING PROCEDURE: Modality Url: {subext.url} {subext.value_integer}")
+                                                    print(
+                                                        f"Follow-up Recommendation: IMAGING PROCEDURE: Modality Url: {subext.url} {subext.value_integer}"
+                                                    )
                                                 elif subext.url == "length":
-                                                    print(f"Follow-up Recommendation: IMAGING PROCEDURE: Modality Url: {subext.url} {subext.value_integer}")
+                                                    print(
+                                                        f"Follow-up Recommendation: IMAGING PROCEDURE: Modality Url: {subext.url} {subext.value_integer}"
+                                                    )
                                     else:
-                                        print(f"Follow-up Recommendation: IMAGING PROCEDURE: Modality: none") 
+                                        print(f"Follow-up Recommendation: IMAGING PROCEDURE: Modality: none")
+
 
 def main():
     sample = HealthInsightsSyncSamples()

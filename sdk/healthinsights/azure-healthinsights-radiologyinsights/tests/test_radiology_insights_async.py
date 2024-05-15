@@ -88,7 +88,7 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
         radiology_insights_client = RadiologyInsightsClient(
             healthinsights_endpoint, AzureKeyCredential(healthinsights_key)
         )
-        
+
         poller = await radiology_insights_client.begin_infer_radiology_insights(
             id="JobID2",
             resource=jobdata,
