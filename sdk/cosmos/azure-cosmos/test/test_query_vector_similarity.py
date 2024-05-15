@@ -109,7 +109,7 @@ class TestVectorSimilarityQuery(unittest.TestCase):
         except ValueError as e:
             assert "Executing a vector search query without TOP or LIMIT can consume many RUs very fast and" \
                    " have long runtimes. Please ensure you are using one of the two filters with your" \
-                   " vector search query.'" in e.args[0]
+                   " vector search query." in e.args[0]
 
         # try to send a vector search query specifying the ordering as ASC or DESC
         query = "SELECT c.text, VectorDistance(c.embedding, [{}]) AS " \
