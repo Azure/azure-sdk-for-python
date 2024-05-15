@@ -121,7 +121,7 @@ class TestVectorSimilarityQueryAsync(unittest.TestCase):
             pytest.fail("Client should not allow queries with ASC/DESC.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
-            assert "incorrect syntax near 'LIMIT'" in e.message
+            assert "Specifying a sorting order (ASC or DESC) with VectorDistance function is not supported." in e.message
 
     async def test_ordering_distances_async(self):
         # Besides ordering distances, we also verify that the query text properly replaces any set embedding policies

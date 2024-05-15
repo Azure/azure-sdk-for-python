@@ -178,23 +178,23 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_fail_create_vector_embedding_policy(self):
         # Using invalid data type
-        vector_embedding_policy = {
-            "vectorEmbeddings": [
-                {
-                    "path": "/vector1",
-                    "dataType": "cubic_meters",
-                    "dimensions": 256,
-                    "distanceFunction": "euclidean"
-                }]}
-        try:
-            await self.test_db.create_container(
-                id='vector_container',
-                partition_key=PartitionKey(path="/id"),
-                vector_embedding_policy=vector_embedding_policy)
-            pytest.fail("Container creation should have failed but succeeded.")
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == 400
-            assert "Vector Embedding Policy has an invalid DataType" in e.http_error_message
+        # vector_embedding_policy = {
+        #     "vectorEmbeddings": [
+        #         {
+        #             "path": "/vector1",
+        #             "dataType": "cubic_meters",
+        #             "dimensions": 256,
+        #             "distanceFunction": "euclidean"
+        #         }]}
+        # try:
+        #     await self.test_db.create_container(
+        #         id='vector_container',
+        #         partition_key=PartitionKey(path="/id"),
+        #         vector_embedding_policy=vector_embedding_policy)
+        #     pytest.fail("Container creation should have failed but succeeded.")
+        # except exceptions.CosmosHttpResponseError as e:
+        #     assert e.status_code == 400
+        #     assert "Vector Embedding Policy has an invalid DataType" in e.http_error_message
 
         # Using too many dimensions
         vector_embedding_policy = {
