@@ -196,7 +196,11 @@ For the detailed differences between different versions of **Detection** and **R
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.vision.face import FaceClient
 from azure.ai.vision.face.models import (
-    FaceDetectionModel, FaceRecognitionModel, FaceAttributeTypeDetection03, FaceAttributeTypeRecognition04)
+    FaceDetectionModel,
+    FaceRecognitionModel,
+    FaceAttributeTypeDetection03,
+    FaceAttributeTypeRecognition04,
+)
 
 endpoint = "<your endpoint>"
 key = "<your api key>"
@@ -214,10 +218,12 @@ with FaceClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as face_c
         return_face_attributes=[
             FaceAttributeTypeDetection03.HEAD_POSE,
             FaceAttributeTypeDetection03.MASK,
-            FaceAttributeTypeRecognition04.QUALITY_FOR_RECOGNITION],
+            FaceAttributeTypeRecognition04.QUALITY_FOR_RECOGNITION,
+        ],
         return_face_landmarks=True,
         return_recognition_model=True,
-        face_id_time_to_live=120)
+        face_id_time_to_live=120,
+    )
 
     print(f"Detect faces from the file: {sample_file_path}")
     for idx, face in enumerate(result):
@@ -234,7 +240,7 @@ and then register faces with these `Person`.
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.vision.face import FaceAdministrationClient, FaceClient
-from azure.ai.vision.face.models import (FaceDetectionModel, FaceRecognitionModel)
+from azure.ai.vision.face.models import FaceDetectionModel, FaceRecognitionModel
 
 
 def read_file_content(file_path: str):
@@ -252,29 +258,34 @@ large_person_group_id = "lpg_family"
 with FaceAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as face_admin_client:
     print(f"Create a large person group with id: {large_person_group_id}")
     face_admin_client.create_large_person_group(
-        large_person_group_id, name="My Family", recognition_model=FaceRecognitionModel.RECOGNITION_04)
+        large_person_group_id, name="My Family", recognition_model=FaceRecognitionModel.RECOGNITION_04
+    )
 
     print("Create a Person Bill and add a face to him.")
     bill_person_id = face_admin_client.create_large_person_group_person(
-        large_person_group_id, name="Bill", user_data="Dad").person_id
+        large_person_group_id, name="Bill", user_data="Dad"
+    ).person_id
     bill_image_file_path = "./samples/images/Family1-Dad1.jpg"
     face_admin_client.add_large_person_group_person_face(
         large_person_group_id,
         bill_person_id,
         read_file_content(bill_image_file_path),
         detection_model=FaceDetectionModel.DETECTION_03,
-        user_data="Dad-0001")
+        user_data="Dad-0001",
+    )
 
     print("Create a Person Clare and add a face to her.")
     clare_person_id = face_admin_client.create_large_person_group_person(
-        large_person_group_id, name="Clare", user_data="Mom").person_id
+        large_person_group_id, name="Clare", user_data="Mom"
+    ).person_id
     clare_image_file_path = "./samples/images/Family1-Mom1.jpg"
     face_admin_client.add_large_person_group_person_face(
         large_person_group_id,
         clare_person_id,
         read_file_content(clare_image_file_path),
         detection_model=FaceDetectionModel.DETECTION_03,
-        user_data="Mom-0001")
+        user_data="Mom-0001",
+    )
 ```
 
 Before doing the identification, we need to train the LargePersonGroup first.
@@ -297,12 +308,14 @@ with FaceClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as face_c
         read_file_content(target_image_file_path),
         detection_model=FaceDetectionModel.DETECTION_03,
         recognition_model=FaceRecognitionModel.RECOGNITION_04,
-        return_face_id=True)
+        return_face_id=True,
+    )
     target_face_ids = list(f.face_id for f in detect_result)
 
     # Identify the faces in the large person group.
     result = face_client.identify_from_large_person_group(
-        face_ids=target_face_ids, large_person_group_id=large_person_group_id)
+        face_ids=target_face_ids, large_person_group_id=large_person_group_id
+    )
     for idx, r in enumerate(result):
         print(f"----- Identification result: #{idx+1} -----")
         print(f"{r.as_dict()}")
@@ -351,7 +364,9 @@ with FaceSessionClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as
             liveness_operation_mode=LivenessOperationMode.PASSIVE,
             device_correlation_id=str(uuid.uuid4()),
             send_results_to_client=False,
-            auth_token_time_to_live_in_seconds=60))
+            auth_token_time_to_live_in_seconds=60,
+        )
+    )
     print(f"Result: {created_session}")
 
     # Get the liveness detection result.
@@ -384,8 +399,10 @@ with FaceSessionClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as
             liveness_operation_mode=LivenessOperationMode.PASSIVE,
             device_correlation_id=str(uuid.uuid4()),
             send_results_to_client=False,
-            auth_token_time_to_live_in_seconds=60),
-        verify_image=file_content)
+            auth_token_time_to_live_in_seconds=60,
+        ),
+        verify_image=file_content,
+    )
     print(f"Result: {created_session}")
 
     # Get the liveness detection and verification result.
