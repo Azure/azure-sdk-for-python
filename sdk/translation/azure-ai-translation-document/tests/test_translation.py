@@ -15,7 +15,7 @@ from preparer import (
 )
 from devtools_testutils import recorded_by_proxy
 from azure.storage.blob import ContainerClient
-from azure.ai.translation.document.models import StartTranslationDetails as _StartTranslationDetails
+from azure.ai.translation.document.models._models import StartTranslationDetails as _StartTranslationDetails
 from azure.ai.translation.document import (
     DocumentTranslationInput,
     TranslationTarget,

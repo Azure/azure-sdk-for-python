@@ -33,7 +33,6 @@ from azure.core.polling.base_polling import (
 )
 
 from .models._models import (
-    
     BatchRequest as _BatchRequest,
     SourceInput as _SourceInput,
     TargetInput as _TargetInput,
@@ -41,7 +40,7 @@ from .models._models import (
     StartTranslationDetails as _StartTranslationDetails,
     Glossary as _Glossary,
     DocumentTranslateContent,
-    TranslationsStatus as _TranslationStatus,
+    TranslationStatus as _TranslationStatus,
     DocumentStatus as _DocumentStatus,
 )
 from .models._enums import StorageInputType
@@ -1379,7 +1378,6 @@ __all__: List[str] = [
     "DocumentStatus",
     "DocumentTranslationError",
     "DocumentTranslationFileFormat",
-    "DocumentTranslateContent",
     "StorageInputType",
 ]  # Add all objects you want publicly available to users at this package level
 

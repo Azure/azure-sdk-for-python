@@ -34,7 +34,11 @@ from ..models import _enums as _enums
 from .. import _model_base
 from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Serializer
-from .._vendor import DocumentTranslationClientMixinABC, SingleDocumentTranslationClientMixinABC
+from .._vendor import (
+    DocumentTranslationClientMixinABC,
+    SingleDocumentTranslationClientMixinABC,
+    prepare_multipart_form_data,
+)
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -306,8 +310,6 @@ def build_single_document_translation_document_translate_request(  # pylint: dis
         _params["allowFallback"] = _SERIALIZER.query("allow_fallback", allow_fallback, "bool")
 
     # Construct headers
-    if content_type is not None:
-        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1567,7 +1569,7 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
 ):
 
     @overload
-    def document_translate(  # pylint: disable=protected-access
+    def document_translate(
         self,
         body: _models.DocumentTranslateContent,
         *,
@@ -1577,13 +1579,12 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
         allow_fallback: Optional[bool] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        # pylint: disable=line-too-long
         """Submit a single document translation request to the Document Translation service.
 
         Use this API to submit a single translation request to the Document Translation Service.
 
         :param body: Required.
-        :type body: ~azure.ai.translation.document.models._models.DocumentTranslateContent
+        :type body: ~azure.ai.translation.document.models.DocumentTranslateContent
         :keyword target_language: Specifies the language of the output document.
          The target language must be one of the supported languages included in the translation scope.
          For example if you want to translate the document in German language, then use
@@ -1615,12 +1616,8 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
 
                 # JSON input template you can fill out and use as your body input.
                 body = {
-                    "document": bytes("bytes", encoding="utf-8"),  # Document to be translated in
-                      the form. Required.
-                    "glossary": [
-                        bytes("bytes", encoding="utf-8")  # Optional. Glossary-translation
-                          memory will be used during translation in the form.
-                    ]
+                    "document": filetype,
+                    "glossary": [filetype]
                 }
         """
 
@@ -1679,13 +1676,12 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
         allow_fallback: Optional[bool] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        # pylint: disable=line-too-long
         """Submit a single document translation request to the Document Translation service.
 
         Use this API to submit a single translation request to the Document Translation Service.
 
         :param body: Is either a DocumentTranslateContent type or a JSON type. Required.
-        :type body: ~azure.ai.translation.document.models._models.DocumentTranslateContent or JSON
+        :type body: ~azure.ai.translation.document.models.DocumentTranslateContent or JSON
         :keyword target_language: Specifies the language of the output document.
          The target language must be one of the supported languages included in the translation scope.
          For example if you want to translate the document in German language, then use
@@ -1717,12 +1713,8 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
 
                 # JSON input template you can fill out and use as your body input.
                 body = {
-                    "document": bytes("bytes", encoding="utf-8"),  # Document to be translated in
-                      the form. Required.
-                    "glossary": [
-                        bytes("bytes", encoding="utf-8")  # Optional. Glossary-translation
-                          memory will be used during translation in the form.
-                    ]
+                    "document": filetype,
+                    "glossary": [filetype]
                 }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -1738,12 +1730,10 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "multipart/form-data"
-        _content = None
-        if isinstance(body, _model_base.Model):
-            _content = body
-        elif isinstance(body, MutableMapping):
-            _content = body
+        _body = body.as_dict() if isinstance(body, _model_base.Model) else body
+        _file_fields: List[str] = ["document", "glossary"]
+        _data_fields: List[str] = []
+        _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_single_document_translation_document_translate_request(
             target_language=target_language,
@@ -1751,7 +1741,8 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
             category=category,
             allow_fallback=allow_fallback,
             api_version=self._config.api_version,
-            content=_content,
+            files=_files,
+            data=_data,
             headers=_headers,
             params=_params,
         )

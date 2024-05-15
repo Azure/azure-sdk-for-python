@@ -8,10 +8,11 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .. import _model_base
 from .._model_base import rest_field
+from .._vendor import FileType
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -149,10 +150,28 @@ class DocumentTranslateContent(_model_base.Model):
     :vartype glossary: list[bytes]
     """
 
-    document: bytes = rest_field(format="base64")
+    document: FileType = rest_field(is_multipart_file_input=True)
     """Document to be translated in the form. Required."""
-    glossary: Optional[List[bytes]] = rest_field(format="base64")
+    glossary: Optional[List[FileType]] = rest_field(is_multipart_file_input=True)
     """Glossary-translation memory will be used during translation in the form."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        document: FileType,
+        glossary: Optional[List[FileType]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class FileFormat(_model_base.Model):
