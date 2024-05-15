@@ -16,8 +16,8 @@ class AsyncAppConfigTestCase(AppConfigTestCase):
         cred = self.get_credential(AzureAppConfigurationClient, is_async=True)
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
 
-    def create_client(self, appconfiguration_connection_string):
-        return AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
+    # def create_client(self, appconfiguration_connection_string):
+    #     return AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
 
     async def add_for_test(self, client, config_setting):
         try:
@@ -34,8 +34,8 @@ class AsyncAppConfigTestCase(AppConfigTestCase):
     async def set_up(self, appconfiguration_string, is_aad=False):
         if is_aad:
             self.client = self.create_aad_client(appconfiguration_string)
-        else:
-            self.client = self.create_client(appconfiguration_string)
+        # else:
+        #     self.client = self.create_client(appconfiguration_string)
         await self.add_for_test(self.client, self.create_config_setting())
         await self.add_for_test(self.client, self.create_config_setting_no_label())
 

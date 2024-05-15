@@ -96,7 +96,7 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
         load_dotenv(find_dotenv())
 
         if self.is_live:
-            self._set_mgmt_settings_real_values()
+            # self._set_mgmt_settings_real_values()
             try:
                 for key in self.needed_keys:
 
