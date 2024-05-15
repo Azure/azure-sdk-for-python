@@ -35,8 +35,8 @@ class FaceClient(FaceClientGenerated):
     @overload
     def detect_from_url(
         self,
-        body: JSON,
         *,
+        url: str,
         content_type: str = "application/json",
         detection_model: Union[str, _models.FaceDetectionModel],
         recognition_model: Union[str, _models.FaceRecognitionModel],
@@ -51,8 +51,8 @@ class FaceClient(FaceClientGenerated):
     @overload
     def detect_from_url(
         self,
+        body: JSON,
         *,
-        url: str,
         content_type: str = "application/json",
         detection_model: Union[str, _models.FaceDetectionModel],
         recognition_model: Union[str, _models.FaceRecognitionModel],
