@@ -5,7 +5,7 @@
 ### Packages included
 
 - azure-communication-chat-1.3.0
-- azure-communication-email-1.1.0
+- azure-communication-email-1.0.0
 - azure-communication-identity-1.5.0
 - azure-communication-phonenumbers-1.1.0
 - azure-communication-sms-1.0.1
