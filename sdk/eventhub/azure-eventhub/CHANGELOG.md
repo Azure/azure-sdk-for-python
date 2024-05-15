@@ -1,16 +1,16 @@
 # Release History
 
-## 5.13.0b1 (2024-05-15)
+## 5.13.0b1 (2024-05-16)
 
 ### Features Added
 
 - Added support for georeplication and disaster recovery-enabled Event Hubs.
 
-### Breaking Changes
+## 5.12.0 (2024-05-16)
 
-### Bugs Fixed
+### Features Added
 
-### Other Changes
+- Added support for non-tls connections (#34272)
 
 ## 5.11.7 (2024-04-10)
 
