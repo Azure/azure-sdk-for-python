@@ -206,7 +206,7 @@ class TestEnvironment(AzureRecordedTestCase):
     def test_environment_get_latest_label(self, client: MLClient, randstr: Callable[[], str]) -> None:
         name = randstr("name")
 
-        versions = ["foo", "bar", "baz", "foobar"]
+        versions = [ "bar", "foo", "baz", "foobar"]
 
         for version in versions:
             created = client.environments.create_or_update(
