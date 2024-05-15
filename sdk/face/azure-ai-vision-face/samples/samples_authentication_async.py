@@ -11,7 +11,7 @@ FILE: sample_authentication_async.py
 DESCRIPTION:
     This sample demonstrates authenticating a client via:
         * api key
-        * Azure Active Directory(AAD)
+        * Microsoft Entra ID
 
 USAGE:
     python sample_authentication_async.py
@@ -22,7 +22,7 @@ USAGE:
     2) AZURE_FACE_API_ACCOUNT_KEY - your Face API key.
     The following environment variables are required for using azure-identity's DefaultAzureCredential.
     For more information, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
-    3) AZURE_TENANT_ID - the tenant ID in Azure Active Directory
+    3) AZURE_TENANT_ID - the tenant ID in Microsoft Entra ID
     4) AZURE_CLIENT_ID - the application (client) ID registered in the AAD tenant
     5) AZURE_CLIENT_SECRET - the client secret for the registered application
 """
