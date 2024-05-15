@@ -1,14 +1,11 @@
 # Release History
 
-## 1.4.2 (Unreleased)
+## 1.4.2 (2024-05-20)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Add diagnostics for sdk detection and backoff
+    ([#35610](https://github.com/Azure/azure-sdk-for-python/pull/35610))
 
 ## 1.4.1 (2024-04-25)
 
