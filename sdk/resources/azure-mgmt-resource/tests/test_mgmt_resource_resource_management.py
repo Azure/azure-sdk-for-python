@@ -912,6 +912,12 @@ class TestMgmtResource(AzureMgmtRecordedTestCase):
     def test_operations(self):
         self.resource_client.operations.list()
 
+    @RandomNameResourceGroupPreparer()
+    @recorded_by_proxy
+    def test_resources_list(self):
+        result = list(self.resource_client.resources.list())
+        assert len(result) > 0
+
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
