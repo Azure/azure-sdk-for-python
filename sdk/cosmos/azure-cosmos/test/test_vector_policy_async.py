@@ -40,7 +40,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.delete_database(self.test_db.id)
         await self.client.close()
 
-    async def test_create_vector_embedding_container(self):
+    async def test_create_vector_embedding_container_async(self):
         indexing_policy = {
             "vectorIndexes": [
                 {"path": "/vector1", "type": "flat"},
@@ -81,7 +81,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
         await self.test_db.delete_container(container_id)
 
-    async def test_fail_create_vector_indexing_policy(self):
+    async def test_fail_create_vector_indexing_policy_async(self):
         vector_embedding_policy = {
             "vectorEmbeddings": [
                 {
@@ -141,7 +141,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
             assert e.status_code == 400
             assert "vector2 not matching in Embedding's path" in e.http_error_message
 
-    async def test_fail_replace_vector_indexing_policy(self):
+    async def test_fail_replace_vector_indexing_policy_async(self):
         vector_embedding_policy = {
             "vectorEmbeddings": [
                 {
@@ -176,7 +176,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
             assert "Vector Indexing Policy cannot be changed in Collection Replace" in e.http_error_message
         await self.test_db.delete_container(container_id)
 
-    async def test_fail_create_vector_embedding_policy(self):
+    async def test_fail_create_vector_embedding_policy_async(self):
         # Using invalid data type
         vector_embedding_policy = {
             "vectorEmbeddings": [
@@ -253,7 +253,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
             pytest.fail("Container creation should have failed but succeeded.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "Vector Embedding Policy has invalid DistanceFunction:handMeasured" in e.http_error_message
+            assert "The Vector Embedding Policy has an invalid DistanceFunction:handMeasured" in e.http_error_message
 
 
 if __name__ == '__main__':

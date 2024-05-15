@@ -243,7 +243,7 @@ class TestVectorPolicy(unittest.TestCase):
             pytest.fail("Container creation should have failed but succeeded.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "Vector Embedding Policy has invalid DistanceFunction:handMeasured" in e.http_error_message
+            assert "The Vector Embedding Policy has an invalid DistanceFunction:handMeasured" in e.http_error_message
 
 
 if __name__ == '__main__':
