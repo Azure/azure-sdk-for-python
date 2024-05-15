@@ -68,7 +68,7 @@ _T = TypeVar("_T")
 
 
 @overload
-async def load(
+async def load( # pylint: disable=docstring-keyword-should-match-keyword-only
     endpoint: str,
     credential: "AsyncTokenCredential",
     *,
@@ -108,25 +108,25 @@ async def load(
     :paramtype refresh_on: List[Tuple[str, str]]
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
-    :paramtype on_refresh_success: Optional[Callable]
     :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has
     happened.
-    :paramtype on_refresh_error: Optional[Callable[[Exception], Awaitable[None]]]
+    :paramtype on_refresh_success: Optional[Callable]
     :keyword on_refresh_error: Optional callback to be invoked when an error occurs while refreshing settings. If not
     specified, errors will be raised.
-    :paramtype feature_flag_enabled: bool
+    :paramtype on_refresh_error: Optional[Callable[[Exception], Awaitable[None]]]
     :keyword feature_flag_enabled: Optional flag to enable or disable the loading of feature flags. Default is False.
-    :paramtype feature_flag_selectors: List[SettingSelector]
+    :paramtype feature_flag_enabled: bool
     :keyword feature_flag_selectors: Optional list of selectors to filter feature flags. By default will load all
     feature flags without a label.
-    :paramtype feature_flag_refresh_enabled: bool
+    :paramtype feature_flag_selectors: List[SettingSelector]
     :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is
     False.
+    :paramtype feature_flag_refresh_enabled: bool
     """
 
 
 @overload
-async def load(
+async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     *,
     connection_string: str,
     selects: Optional[List[SettingSelector]] = None,
@@ -163,20 +163,20 @@ async def load(
     :paramtype refresh_on: List[Tuple[str, str]]
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
-    :paramtype on_refresh_success: Optional[Callable]
     :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has
     happened.
-    :paramtype on_refresh_error: Optional[Callable[[Exception], Awaitable[None]]]
+    :paramtype on_refresh_success: Optional[Callable]
     :keyword on_refresh_error: Optional callback to be invoked when an error occurs while refreshing settings. If not
      specified, errors will be raised.
-    :paramtype feature_flag_enabled: bool
+    :paramtype on_refresh_error: Optional[Callable[[Exception], Awaitable[None]]]
     :keyword feature_flag_enabled: Optional flag to enable or disable the loading of feature flags. Default is False.
-    :paramtype feature_flag_selectors: List[SettingSelector]
+    :paramtype feature_flag_enabled: bool
     :keyword feature_flag_selectors: Optional list of selectors to filter feature flags. By default will load all
      feature flags without a label.
-    :paramtype feature_flag_refresh_enabled: bool
+    :paramtype feature_flag_selectors: List[SettingSelector]
     :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is
      False.
+    :paramtype feature_flag_refresh_enabled: bool
     """
 
 
