@@ -833,7 +833,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         self,
         *,
         max_message_count: Optional[int] = None,
-        before_enqueued_time_utc: Optional[datetime.datetime] = None,
+        before: Optional[datetime.datetime] = None,
         timeout: Optional[float] = None,
     ) -> int:
         """
@@ -841,7 +841,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
 
         :keyword int or None max_message_count: The maximum number of messages to delete. The default value is None,
          meaning it will attempt to delete up to 4,000 messages.
-        :keyword datetime.datetime or None before_enqueued_time_utc: The UTC datetime value before which all messages
+        :keyword datetime.datetime or None before: The UTC datetime value before which all messages
          should be deleted. The default value is None, meaning all messages in the queue will be considered.
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.
@@ -857,7 +857,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         message_count = max_message_count if max_message_count else 4000
 
         message_send = {
-            MGMT_REQUEST_ENQUEUED_TIME_UTC: before_enqueued_time_utc if before_enqueued_time_utc
+            MGMT_REQUEST_ENQUEUED_TIME_UTC: before if before
                 else datetime.datetime.now(datetime.timezone.utc),
             MGMT_REQUEST_MAX_MESSAGE_COUNT: message_count,
         }
@@ -878,13 +878,13 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
     async def purge_messages(
         self,
         *,
-        before_enqueued_time_utc: Optional[datetime.datetime] = None,
+        before: Optional[datetime.datetime] = None,
         timeout: Optional[float] = None,
     ) -> int:
         """
         This operation purges as many messages as possible in the queue that are older than the specified enqueued time.
 
-        :keyword datetime.datetime or None before_enqueued_time_utc: The UTC datetime value before which all messages
+        :keyword datetime.datetime or None before: The UTC datetime value before which all messages
          should be deleted. The default value is None, meaning all messages from the current time and before
          in the queue will be considered.
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
@@ -899,7 +899,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         await self._open()
 
         message_send = {
-            MGMT_REQUEST_ENQUEUED_TIME_UTC: before_enqueued_time_utc if before_enqueued_time_utc
+            MGMT_REQUEST_ENQUEUED_TIME_UTC: before if before
                 else datetime.datetime.now(datetime.timezone.utc),
             MGMT_REQUEST_MAX_MESSAGE_COUNT: 4000,
         }
