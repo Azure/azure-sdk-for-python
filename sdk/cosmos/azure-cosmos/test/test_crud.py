@@ -260,7 +260,7 @@ class TestCRUDOperations(unittest.TestCase):
         # create document without partition key being specified
         created_document = created_collection.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEqual(self.last_headers[1], '["WA"]')
+        self.assertEqual(self.last_headers[0], '["WA"]')
         del self.last_headers[:]
 
         self.assertEqual(created_document.get('id'), document_definition.get('id'))
@@ -277,7 +277,7 @@ class TestCRUDOperations(unittest.TestCase):
         # Create document with partitionkey not present as a leaf level property but a dict
         created_document = created_collection1.create_item(document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEqual(self.last_headers[1], [{}])
+        self.assertEqual(self.last_headers[0], [{}])
         del self.last_headers[:]
 
         # self.assertEqual(options['partitionKey'], documents.Undefined)
@@ -293,7 +293,7 @@ class TestCRUDOperations(unittest.TestCase):
         # Create document with partitionkey not present in the document
         created_document = created_collection2.create_item(document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEqual(self.last_headers[1], [{}])
+        self.assertEqual(self.last_headers[0], [{}])
         del self.last_headers[:]
 
         # self.assertEqual(options['partitionKey'], documents.Undefined)
@@ -319,7 +319,7 @@ class TestCRUDOperations(unittest.TestCase):
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
         created_document = created_collection1.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEqual(self.last_headers[1], '["val1"]')
+        self.assertEqual(self.last_headers[0], '["val1"]')
         del self.last_headers[:]
 
         collection_definition2 = {
@@ -347,7 +347,7 @@ class TestCRUDOperations(unittest.TestCase):
         # create document without partition key being specified
         created_document = created_collection2.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEqual(self.last_headers[1], '["val2"]')
+        self.assertEqual(self.last_headers[0], '["val2"]')
         del self.last_headers[:]
 
         created_db.delete_container(created_collection1.id)
