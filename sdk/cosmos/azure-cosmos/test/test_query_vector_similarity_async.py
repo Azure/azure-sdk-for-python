@@ -46,10 +46,9 @@ class TestVectorSimilarityQueryAsync(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = CosmosClient(cls.host, cls.masterKey)
-        cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
-
     async def asyncSetUp(self):
+        self.client = CosmosClient(self.host, self.masterKey)
+        self.created_db = self.client.get_database_client(self.TEST_DATABASE_ID)
         self.test_db = await self.client.create_database(str(uuid.uuid4()))
         self.created_quantized_cosine_container = await self.test_db.create_container(
             id="quantized" + self.TEST_CONTAINER_ID,
