@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added support for EventHub Emulator
+- Added support for non-tls connections (#34272)
 
 ## 5.11.7 (2024-04-10)
 
