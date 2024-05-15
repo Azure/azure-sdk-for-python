@@ -377,7 +377,7 @@ def _generate_set_tiers_options(
 
     reqs = []
     for blob in blobs:
-        if isinstance(blob, BlobProperties):
+        if not isinstance(blob, str):
             blob_name = blob.get('name')
             tier = blob_tier or blob.get('blob_tier')
             query_parameters, header_parameters = _generate_set_tiers_subrequest_options(
@@ -397,7 +397,7 @@ def _generate_set_tiers_options(
 
         req = HttpRequest(
             "PUT",
-            f"/{quote(container_name)}/{quote(blob_name, safe='/~')}{query_str}",
+            f"/{quote(container_name)}/{quote(str(blob_name), safe='/~')}{query_str}",
             headers=header_parameters
         )
         req.format_parameters(query_parameters)
