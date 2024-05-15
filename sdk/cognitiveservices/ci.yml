@@ -29,16 +29,12 @@ extends:
     ServiceDirectory: cognitiveservices
     TestTimeoutInMinutes: 150
     Artifacts:
-    - name: azure-cognitiveservices-anomalydetector
-      safeName: azurecognitiveservicesanomalydetector
     - name: azure-cognitiveservices-knowledge-qnamaker
       safeName: azurecognitiveservicesknowledgeqnamaker
     - name: azure-cognitiveservices-language-luis
       safeName: azurecognitiveserviceslanguageluis
     - name: azure-cognitiveservices-language-spellcheck
       safeName: azurecognitiveserviceslanguagespellcheck
-    - name: azure-cognitiveservices-language-textanalytics
-      safeName: azurecognitiveserviceslanguagetextanalytics
     - name: azure-cognitiveservices-personalizer
       safeName: azurecognitiveservicespersonalizer
     - name: azure-cognitiveservices-search-autosuggest

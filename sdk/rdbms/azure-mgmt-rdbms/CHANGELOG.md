@@ -1,5 +1,13 @@
 # Release History
 
+## 10.2.0b16 (2024-04-22)
+
+### Features Added
+
+  - Model MigrationResource has a new parameter migrate_roles
+  - Model MigrationResource has a new parameter migration_instance_resource_id
+  - Model MigrationResourceForPatch has a new parameter migrate_roles
+
 ## 10.2.0b15 (2024-03-04)
 
 ### Features Added

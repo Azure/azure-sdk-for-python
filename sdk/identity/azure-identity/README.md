@@ -250,6 +250,7 @@ Not all credentials require this configuration. Credentials that authenticate th
 
 |Credential|Usage|Reference
 |-|-|-
+| `AzurePipelinesCredential` | Supports [Microsoft Entra Workload ID](https://learn.microsoft.com/azure/devops/pipelines/release/configure-workload-identity?view=azure-devops) on Azure Pipelines. |
 |[`CertificateCredential`][cert_cred_ref]| Authenticates a service principal using a certificate. | [Service principal authentication](https://learn.microsoft.com/entra/identity-platform/app-objects-and-service-principals)
 |[`ClientAssertionCredential`][client_assertion_cred_ref]| Authenticates a service principal using a signed client assertion. |
 |[`ClientSecretCredential`][client_secret_cred_ref]| Authenticates a service principal using a secret. | [Service principal authentication](https://learn.microsoft.com/entra/identity-platform/app-objects-and-service-principals)
@@ -288,12 +289,13 @@ variables:
 
 ### Service principal with certificate
 
-|Variable name|Value
-|-|-
-|`AZURE_CLIENT_ID`|ID of a Microsoft Entra application
-|`AZURE_TENANT_ID`|ID of the application's Microsoft Entra tenant
-|`AZURE_CLIENT_CERTIFICATE_PATH`|path to a PEM or PKCS12 certificate file including private key
-|`AZURE_CLIENT_CERTIFICATE_PASSWORD`|password of the certificate file, if any
+|Variable name|Value|Required
+|-|-|-
+|`AZURE_CLIENT_ID`|ID of a Microsoft Entra application|X
+|`AZURE_TENANT_ID`|ID of the application's Microsoft Entra tenant|X
+|`AZURE_CLIENT_CERTIFICATE_PATH`|path to a PEM or PKCS12 certificate file including private key|X
+|`AZURE_CLIENT_CERTIFICATE_PASSWORD`|password of the certificate file, if any|
+|`AZURE_CLIENT_SEND_CERTIFICATE_CHAIN`|if True, the credential will send the public certificate chain in the x5c header of each token request's JWT. This is required for Subject Name/Issuer (SNI) authentication. Defaults to False. There is a [known limitation](https://github.com/Azure/azure-sdk-for-python/issues/13349) that async SNI authentication is not supported.|
 
 ### Username and password
 

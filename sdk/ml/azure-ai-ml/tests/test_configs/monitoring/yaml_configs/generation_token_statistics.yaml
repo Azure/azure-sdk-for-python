@@ -1,0 +1,46 @@
+#source ../configs/genai-momo/out-of-box-monitoring.yaml
+name: generation-token-statistics-test
+
+trigger:
+  type: recurrence
+  frequency: day
+  time_zone: UTC
+  interval: 1 # runs data analysis job daily at 23:15pm
+  schedule: 
+    hours:
+      - 22
+      - 20
+    minutes:
+      - 0
+      - 30
+
+create_monitor:
+  compute:  # clusterless spark compute to run monitoring job
+    instance_type: standard_e8s_v3
+    runtime_version: "3.3"
+  monitoring_target:
+    ml_task: questionanswering #question_answering
+    endpoint_deployment_id: azureml:va-endpoint:va-deployment
+  monitoring_signals:
+    testSignal:
+      type: generation_token_statistics
+      alert_enabled: true
+      production_data:
+        input_data:
+          path: azureml:my_model_inputs_data:1
+          type: mltable
+        data_column_names:
+          prompt_column: question
+          completion_column: answer
+        data_window:
+          lookback_window_size: P7D
+          lookback_window_offset: P0D
+      sampling_rate: 0.1
+      metric_thresholds:
+        totaltoken:
+          total_token_count: 3
+          total_token_count_per_group: 10 
+properties:
+  prop1: value
+tags:
+  tag1: tag

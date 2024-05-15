@@ -48,6 +48,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 )
 from azure.monitor.opentelemetry.exporter._utils import (
     _get_sdk_version,
+    _is_on_app_service,
     _populate_part_a_fields,
     Singleton,
 )
@@ -83,6 +84,8 @@ class _QuickpulseManager(metaclass=Singleton):
             role_name=part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, ""),
             machine_name=platform.node(),
             stream_id=str(id_generator.generate_trace_id()),
+            is_web_app=_is_on_app_service(),
+            performance_collection_supported=True,
         )
         self._reader = _QuickpulseMetricReader(self._exporter, self._base_monitoring_data_point)
         self._meter_provider = MeterProvider([self._reader])

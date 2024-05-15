@@ -386,7 +386,9 @@ def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, r
     autorest_python = "@autorest/python"
     # call scirpt to generate sdk
     try:
-        check_output(f'pwsh {Path("eng/common/scripts/TypeSpec-Project-Process.ps1")} {(Path(spec_folder) / typespec_relative_path).resolve()} {head_sha} {rest_repo_url}', shell=True)
+        tsp_dir = (Path(spec_folder) / typespec_relative_path).resolve()
+        repo_url = rest_repo_url.replace('https://github.com/', "")
+        check_output(f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url} --debug", shell=True)
     except CalledProcessError as e:
         _LOGGER.error(f"Failed to generate sdk from typespec: {e.output.decode('utf-8')}")
         raise e

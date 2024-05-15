@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -33,6 +34,10 @@ from ...operations._integration_runtime_nodes_operations import (
     build_update_request,
 )
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -70,12 +75,11 @@ class IntegrationRuntimeNodesOperations:
         :type integration_runtime_name: str
         :param node_name: The integration runtime node name. Required.
         :type node_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SelfHostedIntegrationRuntimeNode or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.SelfHostedIntegrationRuntimeNode
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -89,23 +93,22 @@ class IntegrationRuntimeNodesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.SelfHostedIntegrationRuntimeNode] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
             integration_runtime_name=integration_runtime_name,
             node_name=node_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -117,13 +120,9 @@ class IntegrationRuntimeNodesOperations:
         deserialized = self._deserialize("SelfHostedIntegrationRuntimeNode", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/nodes/{nodeName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -139,12 +138,11 @@ class IntegrationRuntimeNodesOperations:
         :type integration_runtime_name: str
         :param node_name: The integration runtime node name. Required.
         :type node_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -158,23 +156,22 @@ class IntegrationRuntimeNodesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
             integration_runtime_name=integration_runtime_name,
             node_name=node_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -184,11 +181,7 @@ class IntegrationRuntimeNodesOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/nodes/{nodeName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def update(
@@ -219,7 +212,6 @@ class IntegrationRuntimeNodesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SelfHostedIntegrationRuntimeNode or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.SelfHostedIntegrationRuntimeNode
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -232,7 +224,7 @@ class IntegrationRuntimeNodesOperations:
         factory_name: str,
         integration_runtime_name: str,
         node_name: str,
-        update_integration_runtime_node_request: IO,
+        update_integration_runtime_node_request: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -249,11 +241,10 @@ class IntegrationRuntimeNodesOperations:
         :type node_name: str
         :param update_integration_runtime_node_request: The parameters for updating an integration
          runtime node. Required.
-        :type update_integration_runtime_node_request: IO
+        :type update_integration_runtime_node_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SelfHostedIntegrationRuntimeNode or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.SelfHostedIntegrationRuntimeNode
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -266,7 +257,7 @@ class IntegrationRuntimeNodesOperations:
         factory_name: str,
         integration_runtime_name: str,
         node_name: str,
-        update_integration_runtime_node_request: Union[_models.UpdateIntegrationRuntimeNodeRequest, IO],
+        update_integration_runtime_node_request: Union[_models.UpdateIntegrationRuntimeNodeRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.SelfHostedIntegrationRuntimeNode:
         """Updates a self-hosted integration runtime node.
@@ -280,18 +271,15 @@ class IntegrationRuntimeNodesOperations:
         :param node_name: The integration runtime node name. Required.
         :type node_name: str
         :param update_integration_runtime_node_request: The parameters for updating an integration
-         runtime node. Is either a UpdateIntegrationRuntimeNodeRequest type or a IO type. Required.
+         runtime node. Is either a UpdateIntegrationRuntimeNodeRequest type or a IO[bytes] type.
+         Required.
         :type update_integration_runtime_node_request:
-         ~azure.mgmt.datafactory.models.UpdateIntegrationRuntimeNodeRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.datafactory.models.UpdateIntegrationRuntimeNodeRequest or IO[bytes]
         :return: SelfHostedIntegrationRuntimeNode or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.SelfHostedIntegrationRuntimeNode
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -314,7 +302,7 @@ class IntegrationRuntimeNodesOperations:
         else:
             _json = self._serialize.body(update_integration_runtime_node_request, "UpdateIntegrationRuntimeNodeRequest")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
             integration_runtime_name=integration_runtime_name,
@@ -324,16 +312,15 @@ class IntegrationRuntimeNodesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -345,13 +332,9 @@ class IntegrationRuntimeNodesOperations:
         deserialized = self._deserialize("SelfHostedIntegrationRuntimeNode", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/nodes/{nodeName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_ip_address(
@@ -367,12 +350,11 @@ class IntegrationRuntimeNodesOperations:
         :type integration_runtime_name: str
         :param node_name: The integration runtime node name. Required.
         :type node_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IntegrationRuntimeNodeIpAddress or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeNodeIpAddress
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -386,23 +368,22 @@ class IntegrationRuntimeNodesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.IntegrationRuntimeNodeIpAddress] = kwargs.pop("cls", None)
 
-        request = build_get_ip_address_request(
+        _request = build_get_ip_address_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
             integration_runtime_name=integration_runtime_name,
             node_name=node_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_ip_address.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -414,10 +395,6 @@ class IntegrationRuntimeNodesOperations:
         deserialized = self._deserialize("IntegrationRuntimeNodeIpAddress", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_ip_address.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/nodes/{nodeName}/ipAddress"
-    }
+        return deserialized  # type: ignore

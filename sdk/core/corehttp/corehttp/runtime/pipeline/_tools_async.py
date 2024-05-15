@@ -31,13 +31,11 @@ T = TypeVar("T")
 
 
 @overload
-async def await_result(func: Callable[P, Awaitable[T]], *args: P.args, **kwargs: P.kwargs) -> T:
-    ...
+async def await_result(func: Callable[P, Awaitable[T]], *args: P.args, **kwargs: P.kwargs) -> T: ...
 
 
 @overload
-async def await_result(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:
-    ...
+async def await_result(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T: ...
 
 
 async def await_result(func: Callable[P, Union[T, Awaitable[T]]], *args: P.args, **kwargs: P.kwargs) -> T:

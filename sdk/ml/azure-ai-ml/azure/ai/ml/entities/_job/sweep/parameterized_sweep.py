@@ -154,7 +154,21 @@ class ParameterizedSweep:
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
     ) -> None:
-        """Set resources for Sweep."""
+        """Set resources for Sweep.
+
+        :keyword instance_type: The instance type to use for the job.
+        :paramtype instance_type: Optional[Union[str, List[str]]]
+        :keyword instance_count: The number of instances to use for the job.
+        :paramtype instance_count: Optional[int]
+        :keyword locations: The locations to use for the job.
+        :paramtype locations: Optional[List[str]]
+        :keyword properties: The properties for the job.
+        :paramtype properties: Optional[Dict]
+        :keyword docker_args: The docker arguments for the job.
+        :paramtype docker_args: Optional[str]
+        :keyword shm_size: The shared memory size for the job.
+        :paramtype shm_size: Optional[str]
+        """
         if self.resources is None:
             self.resources = JobResourceConfiguration()
 

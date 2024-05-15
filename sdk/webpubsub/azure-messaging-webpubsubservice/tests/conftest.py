@@ -4,7 +4,10 @@
 # license information.
 # -------------------------------------------------------------------------
 
-def pytest_sessionfinish(session, exitstatus):
-    # We get status 5 when no tests are collected -- this raises as a failure in CI
-    if exitstatus == 5:
-        session.exitstatus = 0  # Flag the run as successful because we expect this outcome
+import pytest
+from devtools_testutils import test_proxy
+
+# autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
+@pytest.fixture(scope="session", autouse=True)
+def start_proxy(test_proxy):
+    return

@@ -1,5 +1,13 @@
 # Release History
 
+## 2.1.0 (2024-04-22)
+
+### Features Added
+
+  - Model DicomService has a new parameter enable_data_partitions
+  - Model DicomService has a new parameter storage_configuration
+  - Model FhirServiceAuthenticationConfiguration has a new parameter smart_identity_providers
+
 ## 2.0.0 (2023-12-18)
 
 ### Features Added

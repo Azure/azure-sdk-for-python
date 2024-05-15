@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -35,12 +35,14 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class HybridComputeManagementClientOperationsMixin(HybridComputeManagementClientMixinABC):
+class HybridComputeManagementClientOperationsMixin(  # pylint: disable=name-too-long
+    HybridComputeManagementClientMixinABC
+):
     async def _upgrade_extensions_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         machine_name: str,
-        extension_upgrade_parameters: Union[_models.MachineExtensionUpgrade, IO],
+        extension_upgrade_parameters: Union[_models.MachineExtensionUpgrade, IO[bytes]],
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -66,7 +68,7 @@ class HybridComputeManagementClientOperationsMixin(HybridComputeManagementClient
         else:
             _json = self._serialize.body(extension_upgrade_parameters, "MachineExtensionUpgrade")
 
-        request = build_upgrade_extensions_request(
+        _request = build_upgrade_extensions_request(
             resource_group_name=resource_group_name,
             machine_name=machine_name,
             subscription_id=self._config.subscription_id,
@@ -74,16 +76,15 @@ class HybridComputeManagementClientOperationsMixin(HybridComputeManagementClient
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._upgrade_extensions_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -102,11 +103,7 @@ class HybridComputeManagementClientOperationsMixin(HybridComputeManagementClient
             )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _upgrade_extensions_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{machineName}/upgradeExtensions"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
     async def begin_upgrade_extensions(
@@ -131,14 +128,6 @@ class HybridComputeManagementClientOperationsMixin(HybridComputeManagementClient
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -149,7 +138,7 @@ class HybridComputeManagementClientOperationsMixin(HybridComputeManagementClient
         self,
         resource_group_name: str,
         machine_name: str,
-        extension_upgrade_parameters: IO,
+        extension_upgrade_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -163,18 +152,10 @@ class HybridComputeManagementClientOperationsMixin(HybridComputeManagementClient
         :type machine_name: str
         :param extension_upgrade_parameters: Parameters supplied to the Upgrade Extensions operation.
          Required.
-        :type extension_upgrade_parameters: IO
+        :type extension_upgrade_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -185,7 +166,7 @@ class HybridComputeManagementClientOperationsMixin(HybridComputeManagementClient
         self,
         resource_group_name: str,
         machine_name: str,
-        extension_upgrade_parameters: Union[_models.MachineExtensionUpgrade, IO],
+        extension_upgrade_parameters: Union[_models.MachineExtensionUpgrade, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """The operation to Upgrade Machine Extensions.
@@ -196,20 +177,9 @@ class HybridComputeManagementClientOperationsMixin(HybridComputeManagementClient
         :param machine_name: The name of the hybrid machine. Required.
         :type machine_name: str
         :param extension_upgrade_parameters: Parameters supplied to the Upgrade Extensions operation.
-         Is either a MachineExtensionUpgrade type or a IO type. Required.
+         Is either a MachineExtensionUpgrade type or a IO[bytes] type. Required.
         :type extension_upgrade_parameters: ~azure.mgmt.hybridcompute.models.MachineExtensionUpgrade or
-         IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -239,7 +209,7 @@ class HybridComputeManagementClientOperationsMixin(HybridComputeManagementClient
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -248,14 +218,10 @@ class HybridComputeManagementClientOperationsMixin(HybridComputeManagementClient
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_upgrade_extensions.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{machineName}/upgradeExtensions"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

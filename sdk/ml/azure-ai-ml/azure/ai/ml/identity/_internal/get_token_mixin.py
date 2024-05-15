@@ -52,11 +52,10 @@ class GetTokenMixin(ABC):
 
         This method is called automatically by Azure SDK clients.
 
-        :param str scopes: desired scopes for the access token. This method requires at least one scope.
-        :keyword str tenant_id: optional tenant to include in the token request.
-
-        :rtype: :class:`azure.core.credentials.AccessToken`
-
+        :param scopes: The desired scopes for the access token. This method requires at least one scope.
+        :type scopes: str
+        :return: The access token
+        :rtype: ~azure.core.credentials.AccessToken
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
             required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``

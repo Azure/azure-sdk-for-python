@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -23,197 +24,186 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._operations._operations import build_quickpulse_ping_request, build_quickpulse_post_request
+from ..._operations._operations import build_quickpulse_is_subscribed_request, build_quickpulse_publish_request
 from .._vendor import QuickpulseClientMixinABC
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
 class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
     @overload
-    async def ping(
+    async def is_subscribed(
         self,
+        endpoint: str = "https://global.livediagnostics.monitor.azure.com",
         monitoring_data_point: Optional[_models.MonitoringDataPoint] = None,
         *,
         ikey: str,
-        apikey: Optional[str] = None,
-        x_ms_qps_transmission_time: Optional[int] = None,
-        x_ms_qps_machine_name: Optional[str] = None,
-        x_ms_qps_instance_name: Optional[str] = None,
-        x_ms_qps_stream_id: Optional[str] = None,
-        x_ms_qps_role_name: Optional[str] = None,
-        x_ms_qps_invariant_version: Optional[str] = None,
-        x_ms_qps_configuration_etag: Optional[str] = None,
+        transmission_time: Optional[int] = None,
+        machine_name: Optional[str] = None,
+        instance_name: Optional[str] = None,
+        stream_id: Optional[str] = None,
+        role_name: Optional[str] = None,
+        invariant_version: Optional[str] = None,
+        configuration_etag: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> Union[_models.CollectionConfigurationInfo, _models.ServiceError]:
-        """SDK ping.
+    ) -> _models.CollectionConfigurationInfo:
+        """Determine whether there is any subscription to the metrics and documents.
 
-        SDK ping.
-
-        :param monitoring_data_point: Data contract between SDK and QuickPulse.
-         /QuickPulseService.svc/ping uses this as a backup source of machine name, instance name and
-         invariant version. Default value is None.
+        :param endpoint: The endpoint of the Live Metrics service. Default value is
+         "https://global.livediagnostics.monitor.azure.com".
+        :type endpoint: str
+        :param monitoring_data_point: Data contract between Application Insights client SDK and Live
+         Metrics. /QuickPulseService.svc/ping uses this as a backup source of machine name, instance
+         name and invariant version. Default value is None.
         :type monitoring_data_point: ~quickpulse_client.models.MonitoringDataPoint
-        :keyword ikey: The ikey of the target Application Insights component that displays server info
-         sent by /QuickPulseService.svc/ping. Required.
+        :keyword ikey: The instrumentation key of the target Application Insights component for which
+         the client checks whether there's any subscription to it. Required.
         :paramtype ikey: str
-        :keyword apikey: Deprecated. An alternative way to pass api key. Use AAD auth instead. Default
-         value is None.
-        :paramtype apikey: str
-        :keyword x_ms_qps_transmission_time: Timestamp when SDK transmits the metrics and documents to
-         QuickPulse. A 8-byte long type of ticks. Default value is None.
-        :paramtype x_ms_qps_transmission_time: int
-        :keyword x_ms_qps_machine_name: Computer name where AI SDK lives. QuickPulse uses machine name
-         with instance name as a backup. Default value is None.
-        :paramtype x_ms_qps_machine_name: str
-        :keyword x_ms_qps_instance_name: Service instance name where AI SDK lives. QuickPulse uses
+        :keyword transmission_time: Timestamp when the client transmits the metrics and documents to
+         Live Metrics. A 8-byte long type of ticks. Default value is None.
+        :paramtype transmission_time: int
+        :keyword machine_name: Computer name where Application Insights SDK lives. Live Metrics uses
          machine name with instance name as a backup. Default value is None.
-        :paramtype x_ms_qps_instance_name: str
-        :keyword x_ms_qps_stream_id: Identifies an AI SDK as trusted agent to report metrics and
-         documents. Default value is None.
-        :paramtype x_ms_qps_stream_id: str
-        :keyword x_ms_qps_role_name: Cloud role name for which SDK reports metrics and documents.
-         Default value is None.
-        :paramtype x_ms_qps_role_name: str
-        :keyword x_ms_qps_invariant_version: Version/generation of the data contract
-         (MonitoringDataPoint) between SDK and QuickPulse. Default value is None.
-        :paramtype x_ms_qps_invariant_version: str
-        :keyword x_ms_qps_configuration_etag: An encoded string that indicates whether the collection
+        :paramtype machine_name: str
+        :keyword instance_name: Service instance name where Application Insights SDK lives. Live
+         Metrics uses machine name with instance name as a backup. Default value is None.
+        :paramtype instance_name: str
+        :keyword stream_id: Identifies an Application Insights SDK as trusted agent to report metrics
+         and documents. Default value is None.
+        :paramtype stream_id: str
+        :keyword role_name: Cloud role name of the service. Default value is None.
+        :paramtype role_name: str
+        :keyword invariant_version: Version/generation of the data contract (MonitoringDataPoint)
+         between the client and Live Metrics. Default value is None.
+        :paramtype invariant_version: str
+        :keyword configuration_etag: An encoded string that indicates whether the collection
          configuration is changed. Default value is None.
-        :paramtype x_ms_qps_configuration_etag: str
+        :paramtype configuration_etag: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: CollectionConfigurationInfo or ServiceError
-        :rtype: ~quickpulse_client.models.CollectionConfigurationInfo or
-         ~quickpulse_client.models.ServiceError
+        :return: CollectionConfigurationInfo
+        :rtype: ~quickpulse_client.models.CollectionConfigurationInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def ping(
+    async def is_subscribed(
         self,
+        endpoint: str = "https://global.livediagnostics.monitor.azure.com",
         monitoring_data_point: Optional[IO[bytes]] = None,
         *,
         ikey: str,
-        apikey: Optional[str] = None,
-        x_ms_qps_transmission_time: Optional[int] = None,
-        x_ms_qps_machine_name: Optional[str] = None,
-        x_ms_qps_instance_name: Optional[str] = None,
-        x_ms_qps_stream_id: Optional[str] = None,
-        x_ms_qps_role_name: Optional[str] = None,
-        x_ms_qps_invariant_version: Optional[str] = None,
-        x_ms_qps_configuration_etag: Optional[str] = None,
+        transmission_time: Optional[int] = None,
+        machine_name: Optional[str] = None,
+        instance_name: Optional[str] = None,
+        stream_id: Optional[str] = None,
+        role_name: Optional[str] = None,
+        invariant_version: Optional[str] = None,
+        configuration_etag: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> Union[_models.CollectionConfigurationInfo, _models.ServiceError]:
-        """SDK ping.
+    ) -> _models.CollectionConfigurationInfo:
+        """Determine whether there is any subscription to the metrics and documents.
 
-        SDK ping.
-
-        :param monitoring_data_point: Data contract between SDK and QuickPulse.
-         /QuickPulseService.svc/ping uses this as a backup source of machine name, instance name and
-         invariant version. Default value is None.
+        :param endpoint: The endpoint of the Live Metrics service. Default value is
+         "https://global.livediagnostics.monitor.azure.com".
+        :type endpoint: str
+        :param monitoring_data_point: Data contract between Application Insights client SDK and Live
+         Metrics. /QuickPulseService.svc/ping uses this as a backup source of machine name, instance
+         name and invariant version. Default value is None.
         :type monitoring_data_point: IO[bytes]
-        :keyword ikey: The ikey of the target Application Insights component that displays server info
-         sent by /QuickPulseService.svc/ping. Required.
+        :keyword ikey: The instrumentation key of the target Application Insights component for which
+         the client checks whether there's any subscription to it. Required.
         :paramtype ikey: str
-        :keyword apikey: Deprecated. An alternative way to pass api key. Use AAD auth instead. Default
-         value is None.
-        :paramtype apikey: str
-        :keyword x_ms_qps_transmission_time: Timestamp when SDK transmits the metrics and documents to
-         QuickPulse. A 8-byte long type of ticks. Default value is None.
-        :paramtype x_ms_qps_transmission_time: int
-        :keyword x_ms_qps_machine_name: Computer name where AI SDK lives. QuickPulse uses machine name
-         with instance name as a backup. Default value is None.
-        :paramtype x_ms_qps_machine_name: str
-        :keyword x_ms_qps_instance_name: Service instance name where AI SDK lives. QuickPulse uses
+        :keyword transmission_time: Timestamp when the client transmits the metrics and documents to
+         Live Metrics. A 8-byte long type of ticks. Default value is None.
+        :paramtype transmission_time: int
+        :keyword machine_name: Computer name where Application Insights SDK lives. Live Metrics uses
          machine name with instance name as a backup. Default value is None.
-        :paramtype x_ms_qps_instance_name: str
-        :keyword x_ms_qps_stream_id: Identifies an AI SDK as trusted agent to report metrics and
-         documents. Default value is None.
-        :paramtype x_ms_qps_stream_id: str
-        :keyword x_ms_qps_role_name: Cloud role name for which SDK reports metrics and documents.
-         Default value is None.
-        :paramtype x_ms_qps_role_name: str
-        :keyword x_ms_qps_invariant_version: Version/generation of the data contract
-         (MonitoringDataPoint) between SDK and QuickPulse. Default value is None.
-        :paramtype x_ms_qps_invariant_version: str
-        :keyword x_ms_qps_configuration_etag: An encoded string that indicates whether the collection
+        :paramtype machine_name: str
+        :keyword instance_name: Service instance name where Application Insights SDK lives. Live
+         Metrics uses machine name with instance name as a backup. Default value is None.
+        :paramtype instance_name: str
+        :keyword stream_id: Identifies an Application Insights SDK as trusted agent to report metrics
+         and documents. Default value is None.
+        :paramtype stream_id: str
+        :keyword role_name: Cloud role name of the service. Default value is None.
+        :paramtype role_name: str
+        :keyword invariant_version: Version/generation of the data contract (MonitoringDataPoint)
+         between the client and Live Metrics. Default value is None.
+        :paramtype invariant_version: str
+        :keyword configuration_etag: An encoded string that indicates whether the collection
          configuration is changed. Default value is None.
-        :paramtype x_ms_qps_configuration_etag: str
+        :paramtype configuration_etag: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: CollectionConfigurationInfo or ServiceError
-        :rtype: ~quickpulse_client.models.CollectionConfigurationInfo or
-         ~quickpulse_client.models.ServiceError
+        :return: CollectionConfigurationInfo
+        :rtype: ~quickpulse_client.models.CollectionConfigurationInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def ping(
+    async def is_subscribed(
         self,
+        endpoint: str = "https://global.livediagnostics.monitor.azure.com",
         monitoring_data_point: Optional[Union[_models.MonitoringDataPoint, IO[bytes]]] = None,
         *,
         ikey: str,
-        apikey: Optional[str] = None,
-        x_ms_qps_transmission_time: Optional[int] = None,
-        x_ms_qps_machine_name: Optional[str] = None,
-        x_ms_qps_instance_name: Optional[str] = None,
-        x_ms_qps_stream_id: Optional[str] = None,
-        x_ms_qps_role_name: Optional[str] = None,
-        x_ms_qps_invariant_version: Optional[str] = None,
-        x_ms_qps_configuration_etag: Optional[str] = None,
+        transmission_time: Optional[int] = None,
+        machine_name: Optional[str] = None,
+        instance_name: Optional[str] = None,
+        stream_id: Optional[str] = None,
+        role_name: Optional[str] = None,
+        invariant_version: Optional[str] = None,
+        configuration_etag: Optional[str] = None,
         **kwargs: Any
-    ) -> Union[_models.CollectionConfigurationInfo, _models.ServiceError]:
-        """SDK ping.
+    ) -> _models.CollectionConfigurationInfo:
+        """Determine whether there is any subscription to the metrics and documents.
 
-        SDK ping.
-
-        :param monitoring_data_point: Data contract between SDK and QuickPulse.
-         /QuickPulseService.svc/ping uses this as a backup source of machine name, instance name and
-         invariant version. Is either a MonitoringDataPoint type or a IO[bytes] type. Default value is
-         None.
-        :type monitoring_data_point: ~quickpulse_client.models.MonitoringDataPoint or IO[bytes]
-        :keyword ikey: The ikey of the target Application Insights component that displays server info
-         sent by /QuickPulseService.svc/ping. Required.
-        :paramtype ikey: str
-        :keyword apikey: Deprecated. An alternative way to pass api key. Use AAD auth instead. Default
+        :param endpoint: The endpoint of the Live Metrics service. Default value is
+         "https://global.livediagnostics.monitor.azure.com".
+        :type endpoint: str
+        :param monitoring_data_point: Data contract between Application Insights client SDK and Live
+         Metrics. /QuickPulseService.svc/ping uses this as a backup source of machine name, instance
+         name and invariant version. Is either a MonitoringDataPoint type or a IO[bytes] type. Default
          value is None.
-        :paramtype apikey: str
-        :keyword x_ms_qps_transmission_time: Timestamp when SDK transmits the metrics and documents to
-         QuickPulse. A 8-byte long type of ticks. Default value is None.
-        :paramtype x_ms_qps_transmission_time: int
-        :keyword x_ms_qps_machine_name: Computer name where AI SDK lives. QuickPulse uses machine name
-         with instance name as a backup. Default value is None.
-        :paramtype x_ms_qps_machine_name: str
-        :keyword x_ms_qps_instance_name: Service instance name where AI SDK lives. QuickPulse uses
+        :type monitoring_data_point: ~quickpulse_client.models.MonitoringDataPoint or IO[bytes]
+        :keyword ikey: The instrumentation key of the target Application Insights component for which
+         the client checks whether there's any subscription to it. Required.
+        :paramtype ikey: str
+        :keyword transmission_time: Timestamp when the client transmits the metrics and documents to
+         Live Metrics. A 8-byte long type of ticks. Default value is None.
+        :paramtype transmission_time: int
+        :keyword machine_name: Computer name where Application Insights SDK lives. Live Metrics uses
          machine name with instance name as a backup. Default value is None.
-        :paramtype x_ms_qps_instance_name: str
-        :keyword x_ms_qps_stream_id: Identifies an AI SDK as trusted agent to report metrics and
-         documents. Default value is None.
-        :paramtype x_ms_qps_stream_id: str
-        :keyword x_ms_qps_role_name: Cloud role name for which SDK reports metrics and documents.
-         Default value is None.
-        :paramtype x_ms_qps_role_name: str
-        :keyword x_ms_qps_invariant_version: Version/generation of the data contract
-         (MonitoringDataPoint) between SDK and QuickPulse. Default value is None.
-        :paramtype x_ms_qps_invariant_version: str
-        :keyword x_ms_qps_configuration_etag: An encoded string that indicates whether the collection
+        :paramtype machine_name: str
+        :keyword instance_name: Service instance name where Application Insights SDK lives. Live
+         Metrics uses machine name with instance name as a backup. Default value is None.
+        :paramtype instance_name: str
+        :keyword stream_id: Identifies an Application Insights SDK as trusted agent to report metrics
+         and documents. Default value is None.
+        :paramtype stream_id: str
+        :keyword role_name: Cloud role name of the service. Default value is None.
+        :paramtype role_name: str
+        :keyword invariant_version: Version/generation of the data contract (MonitoringDataPoint)
+         between the client and Live Metrics. Default value is None.
+        :paramtype invariant_version: str
+        :keyword configuration_etag: An encoded string that indicates whether the collection
          configuration is changed. Default value is None.
-        :paramtype x_ms_qps_configuration_etag: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :return: CollectionConfigurationInfo or ServiceError
-        :rtype: ~quickpulse_client.models.CollectionConfigurationInfo or
-         ~quickpulse_client.models.ServiceError
+        :paramtype configuration_etag: str
+        :return: CollectionConfigurationInfo
+        :rtype: ~quickpulse_client.models.CollectionConfigurationInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -225,7 +215,7 @@ class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Union[_models.CollectionConfigurationInfo, _models.ServiceError]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CollectionConfigurationInfo] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -238,24 +228,24 @@ class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
             else:
                 _json = None
 
-        _request = build_quickpulse_ping_request(
+        _request = build_quickpulse_is_subscribed_request(
             ikey=ikey,
-            apikey=apikey,
-            x_ms_qps_transmission_time=x_ms_qps_transmission_time,
-            x_ms_qps_machine_name=x_ms_qps_machine_name,
-            x_ms_qps_instance_name=x_ms_qps_instance_name,
-            x_ms_qps_stream_id=x_ms_qps_stream_id,
-            x_ms_qps_role_name=x_ms_qps_role_name,
-            x_ms_qps_invariant_version=x_ms_qps_invariant_version,
-            x_ms_qps_configuration_etag=x_ms_qps_configuration_etag,
+            transmission_time=transmission_time,
+            machine_name=machine_name,
+            instance_name=instance_name,
+            stream_id=stream_id,
+            role_name=role_name,
+            invariant_version=invariant_version,
+            configuration_etag=configuration_etag,
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Host": self._serialize.url("self._config.host", self._config.host, "str", skip_quote=True),
+            "endpoint": self._serialize.url("endpoint", endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -266,46 +256,26 @@ class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 400, 401, 403, 404, 500, 503]:
+        if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ServiceError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        if response.status_code == 200:
-            response_headers["x-ms-qps-subscribed"] = self._deserialize(
-                "str", response.headers.get("x-ms-qps-subscribed")
-            )
-            response_headers["x-ms-qps-configuration-etag"] = self._deserialize(
-                "str", response.headers.get("x-ms-qps-configuration-etag")
-            )
-            response_headers["x-ms-qps-service-polling-interval-hint"] = self._deserialize(
-                "int", response.headers.get("x-ms-qps-service-polling-interval-hint")
-            )
-            response_headers["x-ms-qps-service-endpoint-redirect-v2"] = self._deserialize(
-                "str", response.headers.get("x-ms-qps-service-endpoint-redirect-v2")
-            )
+        response_headers["x-ms-qps-configuration-etag"] = self._deserialize(
+            "str", response.headers.get("x-ms-qps-configuration-etag")
+        )
+        response_headers["x-ms-qps-service-endpoint-redirect-v2"] = self._deserialize(
+            "str", response.headers.get("x-ms-qps-service-endpoint-redirect-v2")
+        )
+        response_headers["x-ms-qps-service-polling-interval-hint"] = self._deserialize(
+            "str", response.headers.get("x-ms-qps-service-polling-interval-hint")
+        )
+        response_headers["x-ms-qps-subscribed"] = self._deserialize("str", response.headers.get("x-ms-qps-subscribed"))
 
-            deserialized = self._deserialize("CollectionConfigurationInfo", pipeline_response)
-
-        if response.status_code == 400:
-            deserialized = self._deserialize("ServiceError", pipeline_response)
-
-        if response.status_code == 401:
-            deserialized = self._deserialize("ServiceError", pipeline_response)
-
-        if response.status_code == 403:
-            deserialized = self._deserialize("ServiceError", pipeline_response)
-
-        if response.status_code == 404:
-            deserialized = self._deserialize("ServiceError", pipeline_response)
-
-        if response.status_code == 500:
-            deserialized = self._deserialize("ServiceError", pipeline_response)
-
-        if response.status_code == 503:
-            deserialized = self._deserialize("ServiceError", pipeline_response)
+        deserialized = self._deserialize("CollectionConfigurationInfo", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -313,128 +283,119 @@ class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    async def post(
+    async def publish(
         self,
+        endpoint: str = "https://global.livediagnostics.monitor.azure.com",
         monitoring_data_points: Optional[List[_models.MonitoringDataPoint]] = None,
         *,
         ikey: str,
-        apikey: Optional[str] = None,
-        x_ms_qps_configuration_etag: Optional[str] = None,
-        x_ms_qps_transmission_time: Optional[int] = None,
+        configuration_etag: Optional[str] = None,
+        transmission_time: Optional[int] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> Union[_models.CollectionConfigurationInfo, _models.ServiceError]:
-        """SDK post.
+    ) -> _models.CollectionConfigurationInfo:
+        """Publish live metrics to the Live Metrics service when there is an active subscription to the
+        metrics.
 
-        SDK post.
-
-        :param monitoring_data_points: Data contract between SDK and QuickPulse.
-         /QuickPulseService.svc/post uses this to publish metrics and documents to the backend
-         QuickPulse server. Default value is None.
+        :param endpoint: The endpoint of the Live Metrics service. Default value is
+         "https://global.livediagnostics.monitor.azure.com".
+        :type endpoint: str
+        :param monitoring_data_points: Data contract between the client and Live Metrics.
+         /QuickPulseService.svc/ping uses this as a backup source of machine name, instance name and
+         invariant version. Default value is None.
         :type monitoring_data_points: list[~quickpulse_client.models.MonitoringDataPoint]
-        :keyword ikey: The ikey of the target Application Insights component that displays metrics and
-         documents sent by /QuickPulseService.svc/post. Required.
+        :keyword ikey: The instrumentation key of the target Application Insights component for which
+         the client checks whether there's any subscription to it. Required.
         :paramtype ikey: str
-        :keyword apikey: An alternative way to pass api key. Deprecated. Use AAD authentication
-         instead. Default value is None.
-        :paramtype apikey: str
-        :keyword x_ms_qps_configuration_etag: An encoded string that indicates whether the collection
+        :keyword configuration_etag: An encoded string that indicates whether the collection
          configuration is changed. Default value is None.
-        :paramtype x_ms_qps_configuration_etag: str
-        :keyword x_ms_qps_transmission_time: Timestamp when SDK transmits the metrics and documents to
-         QuickPulse. A 8-byte long type of ticks. Default value is None.
-        :paramtype x_ms_qps_transmission_time: int
+        :paramtype configuration_etag: str
+        :keyword transmission_time: Timestamp when the client transmits the metrics and documents to
+         Live Metrics. A 8-byte long type of ticks. Default value is None.
+        :paramtype transmission_time: int
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: CollectionConfigurationInfo or ServiceError
-        :rtype: ~quickpulse_client.models.CollectionConfigurationInfo or
-         ~quickpulse_client.models.ServiceError
+        :return: CollectionConfigurationInfo
+        :rtype: ~quickpulse_client.models.CollectionConfigurationInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def post(
+    async def publish(
         self,
+        endpoint: str = "https://global.livediagnostics.monitor.azure.com",
         monitoring_data_points: Optional[IO[bytes]] = None,
         *,
         ikey: str,
-        apikey: Optional[str] = None,
-        x_ms_qps_configuration_etag: Optional[str] = None,
-        x_ms_qps_transmission_time: Optional[int] = None,
+        configuration_etag: Optional[str] = None,
+        transmission_time: Optional[int] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> Union[_models.CollectionConfigurationInfo, _models.ServiceError]:
-        """SDK post.
+    ) -> _models.CollectionConfigurationInfo:
+        """Publish live metrics to the Live Metrics service when there is an active subscription to the
+        metrics.
 
-        SDK post.
-
-        :param monitoring_data_points: Data contract between SDK and QuickPulse.
-         /QuickPulseService.svc/post uses this to publish metrics and documents to the backend
-         QuickPulse server. Default value is None.
+        :param endpoint: The endpoint of the Live Metrics service. Default value is
+         "https://global.livediagnostics.monitor.azure.com".
+        :type endpoint: str
+        :param monitoring_data_points: Data contract between the client and Live Metrics.
+         /QuickPulseService.svc/ping uses this as a backup source of machine name, instance name and
+         invariant version. Default value is None.
         :type monitoring_data_points: IO[bytes]
-        :keyword ikey: The ikey of the target Application Insights component that displays metrics and
-         documents sent by /QuickPulseService.svc/post. Required.
+        :keyword ikey: The instrumentation key of the target Application Insights component for which
+         the client checks whether there's any subscription to it. Required.
         :paramtype ikey: str
-        :keyword apikey: An alternative way to pass api key. Deprecated. Use AAD authentication
-         instead. Default value is None.
-        :paramtype apikey: str
-        :keyword x_ms_qps_configuration_etag: An encoded string that indicates whether the collection
+        :keyword configuration_etag: An encoded string that indicates whether the collection
          configuration is changed. Default value is None.
-        :paramtype x_ms_qps_configuration_etag: str
-        :keyword x_ms_qps_transmission_time: Timestamp when SDK transmits the metrics and documents to
-         QuickPulse. A 8-byte long type of ticks. Default value is None.
-        :paramtype x_ms_qps_transmission_time: int
+        :paramtype configuration_etag: str
+        :keyword transmission_time: Timestamp when the client transmits the metrics and documents to
+         Live Metrics. A 8-byte long type of ticks. Default value is None.
+        :paramtype transmission_time: int
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: CollectionConfigurationInfo or ServiceError
-        :rtype: ~quickpulse_client.models.CollectionConfigurationInfo or
-         ~quickpulse_client.models.ServiceError
+        :return: CollectionConfigurationInfo
+        :rtype: ~quickpulse_client.models.CollectionConfigurationInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def post(
+    async def publish(
         self,
+        endpoint: str = "https://global.livediagnostics.monitor.azure.com",
         monitoring_data_points: Optional[Union[List[_models.MonitoringDataPoint], IO[bytes]]] = None,
         *,
         ikey: str,
-        apikey: Optional[str] = None,
-        x_ms_qps_configuration_etag: Optional[str] = None,
-        x_ms_qps_transmission_time: Optional[int] = None,
+        configuration_etag: Optional[str] = None,
+        transmission_time: Optional[int] = None,
         **kwargs: Any
-    ) -> Union[_models.CollectionConfigurationInfo, _models.ServiceError]:
-        """SDK post.
+    ) -> _models.CollectionConfigurationInfo:
+        """Publish live metrics to the Live Metrics service when there is an active subscription to the
+        metrics.
 
-        SDK post.
-
-        :param monitoring_data_points: Data contract between SDK and QuickPulse.
-         /QuickPulseService.svc/post uses this to publish metrics and documents to the backend
-         QuickPulse server. Is either a [MonitoringDataPoint] type or a IO[bytes] type. Default value is
+        :param endpoint: The endpoint of the Live Metrics service. Default value is
+         "https://global.livediagnostics.monitor.azure.com".
+        :type endpoint: str
+        :param monitoring_data_points: Data contract between the client and Live Metrics.
+         /QuickPulseService.svc/ping uses this as a backup source of machine name, instance name and
+         invariant version. Is either a [MonitoringDataPoint] type or a IO[bytes] type. Default value is
          None.
         :type monitoring_data_points: list[~quickpulse_client.models.MonitoringDataPoint] or IO[bytes]
-        :keyword ikey: The ikey of the target Application Insights component that displays metrics and
-         documents sent by /QuickPulseService.svc/post. Required.
+        :keyword ikey: The instrumentation key of the target Application Insights component for which
+         the client checks whether there's any subscription to it. Required.
         :paramtype ikey: str
-        :keyword apikey: An alternative way to pass api key. Deprecated. Use AAD authentication
-         instead. Default value is None.
-        :paramtype apikey: str
-        :keyword x_ms_qps_configuration_etag: An encoded string that indicates whether the collection
+        :keyword configuration_etag: An encoded string that indicates whether the collection
          configuration is changed. Default value is None.
-        :paramtype x_ms_qps_configuration_etag: str
-        :keyword x_ms_qps_transmission_time: Timestamp when SDK transmits the metrics and documents to
-         QuickPulse. A 8-byte long type of ticks. Default value is None.
-        :paramtype x_ms_qps_transmission_time: int
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :return: CollectionConfigurationInfo or ServiceError
-        :rtype: ~quickpulse_client.models.CollectionConfigurationInfo or
-         ~quickpulse_client.models.ServiceError
+        :paramtype configuration_etag: str
+        :keyword transmission_time: Timestamp when the client transmits the metrics and documents to
+         Live Metrics. A 8-byte long type of ticks. Default value is None.
+        :paramtype transmission_time: int
+        :return: CollectionConfigurationInfo
+        :rtype: ~quickpulse_client.models.CollectionConfigurationInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -446,7 +407,7 @@ class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Union[_models.CollectionConfigurationInfo, _models.ServiceError]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CollectionConfigurationInfo] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -459,19 +420,19 @@ class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
             else:
                 _json = None
 
-        _request = build_quickpulse_post_request(
+        _request = build_quickpulse_publish_request(
             ikey=ikey,
-            apikey=apikey,
-            x_ms_qps_configuration_etag=x_ms_qps_configuration_etag,
-            x_ms_qps_transmission_time=x_ms_qps_transmission_time,
+            configuration_etag=configuration_etag,
+            transmission_time=transmission_time,
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Host": self._serialize.url("self._config.host", self._config.host, "str", skip_quote=True),
+            "endpoint": self._serialize.url("endpoint", endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -482,49 +443,20 @@ class QuickpulseClientOperationsMixin(QuickpulseClientMixinABC):
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 400, 401, 403, 404, 500, 503]:
+        if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ServiceError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        if response.status_code == 200:
-            response_headers["x-ms-qps-subscribed"] = self._deserialize(
-                "str", response.headers.get("x-ms-qps-subscribed")
-            )
-            response_headers["x-ms-qps-configuration-etag"] = self._deserialize(
-                "str", response.headers.get("x-ms-qps-configuration-etag")
-            )
-            response_headers["x-ms-qps-service-polling-interval-hint"] = self._deserialize(
-                "int", response.headers.get("x-ms-qps-service-polling-interval-hint")
-            )
-            response_headers["x-ms-qps-service-endpoint-redirect"] = self._deserialize(
-                "str", response.headers.get("x-ms-qps-service-endpoint-redirect")
-            )
-            response_headers["x-ms-qps-service-endpoint-redirect-v2"] = self._deserialize(
-                "str", response.headers.get("x-ms-qps-service-endpoint-redirect-v2")
-            )
+        response_headers["x-ms-qps-configuration-etag"] = self._deserialize(
+            "str", response.headers.get("x-ms-qps-configuration-etag")
+        )
+        response_headers["x-ms-qps-subscribed"] = self._deserialize("str", response.headers.get("x-ms-qps-subscribed"))
 
-            deserialized = self._deserialize("CollectionConfigurationInfo", pipeline_response)
-
-        if response.status_code == 400:
-            deserialized = self._deserialize("ServiceError", pipeline_response)
-
-        if response.status_code == 401:
-            deserialized = self._deserialize("ServiceError", pipeline_response)
-
-        if response.status_code == 403:
-            deserialized = self._deserialize("ServiceError", pipeline_response)
-
-        if response.status_code == 404:
-            deserialized = self._deserialize("ServiceError", pipeline_response)
-
-        if response.status_code == 500:
-            deserialized = self._deserialize("ServiceError", pipeline_response)
-
-        if response.status_code == 503:
-            deserialized = self._deserialize("ServiceError", pipeline_response)
+        deserialized = self._deserialize("CollectionConfigurationInfo", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

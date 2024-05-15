@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -70,7 +70,6 @@ class ResourceGuardProxyOperations:
         :type resource_group_name: str
         :param resource_guard_proxy_name: Required.
         :type resource_guard_proxy_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceGuardProxyBaseResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ResourceGuardProxyBaseResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -89,22 +88,21 @@ class ResourceGuardProxyOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ResourceGuardProxyBaseResource] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             resource_guard_proxy_name=resource_guard_proxy_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -116,13 +114,9 @@ class ResourceGuardProxyOperations:
         deserialized = self._deserialize("ResourceGuardProxyBaseResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupResourceGuardProxies/{resourceGuardProxyName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def put(
@@ -151,7 +145,6 @@ class ResourceGuardProxyOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceGuardProxyBaseResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ResourceGuardProxyBaseResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -163,7 +156,7 @@ class ResourceGuardProxyOperations:
         vault_name: str,
         resource_group_name: str,
         resource_guard_proxy_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -179,11 +172,10 @@ class ResourceGuardProxyOperations:
         :param resource_guard_proxy_name: Required.
         :type resource_guard_proxy_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceGuardProxyBaseResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ResourceGuardProxyBaseResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -195,7 +187,7 @@ class ResourceGuardProxyOperations:
         vault_name: str,
         resource_group_name: str,
         resource_guard_proxy_name: str,
-        parameters: Union[_models.ResourceGuardProxyBaseResource, IO],
+        parameters: Union[_models.ResourceGuardProxyBaseResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.ResourceGuardProxyBaseResource:
         """Add or Update ResourceGuardProxy under vault
@@ -209,13 +201,10 @@ class ResourceGuardProxyOperations:
         :param resource_guard_proxy_name: Required.
         :type resource_guard_proxy_name: str
         :param parameters: Request body for operation. Is either a ResourceGuardProxyBaseResource type
-         or a IO type. Required.
+         or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.recoveryservicesbackup.activestamp.models.ResourceGuardProxyBaseResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.ResourceGuardProxyBaseResource or
+         IO[bytes]
         :return: ResourceGuardProxyBaseResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ResourceGuardProxyBaseResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -243,7 +232,7 @@ class ResourceGuardProxyOperations:
         else:
             _json = self._serialize.body(parameters, "ResourceGuardProxyBaseResource")
 
-        request = build_put_request(
+        _request = build_put_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             resource_guard_proxy_name=resource_guard_proxy_name,
@@ -252,16 +241,15 @@ class ResourceGuardProxyOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.put.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -273,13 +261,9 @@ class ResourceGuardProxyOperations:
         deserialized = self._deserialize("ResourceGuardProxyBaseResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    put.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupResourceGuardProxies/{resourceGuardProxyName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -294,7 +278,6 @@ class ResourceGuardProxyOperations:
         :type resource_group_name: str
         :param resource_guard_proxy_name: Required.
         :type resource_guard_proxy_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -313,22 +296,21 @@ class ResourceGuardProxyOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             resource_guard_proxy_name=resource_guard_proxy_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -338,11 +320,7 @@ class ResourceGuardProxyOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupResourceGuardProxies/{resourceGuardProxyName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def unlock_delete(
@@ -369,7 +347,6 @@ class ResourceGuardProxyOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: UnlockDeleteResponse or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.UnlockDeleteResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -381,7 +358,7 @@ class ResourceGuardProxyOperations:
         vault_name: str,
         resource_group_name: str,
         resource_guard_proxy_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -396,11 +373,10 @@ class ResourceGuardProxyOperations:
         :param resource_guard_proxy_name: Required.
         :type resource_guard_proxy_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: UnlockDeleteResponse or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.UnlockDeleteResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -412,7 +388,7 @@ class ResourceGuardProxyOperations:
         vault_name: str,
         resource_group_name: str,
         resource_guard_proxy_name: str,
-        parameters: Union[_models.UnlockDeleteRequest, IO],
+        parameters: Union[_models.UnlockDeleteRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.UnlockDeleteResponse:
         """Secures delete ResourceGuardProxy operations.
@@ -424,14 +400,10 @@ class ResourceGuardProxyOperations:
         :type resource_group_name: str
         :param resource_guard_proxy_name: Required.
         :type resource_guard_proxy_name: str
-        :param parameters: Request body for operation. Is either a UnlockDeleteRequest type or a IO
-         type. Required.
+        :param parameters: Request body for operation. Is either a UnlockDeleteRequest type or a
+         IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.activestamp.models.UnlockDeleteRequest or
-         IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         IO[bytes]
         :return: UnlockDeleteResponse or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.UnlockDeleteResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -459,7 +431,7 @@ class ResourceGuardProxyOperations:
         else:
             _json = self._serialize.body(parameters, "UnlockDeleteRequest")
 
-        request = build_unlock_delete_request(
+        _request = build_unlock_delete_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             resource_guard_proxy_name=resource_guard_proxy_name,
@@ -468,16 +440,15 @@ class ResourceGuardProxyOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.unlock_delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -489,10 +460,6 @@ class ResourceGuardProxyOperations:
         deserialized = self._deserialize("UnlockDeleteResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    unlock_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupResourceGuardProxies/{resourceGuardProxyName}/unlockDelete"
-    }
+        return deserialized  # type: ignore

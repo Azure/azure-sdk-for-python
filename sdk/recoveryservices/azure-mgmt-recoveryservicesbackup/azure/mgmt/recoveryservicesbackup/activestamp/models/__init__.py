@@ -340,6 +340,7 @@ from ._recovery_services_backup_client_enums import HealthState
 from ._recovery_services_backup_client_enums import HealthStatus
 from ._recovery_services_backup_client_enums import HttpStatusCode
 from ._recovery_services_backup_client_enums import IAASVMPolicyType
+from ._recovery_services_backup_client_enums import IaasVMSnapshotConsistencyType
 from ._recovery_services_backup_client_enums import InfrastructureEncryptionState
 from ._recovery_services_backup_client_enums import InquiryStatus
 from ._recovery_services_backup_client_enums import IntentItemType
@@ -727,6 +728,7 @@ __all__ = [
     "HealthStatus",
     "HttpStatusCode",
     "IAASVMPolicyType",
+    "IaasVMSnapshotConsistencyType",
     "InfrastructureEncryptionState",
     "InquiryStatus",
     "IntentItemType",
