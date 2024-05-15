@@ -29,7 +29,7 @@ from ._model_base import SdkJSONEncoder
 from ._serialization import Serializer
 from ._operations._operations import build_chat_completions_create_request
 from ._client import ChatCompletionsClient as ChatCompletionsClientGenerated
-from ._client import EmbeddingsClient
+from ._client import EmbeddingsClient, ImageEmbeddingsClient
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -47,20 +47,21 @@ class ClientGenerator:
     @staticmethod
     def from_endpoint(
         endpoint: str, credential: AzureKeyCredential, **kwargs: Any
-    ) -> Union[ChatCompletionsClientGenerated, EmbeddingsClient]:
+    ) -> Union[ChatCompletionsClientGenerated, EmbeddingsClient, ImageEmbeddingsClient]:
         client = ChatCompletionsClient(endpoint, credential, **kwargs)  # Pick any of the clients, it does not matter...
         model_info = client.get_model_info()
         logger.info("model_info=%s", model_info)
-        if model_info.model_type == None or model_info.model_type == "":
+        if model_info.model_type in (None, ''):
             raise ValueError(
                 "The AI model information is missing a value for `model type`. Cannot create an appropriate client."
             )
-        elif model_info.model_type == _models.ModelType.CHAT:
+        if model_info.model_type == _models.ModelType.CHAT:
             return client
-        elif model_info.model_type == _models.ModelType.EMBEDDINGS:
+        if model_info.model_type == _models.ModelType.EMBEDDINGS:
             return EmbeddingsClient(endpoint, credential, **kwargs)
-        else:
-            raise ValueError(f"No client available to support AI model type `{model_info.model_type}`")
+        if model_info.model_type == _models.ModelType.IMAGE_EMBEDDINGS:
+            return ImageEmbeddingsClient(endpoint, credential, **kwargs)
+        raise ValueError(f"No client available to support AI model type `{model_info.model_type}`")
 
 
 class ChatCompletionsClient(ChatCompletionsClientGenerated):

@@ -288,20 +288,21 @@ Instead of creating a specific client directly (`ChatCompletionsClient`, `Embedd
 <!-- SNIPPET:sample_chat_completions_with_client_generator.chat_completions_with_client_generator -->
 
 ```python
-from azure.ai.inference import ClientGenerator
+from azure.ai.inference import ClientGenerator, ChatCompletionsClient
 from azure.ai.inference.models import SystemMessage, UserMessage
 from azure.core.credentials import AzureKeyCredential
 
 client = ClientGenerator.from_endpoint(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-result = client.create(
-    messages=[
-        SystemMessage(content="You are a helpful assistant."),
-        UserMessage(content="How many feet are in a mile?"),
-    ]
-)
+if isinstance(client, ChatCompletionsClient):
+    result = client.create(
+        messages=[
+            SystemMessage(content="You are a helpful assistant."),
+            UserMessage(content="How many feet are in a mile?"),
+        ]
+    )
 
-print(result.choices[0].message.content)
+    print(result.choices[0].message.content)
 ```
 
 <!-- END SNIPPET -->

@@ -31,7 +31,7 @@ async def sample_image_embeddings_async():
         print("Set them before running this sample.")
         exit()
 
-    from azure.ai.inference import ImageEmbeddingsClient
+    from azure.ai.inference.aio import ImageEmbeddingsClient
     from azure.ai.inference.models import EmbeddingInput
     from azure.core.credentials import AzureKeyCredential
 

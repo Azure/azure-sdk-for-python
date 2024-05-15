@@ -527,7 +527,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         """
 
     @distributed_trace
-    def create(
+    def create(  # pylint: disable=too-many-locals
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
