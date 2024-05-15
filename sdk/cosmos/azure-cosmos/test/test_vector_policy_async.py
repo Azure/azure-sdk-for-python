@@ -180,7 +180,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
             "vectorEmbeddings": [
                 {
                     "path": "/vector1",
-                    "dataType": "float33",
+                    "dataType": "float32",
                     "dimensions": 1000,
                     "distanceFunction": "euclidean"
                 }]}
