@@ -6,8 +6,7 @@ import uuid
 
 import pytest
 
-import azure.cosmos.exceptions as exceptions
-from azure.cosmos.aio import CosmosClient, DatabaseProxy
+from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
 import test_config
 import vector_test_data
@@ -26,7 +25,7 @@ def verify_ordering(item_list, distance_function):
             assert item_list[i]["SimilarityScore"] >= item_list[i + 1]["SimilarityScore"]
 
 
-class TestVectorSimilarityQuery(unittest.TestCase):
+class TestVectorSimilarityQueryAsync(unittest.TestCase):
     """Test to check vector similarity queries behavior."""
 
     created_db: DatabaseProxy = None
@@ -92,6 +91,7 @@ class TestVectorSimilarityQuery(unittest.TestCase):
         try:
             await self.created_db.delete_container("quantized" + self.TEST_CONTAINER_ID)
             await self.created_db.delete_container("flat" + self.TEST_CONTAINER_ID)
+            await self.created_db.delete_container("large_container" + self.TEST_CONTAINER_ID)
             # await self.created_db.delete_container("diskANN" + self.TEST_CONTAINER_ID)
         except exceptions.CosmosHttpResponseError:
             pass
@@ -136,7 +136,7 @@ class TestVectorSimilarityQuery(unittest.TestCase):
                           "SimilarityScore FROM c ORDER BY VectorDistance(c.embedding, [{}], false, {{'distanceFunction': 'euclidean'}})" \
                 .format(str(i), vector_string, vector_string)
 
-            flat_list = [item async for item in self.created_flat_euclidean_container.query_items(query=vanilla_query)]
+            flat_list = [item async for item in self.created_flat_euclidean_container.query_items(query=specs_query)]
             verify_ordering(flat_list, "euclidean")
 
             quantized_list = [item async for item in self.created_quantized_cosine_container.query_items(query=specs_query)]

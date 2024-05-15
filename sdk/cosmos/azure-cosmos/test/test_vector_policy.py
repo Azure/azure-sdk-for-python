@@ -42,7 +42,7 @@ class TestVectorPolicy(unittest.TestCase):
                 {
                     "path": "/vector1",
                     "dataType": "float32",
-                    "dimensions": 1000,
+                    "dimensions": 256,
                     "distanceFunction": "euclidean"
                 },
                 {
@@ -76,7 +76,7 @@ class TestVectorPolicy(unittest.TestCase):
                 {
                     "path": "/vector1",
                     "dataType": "float32",
-                    "dimensions": 1000,
+                    "dimensions": 256,
                     "distanceFunction": "euclidean"
                 }]}
 
@@ -136,7 +136,7 @@ class TestVectorPolicy(unittest.TestCase):
                 {
                     "path": "/vector1",
                     "dataType": "float32",
-                    "dimensions": 1000,
+                    "dimensions": 256,
                     "distanceFunction": "euclidean"
                 }]}
         indexing_policy = {
@@ -172,19 +172,18 @@ class TestVectorPolicy(unittest.TestCase):
                 {
                     "path": "/vector1",
                     "dataType": "float33",
-                    "dimensions": 1000,
+                    "dimensions": 256,
                     "distanceFunction": "euclidean"
                 }]}
         try:
             self.created_database.create_container(
                 id='vector_container',
                 partition_key=PartitionKey(path="/id"),
-                vector_embedding_policy=vector_embedding_policy
-            )
+                vector_embedding_policy=vector_embedding_policy)
             pytest.fail("Container creation should have failed but succeeded.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "Vector Embedding Policy has invalid DataType" in e.http_error_message
+            assert "Vector Embedding Policy has an invalid DataType" in e.http_error_message
 
         # Using too many dimensions
         vector_embedding_policy = {
@@ -199,12 +198,12 @@ class TestVectorPolicy(unittest.TestCase):
             self.created_database.create_container(
                 id='vector_container',
                 partition_key=PartitionKey(path="/id"),
-                vector_embedding_policy=vector_embedding_policy
-            )
+                vector_embedding_policy=vector_embedding_policy)
             pytest.fail("Container creation should have failed but succeeded.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "Vector Embedding Policy has Dimensions:2000 which is more than max:1536" in e.http_error_message
+            assert "Vector Embedding Policy has Dimensions:1000 which is more than the maximum" \
+                   " supported value:505" in e.http_error_message
 
         # Using negative dimensions
         vector_embedding_policy = {
@@ -219,8 +218,7 @@ class TestVectorPolicy(unittest.TestCase):
             self.created_database.create_container(
                 id='vector_container',
                 partition_key=PartitionKey(path="/id"),
-                vector_embedding_policy=vector_embedding_policy
-            )
+                vector_embedding_policy=vector_embedding_policy)
             pytest.fail("Container creation should have failed but succeeded.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
@@ -232,7 +230,7 @@ class TestVectorPolicy(unittest.TestCase):
                 {
                     "path": "/vector1",
                     "dataType": "float32",
-                    "dimensions": 1000,
+                    "dimensions": 256,
                     "distanceFunction": "handMeasured"
                 }]}
         try:
