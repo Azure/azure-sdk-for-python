@@ -7,6 +7,7 @@
 
 from abc import ABC
 from typing import TYPE_CHECKING
+
 from ._configuration import DocumentTranslationClientConfiguration, SingleDocumentTranslationClientConfiguration
 
 if TYPE_CHECKING:

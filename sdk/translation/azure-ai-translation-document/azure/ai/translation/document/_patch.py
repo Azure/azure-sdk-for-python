@@ -32,21 +32,19 @@ from azure.core.polling.base_polling import (
     _raise_if_bad_http_status_and_method,
 )
 
-from .models import (
-    TranslationStatus,
-    DocumentStatus,
-    StorageInputType,
+from .models._models import (
+    
     BatchRequest as _BatchRequest,
     SourceInput as _SourceInput,
     TargetInput as _TargetInput,
     DocumentFilter as _DocumentFilter,
     StartTranslationDetails as _StartTranslationDetails,
     Glossary as _Glossary,
-)
-from .models._models import (
-    TranslationStatus as _TranslationStatus,
+    DocumentTranslateContent,
+    TranslationsStatus as _TranslationStatus,
     DocumentStatus as _DocumentStatus,
 )
+from .models._enums import StorageInputType
 
 COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
 POLLING_INTERVAL = 1
@@ -1381,6 +1379,8 @@ __all__: List[str] = [
     "DocumentStatus",
     "DocumentTranslationError",
     "DocumentTranslationFileFormat",
+    "DocumentTranslateContent",
+    "StorageInputType",
 ]  # Add all objects you want publicly available to users at this package level
 
 

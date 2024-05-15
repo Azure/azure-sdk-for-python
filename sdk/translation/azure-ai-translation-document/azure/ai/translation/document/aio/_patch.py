@@ -19,18 +19,18 @@ from azure.core.polling.base_polling import (
     _raise_if_bad_http_status_and_method,
 )
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
+
 from azure.ai.translation.document import (
     DocumentTranslationInput,
     DocumentTranslationFileFormat,
     TranslationGlossary,
     TranslationTarget,
-    DocumentTranslationError,    
-)
-from azure.ai.translation.document._patch import (
+    DocumentTranslationError,
     TranslationStatus,
-    DocumentStatus,    
+    DocumentStatus,
     StorageInputType,
 )
+
 from ..models._models import (
     TranslationStatus as _TranslationStatus,
     DocumentStatus as _DocumentStatus,

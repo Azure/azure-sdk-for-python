@@ -23,7 +23,8 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
     map_error,
 )
-from .. import models as _models
+from ..models import _models as _models
+from .. import _model_base
 from .._model_base import _deserialize
 from ._operations import (
     DocumentTranslationClientOperationsMixin as GeneratedDocumentTranslationClientOperationsMixin,
@@ -33,7 +34,6 @@ from ._operations import (
     build_single_document_translation_document_translate_request,
 )
 from .._patch import DocumentTranslationLROPoller
-from .. import _model_base, models as _models
 from .._vendor import prepare_multipart_form_data
 
 if sys.version_info >= (3, 9):
