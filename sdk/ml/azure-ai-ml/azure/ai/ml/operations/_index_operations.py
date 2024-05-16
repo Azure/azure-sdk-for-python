@@ -33,7 +33,7 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _get_base_urls_from_discovery_service
 from azure.ai.ml.constants._common import AssetTypes, AzureMLResourceType, WorkspaceDiscoveryUrlKey
 from azure.ai.ml.dsl import pipeline
-from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
+from azure.ai.ml.entities import Job, PipelineJob, PipelineJobSettings
 from azure.ai.ml.entities._assets import Index
 from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration, UserIdentityConfiguration
 from azure.ai.ml.entities._indexes import (
@@ -269,7 +269,7 @@ class IndexOperations(_ScopeDependentOperations):
         ######## data source info ########
         input_source: Union[IndexDataSource, str],
         input_source_credential: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
-    ) -> Union["MLIndex", "Job"]:  # type: ignore[name-defined]
+    ) -> Job:
         """Builds an index on the cloud using the Azure AI Resources service.
 
         :keyword name: The name of the index to be created.
@@ -294,7 +294,7 @@ class IndexOperations(_ScopeDependentOperations):
         :paramtype input_source_credential: Optional[Union[~azure.ai.ml.entities.ManagedIdentityConfiguration,
             ~azure.ai.ml.entities.UserIdentityConfiguration]]
         :return: If the `source_input` is a GitSource, returns a created DataIndex Job object.
-        :rtype: Union[~azure.ai.ml.entities._indexes.MLIndex, ~azure.ai.ml.entities.Job]
+        :rtype: ~azure.ai.ml.entities.Index
         :raises ValueError: If the `source_input` is not type ~typing.Str or
             ~azure.ai.ml.entities._indexes.LocalSource.
         """
