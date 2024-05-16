@@ -183,7 +183,10 @@ class StorageRecordedTestCase(AzureRecordedTestCase):
         if self.is_live:
             from azure.identity import DefaultAzureCredential
 
-            return DefaultAzureCredential(exclude_environment_credential=True)
+            return DefaultAzureCredential(
+                exclude_environment_credential=True,
+                exclude_interactive_browser_credential=False,
+            )
         return self.generate_fake_token()
 
     def generate_fake_token(self):
