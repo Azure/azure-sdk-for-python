@@ -85,3 +85,39 @@ def reduce_logging_volume(caplog, pytestconfig):
     if not (pytestconfig.getoption("log_level") or pytestconfig.getoption("log_cli_level")):
         caplog.set_level(30)
     yield
+
+
+try:
+    from unittest import mock
+    from devtools_testutils import is_live
+
+    @pytest.fixture(scope="session", autouse=True)
+    def patch_async_sleep():
+        async def immediate_return(_):
+            return
+
+        if not is_live():
+            with mock.patch("asyncio.sleep", immediate_return):
+                yield
+
+        else:
+            yield
+
+
+    @pytest.fixture(scope="session", autouse=True)
+    def patch_sleep():
+        def immediate_return(_):
+            return
+
+        if not is_live():
+            with mock.patch("time.sleep", immediate_return):
+                yield
+
+        else:
+            yield
+
+except ImportError:
+    print(
+        "Failed to import from `is_live` from azure-sdk-tools. To get automatic `sleep` patching in playback tests, "
+        "which can greatly speed up playback testing, install tools/azure-sdk-tools."
+    )
