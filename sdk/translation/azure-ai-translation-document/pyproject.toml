@@ -1,6 +1,5 @@
 [tool.azure-sdk-build]
 pyright = false
-verifytypes = false
 strict_sphinx = true
 
 [tool.generate]
