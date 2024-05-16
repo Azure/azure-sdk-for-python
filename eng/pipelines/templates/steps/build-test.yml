@@ -75,6 +75,14 @@ steps:
         --injected-packages="${{ parameters.InjectedPackages }}"
         ${{ parameters.ToxEnvParallel }}
     env: ${{ parameters.EnvVars }}
+    timeoutInMinutes: 40
+  
+  - pwsh: |
+      Get-ChildItem -Recurse (Join-Path sdk devcenter azure-developer-devcenter .tox whl log) -Include "*.Log" | `
+        ForEach-Object { return $_.FullName -replace '\[', '``[' -replace '\]', '``]' } | `
+        ForEach-Object { gc $_ }
+    displayName: Dump Tox Log Files
+    condition: succeededOrFailed()
 
   - ${{if eq(parameters.TestProxy, true) }}:
     - pwsh: |
