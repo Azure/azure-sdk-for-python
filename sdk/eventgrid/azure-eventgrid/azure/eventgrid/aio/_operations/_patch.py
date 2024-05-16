@@ -270,7 +270,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
         self,
         topic_name: str,
         subscription_name: str,
-        *,
         lock_tokens: List[str],
         **kwargs: Any,
     ) -> _models.AcknowledgeResult:
@@ -283,8 +282,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type topic_name: str
         :param subscription_name: Event Subscription Name. Required.
         :type subscription_name: str
-        :keyword lock_tokens: Array of lock tokens of Cloud Events. Required.
-        :paramtype lock_tokens: List[str]
+        :param lock_tokens: Array of lock tokens of Cloud Events. Required.
+        :type lock_tokens: List[str]
         :return: AcknowledgeResult. The AcknowledgeResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.AcknowledgeResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -301,7 +300,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
         self,
         topic_name: str,
         subscription_name: str,
-        *,
         lock_tokens: List[str],
         release_delay: Optional[Union[int, _models.ReleaseDelay]] = None,
         **kwargs: Any,
@@ -314,8 +312,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type topic_name: str
         :param subscription_name: Event Subscription Name. Required.
         :type subscription_name: str
-        :keyword lock_tokens: Array of lock tokens of Cloud Events. Required.
-        :paramtype lock_tokens: List[str]
+        :param lock_tokens: Array of lock tokens of Cloud Events. Required.
+        :type lock_tokens: List[str]
         :keyword release_delay: Release cloud events with the specified delay in seconds.
          Known values are: 0, 10, 60, 600, and 3600. Default value is None.
         :paramtype release_delay: int or ~azure.eventgrid.models.ReleaseDelay
@@ -338,7 +336,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
         self,
         topic_name: str,
         subscription_name: str,
-        *,
         lock_tokens: List[str],
         **kwargs: Any,
     ) -> _models.RejectResult:
@@ -350,8 +347,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type topic_name: str
         :param subscription_name: Event Subscription Name. Required.
         :type subscription_name: str
-        :keyword lock_tokens: Array of lock tokens of Cloud Events. Required.
-        :paramtype lock_tokens: List[str]
+        :param lock_tokens: Array of lock tokens of Cloud Events. Required.
+        :type lock_tokens: List[str]
         :return: RejectResult. The RejectResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.RejectResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -368,7 +365,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
         self,
         topic_name: str,
         subscription_name: str,
-        *,
         lock_tokens: List[str],
         **kwargs: Any,
     ) -> _models.RenewCloudEventLocksResult:
@@ -381,8 +377,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type topic_name: str
         :param subscription_name: Event Subscription Name. Required.
         :type subscription_name: str
-        :keyword lock_tokens: Array of lock tokens of Cloud Events. Required.
-        :paramtype lock_tokens: List[str]
+        :param lock_tokens: Array of lock tokens of Cloud Events. Required.
+        :type lock_tokens: List[str]
         :return: RenewCloudEventLocksResult. The RenewCloudEventLocksResult is compatible with
          MutableMapping
         :rtype: ~azure.eventgrid.models.RenewCloudEventLocksResult
