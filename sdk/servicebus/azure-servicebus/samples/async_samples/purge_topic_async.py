@@ -61,7 +61,7 @@ async def main():
                 topic_name=TOPIC_NAME,
                 subscription_name='sb-allmsgs-sub'
             )
-        print("sent")
+
         async with receiver:
             deleted_msgs = await receiver.purge_messages()
             print(deleted_msgs)
