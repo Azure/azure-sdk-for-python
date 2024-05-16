@@ -1,5 +1,15 @@
 # Release History
 
+## 5.12.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 5.12.0 (2024-05-16)
 
 ### Features Added
