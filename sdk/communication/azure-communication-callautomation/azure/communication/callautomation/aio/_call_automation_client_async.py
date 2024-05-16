@@ -20,8 +20,7 @@ from .._generated.models import (
     RejectCallRequest,
     StartCallRecordingRequest,
     CallIntelligenceOptions,
-    ConnectRequest,
-    CallLocator
+    ConnectRequest
 )
 from .._models import (
     CallConnectionProperties,
@@ -44,6 +43,7 @@ if TYPE_CHECKING:
     from .._models  import (
         ServerCallLocator,
         GroupCallLocator,
+        RoomCallLocator,
         MediaStreamingOptions,
         TranscriptionOptions
     )
@@ -156,17 +156,72 @@ class CallAutomationClient:
             **kwargs
         )
 
-    @distributed_trace_async
+    @overload
     async def connect(
-            self,
-            callback_url: str,
-            room_id: str,
-            *,
-            cognitive_services_endpoint: Optional[str] = None,
-            **kwargs
+        self,
+        callback_url: str,
+        server_call_id: str,
+        *,
+        cognitive_services_endpoint: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        **kwargs
     ) -> CallConnectionProperties:
         """The request payload for creating a connection to a room CallLocator.
 
+        All required parameters must be populated in order to send to server.
+
+        :param callback_url: The call back url where callback events are sent. Required
+        :type callback_url: str
+        :param server_call_id: The server call ID to locate ongoing call.
+        :type server_call_id: str
+        :keyword cognitive_services_endpoint:
+         The identifier of the Cognitive Service resource assigned to this call.
+        :paramtype cognitive_services_endpoint: str or None
+        :keyword operation_context: Value that can be used to track the call and its associated events.
+        :paramtype operation_context: str or None
+        :return: CallConnectionProperties
+        :rtype: ~azure.communication.callautomation.CallConnectionProperties
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def connect(
+        self,
+        callback_url: str,
+        group_call_id: str,
+        *,
+        cognitive_services_endpoint: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ) -> CallConnectionProperties:
+        """The request payload for creating a connection to a room CallLocator.
+        All required parameters must be populated in order to send to server.
+
+        :param callback_url: The call back url where callback events are sent. Required
+        :type callback_url: str
+        :param group_call_id: The group call ID to locate ongoing call.
+        :type group_call_id: str
+        :keyword cognitive_services_endpoint:
+         The identifier of the Cognitive Service resource assigned to this call.
+        :paramtype cognitive_services_endpoint: str or None
+        :keyword operation_context: Value that can be used to track the call and its associated events.
+        :paramtype operation_context: str or None
+        :return: CallConnectionProperties
+        :rtype: ~azure.communication.callautomation.CallConnectionProperties
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def connect(
+        self,
+        callback_url: str,
+        room_id: str,
+        *,
+        cognitive_services_endpoint: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ) -> CallConnectionProperties:
+        """The request payload for creating a connection to a room CallLocator.
         All required parameters must be populated in order to send to server.
 
         :param callback_url: The call back url where callback events are sent. Required
@@ -176,26 +231,41 @@ class CallAutomationClient:
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str or None
+        :keyword operation_context: Value that can be used to track the call and its associated events.
+        :paramtype operation_context: str or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        call_intelligence_options = CallIntelligenceOptions(
-            cognitive_services_endpoint=cognitive_services_endpoint
-            ) if cognitive_services_endpoint else None
+    @distributed_trace_async
+    async def connect(
+        self,
+        *args: Union['ServerCallLocator', 'GroupCallLocator', 'RoomCallLocator'],
+        **kwargs
+    ) -> CallConnectionProperties:
 
-        call_locator = CallLocator(room_id=room_id, kind="roomCallLocator")
-        connect_call_request = ConnectRequest(
+        call_intelligence_options = CallIntelligenceOptions(
+            cognitive_services_endpoint=kwargs.pop("cognitive_services_endpoint")
+            ) if kwargs.pop("cognitive_services_endpoint") else None
+
+        call_locator = build_call_locator(
+            args,
+            kwargs.pop("call_locator", None),
+            kwargs.pop("server_call_id", None),
+            kwargs.pop("group_call_id", None),
+            kwargs.pop("room_id", None)
+        )
+        create_call_request = ConnectRequest(
             call_locator=call_locator,
-            callback_uri=callback_url,
+            callback_uri=kwargs.pop("callback_url", None),
+            operation_context=kwargs.pop("operation_context", None),
             call_intelligence_options=call_intelligence_options
         )
 
         process_repeatability_first_sent(kwargs)
-
-        result = await self._client.connect(
-            connect_call_request=connect_call_request,
+        result = self._client.connect(
+            create_call_request=create_call_request,
             **kwargs
         )
 

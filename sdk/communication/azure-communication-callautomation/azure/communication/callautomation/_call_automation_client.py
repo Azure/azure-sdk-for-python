@@ -177,6 +177,7 @@ class CallAutomationClient:
         server_call_id: str,
         *,
         cognitive_services_endpoint: Optional[str] = None,
+        operation_context: Optional[str] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """The request payload for creating a connection to a room CallLocator.
@@ -190,6 +191,8 @@ class CallAutomationClient:
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str or None
+        :keyword operation_context: Value that can be used to track the call and its associated events.
+        :paramtype operation_context: str or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -202,6 +205,7 @@ class CallAutomationClient:
         group_call_id: str,
         *,
         cognitive_services_endpoint: Optional[str] = None,
+        operation_context: Optional[str] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """The request payload for creating a connection to a room CallLocator.
@@ -214,6 +218,8 @@ class CallAutomationClient:
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str or None
+        :keyword operation_context: Value that can be used to track the call and its associated events.
+        :paramtype operation_context: str or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -226,6 +232,7 @@ class CallAutomationClient:
         room_id: str,
         *,
         cognitive_services_endpoint: Optional[str] = None,
+        operation_context: Optional[str] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """The request payload for creating a connection to a room CallLocator.
@@ -238,6 +245,8 @@ class CallAutomationClient:
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str or None
+        :keyword operation_context: Value that can be used to track the call and its associated events.
+        :paramtype operation_context: str or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -264,6 +273,7 @@ class CallAutomationClient:
         create_call_request = ConnectRequest(
             call_locator=call_locator,
             callback_uri=kwargs.pop("callback_url", None),
+            operation_context=kwargs.pop("operation_context", None),
             call_intelligence_options=call_intelligence_options
         )
 
