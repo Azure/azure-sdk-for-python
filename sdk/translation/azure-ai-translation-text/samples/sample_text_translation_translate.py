@@ -183,7 +183,9 @@ def get_text_translation_type():
         target_languages = ["cs"]
         input_text_elements = ["<html><body>This <b>is</b> a test.</body></html>"]
 
-        response = text_translator.translate(body=input_text_elements, target_languages=target_languages, text_type=text_type)
+        response = text_translator.translate(
+            body=input_text_elements, target_languages=target_languages, text_type=text_type
+        )
         translation = response[0] if response else None
 
         if translation:
@@ -213,7 +215,10 @@ def get_text_translation_exclude():
         ]
 
         response = text_translator.translate(
-            body=input_text_elements, target_languages=target_languages, source_language=source_language, text_type=text_type
+            body=input_text_elements,
+            target_languages=target_languages,
+            source_language=source_language,
+            text_type=text_type,
         )
         translation = response[0] if response else None
 
@@ -355,7 +360,9 @@ def get_text_translation_custom():
         target_languages = ["cs"]
         input_text_elements = ["This is a test"]
 
-        response = text_translator.translate(body=input_text_elements, target_languages=target_languages, category=category)
+        response = text_translator.translate(
+            body=input_text_elements, target_languages=target_languages, category=category
+        )
         translation = response[0] if response else None
 
         if translation:

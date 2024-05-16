@@ -379,7 +379,9 @@ try:
     target_languages = ["cs"]
     input_text_elements = ["<html><body>This <b>is</b> a test.</body></html>"]
 
-    response = text_translator.translate(body=input_text_elements, target_languages=target_languages, text_type=text_type)
+    response = text_translator.translate(
+        body=input_text_elements, target_languages=target_languages, text_type=text_type
+    )
     translation = response[0] if response else None
 
     if translation:
