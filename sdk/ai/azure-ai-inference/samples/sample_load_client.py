@@ -4,12 +4,12 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to get a chat completions response from
-    the service using a synchronous client that was obtained from a
-    `ClientGenerator.from_endpoint` call.
+    This sample demonstrates how to create a client from a given endpoint URL using
+    the load_client() function imported from azure.ai.inference.
+    In this sample, we get a synchronous client and do a chat completions call.
 
 USAGE:
-    python sample_chat_completions_with_client_generator
+    python sample_load_client.py
 
     Set these two environment variables before running the sample:
     1) CHAT_COMPLETIONS_ENDPOINT - Your endpoint URL, in the form 
@@ -20,7 +20,7 @@ USAGE:
 """
 
 
-def sample_chat_completions_with_client_generator():
+def sample_load_client():
     import os
 
     try:
@@ -31,12 +31,15 @@ def sample_chat_completions_with_client_generator():
         print("Set them before running this sample.")
         exit()
 
-    # [START chat_completions_with_client_generator]
-    from azure.ai.inference import ClientGenerator, ChatCompletionsClient
+    # [START load_client]
+    from azure.ai.inference import load_client, ChatCompletionsClient
     from azure.ai.inference.models import SystemMessage, UserMessage
     from azure.core.credentials import AzureKeyCredential
 
-    client = ClientGenerator.from_endpoint(endpoint=endpoint, credential=AzureKeyCredential(key))
+    client = load_client(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+    # This should create a client of type `ChatCompletionsClient`
+    print(f"Created client of type `{type(client).__name__}`.")
 
     if isinstance(client, ChatCompletionsClient):
         response = client.create(
@@ -47,8 +50,8 @@ def sample_chat_completions_with_client_generator():
         )
 
         print(response.choices[0].message.content)
-    # [END chat_completions_with_client_generator]
+    # [END load_client]
 
 
 if __name__ == "__main__":
-    sample_chat_completions_with_client_generator()
+    sample_load_client()

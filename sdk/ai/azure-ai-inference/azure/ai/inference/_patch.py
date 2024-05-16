@@ -6,6 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import asyncio
 import json
 import logging
 import sys
@@ -30,6 +31,9 @@ from ._serialization import Serializer
 from ._operations._operations import build_chat_completions_create_request
 from ._client import ChatCompletionsClient as ChatCompletionsClientGenerated
 from ._client import EmbeddingsClient, ImageEmbeddingsClient
+from .aio._client import ChatCompletionsClient as AsyncChatCompletionsClient
+from .aio._client import EmbeddingsClient as AsyncEmbeddingsClient
+from .aio._client import ImageEmbeddingsClient as AsyncImageEmbeddingsClient
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -43,25 +47,44 @@ _SERIALIZER.client_side_validation = False
 logger = logging.getLogger(__name__)
 
 
-class ClientGenerator:
-    @staticmethod
-    def from_endpoint(
-        endpoint: str, credential: AzureKeyCredential, **kwargs: Any
-    ) -> Union[ChatCompletionsClientGenerated, EmbeddingsClient, ImageEmbeddingsClient]:
-        client = ChatCompletionsClient(endpoint, credential, **kwargs)  # Pick any of the clients, it does not matter...
-        model_info = client.get_model_info()
-        logger.info("model_info=%s", model_info)
-        if model_info.model_type in (None, ''):
-            raise ValueError(
-                "The AI model information is missing a value for `model type`. Cannot create an appropriate client."
-            )
-        if model_info.model_type == _models.ModelType.CHAT:
-            return client
-        if model_info.model_type == _models.ModelType.EMBEDDINGS:
-            return EmbeddingsClient(endpoint, credential, **kwargs)
-        if model_info.model_type == _models.ModelType.IMAGE_EMBEDDINGS:
-            return ImageEmbeddingsClient(endpoint, credential, **kwargs)
-        raise ValueError(f"No client available to support AI model type `{model_info.model_type}`")
+def load_client(
+    endpoint: str, credential: AzureKeyCredential, **kwargs: Any
+) -> Union[ChatCompletionsClientGenerated, EmbeddingsClient, ImageEmbeddingsClient]:
+    client = ChatCompletionsClient(endpoint, credential, **kwargs)  # Pick any of the clients, it does not matter...
+    model_info = client.get_model_info()
+    logger.info("model_info=%s", model_info)
+    if model_info.model_type in (None, ''):
+        raise ValueError(
+            "The AI model information is missing a value for `model type`. Cannot create an appropriate client."
+        )
+    # TODO: Remove "completions" once Mistral Large fixes their model type
+    if model_info.model_type == _models.ModelType.CHAT or "completion":
+        return client
+    if model_info.model_type == _models.ModelType.EMBEDDINGS:
+        return EmbeddingsClient(endpoint, credential, **kwargs)
+    if model_info.model_type == _models.ModelType.IMAGE_EMBEDDINGS:
+        return ImageEmbeddingsClient(endpoint, credential, **kwargs)
+    raise ValueError(f"No client available to support AI model type `{model_info.model_type}`")
+
+
+def load_async_client(
+    endpoint: str, credential: AzureKeyCredential, **kwargs: Any
+) -> Union[AsyncChatCompletionsClient, AsyncEmbeddingsClient, AsyncImageEmbeddingsClient]:
+    client = ChatCompletionsClient(endpoint, credential, **kwargs)  # Pick any of the clients, it does not matter...
+    model_info = client.get_model_info()
+    logger.info("model_info=%s", model_info)
+    if model_info.model_type in (None, ''):
+        raise ValueError(
+            "The AI model information is missing a value for `model type`. Cannot create an appropriate client."
+        )
+    # TODO: Remove "completions" once Mistral Large fixes their model type
+    if model_info.model_type == _models.ModelType.CHAT or "completion":
+        return AsyncChatCompletionsClient(endpoint, credential, **kwargs)
+    if model_info.model_type == _models.ModelType.EMBEDDINGS:
+        return AsyncEmbeddingsClient(endpoint, credential, **kwargs)
+    if model_info.model_type == _models.ModelType.IMAGE_EMBEDDINGS:
+        return AsyncImageEmbeddingsClient(endpoint, credential, **kwargs)
+    raise ValueError(f"No client available to support AI model type `{model_info.model_type}`")
 
 
 class ChatCompletionsClient(ChatCompletionsClientGenerated):
@@ -406,7 +429,8 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
 
 __all__: List[str] = [
-    "ClientGenerator",
+    "load_client",
+    "load_async_client",
     "ChatCompletionsClient",
 ]  # Add all objects you want publicly available to users at this package level
 

@@ -107,7 +107,7 @@ TODO: Add overview and link to explain image embeddings.
 
 Embeddings operations target the URL route `images/embeddings` on the provided endpoint.
 
-### Client generator
+### Loading a client
 
 TODO
 
@@ -120,7 +120,7 @@ In the following sections you will find simple examples of:
 * [Text Embeddings](#embeddings-example)
 * [Image Embeddings](#image-embeddings-example)
 * [Get model information](#get-model-information-example)
-* [Create a client using the ClientGenerator](#create-a-client-using-the-clientgenerator)
+* [Loading a client using `load_client` function](#loading-a-client-using-load_client-function)
 
 The examples create a synchronous client as mentioned in [Create and authenticate clients](#create-and-authenticate-clients). Only mandatory input settings are shown for simplicity.
 
@@ -176,8 +176,7 @@ response = client.create_streaming(
 )
 
 for update in response:
-    if update.choices[0].delta.content:
-        print(update.choices[0].delta.content, end="")
+    print(update.choices[0].delta.content or "", end="")
 
 response.close()
 ```
@@ -283,18 +282,23 @@ print(f"Model type: {model_info.model_type}")
 
 <!-- END SNIPPET -->
 
-### Create a client using the ClientGenerator
+### Loading a client using `load_client` function
 
-Instead of creating a specific client directly (`ChatCompletionsClient`, `EmbeddingsClient`) you can use the `ClientGenerator.from_endpoint` method to create the appropriate client associated with the provided endpoint URL. In this example we use it to create a `ChatCompletionsClient`:
+Instead of creating a specific client directly (`ChatCompletionsClient`, `EmbeddingsClient` or `ImageEmbeddingsClient`) you can use the `load_client` function to create the appropriate synchronous client associated with the provided endpoint URL. In the example below, we use it to create a synchronous `ChatCompletionsClient`. Similarly, call the `load_async_client` to get the appropriate asynchronous client.
 
-<!-- SNIPPET:sample_chat_completions_with_client_generator.chat_completions_with_client_generator -->
+The `load_client` function makes a REST API call to the `/info` route on the given endpoint, which provides the model type. Based on the model type, the correct client is returned. In most cases you know the model type (chat completions, embeddings, image embeddings) so you can create the appropriate client directly and avoid doing this addition REST API call.
+
+<!-- SNIPPET:sample_load_client.load_client -->
 
 ```python
-from azure.ai.inference import ClientGenerator, ChatCompletionsClient
+from azure.ai.inference import load_client, ChatCompletionsClient
 from azure.ai.inference.models import SystemMessage, UserMessage
 from azure.core.credentials import AzureKeyCredential
 
-client = ClientGenerator.from_endpoint(endpoint=endpoint, credential=AzureKeyCredential(key))
+client = load_client(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+# This should create a client of type `ChatCompletionsClient`
+print(f"Created client of type `{type(client).__name__}`.")
 
 if isinstance(client, ChatCompletionsClient):
     response = client.create(
