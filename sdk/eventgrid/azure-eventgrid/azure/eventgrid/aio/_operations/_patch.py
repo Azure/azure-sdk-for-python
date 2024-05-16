@@ -316,7 +316,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type lock_tokens: List[str]
         :keyword release_delay: Release cloud events with the specified delay in seconds.
          Known values are: 0, 10, 60, 600, and 3600. Default value is None.
-        :paramtype release_delay: int or ~azure.eventgrid.models.ReleaseDelay
+        :paramtype release_delay: int or ~azure.eventgrid.models.ReleaseDelay or None
         :return: ReleaseResult. The ReleaseResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.ReleaseResult
         :raises ~azure.core.exceptions.HttpResponseError:
