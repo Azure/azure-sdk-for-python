@@ -26,14 +26,14 @@ class BaseStreamingChatCompletions:
     """
 
     # Enable detailed logs of SSE parsing. For development only, should be `False` by default.
-    ENABLE_CLASS_LOGS = False
+    _ENABLE_CLASS_LOGS = False
 
     # The prefix of each line in the SSE stream that contains a JSON string
     # to deserialize into a ChatCompletionsUpdate object
-    SSE_DATA_EVENT_PREFIX = "data: "
+    _SSE_DATA_EVENT_PREFIX = "data: "
 
     # The line indicating the end of the SSE stream
-    SSE_DATA_EVENT_DONE = "data: [DONE]"
+    _SSE_DATA_EVENT_DONE = "data: [DONE]"
 
     def __init__(self):
         self._queue: "queue.Queue[_models.ChatCompletionsUpdate]" = queue.Queue()
@@ -50,7 +50,7 @@ class BaseStreamingChatCompletions:
         line_list: List[str] = re.split(r"(?<=\n)", element.decode("utf-8"))
         for index, line in enumerate(line_list):
 
-            if self.ENABLE_CLASS_LOGS:
+            if self._ENABLE_CLASS_LOGS:
                 logger.debug("[Original line] %s", repr(line))
 
             if index == 0:
@@ -61,17 +61,17 @@ class BaseStreamingChatCompletions:
                 self._incomplete_json = line
                 return False
 
-            if self.ENABLE_CLASS_LOGS:
+            if self._ENABLE_CLASS_LOGS:
                 logger.debug("[Modified line] %s", repr(line))
 
             if line == "\n":  # Empty line, indicating flush output to client
                 continue
 
-            if not line.startswith(self.SSE_DATA_EVENT_PREFIX):
+            if not line.startswith(self._SSE_DATA_EVENT_PREFIX):
                 raise ValueError(f"SSE event not supported (line `{line}`)")
 
-            if line.startswith(self.SSE_DATA_EVENT_DONE):
-                if self.ENABLE_CLASS_LOGS:
+            if line.startswith(self._SSE_DATA_EVENT_DONE):
+                if self._ENABLE_CLASS_LOGS:
                     logger.debug("[Done]")
                 return True
 
@@ -80,10 +80,10 @@ class BaseStreamingChatCompletions:
             # and add it to the queue.
             self._queue.put(
                 # pylint: disable=W0212 # Access to a protected member _deserialize of a client class
-                _models.ChatCompletionsUpdate._deserialize(json.loads(line[len(self.SSE_DATA_EVENT_PREFIX) : -1]), [])
+                _models.ChatCompletionsUpdate._deserialize(json.loads(line[len(self._SSE_DATA_EVENT_PREFIX) : -1]), [])
             )
 
-            if self.ENABLE_CLASS_LOGS:
+            if self._ENABLE_CLASS_LOGS:
                 logger.debug("[Added to queue]")
 
         return False
@@ -111,7 +111,7 @@ class StreamingChatCompletions(BaseStreamingChatCompletions):
         return self._queue.get()
 
     def _read_next_block(self) -> bool:
-        if self.ENABLE_CLASS_LOGS:
+        if self._ENABLE_CLASS_LOGS:
             logger.debug("[Reading next block]")
         try:
             # Use 'cast' to make 'pyright' error go away
@@ -153,7 +153,7 @@ class AsyncStreamingChatCompletions(BaseStreamingChatCompletions):
         return self._queue.get()
 
     async def _read_next_block_async(self) -> bool:
-        if self.ENABLE_CLASS_LOGS:
+        if self._ENABLE_CLASS_LOGS:
             logger.debug("[Reading next block]")
         try:
             # Use 'cast' to make 'pyright' error go away
