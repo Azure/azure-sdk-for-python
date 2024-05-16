@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint: disable=C4717, C4722, C4748
+# pylint: disable=C4717, C4722
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint: disable=C4717, C4722, C4748
+# pylint: disable=C4717, C4722
 
 from typing import Union, Optional, Any, overload
 from azure.core.pipeline import PipelineRequest
