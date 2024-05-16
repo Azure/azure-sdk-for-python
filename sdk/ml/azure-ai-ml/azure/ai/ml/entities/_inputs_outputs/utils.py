@@ -329,7 +329,7 @@ def _get_param_with_standard_annotation(
         return _fields
 
     skip_params = skip_params or []
-    inherited_fields = _get_inherited_fields()
+    inherited_fields = _get_inherited_fields()  #
     # From annotations get field with type
     annotations: Dict[str, Annotation] = getattr(cls_or_func, "__annotations__", {})
     annotations = {k: v for k, v in annotations.items() if k not in skip_params}
