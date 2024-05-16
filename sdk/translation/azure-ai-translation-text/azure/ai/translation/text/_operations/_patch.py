@@ -552,17 +552,17 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         allow_fallback: Optional[bool] = None,
         **kwargs: Any
     ) -> List[_models.TranslatedTextItem]:
-        body: Union[List[_models.InputTextItem], IO[bytes]]
+        request_body: Union[List[_models.InputTextItem], IO[bytes]]
         if isinstance(body, list) and all(isinstance(item, str) for item in body):
             input_text_items: List[_models.InputTextItem] = []
             for text in body:
                 input_text_items.append(_models.InputTextItem(text=cast(str, text)))
-            body = input_text_items
+            request_body = input_text_items
         else:
-            body = cast(Union[List[_models.InputTextItem], IO[bytes]], body)
+            request_body = cast(Union[List[_models.InputTextItem], IO[bytes]], body)
 
         return super().translate(
-            body=body,
+            body=request_body,
             target_languages=target_languages,
             client_trace_id=client_trace_id,
             source_language=source_language,
@@ -765,17 +765,17 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         client_trace_id: Optional[str] = None,
         **kwargs: Any
     ) -> List[_models.TransliteratedText]:
-        body: Union[List[_models.InputTextItem], IO[bytes]]
+        request_body: Union[List[_models.InputTextItem], IO[bytes]]
         if isinstance(body, list) and all(isinstance(item, str) for item in body):
             input_text_items: List[_models.InputTextItem] = []
             for text in body:
                 input_text_items.append(_models.InputTextItem(text=cast(str, text)))
-            body = input_text_items
+            request_body = input_text_items
         else:
-            body = cast(Union[List[_models.InputTextItem], IO[bytes]], body)
+            request_body = cast(Union[List[_models.InputTextItem], IO[bytes]], body)
 
         return super().transliterate(
-            body=body,
+            body=request_body,
             language=language,
             source_language_script=source_language_script,
             target_language_script=target_language_script,
@@ -980,18 +980,18 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         script: Optional[str] = None,
         **kwargs: Any
     ) -> List[_models.BreakSentenceItem]:
-        body: Union[List[_models.InputTextItem], IO[bytes]]
+        request_body: Union[List[_models.InputTextItem], IO[bytes]]
         if isinstance(body, list) and all(isinstance(item, str) for item in body):
             input_text_items: List[_models.InputTextItem] = []
             for text in body:
                 input_text_items.append(_models.InputTextItem(text=cast(str, text)))
-            body = input_text_items
+            request_body = input_text_items
 
         else:
-            body = cast(Union[List[_models.InputTextItem], IO[bytes]], body)
+            request_body = cast(Union[List[_models.InputTextItem], IO[bytes]], body)
 
         return super().find_sentence_boundaries(
-            body=body, language=language, script=script, client_trace_id=client_trace_id, **kwargs
+            body=request_body, language=language, script=script, client_trace_id=client_trace_id, **kwargs
         )
 
     @overload
@@ -1341,17 +1341,17 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         client_trace_id: Optional[str] = None,
         **kwargs: Any
     ) -> List[_models.DictionaryLookupItem]:
-        body: Union[List[_models.InputTextItem], IO[bytes]]
+        request_body: Union[List[_models.InputTextItem], IO[bytes]]
         if isinstance(body, list) and all(isinstance(item, str) for item in body):
             input_text_items: List[_models.InputTextItem] = []
             for text in body:
                 input_text_items.append(_models.InputTextItem(text=cast(str, text)))
-            body = input_text_items
+            request_body = input_text_items
         else:
-            body = cast(Union[List[_models.InputTextItem], IO[bytes]], body)
+            request_body = cast(Union[List[_models.InputTextItem], IO[bytes]], body)
 
         return super().lookup_dictionary_entries(
-            body=body,
+            body=request_body,
             source_language=source_language,
             target_language=target_language,
             client_trace_id=client_trace_id,

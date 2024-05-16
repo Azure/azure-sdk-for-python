@@ -13,7 +13,7 @@ from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, Azure
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
-from .._patch import DEFAULT_TOKEN_SCOPE, get_translation_endpoint, TranslatorAuthenticationPolicy
+from .._patch import DEFAULT_TOKEN_SCOPE, DEFAULT_AAD_SCOPE, get_translation_endpoint, TranslatorAuthenticationPolicy
 
 from ._client import TextTranslationClient as ServiceClientGenerated
 
@@ -37,9 +37,9 @@ class AsyncTranslatorAADAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     """
 
-    def __init__(self, credential: AsyncTokenCredential, resource_id: str, region: str, **kwargs: Any) -> None:
+    def __init__(self, credential: AsyncTokenCredential, resource_id: str, region: str, scopes: str, **kwargs: Any) -> None:
         super(AsyncTranslatorAADAuthenticationPolicy, self).__init__(
-            credential.token_credential, "https://cognitiveservices.azure.com/.default", **kwargs
+            credential, scopes, **kwargs
         )
         self.resource_id = resource_id
         self.region = region
@@ -64,7 +64,7 @@ def set_authentication_policy(credential, kwargs):
         if not kwargs.get("authentication_policy"):
             if kwargs.get("region") and kwargs.get("resource_id"):
                 kwargs["authentication_policy"] = AsyncTranslatorAADAuthenticationPolicy(
-                    credential, kwargs["resource_id"], kwargs["region"]
+                    credential, kwargs["resource_id"], kwargs["region"], kwargs.pop("credential_scopes", [DEFAULT_AAD_SCOPE])
                 )
             else:
                 if kwargs.get("resource_id") or kwargs.get("region"):
@@ -113,6 +113,7 @@ class TextTranslationClient(ServiceClientGenerated):
     :paramtype credential: Union[AzureKeyCredential, AsyncTokenCredential]
     :keyword str region: Used for National Clouds.
     :keyword str resource_id: Used with both a TokenCredential combined with a region.
+    :keyword str scopes: Scopes of the credentials.
     :keyword  str api_version: Default value is "3.0". Note that overriding this default value may
      result in unsupported behavior.
     """
@@ -136,6 +137,7 @@ class TextTranslationClient(ServiceClientGenerated):
         region: Optional[str] = None,
         resource_id: Optional[str] = None,
         endpoint: Optional[str] = None,
+        scopes: Optional[str] = None,
         api_version="3.0",
         **kwargs
     ): ...

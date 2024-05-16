@@ -2084,10 +2084,9 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
 
         Lookup Dictionary Examples.
 
-        :param body: Defines the content of the request. Is either a
-         [DictionaryExampleTextItem] type or a IO[bytes] type. Required.
-        :type body: list[~azure.ai.translation.text.models.DictionaryExampleTextItem] or
-         IO[bytes]
+        :param body: Defines the content of the request. Is either a [DictionaryExampleTextItem] type
+         or a IO[bytes] type. Required.
+        :type body: list[~azure.ai.translation.text.models.DictionaryExampleTextItem] or IO[bytes]
         :keyword source_language: Specifies the language of the input text.
          The source language must be one of the supported languages included in the dictionary scope.
          Required.

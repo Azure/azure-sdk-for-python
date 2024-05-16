@@ -27,7 +27,7 @@ class ProfanityAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MARKED = "Marked"
     """Profanity is marked."""
     DELETED = "Deleted"
-    """Profanity is deteled from the translated text."""
+    """Profanity is deleted from the translated text."""
 
 
 class ProfanityMarker(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -43,4 +43,6 @@ class TextType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Translation text type."""
 
     PLAIN = "Plain"
+    """Plain text."""
     HTML = "Html"
+    """HTML-encoded text."""

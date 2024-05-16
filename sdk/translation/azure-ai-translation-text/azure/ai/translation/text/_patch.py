@@ -12,6 +12,7 @@ from azure.core.credentials import TokenCredential, AzureKeyCredential
 from ._client import TextTranslationClient as ServiceClientGenerated
 
 DEFAULT_TOKEN_SCOPE = "https://api.microsofttranslator.com/"
+DEFAULT_AAD_SCOPE = "https://cognitiveservices.azure.com/.default"
 
 
 def patch_sdk():
@@ -48,9 +49,9 @@ class TranslatorAADAuthenticationPolicy(BearerTokenCredentialPolicy):
     :type credential: ~azure.ai.translation.text.TranslatorAADCredential
     """
 
-    def __init__(self, credential: TokenCredential, resource_id: str, region: str, **kwargs: Any) -> None:
+    def __init__(self, credential: TokenCredential, resource_id: str, region: str, scopes: str, **kwargs: Any) -> None:
         super(TranslatorAADAuthenticationPolicy, self).__init__(
-            credential.token_credential, "https://cognitiveservices.azure.com/.default", **kwargs
+            credential, scopes, **kwargs
         )
         self.resource_id = resource_id
         self.region = region
@@ -88,7 +89,7 @@ def set_authentication_policy(credential, kwargs):
         if not kwargs.get("authentication_policy"):
             if kwargs.get("region") and kwargs.get("resource_id"):
                 kwargs["authentication_policy"] = TranslatorAADAuthenticationPolicy(
-                    credential, kwargs["resource_id"], kwargs["region"]
+                    credential, kwargs["resource_id"], kwargs["region"], kwargs.pop("credential_scopes", [DEFAULT_AAD_SCOPE])
                 )
             else:
                 if kwargs.get("resource_id") or kwargs.get("region"):
@@ -137,6 +138,7 @@ class TextTranslationClient(ServiceClientGenerated):
     :paramtype credential: Union[AzureKeyCredential, TokenCredential]
     :keyword str region: Used for National Clouds.
     :keyword str resource_id: Used with both a TokenCredential combined with a region.
+    :keyword str scopes: Scopes of the credentials.
     :keyword  str api_version: Default value is "3.0". Note that overriding this default value may
      result in unsupported behavior.
     """
@@ -160,6 +162,7 @@ class TextTranslationClient(ServiceClientGenerated):
         region: Optional[str] = None,
         resource_id: Optional[str] = None,
         endpoint: Optional[str] = None,
+        scopes: Optional[str] = None,
         api_version="3.0",
         **kwargs
     ): ...
