@@ -29,8 +29,8 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from ..models import _models as _models
-from ..models import _enums as _enums
+from ..models import _models
+from ..models import _enums
 from .. import _model_base
 from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Serializer
@@ -896,7 +896,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # type: ignore[annotation-unchecked] # pylint: disable=protected-access 
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # type: ignore[annotation-unchecked] # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response

@@ -29,7 +29,7 @@ These sample programs show common scenarios for the Document Translation client'
 
 
 ## Prerequisites
-* Python 3.7 or later is required to use this package
+* Python 3.8 or later is required to use this package
 * You must have an [Azure subscription][azure_subscription] and an
 [Azure Translator account][azure_document_translation_account] to run these samples.
 
@@ -38,7 +38,7 @@ These sample programs show common scenarios for the Document Translation client'
 1. Install the Azure Document Translation client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-translation-document
+pip install --pre azure-ai-translation-document
 ```
 For more information about how the versioning of the SDK corresponds to the versioning of the service's API, see [here][versioning_story_readme].
 

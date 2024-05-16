@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 # mypy: disable-error-code="attr-defined"
+# pylint: disable=too-many-lines
 
 from typing import Any, List, Union, overload, Optional, cast, Tuple, TypeVar, Dict
 from enum import Enum
@@ -39,7 +40,6 @@ from .models._models import (
     DocumentFilter as _DocumentFilter,
     StartTranslationDetails as _StartTranslationDetails,
     Glossary as _Glossary,
-    DocumentTranslateContent,
     TranslationStatus as _TranslationStatus,
     DocumentStatus as _DocumentStatus,
 )
@@ -955,11 +955,6 @@ class DocumentTranslationClient:
         except AttributeError as exc:
             raise ValueError("Parameter 'endpoint' must be a string.") from exc
         self._credential = credential
-        self._api_version = kwargs.pop("api_version", None)
-        # TODO how to support API version - v1.0 vs date-based?
-        # if hasattr(self._api_version, "value"):
-        #     self._api_version = cast(DocumentTranslationApiVersion, self._api_version)
-        #     self._api_version = self._api_version.value
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
 
         from ._client import DocumentTranslationClient as _BatchDocumentTranslationClient
@@ -967,7 +962,6 @@ class DocumentTranslationClient:
         self._client = _BatchDocumentTranslationClient(
             endpoint=self._endpoint,
             credential=credential,
-            # api_version=self._api_version,
             http_logging_policy=kwargs.pop("http_logging_policy", get_http_logging_policy()),
             polling_interval=polling_interval,
             **kwargs
@@ -1180,7 +1174,7 @@ class DocumentTranslationClient:
         statuses: Optional[List[str]] = None,
         created_after: Optional[Union[str, datetime.datetime]] = None,
         created_before: Optional[Union[str, datetime.datetime]] = None,
-        orderby: Optional[List[str]] = None,
+        order_by: Optional[List[str]] = None,
         **kwargs: Any
     ) -> ItemPaged[TranslationStatus]:
         """List all the submitted translation operations under the Document Translation resource.
@@ -1196,7 +1190,7 @@ class DocumentTranslationClient:
         :paramtype created_after: str or ~datetime.datetime
         :keyword created_before: Get operations created before a certain datetime.
         :paramtype created_before: str or ~datetime.datetime
-        :keyword list[str] orderby: The sorting query for the operations returned. Currently only
+        :keyword list[str] order_by: The sorting query for the operations returned. Currently only
             'created_on' supported.
             format: ["param1 asc/desc", "param2 asc/desc", ...]
             (ex: 'created_on asc', 'created_on desc').
@@ -1216,7 +1210,7 @@ class DocumentTranslationClient:
 
         if statuses:
             statuses = [convert_status(status, ll=True) for status in statuses]
-        orderby = convert_order_by(orderby)
+        order_by = convert_order_by(order_by)
         created_after = convert_datetime(created_after) if created_after else None
         created_before = convert_datetime(created_before) if created_before else None
 
@@ -1239,7 +1233,7 @@ class DocumentTranslationClient:
                 created_date_time_utc_start=created_after,
                 created_date_time_utc_end=created_before,
                 ids=translation_ids,
-                orderby=orderby,
+                orderby=order_by,
                 statuses=statuses,
                 top=top,
                 skip=skip,
@@ -1258,7 +1252,7 @@ class DocumentTranslationClient:
         statuses: Optional[List[str]] = None,
         created_after: Optional[Union[str, datetime.datetime]] = None,
         created_before: Optional[Union[str, datetime.datetime]] = None,
-        orderby: Optional[List[str]] = None,
+        order_by: Optional[List[str]] = None,
         **kwargs: Any
     ) -> ItemPaged[DocumentStatus]:
         """List all the document statuses for a given translation operation.
@@ -1275,7 +1269,7 @@ class DocumentTranslationClient:
         :paramtype created_after: str or ~datetime.datetime
         :keyword created_before: Get documents created before a certain datetime.
         :paramtype created_before: str or ~datetime.datetime
-        :keyword list[str] orderby: The sorting query for the documents. Currently only
+        :keyword list[str] order_by: The sorting query for the documents. Currently only
             'created_on' is supported.
             format: ["param1 asc/desc", "param2 asc/desc", ...]
             (ex: 'created_on asc', 'created_on desc').
@@ -1295,7 +1289,7 @@ class DocumentTranslationClient:
 
         if statuses:
             statuses = [convert_status(status, ll=True) for status in statuses]
-        orderby = convert_order_by(orderby)
+        order_by = convert_order_by(order_by)
         created_after = convert_datetime(created_after) if created_after else None
         created_before = convert_datetime(created_before) if created_before else None
 
@@ -1315,7 +1309,7 @@ class DocumentTranslationClient:
                 created_date_time_utc_start=created_after,
                 created_date_time_utc_end=created_before,
                 ids=document_ids,
-                orderby=orderby,
+                orderby=order_by,
                 statuses=statuses,
                 top=top,
                 skip=skip,
