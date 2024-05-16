@@ -4,6 +4,8 @@
 
 # pylint: disable=protected-access
 import json
+import re
+from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Optional, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
@@ -31,7 +33,12 @@ from azure.ai.ml._utils._asset_utils import (
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _get_base_urls_from_discovery_service
-from azure.ai.ml.constants._common import AssetTypes, AzureMLResourceType, WorkspaceDiscoveryUrlKey
+from azure.ai.ml.constants._common import (
+    LONG_URI_REGEX_FORMAT,
+    AssetTypes,
+    AzureMLResourceType,
+    WorkspaceDiscoveryUrlKey,
+)
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import Job, PipelineJob, PipelineJobSettings
 from azure.ai.ml.entities._assets import Index
@@ -176,6 +183,8 @@ class IndexOperations(_ScopeDependentOperations):
             artifact_type=ErrorTarget.INDEX,
             show_progress=self._show_progress,
         )
+
+        index = self.__try_add_mlindex_resolution_properties(index)
 
         return Index._from_rest_object(
             self._azure_ai_assets.indexes.create_or_update(
@@ -482,3 +491,48 @@ class IndexOperations(_ScopeDependentOperations):
                 job=index_pipeline, skip_validation=True, **kwargs
             )
         return index_pipeline
+
+    def __try_add_mlindex_resolution_properties(self, index: Index) -> Index:
+        """Inject properties into an index object to allow the Data service to correctly resolve the index location.
+
+        .. note::
+
+            At time of writing, the data service expects the path to the index to be a uri_folder. The service
+            manually appends `/MLIndex` when it tries to resolve the index.
+
+            This is problematic if Index.path is set to a path already pointing to an MLIndex file, since the service
+            will try to resolve the path `/MLIndex/MLIndex`.
+
+            This function injects properties that allows the service to correctly resolve the index's location,
+            while circumventing the doubled `/MLIndex` issue.
+
+        :param Index index: The index to add the properties to. This parameter is modified in place.
+        :return: The modified index.
+        :rtype: Index
+        """
+
+        def is_datastore_uri(s: str) -> bool:
+            """Check whether the string is a datastore uri.
+
+            Should match the format azureml://subscriptions/{}/resourcegroups/{}/workspaces/{}/datastores/{}/paths/{}
+
+            :param str s: The string to check
+            :return: True is s is a datastore uri, False otherwise
+            :rtype: bool
+            """
+            return bool(re.match(LONG_URI_REGEX_FORMAT, s))
+
+        MLINDEX_FOLDER_URI_PROP = "azureml.mlIndexFolderUri"
+        MLINDEX_TEMPLATE_PATH_PROP = "azureml.mlIndexTemplatePath"
+        MLINDEX_FILE_NAME = "MLIndex"
+
+        datastore_uri = str(index.path)
+
+        if index.path is None or not is_datastore_uri(datastore_uri):
+            return index
+
+        if Path(datastore_uri).name == MLINDEX_FILE_NAME:
+            index.properties.setdefault(MLINDEX_FOLDER_URI_PROP, datastore_uri[: -len(MLINDEX_FILE_NAME)])
+            index.properties.setdefault(MLINDEX_TEMPLATE_PATH_PROP, MLINDEX_FILE_NAME)
+
+        return index
