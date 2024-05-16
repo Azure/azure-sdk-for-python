@@ -480,11 +480,11 @@ see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
 
 <!-- LINKS -->
-[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/azure/ai/vision/face
+[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/vision/azure-ai-vision-face/azure/ai/vision/face
 [face_pypi]: https://aka.ms/azsdk-python-face-pkg
 [face_ref_docs]: https://aka.ms/azsdk-python-face-ref
 [face_product_docs]: https://learn.microsoft.com/azure/ai-services/computer-vision/overview-identity
-[face_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples
+[face_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/vision/azure-ai-vision-face/samples
 
 [azure_sub]: https://azure.microsoft.com/free/
 [azure_role_assignment]: https://learn.microsoft.com/azure/role-based-access-control/role-assignments-steps

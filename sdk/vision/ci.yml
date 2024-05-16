@@ -29,3 +29,5 @@ extends:
     Artifacts:
     - name: azure-ai-vision-imageanalysis
       safeName: azureaivisionimageanalysis
+    - name: azure-ai-vision-face
+      safeName: azureaivisionface
