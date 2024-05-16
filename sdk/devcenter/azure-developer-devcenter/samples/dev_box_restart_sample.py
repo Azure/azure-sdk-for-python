@@ -24,32 +24,32 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import logging
 import os
 
 from azure.developer.devcenter import DevCenterClient
+from azure.developer.devcenter.models import PowerState
 from azure.identity import DefaultAzureCredential
-from azure.core.exceptions import HttpResponseError
 
 """
-FILE: create_environment_sample.py
+FILE: dev_box_restart_sample.py
 
 DESCRIPTION:
-    This sample demonstrates how to create and delete Environments using python DevCenterClient. For this sample,
-    you must have previously configured a DevCenter, Project, Catalog, and Environment Type. More details 
-    on how to configure those requirements at https://learn.microsoft.com/azure/deployment-environments/
+    This sample demonstrates how to restart, stop and start a dev box using python DevCenterClient. 
+    For this sample, you must have a running dev box. More details on how to create a dev box 
+    at dev_box_create_sample.py sample in this folder
 
 USAGE:
-    python create_environment_sample.py
+    python devbox_restart_sample.py
 
     Set the environment variables with your own values before running the sample:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
 
-def main():
+
+def dev_box_restart_stop_start():
 
     # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
-    # DEVCENTER_ENDPOINT, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
+    # DEVCENTER_ENDPOINT, AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
     try:
         endpoint = os.environ["DEVCENTER_ENDPOINT"]
     except KeyError:
@@ -58,37 +58,39 @@ def main():
     # Build a client through AAD
     client = DevCenterClient(endpoint, credential=DefaultAzureCredential())
 
-    # Fetch control plane resource dependencies
-    target_project_name = list(client.list_projects(top=1))[0]["name"]
-    target_catalog_name = list(client.list_catalogs(target_project_name, top=1))[0]["name"]
-    target_environment_definition_name = list(
-        client.list_environment_definitions_by_catalog(
-            target_project_name, target_catalog_name, top=1
-        )
-    )[0]["name"]
-    target_environment_type_name = list(
-        client.list_environment_types(target_project_name, top=1)
-    )[0]["name"]
+    # List Dev Boxes
+    dev_boxes = client.list_all_dev_boxes_by_user("me")
+    if dev_boxes:
+        print("List of dev boxes: ")
+        for dev_box in dev_boxes:
+            print(f"{dev_box.name}")
 
-    # Stand up a new environment
-    environment = {
-        "catalogName": target_catalog_name,
-        "environmentDefinitionName": target_environment_definition_name,
-        "environmentType": target_environment_type_name,
-    }
+        # Select first dev box in the list
+        target_dev_box = list(dev_boxes)[0]
+    else:
+        raise ValueError("Missing Dev Box - please create one before running the example.")
 
-    create_response = client.begin_create_or_update_environment(
-        target_project_name, "me", "DevTestEnv", environment
-    )
-    environment_result = create_response.result()
+    # Get the target dev box properties
+    project_name = target_dev_box.project_name
+    user = target_dev_box.user
+    dev_box_name = target_dev_box.name
 
-    print(f"Provisioned environment with status {environment_result['provisioningState']}.")
+    # Stop dev box if it's running
+    if target_dev_box.power_state == PowerState.Running:
+        stop_poller = client.begin_stop_dev_box(project_name, user, dev_box_name)
+        stop_result = stop_poller.result()
+        print(f"Stopping dev box completed with status {stop_result.status}")
 
-    # Tear down the environment when finished
-    delete_response = client.begin_delete_environment(target_project_name, "me", "DevTestEnv")
-    delete_result = delete_response.result()
-    print(f"Completed deletion for the environment with status {delete_result['status']}")
+    # At this point we should have a stopped dev box . Let's start it
+    start_poller = client.begin_start_dev_box(project_name, user, dev_box_name)
+    start_result = start_poller.result()
+    print(f"Starting dev box completed with status {start_result.status}")
+
+    # Restart the dev box
+    restart_poller = client.begin_restart_dev_box(project_name, user, dev_box_name)
+    restart_result = restart_poller.result()
+    print(f"Done restarting the dev box with status {start_result.status}")
 
 
 if __name__ == "__main__":
-    main()
+    dev_box_restart_stop_start()
