@@ -61,13 +61,17 @@ parameters:
         ServiceConnection: azure-sdk-tests
       Preview:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
+        ServiceConnection: azure-sdk-tests
       Canary:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+        ServiceConnection: azure-sdk-tests
         Location: 'centraluseuap'
       UsGov:
         SubscriptionConfiguration: $(sub-config-gov-test-resources)
+        ServiceConnection: usgov_azure-sdk-tests
       China:
         SubscriptionConfiguration: $(sub-config-cn-test-resources)
+        ServiceConnection: china_azure-sdk-tests
   - name: MatrixConfigs
     type: object
     default:
