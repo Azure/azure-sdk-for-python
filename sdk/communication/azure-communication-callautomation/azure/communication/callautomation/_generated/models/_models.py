@@ -1340,8 +1340,7 @@ class ConnectFailed(_serialization.Model):
     :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
      skype chain ID.
     :vartype correlation_id: str
-    :ivar operation_context: Used by customers to set the context for creating a new call. This
-     property will be null for answering a call.
+    :ivar operation_context: Used by customers to set the context for connecting to a call.
     :vartype operation_context: str
     :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
@@ -1373,8 +1372,7 @@ class ConnectFailed(_serialization.Model):
         :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
          skype chain ID.
         :paramtype correlation_id: str
-        :keyword operation_context: Used by customers to set the context for creating a new call. This
-         property will be null for answering a call.
+        :keyword operation_context: Used by customers to set the context for connecting to a call.
         :paramtype operation_context: str
         :keyword result_information: Contains the resulting SIP code, sub-code and message.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
@@ -1396,6 +1394,8 @@ class ConnectRequest(_serialization.Model):
     :vartype call_locator: ~azure.communication.callautomation.models.CallLocator
     :ivar callback_uri: The callback URI. Required.
     :vartype callback_uri: str
+    :ivar operation_context: Used by customers to correlate the request to the response event.
+    :vartype operation_context: str
     :ivar call_intelligence_options: AI options for the call.
     :vartype call_intelligence_options:
      ~azure.communication.callautomation.models.CallIntelligenceOptions
@@ -1409,6 +1409,7 @@ class ConnectRequest(_serialization.Model):
     _attribute_map = {
         "call_locator": {"key": "callLocator", "type": "CallLocator"},
         "callback_uri": {"key": "callbackUri", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
         "call_intelligence_options": {"key": "callIntelligenceOptions", "type": "CallIntelligenceOptions"},
     }
 
@@ -1417,6 +1418,7 @@ class ConnectRequest(_serialization.Model):
         *,
         call_locator: "_models.CallLocator",
         callback_uri: str,
+        operation_context: Optional[str] = None,
         call_intelligence_options: Optional["_models.CallIntelligenceOptions"] = None,
         **kwargs: Any
     ) -> None:
@@ -1425,6 +1427,8 @@ class ConnectRequest(_serialization.Model):
         :paramtype call_locator: ~azure.communication.callautomation.models.CallLocator
         :keyword callback_uri: The callback URI. Required.
         :paramtype callback_uri: str
+        :keyword operation_context: Used by customers to correlate the request to the response event.
+        :paramtype operation_context: str
         :keyword call_intelligence_options: AI options for the call.
         :paramtype call_intelligence_options:
          ~azure.communication.callautomation.models.CallIntelligenceOptions
@@ -1432,6 +1436,7 @@ class ConnectRequest(_serialization.Model):
         super().__init__(**kwargs)
         self.call_locator = call_locator
         self.callback_uri = callback_uri
+        self.operation_context = operation_context
         self.call_intelligence_options = call_intelligence_options
 
 

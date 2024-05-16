@@ -1440,7 +1440,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
     ) -> _models.CallConnectionProperties:
         """Create a Connection to a CallLocator.
 
-        Create a connection to a CallLocator and return connectionId.
+        Create a connection to a CallLocator.
 
         :param connect_request: The create connection request. Required.
         :type connect_request: ~azure.communication.callautomation.models.ConnectRequest
@@ -1458,7 +1458,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
     ) -> _models.CallConnectionProperties:
         """Create a Connection to a CallLocator.
 
-        Create a connection to a CallLocator and return connectionId.
+        Create a connection to a CallLocator.
 
         :param connect_request: The create connection request. Required.
         :type connect_request: IO[bytes]
@@ -1476,7 +1476,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
     ) -> _models.CallConnectionProperties:
         """Create a Connection to a CallLocator.
 
-        Create a connection to a CallLocator and return connectionId.
+        Create a connection to a CallLocator.
 
         :param connect_request: The create connection request. Is either a ConnectRequest type or a
          IO[bytes] type. Required.
