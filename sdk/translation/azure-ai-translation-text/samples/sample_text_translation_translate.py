@@ -46,7 +46,7 @@ def get_text_translation():
         input_text_elements = ["This is a test"]
 
         response = text_translator.translate(
-            body=input_text_elements, to=target_languages, source_language=source_language
+            body=input_text_elements, target_languages=target_languages, source_language=source_language
         )
         translation = response[0] if response else None
 
@@ -68,7 +68,7 @@ def get_text_translation_auto():
         target_languages = ["cs"]
         input_text_elements = ["This is a test"]
 
-        response = text_translator.translate(body=input_text_elements, to=target_languages)
+        response = text_translator.translate(body=input_text_elements, target_languages=target_languages)
         translation = response[0] if response else None
 
         if translation:
@@ -99,7 +99,7 @@ def get_text_translation_with_transliteration():
 
         response = text_translator.translate(
             body=input_text_elements,
-            to=target_languages,
+            target_languages=target_languages,
             source_language_script=source_language_script,
             source_language=from_language,
             target_language_script=target_language_script,
@@ -134,7 +134,7 @@ def get_text_translation_multiple_inputs():
             "Dies ist ein Test.",
         ]
 
-        translations = text_translator.translate(body=input_text_elements, to=target_languages)
+        translations = text_translator.translate(body=input_text_elements, target_languages=target_languages)
 
         for translation in translations:
             print(
@@ -157,7 +157,7 @@ def get_text_translation_multiple_languages():
         target_languages = ["cs", "es", "de"]
         input_text_elements = ["This is a test"]
 
-        response = text_translator.translate(body=input_text_elements, to=target_languages)
+        response = text_translator.translate(body=input_text_elements, target_languages=target_languages)
         translation = response[0] if response else None
 
         if translation:
@@ -183,7 +183,7 @@ def get_text_translation_type():
         target_languages = ["cs"]
         input_text_elements = ["<html><body>This <b>is</b> a test.</body></html>"]
 
-        response = text_translator.translate(body=input_text_elements, to=target_languages, text_type=text_type)
+        response = text_translator.translate(body=input_text_elements, target_languages=target_languages, text_type=text_type)
         translation = response[0] if response else None
 
         if translation:
@@ -213,7 +213,7 @@ def get_text_translation_exclude():
         ]
 
         response = text_translator.translate(
-            body=input_text_elements, to=target_languages, source_language=source_language, text_type=text_type
+            body=input_text_elements, target_languages=target_languages, source_language=source_language, text_type=text_type
         )
         translation = response[0] if response else None
 
@@ -238,7 +238,7 @@ def get_text_translation_entity():
         ]
 
         response = text_translator.translate(
-            body=input_text_elements, to=target_languages, source_language=source_language
+            body=input_text_elements, target_languages=target_languages, source_language=source_language
         )
         translation = response[0] if response else None
 
@@ -263,7 +263,7 @@ def get_text_translation_profanity():
 
         response = text_translator.translate(
             body=input_text_elements,
-            to=target_languages,
+            target_languages=target_languages,
             profanity_action=profanity_action,
             profanity_marker=profanity_maker,
         )
@@ -293,7 +293,7 @@ def get_text_translation_alignment():
         input_text_elements = ["The answer lies in machine translation."]
 
         response = text_translator.translate(
-            body=input_text_elements, to=target_languages, include_alignment=include_alignment
+            body=input_text_elements, target_languages=target_languages, include_alignment=include_alignment
         )
         translation = response[0] if response else None
 
@@ -323,7 +323,7 @@ def get_text_translation_sentence_length():
         input_text_elements = ["The answer lies in machine translation. This is a test."]
 
         response = text_translator.translate(
-            body=input_text_elements, to=target_languages, include_sentence_length=include_sentence_length
+            body=input_text_elements, target_languages=target_languages, include_sentence_length=include_sentence_length
         )
         translation = response[0] if response else None
 
@@ -355,7 +355,7 @@ def get_text_translation_custom():
         target_languages = ["cs"]
         input_text_elements = ["This is a test"]
 
-        response = text_translator.translate(body=input_text_elements, to=target_languages, category=category)
+        response = text_translator.translate(body=input_text_elements, target_languages=target_languages, category=category)
         translation = response[0] if response else None
 
         if translation:

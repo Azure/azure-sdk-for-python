@@ -143,7 +143,7 @@ try:
     target_languages = ["cs", "es", "de"]
     input_text_elements = ["This is a test"]
 
-    response = text_translator.translate(body=input_text_elements, to=target_languages)
+    response = text_translator.translate(body=input_text_elements, target_languages=target_languages)
     translation = response[0] if response else None
 
     if translation:
@@ -219,7 +219,7 @@ try:
     input_text_elements = ["The answer lies in machine translation. This is a test."]
 
     response = text_translator.translate(
-        body=input_text_elements, to=target_languages, include_sentence_length=include_sentence_length
+        body=input_text_elements, target_languages=target_languages, include_sentence_length=include_sentence_length
     )
     translation = response[0] if response else None
 
@@ -262,7 +262,7 @@ try:
     input_text_elements = ["fly"]
 
     response = text_translator.lookup_dictionary_entries(
-        body=input_text_elements, source_language=source_language, to=target_language
+        body=input_text_elements, source_language=source_language, target_language=target_language
     )
     dictionary_entry = response[0] if response else None
 
@@ -298,7 +298,7 @@ try:
     input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
 
     response = text_translator.lookup_dictionary_examples(
-        content=input_text_elements, source_language=source_language, to=target_language
+        content=input_text_elements, source_language=source_language, target_language=target_language
     )
     dictionary_entry = response[0] if response else None
 

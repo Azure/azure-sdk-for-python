@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint: disable=C4717, C4722
+# pylint: disable=C4717, C4722, C4748
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -72,7 +72,7 @@ def set_authentication_policy(credential, kwargs):
             else:
                 if kwargs.get("resource_id") or kwargs.get("region"):
                     raise ValueError(
-                        "Both 'resource_id' and 'region' must be provided with a TokenCredential for Translator authentication."
+                        "Both 'resource_id' and 'region' must be provided with a TokenCredential for authentication."
                     )
                 kwargs["authentication_policy"] = AsyncBearerTokenCredentialPolicy(
                     credential, *kwargs.pop("credential_scopes", [DEFAULT_TOKEN_SCOPE]), kwargs
@@ -125,7 +125,7 @@ class TextTranslationClient(ServiceClientGenerated):
     def __init__(
         self,
         *,
-        credential: Optional[Union[AzureKeyCredential]] = None,
+        credential: Optional[AzureKeyCredential] = None,
         region: Optional[str] = None,
         endpoint: Optional[str] = None,
         api_version="3.0",
@@ -136,7 +136,7 @@ class TextTranslationClient(ServiceClientGenerated):
     def __init__(
         self,
         *,
-        credential: Optional[Union[AsyncTokenCredential]] = None,
+        credential: Optional[AsyncTokenCredential] = None,
         region: Optional[str] = None,
         resource_id: Optional[str] = None,
         endpoint: Optional[str] = None,
