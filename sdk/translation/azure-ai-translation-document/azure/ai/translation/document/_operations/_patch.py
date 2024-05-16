@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# pylint: disable=too-many-lines
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -23,7 +24,7 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
     map_error,
 )
-from ..models import _models as _models
+from ..models import _models
 from .. import _model_base
 from .._model_base import _deserialize
 from ._operations import (
@@ -42,7 +43,7 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # type: ignore[misc] # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]  # type: ignore[misc]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]  # type: ignore
 
 
 class DocumentTranslationClientOperationsMixin(GeneratedDocumentTranslationClientOperationsMixin):

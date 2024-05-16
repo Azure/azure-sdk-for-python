@@ -25,7 +25,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.utils import case_insensitive_dict
 
 from ..._vendor import prepare_multipart_form_data
-from ...models import _models as _models
+from ...models import _models
 from ... import _model_base
 
 from ..._model_base import _deserialize

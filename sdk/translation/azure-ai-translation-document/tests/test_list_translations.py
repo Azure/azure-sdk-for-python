@@ -193,7 +193,7 @@ class TestListTranslations(DocumentTranslationTest):
         )
 
         # list translations
-        submitted_translations = list(client.list_translation_statuses(orderby=["created_on asc"]))
+        submitted_translations = list(client.list_translation_statuses(order_by=["created_on asc"]))
         assert submitted_translations is not None
 
         # check statuses
@@ -218,7 +218,7 @@ class TestListTranslations(DocumentTranslationTest):
         )
 
         # list translations
-        submitted_translations = list(client.list_translation_statuses(orderby=["created_on desc"]))
+        submitted_translations = list(client.list_translation_statuses(order_by=["created_on desc"]))
         assert submitted_translations is not None
 
         # check statuses
@@ -253,7 +253,7 @@ class TestListTranslations(DocumentTranslationTest):
             created_after=start,
             created_before=end,
             # ordering
-            orderby=["created_on asc"],
+            order_by=["created_on asc"],
             # paging
             skip=skip,
         ).by_page()
