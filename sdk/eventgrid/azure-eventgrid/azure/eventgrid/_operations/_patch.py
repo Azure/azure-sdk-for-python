@@ -131,7 +131,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
             List[Dict[str, Any]],
         ],
         *,
-        binary_mode: bool = False,
         content_type: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
@@ -188,7 +187,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
     @validate_args(
         kwargs_mapping={
             "Basic": ["channel_name"],
-            "Standard": ["binary_mode"],
         }
     )
     @distributed_trace
@@ -200,9 +198,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :param events: The event(s) to send.
         :type events: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
          or CNCFCloudEvent or List[CNCFCloudEvent] or EventGridEvent or List[EventGridEvent]
-        :keyword binary_mode: Whether to send the event in binary mode. If not specified, the default
-         value is False.
-        :paramtype binary_mode: bool
         :keyword channel_name: The name of the channel to send the event to.
         :paramtype channel_name: str or None
         :keyword content_type: The content type of the event. If not specified, the default value is
