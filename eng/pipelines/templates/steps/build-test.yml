@@ -78,7 +78,18 @@ steps:
     timeoutInMinutes: 40
   
   - pwsh: |
+      Write-Host "WHL LOGS"
       Get-ChildItem -Recurse (Join-Path sdk devcenter azure-developer-devcenter .tox whl log) -Include "*.Log" | `
+        ForEach-Object { return $_.FullName -replace '\[', '``[' -replace '\]', '``]' } | `
+        ForEach-Object { gc $_ }
+
+      Write-Host "MINDEPENDENCY LOGS"
+      Get-ChildItem -Recurse (Join-Path sdk devcenter azure-developer-devcenter .tox mindependency log) -Include "*.Log" | `
+        ForEach-Object { return $_.FullName -replace '\[', '``[' -replace '\]', '``]' } | `
+        ForEach-Object { gc $_ }
+
+      Write-Host "SDIST LOGS"
+      Get-ChildItem -Recurse (Join-Path sdk devcenter azure-developer-devcenter .tox sdist log) -Include "*.Log" | `
         ForEach-Object { return $_.FullName -replace '\[', '``[' -replace '\]', '``]' } | `
         ForEach-Object { gc $_ }
     displayName: Dump Tox Log Files
