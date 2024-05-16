@@ -16,7 +16,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from ...models._patch import ReceiveResult, ReceiveDetails
-from ..._operations._patch import _to_http_request, use_standard_only
+from ..._operations._patch import use_standard_only
 from ._operations import EventGridClientOperationsMixin as OperationsMixin
 from ... import models as _models
 from ...models._models import AcknowledgeOptions, ReleaseOptions, RejectOptions, RenewLockOptions
@@ -24,13 +24,11 @@ from ..._validation import api_version_validation
 
 from ..._operations._patch import (
     _serialize_events,
-    EVENT_TYPES_BASIC,
-    EVENT_TYPES_STD,
     validate_args,
 )
 
 from ..._legacy import EventGridEvent
-from ..._legacy._helpers import _is_eventgrid_event, _from_cncf_events
+from ..._legacy._helpers import _is_eventgrid_event
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
