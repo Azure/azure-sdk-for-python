@@ -1678,7 +1678,14 @@
         "ctxt",
         "unflattened",
         "deseralize",
-        "wday"
+        "wday",
+        "mros"
+      ]
+    },
+    {
+      "filename": "sdk/devcenter/azure-developer-devcenter/azure/developer/devcenter/models/*.py",
+      "words": [
+        "vcpus"
       ]
     },
     {
