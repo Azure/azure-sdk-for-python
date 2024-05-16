@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.6.1 (2024-05-15)
+### 4.7.0 (2024-05-15)
 
 #### Features Added
 * Adds vector embedding policy and vector indexing policy. See [PR 34882](https://github.com/Azure/azure-sdk-for-python/pull/34882).
@@ -10,6 +10,8 @@
 #### Bugs Fixed
 * Fixed a bug where change feed query in Async client was not returning all pages due to case-sensitive response headers. See [PR 35090](https://github.com/Azure/azure-sdk-for-python/pull/35090).
 * Fixed a bug when a retryable exception occurs in the first page of a query execution causing query to return 0 results. See [PR 35090](https://github.com/Azure/azure-sdk-for-python/pull/35090).
+
+### 4.6.1 (2024-05-15)
 
 ### 4.6.0 (2024-03-14)
 
