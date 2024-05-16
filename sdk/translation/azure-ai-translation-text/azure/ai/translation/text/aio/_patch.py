@@ -37,10 +37,10 @@ class AsyncTranslatorAADAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     """
 
-    def __init__(self, credential: AsyncTokenCredential, resource_id: str, region: str, scopes: str, **kwargs: Any) -> None:
-        super(AsyncTranslatorAADAuthenticationPolicy, self).__init__(
-            credential, scopes, **kwargs
-        )
+    def __init__(
+        self, credential: AsyncTokenCredential, resource_id: str, region: str, scopes: str, **kwargs: Any
+    ) -> None:
+        super(AsyncTranslatorAADAuthenticationPolicy, self).__init__(credential, scopes, **kwargs)
         self.resource_id = resource_id
         self.region = region
         self.translator_credential = credential
@@ -64,7 +64,10 @@ def set_authentication_policy(credential, kwargs):
         if not kwargs.get("authentication_policy"):
             if kwargs.get("region") and kwargs.get("resource_id"):
                 kwargs["authentication_policy"] = AsyncTranslatorAADAuthenticationPolicy(
-                    credential, kwargs["resource_id"], kwargs["region"], kwargs.pop("credential_scopes", [DEFAULT_AAD_SCOPE])
+                    credential,
+                    kwargs["resource_id"],
+                    kwargs["region"],
+                    kwargs.pop("credential_scopes", [DEFAULT_AAD_SCOPE]),
                 )
             else:
                 if kwargs.get("resource_id") or kwargs.get("region"):
