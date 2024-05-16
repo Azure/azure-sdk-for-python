@@ -11,7 +11,6 @@ from typing import List
 import requests
 from azure.core.exceptions import HttpResponseError
 from azure.ai.translation.document.models import DocumentTranslateContent
-from azure.ai.translation.document._vendor import FileType
 from asynctestcase import AsyncDocumentTranslationTest
 from preparer import (
     DocumentTranslationPreparer,

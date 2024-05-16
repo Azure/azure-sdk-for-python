@@ -23,7 +23,6 @@ class TestSupportedFormats(DocumentTranslationTest):
         client = kwargs.pop("client")
         # get supported formats
         supported_doc_formats = client.get_supported_document_formats()
-        print(supported_doc_formats)
         assert supported_doc_formats is not None
         # validate
         for doc_format in supported_doc_formats:
