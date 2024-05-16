@@ -353,7 +353,7 @@
 
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Service Bus
-# ServiceOwners: @kashifkhan @swathipil @l0lawrence
+# ServiceOwners: @kashifkhan
 
 # PRLabel: %Service Bus
 /sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence
