@@ -46,6 +46,7 @@ from azure.core.utils import case_insensitive_dict
 
 from ...models import _models as _models
 from ...models import _enums as _enums
+from ... import _model_base
 from ..._model_base import SdkJSONEncoder, _deserialize
 from ..._operations._operations import (
     build_document_translation_cancel_translation_request,
