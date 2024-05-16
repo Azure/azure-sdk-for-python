@@ -2,6 +2,9 @@
 
 ### 4.7.0 (2024-05-15)
 
+#### Features Added
+* Release of vector similarity search capabilities for the SDK.
+
 ### 4.6.1 (2024-05-15)
 
 #### Features Added
