@@ -395,6 +395,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         topic_name: str,
         subscription_name: str,
         lock_tokens: List[str],
+        *,
         release_delay: Optional[Union[int, _models.ReleaseDelay]] = None,
         **kwargs: Any,
     ) -> _models.ReleaseResult:
