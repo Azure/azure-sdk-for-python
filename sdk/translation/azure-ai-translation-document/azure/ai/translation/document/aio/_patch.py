@@ -102,14 +102,12 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
 
     @property
     def _current_body(self) -> _TranslationStatus:
-        # return _TranslationStatus.deserialize(self._pipeline_response)
         try:
             return _TranslationStatus(self._pipeline_response.http_response.json())
         except json.decoder.JSONDecodeError:
             return _TranslationStatus()  # type: ignore[call-overload]
 
     def _get_id_from_headers(self) -> str:
-        # return self._initial_response.http_response.headers["Operation-Location"].split("/batches/")[1]
         return (
             self._initial_response.http_response.headers["Operation-Location"]
             .split("/batches/")[1]
