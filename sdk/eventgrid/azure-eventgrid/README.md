@@ -135,10 +135,6 @@ A **[namespace topic](https://learn.microsoft.com/azure/event-grid/concepts-even
 
 An **[event subscription](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#event-subscriptions)** is a configuration resource associated with a single topic.
 
-#### Binary Content Mode
-
-A namespace topic can receive CloudEvents published in **[binary mode](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#binary-content-mode)**.
-
 ### *Event Grid Basic*
 
 #### Topic
@@ -427,7 +423,6 @@ These code samples show common champion scenario operations with the Azure Event
 
 * Authenticate the client: [sample_authentication.py][python-eg-auth] 
 * Sample of all operations: [sample_all_operations.py][python-eg-client-all-ops-sample]
-* Publish cloud event in binary mode: [sample_binary_mode_operation.py][python-eg-client-binary-mode-sample]
 
 #### Basic EventGrid Scenarios
 
@@ -507,9 +502,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-eg-sample-consume-custom-payload]: https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_consume_custom_payload.py
 
 
-[python-eg-client-all-ops-sample]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_all_operations.py
-
-[python-eg-client-binary-mode-sample]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_binary_mode.py
+[python-eg-client-all-ops-sample]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_all_operations.py
 
 
 [cla]: https://cla.microsoft.com

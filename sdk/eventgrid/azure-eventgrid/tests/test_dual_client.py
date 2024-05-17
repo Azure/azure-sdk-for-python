@@ -44,37 +44,6 @@ class TestEGDualClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @ArgPasser()
     @recorded_by_proxy
-    def test_create_client_publish(
-        self, level, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name
-    ):
-        client = self.create_eg_client(eventgrid_endpoint, eventgrid_key, level=level)
-
-        from xml.etree import ElementTree as ET
-
-        xml_string = """<?xml version="1.0" encoding="UTF-8"?><Data><test>test</test></Data>"""
-        tree = xml_string.encode("utf-8")
-        event = CloudEvent(
-            type="Contoso.Items.ItemReceived",
-            source="source",
-            subject="MySubject",
-            data=tree,
-            datacontenttype="text/xml",
-            extensions={"extension1": "value1", "extension2": "value2"},
-        )
-
-        if level == "Basic":
-            with pytest.raises(ValueError):
-                client.send(topic_name=eventgrid_topic_name, events=event, binary_mode=True)
-        else:
-            client.send(topic_name=eventgrid_topic_name, events=event, binary_mode=True)
-
-        _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level)
-
-    @pytest.mark.live_test_only()
-    @pytest.mark.parametrize("level", ["Standard", "Basic"])
-    @EventGridPreparer()
-    @ArgPasser()
-    @recorded_by_proxy
     def test_create_client_receive(
         self, level, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name
     ):
