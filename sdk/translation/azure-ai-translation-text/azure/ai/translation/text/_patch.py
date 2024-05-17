@@ -90,7 +90,7 @@ def set_authentication_policy(credential, kwargs):
                     credential,
                     kwargs["resource_id"],
                     kwargs["region"],
-                    kwargs.pop("credential_scopes", [DEFAULT_ENTRA_ID_SCOPE]),
+                    kwargs.pop("scopes", DEFAULT_ENTRA_ID_SCOPE),
                 )
             else:
                 if kwargs.get("resource_id") or kwargs.get("region"):
@@ -98,7 +98,7 @@ def set_authentication_policy(credential, kwargs):
                         "Both 'resource_id' and 'region' must be provided with a TokenCredential for authentication."
                     )
                 kwargs["authentication_policy"] = BearerTokenCredentialPolicy(
-                    credential, *kwargs.pop("credential_scopes", [DEFAULT_TOKEN_SCOPE]), kwargs
+                    credential, *kwargs.pop("scopes", [DEFAULT_TOKEN_SCOPE]), kwargs
                 )
 
 
@@ -171,7 +171,7 @@ class TextTranslationClient(ServiceClientGenerated):
     def __init__(self, **kwargs):
         api_version = kwargs.get("api_version", "3.0")
         set_authentication_policy(kwargs.get("credential"), kwargs)
-        translation_endpoint = get_translation_endpoint(kwargs.pop("endpoint"), api_version)
+        translation_endpoint = get_translation_endpoint(kwargs.pop("endpoint", "https://api.cognitive.microsofttranslator.com"), api_version)
         super().__init__(endpoint=translation_endpoint, api_version=api_version, **kwargs)
 
 

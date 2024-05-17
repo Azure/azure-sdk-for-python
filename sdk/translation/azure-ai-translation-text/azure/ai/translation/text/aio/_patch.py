@@ -72,7 +72,7 @@ def set_authentication_policy(credential, kwargs):
                     credential,
                     kwargs["resource_id"],
                     kwargs["region"],
-                    kwargs.pop("credential_scopes", [DEFAULT_ENTRA_ID_SCOPE]),
+                    kwargs.pop("scopes", DEFAULT_ENTRA_ID_SCOPE),
                 )
             else:
                 if kwargs.get("resource_id") or kwargs.get("region"):
@@ -80,7 +80,7 @@ def set_authentication_policy(credential, kwargs):
                         "Both 'resource_id' and 'region' must be provided with a TokenCredential for authentication."
                     )
                 kwargs["authentication_policy"] = AsyncBearerTokenCredentialPolicy(
-                    credential, *kwargs.pop("credential_scopes", [DEFAULT_TOKEN_SCOPE]), kwargs
+                    credential, *kwargs.pop("scopes", [DEFAULT_TOKEN_SCOPE]), kwargs
                 )
 
 
