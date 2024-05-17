@@ -448,7 +448,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @overload
     def play_media(
         self,
-        play_sources: Optional[ List[Union['FileSource', 'TextSource', 'SsmlSource']]],
+        play_sources: List[Union['FileSource', 'TextSource', 'SsmlSource']],
         play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
         *,
         loop: bool = False,
@@ -661,7 +661,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         interrupt_prompt: bool = False,
         dtmf_inter_tone_timeout: Optional[int] = None,
         dtmf_max_tones_to_collect: Optional[int] = None,
-        dtmf_stop_tones: Optional[List[Union[str, DtmfTone]]] = None,
+        dtmf_stop_tones: Optional[List[Union[str, 'DtmfTone']]] = None,
         speech_language: Optional[str] = None,
         choices: Optional[List['RecognitionChoice']] = None,
         end_silence_timeout: Optional[int] = None,
