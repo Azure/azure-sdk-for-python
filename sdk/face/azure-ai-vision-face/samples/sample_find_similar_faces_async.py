@@ -56,7 +56,7 @@ class FindSimilarFaces:
             # Detect faces from 'IMAGE_NINE_FACES'
             nine_faces_file_path = helpers.get_image_path(TestImages.IMAGE_NINE_FACES)
             detect_result1 = await face_client.detect(
-                helpers.read_file_content(nine_faces_file_path),
+                image_content=helpers.read_file_content(nine_faces_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
                 return_face_id=True,
@@ -72,7 +72,7 @@ class FindSimilarFaces:
                 TestImages.IMAGE_FINDSIMILAR
             )
             detect_result2 = await face_client.detect(
-                helpers.read_file_content(find_similar_file_path),
+                image_content=helpers.read_file_content(find_similar_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
                 return_face_id=True,

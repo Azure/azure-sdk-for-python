@@ -26,7 +26,7 @@ class TestAuthentication(AzureRecordedTestCase):
     def test_face_client_api_key_authentication(self, client, **kwargs):
         sample_file_path = helpers.get_image_path(TestImages.IMAGE_DETECTION_1)
         result = client.detect(
-            helpers.read_file_content(sample_file_path),
+            image_content=helpers.read_file_content(sample_file_path),
             detection_model=FaceDetectionModel.DETECTION_03,
             recognition_model=FaceRecognitionModel.RECOGNITION_04,
             return_face_id=False,

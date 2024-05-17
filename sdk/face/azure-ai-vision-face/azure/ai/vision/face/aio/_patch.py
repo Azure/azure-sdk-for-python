@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+from io import IOBase
 from typing import Any, IO, List, Optional, Union, overload
 
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -33,7 +34,23 @@ class FaceClient(FaceClientGenerated):
     """
 
     @overload
-    async def detect_from_url(
+    async def detect(
+        self,
+        *,
+        image_content: bytes,
+        content_type: str = "application/octet-stream",
+        detection_model: Union[str, _models.FaceDetectionModel],
+        recognition_model: Union[str, _models.FaceRecognitionModel],
+        return_face_id: bool,
+        return_face_attributes: Optional[List[Union[str, _models.FaceAttributeType]]] = None,
+        return_face_landmarks: Optional[bool] = None,
+        return_recognition_model: Optional[bool] = None,
+        face_id_time_to_live: Optional[int] = None,
+        **kwargs: Any,
+    ) -> List[_models.FaceDetectionResult]: ...
+
+    @overload
+    async def detect(
         self,
         *,
         url: str,
@@ -49,7 +66,7 @@ class FaceClient(FaceClientGenerated):
     ) -> List[_models.FaceDetectionResult]: ...
 
     @overload
-    async def detect_from_url(
+    async def detect(
         self,
         body: JSON,
         *,
@@ -65,11 +82,11 @@ class FaceClient(FaceClientGenerated):
     ) -> List[_models.FaceDetectionResult]: ...
 
     @overload
-    async def detect_from_url(
+    async def detect(
         self,
         body: IO[bytes],
         *,
-        content_type: str = "application/json",
+        content_type: str,
         detection_model: Union[str, _models.FaceDetectionModel],
         recognition_model: Union[str, _models.FaceRecognitionModel],
         return_face_id: bool,
@@ -81,10 +98,12 @@ class FaceClient(FaceClientGenerated):
     ) -> List[_models.FaceDetectionResult]: ...
 
     @distributed_trace_async
-    async def detect_from_url(
+    async def detect(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
+        content_type: str = _Unset,
+        image_content: bytes = _Unset,
         url: str = _Unset,
         detection_model: Union[str, _models.FaceDetectionModel],
         recognition_model: Union[str, _models.FaceRecognitionModel],
@@ -147,7 +166,14 @@ class FaceClient(FaceClientGenerated):
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword url: URL of input image. Required when body is not set.
+        :keyword content_type: The type of body. It should be "application/json" or "application/octet-stream".
+         Required if body is set.
+        :paramtype content_type: str
+        :keyword image_content: The input image binary. Required when body or url is not set.
+         image_content and url are not allowed to be set at the same time.
+        :paramtype url: bytes
+        :keyword url: URL of input image. Required when body or image_content is not set.
+         image_content and url are not allowed to be set at the same time.
         :paramtype url: str
         :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
          'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
@@ -468,399 +494,42 @@ class FaceClient(FaceClientGenerated):
                     }
                 ]
         """
-        return await super()._detect_from_url(
-            body,
-            url=url,
-            detection_model=detection_model,
-            recognition_model=recognition_model,
-            return_face_id=return_face_id,
-            return_face_attributes=return_face_attributes,
-            return_face_landmarks=return_face_landmarks,
-            return_recognition_model=return_recognition_model,
-            face_id_time_to_live=face_id_time_to_live,
-            **kwargs,
-        )
+        if body is _Unset and image_content is _Unset and url is _Unset:
+            raise TypeError("missing required argument: body, url or image_content")
+        if image_content is not _Unset and url is not _Unset:
+            raise TypeError("setting url and image_content at the same time is not allowed")
+        if body is not _Unset and content_type is _Unset:
+            raise TypeError("content_type should be set together with body")
 
-    @distributed_trace_async
-    async def detect(
-        self,
-        image_content: bytes,
-        *,
-        detection_model: Union[str, _models.FaceDetectionModel],
-        recognition_model: Union[str, _models.FaceRecognitionModel],
-        return_face_id: bool,
-        return_face_attributes: Optional[List[Union[str, _models.FaceAttributeType]]] = None,
-        return_face_landmarks: Optional[bool] = None,
-        return_recognition_model: Optional[bool] = None,
-        face_id_time_to_live: Optional[int] = None,
-        **kwargs: Any,
-    ) -> List[_models.FaceDetectionResult]:
-        # pylint: disable=line-too-long
-        """Detect human faces in an image, return face rectangles, and optionally with faceIds, landmarks,
-        and attributes.
+        if url is not _Unset or content_type == "application/json":
+            return await super()._detect_from_url(
+                body,
+                url=url,
+                detection_model=detection_model,
+                recognition_model=recognition_model,
+                return_face_id=return_face_id,
+                return_face_attributes=return_face_attributes,
+                return_face_landmarks=return_face_landmarks,
+                return_recognition_model=return_recognition_model,
+                face_id_time_to_live=face_id_time_to_live,
+                **kwargs,
+            )
 
-        ..
+        if isinstance(body, IOBase):
+            return await super()._detect(
+                body.read(),
+                detection_model=detection_model,
+                recognition_model=recognition_model,
+                return_face_id=return_face_id,
+                return_face_attributes=return_face_attributes,
+                return_face_landmarks=return_face_landmarks,
+                return_recognition_model=return_recognition_model,
+                face_id_time_to_live=face_id_time_to_live,
+                **kwargs,
+            )
 
-           [!IMPORTANT]
-           To mitigate potential misuse that can subject people to stereotyping, discrimination, or
-        unfair denial of services, we are retiring Face API attributes that predict emotion, gender,
-        age, smile, facial hair, hair, and makeup. Read more about this decision
-        https://azure.microsoft.com/blog/responsible-ai-investments-and-safeguards-for-facial-recognition/.
-
-
-        *
-
-
-        * No image will be stored. Only the extracted face feature(s) will be stored on server. The
-        faceId is an identifier of the face feature and will be used in Face - Identify, Face - Verify,
-        and Face - Find Similar. The stored face features will expire and be deleted at the time
-        specified by faceIdTimeToLive after the original detection call.
-        * Optional parameters include faceId, landmarks, and attributes. Attributes include headPose,
-        glasses, occlusion, accessories, blur, exposure, noise, mask, and qualityForRecognition. Some
-        of the results returned for specific attributes may not be highly accurate.
-        * JPEG, PNG, GIF (the first frame), and BMP format are supported. The allowed image file size
-        is from 1KB to 6MB.
-        * The minimum detectable face size is 36x36 pixels in an image no larger than 1920x1080 pixels.
-        Images with dimensions higher than 1920x1080 pixels will need a proportionally larger minimum
-        face size.
-        * Up to 100 faces can be returned for an image. Faces are ranked by face rectangle size from
-        large to small.
-        * For optimal results when querying Face - Identify, Face - Verify, and Face - Find Similar
-        ('returnFaceId' is true), please use faces that are: frontal, clear, and with a minimum size of
-        200x200 pixels (100 pixels between eyes).
-        * Different 'detectionModel' values can be provided. To use and compare different detection
-        models, please refer to
-        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-detection-model
-
-          * 'detection_02': Face attributes and landmarks are disabled if you choose this detection
-        model.
-          * 'detection_03': Face attributes (mask and headPose only) and landmarks are supported if you
-        choose this detection model.
-
-        * Different 'recognitionModel' values are provided. If follow-up operations like Verify,
-        Identify, Find Similar are needed, please specify the recognition model with 'recognitionModel'
-        parameter. The default value for 'recognitionModel' is 'recognition_01', if latest model
-        needed, please explicitly specify the model you need in this parameter. Once specified, the
-        detected faceIds will be associated with the specified recognition model. More details, please
-        refer to
-        https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/specify-recognition-model.
-
-        :param image_content: The input image binary. Required.
-        :type image_content: bytes
-        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
-         'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
-         value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
-         Required.
-        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
-        :keyword recognition_model: The 'recognitionModel' associated with the detected faceIds.
-         Supported 'recognitionModel' values include 'recognition_01', 'recognition_02',
-         'recognition_03' or 'recognition_04'. The default value is 'recognition_01'. 'recognition_04'
-         is recommended since its accuracy is improved on faces wearing masks compared with
-         'recognition_03', and its overall accuracy is improved compared with 'recognition_01' and
-         'recognition_02'. Known values are: "recognition_01", "recognition_02", "recognition_03", and
-         "recognition_04". Required.
-        :paramtype recognition_model: str or ~azure.ai.vision.face.models.FaceRecognitionModel
-        :keyword return_face_id: Return faceIds of the detected faces or not. Required.
-        :paramtype return_face_id: bool
-        :keyword return_face_attributes: Analyze and return the one or more specified face attributes
-         in the comma-separated string like 'returnFaceAttributes=headPose,glasses'. Face attribute
-         analysis has additional computational and time cost. Default value is None.
-        :paramtype return_face_attributes: list[str or ~azure.ai.vision.face.models.FaceAttributeType]
-        :keyword return_face_landmarks: Return face landmarks of the detected faces or not. The default
-         value is false. Default value is None.
-        :paramtype return_face_landmarks: bool
-        :keyword return_recognition_model: Return 'recognitionModel' or not. The default value is
-         false. Default value is None.
-        :paramtype return_recognition_model: bool
-        :keyword face_id_time_to_live: The number of seconds for the face ID being cached. Supported
-         range from 60 seconds up to 86400 seconds. The default value is 86400 (24 hours). Default value
-         is None.
-        :paramtype face_id_time_to_live: int
-        :return: list of FaceDetectionResult
-        :rtype: list[~azure.ai.vision.face.models.FaceDetectionResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == [
-                    {
-                        "faceRectangle": {
-                            "height": 0,  # The height of the rectangle, in pixels.
-                              Required.
-                            "left": 0,  # The distance from the left edge if the image to
-                              the left edge of the rectangle, in pixels. Required.
-                            "top": 0,  # The distance from the top edge if the image to
-                              the top edge of the rectangle, in pixels. Required.
-                            "width": 0  # The width of the rectangle, in pixels.
-                              Required.
-                        },
-                        "faceAttributes": {
-                            "accessories": [
-                                {
-                                    "confidence": 0.0,  # Confidence level of the
-                                      accessory type. Range between [0,1]. Required.
-                                    "type": "str"  # Type of the accessory.
-                                      Required. Known values are: "headwear", "glasses", and "mask".
-                                }
-                            ],
-                            "age": 0.0,  # Optional. Age in years.
-                            "blur": {
-                                "blurLevel": "str",  # An enum value indicating level
-                                  of blurriness. Required. Known values are: "low", "medium", and
-                                  "high".
-                                "value": 0.0  # A number indicating level of
-                                  blurriness ranging from 0 to 1. Required.
-                            },
-                            "exposure": {
-                                "exposureLevel": "str",  # An enum value indicating
-                                  level of exposure. Required. Known values are: "underExposure",
-                                  "goodExposure", and "overExposure".
-                                "value": 0.0  # A number indicating level of exposure
-                                  level ranging from 0 to 1. [0, 0.25) is under exposure. [0.25, 0.75)
-                                  is good exposure. [0.75, 1] is over exposure. Required.
-                            },
-                            "facialHair": {
-                                "beard": 0.0,  # A number ranging from 0 to 1
-                                  indicating a level of confidence associated with a property.
-                                  Required.
-                                "moustache": 0.0,  # A number ranging from 0 to 1
-                                  indicating a level of confidence associated with a property.
-                                  Required.
-                                "sideburns": 0.0  # A number ranging from 0 to 1
-                                  indicating a level of confidence associated with a property.
-                                  Required.
-                            },
-                            "glasses": "str",  # Optional. Glasses type if any of the
-                              face. Known values are: "noGlasses", "readingGlasses", "sunglasses", and
-                              "swimmingGoggles".
-                            "hair": {
-                                "bald": 0.0,  # A number describing confidence level
-                                  of whether the person is bald. Required.
-                                "hairColor": [
-                                    {
-                                        "color": "str",  # Name of the hair
-                                          color. Required. Known values are: "unknown", "white",
-                                          "gray", "blond", "brown", "red", "black", and "other".
-                                        "confidence": 0.0  # Confidence level
-                                          of the color. Range between [0,1]. Required.
-                                    }
-                                ],
-                                "invisible": bool  # A boolean value describing
-                                  whether the hair is visible in the image. Required.
-                            },
-                            "headPose": {
-                                "pitch": 0.0,  # Value of angles. Required.
-                                "roll": 0.0,  # Value of angles. Required.
-                                "yaw": 0.0  # Value of angles. Required.
-                            },
-                            "mask": {
-                                "noseAndMouthCovered": bool,  # A boolean value
-                                  indicating whether nose and mouth are covered. Required.
-                                "type": "str"  # Type of the mask. Required. Known
-                                  values are: "faceMask", "noMask", "otherMaskOrOcclusion", and
-                                  "uncertain".
-                            },
-                            "noise": {
-                                "noiseLevel": "str",  # An enum value indicating
-                                  level of noise. Required. Known values are: "low", "medium", and
-                                  "high".
-                                "value": 0.0  # A number indicating level of noise
-                                  level ranging from 0 to 1. [0, 0.25) is under exposure. [0.25, 0.75)
-                                  is good exposure. [0.75, 1] is over exposure. [0, 0.3) is low noise
-                                  level. [0.3, 0.7) is medium noise level. [0.7, 1] is high noise
-                                  level. Required.
-                            },
-                            "occlusion": {
-                                "eyeOccluded": bool,  # A boolean value indicating
-                                  whether eyes are occluded. Required.
-                                "foreheadOccluded": bool,  # A boolean value
-                                  indicating whether forehead is occluded. Required.
-                                "mouthOccluded": bool  # A boolean value indicating
-                                  whether the mouth is occluded. Required.
-                            },
-                            "qualityForRecognition": "str",  # Optional. Properties
-                              describing the overall image quality regarding whether the image being
-                              used in the detection is of sufficient quality to attempt face
-                              recognition on. Known values are: "low", "medium", and "high".
-                            "smile": 0.0  # Optional. Smile intensity, a number between
-                              [0,1].
-                        },
-                        "faceId": "str",  # Optional. Unique faceId of the detected face,
-                          created by detection API and it will expire 24 hours after the detection
-                          call. To return this, it requires 'returnFaceId' parameter to be true.
-                        "faceLandmarks": {
-                            "eyeLeftBottom": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyeLeftInner": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyeLeftOuter": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyeLeftTop": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyeRightBottom": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyeRightInner": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyeRightOuter": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyeRightTop": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyebrowLeftInner": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyebrowLeftOuter": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyebrowRightInner": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "eyebrowRightOuter": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "mouthLeft": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "mouthRight": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "noseLeftAlarOutTip": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "noseLeftAlarTop": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "noseRightAlarOutTip": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "noseRightAlarTop": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "noseRootLeft": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "noseRootRight": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "noseTip": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "pupilLeft": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "pupilRight": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "underLipBottom": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "underLipTop": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "upperLipBottom": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            },
-                            "upperLipTop": {
-                                "x": 0.0,  # The horizontal component, in pixels.
-                                  Required.
-                                "y": 0.0  # The vertical component, in pixels.
-                                  Required.
-                            }
-                        },
-                        "recognitionModel": "str"  # Optional. The 'recognitionModel'
-                          associated with this faceId. This is only returned when
-                          'returnRecognitionModel' is explicitly set as true. Known values are:
-                          "recognition_01", "recognition_02", "recognition_03", and "recognition_04".
-                    }
-                ]
-        """
+        if isinstance(body, bytes):
+            image_content = body
         return await super()._detect(
             image_content,
             detection_model=detection_model,

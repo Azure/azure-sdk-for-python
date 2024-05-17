@@ -171,7 +171,7 @@ with FaceClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as face_c
         file_content = fd.read()
 
     result = face_client.detect(
-        file_content,
+        image_content=file_content,
         detection_model=FaceDetectionModel.DETECTION_03,  # The latest detection model.
         recognition_model=FaceRecognitionModel.RECOGNITION_04,  # The latest recognition model.
         return_face_id=True,

@@ -55,7 +55,7 @@ class StatelessFaceVerification:
         ) as face_client:
             dad_picture1 = helpers.get_image_path(TestImages.IMAGE_FAMILY_1_DAD_1)
             detect_result1 = await face_client.detect(
-                helpers.read_file_content(dad_picture1),
+                image_content=helpers.read_file_content(dad_picture1),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
                 return_face_id=True,
@@ -68,7 +68,7 @@ class StatelessFaceVerification:
 
             dad_picture2 = helpers.get_image_path(TestImages.IMAGE_FAMILY_1_DAD_2)
             detect_result2 = await face_client.detect(
-                helpers.read_file_content(dad_picture2),
+                image_content=helpers.read_file_content(dad_picture2),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
                 return_face_id=True,
@@ -91,7 +91,7 @@ class StatelessFaceVerification:
 
             man_picture = helpers.get_image_path(TestImages.IMAGE_FAMILY_3_Man_1)
             detect_result3 = await face_client.detect(
-                helpers.read_file_content(man_picture),
+                image_content=helpers.read_file_content(man_picture),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
                 return_face_id=True,

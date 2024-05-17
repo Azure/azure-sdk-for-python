@@ -44,7 +44,7 @@ class DetectFaces:
         )
         self.logger = get_logger("sample_face_detection")
 
-    def detect(self):
+    def detect_from_image_content(self):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.vision.face import FaceClient
         from azure.ai.vision.face.models import (
@@ -59,7 +59,7 @@ class DetectFaces:
         ) as face_client:
             sample_file_path = helpers.get_image_path(TestImages.IMAGE_DETECTION_5)
             result = face_client.detect(
-                helpers.read_file_content(sample_file_path),
+                image_content=helpers.read_file_content(sample_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
                 return_face_id=True,
@@ -92,7 +92,7 @@ class DetectFaces:
             endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
         ) as face_client:
             sample_url = TestImages.DEFAULT_IMAGE_URL
-            result = face_client.detect_from_url(
+            result = face_client.detect(
                 url=sample_url,
                 detection_model=FaceDetectionModel.DETECTION_01,
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
@@ -113,5 +113,5 @@ class DetectFaces:
 
 if __name__ == "__main__":
     sample = DetectFaces()
-    sample.detect()
+    sample.detect_from_image_content()
     sample.detect_from_url()
