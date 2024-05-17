@@ -18,6 +18,7 @@ USAGE:
 """
 import asyncio
 
+
 async def sample_embeddings_async():
     import os
     from azure.ai.inference.aio import EmbeddingsClient
@@ -36,13 +37,7 @@ async def sample_embeddings_async():
     client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Do a single embeddings operation. Start the operation and get a Future object.
-    response = await client.create(
-        input=[
-            "first phrase",
-            "second phrase",
-            "third phrase"
-        ]
-    )
+    response = await client.embedding(input=["first phrase", "second phrase", "third phrase"])
 
     print("Embeddings response:")
     for item in response.data:
@@ -52,6 +47,7 @@ async def sample_embeddings_async():
         )
 
     await client.close()
+
 
 async def main():
     await sample_embeddings_async()

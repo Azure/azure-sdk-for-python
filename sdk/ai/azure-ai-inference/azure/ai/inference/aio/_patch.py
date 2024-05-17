@@ -28,7 +28,7 @@ from .. import models as _models
 from .._model_base import SdkJSONEncoder
 from ._client import ChatCompletionsClient as ChatCompletionsClientGenerated
 from ._client import EmbeddingsClient, ImageEmbeddingsClient
-from .._operations._operations import build_chat_completions_create_request
+from .._operations._operations import build_chat_completions_complete_request
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -46,12 +46,12 @@ async def load_client(
     model_info = await client.get_model_info()
     await client.close()
     _LOGGER.info("model_info=%s", model_info)
-    if model_info.model_type in (None, ''):
+    if model_info.model_type in (None, ""):
         raise ValueError(
             "The AI model information is missing a value for `model type`. Cannot create an appropriate client."
         )
     # TODO: Remove "completions" once Mistral Large fixes their model type
-    if model_info.model_type == _models.ModelType.CHAT or "completion":
+    if model_info.model_type in (_models.ModelType.CHAT, "completion"):
         return ChatCompletionsClient(endpoint, credential, **kwargs)
     if model_info.model_type == _models.ModelType.EMBEDDINGS:
         return EmbeddingsClient(endpoint, credential, **kwargs)
@@ -63,13 +63,13 @@ async def load_client(
 class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
     @overload
-    async def create_streaming(
+    async def streaming_complete(
         self,
         body: JSON,
         *,
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AsyncStreamingChatCompletions:
         # pylint: disable=line-too-long
         """Gets streaming chat completions for the provided chat messages.
@@ -94,7 +94,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         """
 
     @overload
-    async def create_streaming(
+    async def streaming_complete(
         self,
         *,
         messages: List[_models.ChatRequestMessage],
@@ -113,7 +113,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
             Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
         ] = None,
         seed: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AsyncStreamingChatCompletions:
         # pylint: disable=line-too-long
         """Gets streaming chat completions for the provided chat messages.
@@ -200,13 +200,13 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         """
 
     @overload
-    async def create_streaming(
+    async def streaming_complete(
         self,
         body: IO[bytes],
         *,
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AsyncStreamingChatCompletions:
         # pylint: disable=line-too-long
         """Gets streaming chat completions for the provided chat messages.
@@ -231,7 +231,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         """
 
     @distributed_trace_async
-    async def create_streaming(
+    async def streaming_complete(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -250,7 +250,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
             Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
         ] = None,
         seed: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AsyncStreamingChatCompletions:
         # pylint: disable=line-too-long
         """Gets streaming chat completions for the provided chat messages.
@@ -373,7 +373,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_chat_completions_create_request(
+        _request = build_chat_completions_complete_request(
             model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -403,7 +403,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
 __all__: List[str] = [
     "load_client",
-    "ChatCompletionsClient"
+    "ChatCompletionsClient",
 ]  # Add all objects you want publicly available to users at this package level
 
 

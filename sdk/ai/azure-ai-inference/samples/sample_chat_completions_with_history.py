@@ -19,6 +19,7 @@ USAGE:
     2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
+
 def sample_chat_completions_with_history():
     import os
 
@@ -43,13 +44,13 @@ def sample_chat_completions_with_history():
         UserMessage(content="What year was construction of the international space station mostly done?"),
     ]
 
-    response = client.create(messages=messages)
+    response = client.complete(messages=messages)
     print(response.choices[0].message.content)
 
     messages.append(AssistantMessage(content=response.choices[0].message.content))
     messages.append(UserMessage(content="And what was the estimated cost to build it?"))
 
-    response = client.create(messages=messages)
+    response = client.complete(messages=messages)
     print(response.choices[0].message.content)
 
 

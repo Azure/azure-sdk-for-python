@@ -42,7 +42,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_chat_completions_create_request(*, model_deployment: Optional[str] = None, **kwargs: Any) -> HttpRequest:
+def build_chat_completions_complete_request(*, model_deployment: Optional[str] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -85,7 +85,7 @@ def build_chat_completions_get_model_info_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_embeddings_create_request(*, model_deployment: Optional[str] = None, **kwargs: Any) -> HttpRequest:
+def build_embeddings_embedding_request(*, model_deployment: Optional[str] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -128,7 +128,7 @@ def build_embeddings_get_model_info_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_image_embeddings_create_request(*, model_deployment: Optional[str] = None, **kwargs: Any) -> HttpRequest:
+def build_image_embeddings_embedding_request(*, model_deployment: Optional[str] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -174,7 +174,7 @@ def build_image_embeddings_get_model_info_request(**kwargs: Any) -> HttpRequest:
 class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
 
     @overload
-    def create(
+    def complete(
         self,
         body: JSON,
         *,
@@ -302,7 +302,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         """
 
     @overload
-    def create(
+    def complete(
         self,
         *,
         messages: List[_models.ChatRequestMessage],
@@ -452,7 +452,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         """
 
     @overload
-    def create(
+    def complete(
         self,
         body: IO[bytes],
         *,
@@ -527,7 +527,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         """
 
     @distributed_trace
-    def create(  # pylint: disable=too-many-locals
+    def complete(  # pylint: disable=too-many-locals
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -766,7 +766,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_chat_completions_create_request(
+        _request = build_chat_completions_complete_request(
             model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -875,7 +875,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
 class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
 
     @overload
-    def create(
+    def embedding(
         self,
         body: JSON,
         *,
@@ -967,7 +967,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         """
 
     @overload
-    def create(
+    def embedding(
         self,
         *,
         input: List[str],
@@ -1060,7 +1060,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         """
 
     @overload
-    def create(
+    def embedding(
         self,
         body: IO[bytes],
         *,
@@ -1124,7 +1124,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         """
 
     @distributed_trace
-    def create(
+    def embedding(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -1274,7 +1274,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_embeddings_create_request(
+        _request = build_embeddings_embedding_request(
             model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1383,7 +1383,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
 class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
 
     @overload
-    def create(
+    def embedding(
         self,
         body: JSON,
         *,
@@ -1478,7 +1478,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         """
 
     @overload
-    def create(
+    def embedding(
         self,
         *,
         input: List[_models.EmbeddingInput],
@@ -1571,7 +1571,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         """
 
     @overload
-    def create(
+    def embedding(
         self,
         body: IO[bytes],
         *,
@@ -1635,7 +1635,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         """
 
     @distributed_trace
-    def create(
+    def embedding(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -1788,7 +1788,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_image_embeddings_create_request(
+        _request = build_image_embeddings_embedding_request(
             model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,

@@ -27,11 +27,11 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
 from ..._operations._operations import (
-    build_chat_completions_create_request,
+    build_chat_completions_complete_request,
     build_chat_completions_get_model_info_request,
-    build_embeddings_create_request,
+    build_embeddings_embedding_request,
     build_embeddings_get_model_info_request,
-    build_image_embeddings_create_request,
+    build_image_embeddings_embedding_request,
     build_image_embeddings_get_model_info_request,
 )
 from .._vendor import ChatCompletionsClientMixinABC, EmbeddingsClientMixinABC, ImageEmbeddingsClientMixinABC
@@ -49,7 +49,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
 
     @overload
-    async def create(
+    async def complete(
         self,
         body: JSON,
         *,
@@ -177,7 +177,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         """
 
     @overload
-    async def create(
+    async def complete(
         self,
         *,
         messages: List[_models.ChatRequestMessage],
@@ -327,7 +327,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         """
 
     @overload
-    async def create(
+    async def complete(
         self,
         body: IO[bytes],
         *,
@@ -402,7 +402,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         """
 
     @distributed_trace_async
-    async def create(  # pylint: disable=too-many-locals
+    async def complete(  # pylint: disable=too-many-locals
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -641,7 +641,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_chat_completions_create_request(
+        _request = build_chat_completions_complete_request(
             model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -750,7 +750,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
 class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
 
     @overload
-    async def create(
+    async def embedding(
         self,
         body: JSON,
         *,
@@ -842,7 +842,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         """
 
     @overload
-    async def create(
+    async def embedding(
         self,
         *,
         input: List[str],
@@ -935,7 +935,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         """
 
     @overload
-    async def create(
+    async def embedding(
         self,
         body: IO[bytes],
         *,
@@ -999,7 +999,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         """
 
     @distributed_trace_async
-    async def create(
+    async def embedding(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -1149,7 +1149,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_embeddings_create_request(
+        _request = build_embeddings_embedding_request(
             model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1258,7 +1258,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
 class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
 
     @overload
-    async def create(
+    async def embedding(
         self,
         body: JSON,
         *,
@@ -1353,7 +1353,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         """
 
     @overload
-    async def create(
+    async def embedding(
         self,
         *,
         input: List[_models.EmbeddingInput],
@@ -1446,7 +1446,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         """
 
     @overload
-    async def create(
+    async def embedding(
         self,
         body: IO[bytes],
         *,
@@ -1510,7 +1510,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         """
 
     @distributed_trace_async
-    async def create(
+    async def embedding(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -1663,7 +1663,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_image_embeddings_create_request(
+        _request = build_image_embeddings_embedding_request(
             model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,

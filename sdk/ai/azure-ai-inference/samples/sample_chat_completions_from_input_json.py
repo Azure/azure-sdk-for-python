@@ -19,6 +19,7 @@ USAGE:
     2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
+
 def sample_chat_completions_from_input_json():
     import os
     from typing import MutableMapping, Any
@@ -53,7 +54,7 @@ def sample_chat_completions_from_input_json():
 
     # Make a chat completion call, by directly providing the
     # HTTP request body as IO[bytes], containing chat messages.
-    response = client.create(json_messages)
+    response = client.complete(json_messages)
 
     print(response.choices[0].message.content)
 

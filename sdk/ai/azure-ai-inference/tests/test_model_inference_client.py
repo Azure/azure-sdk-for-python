@@ -32,7 +32,7 @@ class TestModelClient(ModelClientTestBase):
     @recorded_by_proxy
     def test_chat_completions_error_free(self, **kwargs):
         client = self._create_chat_client(**kwargs)
-        result = client.create(messages=[sdk.models.UserMessage(content="How many feet are in a mile?")])
+        result = client.complete(messages=[sdk.models.UserMessage(content="How many feet are in a mile?")])
         self._print_chat_completions_result(result)
         self._validate_chat_completions_result(result, ["5280", "5,280"])
         client.close()
@@ -41,7 +41,7 @@ class TestModelClient(ModelClientTestBase):
     @recorded_by_proxy
     def test_chat_completions_streaming_error_free(self, **kwargs):
         client = self._create_chat_client(**kwargs)
-        result = client.create_streaming(
+        result = client.streaming_complete(
             messages=[
                 sdk.models.SystemMessage(content="You are a helpful assistant."),
                 sdk.models.UserMessage(content="Give me 3 good reasons why I should exercise every day."),
@@ -78,7 +78,7 @@ class TestModelClient(ModelClientTestBase):
             sdk.models.SystemMessage(content="You are an assistant that helps users find weather information."),
             sdk.models.UserMessage(content="what's the maximum temperature in Seattle two days from now?"),
         ]
-        result = client.create(
+        result = client.complete(
             messages=messages,
             tools=[forecast_tool],
         )
@@ -91,7 +91,7 @@ class TestModelClient(ModelClientTestBase):
                 tool_call_id=result.choices[0].message.tool_calls[0].id,
             )
         )
-        result = client.create(
+        result = client.complete(
             messages=messages,
             tools=[forecast_tool],
         )
@@ -102,7 +102,7 @@ class TestModelClient(ModelClientTestBase):
     @recorded_by_proxy
     def test_embeddings_error_free(self, **kwargs):
         client = self._create_embeddings_client(**kwargs)
-        result = client.create(input=["first phrase", "second phrase", "third phrase"])
+        result = client.embedding(input=["first phrase", "second phrase", "third phrase"])
         self._print_embeddings_result(result)
         self._validate_embeddings_result(result)
         client.close()
@@ -119,7 +119,7 @@ class TestModelClient(ModelClientTestBase):
         client = self._create_chat_client(bad_key=True, **kwargs)
         exception_caught = False
         try:
-            result = client.create(messages=[sdk.models.UserMessage(content="How many feet are in a mile?")])
+            result = client.complete(messages=[sdk.models.UserMessage(content="How many feet are in a mile?")])
         except AzureError as e:
             exception_caught = True
             print(e)
@@ -135,7 +135,7 @@ class TestModelClient(ModelClientTestBase):
         client = self._create_embeddings_client_with_chat_completions_credentials(**kwargs)
         exception_caught = False
         try:
-            result = client.create(input=["first phrase", "second phrase", "third phrase"])
+            result = client.embedding(input=["first phrase", "second phrase", "third phrase"])
         except AzureError as e:
             exception_caught = True
             print(e)

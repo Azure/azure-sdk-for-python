@@ -20,6 +20,7 @@ USAGE:
     2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
+
 def sample_chat_completions_with_tools():
     import os
     import json
@@ -93,7 +94,7 @@ def sample_chat_completions_with_tools():
         UserMessage(content="What is the next flights from Seattle to Miami?"),
     ]
 
-    response = client.create(
+    response = client.complete(
         messages=messages,
         tools=[flight_info],
     )
@@ -102,12 +103,7 @@ def sample_chat_completions_with_tools():
     if response.choices[0].finish_reason == CompletionsFinishReason.TOOL_CALLS:
 
         # Append the previous model response to the chat history
-        messages.append(
-            AssistantMessage(
-                content="",
-                tool_calls=response.choices[0].message.tool_calls
-            )
-        )
+        messages.append(AssistantMessage(content="", tool_calls=response.choices[0].message.tool_calls))
 
         # The tools call should be a function call
         tool_call = response.choices[0].message.tool_calls[0]
@@ -122,16 +118,11 @@ def sample_chat_completions_with_tools():
 
             # Provide the tool response to the model, by appending it to the chat history
             messages.append(
-                ToolMessage(
-                    tool_call_id=tool_call.id, content=function_response
-                )  # json.dumps(function_response)
+                ToolMessage(tool_call_id=tool_call.id, content=function_response)
             )
 
             # With the additional tools information on hand, get another response from the model
-            response = client.create(
-                messages=messages,
-                tools=[flight_info]
-            )
+            response = client.complete(messages=messages, tools=[flight_info])
 
             print(f"Model response = {response.choices[0].message.content}")
 

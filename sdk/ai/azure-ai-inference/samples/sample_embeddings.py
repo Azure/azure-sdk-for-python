@@ -18,6 +18,7 @@ USAGE:
     2) EMBEDDINGS_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
+
 def sample_embeddings():
     import os
 
@@ -35,7 +36,7 @@ def sample_embeddings():
 
     client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    response = client.create(input=["first phrase", "second phrase", "third phrase"])
+    response = client.embedding(input=["first phrase", "second phrase", "third phrase"])
 
     for item in response.data:
         length = len(item.embedding)

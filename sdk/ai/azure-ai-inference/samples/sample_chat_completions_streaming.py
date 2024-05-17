@@ -18,6 +18,7 @@ USAGE:
     2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
+
 def sample_chat_completions_streaming():
     import os
 
@@ -36,7 +37,7 @@ def sample_chat_completions_streaming():
 
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    response = client.create_streaming(
+    response = client.streaming_complete(
         messages=[
             SystemMessage(content="You are a helpful assistant."),
             UserMessage(content="Give me 5 good reasons why I should exercise every day."),

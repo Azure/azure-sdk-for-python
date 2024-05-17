@@ -20,6 +20,7 @@ USAGE:
 """
 import io
 
+
 def sample_chat_completions_from_input_bytes():
     import os
 
@@ -39,7 +40,7 @@ def sample_chat_completions_from_input_bytes():
 
     # Make a chat completion call, by directly providing the
     # HTTP request body as IO[bytes], containing chat messages.
-    response = client.create(read_text_file("example_chat.json"))
+    response = client.complete(read_text_file("example_chat.json"))
 
     print(response.choices[0].message.content)
 

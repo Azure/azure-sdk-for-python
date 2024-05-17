@@ -18,6 +18,7 @@ USAGE:
     2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
+
 def sample_chat_completions_with_entra_id_auth():
     import os
 
@@ -38,7 +39,7 @@ def sample_chat_completions_with_entra_id_auth():
 
     client = ChatCompletionsClient(endpoint=endpoint, credential=default_azure_credential)
 
-    response = client.create(
+    response = client.complete(
         messages=[
             SystemMessage(content="You are a helpful assistant."),
             UserMessage(content="How many feet are in a mile?"),

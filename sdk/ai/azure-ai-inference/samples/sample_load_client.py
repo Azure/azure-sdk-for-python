@@ -19,6 +19,7 @@ USAGE:
     2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
+
 def sample_load_client():
     import os
 
@@ -41,7 +42,7 @@ def sample_load_client():
     print(f"Created client of type `{type(client).__name__}`.")
 
     if isinstance(client, ChatCompletionsClient):
-        response = client.create(
+        response = client.complete(
             messages=[
                 SystemMessage(content="You are a helpful assistant."),
                 UserMessage(content="How many feet are in a mile?"),

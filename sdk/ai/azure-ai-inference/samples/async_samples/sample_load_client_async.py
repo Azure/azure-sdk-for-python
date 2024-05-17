@@ -20,6 +20,7 @@ USAGE:
 """
 import asyncio
 
+
 async def sample_load_client_async():
     import os
 
@@ -41,9 +42,9 @@ async def sample_load_client_async():
     print(f"Created client of type `{type(client).__name__}`.")
 
     # TODO: Why does this return False?
-    #if isinstance(client, ChatCompletionsClient):
+    # if isinstance(client, ChatCompletionsClient):
     # Do a single chat completion operation. Start the operation and get a Future object.
-    response = await client.create(
+    response = await client.complete(
         messages=[
             SystemMessage(content="You are a helpful assistant."),
             UserMessage(content="How many feet are in a mile?"),

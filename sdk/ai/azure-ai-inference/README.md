@@ -139,7 +139,7 @@ from azure.core.credentials import AzureKeyCredential
 
 client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-response = client.create(
+response = client.complete(
     messages=[
         SystemMessage(content="You are a helpful assistant."),
         UserMessage(content="How many feet are in a mile?"),
@@ -168,7 +168,7 @@ from azure.core.credentials import AzureKeyCredential
 
 client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-response = client.create_streaming(
+response = client.streaming_complete(
     messages=[
         SystemMessage(content="You are a helpful assistant."),
         UserMessage(content="Give me 5 good reasons why I should exercise every day."),
@@ -199,7 +199,7 @@ from azure.core.credentials import AzureKeyCredential
 
 client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-response = client.create(input=["first phrase", "second phrase", "third phrase"])
+response = client.embedding(input=["first phrase", "second phrase", "third phrase"])
 
 for item in response.data:
     length = len(item.embedding)
@@ -232,16 +232,13 @@ from azure.ai.inference.models import EmbeddingInput
 from azure.core.credentials import AzureKeyCredential
 
 with open("sample1.png", "rb") as f:
-    image1:str = base64.b64encode(f.read()).decode('utf-8')
+    image1: str = base64.b64encode(f.read()).decode("utf-8")
 with open("sample2.png", "rb") as f:
-    image2:str = base64.b64encode(f.read()).decode('utf-8')
+    image2: str = base64.b64encode(f.read()).decode("utf-8")
 
 client = ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-response = client.create(input=[
-    EmbeddingInput(image=image1),
-    EmbeddingInput(image=image2)
-])
+response = client.embedding(input=[EmbeddingInput(image=image1), EmbeddingInput(image=image2)])
 
 for item in response.data:
     length = len(item.embedding)
@@ -301,7 +298,7 @@ client = load_client(endpoint=endpoint, credential=AzureKeyCredential(key))
 print(f"Created client of type `{type(client).__name__}`.")
 
 if isinstance(client, ChatCompletionsClient):
-    response = client.create(
+    response = client.complete(
         messages=[
             SystemMessage(content="You are a helpful assistant."),
             UserMessage(content="How many feet are in a mile?"),

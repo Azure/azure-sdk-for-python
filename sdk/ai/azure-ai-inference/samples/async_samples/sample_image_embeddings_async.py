@@ -19,6 +19,7 @@ USAGE:
 """
 import asyncio
 
+
 async def sample_image_embeddings_async():
     import os
     import base64
@@ -36,19 +37,14 @@ async def sample_image_embeddings_async():
     from azure.core.credentials import AzureKeyCredential
 
     with open("sample1.png", "rb") as f:
-        image1:str = base64.b64encode(f.read()).decode('utf-8')
+        image1: str = base64.b64encode(f.read()).decode("utf-8")
     with open("sample2.png", "rb") as f:
-        image2:str = base64.b64encode(f.read()).decode('utf-8')
+        image2: str = base64.b64encode(f.read()).decode("utf-8")
 
     client = ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Do a single image embeddings operation. Start the operation and get a Future object.
-    response = await client.create(
-        input=[
-            EmbeddingInput(image=image1),
-            EmbeddingInput(image=image2)
-        ]
-    )
+    response = await client.embedding(input=[EmbeddingInput(image=image1), EmbeddingInput(image=image2)])
 
     print("Embeddings response:")
     for item in response.data:

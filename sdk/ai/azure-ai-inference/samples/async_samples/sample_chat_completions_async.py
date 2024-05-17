@@ -19,6 +19,7 @@ USAGE:
 """
 import asyncio
 
+
 async def sample_chat_completions_async():
     import os
     from azure.ai.inference.aio import ChatCompletionsClient
@@ -38,7 +39,7 @@ async def sample_chat_completions_async():
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Do a single chat completion operation
-    response = await client.create(
+    response = await client.complete(
         messages=[
             SystemMessage(content="You are a helpful assistant."),
             UserMessage(content="How many feet are in a mile?"),
@@ -49,6 +50,7 @@ async def sample_chat_completions_async():
     print(response.choices[0].message.content)
 
     await client.close()
+
 
 async def main():
     await sample_chat_completions_async()

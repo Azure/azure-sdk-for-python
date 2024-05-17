@@ -27,7 +27,7 @@ from azure.core.exceptions import (
 from . import models as _models
 from ._model_base import SdkJSONEncoder
 from ._serialization import Serializer
-from ._operations._operations import build_chat_completions_create_request
+from ._operations._operations import build_chat_completions_complete_request
 from ._client import ChatCompletionsClient as ChatCompletionsClientGenerated
 from ._client import EmbeddingsClient, ImageEmbeddingsClient
 
@@ -49,12 +49,12 @@ def load_client(
     model_info = client.get_model_info()
     client.close()
     _LOGGER.info("model_info=%s", model_info)
-    if model_info.model_type in (None, ''):
+    if model_info.model_type in (None, ""):
         raise ValueError(
             "The AI model information is missing a value for `model type`. Cannot create an appropriate client."
         )
     # TODO: Remove "completions" once Mistral Large fixes their model type
-    if model_info.model_type == _models.ModelType.CHAT or "completion":
+    if model_info.model_type in (_models.ModelType.CHAT, "completion"):
         return ChatCompletionsClient(endpoint, credential, **kwargs)
     if model_info.model_type == _models.ModelType.EMBEDDINGS:
         return EmbeddingsClient(endpoint, credential, **kwargs)
@@ -66,7 +66,7 @@ def load_client(
 class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
     @overload
-    def create_streaming(
+    def streaming_complete(
         self,
         body: JSON,
         *,
@@ -97,7 +97,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         """
 
     @overload
-    def create_streaming(
+    def streaming_complete(
         self,
         *,
         messages: List[_models.ChatRequestMessage],
@@ -203,7 +203,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         """
 
     @overload
-    def create_streaming(
+    def streaming_complete(
         self,
         body: IO[bytes],
         *,
@@ -234,7 +234,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         """
 
     @distributed_trace
-    def create_streaming(
+    def streaming_complete(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -376,7 +376,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_chat_completions_create_request(
+        _request = build_chat_completions_complete_request(
             model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,
