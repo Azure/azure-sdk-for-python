@@ -81,6 +81,6 @@ def sample_translation_specific_document():
             print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_translation_under_folder()
     sample_translation_specific_document()
