@@ -28,7 +28,7 @@ steps:
       script: |
         eng/common/scripts/Import-AzModules.ps1
 
-        $environmentSpec = @"
-          $(env-config-dogfood)
-        "@ | ConvertFrom-Json -AsHashtable;
-        Add-AzEnvironment @environmentSpec
+        # $environmentSpec = @"
+        #   $(env-config-dogfood)
+        # "@ | ConvertFrom-Json -AsHashtable;
+        # Add-AzEnvironment @environmentSpec
