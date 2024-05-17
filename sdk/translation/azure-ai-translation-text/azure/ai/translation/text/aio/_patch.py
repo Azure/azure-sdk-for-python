@@ -13,7 +13,7 @@ from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, Azure
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
-from .._patch import DEFAULT_TOKEN_SCOPE, DEFAULT_AAD_SCOPE, get_translation_endpoint, TranslatorAuthenticationPolicy
+from .._patch import DEFAULT_TOKEN_SCOPE, DEFAULT_ENTRA_ID_SCOPE, get_translation_endpoint, TranslatorAuthenticationPolicy
 
 from ._client import TextTranslationClient as ServiceClientGenerated
 
@@ -27,20 +27,20 @@ def patch_sdk():
     """
 
 
-class AsyncTranslatorAADAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
-    """Translator AAD Authentication Policy. Adds headers that are required by Translator Service
-    when global endpoint is used with AAD policy.
+class AsyncTranslatorEntraIdAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
+    """Translator Entra Id Authentication Policy. Adds headers that are required by Translator Service
+    when global endpoint is used with Entra Id policy.
     Ocp-Apim-Subscription-Region header contains region of the Translator resource.
     Ocp-Apim-ResourceId header contains Azure resource Id - Translator resource.
 
-    :param credential: Translator AAD Credentials used to access Translator Resource for global Translator endpoint.
+    :param credential: Translator Entra Id Credentials used to access Translator Resource for global Translator endpoint.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     """
 
     def __init__(
         self, credential: AsyncTokenCredential, resource_id: str, region: str, scopes: str, **kwargs: Any
     ) -> None:
-        super(AsyncTranslatorAADAuthenticationPolicy, self).__init__(credential, scopes, **kwargs)
+        super(AsyncTranslatorEntraIdAuthenticationPolicy, self).__init__(credential, scopes, **kwargs)
         self.resource_id = resource_id
         self.region = region
         self.translator_credential = credential
@@ -63,11 +63,11 @@ def set_authentication_policy(credential, kwargs):
     elif hasattr(credential, "get_token"):
         if not kwargs.get("authentication_policy"):
             if kwargs.get("region") and kwargs.get("resource_id"):
-                kwargs["authentication_policy"] = AsyncTranslatorAADAuthenticationPolicy(
+                kwargs["authentication_policy"] = AsyncTranslatorEntraIdAuthenticationPolicy(
                     credential,
                     kwargs["resource_id"],
                     kwargs["region"],
-                    kwargs.pop("credential_scopes", [DEFAULT_AAD_SCOPE]),
+                    kwargs.pop("credential_scopes", [DEFAULT_ENTRA_ID_SCOPE]),
                 )
             else:
                 if kwargs.get("resource_id") or kwargs.get("region"):

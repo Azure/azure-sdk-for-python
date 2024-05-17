@@ -12,7 +12,7 @@ from azure.core.credentials import TokenCredential, AzureKeyCredential
 from ._client import TextTranslationClient as ServiceClientGenerated
 
 DEFAULT_TOKEN_SCOPE = "https://api.microsofttranslator.com/"
-DEFAULT_AAD_SCOPE = "https://cognitiveservices.azure.com/.default"
+DEFAULT_ENTRA_ID_SCOPE = "https://cognitiveservices.azure.com/.default"
 
 
 def patch_sdk():
@@ -39,18 +39,18 @@ class TranslatorAuthenticationPolicy(SansIOHTTPPolicy):
         request.http_request.headers["Ocp-Apim-Subscription-Region"] = self.region
 
 
-class TranslatorAADAuthenticationPolicy(BearerTokenCredentialPolicy):
-    """Translator AAD Authentication Policy. Adds headers that are required by Translator Service
-    when global endpoint is used with AAD policy.
+class TranslatorEntraIdAuthenticationPolicy(BearerTokenCredentialPolicy):
+    """Translator EntraId Authentication Policy. Adds headers that are required by Translator Service
+    when global endpoint is used with Entra Id policy.
     Ocp-Apim-Subscription-Region header contains region of the Translator resource.
     Ocp-Apim-ResourceId header contains Azure resource Id - Translator resource.
 
-    :param credential: Translator AAD Credentials used to access Translator Resource for global Translator endpoint.
-    :type credential: ~azure.ai.translation.text.TranslatorAADCredential
+    :param credential: Translator Entra Id Credentials used to access Translator Resource for global Translator endpoint.
+    :type credential: ~azure.ai.translation.text.TranslatorEntraIdCredential
     """
 
     def __init__(self, credential: TokenCredential, resource_id: str, region: str, scopes: str, **kwargs: Any) -> None:
-        super(TranslatorAADAuthenticationPolicy, self).__init__(credential, scopes, **kwargs)
+        super(TranslatorEntraIdAuthenticationPolicy, self).__init__(credential, scopes, **kwargs)
         self.resource_id = resource_id
         self.region = region
         self.translator_credential = credential
@@ -86,11 +86,11 @@ def set_authentication_policy(credential, kwargs):
     elif hasattr(credential, "get_token"):
         if not kwargs.get("authentication_policy"):
             if kwargs.get("region") and kwargs.get("resource_id"):
-                kwargs["authentication_policy"] = TranslatorAADAuthenticationPolicy(
+                kwargs["authentication_policy"] = TranslatorEntraIdAuthenticationPolicy(
                     credential,
                     kwargs["resource_id"],
                     kwargs["region"],
-                    kwargs.pop("credential_scopes", [DEFAULT_AAD_SCOPE]),
+                    kwargs.pop("credential_scopes", [DEFAULT_ENTRA_ID_SCOPE]),
                 )
             else:
                 if kwargs.get("resource_id") or kwargs.get("region"):

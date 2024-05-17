@@ -3,7 +3,7 @@
 ## 1.0.0 (Unreleased)
 
 ### Features Added
-  - Added support for AAD authentication.
+  - Added support for Entra Id authentication.
 
 ### Breaking Changes
 
