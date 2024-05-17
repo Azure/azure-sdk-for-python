@@ -13,7 +13,12 @@ from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, Azure
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
-from .._patch import DEFAULT_TOKEN_SCOPE, DEFAULT_ENTRA_ID_SCOPE, get_translation_endpoint, TranslatorAuthenticationPolicy
+from .._patch import (
+    DEFAULT_TOKEN_SCOPE,
+    DEFAULT_ENTRA_ID_SCOPE,
+    get_translation_endpoint,
+    TranslatorAuthenticationPolicy,
+)
 
 from ._client import TextTranslationClient as ServiceClientGenerated
 
