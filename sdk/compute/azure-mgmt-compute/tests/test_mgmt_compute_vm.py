@@ -80,6 +80,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
 
         return nic_info.id
 
+    @pytest.mark.skip("image deprecated.")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_compute_vm(self, resource_group):
@@ -388,6 +389,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         result = self.mgmt_client.virtual_machines.begin_delete(resource_group.name, VIRTUAL_MACHINE_NAME)
         result = result.result()
 
+    @pytest.mark.skip("image deprecated.")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_compute_vm_image(self, resource_group):
