@@ -111,14 +111,14 @@ class TextTranslationClient(ServiceClientGenerated):
     None + AsyncTokenCredential - general translator endpoint with token authentication
     None + AsyncTokenCredential + Region - general translator endpoint with regional Translator resource
     :keyword str endpoint: Supported Text Translation endpoints (protocol and hostname, for example:
-         https://api.cognitive.microsofttranslator.com). If not provided, global translator endpoint will be used.
+        https://api.cognitive.microsofttranslator.com). If not provided, global translator endpoint will be used.
     :keyword credential: Credential used to authenticate with the Translator service
     :paramtype credential: Union[AzureKeyCredential, AsyncTokenCredential]
     :keyword str region: Used for National Clouds.
     :keyword str resource_id: Used with both a TokenCredential combined with a region.
     :keyword str scopes: Scopes of the credentials.
     :keyword  str api_version: Default value is "3.0". Note that overriding this default value may
-     result in unsupported behavior.
+        result in unsupported behavior.
     """
 
     @overload
