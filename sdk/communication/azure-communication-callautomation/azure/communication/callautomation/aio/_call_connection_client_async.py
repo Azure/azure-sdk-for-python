@@ -718,8 +718,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         """
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
             target_participant=serialize_identifier(target_participant),
-            operation_context=operation_context,
-            operation_callback_uri=operation_callback_url
+            operation_context=operation_context
         )
         await self._call_media_client.start_continuous_dtmf_recognition(
             self._call_connection_id,
