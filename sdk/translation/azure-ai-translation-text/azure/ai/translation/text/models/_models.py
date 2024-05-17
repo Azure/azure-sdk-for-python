@@ -979,8 +979,9 @@ class TranslationText(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar to: A string representing the language code of the target language. Required.
-    :vartype to: str
+    :ivar target_language: A string representing the language code of the target language.
+     Required.
+    :vartype target_language: str
     :ivar text: A string giving the translated text. Required.
     :vartype text: str
     :ivar transliteration: An object giving the translated text in the script specified by the
@@ -992,7 +993,7 @@ class TranslationText(_model_base.Model):
     :vartype sentence_boundaries: ~azure.ai.translation.text.models.SentenceBoundaries
     """
 
-    to: str = rest_field()
+    target_language: str = rest_field(name="to")
     """A string representing the language code of the target language. Required."""
     text: str = rest_field()
     """A string giving the translated text. Required."""
@@ -1007,7 +1008,7 @@ class TranslationText(_model_base.Model):
     def __init__(
         self,
         *,
-        to: str,
+        target_language: str,
         text: str,
         transliteration: Optional["_models.TransliteratedText"] = None,
         alignment: Optional["_models.TranslatedTextAlignment"] = None,
@@ -1041,11 +1042,11 @@ class TransliterableScript(LanguageScript):
     :ivar directionality: Directionality, which is rtl for right-to-left languages or ltr for
      left-to-right languages. Required. Known values are: "ltr" and "rtl".
     :vartype directionality: str or ~azure.ai.translation.text.models.LanguageDirectionality
-    :ivar to_scripts: List of scripts available to convert text to. Required.
-    :vartype to_scripts: list[~azure.ai.translation.text.models.LanguageScript]
+    :ivar target_language_scripts: List of scripts available to convert text to. Required.
+    :vartype target_language_scripts: list[~azure.ai.translation.text.models.LanguageScript]
     """
 
-    to_scripts: List["_models.LanguageScript"] = rest_field(name="toScripts")
+    target_language_scripts: List["_models.LanguageScript"] = rest_field(name="toScripts")
     """List of scripts available to convert text to. Required."""
 
     @overload
@@ -1056,7 +1057,7 @@ class TransliterableScript(LanguageScript):
         name: str,
         native_name: str,
         directionality: Union[str, "_models.LanguageDirectionality"],
-        to_scripts: List["_models.LanguageScript"],
+        target_language_scripts: List["_models.LanguageScript"],
     ): ...
 
     @overload

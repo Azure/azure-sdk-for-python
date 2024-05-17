@@ -54,13 +54,13 @@ class TestGetLanguagesAsync(TextTranslationTest):
         assert transliterations.scripts[0].native_name is not None
         assert transliterations.scripts[0].code is not None
         assert transliterations.scripts[0].directionality is not None
-        assert transliterations.scripts[0].to_scripts is not None
+        assert transliterations.scripts[0].target_language_scripts is not None
 
-        assert len(transliterations.scripts[0].to_scripts) > 0
-        assert transliterations.scripts[0].to_scripts[0].name is not None
-        assert transliterations.scripts[0].to_scripts[0].native_name is not None
-        assert transliterations.scripts[0].to_scripts[0].code is not None
-        assert transliterations.scripts[0].to_scripts[0].directionality is not None
+        assert len(transliterations.scripts[0].target_language_scripts) > 0
+        assert transliterations.scripts[0].target_language_scripts[0].name is not None
+        assert transliterations.scripts[0].target_language_scripts[0].native_name is not None
+        assert transliterations.scripts[0].target_language_scripts[0].code is not None
+        assert transliterations.scripts[0].target_language_scripts[0].directionality is not None
 
     @TextTranslationPreparer()
     @recorded_by_proxy_async
@@ -77,8 +77,8 @@ class TestGetLanguagesAsync(TextTranslationTest):
         assert transliterations.scripts is not None
 
         assert len(transliterations.scripts) > 1
-        assert len(transliterations.scripts[0].to_scripts) > 1
-        assert len(transliterations.scripts[1].to_scripts) > 1
+        assert len(transliterations.scripts[0].target_language_scripts) > 1
+        assert len(transliterations.scripts[1].target_language_scripts) > 1
 
     @TextTranslationPreparer()
     @recorded_by_proxy_async

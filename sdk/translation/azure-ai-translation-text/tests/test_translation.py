@@ -28,7 +28,7 @@ class TestTranslation(TextTranslationTest):
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
-        assert response[0].translations[0].to == "cs"
+        assert response[0].translations[0].target_language == "cs"
         assert response[0].translations[0].text is not None
 
     @TextTranslationPreparer()
@@ -47,7 +47,7 @@ class TestTranslation(TextTranslationTest):
         assert len(response[0].translations) == 1
         assert response[0].detected_language.language == "en"
         assert response[0].detected_language.confidence == 1
-        assert response[0].translations[0].to == "cs"
+        assert response[0].translations[0].target_language == "cs"
         assert response[0].translations[0].text is not None
 
     @TextTranslationPreparer()
@@ -91,7 +91,7 @@ class TestTranslation(TextTranslationTest):
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
-        assert response[0].translations[0].to == "es"
+        assert response[0].translations[0].target_language == "es"
         assert "wordomatic" in response[0].translations[0].text
 
     @TextTranslationPreparer()
@@ -116,7 +116,7 @@ class TestTranslation(TextTranslationTest):
         assert len(response) == 1
         assert response[0].source_text is not None
         assert len(response[0].translations) == 1
-        assert response[0].translations[0].to == "zh-Hans"
+        assert response[0].translations[0].target_language == "zh-Hans"
         assert response[0].translations[0].text is not None
 
     @TextTranslationPreparer()
@@ -327,5 +327,5 @@ class TestTranslation(TextTranslationTest):
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
-        assert response[0].translations[0].to == "cs"
+        assert response[0].translations[0].target_language == "cs"
         assert response[0].translations[0].text is not None
