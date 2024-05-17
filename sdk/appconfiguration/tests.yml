@@ -12,16 +12,11 @@ extends:
     parameters:
       ServiceDirectory: appconfiguration
       Packages: ${{ parameters.Services }}
-      SupportedClouds: 'Public,UsGov,China'
+      SupportedClouds: 'Public'
       TestTimeoutInMinutes: 240
       CloudConfig:
         Public:
-          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-        UsGov:
-          SubscriptionConfiguration: $(sub-config-gov-test-resources)
-        China:
-          SubscriptionConfiguration: $(sub-config-cn-test-resources)
-          Location: chinanorth3
+          SubscriptionConfiguration: $(sub-config-azure-cloud-iso-test-resources)
       MatrixReplace:
         - TestSamples=.*/true
       EnvVars:
