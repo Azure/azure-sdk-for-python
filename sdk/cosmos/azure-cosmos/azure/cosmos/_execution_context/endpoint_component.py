@@ -60,6 +60,14 @@ class _QueryExecutionOrderByEndpointComponent(_QueryExecutionEndpointComponent):
 
     next = __next__  # Python 2 compatibility.
 
+class _QueryExecutionNonStreamingEndpointComponent(_QueryExecutionEndpointComponent):
+    """Represents an endpoint in handling a non-streaming order by query results.
+
+    For each processed orderby result it returns the item result.
+    """
+    def __next__(self):
+        return next(self._execution_context)._item_result["payload"]  # pylint: disable=protected-access
+
 
 class _QueryExecutionTopEndpointComponent(_QueryExecutionEndpointComponent):
     """Represents an endpoint in handling top query.

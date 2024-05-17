@@ -29,6 +29,7 @@ from collections import deque
 from azure.cosmos import _base
 from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQueryExecutionContext
 
+# pylint: disable=protected-access
 
 class _DocumentProducer(object):
     """This class takes care of handling of the results for one single partition
@@ -271,3 +272,51 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProducerCompa
             type2 = _OrderByHelper.getTypeStr(elt2)
             if type1 != type2:
                 raise ValueError("Expected {}, but got {}.".format(type1, type2))
+
+class _NonStreamingItemResultProducer:
+    """This class takes care of handling of the items to be sorted in a non-streaming context.
+    One instance of this document producer goes attached to every item coming in for the priority queue to be able
+    to properly sort items as they get inserted.
+    """
+
+    def __init__(self, item_result, sort_order):
+        """
+        Constructor
+        :param dict[str, Any] item_result: The item result extracted from the document producer
+        :param list[str] sort_order: List of sort orders (i.e., Ascending, Descending)
+        """
+        self._item_result = item_result
+        self._doc_producer_comp = _NonStreamingOrderByComparator(sort_order)
+
+
+
+class _NonStreamingOrderByComparator(object):
+    """Provide a Comparator for item results which respects orderby sort order.
+    """
+
+    def __init__(self, sort_order):
+        """Instantiates this class
+        :param list sort_order:
+            List of sort orders (i.e., Ascending, Descending)
+        """
+        self._sort_order = sort_order
+
+    async def compare(self, doc_producer1, doc_producer2):
+        """Compares the given two instances of DocumentProducers.
+        Based on the orderby query items and whether the sort order is Ascending
+        or Descending compares the peek result of the two DocumentProducers.
+        :param _DocumentProducer doc_producer1: first instance to be compared
+        :param _DocumentProducer doc_producer2: second instance to be compared
+        :return:
+            Integer value of compare result.
+                positive integer if doc_producers1 > doc_producers2
+                negative integer if doc_producers1 < doc_producers2
+        :rtype: int
+        """
+        rank1 = doc_producer1._item_result["orderByItems"][0]
+        rank2 = doc_producer2._item_result["orderByItems"][0]
+        res = await _OrderByHelper.compare(rank1, rank2)
+        if res != 0:
+            if self._sort_order[0] == "Descending":
+                return -res
+        return res
