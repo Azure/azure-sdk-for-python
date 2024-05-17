@@ -36,7 +36,7 @@ def sample_single_document_translation():
     client = SingleDocumentTranslationClient(endpoint, AzureKeyCredential(key))
     target_languages = "hi"
     file_name = os.path.basename(TEST_INPUT_FILE_NAME)
-    print(file_name)
+    print(f"File for translation: {file_name}")
     file_type = "text/html"
     with open(TEST_INPUT_FILE_NAME, "r") as file:
         file_contents = file.read()
