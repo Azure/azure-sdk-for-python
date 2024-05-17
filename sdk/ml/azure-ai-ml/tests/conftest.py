@@ -101,7 +101,8 @@ def add_new_sanitizers():
 
     This fixture is a stop gap to deal with a variant of https://github.com/Azure/azure-sdk-for-python/issues/35447
     """
-    add_uri_regex_sanitizer(
+    pass
+    '''add_uri_regex_sanitizer(
         regex=r"subscriptions/(?<subscription_id>[^\.]+)/",
         group_for_replace="subscription_id",
         value="00000000-0000-0000-0000-000000000",
@@ -120,7 +121,7 @@ def add_new_sanitizers():
         group_for_replace="workspace",
         value="00000",
         function_scoped=True,
-    )
+    )'''
 
 
 @pytest.fixture(scope="session", autouse=True)
