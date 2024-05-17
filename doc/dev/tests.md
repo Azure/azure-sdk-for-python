@@ -248,17 +248,23 @@ value of `"appId"`, and `AZURE_CLIENT_SECRET` to the value of `"password"`.
 The test proxy has to be available in order for tests to work; this is done automatically with a `pytest` fixture.
 
 Create a `conftest.py` file within your package's test directory (`sdk/{service}/{package}/tests`), and inside it add a
-session-level fixture that accepts `devtools_testutils.test_proxy` as a parameter (and has `autouse` set to `True`):
+session-level fixture that accepts the `test_proxy` fixture as a parameter (and has `autouse` set to `True`):
 
 ```python
 import pytest
-from devtools_testutils import test_proxy
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
+# test_proxy auto-starts the test proxy
+# patch_sleep and patch_async_sleep streamline tests by disabling wait times during LRO polling
 @pytest.fixture(scope="session", autouse=True)
-def start_proxy(test_proxy):
+def start_proxy(test_proxy, patch_sleep, patch_async_sleep):
     return
 ```
+
+As shown in the example, it's recommended to also request the `patch_sleep` and `patch_async_sleep` fixtures unless
+your tests have a unique need to use `time.sleep` or `asyncio.sleep` during playback tests (this is unusual). All of
+these fixtures are imported by the central [`/sdk/conftest.py`][central_conftest], so `pytest` will automatically
+resolve the references.
 
 For more details about how this fixture starts up the test proxy, or the test proxy itself, refer to the
 [test proxy migration guide][test_proxy_startup].
@@ -576,6 +582,7 @@ For information about more advanced testing scenarios, refer to the [advanced te
 [azure_cli_service_principal]: https://docs.microsoft.com/cli/azure/ad/sp?view=azure-cli-latest#az-ad-sp-create-for-rbac
 [azure_portal]: https://portal.azure.com/
 [azure_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/7e66e3877519a15c1d4304eb69abf0a2281773/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L44
+[central_conftest]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/conftest.py
 [env_var_docs]: https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-sdk-tools/devtools_testutils#use-the-environmentvariableloader
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
 [generate_sas]: https://github.com/Azure/azure-sdk-for-python/blob/bf4749babb363e2dc972775f4408036e31f361b4/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L196
