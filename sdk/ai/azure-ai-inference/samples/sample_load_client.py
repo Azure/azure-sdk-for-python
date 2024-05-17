@@ -5,7 +5,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create a client from a given endpoint URL using
-    the load_client() function imported from azure.ai.inference.
+    the load_client() function, imported from azure.ai.inference.
     In this sample, we get a synchronous client and do a chat completions call.
 
 USAGE:

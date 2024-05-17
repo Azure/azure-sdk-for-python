@@ -7,11 +7,13 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import json
+import logging
 import sys
 
 from io import IOBase
 from typing import Any, Dict, Union, IO, List, Optional, overload
 from azure.core.pipeline import PipelineResponse
+from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.core.exceptions import (
@@ -25,6 +27,7 @@ from azure.core.exceptions import (
 from .. import models as _models
 from .._model_base import SdkJSONEncoder
 from ._client import ChatCompletionsClient as ChatCompletionsClientGenerated
+from ._client import EmbeddingsClient, ImageEmbeddingsClient
 from .._operations._operations import build_chat_completions_create_request
 
 if sys.version_info >= (3, 9):
@@ -33,6 +36,28 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
+_LOGGER = logging.getLogger(__name__)
+
+
+async def load_client(
+    endpoint: str, credential: AzureKeyCredential, **kwargs: Any
+) -> Union[ChatCompletionsClientGenerated, EmbeddingsClient, ImageEmbeddingsClient]:
+    client = ChatCompletionsClient(endpoint, credential, **kwargs)  # Pick any of the clients, it does not matter...
+    model_info = await client.get_model_info()
+    await client.close()
+    _LOGGER.info("model_info=%s", model_info)
+    if model_info.model_type in (None, ''):
+        raise ValueError(
+            "The AI model information is missing a value for `model type`. Cannot create an appropriate client."
+        )
+    # TODO: Remove "completions" once Mistral Large fixes their model type
+    if model_info.model_type == _models.ModelType.CHAT or "completion":
+        return ChatCompletionsClient(endpoint, credential, **kwargs)
+    if model_info.model_type == _models.ModelType.EMBEDDINGS:
+        return EmbeddingsClient(endpoint, credential, **kwargs)
+    if model_info.model_type == _models.ModelType.IMAGE_EMBEDDINGS:
+        return ImageEmbeddingsClient(endpoint, credential, **kwargs)
+    raise ValueError(f"No client available to support AI model type `{model_info.model_type}`")
 
 
 class ChatCompletionsClient(ChatCompletionsClientGenerated):
@@ -377,6 +402,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
 
 __all__: List[str] = [
+    "load_client",
     "ChatCompletionsClient"
 ]  # Add all objects you want publicly available to users at this package level
 

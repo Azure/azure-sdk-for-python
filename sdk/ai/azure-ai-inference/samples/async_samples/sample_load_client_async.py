@@ -4,8 +4,8 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to create an asynchronous client from a given
-    endpoint URL using the load_async_client() function.
+    This sample demonstrates how to create an asynchronous client from a given endpoint URL using
+    the load_client() function, imported from azure.ai.inference.aio.
     In this sample, we get an asynchronous client and do a chat completions call.
 
 USAGE:
@@ -31,18 +31,17 @@ async def sample_load_client_async():
         print("Set them before running this sample.")
         exit()
 
-    from azure.ai.inference import load_async_client
-    from azure.ai.inference.aio import ChatCompletionsClient
+    from azure.ai.inference.aio import load_client, ChatCompletionsClient
     from azure.ai.inference.models import SystemMessage, UserMessage
     from azure.core.credentials import AzureKeyCredential
 
-    client = load_async_client(endpoint=endpoint, credential=AzureKeyCredential(key))
+    client = await load_client(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # This should create a client of type `ChatCompletionsClient`
     print(f"Created client of type `{type(client).__name__}`.")
 
     # TODO: Why does this return False?
-    #if isinstance(client, azure.ai.inference.aio.ChatCompletionsClient):
+    #if isinstance(client, ChatCompletionsClient):
     # Do a single chat completion operation. Start the operation and get a Future object.
     future = asyncio.ensure_future(
         client.create(
