@@ -40,6 +40,7 @@ class TestConditionalNodeInPipeline(AzureRecordedTestCase):
 
 
 class TestIfElse(TestConditionalNodeInPipeline):
+    @pytest.mark.usefixtures("add_new_sanitizers")
     def test_happy_path_if_else(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         params_override = [{"name": randstr("name")}]
         my_job = load_job(
@@ -140,6 +141,7 @@ class TestIfElse(TestConditionalNodeInPipeline):
             "result": {"type": "command"},
         }
 
+    @pytest.mark.usefixtures("add_new_sanitizers")
     def test_if_else_single_multiple_block(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         params_override = [{"name": randstr("name")}]
         my_job = load_job(

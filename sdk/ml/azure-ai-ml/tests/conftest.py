@@ -100,10 +100,40 @@ def add_new_sanitizers():
 
 
     This fixture is a stop gap to deal with a variant of https://github.com/Azure/azure-sdk-for-python/issues/35447
+
+
+    
+
+    Notes:
+    - My process:
+      - Check PR pipeline, see what tests failed, add this fixture to them.
+      - Run the tests in playback mode, see what failed, try to adjust this sanitizer to account for that.
+      - Once adjusted (or if failure reason isn't clear) run tests in live mode, push the recordings, then switch back to playback mode and see what changed.
+    - Might need to sanitize outside uri. Experiment with add_general_regex_sanitizer instead of add_uri_regex_sanitizer?
+    - Known problematic tests beyond original skipped tests:
+      - Couldn't get live test to run properly due to missing a cpu-cluster resource (first 3 from tests/dsl/e2etests/test_dsl_pipeline_samples.py, last 2 in tests/pipeline_job/e2etests/test_pipeline_job.py)
+        - test_basic_pipeline
+        - test_pipeline_with_data
+        - test_nyc_taxi_data_regression
+        - test_pipeline_with_pipeline_component
+        - test_register_output_yaml_succeed
+      - live test ran, but playback failed due to issues that didn't immediately seem like sanitization problems after corrections. (tests/dsl/e2etests/test_dsl_pipeline_samples.py)
+        - test_pipeline_with_pipeline_component
+        - test_pipeline_with_data_as_inputs_for_pipeline_component
+      - live test ran, but playback failed with sanitization issues that I couldn't cleanse without causing other failures (from tests/dsl/e2etests/test_dsl_pipeline_with_specific_nodes.py)
+        - test_dsl_pipeline_concurrent_component_registration
+      - The environment test 'test_environment_archive_restore_version' fails because of an actual apparent functionality failure. The restoration process (or the listing of archieved environments) is not working properly.
+      - The following tests recorded, but failed in playback mode due to reasons I didn't fully understand.
+        They seemed like sanitization issues so profound they caused entire records to not even be compared (or the matching records were missing?)
+        They're both from tests/pipeline_job/e2etests/test_control_flow_pipeline.py
+         - test_happy_path_if_else
+         - test_if_else_single_multiple_block
+
+
     """
     pass
-    '''add_uri_regex_sanitizer(
-        regex=r"subscriptions/(?<subscription_id>[^\.]+)/",
+    add_uri_regex_sanitizer(
+        regex=r"subscriptions/(?<subscription_id>[^\.]+)",
         group_for_replace="subscription_id",
         value="00000000-0000-0000-0000-000000000",
         function_scoped=True,
@@ -121,7 +151,24 @@ def add_new_sanitizers():
         group_for_replace="workspace",
         value="00000",
         function_scoped=True,
+    )
+
+    add_uri_regex_sanitizer(
+        regex=r"codes/(?<code>[^\.]+)/",
+        group_for_replace="code",
+        value="000000000000000000000",
+        function_scoped=True,
+    )
+
+    # This sanitizer seemed to help, but also is likely the source of decoding errors in playback mode. It probably needs to be refined. 
+    '''add_uri_regex_sanitizer(
+        regex=r"workspaces/(?<workspace>[^\.]+)/(?<what_is_this>[^\.]+)",
+        group_for_replace="what_is_this",
+        value="000000000000000000000",
+        function_scoped=True,
     )'''
+
+    
 
 
 @pytest.fixture(scope="session", autouse=True)

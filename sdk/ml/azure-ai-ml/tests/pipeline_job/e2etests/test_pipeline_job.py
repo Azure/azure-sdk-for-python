@@ -1328,6 +1328,7 @@ class TestPipelineJob(AzureRecordedTestCase):
 
         assert train_job.inputs.training_data.mode is InputOutputModes.RO_MOUNT
 
+    @pytest.mark.usefixtures("add_new_sanitizers")
     def test_pipeline_with_pipeline_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -1757,6 +1758,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
+    @pytest.mark.usefixtures("add_new_sanitizers")
     def test_register_output_yaml_succeed(
         self,
         client: MLClient,

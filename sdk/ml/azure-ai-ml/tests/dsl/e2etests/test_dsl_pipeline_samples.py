@@ -292,6 +292,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = automl_job_in_pipeline()
         assert_job_cancel(pipeline, client)
 
+    @pytest.mark.usefixtures("add_new_sanitizers")
     @pytest.mark.e2etest
     def test_pipeline_with_pipeline_component(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.pipeline_with_pipeline_component.pipeline import (
@@ -301,6 +302,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = pipeline_with_pipeline_component()
         assert_job_cancel(pipeline, client)
 
+    @pytest.mark.usefixtures("add_new_sanitizers")
     @pytest.mark.e2etest
     def test_pipeline_with_data_as_inputs_for_pipeline_component(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.pipeline_with_pipeline_component.pipeline_with_data_as_input import (

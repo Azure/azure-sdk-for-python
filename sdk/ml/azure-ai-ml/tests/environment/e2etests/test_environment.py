@@ -162,6 +162,7 @@ class TestEnvironment(AzureRecordedTestCase):
         assert environment
         assert environment.id == environment_id
 
+    @pytest.mark.usefixtures("add_new_sanitizers")
     def test_environment_archive_restore_version(self, client: MLClient, env_name: Callable[[str], str]) -> None:
         versions = ["1", "2"]
         version_archived = versions[0]
@@ -175,7 +176,7 @@ class TestEnvironment(AzureRecordedTestCase):
 
         def get_environment_list():
             # Wait for list index to update before calling list command
-            sleep_if_live(30)
+            sleep_if_live(60)
             environment_list = client.environments.list(name=name, list_view_type=ListViewType.ACTIVE_ONLY)
             return [e.version for e in environment_list if e is not None]
 
@@ -206,6 +207,7 @@ class TestEnvironment(AzureRecordedTestCase):
         client.environments.restore(name=name)
         assert name in get_environment_list()
 
+    @pytest.mark.usefixtures("add_new_sanitizers")
     def test_environment_get_latest_label(self, client: MLClient, randstr: Callable[[], str]) -> None:
         name = randstr("name")
 

@@ -283,6 +283,7 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
             # updated command component and its parents (pipeline_leaf and pipeline_mid) will be resolved
             assert mock_resolve.call_count == 3
 
+    @pytest.mark.usefixtures("add_new_sanitizers")
     def test_dsl_pipeline_concurrent_component_registration(self, client: MLClient, mocker: MockFixture) -> None:
         # disable on-disk cache to test concurrent component registration
         mocker.patch("azure.ai.ml._utils.utils.is_on_disk_cache_enabled", return_value=False)
