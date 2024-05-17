@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.cosmosdb import CosmosDBManagementClient
 
 """
@@ -14,7 +15,7 @@ from azure.mgmt.cosmosdb import CosmosDBManagementClient
     pip install azure-identity
     pip install azure-mgmt-cosmosdb
 # USAGE
-    python cosmos_db_sql_database_redistribute_throughput.py
+    python cosmos_db_sql_dedicated_gateway_service_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,26 +30,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.sql_resources.begin_sql_database_redistribute_throughput(
+    client.service.begin_delete(
         resource_group_name="rg1",
         account_name="ddb1",
-        database_name="databaseName",
-        redistribute_throughput_parameters={
-            "properties": {
-                "resource": {
-                    "sourcePhysicalPartitionThroughputInfo": [{"id": "2", "throughput": 5000}, {"id": "3"}],
-                    "targetPhysicalPartitionThroughputInfo": [
-                        {"id": "0", "throughput": 5000},
-                        {"id": "1", "throughput": 5000},
-                    ],
-                    "throughputPolicy": "custom",
-                }
-            }
-        },
+        service_name="SqlDedicatedGateway",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2024-02-15-preview/examples/CosmosDBSqlDatabaseRedistributeThroughput.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/services/sqldedicatedgateway/CosmosDBSqlDedicatedGatewayServiceDelete.json
 if __name__ == "__main__":
     main()
