@@ -3,9 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-NOTE: 
-    This sample is still work in progress...
-
 DESCRIPTION:
     This sample demonstrates how to do chat completions using a synchronous client,
     with the assistance of tools. In this sample, we use a mock function tool to retrieve
@@ -23,18 +20,9 @@ USAGE:
     2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
-
 def sample_chat_completions_with_tools():
     import os
     import json
-
-    # Enable unredacted logging, including full request and response payloads (delete me!)
-    import sys
-    import logging
-
-    logger = logging.getLogger("azure")
-    logger.setLevel(logging.DEBUG)
-    logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 
     try:
         endpoint = os.environ["CHAT_COMPLETIONS_ENDPOINT"]
@@ -47,10 +35,7 @@ def sample_chat_completions_with_tools():
     from azure.ai.inference import ChatCompletionsClient
     from azure.ai.inference.models import (
         AssistantMessage,
-        ChatCompletionsFunctionToolCall,
         ChatCompletionsFunctionToolDefinition,
-        ChatCompletionsNamedToolSelection,
-        ChatCompletionsToolSelectionPreset,
         CompletionsFinishReason,
         FunctionDefinition,
         SystemMessage,
@@ -59,9 +44,6 @@ def sample_chat_completions_with_tools():
     )
     from azure.core.credentials import AzureKeyCredential
 
-    # Create a chat completion client. Make sure you selected a model that supports tools.
-    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key), logging_enable=True)
-
     # Define a function that retrieves flight information
     def get_flight_info(origin_city: str, destination_city: str):
         """
@@ -69,21 +51,16 @@ def sample_chat_completions_with_tools():
         flight between two cities.
 
         Parameters:
-        origin_city (str): The name of the city where the flight originates
-        destination_city (str): The destination city
+        origin_city (str): The name of the city where the flight originates.
+        destination_city (str): The destination city.
 
         Returns:
-        str: The airline name, fight number, date and time of the next flight between the cities
+        str: The airline name, fight number, date and time of the next flight between the cities.
         """
         if origin_city == "Seattle" and destination_city == "Miami":
             return "Delta airlines flight number 123 from Seattle to Miami, departing May 7th, 2024 at 10:00 AM."
-            # return '{"info": "Delta airlines flight number 123 from Seattle to Miami, departing May 7th, 2024 at 10:00 AM."}'
-        elif origin_city == "Seattle" and destination_city == "Orlando":
-            return "American Airlines flight number 456 from Seattle to Orlando, departing May 8th, 2024 at 2:45 PM."
-            # return '{"info": "American Airlines flight number 456 from Seattle to Orlando, departing May 8th, 2024 at 2:45 PM."}'
         else:
-            return "I don't have that information."
-            # return '{"into": "I don\'t have that information."}'
+            return "Sorry, I don't have that information."
 
     # Define a 'tool' that the model can use to retrieves flight information
     flight_info = ChatCompletionsFunctionToolDefinition(
@@ -107,53 +84,56 @@ def sample_chat_completions_with_tools():
         )
     )
 
+    # Create a chat completion client. Make sure you selected a model that supports tools.
+    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
     # Make a chat completions call asking for flight information, while providing a tool to handle the request
     messages = [
         SystemMessage(content="You an assistant that helps users find flight information."),
-        UserMessage(content="What are the next flights from Seattle to Miami and from Seattle to Orlando?"),
+        UserMessage(content="What is the next flights from Seattle to Miami?"),
     ]
 
     response = client.create(
         messages=messages,
         tools=[flight_info],
-        # tool_choice=ChatCompletionsNamedToolSelection(type="function")  # Cohere model does not support
     )
 
-    # As long as the model keeps requesting tool calls, make tool calls and provide the tool outputs to the model
-    while response.choices[0].finish_reason == CompletionsFinishReason.TOOL_CALLS:
+    # The model should be asking for tool calls
+    if response.choices[0].finish_reason == CompletionsFinishReason.TOOL_CALLS:
 
         # Append the previous model response to the chat history
-        if response.choices[0].message.tool_calls is not None:
-            # TODO: Remove the need to set content=""
-            messages.append(AssistantMessage(content="", tool_calls=response.choices[0].message.tool_calls))
-
-        # Make new function call(s) as needed. If parallel function calling is supported by the model,
-        # we may have more than one tool call request.
-        if response.choices[0].message.tool_calls is not None:
-            for tool_call in response.choices[0].message.tool_calls:
-                if hasattr(tool_call, "function"):
-                    function_name = tool_call.function.name
-                    function_args = json.loads(tool_call.function.arguments.replace("'", '"'))
-                    tool_call_id = tool_call.id
-                    print(f"Calling function `{function_name}` with arguments {function_args}")
-                    callable_func = locals()[function_name]
-                    function_response = callable_func(**function_args)
-                    print(f"Function response is: {function_response}")
-
-                    # Provide the tool response to the model, by appending it to the chat history
-                    messages.append(
-                        ToolMessage(
-                            tool_call_id=tool_call_id, content=function_response
-                        )  # json.dumps(function_response)
-                    )
-
-        # With the additional tools information on hand, get another response from the model
-        response = client.create(
-            messages=messages, tools=[flight_info], tool_choice=ChatCompletionsToolSelectionPreset.AUTO
+        messages.append(
+            AssistantMessage(
+                content="",
+                tool_calls=response.choices[0].message.tool_calls
+            )
         )
 
-    # Print the final response
-    print(response.choices[0].message.content)
+        # The tools call should be a function call
+        tool_call = response.choices[0].message.tool_calls[0]
+        if hasattr(tool_call, "function"):
+
+            function_args = json.loads(tool_call.function.arguments.replace("'", '"'))
+            print(f"Calling function `{tool_call.function.name}` with arguments {function_args}")
+            callable_func = locals()[tool_call.function.name]
+
+            function_response = callable_func(**function_args)
+            print(f"Function response = {function_response}")
+
+            # Provide the tool response to the model, by appending it to the chat history
+            messages.append(
+                ToolMessage(
+                    tool_call_id=tool_call.id, content=function_response
+                )  # json.dumps(function_response)
+            )
+
+            # With the additional tools information on hand, get another response from the model
+            response = client.create(
+                messages=messages,
+                tools=[flight_info]
+            )
+
+            print(f"Model response = {response.choices[0].message.content}")
 
 
 if __name__ == "__main__":

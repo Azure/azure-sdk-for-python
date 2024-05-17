@@ -18,7 +18,6 @@ USAGE:
     2) IMAGE_EMBEDDINGS_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
-
 def sample_image_embeddings():
     import os
     import base64

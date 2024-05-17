@@ -18,7 +18,6 @@ USAGE:
 """
 import asyncio
 
-
 async def sample_embeddings_async():
     import os
     from azure.ai.inference.aio import EmbeddingsClient
@@ -37,31 +36,22 @@ async def sample_embeddings_async():
     client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Do a single embeddings operation. Start the operation and get a Future object.
-    future = asyncio.ensure_future(client.create(input=["first phrase", "second phrase", "third phrase"]))
+    response = await client.create(
+        input=[
+            "first phrase",
+            "second phrase",
+            "third phrase"
+        ]
+    )
 
-    # Loop until the operation is done
-    while not future.done():
-        await asyncio.sleep(0.1)
-        print("Waiting...")
-
-    # Get the response
-    response = future.result()
-    await client.close()
-
-    # Print results the the console
     print("Embeddings response:")
     for item in response.data:
         length = len(item.embedding)
         print(
             f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, ..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
         )
-    print(f"id: {response.id}")
-    print(f"model: {response.model}")
-    print(f"object: {response.object}")
-    print(f"usage.input_tokens: {response.usage.input_tokens}")
-    print(f"usage.prompt_tokens: {response.usage.prompt_tokens}")
-    print(f"usage.total_tokens: {response.usage.total_tokens}")
 
+    await client.close()
 
 async def main():
     await sample_embeddings_async()

@@ -19,7 +19,6 @@ USAGE:
 """
 import asyncio
 
-
 async def sample_chat_completions_streaming_async():
     import os
     from azure.ai.inference.aio import ChatCompletionsClient
@@ -39,22 +38,12 @@ async def sample_chat_completions_streaming_async():
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Do a single streaming chat completion operation. Start the operation and get a Future object.
-    future = asyncio.ensure_future(
-        client.create_streaming(
-            messages=[
-                SystemMessage(content="You are a helpful assistant."),
-                UserMessage(content="Give me 5 good reasons why I should exercise every day."),
-            ]
-        )
+    response = await client.create_streaming(
+        messages=[
+            SystemMessage(content="You are a helpful assistant."),
+            UserMessage(content="Give me 5 good reasons why I should exercise every day."),
+        ]
     )
-
-    # Loop until you get the HTTP response headers from the service
-    while not future.done():
-        await asyncio.sleep(0.1)
-        print("Waiting...")
-
-    # Get the response
-    response = future.result()
 
     # Iterate on the response to get chat completion updates, as they arrive from the service
     async for update in response:

@@ -43,26 +43,17 @@ async def sample_load_client_async():
     # TODO: Why does this return False?
     #if isinstance(client, ChatCompletionsClient):
     # Do a single chat completion operation. Start the operation and get a Future object.
-    future = asyncio.ensure_future(
-        client.create(
-            messages=[
-                SystemMessage(content="You are a helpful assistant."),
-                UserMessage(content="How many feet are in a mile?"),
-            ]
-        )
+    response = await client.create(
+        messages=[
+            SystemMessage(content="You are a helpful assistant."),
+            UserMessage(content="How many feet are in a mile?"),
+        ]
     )
 
-    # Loop until the operation is done
-    while not future.done():
-        await asyncio.sleep(0.1)
-        print("Waiting...")
+    # Print response the the console
+    print(response.choices[0].message.content)
 
-    # Get the response
-    response = future.result()
     await client.close()
-
-    # Print results the the console
-    print(f"choices[0].message.content: {response.choices[0].message.content}")
 
 
 async def main():

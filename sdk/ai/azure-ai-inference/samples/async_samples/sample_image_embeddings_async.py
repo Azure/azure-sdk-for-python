@@ -43,30 +43,22 @@ async def sample_image_embeddings_async():
     client = ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Do a single image embeddings operation. Start the operation and get a Future object.
-    future = asyncio.ensure_future(
-        client.create(
-            input=[
-                EmbeddingInput(image=image1),
-                EmbeddingInput(image=image2)
-            ]
-        )
+    response = await client.create(
+        input=[
+            EmbeddingInput(image=image1),
+            EmbeddingInput(image=image2)
+        ]
     )
 
-    # Loop until the operation is done
-    while not future.done():
-        await asyncio.sleep(0.1)
-        print("Waiting...")
-
-    # Get the response
-    response = future.result()
-    await client.close()
-
+    print("Embeddings response:")
     for item in response.data:
         length = len(item.embedding)
         print(
             f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
             f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
         )
+
+    await client.close()
 
 
 async def main():

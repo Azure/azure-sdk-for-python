@@ -4,7 +4,7 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to get a chat completion response 
+    This sample demonstrates how to get a chat completion response
     from the service using an asynchronous client.
 
 USAGE:
@@ -18,7 +18,6 @@ USAGE:
     2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
 import asyncio
-
 
 async def sample_chat_completions_async():
     import os
@@ -38,40 +37,18 @@ async def sample_chat_completions_async():
     # Create a Model Client for synchronous operations
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    # Do a single chat completion operation. Start the operation and get a Future object.
-    future = asyncio.ensure_future(
-        client.create(
-            messages=[
-                SystemMessage(content="You are a helpful assistant."),
-                UserMessage(content="How many feet are in a mile?"),
-            ]
-        )
+    # Do a single chat completion operation
+    response = await client.create(
+        messages=[
+            SystemMessage(content="You are a helpful assistant."),
+            UserMessage(content="How many feet are in a mile?"),
+        ]
     )
 
-    # Loop until the operation is done
-    while not future.done():
-        await asyncio.sleep(0.1)
-        print("Waiting...")
+    # Print response the the console
+    print(response.choices[0].message.content)
 
-    # Get the response
-    response = future.result()
     await client.close()
-
-    # Print results the the console
-    print("Chat Completions:")
-    print(f"choices[0].message.content: {response.choices[0].message.content}")
-    print(f"choices[0].message.role: {response.choices[0].message.role}")
-    print(f"choices[0].finish_reason: {response.choices[0].finish_reason}")
-    print(f"choices[0].index: {response.choices[0].index}")
-    print(f"id: {response.id}")
-    print(f"created: {response.created}")
-    print(f"model: {response.model}")
-    print(f"object: {response.object}")
-    print(f"usage.capacity_type: {response.usage.capacity_type}")
-    print(f"usage.prompt_tokens: {response.usage.prompt_tokens}")
-    print(f"usage.completion_tokens: {response.usage.completion_tokens}")
-    print(f"usage.total_tokens: {response.usage.total_tokens}")
-
 
 async def main():
     await sample_chat_completions_async()
