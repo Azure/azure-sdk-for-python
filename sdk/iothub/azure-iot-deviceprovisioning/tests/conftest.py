@@ -10,6 +10,7 @@ from devtools_testutils import (
     EnvironmentVariableLoader,
     add_general_regex_sanitizer,
     add_header_regex_sanitizer,
+    remove_batch_sanitizers,
     test_proxy,
 )
 
@@ -89,6 +90,10 @@ def add_sanitizers(test_proxy):
     add_body_key_sanitizer(json_path="$..secondaryKey", value="secondaryKey")
     add_body_key_sanitizer(json_path="$..sha256Thumbprint", value="thumbprint")
     add_body_key_sanitizer(json_path="$..sha1Thumbprint", value="thumbprint")
+
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3490: $..etag
+    remove_batch_sanitizers(["AZSDK3490"])
     return
 
 

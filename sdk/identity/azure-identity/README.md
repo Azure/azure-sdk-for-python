@@ -250,6 +250,7 @@ Not all credentials require this configuration. Credentials that authenticate th
 
 |Credential|Usage|Reference
 |-|-|-
+|[`AzurePipelinesCredential`][az_pipelines_cred_ref]| Supports [Microsoft Entra Workload ID](https://learn.microsoft.com/azure/devops/pipelines/release/configure-workload-identity?view=azure-devops) on Azure Pipelines. |
 |[`CertificateCredential`][cert_cred_ref]| Authenticates a service principal using a certificate. | [Service principal authentication](https://learn.microsoft.com/entra/identity-platform/app-objects-and-service-principals)
 |[`ClientAssertionCredential`][client_assertion_cred_ref]| Authenticates a service principal using a signed client assertion. |
 |[`ClientSecretCredential`][client_secret_cred_ref]| Authenticates a service principal using a secret. | [Service principal authentication](https://learn.microsoft.com/entra/identity-platform/app-objects-and-service-principals)
@@ -374,6 +375,7 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information, see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 [auth_code_cred_ref]: https://aka.ms/azsdk/python/identity/authorizationcodecredential
+[az_pipelines_cred_ref]: https://aka.ms/azsdk/python/identity/azurepipelinescredential
 [azd_cli_cred_ref]: https://aka.ms/azsdk/python/identity/azuredeveloperclicredential
 [azure_cli]: https://learn.microsoft.com/cli/azure
 [azure_developer_cli]:https://aka.ms/azure-dev
