@@ -68,7 +68,7 @@ _T = TypeVar("_T")
 
 
 @overload
-async def load( # pylint: disable=docstring-keyword-should-match-keyword-only
+async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     endpoint: str,
     credential: "AsyncTokenCredential",
     *,

@@ -42,6 +42,7 @@ Currently the Azure App Configuration Provider enables:
 
 * Connecting to an App Configuration Store using a connection string or Azure Active Directory.
 * Selecting multiple sets of configurations using `SettingSelector`.
+* Loading Feature Flags
 * Dynamic Refresh
 * Trim prefixes off key names.
 * Resolving Key Vault References, requires AAD.
@@ -53,7 +54,6 @@ Currently the Azure App Configuration Provider enables:
 List of features we are going to add to the Python Provider in the future.
 
 * Geo-Replication support
-* Feature Management
 * Configuration Placeholders
 
 ## Examples
@@ -109,6 +109,37 @@ config.refresh()
 Once the provider is refreshed, the configurations can be accessed as normal. And if any changes have been made it will be updated with the latest values. If the `refresh_interval` hasn't passed since the last refresh check, the provider will not check for changes.
 
 For additional info check out [Dynamic Refresh](https://learn.microsoft.com/azure/azure-app-configuration/enable-dynamic-configuration-python) on MS Learn.
+
+## Selecting Feature Flags
+
+You can enable loading of feature flags by setting `feature_flags_enabled` to `True`. By default all feature flags with no label are loaded.
+
+```python
+config = load(
+    connection_string=connection_string,
+    feature_flag_enabled=True,
+)
+```
+
+If you want to load feature flags with a specific label you can use `feature_flag_selectors` and provide a list of `SettingSelector`s to filter the feature flags.
+
+```python
+config = load(
+    connection_string=connection_string,
+    feature_flag_enabled=True,
+    feature_flag_selectors=[SettingSelector(key_filter="*", label_filter="dev")]
+)
+```
+
+Feature flags can be refreshed in a similar way to configurations. By setting `feature_flag_refresh_enabled` to `True` and calling `refresh` on the provider.
+
+```python
+config = load(
+    connection_string=connection_string,
+    feature_flag_enabled=True,
+    feature_flag_refresh_enabled=True,
+)
+```
 
 ### Trimming Keys
 

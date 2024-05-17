@@ -70,7 +70,7 @@ min_uptime = 5
 
 
 @overload
-def load( # pylint: disable=docstring-keyword-should-match-keyword-only
+def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     endpoint: str,
     credential: "TokenCredential",
     *,
@@ -128,7 +128,7 @@ def load( # pylint: disable=docstring-keyword-should-match-keyword-only
 
 
 @overload
-def load( # pylint: disable=docstring-keyword-should-match-keyword-only
+def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     *,
     connection_string: str,
     selects: Optional[List[SettingSelector]] = None,
