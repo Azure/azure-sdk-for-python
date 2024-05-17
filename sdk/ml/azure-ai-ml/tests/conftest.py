@@ -29,6 +29,7 @@ from devtools_testutils import (
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import is_live_and_not_recording
 from devtools_testutils.proxy_fixtures import VariableRecorder
+from devtools_testutils import add_uri_regex_sanitizer
 from pytest_mock import MockFixture
 from test_utilities.constants import Test_Registry_Name, Test_Resource_Group, Test_Subscription, Test_Workspace_Name
 from test_utilities.utils import reload_schema_for_nodes_in_pipeline_job
@@ -86,6 +87,40 @@ def _query_param_regex(name, *, only_value=True) -> str:
         name_regex = rf"(?<={name_regex})"
 
     return rf'{name_regex}{value_regex}(?=[{QUERY_STRING_DELIMETER}"\s]|$)'
+
+
+@pytest.fixture
+def add_new_sanitizers():
+    """Sanitizes values that are being sanitized by the newly updated (as of mid may 2024) central sanitizer,
+    but are not sanitized here. This sanitizer should be rolled out and become a default on all tests as quickly
+    as possible. Some hiccups are expected since many tests so assertions against unserialized values that are
+    generated from alternative sources.
+
+    Currently sanitized values: sub IDs, resource groups, and workspaces.
+
+
+    This fixture is a stop gap to deal with a variant of https://github.com/Azure/azure-sdk-for-python/issues/35447
+    """
+    add_uri_regex_sanitizer(
+        regex=r"subscriptions/(?<subscription_id>[^\.]+)/",
+        group_for_replace="subscription_id",
+        value="00000000-0000-0000-0000-000000000",
+        function_scoped=True,
+    )
+
+    add_uri_regex_sanitizer(
+        regex=r"resourceGroups/(?<resource_group>[^\.]+)/",
+        group_for_replace="resource_group",
+        value="00000",
+        function_scoped=True,
+    )
+
+    add_uri_regex_sanitizer(
+        regex=r"workspaces/(?<workspace>[^\.]+)/",
+        group_for_replace="workspace",
+        value="00000",
+        function_scoped=True,
+    )
 
 
 @pytest.fixture(scope="session", autouse=True)

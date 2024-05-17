@@ -4,7 +4,7 @@ from typing import Callable
 
 import pytest
 from devtools_testutils import AzureRecordedTestCase
-from test_utilities.utils import sleep_if_live
+from test_utilities.utils import sleep_if_live, is_live
 
 from azure.ai.ml import MLClient, load_environment
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
@@ -22,12 +22,11 @@ def env_name(variable_recorder) -> Callable[[str], str]:
 
 
 # previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
-
-
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test", "mock_code_hash")
 @pytest.mark.production_experiences_test
 class TestEnvironment(AzureRecordedTestCase):
+    @pytest.mark.usefixtures("add_new_sanitizers")
     def test_environment_create_conda(self, client: MLClient, env_name: Callable[[str], str]) -> None:
         params_override = [{"name": env_name("name")}]
         env = load_environment(
@@ -41,11 +40,15 @@ class TestEnvironment(AzureRecordedTestCase):
         )
 
         assert environment.conda_file
-        assert environment.id == environment_id
+        # Don't try to match in playback mode due to sanitized values.
+        if is_live():
+            assert environment.id == environment_id
 
         env_dump = environment._to_dict()
         assert env_dump
-        assert env_dump["id"] == ARM_ID_PREFIX + environment_id
+        # Same for this.
+        if is_live():
+            assert env_dump["id"] == ARM_ID_PREFIX + environment_id
         assert env_dump["conda_file"]
         assert env_dump["description"]
 
@@ -89,6 +92,7 @@ class TestEnvironment(AzureRecordedTestCase):
         assert env_dump["id"] == ARM_ID_PREFIX + environment_id
         assert env_dump["image"] == environment.image
 
+    @pytest.mark.live_test_only("Needs re-recording to work with new test proxy sanitizers")
     def test_environment_create_or_update_docker_context(
         self, client: MLClient, env_name: Callable[[str], str]
     ) -> None:
@@ -204,7 +208,8 @@ class TestEnvironment(AzureRecordedTestCase):
 
     def test_environment_get_latest_label(self, client: MLClient, randstr: Callable[[], str]) -> None:
         name = randstr("name")
-        versions = ["foo", "bar", "baz", "foobar"]
+
+        versions = ["bar", "foo", "baz", "foobar"]
 
         for version in versions:
             created = client.environments.create_or_update(
@@ -218,6 +223,7 @@ class TestEnvironment(AzureRecordedTestCase):
             sleep_if_live(2)
             assert client.environments.get(name, label="latest").version == version
 
+    @pytest.mark.usefixtures("add_new_sanitizers")
     def test_registry_environment_create_conda_and_get(
         self, only_registry_client: MLClient, env_name: Callable[[str], str]
     ) -> None:

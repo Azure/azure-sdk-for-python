@@ -206,6 +206,7 @@ class TestComponent(AzureRecordedTestCase):
             recorded_component_name="component_name",
         )
 
+    @pytest.mark.usefixtures("add_new_sanitizers")
     def test_automl_component(self, client: MLClient, registry_client: MLClient, randstr: Callable[[str], str]) -> None:
         expected_component_dict = {
             "description": "Component that executes an AutoML Classification task model training in a pipeline.",
