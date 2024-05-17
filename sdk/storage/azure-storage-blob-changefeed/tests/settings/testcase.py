@@ -4,8 +4,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from __future__ import division
-
 import functools
 import os.path
 
@@ -14,14 +12,9 @@ try:
 except ImportError:
     import mock
 
-import logging
 from devtools_testutils import PowerShellPreparer
 from devtools_testutils.fake_credentials import STORAGE_ACCOUNT_FAKE_KEY
 
-try:
-    from cStringIO import StringIO      # Python 2
-except ImportError:
-    from io import StringIO
 try:
     # Running locally - use configuration in settings_real.py
     from .settings_real import *
@@ -43,6 +36,10 @@ os.environ['AZURE_TEST_RUN_LIVE'] = os.environ.get('AZURE_TEST_RUN_LIVE', None) 
 os.environ['AZURE_SKIP_LIVE_RECORDING'] = os.environ.get('AZURE_SKIP_LIVE_RECORDING', None) or SKIP_LIVE_RECORDING
 os.environ['PROTOCOL'] = PROTOCOL
 os.environ['ACCOUNT_URL_SUFFIX'] = ACCOUNT_URL_SUFFIX
+
+# This has no effect currently in Storage as we use a different mechanism (generate_oauth_token) to get these credential types. This is set to suppress the warning for having
+# no authentication type set or client secret authentication values set.
+os.environ['AZURE_TEST_USE_CLI_AUTH'] = "true"
 
 ChangeFeedPreparer = functools.partial(
     PowerShellPreparer, "storage",
