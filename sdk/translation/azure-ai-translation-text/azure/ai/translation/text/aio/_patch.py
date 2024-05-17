@@ -7,7 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Union, Optional, Any, overload
+from typing import Optional, Any, overload
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential

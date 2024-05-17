@@ -311,7 +311,7 @@ def get_text_translation_alignment():
             for translated_text in translation.translations:
                 print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
                 if translated_text.alignment:
-                    print(f"Alignments: {translated_text.alignment.proj}")
+                    print(f"Alignments: {translated_text.alignment.projections}")
 
     except HttpResponseError as exception:
         if exception.error is not None:
@@ -340,10 +340,10 @@ def get_text_translation_sentence_length():
                 )
             for translated_text in translation.translations:
                 print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
-                if translated_text.sentences_lengths:
-                    print(f"Source Sentence length: {translated_text.sentences_lengths.src_sentences_lengths}")
+                if translated_text.sentence_boundaries:
+                    print(f"Source Sentence length: {translated_text.sentence_boundaries.source_sentences_lengths}")
                     print(
-                        f"Translated Sentence length: {translated_text.sentences_lengths.translated_sentences_lengths}"
+                        f"Translated Sentence length: {translated_text.sentence_boundaries.translated_sentences_lengths}"
                     )
 
     except HttpResponseError as exception:

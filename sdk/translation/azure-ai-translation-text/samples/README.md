@@ -208,7 +208,7 @@ try:
     input_text_elements = ["This is a test"]
 
     response = text_translator.translate(
-        body=input_text_elements, target_languages=target_languages, source_language=source_language
+        body=input_text_elements, to=target_languages, source_language=source_language
     )
     translation = response[0] if response else None
 
@@ -240,7 +240,7 @@ try:
     target_languages = ["cs"]
     input_text_elements = ["This is a test"]
 
-    response = text_translator.translate(body=input_text_elements, target_languages=target_languages)
+    response = text_translator.translate(body=input_text_elements, to=target_languages)
     translation = response[0] if response else None
 
     if translation:
@@ -277,7 +277,7 @@ try:
 
     response = text_translator.translate(
         body=input_text_elements,
-        target_languages=target_languages,
+        to=target_languages,
         source_language_script=source_language_script,
         source_language=from_language,
         target_language_script=target_language_script,
@@ -318,7 +318,7 @@ try:
         "Dies ist ein Test.",
     ]
 
-    translations = text_translator.translate(body=input_text_elements, target_languages=target_languages)
+    translations = text_translator.translate(body=input_text_elements, to=target_languages)
 
     for translation in translations:
         print(
@@ -347,7 +347,7 @@ try:
     target_languages = ["cs", "es", "de"]
     input_text_elements = ["This is a test"]
 
-    response = text_translator.translate(body=input_text_elements, target_languages=target_languages)
+    response = text_translator.translate(body=input_text_elements, to=target_languages)
     translation = response[0] if response else None
 
     if translation:
@@ -379,9 +379,7 @@ try:
     target_languages = ["cs"]
     input_text_elements = ["<html><body>This <b>is</b> a test.</body></html>"]
 
-    response = text_translator.translate(
-        body=input_text_elements, target_languages=target_languages, text_type=text_type
-    )
+    response = text_translator.translate(body=input_text_elements, to=target_languages, text_type=text_type)
     translation = response[0] if response else None
 
     if translation:
@@ -417,7 +415,7 @@ try:
     ]
 
     response = text_translator.translate(
-        body=input_text_elements, target_languages=target_languages, source_language=source_language, text_type=text_type
+        body=input_text_elements, to=target_languages, source_language=source_language, text_type=text_type
     )
     translation = response[0] if response else None
 
@@ -450,7 +448,7 @@ try:
     ]
 
     response = text_translator.translate(
-        body=input_text_elements, target_languages=target_languages, source_language=source_language
+        body=input_text_elements, to=target_languages, source_language=source_language
     )
     translation = response[0] if response else None
 
@@ -483,7 +481,7 @@ try:
 
     response = text_translator.translate(
         body=input_text_elements,
-        target_languages=target_languages,
+        to=target_languages,
         profanity_action=profanity_action,
         profanity_marker=profanity_maker,
     )
@@ -519,7 +517,7 @@ try:
     input_text_elements = ["The answer lies in machine translation."]
 
     response = text_translator.translate(
-        body=input_text_elements, target_languages=target_languages, include_alignment=include_alignment
+        body=input_text_elements, to=target_languages, include_alignment=include_alignment
     )
     translation = response[0] if response else None
 
@@ -555,7 +553,7 @@ try:
     input_text_elements = ["The answer lies in machine translation. This is a test."]
 
     response = text_translator.translate(
-        body=input_text_elements, target_languages=target_languages, include_sentence_length=include_sentence_length
+        body=input_text_elements, to=target_languages, include_sentence_length=include_sentence_length
     )
     translation = response[0] if response else None
 
@@ -597,7 +595,7 @@ try:
     target_languages = ["cs"]
     input_text_elements = ["This is a test"]
 
-    response = text_translator.translate(body=input_text_elements, target_languages=target_languages, category=category)
+    response = text_translator.translate(body=input_text_elements, to=target_languages, category=category)
     translation = response[0] if response else None
 
     if translation:
@@ -738,7 +736,7 @@ try:
     input_text_elements = ["fly"]
 
     response = text_translator.lookup_dictionary_entries(
-        body=input_text_elements, source_language=source_language, target_languages=target_language
+        body=input_text_elements, source_language=source_language, to=target_language
     )
     dictionary_entry = response[0] if response else None
 
@@ -770,7 +768,7 @@ try:
     input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
 
     response = text_translator.lookup_dictionary_examples(
-        content=input_text_elements, source_language=source_language, target_languages=target_language
+        content=input_text_elements, source_language=source_language, to=target_language
     )
     dictionary_entry = response[0] if response else None
 

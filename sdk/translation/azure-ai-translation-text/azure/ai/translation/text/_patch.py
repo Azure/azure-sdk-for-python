@@ -4,7 +4,7 @@
 # ------------------------------------
 # pylint: disable=C4717, C4722
 
-from typing import Union, Optional, Any, overload
+from typing import Optional, Any, overload
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import SansIOHTTPPolicy, BearerTokenCredentialPolicy, AzureKeyCredentialPolicy
 from azure.core.credentials import TokenCredential, AzureKeyCredential

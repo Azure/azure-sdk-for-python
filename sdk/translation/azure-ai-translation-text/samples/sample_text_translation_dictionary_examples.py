@@ -45,7 +45,7 @@ def get_text_translation_dictionary_examples():
         input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
 
         response = text_translator.lookup_dictionary_examples(
-            content=input_text_elements, source_language=source_language, target_language=target_language
+            body=input_text_elements, source_language=source_language, target_language=target_language
         )
         dictionary_entry = response[0] if response else None
 
