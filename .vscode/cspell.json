@@ -1773,6 +1773,15 @@
       ]
     },
     {
+      "filename": "sdk/translation/azure-ai-translation-document/azure/ai/translation/document/*.py",
+      "words": [
+        "mros",
+        "Nify",
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
       "filename": "sdk/healthinsights/azure-healthinsights-radiologyinsights/**",
       "words": [
         "ctxt",

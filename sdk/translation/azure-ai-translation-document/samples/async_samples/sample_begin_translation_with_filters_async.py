@@ -87,5 +87,6 @@ async def main():
     await sample_translation_under_folder_async()
     await sample_translation_specific_document_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

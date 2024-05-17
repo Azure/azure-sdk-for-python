@@ -1,12 +1,14 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.1.0b1 (Unreleased)
 
 ### Features Added
+- Added SingleDocumentTranslationClient that is used to invoke `document_translate` API.
+- `document_translate` is the method added to submit a single/synchronous document translation request to the Document Translation service.
+- `DocumentTranslateContent` has been added to specify the `document_translate` request content.
 
 ### Breaking Changes
-
-### Bugs Fixed
+- Version `v1.0` is not supported
 
 ### Other Changes
 
