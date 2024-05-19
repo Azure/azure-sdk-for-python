@@ -159,9 +159,9 @@ class CallAutomationClient:
     @overload
     async def connect(
         self,
-        callback_url: str,
+        *,
         server_call_id: str,
-        *,
+        callback_url: str,
         cognitive_services_endpoint: Optional[str] = None,
         operation_context: Optional[str] = None,
         **kwargs
@@ -170,10 +170,10 @@ class CallAutomationClient:
 
         All required parameters must be populated in order to send to server.
 
-        :param callback_url: The call back url where callback events are sent. Required
-        :type callback_url: str
-        :param server_call_id: The server call ID to locate ongoing call.
-        :type server_call_id: str
+        :keyword server_call_id: The server call ID to locate ongoing call.
+        :paramtype server_call_id: str
+        :keyword callback_url: The call back url where callback events are sent. Required
+        :paramtype callback_url: str
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str or None
@@ -187,9 +187,9 @@ class CallAutomationClient:
     @overload
     async def connect(
         self,
-        callback_url: str,
+        *,
         group_call_id: str,
-        *,
+        callback_url: str,
         cognitive_services_endpoint: Optional[str] = None,
         operation_context: Optional[str] = None,
         **kwargs
@@ -197,10 +197,10 @@ class CallAutomationClient:
         """The request payload for creating a connection to a room CallLocator.
         All required parameters must be populated in order to send to server.
 
-        :param callback_url: The call back url where callback events are sent. Required
-        :type callback_url: str
-        :param group_call_id: The group call ID to locate ongoing call.
-        :type group_call_id: str
+        :keyword group_call_id: The group call ID to locate ongoing call.
+        :paramtype group_call_id: str
+        :keyword callback_url: The call back url where callback events are sent. Required
+        :paramtype callback_url: str
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str or None
@@ -214,9 +214,9 @@ class CallAutomationClient:
     @overload
     async def connect(
         self,
-        callback_url: str,
-        room_id: str,
         *,
+        room_id: str,
+        callback_url: str,
         cognitive_services_endpoint: Optional[str] = None,
         operation_context: Optional[str] = None,
         **kwargs
@@ -224,10 +224,10 @@ class CallAutomationClient:
         """The request payload for creating a connection to a room CallLocator.
         All required parameters must be populated in order to send to server.
 
-        :param callback_url: The call back url where callback events are sent. Required
-        :type callback_url: str
-        :param room_id: Acs room id. Required
-        :type room_id: str
+        :keyword room_id: Acs room id. Required
+        :paramtype room_id: str
+        :keyword callback_url: The call back url where callback events are sent. Required
+        :paramtype callback_url: str
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str or None
@@ -245,9 +245,10 @@ class CallAutomationClient:
         **kwargs
     ) -> CallConnectionProperties:
 
+        cognitive_services_endpoint=kwargs.pop("cognitive_services_endpoint", None)
         call_intelligence_options = CallIntelligenceOptions(
-            cognitive_services_endpoint=kwargs.pop("cognitive_services_endpoint")
-            ) if kwargs.pop("cognitive_services_endpoint") else None
+            cognitive_services_endpoint=cognitive_services_endpoint
+            ) if cognitive_services_endpoint else None
 
         call_locator = build_call_locator(
             args,
@@ -256,7 +257,7 @@ class CallAutomationClient:
             kwargs.pop("group_call_id", None),
             kwargs.pop("room_id", None)
         )
-        create_call_request = ConnectRequest(
+        connect_call_request = ConnectRequest(
             call_locator=call_locator,
             callback_uri=kwargs.pop("callback_url", None),
             operation_context=kwargs.pop("operation_context", None),
@@ -265,7 +266,7 @@ class CallAutomationClient:
 
         process_repeatability_first_sent(kwargs)
         result = self._client.connect(
-            create_call_request=create_call_request,
+            connect_call_request=connect_call_request,
             **kwargs
         )
 

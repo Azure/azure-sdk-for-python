@@ -216,7 +216,7 @@ class TestCallAutomationClient(unittest.TestCase):
             AzureKeyCredential("fakeCredential=="),
             transport=Mock(send=mock_send)
         )
-        call_connection_properties = call_automation_client.connect(self.callback_url, "123456")
+        call_connection_properties = call_automation_client.connect(server_call_id="123456",callback_url=self.callback_url)
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
         self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
         self.assertEqual(self.callback_url, call_connection_properties.callback_url)
