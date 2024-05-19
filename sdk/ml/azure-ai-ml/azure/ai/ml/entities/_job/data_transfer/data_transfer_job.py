@@ -181,7 +181,6 @@ class DataTransferCopyJob(DataTransferJob):
 
         :param context: Context of data transfer job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
         :return: Translated data transfer copy component.
         :rtype: DataTransferCopyComponent
         """
@@ -206,7 +205,6 @@ class DataTransferCopyJob(DataTransferJob):
 
         :param context: Context of data transfer job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
         :return: Translated data transfer component.
         :rtype: DataTransferCopy
         """
@@ -256,7 +254,6 @@ class DataTransferImportJob(DataTransferJob):
 
         :param context: Context of data transfer job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
         :return: Translated data transfer import component.
         :rtype: str
         """
@@ -274,7 +271,6 @@ class DataTransferImportJob(DataTransferJob):
 
         :param context: Context of data transfer job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
         :return: Translated data transfer import node.
         :rtype: DataTransferImport
         """
@@ -324,7 +320,6 @@ class DataTransferExportJob(DataTransferJob):
 
         :param context: Context of data transfer job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
         :return: Translated data transfer export component.
         :rtype: str
         """
@@ -346,7 +341,6 @@ class DataTransferExportJob(DataTransferJob):
 
         :param context: Context of data transfer job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
         :return: Translated data transfer export node.
         :rtype: DataTransferExport
         """

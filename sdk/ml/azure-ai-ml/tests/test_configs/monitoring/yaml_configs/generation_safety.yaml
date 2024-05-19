@@ -47,7 +47,7 @@ create_monitor:
             prediction: is_fraud
             prediction_probability: is_fraud_probability
             correlation_id: inference_correlation_id
-      workspace_connection_id: fake_workspace_connection_id
+      connection_id: fake_workspace_connection_id
       sampling_rate: 1
       metric_thresholds:
         groundedness:

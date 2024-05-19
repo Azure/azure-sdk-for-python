@@ -11,6 +11,7 @@
 ### Other Changes
 
 - HTTP tracing spans will now include an `error.type` attribute if an error status code is returned.  #34619
+- Minimum required Python version is now 3.8
 
 ## 1.30.1 (2024-02-29)
 

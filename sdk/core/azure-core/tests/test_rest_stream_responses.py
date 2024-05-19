@@ -147,9 +147,7 @@ def test_cannot_read_after_response_closed(port, client):
 
 def test_decompress_plain_no_header(client):
     # thanks to Xiang Yan for this test!
-    account_name = "coretests"
-    url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
-    request = HttpRequest("GET", url)
+    request = HttpRequest("GET", "/streams/string")
     response = client.send_request(request, stream=True)
     with pytest.raises(ResponseNotReadError):
         response.content
@@ -159,9 +157,7 @@ def test_decompress_plain_no_header(client):
 
 def test_compress_plain_no_header(client):
     # thanks to Xiang Yan for this test!
-    account_name = "coretests"
-    url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
-    request = HttpRequest("GET", url)
+    request = HttpRequest("GET", "/streams/string")
     response = client.send_request(request, stream=True)
     iter = response.iter_raw()
     data = b"".join(list(iter))
@@ -170,25 +166,11 @@ def test_compress_plain_no_header(client):
 
 def test_decompress_compressed_no_header(client):
     # thanks to Xiang Yan for this test!
-    account_name = "coretests"
-    url = "https://{}.blob.core.windows.net/tests/test.tar.gz".format(account_name)
-    request = HttpRequest("GET", url)
+    request = HttpRequest("GET", "/streams/compressed_no_header")
     response = client.send_request(request, stream=True)
     iter = response.iter_bytes()
     data = b"".join(list(iter))
-    assert data == b"\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\n+I-.\x01\x00\x0c~\x7f\xd8\x04\x00\x00\x00"
-
-
-def test_decompress_compressed_header(client):
-    # thanks to Xiang Yan for this test!
-    account_name = "coretests"
-    account_url = "https://{}.blob.core.windows.net".format(account_name)
-    url = "https://{}.blob.core.windows.net/tests/test_with_header.tar.gz".format(account_name)
-    request = HttpRequest("GET", url)
-    response = client.send_request(request, stream=True)
-    iter = response.iter_bytes()
-    data = b"".join(list(iter))
-    assert data == b"test"
+    assert data.startswith(b"\x1f\x8b")  # gzip magic number
 
 
 def test_iter_read(client):

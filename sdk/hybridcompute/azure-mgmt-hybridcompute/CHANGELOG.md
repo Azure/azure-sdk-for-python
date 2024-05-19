@@ -1,5 +1,39 @@
 # Release History
 
+## 9.0.0b2 (2024-04-22)
+
+### Features Added
+
+  - Added operation group MachineRunCommandsOperations
+  - Model LicenseProfile has a new parameter billing_start_date
+  - Model LicenseProfile has a new parameter disenrollment_date
+  - Model LicenseProfile has a new parameter enrollment_date
+  - Model LicenseProfile has a new parameter product_features
+  - Model LicenseProfile has a new parameter product_type
+  - Model LicenseProfile has a new parameter software_assurance_customer
+  - Model LicenseProfile has a new parameter subscription_status
+  - Model LicenseProfileMachineInstanceView has a new parameter billing_start_date
+  - Model LicenseProfileMachineInstanceView has a new parameter disenrollment_date
+  - Model LicenseProfileMachineInstanceView has a new parameter enrollment_date
+  - Model LicenseProfileMachineInstanceView has a new parameter license_channel
+  - Model LicenseProfileMachineInstanceView has a new parameter license_status
+  - Model LicenseProfileMachineInstanceView has a new parameter product_features
+  - Model LicenseProfileMachineInstanceView has a new parameter product_type
+  - Model LicenseProfileMachineInstanceView has a new parameter software_assurance_customer
+  - Model LicenseProfileMachineInstanceView has a new parameter subscription_status
+  - Model LicenseProfileUpdate has a new parameter product_features
+  - Model LicenseProfileUpdate has a new parameter product_type
+  - Model LicenseProfileUpdate has a new parameter software_assurance_customer
+  - Model LicenseProfileUpdate has a new parameter subscription_status
+  - Model Machine has a new parameter os_edition
+
+### Breaking Changes
+
+  - Removed operation group AgentVersionOperations
+  - Removed operation group HybridIdentityMetadataOperations
+  - Removed operation group LicenseProfilesOperations
+  - Removed operation group LicensesOperations
+
 ## 9.0.0b1 (2023-11-20)
 
 ### Features Added

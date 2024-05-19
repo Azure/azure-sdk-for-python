@@ -101,8 +101,7 @@ class _AttrDict(Generic[K, V], Dict, ABC):
             self.__getattribute__(attr_name)
         except AttributeError:
             return True
-        else:
-            return False
+        return False
 
     def __getattr__(self, key: Any) -> Any:
         if not self._is_arbitrary_attr(key):
