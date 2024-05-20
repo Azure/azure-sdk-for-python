@@ -1512,7 +1512,34 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    def test_get_blob_read_chars(self, **kwargs):
+    def test_get_blob_read_chars_single(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        data = '你好世界' * 5
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, encoding='utf-8', overwrite=True)
+
+        stream = blob.download_blob(encoding='utf-8')
+        assert stream.read() == data
+
+        stream = blob.download_blob(encoding='utf-8')
+        assert stream.read(chars=100000) == data
+
+        result = ''
+        stream = blob.download_blob(encoding='utf-8')
+        for _ in range(4):
+            chunk = stream.read(chars=5)
+            result += chunk
+            assert len(chunk) == 5
+
+        result += stream.readall()
+        assert result == data
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_read_chars_chunks(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -1523,6 +1550,9 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
         stream = blob.download_blob(encoding='utf-8')
         assert stream.read() == data
+
+        stream = blob.download_blob(encoding='utf-8')
+        assert stream.read(chars=100000) == data
 
         result = ''
         stream = blob.download_blob(encoding='utf-8')

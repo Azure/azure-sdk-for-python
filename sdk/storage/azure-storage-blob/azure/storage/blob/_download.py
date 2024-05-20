@@ -9,7 +9,7 @@ import threading
 import time
 import warnings
 from io import BytesIO, StringIO
-from typing import Generic, IO, Iterator, Optional, TypeVar
+from typing import Generic, IO, Iterator, Optional, TypeVar, Union
 
 from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError
 from azure.core.tracing.common import with_current_context
@@ -613,18 +613,20 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         if self._text_mode and size > -1:
             raise ValueError("Stream has been partially read in text mode. Please use chars.")
 
+        download_complete = self._download_offset >= self.size
         if not self._text_mode and chars is not None:
             self._text_mode = True
             self._decoder = codecs.getincrementaldecoder(self._encoding)('strict')
-            self._current_content = self._decoder.decode(self._current_content)
+            self._current_content = self._decoder.decode(self._current_content, final=download_complete)
 
-        output_stream: IO
+        output_stream: Union[BytesIO, StringIO]
         if self._text_mode:
             output_stream = StringIO()
             size = chars if chars else sys.maxsize
         else:
             output_stream = BytesIO()
             size = size if size > 0 else sys.maxsize
+        readall = size == sys.maxsize
         count = 0
 
         # Start by reading from current_content
@@ -635,10 +637,11 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         count += read
         self._current_content_offset += read
         self._offset += read
-        # TODO: Progress hook
+        if readall and self._progress_hook:
+            self._progress_hook(self._offset, self.size)
 
         remaining = size - count
-        if remaining > 0 and self.size - self._download_offset > 0:
+        if remaining > 0 and not download_complete:
             # Create a downloader than can download the rest of the file
             start = self._start_range + self._download_offset
             end = self._start_range + self.size
@@ -658,7 +661,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 encryption_options=self._encryption_options,
                 encryption_data=self._encryption_data,
                 use_location=self._location_mode,
-                progress_hook=self._progress_hook,
+                progress_hook=self._progress_hook if readall else None,
                 **self._request_options
             )
 
@@ -677,6 +680,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 self._offset += read
                 remaining -= read
 
+        # TODO: Progress on read
         data = output_stream.getvalue()
         if not self._text_mode and self._encoding:
             # This is technically incorrect to do, but we have it for backwards compatibility.
