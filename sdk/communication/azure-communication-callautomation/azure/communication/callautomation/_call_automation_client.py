@@ -47,9 +47,7 @@ if TYPE_CHECKING:
     from ._models  import (
         ServerCallLocator,
         GroupCallLocator,
-        RoomCallLocator,
-        MediaStreamingOptions,
-        TranscriptionOptions
+        RoomCallLocator
     )
     from azure.core.credentials import (
         TokenCredential,
@@ -296,8 +294,6 @@ class CallAutomationClient:
         source_display_name: Optional[str] = None,
         operation_context: Optional[str] = None,
         cognitive_services_endpoint: Optional[str] = None,
-        media_streaming_options: Optional['MediaStreamingOptions'] = None,
-        transcription_options: Optional['TranscriptionOptions'] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """Create a call connection request to a target identity.
@@ -318,12 +314,6 @@ class CallAutomationClient:
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str or None
-        :keyword media_streaming_options: Media Streaming Configuration.
-        :paramtype media_streaming_options: ~azure.communication.callautomation.MediaStreamingOptions
-         or None
-        :keyword transcription_options: Configuration of live transcription.
-        :paramtype transcription_options: ~azure.communication.callautomation.TranscriptionOptions
-         or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -342,8 +332,6 @@ class CallAutomationClient:
             targets = [serialize_identifier(p) for p in target_participant]
         except TypeError:
             targets = [serialize_identifier(target_participant)]
-        media_config = media_streaming_options.to_generated() if media_streaming_options else None
-        transcription_config = transcription_options.to_generated() if transcription_options else None
         create_call_request = CreateCallRequest(
             targets=targets,
             callback_uri=callback_url,
@@ -351,9 +339,7 @@ class CallAutomationClient:
             source_display_name=source_display_name,
             source=serialize_communication_user_identifier(self.source),
             operation_context=operation_context,
-            call_intelligence_options=call_intelligence_options,
-            media_streaming_options=media_config,
-            transcription_options=transcription_config
+            call_intelligence_options=call_intelligence_options
         )
         process_repeatability_first_sent(kwargs)
         result = self._client.create_call(
@@ -419,8 +405,6 @@ class CallAutomationClient:
         *,
         cognitive_services_endpoint: Optional[str] = None,
         operation_context: Optional[str] = None,
-        media_streaming_options: Optional['MediaStreamingOptions'] = None,
-        transcription_options: Optional['TranscriptionOptions'] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """Answer incoming call with Azure Communication Service's IncomingCall event
@@ -436,11 +420,6 @@ class CallAutomationClient:
         :paramtype cognitive_services_endpoint: str
         :keyword operation_context: The operation context.
         :paramtype operation_context: str
-        :keyword media_streaming_options: Media Streaming Configuration.
-        :paramtype media_streaming_options: ~azure.communication.callautomation.MediaStreamingOptions
-        :keyword transcription_options: Configuration of live transcription.
-        :paramtype transcription_options: ~azure.communication.callautomation.TranscriptionOptions
-         or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -455,10 +434,6 @@ class CallAutomationClient:
             call_intelligence_options=call_intelligence_options,
             answered_by=serialize_communication_user_identifier(
                 self.source) if self.source else None,
-            media_streaming_options=media_streaming_options.to_generated(
-            ) if media_streaming_options else None,
-            transcription_options=transcription_options.to_generated()
-            if transcription_options else None,
             operation_context=operation_context
         )
 

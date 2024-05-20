@@ -8,7 +8,6 @@ import warnings
 from ._version import VERSION
 from ._call_automation_client import CallAutomationClient
 from ._call_connection_client import CallConnectionClient
-from .streaming.streaming_data_parser import StreamingDataParser
 from ._models import (
     CallConnectionProperties,
     FileSource,
@@ -20,8 +19,6 @@ from ._models import (
     AddParticipantResult,
     RemoveParticipantResult,
     TransferCallResult,
-    MediaStreamingOptions,
-    TranscriptionOptions,
     ChannelAffinity,
     MuteParticipantResult,
     SendDtmfTonesResult,
@@ -29,6 +26,7 @@ from ._models import (
     CallInvite,
     ServerCallLocator,
     GroupCallLocator,
+    RoomCallLocator,
     AzureBlobContainerRecordingStorage,
     AzureCommunicationsRecordingStorage
 )
@@ -50,19 +48,10 @@ from ._generated.models._enums import (
     RecordingStorageKind,
     RecordingKind,
     RecognizeInputType,
-    MediaStreamingAudioChannelType,
-    MediaStreamingContentType,
-    MediaStreamingTransportType,
-    TranscriptionTransportType,
     DtmfTone,
     CallConnectionState,
     RecordingState,
     VoiceKind
-)
-
-from .streaming.models import (
-    TranscriptionMetadata,
-    TranscriptionData
 )
 
 __all__ = [
@@ -70,19 +59,15 @@ __all__ = [
     "CallAutomationClient",
     "CallConnectionClient",
 
-    # parser
-    "StreamingDataParser",
-
     # models for input
     "FileSource",
     "TextSource",
     "SsmlSource",
     "RecognitionChoice",
     "ChannelAffinity",
-    "MediaStreamingOptions",
-    "TranscriptionOptions",
     'AzureBlobContainerRecordingStorage',
     'AzureCommunicationsRecordingStorage',
+    'RoomCallLocator',
 
     # models for output
     "CallConnectionProperties",
@@ -105,10 +90,6 @@ __all__ = [
     "CommunicationCloudEnvironment",
     "UnknownIdentifier",
 
-    # streaming models
-    "TranscriptionMetadata",
-    "TranscriptionData",
-
     # enums
     "CallRejectReason",
     "RecordingContent",
@@ -117,10 +98,6 @@ __all__ = [
     "RecordingStorageKind",
     "RecordingKind",
     "RecognizeInputType",
-    "MediaStreamingAudioChannelType",
-    "MediaStreamingContentType",
-    "MediaStreamingTransportType",
-    "TranscriptionTransportType",
     "DtmfTone",
     "CallConnectionState",
     "RecordingState",
