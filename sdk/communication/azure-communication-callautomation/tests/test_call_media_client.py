@@ -84,7 +84,7 @@ class TestCallMediaClient(unittest.TestCase):
         mock_play = Mock()
         self.call_media_operations.play = mock_play
         play_sources = [FileSource(url=self.url),  TextSource(text='test test test')]
-        self.call_connection_client.play_media(play_sources=play_sources, play_to=[self.target_user])
+        self.call_connection_client.play_media(play_source=play_sources, play_to=[self.target_user])
 
         expected_play_request = PlayRequest(
             play_sources=[play_source._to_generated() for play_source in play_sources],
@@ -146,7 +146,7 @@ class TestCallMediaClient(unittest.TestCase):
         mock_play = Mock()
         self.call_media_operations.play = mock_play
         play_sources = [FileSource(url=self.url),  TextSource(text='test test test')]
-        self.call_connection_client.play_media(play_sources=play_sources)
+        self.call_connection_client.play_media_to_all(play_sources)
 
         expected_play_request = PlayRequest(
             play_sources=[play_source._to_generated() for play_source in play_sources],
@@ -249,7 +249,7 @@ class TestCallMediaClient(unittest.TestCase):
             interrupt_prompt=test_interrupt_prompt,
             interrupt_call_media_operation=test_interrupt_call_media_operation,
             initial_silence_timeout=test_initial_silence_timeout,
-            play_prompts=test_play_sources)
+            play_prompt=test_play_sources)
 
         mock_recognize.assert_called_once()
 
