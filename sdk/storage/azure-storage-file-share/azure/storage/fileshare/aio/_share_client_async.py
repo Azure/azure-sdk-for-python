@@ -5,41 +5,41 @@
 # --------------------------------------------------------------------------
 # pylint: disable=docstring-keyword-should-match-keyword-only, invalid-overridden-method, too-many-lines
 
-import warnings
 import sys
 from typing import (
     Any, Dict, Iterable, Literal, Optional, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
+import warnings
 
 from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.pipeline import AsyncPipeline
+from .._deserialize import deserialize_permission, deserialize_share_properties
+from .._generated.aio import AzureFileStorage
+from .._generated.models import (
+    DeleteSnapshotsOptionType,
+    SignedIdentifier)
+from .._models import ShareProtocols
 from .._share_client_helpers import (
     _create_permission_for_share_options,
     _format_url,
     _from_share_url,
     _parse_url)
 from .._shared.policies_async import ExponentialRetry
-from .._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
+from .._shared.base_client import StorageAccountHostsMixin, parse_query
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.request_handlers import add_metadata_headers, serialize_iso
 from .._shared.response_handlers import (
-    return_response_headers,
     process_storage_error,
-    return_headers_and_deserialized)
-from .._generated.aio import AzureFileStorage
-from .._generated.models import (
-    SignedIdentifier,
-    DeleteSnapshotsOptionType)
-from .._deserialize import deserialize_share_properties, deserialize_permission
-from .._serialize import get_api_version, get_access_conditions
+    return_headers_and_deserialized,
+    return_response_headers)
+from .._serialize import get_access_conditions, get_api_version
+from ..aio._lease_async import ShareLeaseClient
 from ._directory_client_async import ShareDirectoryClient
 from ._file_client_async import ShareFileClient
-from ..aio._lease_async import ShareLeaseClient
-from .._models import ShareProtocols
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -77,8 +77,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         ~azure.core.credentials_async.AsyncTokenCredential or
         str or dict[str, str] or None
     :keyword token_intent:
-        Required when using `TokenCredential` for authentication and ignored for other forms of authentication.
-        Specifies the intent for all requests when using `TokenCredential` authentication. Possible values are:
+        Required when using `AsyncTokenCredential` for authentication and ignored for other forms of authentication.
+        Specifies the intent for all requests when using `AsyncTokenCredential` authentication. Possible values are:
 
         backup - Specifies requests are intended for backup/admin type operations, meaning that all file/directory
                  ACLs are bypassed and full permissions are granted. User must also have required RBAC permission.
@@ -382,7 +382,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def create_snapshot(self, **kwargs: Any) -> dict[str, Any]:
+    async def create_snapshot(self, **kwargs: Any) -> Dict[str, Any]:
         """Creates a snapshot of the share.
 
         A snapshot is a read-only version of a share that's taken at a point in time.
@@ -721,7 +721,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
     async def set_share_access_policy(
         self, signed_identifiers: Dict[str, "AccessPolicy"],
         **kwargs: Any
-    ) -> dict[str, str]:
+    ) -> Dict[str, str]:
         """Sets the permissions for the share, or stored access
         policies that may be used with Shared Access Signatures. The permissions
         indicate whether files in a share may be accessed publicly.

@@ -14,33 +14,32 @@ from typing_extensions import Self
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
+from ._deserialize import deserialize_permission, deserialize_share_properties
+from ._directory_client import ShareDirectoryClient
+from ._file_client import ShareFileClient
+from ._generated import AzureFileStorage
+from ._generated.models import (
+    DeleteSnapshotsOptionType,
+    SignedIdentifier)
+from ._lease import ShareLeaseClient
+from ._models import ShareProtocols
+from ._serialize import get_api_version, get_access_conditions
+from ._share_client_helpers import (
+    _create_permission_for_share_options,
+    _format_url,
+    _from_share_url,
+    _parse_url)
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
     return_response_headers,
     process_storage_error,
     return_headers_and_deserialized)
-from ._generated import AzureFileStorage
-from ._generated.models import (
-    SignedIdentifier,
-    DeleteSnapshotsOptionType,
-    SharePermission)
-from ._deserialize import deserialize_share_properties, deserialize_permission_key, deserialize_permission
-from ._serialize import get_api_version, get_access_conditions
-from ._directory_client import ShareDirectoryClient
-from ._file_client import ShareFileClient
-from ._lease import ShareLeaseClient
-from ._models import ShareProtocols
-from ._share_client_helpers import (
-    _create_permission_for_share_options,
-    _format_url,
-    _from_share_url,
-    _parse_url)
 
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from ._models import ShareProperties, AccessPolicy
+    from ._models import AccessPolicy, ShareProperties
 
 
 class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-methods
