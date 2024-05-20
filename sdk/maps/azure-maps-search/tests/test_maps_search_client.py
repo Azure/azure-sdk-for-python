@@ -102,3 +102,5 @@ class TestMapsSearchClient(AzureRecordedTestCase):
             result_type="locality",
             resolution="small")
 
+        assert result.geometry is not None
+        assert len(result.geometry.geometries) > 0
