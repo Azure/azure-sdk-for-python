@@ -150,15 +150,15 @@ class IssueProcessPython(IssueProcess):
                 break
 
     @property
-    def is_typespec_folder(self) -> bool:
-        return ".Management" in self.readme_link
+    def has_typespec_folder(self) -> bool:
+        return self.local_file("tspconfig.yaml").exists()
 
     def auto_parse(self):
         super().auto_parse()
         issue_body_list = self.get_issue_body()
         self.readme_link = issue_body_list[0].strip("\r\n ")
 
-        if not self.package_name and self.is_typespec_folder:
+        if not self.package_name and self.has_typespec_folder:
             self.package_name_output_folder_from_tspconfig()
         if not self.package_name and re.findall(".+/Azure/azure-rest-api-specs/.+/resource-manager", self.readme_link):
             self.package_name_output_folder_from_readme()
