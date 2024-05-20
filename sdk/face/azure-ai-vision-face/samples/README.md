@@ -26,6 +26,8 @@ Several Azure Face Python SDK samples are available to you in the SDK's GitHub r
     * From a binary data
     * From a URL
 
+* [sample_stateless_face_verification.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_stateless_face_verification.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_stateless_face_verification_async.py)) - Examples for verifying whether two faces belong to the same person.
+
 * [sample_face_grouping.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_face_grouping.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_face_grouping_async.py)) - Examples for dividing candidate faces into groups based on face similarity.
 
 * [sample_find_similar_faces.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_find_similar_faces.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_find_similar_faces_async.py)) - Examples for searching the similar-looking faces from a set of candidate faces:
