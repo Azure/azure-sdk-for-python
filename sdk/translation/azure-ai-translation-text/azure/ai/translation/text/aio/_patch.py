@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint: disable=C4717, C4722
+# pylint: disable=C4717, C4722, C4748
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -32,13 +32,13 @@ def patch_sdk():
     """
 
 
-class AsyncTranslatorEntraIdAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
+class AsyncTranslatorEntraIdAuthenticationPolicy(AsyncBearerTokenCredentialPolicy): # pylint: disable=name-too-long
     """Translator Entra Id Authentication Policy. Adds headers that are required by Translator Service
     when global endpoint is used with Entra Id policy.
     Ocp-Apim-Subscription-Region header contains region of the Translator resource.
     Ocp-Apim-ResourceId header contains Azure resource Id - Translator resource.
 
-    :param credential: Translator Entra Id Credentials used to access Translator Resource for global Translator endpoint.
+    :param credential: Translator Entra Id Credentials used to access Translator Resource for global endpoint.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     """
 

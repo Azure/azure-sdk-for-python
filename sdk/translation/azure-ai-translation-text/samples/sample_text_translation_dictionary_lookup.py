@@ -52,7 +52,7 @@ def get_text_translation_dictionary_lookup():
         if dictionary_entry:
             print(f"For the given input {len(dictionary_entry.translations)} entries were found in the dictionary.")
             print(
-                f"First entry: '{dictionary_entry.translations[0].display_target}', score: {dictionary_entry.translations[0].score}."
+                f"First entry: '{dictionary_entry.translations[0].display_target}', confidence: {dictionary_entry.translations[0].confidence}."
             )
 
     except HttpResponseError as exception:

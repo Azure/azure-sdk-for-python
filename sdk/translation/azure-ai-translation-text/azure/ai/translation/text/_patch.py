@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint: disable=C4717, C4722
+# pylint: disable=C4717, C4722, C4748
 
 from typing import Optional, Any, overload
 from azure.core.pipeline import PipelineRequest
@@ -45,7 +45,7 @@ class TranslatorEntraIdAuthenticationPolicy(BearerTokenCredentialPolicy):
     Ocp-Apim-Subscription-Region header contains region of the Translator resource.
     Ocp-Apim-ResourceId header contains Azure resource Id - Translator resource.
 
-    :param credential: Translator Entra Id Credentials used to access Translator Resource for global Translator endpoint.
+    :param credential: Translator Entra Id Credentials used to access Translator Resource for global endpoint.
     :type credential: ~azure.ai.translation.text.TranslatorEntraIdCredential
     """
 
