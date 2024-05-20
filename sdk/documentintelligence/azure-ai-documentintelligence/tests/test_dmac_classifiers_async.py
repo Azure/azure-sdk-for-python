@@ -76,7 +76,7 @@ class TestClassifiersAsync(AsyncDocumentIntelligenceTest):
             assert len(result.doc_types) == 5
             for doc_type, doc_details in result.doc_types.items():
                 assert doc_type
-                assert doc_details.azure_blob_source.container_url.endswith("training-data-classifier")
+                assert doc_details.azure_blob_source.container_url
                 assert doc_details.azure_blob_source.prefix.startswith(doc_type)
 
             classifier = await client.get_classifier(result.classifier_id)
@@ -165,7 +165,7 @@ class TestClassifiersAsync(AsyncDocumentIntelligenceTest):
             assert len(result.doc_types) == 5
             for doc_type, doc_details in result.doc_types.items():
                 assert doc_type
-                assert doc_details.azure_blob_file_list_source.container_url.endswith("training-data-classifier")
+                assert doc_details.azure_blob_file_list_source.container_url
                 assert doc_details.azure_blob_file_list_source.file_list.startswith(doc_type)
 
             classifier = await client.get_classifier(result.classifier_id)

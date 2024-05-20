@@ -26,7 +26,7 @@
 import os
 import pytest
 from dotenv import load_dotenv
-from devtools_testutils import test_proxy, add_general_regex_sanitizer
+from devtools_testutils import test_proxy, add_general_regex_sanitizer, remove_batch_sanitizers
 from devtools_testutils import add_header_regex_sanitizer, add_body_key_sanitizer
 
 load_dotenv()
@@ -47,3 +47,7 @@ def add_sanitizers(test_proxy):
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
     add_body_key_sanitizer(json_path="$..primaryKey", value="primaryKey")
     add_body_key_sanitizer(json_path="$..secondaryKey", value="secondaryKey")
+
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3493: $..name
+    remove_batch_sanitizers(["AZSDK3493"])

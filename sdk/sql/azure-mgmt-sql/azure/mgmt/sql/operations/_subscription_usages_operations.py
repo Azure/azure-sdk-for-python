@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -116,7 +116,6 @@ class SubscriptionUsagesOperations:
 
         :param location_name: The name of the region where the resource is located. Required.
         :type location_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SubscriptionUsage or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.SubscriptionUsage]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -138,23 +137,22 @@ class SubscriptionUsagesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_location_request(
+                _request = build_list_by_location_request(
                     location_name=location_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_location.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("SubscriptionUsageListResult", pipeline_response)
@@ -164,11 +162,11 @@ class SubscriptionUsagesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -180,10 +178,6 @@ class SubscriptionUsagesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_location.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/usages"
-    }
-
     @distributed_trace
     def get(self, location_name: str, usage_name: str, **kwargs: Any) -> _models.SubscriptionUsage:
         """Gets a subscription usage metric.
@@ -192,7 +186,6 @@ class SubscriptionUsagesOperations:
         :type location_name: str
         :param usage_name: Name of usage metric to return. Required.
         :type usage_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SubscriptionUsage or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.SubscriptionUsage
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -211,21 +204,20 @@ class SubscriptionUsagesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
         cls: ClsType[_models.SubscriptionUsage] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             location_name=location_name,
             usage_name=usage_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -237,10 +229,6 @@ class SubscriptionUsagesOperations:
         deserialized = self._deserialize("SubscriptionUsage", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/usages/{usageName}"
-    }
+        return deserialized  # type: ignore
