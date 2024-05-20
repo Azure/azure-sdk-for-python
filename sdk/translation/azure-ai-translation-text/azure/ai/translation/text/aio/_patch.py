@@ -138,7 +138,7 @@ class TextTranslationClient(ServiceClientGenerated):
     ): ...
 
     @overload
-    def __init__(
+    def __init__( # pyright: ignore[reportOverlappingOverload]
         self,
         *,
         credential: Optional[AsyncTokenCredential] = None,
