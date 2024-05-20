@@ -5,6 +5,7 @@
 ### Breaking Changes
 
   - Operation DiscoverySolutionNLPSubscriptionScopeOperations.post has a new required parameter subscription_id
+  - `subscription_id` is removed from client signature which was added in last preview release with wrong
 
 ## 2.0.0b3 (2024-04-22)
 
