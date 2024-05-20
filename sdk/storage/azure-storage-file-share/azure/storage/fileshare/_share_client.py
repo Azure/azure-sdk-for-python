@@ -3,13 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines, docstring-keyword-should-match-keyword-only
+# pylint: disable=docstring-keyword-should-match-keyword-only, too-many-lines
 
 from typing import (
-    Optional, Union, Dict, Any, Iterable, Literal, TYPE_CHECKING
+    Any, Dict, Iterable, Literal, Optional, Union,
+    TYPE_CHECKING
 )
-from urllib.parse import urlparse, quote, unquote
-
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
@@ -32,6 +31,11 @@ from ._directory_client import ShareDirectoryClient
 from ._file_client import ShareFileClient
 from ._lease import ShareLeaseClient
 from ._models import ShareProtocols
+from ._share_client_helpers import (
+    _create_permission_for_share_options,
+    _format_url,
+    _from_share_url,
+    _parse_url)
 
 
 if TYPE_CHECKING:
@@ -39,7 +43,7 @@ if TYPE_CHECKING:
     from ._models import ShareProperties, AccessPolicy
 
 
-class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-methods
+class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific share, although that share may not yet exist.
 
     For operations relating to a specific directory or file in this share, the clients for
@@ -93,45 +97,34 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
     """
     def __init__(
-            self, account_url: str,
-            share_name: str,
-            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            *,
-            token_intent: Optional[Literal['backup']] = None,
-            **kwargs: Any
-        ) -> None:
+        self, account_url: str,
+        share_name: str,
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        *,
+        token_intent: Optional[Literal['backup']] = None,
+        **kwargs: Any
+    ) -> None:
         if hasattr(credential, 'get_token') and not token_intent:
             raise ValueError("'token_intent' keyword is required when 'credential' is an TokenCredential.")
-        try:
-            if not account_url.lower().startswith('http'):
-                account_url = "https://" + account_url
-        except AttributeError as exc:
-            raise ValueError("Account URL must be a string.") from exc
-        parsed_url = urlparse(account_url.rstrip('/'))
-        if not share_name:
-            raise ValueError("Please specify a share name.")
-        if not parsed_url.netloc:
-            raise ValueError(f"Invalid URL: {account_url}")
-
-        path_snapshot = None
+        parsed_url = _parse_url(account_url, share_name)
         path_snapshot, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError(
                 'You need to provide either an account shared key or SAS token when creating a storage service.')
         try:
-            self.snapshot = snapshot.snapshot # type: ignore
+            self.snapshot = snapshot.snapshot  # type: ignore
         except AttributeError:
             try:
-                self.snapshot = snapshot['snapshot'] # type: ignore
+                self.snapshot = snapshot['snapshot']  # type: ignore
             except TypeError:
                 self.snapshot = snapshot or path_snapshot
 
         self.share_name = share_name
         self._query_str, credential = self._format_query_string(
-            sas_token, credential, share_snapshot=self.snapshot)
+            sas_token=sas_token, credential=credential, share_snapshot=self.snapshot)
         super(ShareClient, self).__init__(
-            parsed_url, service='file-share', credential=credential, **kwargs)
+            parsed_url=parsed_url, service='file-share', credential=credential, **kwargs)
         self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
         self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
         self.file_request_intent = token_intent
@@ -139,15 +132,15 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
                                         file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     @classmethod
     def from_share_url(
-            cls, share_url: str,
-            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> Self:
+        cls, share_url: str,
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
         """
         :param str share_url: The full URI to the share.
         :param snapshot:
@@ -171,50 +164,27 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         :returns: A share client.
         :rtype: ~azure.storage.fileshare.ShareClient
         """
-        try:
-            if not share_url.lower().startswith('http'):
-                share_url = "https://" + share_url
-        except AttributeError as exc:
-            raise ValueError("Share URL must be a string.") from exc
-        parsed_url = urlparse(share_url.rstrip('/'))
-        if not (parsed_url.path and parsed_url.netloc):
-            raise ValueError(f"Invalid URL: {share_url}")
-
-        share_path = parsed_url.path.lstrip('/').split('/')
-        account_path = ""
-        if len(share_path) > 1:
-            account_path = "/" + "/".join(share_path[:-1])
-        account_url = f"{parsed_url.scheme}://{parsed_url.netloc.rstrip('/')}{account_path}?{parsed_url.query}"
-
-        share_name = unquote(share_path[-1])
-        path_snapshot, _ = parse_query(parsed_url.query)
-        if snapshot:
-            try:
-                path_snapshot = snapshot.snapshot # type: ignore
-            except AttributeError:
-                try:
-                    path_snapshot = snapshot['snapshot'] # type: ignore
-                except TypeError:
-                    path_snapshot = snapshot
-
-        if not share_name:
-            raise ValueError("Invalid URL. Please provide a URL with a valid share name")
+        account_url, share_name, path_snapshot = _from_share_url(share_url, snapshot)
         return cls(account_url, share_name, path_snapshot, credential, **kwargs)
 
-    def _format_url(self, hostname):
-        share_name = self.share_name
-        if isinstance(share_name, str):
-            share_name = share_name.encode('UTF-8')
-        return f"{self.scheme}://{hostname}/{quote(share_name)}{self._query_str}"
+    def _format_url(self, hostname: str) -> str:
+        """Format the endpoint URL according to the current location mode hostname.
+
+        :param str hostname:
+            The hostname of the current location mode.
+        :returns: A formatted endpoint URL including current location mode hostname.
+        :rtype: str
+        """
+        return _format_url(self.scheme, hostname, self.share_name, self._query_str)
 
     @classmethod
     def from_connection_string(
-            cls, conn_str: str,
-            share_name: str,
-            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> Self:
+        cls, conn_str: str,
+        share_name: str,
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
         """Create ShareClient from a Connection String.
 
         :param str conn_str:
@@ -256,8 +226,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         return cls(
             account_url, share_name=share_name, snapshot=snapshot, credential=credential, **kwargs)
 
-    def get_directory_client(self, directory_path=None):
-        # type: (Optional[str]) -> ShareDirectoryClient
+    def get_directory_client(self, directory_path: Optional[str] = None) -> ShareDirectoryClient:
         """Get a client to interact with the specified directory.
         The directory need not already exist.
 
@@ -267,8 +236,8 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         :rtype: ~azure.storage.fileshare.ShareDirectoryClient
         """
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies  # pylint: disable = protected-access
         )
 
         return ShareDirectoryClient(
@@ -278,8 +247,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot,
             allow_source_trailing_dot=self.allow_source_trailing_dot)
 
-    def get_file_client(self, file_path):
-        # type: (str) -> ShareFileClient
+    def get_file_client(self, file_path: str) -> ShareFileClient:
         """Get a client to interact with the specified file.
         The file need not already exist.
 
@@ -289,8 +257,8 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         :rtype: ~azure.storage.fileshare.ShareFileClient
         """
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies  # pylint: disable = protected-access
         )
 
         return ShareFileClient(
@@ -301,8 +269,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             allow_source_trailing_dot=self.allow_source_trailing_dot)
 
     @distributed_trace
-    def acquire_lease(self, **kwargs):
-        # type: (**Any) -> ShareLeaseClient
+    def acquire_lease(self, **kwargs: Any) -> ShareLeaseClient:
         """Requests a new lease.
 
         If the share does not have an active lease, the Share
@@ -344,8 +311,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         return lease
 
     @distributed_trace
-    def create_share(self, **kwargs):
-        # type: (Any) -> Dict[str, Any]
+    def create_share(self, **kwargs: Any) -> Dict[str, Any]:
         """Creates a new Share under the account. If a share with the
         same name already exists, the operation fails.
 
@@ -375,7 +341,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
         :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
         :returns: Share-updated property dict (Etag and last modified).
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
 
         .. admonition:: Example:
 
@@ -397,10 +363,10 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         if root_squash and protocols not in ['NFS', ShareProtocols.NFS]:
             raise ValueError("The 'root_squash' keyword can only be used on NFS enabled shares.")
         headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata)) # type: ignore
+        headers.update(add_metadata_headers(metadata))  # type: ignore
 
         try:
-            return self._client.share.create( # type: ignore
+            return self._client.share.create(  # type: ignore
                 timeout=timeout,
                 metadata=metadata,
                 quota=quota,
@@ -414,11 +380,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     @distributed_trace
-    def create_snapshot( # type: ignore
-            self,
-            **kwargs # type: Optional[Any]
-        ):
-        # type: (...) -> Dict[str, Any]
+    def create_snapshot(self, **kwargs: Any) -> Dict[str, Any]:
         """Creates a snapshot of the share.
 
         A snapshot is a read-only version of a share that's taken at a point in time.
@@ -453,9 +415,9 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         metadata = kwargs.pop('metadata', None)
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata)) # type: ignore
+        headers.update(add_metadata_headers(metadata))  # type: ignore
         try:
-            return self._client.share.create_snapshot( # type: ignore
+            return self._client.share.create_snapshot(  # type: ignore
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
@@ -521,8 +483,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     @distributed_trace
-    def get_share_properties(self, **kwargs):
-        # type: (Any) -> ShareProperties
+    def get_share_properties(self, **kwargs: Any) -> "ShareProperties":
         """Returns all user-defined metadata and system properties for the
         specified share. The data returned does not include the shares's
         list of files or directories.
@@ -568,8 +529,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         return props # type: ignore
 
     @distributed_trace
-    def set_share_quota(self, quota, **kwargs):
-        # type: (int, Any) ->  Dict[str, Any]
+    def set_share_quota(self, quota: int, **kwargs: Any) -> Dict[str, Any]:
         """Sets the quota for the share.
 
         :param int quota:
@@ -603,7 +563,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.share.set_properties( # type: ignore
+            return self._client.share.set_properties(  # type: ignore
                 timeout=timeout,
                 quota=quota,
                 access_tier=None,
@@ -614,8 +574,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     @distributed_trace
-    def set_share_properties(self, **kwargs):
-        # type: (Any) ->  Dict[str, Any]
+    def set_share_properties(self, **kwargs: Any) -> Dict[str, Any]:
         """Sets the share properties.
 
         .. versionadded:: 12.4.0
@@ -660,7 +619,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         if all(parameter is None for parameter in [access_tier, quota, root_squash]):
             raise ValueError("set_share_properties should be called with at least one parameter.")
         try:
-            return self._client.share.set_properties( # type: ignore
+            return self._client.share.set_properties(  # type: ignore
                 timeout=timeout,
                 quota=quota,
                 access_tier=access_tier,
@@ -672,8 +631,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     @distributed_trace
-    def set_share_metadata(self, metadata, **kwargs):
-        # type: (Dict[str, Any], Any) ->  Dict[str, Any]
+    def set_share_metadata(self, metadata: Dict[str, str], **kwargs: Any) -> Dict[str, Any]:
         """Sets the metadata for the share.
 
         Each call to this operation replaces all existing metadata
@@ -713,7 +671,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         try:
-            return self._client.share.set_metadata( # type: ignore
+            return self._client.share.set_metadata(  # type: ignore
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
@@ -723,8 +681,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     @distributed_trace
-    def get_share_access_policy(self, **kwargs):
-        # type: (Any) -> Dict[str, Any]
+    def get_share_access_policy(self, **kwargs: Any) -> Dict[str, Any]:
         """Gets the permissions for the share. The permissions
         indicate whether files in a share may be accessed publicly.
 
@@ -760,8 +717,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         }
 
     @distributed_trace
-    def set_share_access_policy(self, signed_identifiers, **kwargs):
-        # type: (Dict[str, AccessPolicy], Any) -> Dict[str, str]
+    def set_share_access_policy(self, signed_identifiers: Dict[str, "AccessPolicy"], **kwargs: Any) -> Dict[str, str]:
         """Sets the permissions for the share, or stored access
         policies that may be used with Shared Access Signatures. The permissions
         indicate whether files in a share may be accessed publicly.
@@ -799,9 +755,9 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
                 value.start = serialize_iso(value.start)
                 value.expiry = serialize_iso(value.expiry)
             identifiers.append(SignedIdentifier(id=key, access_policy=value))
-        signed_identifiers = identifiers # type: ignore
+        signed_identifiers = identifiers  # type: ignore
         try:
-            return self._client.share.set_access_policy( # type: ignore
+            return self._client.share.set_access_policy(  # type: ignore
                 share_acl=signed_identifiers or None,
                 timeout=timeout,
                 cls=return_response_headers,
@@ -811,8 +767,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     @distributed_trace
-    def get_share_stats(self, **kwargs):
-        # type: (Any) -> int
+    def get_share_stats(self, **kwargs: Any) -> int:
         """Gets the approximate size of the data stored on the share in bytes.
 
         Note that this value may not include all recently created
@@ -841,18 +796,17 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
                 **kwargs)
-            return stats.share_usage_bytes # type: ignore
+            return stats.share_usage_bytes  # type: ignore
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
     def list_directories_and_files(
-            self, directory_name=None,  # type: Optional[str]
-            name_starts_with=None,  # type: Optional[str]
-            marker=None,  # type: Optional[str]
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> Iterable[Dict[str, str]]
+        self, directory_name: Optional[str] = None,
+        name_starts_with: Optional[str] = None,
+        marker: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable[Dict[str, str]]:
         """Lists the directories and files under the share.
 
         :param str directory_name:
@@ -901,22 +855,8 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         return directory.list_directories_and_files(
             name_starts_with=name_starts_with, marker=marker, timeout=timeout, **kwargs)
 
-    @staticmethod
-    def _create_permission_for_share_options(file_permission,  # type: str
-                                             **kwargs):
-        options = {
-            'share_permission': SharePermission(permission=file_permission),
-            'cls': deserialize_permission_key,
-            'timeout': kwargs.pop('timeout', None),
-        }
-        options.update(kwargs)
-        return options
-
     @distributed_trace
-    def create_permission_for_share(self, file_permission,  # type: str
-                                    **kwargs  # type: Any
-                                    ):
-        # type: (...) -> str
+    def create_permission_for_share(self, file_permission: str, **kwargs: Any) -> str:
         """Create a permission (a security descriptor) at the share level.
 
         This 'permission' can be used for the files/directories in the share.
@@ -935,18 +875,14 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         :rtype: str
         """
         timeout = kwargs.pop('timeout', None)
-        options = self._create_permission_for_share_options(file_permission, timeout=timeout, **kwargs)
+        options = _create_permission_for_share_options(file_permission, timeout=timeout, **kwargs)
         try:
             return self._client.share.create_permission(**options)
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
-    def get_permission_for_share(  # type: ignore
-            self, permission_key,  # type: str
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> str
+    def get_permission_for_share(self, permission_key: str, **kwargs: Any) -> str:
         """Get a permission (a security descriptor) for a given key.
 
         This 'permission' can be used for the files/directories in the share.
@@ -973,8 +909,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     @distributed_trace
-    def create_directory(self, directory_name, **kwargs):
-        # type: (str, Any) -> ShareDirectoryClient
+    def create_directory(self, directory_name: str, **kwargs: Any) -> ShareDirectoryClient:
         """Creates a directory in the share and returns a client to interact
         with the directory.
 
@@ -995,11 +930,10 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         directory = self.get_directory_client(directory_name)
         kwargs.setdefault('merge_span', True)
         directory.create_directory(**kwargs)
-        return directory # type: ignore
+        return directory  # type: ignore
 
     @distributed_trace
-    def delete_directory(self, directory_name, **kwargs):
-        # type: (str, Any) -> None
+    def delete_directory(self, directory_name: str, **kwargs: Any) -> None:
         """Marks the directory for deletion. The directory is
         later deleted during garbage collection.
 
