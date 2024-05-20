@@ -80,6 +80,7 @@ def compressed():
 
 
 def compressed_stream():
+
     with tempfile.TemporaryFile(mode="w+b") as f:
         gzf = gzip.GzipFile(mode="w+b", fileobj=f)
         gzf.write(b"test")

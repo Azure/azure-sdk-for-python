@@ -2,15 +2,19 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from os import PathLike
-from typing import Any, Dict, Optional, Union
+from pathlib import Path
+from typing import Any, Dict, Optional, Union, cast
 
 # cspell:disable-next-line
 from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401.models import Index as RestIndex
-from azure.ai.ml._utils._arm_id_utils import AMLAssetId
+from azure.ai.ml._schema import IndexAssetSchema
+from azure.ai.ml._utils._arm_id_utils import AMLAssetId, AMLNamedArmId
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, LONG_URI_FORMAT, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.entities._system_data import RestSystemData, SystemData
+from azure.ai.ml.entities._util import load_from_dict
 
 
 @experimental
@@ -41,8 +45,8 @@ class Index(Artifact):
         self,
         *,
         name: str,
-        version: str,
-        stage: str,
+        version: Optional[str] = None,
+        stage: str = "Development",
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
@@ -107,14 +111,27 @@ class Index(Artifact):
         params_override: Optional[list] = None,
         **kwargs: Any,
     ) -> "Index":
-        raise NotImplementedError()
+        data = data or {}
+        params_override = params_override or []
+        context = {
+            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
+            PARAMS_OVERRIDE_KEY: params_override,
+        }
+        return cast(Index, load_from_dict(IndexAssetSchema, data, context, **kwargs))
 
     def _to_dict(self) -> Dict:
-        raise NotImplementedError()
+        return cast(dict, IndexAssetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
         """Updates an an artifact with the remote path of a local upload.
 
         :param ArtifactStorageInfo asset_artifact: The asset storage info of the artifact
         """
-        self.path = asset_artifact.full_storage_path
+        aml_datastore_id = AMLNamedArmId(asset_artifact.datastore_arm_id)
+        self.path = LONG_URI_FORMAT.format(
+            aml_datastore_id.subscription_id,
+            aml_datastore_id.resource_group_name,
+            aml_datastore_id.workspace_name,
+            aml_datastore_id.asset_name,
+            asset_artifact.relative_path,
+        )

@@ -264,7 +264,6 @@ input-file:
 output-folder: $(python-sdks-folder)/v2024_04_01_preview
 ```
 
-
 ### Tag: multiapi
 
 These settings apply only when `--multiapi` is specified on the command line.

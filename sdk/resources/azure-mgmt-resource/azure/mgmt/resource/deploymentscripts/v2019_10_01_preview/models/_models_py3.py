@@ -58,7 +58,7 @@ class DeploymentScript(AzureResourceBase):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: String Id used to locate any resource on Azure.
     :vartype id: str
@@ -138,7 +138,7 @@ class AzureCliScript(DeploymentScript):  # pylint: disable=too-many-instance-att
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: String Id used to locate any resource on Azure.
     :vartype id: str
@@ -338,7 +338,7 @@ class AzureCliScript(DeploymentScript):  # pylint: disable=too-many-instance-att
 class ScriptConfigurationBase(_serialization.Model):
     """Common configuration settings for both Azure PowerShell and Azure CLI scripts.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar primary_script_uri: Uri for the script. This is the entry point for the external script.
     :vartype primary_script_uri: str
@@ -508,7 +508,7 @@ class AzureCliScriptProperties(
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar primary_script_uri: Uri for the script. This is the entry point for the external script.
     :vartype primary_script_uri: str
@@ -674,7 +674,7 @@ class AzurePowerShellScript(DeploymentScript):  # pylint: disable=too-many-insta
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: String Id used to locate any resource on Azure.
     :vartype id: str
@@ -878,7 +878,7 @@ class AzurePowerShellScriptProperties(
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar primary_script_uri: Uri for the script. This is the entry point for the external script.
     :vartype primary_script_uri: str
@@ -1176,7 +1176,7 @@ class DeploymentScriptUpdateParameter(AzureResourceBase):
 class EnvironmentVariable(_serialization.Model):
     """The environment variable to pass to the script in the container instance.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the environment variable. Required.
     :vartype name: str

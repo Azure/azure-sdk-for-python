@@ -1,8 +1,19 @@
 # Release History
 
-## 1.16.0 (unreleased)
+## 1.17.0 (unreleased)
 
 ### Features Added
+
+### Bugs Fixed
+
+### Breaking Changes
+
+### Other Changes
+
+## 1.16.0 (2024-05-14)
+
+### Features Added
+- Add experimental support for working with Promptflow evaluators: `ml_client.evaluators`.
 - Many changes to the Connection entity class and its associated operations.
 - Workspace Connection `list`, `get`, and `create_or_update` operations now include an optional `populate_secrets` input, which causes the operations to try making a secondary call to fill in the returned connections' credential info if possible. Only works with api key-based credentials for now.
 - Many workspace connection subtypes added. The full list of subclasses is now:
@@ -32,7 +43,6 @@
 
 ### Breaking Changes
 
-- WorkspaceConnection and subclasses renamed to just Connection
 - Removed WorkspaceHubConfig entity, and renamed WorkspaceHub to Hub.
 - workspace_hub input of Workspace class hidden, renamed to hub_id, and re-surfaced in child class Project.
 - Removed Workspace Hub Operations from ML Client.
@@ -141,7 +151,7 @@
 
 ### Other Changes
 
-- `azure-ai-ml` now performs all file i/o on `utf-8` encoded files per Azure SDK guidance. 
+- `azure-ai-ml` now performs all file i/o on `utf-8` encoded files per Azure SDK guidance.
   (instead of the default behavior for python < 3.15, which uses locale specific encodings)
 - Removed references to deprecated "feature_store" workspace connection type.
 

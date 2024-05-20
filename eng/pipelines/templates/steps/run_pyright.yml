@@ -2,6 +2,7 @@ parameters:
   BuildTargetingString: 'azure-*'
   ServiceDirectory: ''
   TestMarkArgument: ''
+  AdditionalTestArgs: ''
 
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
@@ -31,6 +32,7 @@ steps:
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="pyright"
         --disablecov
+        ${{ parameters.AdditionalTestArgs }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Pyright'],'true'))
 
   - task: PythonScript@0
@@ -43,4 +45,5 @@ steps:
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="verifytypes"
         --disablecov
+        ${{ parameters.AdditionalTestArgs }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Verifytypes'],'true'))
