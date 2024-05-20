@@ -16,7 +16,10 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from ...models._patch import ReceiveResult, ReceiveDetails
-from ._operations import EventGridPublisherClientOperationsMixin as OperationsPubMixin, EventGridConsumerClientOperationsMixin as OperationsConsumerMixin
+from ._operations import (
+    EventGridPublisherClientOperationsMixin as OperationsPubMixin,
+    EventGridConsumerClientOperationsMixin as OperationsConsumerMixin,
+)
 from ... import models as _models
 from ...models._models import AcknowledgeOptions, ReleaseOptions, RejectOptions, RenewLockOptions
 from ..._validation import api_version_validation
@@ -264,7 +267,6 @@ class EventGridConsumerClientOperationsMixin(OperationsConsumerMixin):
         receive_result_deserialized = ReceiveResult(value=detail_items)
         return receive_result_deserialized
 
-    
     @distributed_trace_async
     async def acknowledge_cloud_events(
         self,
@@ -291,7 +293,6 @@ class EventGridConsumerClientOperationsMixin(OperationsConsumerMixin):
         options = AcknowledgeOptions(lock_tokens=lock_tokens)
         return await super()._acknowledge(topic_name, subscription_name, options, **kwargs)
 
-    
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2023-10-01-preview": ["release_delay"]},
@@ -331,7 +332,6 @@ class EventGridConsumerClientOperationsMixin(OperationsConsumerMixin):
             **kwargs,
         )
 
-    
     @distributed_trace_async
     async def reject_cloud_events(
         self,
@@ -357,7 +357,6 @@ class EventGridConsumerClientOperationsMixin(OperationsConsumerMixin):
         options = RejectOptions(lock_tokens=lock_tokens)
         return await super()._reject(topic_name, subscription_name, options, **kwargs)
 
-    
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2023-10-01-preview",

@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, List, Optional, TYPE_CHECKING
+from typing import Any, List, Mapping, Optional, TYPE_CHECKING, overload
 
 from .. import _model_base
 from .._model_base import rest_field
@@ -50,6 +50,24 @@ class AcknowledgeResult(_model_base.Model):
      along with the related error information (namely, the error code and description). Required."""
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
     """Array of lock tokens for the successfully acknowledged cloud events. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        failed_lock_tokens: List["_models._models.FailedLockToken"],
+        succeeded_lock_tokens: List[str],
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class BrokerProperties(_model_base.Model):
@@ -223,6 +241,23 @@ class ReceiveResult(_model_base.Model):
     value: List["_models._models.ReceiveDetails"] = rest_field()
     """Array of receive responses, one per cloud event. Required."""
 
+    @overload
+    def __init__(
+        self,
+        *,
+        value: List["_models._models.ReceiveDetails"],
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
 
 class RejectOptions(_model_base.Model):
     """Array of lock tokens for the corresponding received Cloud Events to be rejected.
@@ -256,6 +291,24 @@ class RejectResult(_model_base.Model):
      along with the related error information (namely, the error code and description). Required."""
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
     """Array of lock tokens for the successfully rejected cloud events. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        failed_lock_tokens: List["_models._models.FailedLockToken"],
+        succeeded_lock_tokens: List[str],
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class ReleaseOptions(_model_base.Model):
@@ -310,6 +363,24 @@ class RenewCloudEventLocksResult(_model_base.Model):
      along with the related error information (namely, the error code and description). Required."""
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
     """Array of lock tokens for the successfully renewed locks. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        failed_lock_tokens: List["_models._models.FailedLockToken"],
+        succeeded_lock_tokens: List[str],
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class RenewLockOptions(_model_base.Model):

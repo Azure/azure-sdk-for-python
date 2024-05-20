@@ -247,7 +247,7 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
 class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
 
     @distributed_trace_async
-    async def _receive(  # pylint: disable=protected-access
+    async def _receive(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -255,7 +255,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         max_events: Optional[int] = None,
         max_wait_time: Optional[int] = None,
         **kwargs: Any
-    ) -> _models._models.ReceiveResult:
+    ) -> _models.ReceiveResult:
         # pylint: disable=line-too-long
         """Receive a batch of Cloud Events from a subscription.
 
@@ -273,7 +273,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
          60 seconds. Default value is None.
         :paramtype max_wait_time: int
         :return: ReceiveResult. The ReceiveResult is compatible with MutableMapping
-        :rtype: ~azure.eventgrid.models._models.ReceiveResult
+        :rtype: ~azure.eventgrid.models.ReceiveResult
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -330,7 +330,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ReceiveResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models.ReceiveResult] = kwargs.pop("cls", None)
 
         _request = build_event_grid_consumer_receive_request(
             topic_name=topic_name,
@@ -362,9 +362,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.ReceiveResult, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.ReceiveResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -380,9 +378,9 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.AcknowledgeResult: ...
+    ) -> _models.AcknowledgeResult: ...
     @overload
-    async def _acknowledge(  # pylint: disable=protected-access
+    async def _acknowledge(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -390,9 +388,9 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.AcknowledgeResult: ...
+    ) -> _models.AcknowledgeResult: ...
     @overload
-    async def _acknowledge(  # pylint: disable=protected-access
+    async def _acknowledge(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -400,16 +398,16 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.AcknowledgeResult: ...
+    ) -> _models.AcknowledgeResult: ...
 
     @distributed_trace_async
-    async def _acknowledge(  # pylint: disable=protected-access
+    async def _acknowledge(
         self,
         topic_name: str,
         event_subscription_name: str,
         acknowledge_options: Union[_models._models.AcknowledgeOptions, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models._models.AcknowledgeResult:
+    ) -> _models.AcknowledgeResult:
         """Acknowledge a batch of Cloud Events. The response will include the set of successfully
         acknowledged lock tokens, along with other failed lock tokens with their corresponding error
         information. Successfully acknowledged events will no longer be available to be received by any
@@ -424,7 +422,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         :type acknowledge_options: ~azure.eventgrid.models._models.AcknowledgeOptions or JSON or
          IO[bytes]
         :return: AcknowledgeResult. The AcknowledgeResult is compatible with MutableMapping
-        :rtype: ~azure.eventgrid.models._models.AcknowledgeResult
+        :rtype: ~azure.eventgrid.models.AcknowledgeResult
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -478,7 +476,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models._models.AcknowledgeResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models.AcknowledgeResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -517,9 +515,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.AcknowledgeResult, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.AcknowledgeResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -536,7 +532,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         event_subscription_name: str,
         release_options: _models._models.ReleaseOptions,
         *,
-        release_delay_in_seconds: Optional[Union[str, _models._enums.ReleaseDelay]] = None,
+        release_delay_in_seconds: Optional[Union[str, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models._models.ReleaseResult: ...
@@ -550,7 +546,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         event_subscription_name: str,
         release_options: JSON,
         *,
-        release_delay_in_seconds: Optional[Union[str, _models._enums.ReleaseDelay]] = None,
+        release_delay_in_seconds: Optional[Union[str, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models._models.ReleaseResult: ...
@@ -564,7 +560,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         event_subscription_name: str,
         release_options: IO[bytes],
         *,
-        release_delay_in_seconds: Optional[Union[str, _models._enums.ReleaseDelay]] = None,
+        release_delay_in_seconds: Optional[Union[str, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models._models.ReleaseResult: ...
@@ -579,7 +575,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         event_subscription_name: str,
         release_options: Union[_models._models.ReleaseOptions, JSON, IO[bytes]],
         *,
-        release_delay_in_seconds: Optional[Union[str, _models._enums.ReleaseDelay]] = None,
+        release_delay_in_seconds: Optional[Union[str, _models.ReleaseDelay]] = None,
         **kwargs: Any
     ) -> _models._models.ReleaseResult:
         """Release a batch of Cloud Events. The response will include the set of successfully released
@@ -709,9 +705,9 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.RejectResult: ...
+    ) -> _models.RejectResult: ...
     @overload
-    async def _reject(  # pylint: disable=protected-access
+    async def _reject(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -719,9 +715,9 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.RejectResult: ...
+    ) -> _models.RejectResult: ...
     @overload
-    async def _reject(  # pylint: disable=protected-access
+    async def _reject(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -729,16 +725,16 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.RejectResult: ...
+    ) -> _models.RejectResult: ...
 
     @distributed_trace_async
-    async def _reject(  # pylint: disable=protected-access
+    async def _reject(
         self,
         topic_name: str,
         event_subscription_name: str,
         reject_options: Union[_models._models.RejectOptions, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models._models.RejectResult:
+    ) -> _models.RejectResult:
         """Reject a batch of Cloud Events. The response will include the set of successfully rejected lock
         tokens, along with other failed lock tokens with their corresponding error information.
         Successfully rejected events will be dead-lettered and can no longer be received by a consumer.
@@ -751,7 +747,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
          IO[bytes] Required.
         :type reject_options: ~azure.eventgrid.models._models.RejectOptions or JSON or IO[bytes]
         :return: RejectResult. The RejectResult is compatible with MutableMapping
-        :rtype: ~azure.eventgrid.models._models.RejectResult
+        :rtype: ~azure.eventgrid.models.RejectResult
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -805,7 +801,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models._models.RejectResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models.RejectResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -844,9 +840,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.RejectResult, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.RejectResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -868,15 +862,15 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.RenewCloudEventLocksResult: ...
+    ) -> _models.RenewCloudEventLocksResult: ...
     @overload
     @api_version_validation(
         method_added_on="2023-10-01-preview",
         params_added_on={
             "2023-10-01-preview": ["api_version", "topic_name", "event_subscription_name", "content_type", "accept"]
         },
-    )  # pylint: disable=protected-access
-    async def _renew_lock(  # pylint: disable=protected-access
+    )
+    async def _renew_lock(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -884,15 +878,15 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.RenewCloudEventLocksResult: ...
+    ) -> _models.RenewCloudEventLocksResult: ...
     @overload
     @api_version_validation(
         method_added_on="2023-10-01-preview",
         params_added_on={
             "2023-10-01-preview": ["api_version", "topic_name", "event_subscription_name", "content_type", "accept"]
         },
-    )  # pylint: disable=protected-access
-    async def _renew_lock(  # pylint: disable=protected-access
+    )
+    async def _renew_lock(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -900,7 +894,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.RenewCloudEventLocksResult: ...
+    ) -> _models.RenewCloudEventLocksResult: ...
 
     @distributed_trace_async
     @api_version_validation(
@@ -908,14 +902,14 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         params_added_on={
             "2023-10-01-preview": ["api_version", "topic_name", "event_subscription_name", "content_type", "accept"]
         },
-    )  # pylint: disable=protected-access
-    async def _renew_lock(  # pylint: disable=protected-access
+    )
+    async def _renew_lock(
         self,
         topic_name: str,
         event_subscription_name: str,
         renew_lock_options: Union[_models._models.RenewLockOptions, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models._models.RenewCloudEventLocksResult:
+    ) -> _models.RenewCloudEventLocksResult:
         """Renew locks for a batch of Cloud Events. The response will include the set of successfully
         renewed lock tokens, along with other failed lock tokens with their corresponding error
         information. Successfully renewed locks will ensure that the associated event is only available
@@ -930,7 +924,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         :type renew_lock_options: ~azure.eventgrid.models._models.RenewLockOptions or JSON or IO[bytes]
         :return: RenewCloudEventLocksResult. The RenewCloudEventLocksResult is compatible with
          MutableMapping
-        :rtype: ~azure.eventgrid.models._models.RenewCloudEventLocksResult
+        :rtype: ~azure.eventgrid.models.RenewCloudEventLocksResult
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -984,9 +978,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models._models.RenewCloudEventLocksResult] = kwargs.pop(  # pylint: disable=protected-access
-            "cls", None
-        )
+        cls: ClsType[_models.RenewCloudEventLocksResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -1025,9 +1017,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.RenewCloudEventLocksResult, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.RenewCloudEventLocksResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
