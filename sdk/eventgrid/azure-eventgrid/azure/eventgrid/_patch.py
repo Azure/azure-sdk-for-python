@@ -63,7 +63,7 @@ class EventGridClient(InternalEventGridClient):
         credential: Union[AzureKeyCredential, AzureSasCredential, "TokenCredential"],
         *,
         api_version: Optional[str] = None,
-        level: Union[str, ClientLevel] = "Standard",
+        level: Union[str, ClientLevel] = ClientLevel.STANDARD,
         **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
