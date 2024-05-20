@@ -796,6 +796,26 @@ class OperationsListResult(_serialization.Model):
         self.value = value
 
 
+class ScheduledEventApproveResponse(_serialization.Model):
+    """Response of scheduled event acknowledge.
+
+    :ivar value: Successfully Approved.
+    :vartype value: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: Successfully Approved.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+
+
 class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
