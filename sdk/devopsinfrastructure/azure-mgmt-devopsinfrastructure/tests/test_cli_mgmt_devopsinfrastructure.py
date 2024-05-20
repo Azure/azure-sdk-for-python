@@ -18,8 +18,16 @@ class TestMgmtDevOpsInfrastructure(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_list_pools_by_resource_group(self, resource_group):
         assert list(self.client.pools.list_by_resource_group(resource_group.name)) == []
+
+    @recorded_by_proxy
+    def test_list_sku(self):
+        assert list(self.client.sku.list_by_location(AZURE_LOCATION)) == []
+        
+    @recorded_by_proxy
+    def test_list_subscription_usages(self):
+        assert list(self.client.subscription_usages.list_by_location(AZURE_LOCATION)) == []
 
     @recorded_by_proxy
     def test_list_operations(self):
