@@ -1481,8 +1481,7 @@ class JobOperations(_ScopeDependentOperations):
             job.trial.environment = resolver(  # type: ignore[assignment]
                 job.trial.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
             )
-        if job.compute is not None and not is_ARM_id_for_resource(job.compute, AzureMLResourceType.COMPUTE):
-            job.compute = self._resolve_compute_id(resolver, job.compute)
+        job.compute = self._resolve_compute_id(resolver, job.compute)
         return job
 
     def _resolve_arm_id_for_automl_job(
