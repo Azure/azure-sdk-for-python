@@ -9,9 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List, Union, Any, TYPE_CHECKING, Optional
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 
-
-from .._legacy.aio import EventGridPublisherClient
-from ._client import EventGridClient as InternalEventGridClient
+from ._client import EventGridPublisherClient as InternalEventGridPublisherClient
 from .._serialization import Deserializer, Serializer
 from .._patch import (
     ClientLevel,
@@ -24,8 +22,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class EventGridClient(InternalEventGridClient):
-    """Azure Messaging EventGrid Client.
+class EventGridPublisherClient(InternalEventGridPublisherClient):
+    """Azure Messaging EventGrid Publisher Client.
 
     :param endpoint: The endpoint to the Event Grid resource.
     :type endpoint: str
@@ -87,6 +85,5 @@ def patch_sdk():
 
 
 __all__: List[str] = [
-    "EventGridClient",
     "EventGridPublisherClient",
 ]  # Add all objects you want publicly available to users at this package level

@@ -17,13 +17,12 @@ from azure.core.credentials import (
 )
 
 from ._legacy import (
-    EventGridPublisherClient,
     SystemEventNames,
     EventGridEvent,
     generate_sas,
 )
 from ._client import (
-    EventGridClient as InternalEventGridClient,
+    EventGridPublisherClient as InternalEventGridPublisherClient,
 )
 from ._serialization import Serializer, Deserializer
 
@@ -37,9 +36,9 @@ DEFAULT_STANDARD_API_VERSION = "2023-10-01-preview"
 DEFAULT_BASIC_API_VERSION = "2018-01-01"
 
 
-class EventGridClient(InternalEventGridClient):
+class EventGridPublisherClient(InternalEventGridPublisherClient):
     """
-    Azure Messaging EventGrid Client.
+    Azure Messaging EventGrid Publisher Client.
 
     :param endpoint: The endpoint to the Event Grid resource.
     :type endpoint: str

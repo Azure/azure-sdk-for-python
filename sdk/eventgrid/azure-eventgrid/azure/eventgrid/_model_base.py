@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=protected-access, arguments-differ, signature-differs, broad-except
 
+import copy
 import calendar
 import decimal
 import functools
@@ -639,6 +640,13 @@ def _deserialize_sequence(
     return type(obj)(_deserialize(deserializer, entry, module) for entry in obj)
 
 
+def _sorted_annotations(types: typing.List[typing.Any]) -> typing.List[typing.Any]:
+    return sorted(
+        types,
+        key=lambda x: hasattr(x, "__name__") and x.__name__.lower() in ("str", "float", "int", "bool"),
+    )
+
+
 def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, R0912
     annotation: typing.Any,
     module: typing.Optional[str],
@@ -680,21 +688,25 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
     # is it optional?
     try:
         if any(a for a in annotation.__args__ if a == type(None)):  # pyright: ignore
-            if_obj_deserializer = _get_deserialize_callable_from_annotation(
-                next(a for a in annotation.__args__ if a != type(None)), module, rf  # pyright: ignore
-            )
+            if len(annotation.__args__) <= 2:  # pyright: ignore
+                if_obj_deserializer = _get_deserialize_callable_from_annotation(
+                    next(a for a in annotation.__args__ if a != type(None)), module, rf  # pyright: ignore
+                )
 
-            return functools.partial(_deserialize_with_optional, if_obj_deserializer)
+                return functools.partial(_deserialize_with_optional, if_obj_deserializer)
+            # the type is Optional[Union[...]], we need to remove the None type from the Union
+            annotation_copy = copy.copy(annotation)
+            annotation_copy.__args__ = [a for a in annotation_copy.__args__ if a != type(None)]  # pyright: ignore
+            return _get_deserialize_callable_from_annotation(annotation_copy, module, rf)
     except AttributeError:
         pass
 
+    # is it union?
     if getattr(annotation, "__origin__", None) is typing.Union:
         # initial ordering is we make `string` the last deserialization option, because it is often them most generic
         deserializers = [
             _get_deserialize_callable_from_annotation(arg, module, rf)
-            for arg in sorted(
-                annotation.__args__, key=lambda x: hasattr(x, "__name__") and x.__name__ == "str"  # pyright: ignore
-            )
+            for arg in _sorted_annotations(annotation.__args__)  # pyright: ignore
         ]
 
         return functools.partial(_deserialize_with_union, deserializers)

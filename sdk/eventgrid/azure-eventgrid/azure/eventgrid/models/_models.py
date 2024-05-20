@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, List, Mapping, Optional, TYPE_CHECKING, overload
+from typing import Any, List, Optional, TYPE_CHECKING
 
 from .. import _model_base
 from .._model_base import rest_field
@@ -39,35 +39,17 @@ class AcknowledgeResult(_model_base.Model):
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
      error code and description). Required.
-    :vartype failed_lock_tokens: list[~azure.eventgrid.models.FailedLockToken]
+    :vartype failed_lock_tokens: list[~azure.eventgrid.models._models.FailedLockToken]
     :ivar succeeded_lock_tokens: Array of lock tokens for the successfully acknowledged cloud
      events. Required.
     :vartype succeeded_lock_tokens: list[str]
     """
 
-    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
+    failed_lock_tokens: List["_models._models.FailedLockToken"] = rest_field(name="failedLockTokens")
     """Array of FailedLockToken for failed cloud events. Each FailedLockToken includes the lock token
      along with the related error information (namely, the error code and description). Required."""
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
     """Array of lock tokens for the successfully acknowledged cloud events. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        failed_lock_tokens: List["_models.FailedLockToken"],
-        succeeded_lock_tokens: List[str],
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class BrokerProperties(_model_base.Model):
@@ -155,10 +137,10 @@ class Error(_model_base.Model):
     :ivar target: The target of the error.
     :vartype target: str
     :ivar details: An array of details about specific errors that led to this reported error.
-    :vartype details: list[~azure.eventgrid.models.Error]
+    :vartype details: list[~azure.eventgrid.models._models.Error]
     :ivar innererror: An object containing more specific information than the current object about
      the error.
-    :vartype innererror: ~azure.eventgrid.models.InnerError
+    :vartype innererror: ~azure.eventgrid.models._models.InnerError
     """
 
     code: str = rest_field()
@@ -182,31 +164,13 @@ class FailedLockToken(_model_base.Model):
     :vartype lock_token: str
     :ivar error: Error information of the failed operation result for the lock token in the
      request. Required.
-    :vartype error: ~azure.eventgrid.models.Error
+    :vartype error: ~azure.eventgrid.models._models.Error
     """
 
     lock_token: str = rest_field(name="lockToken")
     """The lock token of an entry in the request. Required."""
     error: "_models._models.Error" = rest_field()
     """Error information of the failed operation result for the lock token in the request. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        lock_token: str,
-        error: "_models._models.Error",
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class InnerError(_model_base.Model):
@@ -217,7 +181,7 @@ class InnerError(_model_base.Model):
     :ivar code: One of a server-defined set of error codes.
     :vartype code: str
     :ivar innererror: Inner error.
-    :vartype innererror: ~azure.eventgrid.models.InnerError
+    :vartype innererror: ~azure.eventgrid.models._models.InnerError
     """
 
     code: Optional[str] = rest_field()
@@ -236,9 +200,9 @@ class ReceiveDetails(_model_base.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar broker_properties: The Event Broker details. Required.
-    :vartype broker_properties: ~azure.eventgrid.models.BrokerProperties
+    :vartype broker_properties: ~azure.eventgrid.models._models.BrokerProperties
     :ivar event: Cloud Event details. Required.
-    :vartype event: ~azure.eventgrid.models.CloudEvent
+    :vartype event: ~azure.eventgrid.models._models.CloudEvent
     """
 
     broker_properties: "_models._models.BrokerProperties" = rest_field(name="brokerProperties")
@@ -253,7 +217,7 @@ class ReceiveResult(_model_base.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar value: Array of receive responses, one per cloud event. Required.
-    :vartype value: list[~azure.eventgrid.models.ReceiveDetails]
+    :vartype value: list[~azure.eventgrid.models._models.ReceiveDetails]
     """
 
     value: List["_models._models.ReceiveDetails"] = rest_field()
@@ -281,35 +245,17 @@ class RejectResult(_model_base.Model):
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
      error code and description). Required.
-    :vartype failed_lock_tokens: list[~azure.eventgrid.models.FailedLockToken]
+    :vartype failed_lock_tokens: list[~azure.eventgrid.models._models.FailedLockToken]
     :ivar succeeded_lock_tokens: Array of lock tokens for the successfully rejected cloud events.
      Required.
     :vartype succeeded_lock_tokens: list[str]
     """
 
-    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
+    failed_lock_tokens: List["_models._models.FailedLockToken"] = rest_field(name="failedLockTokens")
     """Array of FailedLockToken for failed cloud events. Each FailedLockToken includes the lock token
      along with the related error information (namely, the error code and description). Required."""
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
     """Array of lock tokens for the successfully rejected cloud events. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        failed_lock_tokens: List["_models.FailedLockToken"],
-        succeeded_lock_tokens: List[str],
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class ReleaseOptions(_model_base.Model):
@@ -333,35 +279,17 @@ class ReleaseResult(_model_base.Model):
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
      error code and description). Required.
-    :vartype failed_lock_tokens: list[~azure.eventgrid.models.FailedLockToken]
+    :vartype failed_lock_tokens: list[~azure.eventgrid.models._models.FailedLockToken]
     :ivar succeeded_lock_tokens: Array of lock tokens for the successfully released cloud events.
      Required.
     :vartype succeeded_lock_tokens: list[str]
     """
 
-    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
+    failed_lock_tokens: List["_models._models.FailedLockToken"] = rest_field(name="failedLockTokens")
     """Array of FailedLockToken for failed cloud events. Each FailedLockToken includes the lock token
      along with the related error information (namely, the error code and description). Required."""
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
     """Array of lock tokens for the successfully released cloud events. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        failed_lock_tokens: List["_models.FailedLockToken"],
-        succeeded_lock_tokens: List[str],
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class RenewCloudEventLocksResult(_model_base.Model):
@@ -372,34 +300,16 @@ class RenewCloudEventLocksResult(_model_base.Model):
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
      error code and description). Required.
-    :vartype failed_lock_tokens: list[~azure.eventgrid.models.FailedLockToken]
+    :vartype failed_lock_tokens: list[~azure.eventgrid.models._models.FailedLockToken]
     :ivar succeeded_lock_tokens: Array of lock tokens for the successfully renewed locks. Required.
     :vartype succeeded_lock_tokens: list[str]
     """
 
-    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
+    failed_lock_tokens: List["_models._models.FailedLockToken"] = rest_field(name="failedLockTokens")
     """Array of FailedLockToken for failed cloud events. Each FailedLockToken includes the lock token
      along with the related error information (namely, the error code and description). Required."""
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
     """Array of lock tokens for the successfully renewed locks. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        failed_lock_tokens: List["_models.FailedLockToken"],
-        succeeded_lock_tokens: List[str],
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class RenewLockOptions(_model_base.Model):

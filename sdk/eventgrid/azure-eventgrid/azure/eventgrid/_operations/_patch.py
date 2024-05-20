@@ -30,7 +30,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.utils import case_insensitive_dict
 
-from ._operations import EventGridClientOperationsMixin as OperationsMixin
+from ._operations import EventGridPublisherClientOperationsMixin as OperationsPubMixin, EventGridConsumerClientOperationsMixin as OperationsConsumerMixin
 from ..models._patch import (
     ReceiveResult,
     ReceiveDetails,
@@ -63,25 +63,6 @@ _SERIALIZER.client_side_validation = False
 
 if TYPE_CHECKING:
     from cloudevents.http.event import CloudEvent as CNCFCloudEvent
-
-def use_standard_only(func):
-    """Use the standard client only.
-
-    This decorator raises an AttributeError if the client is not a standard client.
-
-    :param func: The function to decorate.
-    :type func: Callable
-    :return: The decorated function.
-    :rtype: Callable
-    """
-
-    @wraps(func)
-    def wrapper(self, *args, **kwargs):
-        if self._level == "Basic":  # pylint: disable=protected-access
-            raise ValueError("The basic client is not supported for this operation.")
-        return func(self, *args, **kwargs)
-
-    return wrapper
 
 
 def validate_args(**kwargs: Any):
@@ -118,7 +99,7 @@ def validate_args(**kwargs: Any):
     return decorator
 
 
-class EventGridClientOperationsMixin(OperationsMixin):
+class EventGridPublisherClientOperationsMixin(OperationsPubMixin):
 
     @overload
     def send(
@@ -190,7 +171,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         }
     )
     @distributed_trace
-    def send(self, *args, **kwargs) -> None: # pylint: disable=docstring-should-be-keyword, docstring-missing-param
+    def send(self, *args, **kwargs) -> None:  # pylint: disable=docstring-should-be-keyword, docstring-missing-param
         """Send events to the Event Grid Service.
 
         :param topic_name: The name of the topic to send the event to.
@@ -256,7 +237,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         if self._level == "Standard" and topic_name is None:
             raise ValueError("Topic name is required for Event Grid Namespaces.")
 
-         # If a cloud event dict, convert to CloudEvent for serializing
+        # If a cloud event dict, convert to CloudEvent for serializing
         try:
             if isinstance(events, dict):
                 events = CloudEvent.from_dict(events)
@@ -297,7 +278,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
                 ) from exception
             raise exception
 
-    @use_standard_only
+class EventGridConsumerClientOperationsMixin(OperationsConsumerMixin):
+    
     @distributed_trace
     def receive_cloud_events(
         self,
@@ -329,7 +311,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
         detail_items = []
-        received_result = self._receive_cloud_events(
+        received_result = self._receive(
             topic_name,
             subscription_name,
             max_events=max_events,
@@ -348,7 +330,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         receive_result_deserialized = ReceiveResult(value=detail_items)
         return receive_result_deserialized
 
-    @use_standard_only
+    
     @distributed_trace
     def acknowledge_cloud_events(
         self,
@@ -373,14 +355,14 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         options = AcknowledgeOptions(lock_tokens=lock_tokens)
-        return super()._acknowledge_cloud_events(
+        return super()._acknowledge(
             topic_name=topic_name,
             event_subscription_name=subscription_name,
             acknowledge_options=options,
             **kwargs,
         )
 
-    @use_standard_only
+    
     @distributed_trace
     @api_version_validation(
         params_added_on={"2023-10-01-preview": ["release_delay"]},
@@ -412,7 +394,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         options = ReleaseOptions(lock_tokens=lock_tokens)
-        return super()._release_cloud_events(
+        return super()._release(
             topic_name=topic_name,
             event_subscription_name=subscription_name,
             release_options=options,
@@ -420,7 +402,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             **kwargs,
         )
 
-    @use_standard_only
+    
     @distributed_trace
     def reject_cloud_events(
         self,
@@ -444,14 +426,14 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         options = RejectOptions(lock_tokens=lock_tokens)
-        return super()._reject_cloud_events(
+        return super()._reject(
             topic_name=topic_name,
             event_subscription_name=subscription_name,
             reject_options=options,
             **kwargs,
         )
 
-    @use_standard_only
+    
     @distributed_trace
     @api_version_validation(
         method_added_on="2023-10-01-preview",
@@ -480,7 +462,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         options = RenewLockOptions(lock_tokens=lock_tokens)
-        return super()._renew_cloud_event_locks(
+        return super()._renew_lock(
             topic_name=topic_name,
             event_subscription_name=subscription_name,
             renew_lock_options=options,
@@ -529,7 +511,8 @@ def _serialize_cloud_event(cloud_event):
 
 
 __all__: List[str] = [
-    "EventGridClientOperationsMixin"
+    "EventGridPublisherClientOperationsMixin",
+    "EventGridConsumerClientOperationsMixin",
 ]  # Add all objects you want publicly available to users at this package level
 
 

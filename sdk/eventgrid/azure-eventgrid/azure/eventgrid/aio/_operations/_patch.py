@@ -16,8 +16,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from ...models._patch import ReceiveResult, ReceiveDetails
-from ..._operations._patch import use_standard_only
-from ._operations import EventGridClientOperationsMixin as OperationsMixin
+from ._operations import EventGridPublisherClientOperationsMixin as OperationsPubMixin, EventGridConsumerClientOperationsMixin as OperationsConsumerMixin
 from ... import models as _models
 from ...models._models import AcknowledgeOptions, ReleaseOptions, RejectOptions, RenewLockOptions
 from ..._validation import api_version_validation
@@ -39,7 +38,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class EventGridClientOperationsMixin(OperationsMixin):
+class EventGridPublisherClientOperationsMixin(OperationsPubMixin):
 
     @overload
     async def send(
@@ -200,7 +199,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
                 self._http_response_error_handler(exception, "Basic")
                 raise exception
 
-
     def _http_response_error_handler(self, exception, level):
         if isinstance(exception, HttpResponseError):
             if exception.status_code == 400:
@@ -213,7 +211,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
                 ) from exception
             raise exception
 
-    @use_standard_only
+
+class EventGridConsumerClientOperationsMixin(OperationsConsumerMixin):
+
     @distributed_trace_async
     async def receive_cloud_events(
         self,
@@ -245,7 +245,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
         detail_items = []
-        receive_result = await self._receive_cloud_events(
+        receive_result = await self._receive(
             topic_name,
             subscription_name,
             max_events=max_events,
@@ -264,7 +264,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         receive_result_deserialized = ReceiveResult(value=detail_items)
         return receive_result_deserialized
 
-    @use_standard_only
+    
     @distributed_trace_async
     async def acknowledge_cloud_events(
         self,
@@ -289,9 +289,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         options = AcknowledgeOptions(lock_tokens=lock_tokens)
-        return await super()._acknowledge_cloud_events(topic_name, subscription_name, options, **kwargs)
+        return await super()._acknowledge(topic_name, subscription_name, options, **kwargs)
 
-    @use_standard_only
+    
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2023-10-01-preview": ["release_delay"]},
@@ -323,7 +323,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         options = ReleaseOptions(lock_tokens=lock_tokens)
-        return await super()._release_cloud_events(
+        return await super()._release(
             topic_name,
             subscription_name,
             options,
@@ -331,7 +331,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             **kwargs,
         )
 
-    @use_standard_only
+    
     @distributed_trace_async
     async def reject_cloud_events(
         self,
@@ -355,9 +355,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         options = RejectOptions(lock_tokens=lock_tokens)
-        return await super()._reject_cloud_events(topic_name, subscription_name, options, **kwargs)
+        return await super()._reject(topic_name, subscription_name, options, **kwargs)
 
-    @use_standard_only
+    
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2023-10-01-preview",
@@ -386,11 +386,12 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         options = RenewLockOptions(lock_tokens=lock_tokens)
-        return await super()._renew_cloud_event_locks(topic_name, subscription_name, options, **kwargs)
+        return await super()._renew_lock(topic_name, subscription_name, options, **kwargs)
 
 
 __all__: List[str] = [
-    "EventGridClientOperationsMixin"
+    "EventGridPublisherClientOperationsMixin",
+    "EventGridConsumerClientOperationsMixin",
 ]  # Add all objects you want publicly available to users at this package level
 
 
