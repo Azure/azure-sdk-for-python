@@ -750,12 +750,12 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         release_delay_in_seconds: Optional[Union[str, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.ReleaseResult: ...
+    ) -> _models.ReleaseResult: ...
     @overload
     @api_version_validation(
         params_added_on={"2023-10-01-preview": ["release_delay_in_seconds"]},
-    )  # pylint: disable=protected-access
-    def _release(  # pylint: disable=protected-access
+    )
+    def _release(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -764,12 +764,12 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         release_delay_in_seconds: Optional[Union[str, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.ReleaseResult: ...
+    ) -> _models.ReleaseResult: ...
     @overload
     @api_version_validation(
         params_added_on={"2023-10-01-preview": ["release_delay_in_seconds"]},
-    )  # pylint: disable=protected-access
-    def _release(  # pylint: disable=protected-access
+    )
+    def _release(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -778,13 +778,13 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         release_delay_in_seconds: Optional[Union[str, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.ReleaseResult: ...
+    ) -> _models.ReleaseResult: ...
 
     @distributed_trace
     @api_version_validation(
         params_added_on={"2023-10-01-preview": ["release_delay_in_seconds"]},
-    )  # pylint: disable=protected-access
-    def _release(  # pylint: disable=protected-access
+    )
+    def _release(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -792,7 +792,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         *,
         release_delay_in_seconds: Optional[Union[str, _models.ReleaseDelay]] = None,
         **kwargs: Any
-    ) -> _models._models.ReleaseResult:
+    ) -> _models.ReleaseResult:
         """Release a batch of Cloud Events. The response will include the set of successfully released
         lock tokens, along with other failed lock tokens with their corresponding error information.
         Successfully released events can be received by consumers.
@@ -808,7 +808,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
          Known values are: "0", "10", "60", "600", and "3600". Default value is None.
         :paramtype release_delay_in_seconds: str or ~azure.eventgrid.models.ReleaseDelay
         :return: ReleaseResult. The ReleaseResult is compatible with MutableMapping
-        :rtype: ~azure.eventgrid.models._models.ReleaseResult
+        :rtype: ~azure.eventgrid.models.ReleaseResult
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -862,7 +862,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models._models.ReleaseResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models.ReleaseResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -902,9 +902,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.ReleaseResult, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.ReleaseResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

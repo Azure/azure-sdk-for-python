@@ -9,6 +9,7 @@
 from ._models import AcknowledgeResult
 from ._models import ReceiveResult
 from ._models import RejectResult
+from ._models import ReleaseResult
 from ._models import RenewCloudEventLocksResult
 
 from ._enums import ReleaseDelay
@@ -20,6 +21,7 @@ __all__ = [
     "AcknowledgeResult",
     "ReceiveResult",
     "RejectResult",
+    "ReleaseResult",
     "RenewCloudEventLocksResult",
     "ReleaseDelay",
 ]

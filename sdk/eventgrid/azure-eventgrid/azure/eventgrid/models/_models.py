@@ -344,6 +344,24 @@ class ReleaseResult(_model_base.Model):
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
     """Array of lock tokens for the successfully released cloud events. Required."""
 
+    @overload
+    def __init__(
+        self,
+        *,
+        failed_lock_tokens: List["_models._models.FailedLockToken"],
+        succeeded_lock_tokens: List[str],
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
 
 class RenewCloudEventLocksResult(_model_base.Model):
     """The result of the RenewLock operation.
