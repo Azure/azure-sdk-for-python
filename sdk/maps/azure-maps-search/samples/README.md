@@ -13,8 +13,6 @@ These code samples show common scenario operations with the Azure Maps Search cl
 
 Authenticate the client with a Azure Maps Search [API Key Credential](https://docs.microsoft.com/azure/azure-maps/how-to-manage-account-keys):
 
-[samples authentication](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_authentication_async.py))
-
 Then for common Azure Maps Search operations:
 
 * Perform geocode search: [sample_geocode.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_geocode.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_geocode_async.py))
