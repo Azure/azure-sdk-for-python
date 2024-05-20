@@ -76,7 +76,7 @@ class IssueProcessPython(IssueProcess):
             issue_number = self.issue_package.issue.number
             if not self.readme_comparison:
                 try:
-                    spec_readme = self.readme_link + ('' if self.is_typespec_folder else '/readme.md') 
+                    spec_readme = self.readme_link + ('' if self.has_typespec_folder else '/readme.md') 
                     issue_link = self.issue_package.issue.html_url
                     release_pipeline_url = get_python_release_pipeline(self.output_folder)
                     res_run = run_pipeline(issue_link=issue_link,
