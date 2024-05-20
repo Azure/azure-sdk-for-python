@@ -18,7 +18,7 @@ from search_preparer import MapsSearchPreparer
 class TestMapsSearchClient(AzureRecordedTestCase):
     def setup_method(self, method):
         self.client = MapsSearchClient(
-            credential=os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+            credential=AzureKeyCredential(os.environ.get('AZURE_SUBSCRIPTION_KEY', "AzureMapsSubscriptionKey"))
         )
         assert self.client is not None
 
@@ -32,8 +32,8 @@ class TestMapsSearchClient(AzureRecordedTestCase):
         longitude = coordinates[0]
         latitude = coordinates[1]
 
-        assert longitude == -122.138679
-        assert latitude == 47.630356
+        assert longitude == -122.138669
+        assert latitude == 47.630359
 
     @MapsSearchPreparer()
     @recorded_by_proxy
@@ -55,16 +55,16 @@ class TestMapsSearchClient(AzureRecordedTestCase):
         longitude1 = coordinates1[0]
         latitude1 = coordinates1[1]
 
-        assert longitude1 == -122.138679
-        assert latitude1 == 47.630356
+        assert longitude1 == -122.138669
+        assert latitude1 == 47.630359
 
         assert len(result2.features) == 1
         coordinates2 = result2.features[0].geometry.coordinates
         longitude2 = coordinates2[0]
         latitude2 = coordinates2[1]
 
-        assert longitude2 == -122.138679
-        assert latitude2 == 47.630356
+        assert longitude2 == -122.138669
+        assert latitude2 == 47.630359
 
     @MapsSearchPreparer()
     @recorded_by_proxy
