@@ -103,7 +103,7 @@ def sample_chat_completions_with_tools():
     if response.choices[0].finish_reason == CompletionsFinishReason.TOOL_CALLS:
 
         # Append the previous model response to the chat history
-        messages.append(AssistantMessage(content="", tool_calls=response.choices[0].message.tool_calls))
+        messages.append(AssistantMessage(tool_calls=response.choices[0].message.tool_calls))
 
         # The tools call should be a function call
         tool_call = response.choices[0].message.tool_calls[0]
