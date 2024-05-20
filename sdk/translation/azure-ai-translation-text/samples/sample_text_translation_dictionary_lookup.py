@@ -40,19 +40,19 @@ text_translator = sample_text_translation_client.create_text_translation_client_
 def get_text_translation_dictionary_lookup():
     # [START get_text_translation_dictionary_lookup]
     try:
-        source_language = "en"
-        target_language = "es"
+        from_parameter = "en"
+        to = "es"
         input_text_elements = ["fly"]
 
         response = text_translator.lookup_dictionary_entries(
-            body=input_text_elements, source_language=source_language, target_language=target_language
+            body=input_text_elements, from_parameter=from_parameter, to=to
         )
         dictionary_entry = response[0] if response else None
 
         if dictionary_entry:
             print(f"For the given input {len(dictionary_entry.translations)} entries were found in the dictionary.")
             print(
-                f"First entry: '{dictionary_entry.translations[0].display_target}', confidence: {dictionary_entry.translations[0].confidence}."
+                f"First entry: '{dictionary_entry.translations[0].display_target}', score: {dictionary_entry.translations[0].score}."
             )
 
     except HttpResponseError as exception:

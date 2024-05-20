@@ -23,8 +23,8 @@ class TestTransliterationAsync(TextTranslationTest, TestHelper):
             response = await client.transliterate(
                 body=input_text_elements,
                 language="zh-Hans",
-                source_language_script="Hans",
-                target_language_script="Latn",
+                from_script="Hans",
+                to_script="Latn",
             )
 
         assert response is not None
@@ -43,8 +43,8 @@ class TestTransliterationAsync(TextTranslationTest, TestHelper):
             response = await client.transliterate(
                 body=input_text_elements,
                 language="hi",
-                source_language_script="Deva",
-                target_language_script="Latn",
+                from_script="Deva",
+                to_script="Latn",
             )
 
         assert response is not None
@@ -68,8 +68,8 @@ class TestTransliterationAsync(TextTranslationTest, TestHelper):
             response = await client.transliterate(
                 body=input_text_elements,
                 language="gu",
-                source_language_script="Latn",
-                target_language_script="Gujr",
+                from_script="Latn",
+                to_script="Gujr",
             )
 
         assert response is not None

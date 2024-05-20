@@ -37,12 +37,12 @@ text_translator = sample_text_translation_client.create_text_translation_client_
 def get_text_sentence_boundaries():
     # [START get_text_sentence_boundaries]
     try:
-        source_language = "zh-Hans"
+        from_parameter = "zh-Hans"
         source_script = "Latn"
         input_text_elements = ["zhè shì gè cè shì。"]
 
         response = text_translator.find_sentence_boundaries(
-            body=input_text_elements, language=source_language, script=source_script
+            body=input_text_elements, language=from_parameter, script=source_script
         )
         sentence_boundaries = response[0] if response else None
 
@@ -50,10 +50,10 @@ def get_text_sentence_boundaries():
             detected_language = sentence_boundaries.detected_language
             if detected_language:
                 print(
-                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
+                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
                 )
             print(f"The detected sentence boundaries:")
-            for boundary in sentence_boundaries.sentences_lengths:
+            for boundary in sentence_boundaries.sent_len:
                 print(boundary)
 
     except HttpResponseError as exception:
@@ -76,10 +76,10 @@ def get_text_sentence_boundaries_auto():
             detected_language = sentence_boundaries.detected_language
             if detected_language:
                 print(
-                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
+                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
                 )
             print(f"The detected sentence boundaries:")
-            for boundary in sentence_boundaries.sentences_lengths:
+            for boundary in sentence_boundaries.sent_len:
                 print(boundary)
 
     except HttpResponseError as exception:

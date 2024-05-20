@@ -40,12 +40,12 @@ text_translator = sample_text_translation_client.create_text_translation_client_
 def get_text_translation_dictionary_examples():
     # [START get_text_translation_dictionary_examples]
     try:
-        source_language = "en"
-        target_language = "es"
+        from_parameter = "en"
+        to = "es"
         input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
 
         response = text_translator.lookup_dictionary_examples(
-            body=input_text_elements, source_language=source_language, target_language=target_language
+            body=input_text_elements, from_parameter=from_parameter, to=to
         )
         dictionary_entry = response[0] if response else None
 

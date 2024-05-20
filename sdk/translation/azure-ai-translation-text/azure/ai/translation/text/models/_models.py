@@ -30,8 +30,8 @@ class BackTranslation(_model_base.Model):
      a form best
      suited for end-user display. Required.
     :vartype display_text: str
-    :ivar examples_count: An integer representing the number of examples that are available for
-     this translation pair.
+    :ivar num_examples: An integer representing the number of examples that are available for this
+     translation pair.
      Actual examples must be retrieved with a separate call to lookup examples. The number is
      mostly
      intended to facilitate display in a UX. For example, a user interface may add a hyperlink
@@ -40,7 +40,7 @@ class BackTranslation(_model_base.Model):
      as plain text if there are no examples. Note that the actual number of examples returned
      by a call to lookup examples may be less than numExamples, because additional filtering may be
      applied on the fly to remove "bad" examples. Required.
-    :vartype examples_count: int
+    :vartype num_examples: int
     :ivar frequency_count: An integer representing the frequency of this translation pair in the
      data. The main purpose of this
      field is to provide a user interface with a means to sort back-translations so the most
@@ -55,7 +55,7 @@ class BackTranslation(_model_base.Model):
     display_text: str = rest_field(name="displayText")
     """A string giving the source term that is a back-translation of the target in a form best
      suited for end-user display. Required."""
-    examples_count: int = rest_field(name="numExamples")
+    num_examples: int = rest_field(name="numExamples")
     """An integer representing the number of examples that are available for this translation pair.
      Actual examples must be retrieved with a separate call to lookup examples. The number is mostly
      intended to facilitate display in a UX. For example, a user interface may add a hyperlink
@@ -76,7 +76,7 @@ class BackTranslation(_model_base.Model):
         *,
         normalized_text: str,
         display_text: str,
-        examples_count: int,
+        num_examples: int,
         frequency_count: int,
     ): ...
 
@@ -99,17 +99,16 @@ class BreakSentenceItem(_model_base.Model):
     :ivar detected_language: The detectedLanguage property is only present in the result object
      when language auto-detection is requested.
     :vartype detected_language: ~azure.ai.translation.text.models.DetectedLanguage
-    :ivar sentences_lengths: An integer array representing the lengths of the sentences in the
-     input text.
+    :ivar sent_len: An integer array representing the lengths of the sentences in the input text.
      The length of the array is the number of sentences, and the values are the length of each
      sentence. Required.
-    :vartype sentences_lengths: list[int]
+    :vartype sent_len: list[int]
     """
 
     detected_language: Optional["_models.DetectedLanguage"] = rest_field(name="detectedLanguage")
     """The detectedLanguage property is only present in the result object when language auto-detection
      is requested."""
-    sentences_lengths: List[int] = rest_field(name="sentLen")
+    sent_len: List[int] = rest_field(name="sentLen")
     """An integer array representing the lengths of the sentences in the input text.
      The length of the array is the number of sentences, and the values are the length of each
      sentence. Required."""
@@ -118,7 +117,7 @@ class BreakSentenceItem(_model_base.Model):
     def __init__(
         self,
         *,
-        sentences_lengths: List[int],
+        sent_len: List[int],
         detected_language: Optional["_models.DetectedLanguage"] = None,
     ): ...
 
@@ -140,14 +139,14 @@ class DetectedLanguage(_model_base.Model):
 
     :ivar language: A string representing the code of the detected language. Required.
     :vartype language: str
-    :ivar confidence: A float value indicating the confidence in the result.
+    :ivar score: A float value indicating the confidence in the result.
      The score is between zero and one and a low score indicates a low confidence. Required.
-    :vartype confidence: float
+    :vartype score: float
     """
 
     language: str = rest_field()
     """A string representing the code of the detected language. Required."""
-    confidence: float = rest_field(name="score")
+    score: float = rest_field()
     """A float value indicating the confidence in the result.
      The score is between zero and one and a low score indicates a low confidence. Required."""
 
@@ -156,7 +155,7 @@ class DetectedLanguage(_model_base.Model):
         self,
         *,
         language: str,
-        confidence: float,
+        score: float,
     ): ...
 
     @overload
@@ -615,9 +614,9 @@ class LanguageScript(_model_base.Model):
     :ivar native_name: Display name of the language in the locale native for the language.
      Required.
     :vartype native_name: str
-    :ivar directionality: Directionality, which is rtl for right-to-left languages or ltr for
-     left-to-right languages. Required. Known values are: "ltr" and "rtl".
-    :vartype directionality: str or ~azure.ai.translation.text.models.LanguageDirectionality
+    :ivar dir: Directionality, which is rtl for right-to-left languages or ltr for left-to-right
+     languages. Required. Known values are: "ltr" and "rtl".
+    :vartype dir: str or ~azure.ai.translation.text.models.LanguageDirectionality
     """
 
     code: str = rest_field()
@@ -626,7 +625,7 @@ class LanguageScript(_model_base.Model):
     """Display name of the script in the locale requested via Accept-Language header. Required."""
     native_name: str = rest_field(name="nativeName")
     """Display name of the language in the locale native for the language. Required."""
-    directionality: Union[str, "_models.LanguageDirectionality"] = rest_field(name="dir")
+    dir: Union[str, "_models.LanguageDirectionality"] = rest_field()
     """Directionality, which is rtl for right-to-left languages or ltr for left-to-right languages.
      Required. Known values are: \"ltr\" and \"rtl\"."""
 
@@ -637,7 +636,7 @@ class LanguageScript(_model_base.Model):
         code: str,
         name: str,
         native_name: str,
-        directionality: Union[str, "_models.LanguageDirectionality"],
+        dir: Union[str, "_models.LanguageDirectionality"],
     ): ...
 
     @overload
@@ -656,23 +655,23 @@ class SentenceBoundaries(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar source_sentences_lengths: An integer array representing the lengths of the sentences in
-     the input text.
+    :ivar src_sent_len: An integer array representing the lengths of the sentences in the input
+     text.
      The length of the array is the number of sentences, and the values are the length of each
      sentence. Required.
-    :vartype source_sentences_lengths: list[int]
-    :ivar translated_sentences_lengths: An integer array representing the lengths of the sentences
-     in the translated text.
+    :vartype src_sent_len: list[int]
+    :ivar trans_sent_len: An integer array representing the lengths of the sentences in the
+     translated text.
      The length of the array is the number of sentences, and the values are the length of each
      sentence. Required.
-    :vartype translated_sentences_lengths: list[int]
+    :vartype trans_sent_len: list[int]
     """
 
-    source_sentences_lengths: List[int] = rest_field(name="srcSentLen")
+    src_sent_len: List[int] = rest_field(name="srcSentLen")
     """An integer array representing the lengths of the sentences in the input text.
      The length of the array is the number of sentences, and the values are the length of each
      sentence. Required."""
-    translated_sentences_lengths: List[int] = rest_field(name="transSentLen")
+    trans_sent_len: List[int] = rest_field(name="transSentLen")
     """An integer array representing the lengths of the sentences in the translated text.
      The length of the array is the number of sentences, and the values are the length of each
      sentence. Required."""
@@ -681,8 +680,8 @@ class SentenceBoundaries(_model_base.Model):
     def __init__(
         self,
         *,
-        source_sentences_lengths: List[int],
-        translated_sentences_lengths: List[int],
+        src_sent_len: List[int],
+        trans_sent_len: List[int],
     ): ...
 
     @overload
@@ -707,9 +706,9 @@ class SourceDictionaryLanguage(_model_base.Model):
     :ivar native_name: Display name of the language in the locale native for this language.
      Required.
     :vartype native_name: str
-    :ivar directionality: Directionality, which is rtl for right-to-left languages or ltr for
-     left-to-right languages. Required. Known values are: "ltr" and "rtl".
-    :vartype directionality: str or ~azure.ai.translation.text.models.LanguageDirectionality
+    :ivar dir: Directionality, which is rtl for right-to-left languages or ltr for left-to-right
+     languages. Required. Known values are: "ltr" and "rtl".
+    :vartype dir: str or ~azure.ai.translation.text.models.LanguageDirectionality
     :ivar translations: List of languages with alterative translations and examples for the query
      expressed in the source language. Required.
     :vartype translations: list[~azure.ai.translation.text.models.TargetDictionaryLanguage]
@@ -719,7 +718,7 @@ class SourceDictionaryLanguage(_model_base.Model):
     """Display name of the language in the locale requested via Accept-Language header. Required."""
     native_name: str = rest_field(name="nativeName")
     """Display name of the language in the locale native for this language. Required."""
-    directionality: Union[str, "_models.LanguageDirectionality"] = rest_field(name="dir")
+    dir: Union[str, "_models.LanguageDirectionality"] = rest_field()
     """Directionality, which is rtl for right-to-left languages or ltr for left-to-right languages.
      Required. Known values are: \"ltr\" and \"rtl\"."""
     translations: List["_models.TargetDictionaryLanguage"] = rest_field()
@@ -732,7 +731,7 @@ class SourceDictionaryLanguage(_model_base.Model):
         *,
         name: str,
         native_name: str,
-        directionality: Union[str, "_models.LanguageDirectionality"],
+        dir: Union[str, "_models.LanguageDirectionality"],
         translations: List["_models.TargetDictionaryLanguage"],
     ): ...
 
@@ -788,9 +787,9 @@ class TargetDictionaryLanguage(_model_base.Model):
     :ivar native_name: Display name of the language in the locale native for this language.
      Required.
     :vartype native_name: str
-    :ivar directionality: Directionality, which is rtl for right-to-left languages or ltr for
-     left-to-right languages. Required. Known values are: "ltr" and "rtl".
-    :vartype directionality: str or ~azure.ai.translation.text.models.LanguageDirectionality
+    :ivar dir: Directionality, which is rtl for right-to-left languages or ltr for left-to-right
+     languages. Required. Known values are: "ltr" and "rtl".
+    :vartype dir: str or ~azure.ai.translation.text.models.LanguageDirectionality
     :ivar code: Language code identifying the target language. Required.
     :vartype code: str
     """
@@ -799,7 +798,7 @@ class TargetDictionaryLanguage(_model_base.Model):
     """Display name of the language in the locale requested via Accept-Language header. Required."""
     native_name: str = rest_field(name="nativeName")
     """Display name of the language in the locale native for this language. Required."""
-    directionality: Union[str, "_models.LanguageDirectionality"] = rest_field(name="dir")
+    dir: Union[str, "_models.LanguageDirectionality"] = rest_field()
     """Directionality, which is rtl for right-to-left languages or ltr for left-to-right languages.
      Required. Known values are: \"ltr\" and \"rtl\"."""
     code: str = rest_field()
@@ -811,7 +810,7 @@ class TargetDictionaryLanguage(_model_base.Model):
         *,
         name: str,
         native_name: str,
-        directionality: Union[str, "_models.LanguageDirectionality"],
+        dir: Union[str, "_models.LanguageDirectionality"],
         code: str,
     ): ...
 
@@ -831,8 +830,8 @@ class TranslatedTextAlignment(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar projections: Maps input text to translated text. The alignment information is only
-     provided when the request
+    :ivar proj: Maps input text to translated text. The alignment information is only provided when
+     the request
      parameter includeAlignment is true. Alignment is returned as a string value of the following
      format: [[SourceTextStartIndex]:[SourceTextEndIndex]–[TgtTextStartIndex]:[TgtTextEndIndex]].
      The colon separates start and end index, the dash separates the languages, and space separates
@@ -841,10 +840,10 @@ class TranslatedTextAlignment(_model_base.Model):
      words may
      be non-contiguous. When no alignment information is available, the alignment element will be
      empty. Required.
-    :vartype projections: str
+    :vartype proj: str
     """
 
-    projections: str = rest_field(name="proj")
+    proj: str = rest_field()
     """Maps input text to translated text. The alignment information is only provided when the request
      parameter includeAlignment is true. Alignment is returned as a string value of the following
      format: [[SourceTextStartIndex]:[SourceTextEndIndex]–[TgtTextStartIndex]:[TgtTextEndIndex]].
@@ -859,7 +858,7 @@ class TranslatedTextAlignment(_model_base.Model):
     def __init__(
         self,
         *,
-        projections: str,
+        proj: str,
     ): ...
 
     @overload
@@ -941,16 +940,16 @@ class TranslationLanguage(_model_base.Model):
     :ivar native_name: Display name of the language in the locale native for this language.
      Required.
     :vartype native_name: str
-    :ivar directionality: Directionality, which is rtl for right-to-left languages or ltr for
-     left-to-right languages. Required. Known values are: "ltr" and "rtl".
-    :vartype directionality: str or ~azure.ai.translation.text.models.LanguageDirectionality
+    :ivar dir: Directionality, which is rtl for right-to-left languages or ltr for left-to-right
+     languages. Required. Known values are: "ltr" and "rtl".
+    :vartype dir: str or ~azure.ai.translation.text.models.LanguageDirectionality
     """
 
     name: str = rest_field()
     """Display name of the language in the locale requested via Accept-Language header. Required."""
     native_name: str = rest_field(name="nativeName")
     """Display name of the language in the locale native for this language. Required."""
-    directionality: Union[str, "_models.LanguageDirectionality"] = rest_field(name="dir")
+    dir: Union[str, "_models.LanguageDirectionality"] = rest_field()
     """Directionality, which is rtl for right-to-left languages or ltr for left-to-right languages.
      Required. Known values are: \"ltr\" and \"rtl\"."""
 
@@ -960,7 +959,7 @@ class TranslationLanguage(_model_base.Model):
         *,
         name: str,
         native_name: str,
-        directionality: Union[str, "_models.LanguageDirectionality"],
+        dir: Union[str, "_models.LanguageDirectionality"],
     ): ...
 
     @overload
@@ -979,9 +978,8 @@ class TranslationText(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar target_language: A string representing the language code of the target language.
-     Required.
-    :vartype target_language: str
+    :ivar to: A string representing the language code of the target language. Required.
+    :vartype to: str
     :ivar text: A string giving the translated text. Required.
     :vartype text: str
     :ivar transliteration: An object giving the translated text in the script specified by the
@@ -989,11 +987,11 @@ class TranslationText(_model_base.Model):
     :vartype transliteration: ~azure.ai.translation.text.models.TransliteratedText
     :ivar alignment: Alignment information.
     :vartype alignment: ~azure.ai.translation.text.models.TranslatedTextAlignment
-    :ivar sentence_boundaries: Sentence boundaries in the input and output texts.
-    :vartype sentence_boundaries: ~azure.ai.translation.text.models.SentenceBoundaries
+    :ivar sent_len: Sentence boundaries in the input and output texts.
+    :vartype sent_len: ~azure.ai.translation.text.models.SentenceBoundaries
     """
 
-    target_language: str = rest_field(name="to")
+    to: str = rest_field()
     """A string representing the language code of the target language. Required."""
     text: str = rest_field()
     """A string giving the translated text. Required."""
@@ -1001,18 +999,18 @@ class TranslationText(_model_base.Model):
     """An object giving the translated text in the script specified by the toScript parameter."""
     alignment: Optional["_models.TranslatedTextAlignment"] = rest_field()
     """Alignment information."""
-    sentence_boundaries: Optional["_models.SentenceBoundaries"] = rest_field(name="sentLen")
+    sent_len: Optional["_models.SentenceBoundaries"] = rest_field(name="sentLen")
     """Sentence boundaries in the input and output texts."""
 
     @overload
     def __init__(
         self,
         *,
-        target_language: str,
+        to: str,
         text: str,
         transliteration: Optional["_models.TransliteratedText"] = None,
         alignment: Optional["_models.TranslatedTextAlignment"] = None,
-        sentence_boundaries: Optional["_models.SentenceBoundaries"] = None,
+        sent_len: Optional["_models.SentenceBoundaries"] = None,
     ): ...
 
     @overload
@@ -1039,14 +1037,14 @@ class TransliterableScript(LanguageScript):
     :ivar native_name: Display name of the language in the locale native for the language.
      Required.
     :vartype native_name: str
-    :ivar directionality: Directionality, which is rtl for right-to-left languages or ltr for
-     left-to-right languages. Required. Known values are: "ltr" and "rtl".
-    :vartype directionality: str or ~azure.ai.translation.text.models.LanguageDirectionality
-    :ivar target_language_scripts: List of scripts available to convert text to. Required.
-    :vartype target_language_scripts: list[~azure.ai.translation.text.models.LanguageScript]
+    :ivar dir: Directionality, which is rtl for right-to-left languages or ltr for left-to-right
+     languages. Required. Known values are: "ltr" and "rtl".
+    :vartype dir: str or ~azure.ai.translation.text.models.LanguageDirectionality
+    :ivar to_scripts: List of scripts available to convert text to. Required.
+    :vartype to_scripts: list[~azure.ai.translation.text.models.LanguageScript]
     """
 
-    target_language_scripts: List["_models.LanguageScript"] = rest_field(name="toScripts")
+    to_scripts: List["_models.LanguageScript"] = rest_field(name="toScripts")
     """List of scripts available to convert text to. Required."""
 
     @overload
@@ -1056,8 +1054,8 @@ class TransliterableScript(LanguageScript):
         code: str,
         name: str,
         native_name: str,
-        directionality: Union[str, "_models.LanguageDirectionality"],
-        target_language_scripts: List["_models.LanguageScript"],
+        dir: Union[str, "_models.LanguageDirectionality"],
+        to_scripts: List["_models.LanguageScript"],
     ): ...
 
     @overload
