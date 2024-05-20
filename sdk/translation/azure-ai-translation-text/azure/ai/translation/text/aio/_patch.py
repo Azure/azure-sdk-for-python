@@ -112,6 +112,7 @@ class TextTranslationClient(ServiceClientGenerated):
     str + AzureKeyCredential - used custom domain translator endpoint
     str + AzureKeyCredential + Region - used for global translator endpoint
     str + AsyncTokenCredential - used for regional endpoint with token authentication
+    str + None - used with text translation on-prem container
     None + AzureKeyCredential - used for global translator endpoint with global Translator resource
     None + AsyncTokenCredential - general translator endpoint with token authentication
     None + AsyncTokenCredential + Region - general translator endpoint with regional Translator resource
