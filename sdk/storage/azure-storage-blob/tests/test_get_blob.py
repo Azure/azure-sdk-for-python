@@ -1510,4 +1510,62 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             stream.read(500)
         stream.readall()
 
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_read_chars(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        data = '你好世界' * 256  # 3 KiB
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, encoding='utf-8', overwrite=True)
+
+        stream = blob.download_blob(encoding='utf-8')
+        assert stream.read() == data
+
+        result = ''
+        stream = blob.download_blob(encoding='utf-8')
+        for _ in range(4):
+            chunk = stream.read(chars=100)
+            result += chunk
+            assert len(chunk) == 100
+
+        result += stream.readall()
+        assert result == data
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_read_chars_mixed(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        initial_data = 'abcde' * 2
+        data = initial_data + ('你好世界' * 2)
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, encoding='utf-8', overwrite=True)
+
+        stream = blob.download_blob(encoding='utf-8')
+
+        # Read the initial data as bytes
+        assert stream.read(len(initial_data.encode('utf-8'))) == initial_data
+
+        # Read some data as chars, this should prevent any reading as bytes
+        assert stream.read(chars=4) == '你好世界'
+
+        # readinto, chunks, and read(size=x) should now be blocked
+        with pytest.raises(ValueError) as e:
+            stream.readinto(BytesIO())
+        assert 'Stream has been partially read in text mode.' in str(e.value)
+        with pytest.raises(ValueError) as e:
+            stream.chunks()
+        assert 'Stream has been partially read in text mode.' in str(e.value)
+        with pytest.raises(ValueError) as e:
+            stream.read(size=12)
+        assert 'Stream has been partially read in text mode.' in str(e.value)
+
+        # read() should still work to get remaining chars
+        assert stream.read() == '你好世界'
+
     # ------------------------------------------------------------------------------
