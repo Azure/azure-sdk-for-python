@@ -21,6 +21,7 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
+from ._directory_client_helpers import _parse_url
 from ._generated import AzureFileStorage
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers
@@ -102,37 +103,27 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
     """
     def __init__(
-            self, account_url: str,
-            share_name: str,
-            directory_path: str,
-            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            *,
-            token_intent: Optional[Literal['backup']] = None,
-            **kwargs: Any
-        ) -> None:
+        self, account_url: str,
+        share_name: str,
+        directory_path: str,
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        *,
+        token_intent: Optional[Literal['backup']] = None,
+        **kwargs: Any
+    ) -> None:
         if hasattr(credential, 'get_token') and not token_intent:
             raise ValueError("'token_intent' keyword is required when 'credential' is an TokenCredential.")
-        try:
-            if not account_url.lower().startswith('http'):
-                account_url = "https://" + account_url
-        except AttributeError as exc:
-            raise ValueError("Account URL must be a string.") from exc
-        parsed_url = urlparse(account_url.rstrip('/'))
-        if not share_name:
-            raise ValueError("Please specify a share name.")
-        if not parsed_url.netloc:
-            raise ValueError(f"Invalid URL: {account_url}")
-
+        parsed_url = _parse_url(account_url, share_name)
         path_snapshot, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError(
                 'You need to provide either an account shared key or SAS token when creating a storage service.')
         try:
-            self.snapshot = snapshot.snapshot # type: ignore
+            self.snapshot = snapshot.snapshot  # type: ignore
         except AttributeError:
             try:
-                self.snapshot = snapshot['snapshot'] # type: ignore
+                self.snapshot = snapshot['snapshot']  # type: ignore
             except TypeError:
                 self.snapshot = snapshot or path_snapshot
 

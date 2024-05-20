@@ -20,16 +20,17 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from .._directory_client_helpers import _parse_url
 from .._parser import _get_file_permission, _datetime_to_str
 from .._shared.parser import _str
 from .._generated.aio import AzureFileStorage
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
+from .._shared.base_client import StorageAccountHostsMixin, parse_query
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._deserialize import deserialize_directory_properties
 from .._serialize import get_api_version, get_dest_access_conditions, get_rename_smb_properties
-from .._directory_client import ShareDirectoryClient as ShareDirectoryClientBase
 from ._file_client_async import ShareFileClient
 from ._models import DirectoryPropertiesPaged, HandlesPaged
 
@@ -44,7 +45,7 @@ if TYPE_CHECKING:
     from .._models import DirectoryProperties, Handle, NTFSAttributes
 
 
-class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBase):
+class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
     """A client to interact with a specific directory, although it may not yet exist.
 
     For operations relating to a specific subdirectory or file in this share, the clients for those
@@ -77,8 +78,8 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         ~azure.core.credentials_async.AsyncTokenCredential or
         str or dict[str, str] or None
     :keyword token_intent:
-        Required when using `TokenCredential` for authentication and ignored for other forms of authentication.
-        Specifies the intent for all requests when using `TokenCredential` authentication. Possible values are:
+        Required when using `AsyncTokenCredential` for authentication and ignored for other forms of authentication.
+        Specifies the intent for all requests when using `AsyncTokenCredential` authentication. Possible values are:
 
         backup - Specifies requests are intended for backup/admin type operations, meaning that all file/directory
                  ACLs are bypassed and full permissions are granted. User must also have required RBAC permission.
@@ -96,37 +97,54 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         The hostname of the secondary endpoint.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
-        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
     """
     def __init__(
-            self, account_url: str,
-            share_name: str,
-            directory_path: str,
-            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
-            *,
-            token_intent: Optional[Literal['backup']] = None,
-            **kwargs: Any
-        ) -> None:
+        self, account_url: str,
+        share_name: str,
+        directory_path: str,
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        *,
+        token_intent: Optional[Literal['backup']] = None,
+        **kwargs: Any
+    ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         if loop and sys.version_info >= (3, 8):
             warnings.warn("The 'loop' parameter was deprecated from asyncio's high-level"
             "APIs in Python 3.8 and is no longer supported.", DeprecationWarning)
+        if hasattr(credential, 'get_token') and not token_intent:
+            raise ValueError("'token_intent' keyword is required when 'credential' is an AsyncTokenCredential.")
+        parsed_url = _parse_url(account_url, share_name)
+        path_snapshot, sas_token = parse_query(parsed_url.query)
+        if not sas_token and not credential:
+            raise ValueError(
+                'You need to provide either an account shared key or SAS token when creating a storage service.')
+        try:
+            self.snapshot = snapshot.snapshot  # type: ignore
+        except AttributeError:
+            try:
+                self.snapshot = snapshot['snapshot']  # type: ignore
+            except TypeError:
+                self.snapshot = snapshot or path_snapshot
+
+        self.share_name = share_name
+        self.directory_path = directory_path
+
+        self._query_str, credential = self._format_query_string(
+            sas_token, credential, share_snapshot=self.snapshot)
         super(ShareDirectoryClient, self).__init__(
-            account_url,
-            share_name=share_name,
-            directory_path=directory_path,
-            snapshot=snapshot,
-            credential=credential,
-            token_intent=token_intent,
-            **kwargs)
+            parsed_url, service='file-share', credential=credential, **kwargs)
+        self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
+        self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
+        self.file_request_intent = token_intent
         self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline,
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
                                         file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     def get_file_client(self, file_name, **kwargs):
         # type: (str, Any) -> ShareFileClient
