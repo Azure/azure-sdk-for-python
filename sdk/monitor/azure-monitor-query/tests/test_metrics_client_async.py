@@ -55,7 +55,7 @@ class TestMetricsClientAsync(MetricsClientTestCase):
 
     @pytest.mark.asyncio
     async def test_client_different_endpoint(self):
-        credential = self.get_credential(MetricsClient)
+        credential = self.get_credential(MetricsClient, is_async=True)
         endpoint = "https://usgovvirginia.metrics.monitor.azure.us"
         audience = "https://metrics.monitor.azure.us"
         client = MetricsClient(endpoint, credential, audience=audience)
