@@ -132,26 +132,31 @@ class AzureRecordedTestCase(object):
                     from azure.identity.aio import AzureDeveloperCliCredential
                 return AzureDeveloperCliCredential()
 
-            # Service principal authentication
-            if tenant_id and client_id and secret:
-                # Check for track 2 client
-                if _is_autorest_v3(client_class):
-                    _LOGGER.info(
-                        "Service principal client ID, secret, and tenant ID detected. Using ClientSecretCredential.\n"
-                        "For user-based auth, set AZURE_TEST_USE_PWSH_AUTH or AZURE_TEST_USE_CLI_AUTH to 'true'."
-                    )
-                    from azure.identity import ClientSecretCredential
+            from azure.identity import DefaultAzureCredential
+            if is_async:
+                from azure.identity.aio import DefaultAzureCredential
+            return DefaultAzureCredential()
 
-                    if is_async:
-                        from azure.identity.aio import ClientSecretCredential
-                    return ClientSecretCredential(tenant_id=tenant_id, client_id=client_id, client_secret=secret)
-                else:
-                    # Create msrestazure class
-                    from msrestazure.azure_active_directory import (
-                        ServicePrincipalCredentials,
-                    )
-
-                    return ServicePrincipalCredentials(tenant=tenant_id, client_id=client_id, secret=secret)
+            # Stop using Service principal authentication. Use DefaultAzureCredential instead.
+            # if tenant_id and client_id and secret:
+            #     # Check for track 2 client
+            #     if _is_autorest_v3(client_class):
+            #         _LOGGER.info(
+            #             "Service principal client ID, secret, and tenant ID detected. Using ClientSecretCredential.\n"
+            #             "For user-based auth, set AZURE_TEST_USE_PWSH_AUTH or AZURE_TEST_USE_CLI_AUTH to 'true'."
+            #         )
+            #         from azure.identity import ClientSecretCredential
+            #
+            #         if is_async:
+            #             from azure.identity.aio import ClientSecretCredential
+            #         return ClientSecretCredential(tenant_id=tenant_id, client_id=client_id, client_secret=secret)
+            #     else:
+            #         # Create msrestazure class
+            #         from msrestazure.azure_active_directory import (
+            #             ServicePrincipalCredentials,
+            #         )
+            #
+            #         return ServicePrincipalCredentials(tenant=tenant_id, client_id=client_id, secret=secret)
 
         # For playback tests, return credentials that will accept playback `get_token` calls
         else:
