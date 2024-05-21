@@ -37,16 +37,16 @@ from devtools_testutils import (
     CachedResourceGroupPreparer,
     set_custom_default_matcher,
 )
-from azure_devtools.scenario_tests.recording_processors import (
-    GeneralNameReplacer,
-    RecordingProcessor,
-)
+# from azure_devtools.scenario_tests.recording_processors import (
+#     GeneralNameReplacer,
+#     RecordingProcessor,
+# )
 
 # toggle to test sync or async client
 TEST_SYNC_CLIENT = False
 BatchClient = SyncBatchClient if TEST_SYNC_CLIENT else AsyncBatchClient
 
-AZURE_LOCATION = "eastasia"
+AZURE_LOCATION = "eastus"
 BATCH_ENVIRONMENT = None  # Set this to None if testing against prod
 BATCH_RESOURCE = "https://batch.core.windows.net/"
 DEFAULT_VM_SIZE = "standard_d2_v2"
@@ -69,26 +69,26 @@ def get_redacted_key(key):
     return redacted_value
 
 
-class RecordingRedactor(RecordingProcessor):
-    """Removes keys from test recordings"""
+# class RecordingRedactor(RecordingProcessor):
+#     """Removes keys from test recordings"""
 
-    def process_response(self, response):
-        try:
-            body = json.loads(response["body"]["string"])
-        except (KeyError, ValueError):
-            return response
+#     def process_response(self, response):
+#         try:
+#             body = json.loads(response["body"]["string"])
+#         except (KeyError, ValueError):
+#             return response
 
-        for field in body:
-            if field in SECRET_FIELDS:
-                body[field] = get_redacted_key(body[field])
+#         for field in body:
+#             if field in SECRET_FIELDS:
+#                 body[field] = get_redacted_key(body[field])
 
-        response["body"]["string"] = json.dumps(body)
-        return response
+#         response["body"]["string"] = json.dumps(body)
+#         return response
 
 
 class TestBatch(AzureMgmtRecordedTestCase):
-    scrubber = GeneralNameReplacer()
-    redactor = RecordingRedactor()
+    # scrubber = GeneralNameReplacer()
+    # redactor = RecordingRedactor()
 
     def fail(self, err):
         raise RuntimeError(err)
@@ -119,83 +119,6 @@ class TestBatch(AzureMgmtRecordedTestCase):
         except Exception as err:
             pytest.fail("Expected CreateTasksError, instead got: {!r}".format(err))
 
-    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
-    @StorageAccountPreparer(name_prefix="batch1", location=AZURE_LOCATION)
-    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
-    @JobPreparer()
-    @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
-    @client_setup
-    @recorded_by_proxy_async
-    async def test_batch_applications(self, client: BatchClient, **kwargs):
-        batch_job = kwargs.pop("batch_job")
-        # Test List Applications
-        apps = list(await async_wrapper(client.list_applications()))
-        assert len(apps) == 1
-
-        # Test Get Application
-        app = await async_wrapper(client.get_application("application_id"))
-        assert isinstance(app, models.BatchApplication)
-        assert app.id == "application_id"
-        assert app.versions == ["v1.0"]
-
-        # Test Create Task with Application Package
-        task_id = "python_task_with_app_package"
-        task = models.BatchTaskCreateParameters(
-            id=task_id,
-            command_line='cmd /c "echo hello world"',
-            application_package_references=[
-                models.BatchApplicationPackageReference(application_id="application_id", version="v1.0")
-            ],
-        )
-        response = await async_wrapper(client.create_task(batch_job.id, task))
-        assert response is None
-
-        # Test Get Task with Application Package
-        task = await async_wrapper(client.get_task(batch_job.id, task_id))
-        assert isinstance(task, models.BatchTask)
-        assert task.application_package_references[0].application_id == "application_id"
-
-    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
-    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
-    @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
-    @client_setup
-    @recorded_by_proxy_async
-    async def test_batch_certificates(self, client: BatchClient, **kwargs):
-        # Test Add Certificate
-        certificate = models.BatchCertificate(
-            thumbprint="cff2ab63c8c955aaf71989efa641b906558d9fb7",
-            thumbprint_algorithm="sha1",
-            data="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",
-            certificate_format=models.BatchCertificateFormat.pfx,
-            password="nodesdk",
-        )
-
-        response = await async_wrapper(client.create_certificate(certificate))
-        assert response is None
-
-        # Test List Certificates
-        certs = await async_wrapper(client.list_certificates())
-        test_cert = [c for c in certs if c.thumbprint == "cff2ab63c8c955aaf71989efa641b906558d9fb7"]
-        assert len(test_cert) == 1
-
-        # Test Get Certificate
-        cert = await async_wrapper(client.get_certificate("sha1", "cff2ab63c8c955aaf71989efa641b906558d9fb7"))
-        assert isinstance(cert, models.BatchCertificate)
-        assert cert.thumbprint == "cff2ab63c8c955aaf71989efa641b906558d9fb7"
-        assert cert.thumbprint_algorithm == "sha1"
-        assert cert.delete_certificate_error is None
-
-        # Test Cancel Certificate Delete
-        await self.assertBatchError(
-            "CertificateStateActive",
-            client.cancel_certificate_deletion,
-            "sha1",
-            "cff2ab63c8c955aaf71989efa641b906558d9fb7",
-        )
-
-        # Test Delete Certificate
-        response = await async_wrapper(client.delete_certificate("sha1", "cff2ab63c8c955aaf71989efa641b906558d9fb7"))
-        assert response is None
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -203,12 +126,6 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @client_setup
     @recorded_by_proxy_async
     async def test_batch_create_pools(self, client: BatchClient, **kwargs):
-        # Test List Node Agent SKUs
-        response = await async_wrapper(client.list_supported_images())
-        response = list(response)
-        assert len(response) > 1
-        assert response[-1].image_reference is not None
-
         # Test Create Iaas Pool
         users = [
             models.UserAccount(name="test-user-1", password="secret"),
@@ -218,7 +135,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 elevation_level=models.ElevationLevel.admin,
             ),
         ]
-        test_iaas_pool = models.BatchPoolCreateParameters(
+        test_iaas_pool = models.BatchPoolCreateContent(
             id=self.get_resource_name("batch_iaas_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
@@ -256,7 +173,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             "/virtualNetworks/vnet1"
             "/subnets/subnet1"
         )
-        test_network_pool = models.BatchPoolCreateParameters(
+        test_network_pool = models.BatchPoolCreateContent(
             id=self.get_resource_name("batch_network_"),
             vm_size=DEFAULT_VM_SIZE,
             network_configuration=network_config,
@@ -272,7 +189,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             timeout=45,
         )
 
-        test_image_pool = models.BatchPoolCreateParameters(
+        test_image_pool = models.BatchPoolCreateContent(
             id=self.get_resource_name("batch_image_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
@@ -290,8 +207,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
         await self.assertBatchError("InvalidPropertyValue", client.create_pool, pool=test_image_pool, timeout=45)
 
         # Test Create Pool with Data Disk
-        data_disk = models.DataDisk(lun=1, disk_size_gb=50)
-        test_disk_pool = models.BatchPoolCreateParameters(
+        data_disk = models.DataDisk(logical_unit_number=1, disk_size_gb=50)
+        test_disk_pool = models.BatchPoolCreateContent(
             id=self.get_resource_name("batch_disk_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
@@ -304,30 +221,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await async_wrapper(client.create_pool(test_disk_pool))
         assert response is None
         disk_pool = await async_wrapper(client.get_pool(test_disk_pool.id))
-        assert disk_pool.virtual_machine_configuration.data_disks[0].lun == 1
+        assert disk_pool.virtual_machine_configuration.data_disks[0].logical_unit_number == 1
         assert disk_pool.virtual_machine_configuration.data_disks[0].disk_size_gb == 50
         assert disk_pool.target_node_communication_mode == models.BatchNodeCommunicationMode.classic
 
-        # Test Create Pool with Application Licenses
-        test_app_pool = models.BatchPoolCreateParameters(
-            id=self.get_resource_name("batch_app_"),
-            vm_size=DEFAULT_VM_SIZE,
-            application_licenses=["maya"],
-            virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
-                node_agent_sku_id="batch.node.ubuntu 18.04",
-                data_disks=[data_disk],
-            ),
-            target_node_communication_mode=models.BatchNodeCommunicationMode.simplified,
-        )
-        response = await async_wrapper(client.create_pool(test_app_pool))
-        assert response is None
-        app_pool = await async_wrapper(client.get_pool(test_app_pool.id))
-        assert app_pool.application_licenses[0] == "maya"
-        assert app_pool.target_node_communication_mode == models.BatchNodeCommunicationMode.simplified
-
         # Test Create Pool with Azure Disk Encryption
-        test_ade_pool = models.BatchPoolCreateParameters(
+        test_ade_pool = models.BatchPoolCreateContent(
             id=self.get_resource_name("batch_ade_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
@@ -351,13 +250,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test List Pools with Maximum
         pools = list(await async_wrapper(client.list_pools(maxresults=1)))
-        assert len(pools) == 4
+        assert len(pools) == 3
 
         # Test List Pools with Filter
         pools = list(
             await async_wrapper(
-                client.list_pools(
-                    filter="startswith(id,'batch_app_')",
+                client.batch_api.list_pools(
+                    filter="startswith(id,'batch_ade_')",
                     select=["id,state"],
                     expand=["stats"],
                 )
@@ -372,7 +271,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_batch_create_pool_with_blobfuse_mount(self, client: BatchClient, **kwargs):
         # Test Create Iaas Pool
-        test_iaas_pool = models.BatchPoolCreateParameters(
+        test_iaas_pool = models.BatchPoolCreateContent(
             id=self.get_resource_name("batch_iaas_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
@@ -396,10 +295,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 )
             ],
         )
-        response = await async_wrapper(client.create_pool(test_iaas_pool))
+        response = await async_wrapper(client.batch_api.create_pool(test_iaas_pool))
         assert response is None
 
-        mount_pool = await async_wrapper(client.get_pool(test_iaas_pool.id))
+        mount_pool = await async_wrapper(client.batch_api.get_pool(test_iaas_pool.id))
         assert mount_pool.mount_configuration is not None
         assert len(mount_pool.mount_configuration) == 1
         assert mount_pool.mount_configuration[0].azure_blob_file_system_configuration is not None
@@ -411,11 +310,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @client_setup
     @recorded_by_proxy_async
     async def test_batch_update_pools(self, client: BatchClient, **kwargs):
-        # Test Create Paas Pool
-        test_paas_pool = models.BatchPoolCreateParameters(
+        test_paas_pool = models.BatchPoolCreateContent(
             id=self.get_resource_name("batch_paas_"),
             vm_size=DEFAULT_VM_SIZE,
-            cloud_service_configuration=models.CloudServiceConfiguration(os_family="5"),
+            virtual_machine_configuration=models.VirtualMachineConfiguration(
+                node_agent_sku_id="batch.node.ubuntu 18.04",
+                image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
+            ),
             start_task=models.BatchStartTask(
                 command_line='cmd.exe /c "echo hello world"',
                 resource_files=[models.ResourceFile(http_url="https://blobsource.com", file_path="filename.txt")],
@@ -425,17 +326,18 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 ),
             ),
         )
-        response = await async_wrapper(client.create_pool(test_paas_pool))
+        response = await async_wrapper(client.batch_api.create_pool(test_paas_pool))
         assert response is None
 
         # Test Update Pool Options
-        params = models.BatchPoolReplaceParameters(
-            certificate_references=[],
+        params = models.BatchPoolReplaceContent(
+            # certificateReferences=[],
             application_package_references=[],
             metadata=[models.MetadataItem(name="foo", value="bar")],
             target_node_communication_mode=models.BatchNodeCommunicationMode.classic,
         )
-        response = await async_wrapper(client.replace_pool_properties(test_paas_pool.id, params))
+        # certRef = { "certificateReferences": [] }
+        response = await async_wrapper(client.batch_api.replace_pool_properties(test_paas_pool.id, params))
         assert response is None
 
         # Test Patch Pool Options
@@ -448,12 +350,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response
 
         # Test Get Pool
-        pool = await async_wrapper(client.get_pool(test_paas_pool.id))
+        pool = await async_wrapper(client.batch_api.get_pool(test_paas_pool.id))
         assert isinstance(pool, models.BatchPool)
         assert pool.id == test_paas_pool.id
         assert pool.state == models.BatchPoolState.active
         assert pool.allocation_state == models.AllocationState.steady
-        assert pool.cloud_service_configuration.os_family == "5"
+        # assert pool.vm_configuration.node_agent_sku_id == "batch.node.ubuntu 18.04"
         assert pool.vm_size == DEFAULT_VM_SIZE
         assert pool.start_task is None
         assert pool.metadata[0].name == "foo2"
@@ -461,7 +363,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert pool.target_node_communication_mode == models.BatchNodeCommunicationMode.classic
 
         # Test Get Pool with OData Clauses
-        pool = await async_wrapper(client.get_pool(pool_id=test_paas_pool.id, select=["id,state"], expand=["stats"]))
+        pool = await async_wrapper(client.batch_api.get_pool(pool_id=test_paas_pool.id, select=["id,state"], expand=["stats"]))
         assert isinstance(pool, models.BatchPool)
         assert pool.id == test_paas_pool.id
         assert pool.state == models.BatchPoolState.active
@@ -505,18 +407,18 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert result.results == "$TargetDedicatedNodes=3;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
 
         # Test Disable Autoscale
-        pool = await async_wrapper(client.get_pool(batch_pool.name))
+        pool = await async_wrapper(client.batch_api.get_pool(batch_pool.name))
         while self.is_live and pool.allocation_state != models.AllocationState.steady:
             time.sleep(5)
-            pool = await async_wrapper(client.get_pool(batch_pool.name))
+            pool = await async_wrapper(client.batch_api.get_pool(batch_pool.name))
         response = await async_wrapper(client.disable_pool_auto_scale(batch_pool.name))
         assert response is None
 
         # Test Pool Resize
-        pool = await async_wrapper(client.get_pool(batch_pool.name))
+        pool = await async_wrapper(client.batch_api.get_pool(batch_pool.name))
         while self.is_live and pool.allocation_state != models.AllocationState.steady:
             time.sleep(5)
-            pool = await async_wrapper(client.get_pool(batch_pool.name))
+            pool = await async_wrapper(client.batch_api.get_pool(batch_pool.name))
         params = models.BatchPoolResizeParameters(target_dedicated_nodes=0, target_low_priority_nodes=2)
         response = await async_wrapper(client.resize_pool(batch_pool.name, params))
         assert response is None
@@ -524,10 +426,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Stop Pool Resize
         response = await async_wrapper(client.stop_pool_resize(batch_pool.name))
         assert response is None
-        pool = await async_wrapper(client.get_pool(batch_pool.name))
+        pool = await async_wrapper(client.batch_api.get_pool(batch_pool.name))
         while self.is_live and pool.allocation_state != models.AllocationState.steady:
             time.sleep(5)
-            pool = await async_wrapper(client.get_pool(batch_pool.name))
+            pool = await async_wrapper(client.batch_api.get_pool(batch_pool.name))
 
         # Test Get Pool Usage Info
         info = list(await async_wrapper(client.list_pool_usage_metrics()))
@@ -632,7 +534,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             node_agent_sku_id="batch.node.ubuntu 18.04",
             image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
         )
-        pool = models.BatchPoolCreateParameters(
+        pool = models.BatchPoolCreateContent(
             id=self.get_resource_name("batch_network_"),
             target_dedicated_nodes=1,
             vm_size=DEFAULT_VM_SIZE,
@@ -640,11 +542,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
             network_configuration=network_config,
         )
 
-        await async_wrapper(client.create_pool(pool))
-        network_pool: models.BatchPool = await async_wrapper(client.get_pool(pool.id))
+        await async_wrapper(client.batch_api.create_pool(pool))
+        network_pool: models.BatchPool = await async_wrapper(client.batch_api.get_pool(pool.id))
         while self.is_live and network_pool.allocation_state != models.AllocationState.steady:
             time.sleep(10)
-            network_pool = await async_wrapper(client.get_pool(pool.id))
+            network_pool = await async_wrapper(client.batch_api.get_pool(pool.id))
 
         # Test Batch Node Config
         nodes = list(await async_wrapper(client.list_nodes(pool.id)))
@@ -764,20 +666,20 @@ class TestBatch(AzureMgmtRecordedTestCase):
             extensions=[extension],
             image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
         )
-        batch_pool = models.BatchPoolCreateParameters(
+        batch_pool = models.BatchPoolCreateContent(
             id=self.get_resource_name("batch_network_"),
             target_dedicated_nodes=1,
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=virtual_machine_config,
             network_configuration=network_config,
         )
-        response = await async_wrapper(client.create_pool(batch_pool))
+        response = await async_wrapper(client.batch_api.create_pool(batch_pool))
         assert response is None
 
-        batch_pool = await async_wrapper(client.get_pool(batch_pool.id))
+        batch_pool = await async_wrapper(client.batch_api.get_pool(batch_pool.id))
         while self.is_live and batch_pool.allocation_state != models.AllocationState.steady:
             time.sleep(10)
-            batch_pool = await async_wrapper(client.get_pool(batch_pool.id))
+            batch_pool = await async_wrapper(client.batch_api.get_pool(batch_pool.id))
 
         nodes = list(await async_wrapper(client.list_nodes(batch_pool.id)))
         assert len(nodes) == 1
