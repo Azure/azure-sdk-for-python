@@ -77,7 +77,7 @@ def set_authentication_policy(credential, kwargs):
             else:
                 if kwargs.get("resource_id") or kwargs.get("region"):
                     raise ValueError(
-                        "Both 'resource_id' and 'region' must be provided with a TokenCredential for authentication."
+                        "Both 'resource_id' and 'region' must be provided with a TokenCredential for regional resource authentication."
                     )
                 kwargs["authentication_policy"] = AsyncBearerTokenCredentialPolicy(
                     credential, *kwargs.pop("scopes", [DEFAULT_TOKEN_SCOPE]), kwargs
@@ -115,16 +115,17 @@ class TextTranslationClient(ServiceClientGenerated):
     str + None - used with text translation on-prem container
     None + AzureKeyCredential - used for global translator endpoint with global Translator resource
     None + AsyncTokenCredential - general translator endpoint with token authentication
-    None + AsyncTokenCredential + Region - general translator endpoint with regional Translator resource
+    None + AsyncTokenCredential + Region + ResourceID - general translator endpoint with regional Translator resource
+
     :keyword str endpoint: Supported Text Translation endpoints (protocol and hostname, for example:
-    https://api.cognitive.microsofttranslator.com). If not provided, global translator endpoint will be used.
+     https://api.cognitive.microsofttranslator.com). If not provided, global translator endpoint will be used.
     :keyword credential: Credential used to authenticate with the Translator service
     :paramtype credential: Union[AzureKeyCredential, AsyncTokenCredential]
     :keyword str region: Used for National Clouds.
     :keyword str resource_id: Used with both a TokenCredential combined with a region.
     :keyword str scopes: Scopes of the credentials.
     :keyword  str api_version: Default value is "3.0". Note that overriding this default value may
-    result in unsupported behavior.
+     result in unsupported behavior.
     """
 
     @overload
@@ -136,7 +137,7 @@ class TextTranslationClient(ServiceClientGenerated):
         endpoint: Optional[str] = None,
         resource_id: Optional[str] = None,
         scopes: Optional[str] = None,
-        api_version="3.0",
+        api_version: str = "3.0",
         **kwargs
     ): ...
 
