@@ -15,7 +15,7 @@ class TestGetLanguagesAsync(TextTranslationTest):
         endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_async_getlanguage_client(endpoint)
         async with client:
-            response = await client.get_languages()
+            response = await client.get_supported_languages()
 
         assert len(response.translation) > 0
         assert len(response.transliteration) > 0
@@ -27,7 +27,7 @@ class TestGetLanguagesAsync(TextTranslationTest):
         endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_async_getlanguage_client(endpoint)
         async with client:
-            response = await client.get_languages(scope="translation")
+            response = await client.get_supported_languages(scope="translation")
 
         assert len(response.translation) > 0
         translations = response.translation["af"]
@@ -41,7 +41,7 @@ class TestGetLanguagesAsync(TextTranslationTest):
         endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_async_getlanguage_client(endpoint)
         async with client:
-            response = await client.get_languages(scope="transliteration")
+            response = await client.get_supported_languages(scope="transliteration")
 
         assert len(response.transliteration) > 0
         transliterations = response.transliteration["be"]
@@ -68,7 +68,7 @@ class TestGetLanguagesAsync(TextTranslationTest):
         endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_async_getlanguage_client(endpoint)
         async with client:
-            response = await client.get_languages(scope="transliteration")
+            response = await client.get_supported_languages(scope="transliteration")
 
         assert len(response.transliteration) > 0
         transliterations = response.transliteration["zh-Hant"]
@@ -86,7 +86,7 @@ class TestGetLanguagesAsync(TextTranslationTest):
         endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_async_getlanguage_client(endpoint)
         async with client:
-            response = await client.get_languages(scope="dictionary")
+            response = await client.get_supported_languages(scope="dictionary")
 
         assert len(response.dictionary) > 0
         dictionaries = response.dictionary["de"]
@@ -105,7 +105,7 @@ class TestGetLanguagesAsync(TextTranslationTest):
         endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_async_getlanguage_client(endpoint)
         async with client:
-            response = await client.get_languages(scope="dictionary")
+            response = await client.get_supported_languages(scope="dictionary")
 
         assert len(response.dictionary) > 0
         dictionaries = response.dictionary["en"]
@@ -124,7 +124,7 @@ class TestGetLanguagesAsync(TextTranslationTest):
         endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_async_getlanguage_client(endpoint)
         async with client:
-            response = await client.get_languages(accept_language="es")
+            response = await client.get_supported_languages(accept_language="es")
 
         assert len(response.translation.items()) > 0
         assert len(response.transliteration.items()) > 0

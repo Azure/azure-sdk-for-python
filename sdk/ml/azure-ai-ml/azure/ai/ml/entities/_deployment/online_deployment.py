@@ -850,6 +850,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
                 else None
             ),
             provisioning_state=deployment.provisioning_state if hasattr(deployment, "provisioning_state") else None,
+            creation_context=resource.system_data,
         )
 
     def _merge_with(self, other: Any) -> None:

@@ -146,7 +146,7 @@ extends:
           - template: /eng/pipelines/templates/variables/globals.yml@self
 
         jobs:
-          - template: eng/pipelines/templates/jobs/build-conda-dependencies.yml@self
+          - template: /eng/pipelines/templates/jobs/build-conda-dependencies.yml@self
             parameters:
               CondaArtifacts:
                 - name: uamqp

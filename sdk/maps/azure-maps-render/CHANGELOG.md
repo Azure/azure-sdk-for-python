@@ -1,5 +1,12 @@
 # Release History
 
+## 1.0.0b3 (2024-05-15)
+
+### Other Changes
+
+- Fix Sphinx errors
+- Fix mypy typing errors for mypy version 1.6.1
+
 ## 1.0.0b2 (2023-07-13)
 
 ### Other Changes
