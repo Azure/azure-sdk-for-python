@@ -352,6 +352,8 @@
 /sdk/sql/                                                            @jaredmoo
 
 # AzureSdkOwners: @kashifkhan
+# ServiceLabel: %Service Bus
+# ServiceOwners:  @EldertGrootenboer
 
 # PRLabel: %Service Bus
 /sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence
