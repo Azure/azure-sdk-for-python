@@ -16,12 +16,12 @@ from eventgrid_preparer import EventGridPreparer
 
 
 def _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name):
-    events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=100)
+    events = client.receive(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=100)
     tokens = []
     for detail in events.value:
         token = detail.broker_properties.lock_token
         tokens.append(token)
-    ack = client.acknowledge_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=tokens)
+    ack = client.acknowledge(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=tokens)
 
 
 class TestEGClientExceptions(AzureRecordedTestCase):
@@ -51,10 +51,10 @@ class TestEGClientExceptions(AzureRecordedTestCase):
 
         time.sleep(5)
 
-        events = consumer.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=1)
+        events = consumer.receive(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=1)
         lock_token = events.value[0].broker_properties.lock_token
 
-        ack = consumer.acknowledge_cloud_events(
+        ack = consumer.acknowledge(
             eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=[lock_token]
         )
         assert len(ack.succeeded_lock_tokens) == 1
@@ -77,19 +77,19 @@ class TestEGClientExceptions(AzureRecordedTestCase):
 
         publisher.send(events=[event])
 
-        events = consumer.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=1)
+        events = consumer.receive(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=1)
         lock_token = events.value[0].broker_properties.lock_token
 
-        ack = consumer.release_cloud_events(
+        ack = consumer.release(
             eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=[lock_token]
         )
         assert len(ack.succeeded_lock_tokens) == 1
         assert len(ack.failed_lock_tokens) == 0
 
-        events = consumer.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=1)
+        events = consumer.receive(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=1)
         assert events.value[0].broker_properties.delivery_count > 1
 
-        consumer.reject_cloud_events(
+        consumer.reject(
             eventgrid_topic_name,
             eventgrid_event_subscription_name,
             lock_tokens=[events.value[0].broker_properties.lock_token],
@@ -116,7 +116,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
 
         time.sleep(5)
 
-        events = consumer.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=1)
+        events = consumer.receive(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=1)
         data = events.value[0].event.data
 
         assert isinstance(data, dict)
