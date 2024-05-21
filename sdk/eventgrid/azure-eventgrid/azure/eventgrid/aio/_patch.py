@@ -10,7 +10,7 @@ from typing import List, Union, Any, TYPE_CHECKING, Optional
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 
 from .._legacy.aio import EventGridPublisherClient as GAEventGridPublisherClient
-from ._client import EventGridPublisherClient as InternalEventGridPublisherClient
+from ._client import EventGridPublisherClient as InternalEventGridPublisherClient, EventGridConsumerClient as InternalEventGridConsumerClient
 from .._serialization import Deserializer, Serializer
 from .._patch import (
     ClientLevel,
@@ -35,10 +35,7 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
      "2023-10-01-preview". Default value for basic is "2018-01-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str or None
-    :keyword level: The level of client to use.
-     Known values include: "Basic", "Standard". Default value is "Standard".
-     `Standard` is used for working with a namespace topic.
-     `Basic` is used for working with a basic topic.
+    :keyword namespace_topic: The topic of the Event Grid Namespace. Required for working with a namespace topic.
     :paramtype level: str
     """
 
@@ -47,19 +44,20 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
         endpoint: str,
         credential: Union[AzureKeyCredential, AzureSasCredential, "AsyncTokenCredential"],
         *,
+        namespace_topic: Optional[str] = None,
         api_version: Optional[str] = None,
-        level: Union[str, ClientLevel] = ClientLevel.STANDARD,
         **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
-        self._level = level
+        self._namespace = namespace_topic
+        self._credential = credential
 
-        if level == ClientLevel.BASIC:
+        if not self._namespace:
             self._client = GAEventGridPublisherClient(  # type: ignore[assignment]
                 endpoint, credential, api_version=api_version or DEFAULT_BASIC_API_VERSION, **kwargs
             )
             self._send = self._client.send  # type: ignore[attr-defined]
-        elif level == ClientLevel.STANDARD:
+        else:
             if isinstance(credential, AzureSasCredential):
                 raise TypeError("SAS token authentication is not supported for the standard client.")
 
@@ -70,12 +68,21 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
                 **kwargs
             )
             self._send = self._publish_cloud_events
-        else:
-            raise ValueError("Unknown client level. Known values are `Standard` and `Basic`.")
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
+    def __repr__(self) -> str:
+        return "<EventGridPublisherClient [namespace_topic={}] and credential type [{}]>".format(self._namespace, type(self.credential))
+
+class EventGridConsumerClient(InternalEventGridConsumerClient):
+
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any) -> None:
+        return super().__init__(endpoint=endpoint, credential=credential, **kwargs)
+    
+
+    def __repr__(self) -> str:
+        return "<EventGridConsumerClient>"
 
 def patch_sdk():
     """Do not remove from this file.
@@ -87,4 +94,5 @@ def patch_sdk():
 
 __all__: List[str] = [
     "EventGridPublisherClient",
+    "EventGridConsumerClient",
 ]  # Add all objects you want publicly available to users at this package level

@@ -51,10 +51,7 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
      "2023-10-01-preview". Default value for basic is "2018-01-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str or None
-    :keyword level: The level of client to use. Known values are
-     `Standard` and `Basic`. Default value is `Standard`.
-     `Standard` is used for working with a namespace topic.
-     `Basic` is used for working with a basic topic.
+    :keyword namespace_topic: The topic of the Event Grid Namespace. Required for working with a namespace topic.
     :paramtype level: str
     """
 
@@ -63,22 +60,22 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
         endpoint: str,
         credential: Union[AzureKeyCredential, AzureSasCredential, "TokenCredential"],
         *,
+        namespace_topic: Optional[str] = None,
         api_version: Optional[str] = None,
-        level: Union[str, ClientLevel] = ClientLevel.BASIC,
         **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
-        self._level = level
+        self._namespace = namespace_topic
         self.credential = credential
 
-        if level == ClientLevel.BASIC:
+        if not self._namespace:
             self._client = GAEventGridPublisherClient(
                 endpoint,
                 credential,
                 api_version=api_version or DEFAULT_BASIC_API_VERSION,
             )  # type:ignore[assignment]
             self._send = self._client.send  # type:ignore[attr-defined]
-        elif level == ClientLevel.STANDARD:
+        else:
             if isinstance(credential, AzureSasCredential):
                 raise TypeError("SAS token authentication is not supported for the standard client.")
             super().__init__(
@@ -89,14 +86,12 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
             )
 
             self._send = self._publish_cloud_events
-        else:
-            raise ValueError("Unknown client level. Known values are `Standard` and `Basic`.")
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
     def __repr__(self) -> str:
-        return "<EventGridPublisherClient [level={}] and credential type [{}]>".format(self._level, type(self.credential))
+        return "<EventGridPublisherClient [namespace_topic={}] and credential type [{}]>".format(self._namespace, type(self.credential))
 
 class EventGridConsumerClient(InternalEventGridConsumerClient):
 
@@ -105,7 +100,7 @@ class EventGridConsumerClient(InternalEventGridConsumerClient):
     
 
     def __repr__(self) -> str:
-        return "<EventGridConsumerClient [level={}] and credential type [{}]>".format(self._level, type(self.credential))
+        return "<EventGridConsumerClient>"
 
 def patch_sdk():
     """Do not remove from this file.
@@ -117,6 +112,7 @@ def patch_sdk():
 
 __all__: List[str] = [
     "EventGridPublisherClient",
+    "EventGridConsumerClient",
     "SystemEventNames",
     "EventGridEvent",
     "generate_sas",

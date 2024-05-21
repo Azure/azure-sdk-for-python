@@ -43,37 +43,6 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 
 class EventGridPublisherClientOperationsMixin(OperationsPubMixin):
 
-    @overload
-    async def send(
-        self,
-        topic_name: str,
-        events: Union[
-            CloudEvent,
-            List[CloudEvent],
-            Dict[str, Any],
-            List[Dict[str, Any]],
-            "CNCFCloudEvent",
-            List["CNCFCloudEvent"],
-        ],
-        *,
-        content_type: Optional[str] = None,
-        **kwargs: Any,
-    ) -> None:
-        """Send events to the Event Grid Namespace Service.
-        :param topic_name: The name of the topic to send the event to.
-        :type topic_name: str
-        :param events: The event(s) to send. A single instance of CloudEvent or a list of CloudEvents are accepted.
-         Dictionaries are also accepted, but must be in the format of a CloudEvent.
-        :type events: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
-        :keyword content_type: The content type of the event. If not specified, the default value is
-         "application/cloudevents+json; charset=utf-8".
-        :paramtype content_type: str or None
-        :return: None
-        :rtype: None
-        """
-        ...
-
-    @overload
     async def send(
         self,
         events: Union[
@@ -91,32 +60,7 @@ class EventGridPublisherClientOperationsMixin(OperationsPubMixin):
         content_type: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
-        """Send events to the Event Grid Basic Service.
-        :param events: The event(s) to send.
-        :type events: CloudEvent or List[CloudEvent] or EventGridEvent or List[EventGridEvent]
-         or Dict[str, Any] or List[Dict[str, Any]] or CNCFCloudEvent or List[CNCFCloudEvent]
-        :keyword channel_name: The name of the channel to send the event to.
-        :paramtype channel_name: str or None
-        :keyword content_type: The content type of the event. If not specified, the default value is
-         "application/cloudevents+json; charset=utf-8".
-        :paramtype content_type: str or None
-        :return: None
-        :rtype: None
-        """
-        ...
-
-    @validate_args(
-        kwargs_mapping={
-            "Basic": ["channel_name"],
-        }
-    )
-    @distributed_trace_async
-    async def send(
-        self, *args, **kwargs
-    ) -> None:  # pylint: disable=docstring-should-be-keyword, docstring-missing-param
-        """Send events to the Event Grid Namespace Service.
-        :param topic_name: The name of the topic to send the event to.
-        :type topic_name: str
+        """Send events to the Event Grid Service.
         :param events: The event(s) to send. A single instance of CloudEvent or a list of CloudEvents are accepted.
          Dictionaries are also accepted, but must be in the format of a CloudEvent.
         :type events: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
@@ -144,33 +88,12 @@ class EventGridPublisherClientOperationsMixin(OperationsPubMixin):
                 :caption: Publishing a CloudEvent to a Basic Topic.
         """
         # Check kwargs
-        channel_name = kwargs.pop("channel_name", None)
-        topic_name = kwargs.pop("topic_name", None)
-        events = kwargs.pop("events", None)
-
-        # both there
-        if len(args) > 1:
-            if events is not None:
-                raise ValueError("events is already passed as a keyword argument.")
-            if topic_name is not None:
-                raise ValueError("topic_name is already passed as a keyword argument.")
-            events = args[1]
-            topic_name = args[0]
-
-        elif len(args) == 1:
-            if events is not None:
-                if topic_name is not None:
-                    raise ValueError("topic_name is already passed as a keyword argument.")
-                topic_name = args[0]
-            else:
-                events = args[0]
-
-        # TODO: check above logic
+        events = kwargs.pop("events", None) or events
 
         if events is None:
             raise ValueError("events is required for the `send` operation.")
 
-        if self._level == "Standard" and topic_name is None:
+        if self._namespace and channel_name:
             raise ValueError("Topic name is required for standard level client.")
 
         # If a cloud event dict, convert to CloudEvent for serializing
@@ -182,7 +105,7 @@ class EventGridPublisherClientOperationsMixin(OperationsPubMixin):
         except Exception:  # pylint: disable=broad-except
             pass
 
-        if self._level == "Standard":
+        if self._namespace:
             kwargs["content_type"] = kwargs.get("content_type", "application/cloudevents-batch+json; charset=utf-8")
             if not isinstance(events, list):
                 events = [events]
@@ -191,9 +114,9 @@ class EventGridPublisherClientOperationsMixin(OperationsPubMixin):
                 raise TypeError("EventGridEvent is not supported for Event Grid Namespaces.")
             try:
                 # Try to send via namespace
-                await self._send(topic_name, _serialize_events(events), **kwargs)
+                await self._send(self._namespace, _serialize_events(events), **kwargs)
             except Exception as exception:  # pylint: disable=broad-except
-                self._http_response_error_handler(exception, "Standard")
+                self._http_response_error_handler(exception, "Namespace")
                 raise exception
         else:
             try:
@@ -209,7 +132,7 @@ class EventGridPublisherClientOperationsMixin(OperationsPubMixin):
             if exception.status_code == 404:
                 raise ResourceNotFoundError(
                     "Resource not found. "
-                    f"Please check that the level set on the client, {level}, corresponds to the correct "
+                    f"Please check that the tier you are using, corresponds to the correct "
                     "endpoint and/or topic name."
                 ) from exception
             raise exception
