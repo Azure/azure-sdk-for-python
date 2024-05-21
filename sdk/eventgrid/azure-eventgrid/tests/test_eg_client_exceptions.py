@@ -103,7 +103,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
     def test_acknowledge_cloud_event_not_found(
         self, eventgrid_endpoint, eventgrid_key, eventgrid_event_subscription_name
     ):
-        publisher, consumer = self.create_eg_client(eventgrid_endpoint, eventgrid_key, eventgrid_topic_name)
+        publisher, consumer = self.create_eg_client(eventgrid_endpoint, eventgrid_key, "faketopic")
 
         with pytest.raises(ResourceNotFoundError):
             lock_tokens = ["faketoken"]
@@ -112,7 +112,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy
     def test_release_cloud_event_not_found(self, eventgrid_endpoint, eventgrid_key, eventgrid_event_subscription_name):
-        publisher, consumer = self.create_eg_client(eventgrid_endpoint, eventgrid_key, eventgrid_topic_name)
+        publisher, consumer = self.create_eg_client(eventgrid_endpoint, eventgrid_key, "faketopic")
 
         with pytest.raises(ResourceNotFoundError):
             lock_tokens = ["faketoken"]
@@ -121,7 +121,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy
     def test_reject_cloud_event_not_found(self, eventgrid_endpoint, eventgrid_key, eventgrid_event_subscription_name):
-        publisher, consumer = self.create_eg_client(eventgrid_endpoint, eventgrid_key, eventgrid_topic_name)
+        publisher, consumer = self.create_eg_client(eventgrid_endpoint, eventgrid_key, "faketopic")
         lock_tokens = ["faketoken"]
 
         with pytest.raises(ResourceNotFoundError):
