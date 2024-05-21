@@ -47,7 +47,7 @@ else:
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from .._models import DirectoryProperties, Handle, NTFSAttributes
+    from .._models import FileProperties, DirectoryProperties, Handle, NTFSAttributes
 
 
 class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
@@ -499,7 +499,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             process_storage_error(error)
 
     @distributed_trace
-    def list_directories_and_files(self, name_starts_with: Optional[str] = None, **kwargs: Any) -> AsyncItemPaged:
+    def list_directories_and_files(
+        self,
+        name_starts_with: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[Union["DirectoryProperties", "FileProperties"]]:
         """Lists all the directories and files under the directory.
 
         :param str name_starts_with:

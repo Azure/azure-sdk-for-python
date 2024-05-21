@@ -42,7 +42,7 @@ else:
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from ._models import DirectoryProperties, Handle, NTFSAttributes
+    from ._models import FileProperties, DirectoryProperties, Handle, NTFSAttributes
 
 
 class ShareDirectoryClient(StorageAccountHostsMixin):
@@ -493,7 +493,11 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def list_directories_and_files(self, name_starts_with: Optional[str] = None, **kwargs: Any) -> ItemPaged:
+    def list_directories_and_files(
+        self,
+        name_starts_with: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged[Union["DirectoryProperties", "FileProperties"]]:
         """Lists all the directories and files under the directory.
 
         :param str name_starts_with:
