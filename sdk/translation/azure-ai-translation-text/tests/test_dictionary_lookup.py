@@ -17,13 +17,11 @@ class TestDictionaryLookup(TextTranslationTest):
         region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
-        source_language = "en"
-        target_language = "es"
+        from_parameter = "en"
+        to = "es"
         input_text_elements = ["fly"]
 
-        response = client.lookup_dictionary_entries(
-            request_body=input_text_elements, from_parameter=source_language, to=target_language
-        )
+        response = client.lookup_dictionary_entries(body=input_text_elements, from_parameter=from_parameter, to=to)
         assert response is not None
         assert response[0].normalized_source == "fly"
         assert response[0].display_source == "fly"
@@ -36,13 +34,11 @@ class TestDictionaryLookup(TextTranslationTest):
         region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
-        source_language = "en"
-        target_language = "es"
+        from_parameter = "en"
+        to = "es"
         input_text_elements = ["fly", "fox"]
 
-        response = client.lookup_dictionary_entries(
-            request_body=input_text_elements, from_parameter=source_language, to=target_language
-        )
+        response = client.lookup_dictionary_entries(body=input_text_elements, from_parameter=from_parameter, to=to)
         assert response is not None
         assert len(response) == 2
         assert response[0].normalized_source == "fly"
