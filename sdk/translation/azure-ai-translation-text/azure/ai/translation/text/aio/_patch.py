@@ -43,9 +43,9 @@ class AsyncTranslatorEntraIdAuthenticationPolicy(AsyncBearerTokenCredentialPolic
     """
 
     def __init__(
-        self, credential: AsyncTokenCredential, resource_id: str, region: str, scopes: str, **kwargs: Any
+        self, credential: AsyncTokenCredential, resource_id: str, region: str, audiences: str, **kwargs: Any
     ) -> None:
-        super(AsyncTranslatorEntraIdAuthenticationPolicy, self).__init__(credential, scopes, **kwargs)
+        super(AsyncTranslatorEntraIdAuthenticationPolicy, self).__init__(credential, audiences, **kwargs)
         self.resource_id = resource_id
         self.region = region
         self.translator_credential = credential
@@ -72,7 +72,7 @@ def set_authentication_policy(credential, kwargs):
                     credential,
                     kwargs["resource_id"],
                     kwargs["region"],
-                    kwargs.pop("scopes", DEFAULT_ENTRA_ID_SCOPE),
+                    kwargs.pop("audiences", DEFAULT_ENTRA_ID_SCOPE),
                 )
             else:
                 if kwargs.get("resource_id") or kwargs.get("region"):
@@ -80,7 +80,7 @@ def set_authentication_policy(credential, kwargs):
                         "Both 'resource_id' and 'region' must be provided with a TokenCredential for authentication."
                     )
                 kwargs["authentication_policy"] = AsyncBearerTokenCredentialPolicy(
-                    credential, *kwargs.pop("scopes", [DEFAULT_TOKEN_SCOPE]), kwargs
+                    credential, *kwargs.pop("audiences", [DEFAULT_TOKEN_SCOPE]), kwargs
                 )
 
 
@@ -122,7 +122,7 @@ class TextTranslationClient(ServiceClientGenerated):
     :paramtype credential: Union[AzureKeyCredential, AsyncTokenCredential]
     :keyword str region: Used for National Clouds.
     :keyword str resource_id: Used with both a TokenCredential combined with a region.
-    :keyword str scopes: Scopes of the credentials.
+    :keyword str audiences: Scopes of the credentials.
     :keyword  str api_version: Default value is "3.0". Note that overriding this default value may
     result in unsupported behavior.
     """
@@ -135,7 +135,7 @@ class TextTranslationClient(ServiceClientGenerated):
         region: Optional[str] = None,
         endpoint: Optional[str] = None,
         resource_id: Optional[str] = None,
-        scopes: Optional[str] = None,
+        audiences: Optional[str] = None,
         api_version="3.0",
         **kwargs
     ): ...
