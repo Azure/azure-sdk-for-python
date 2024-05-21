@@ -133,16 +133,17 @@ class TextTranslationClient(ServiceClientGenerated):
     str + None - used with text translation on-prem container
     None + AzureKeyCredential - used for global translator endpoint with global Translator resource
     None + TokenCredential - general translator endpoint with token authentication
-    None + TokenCredential + Region - general translator endpoint with regional Translator resource
+    None + TokenCredential + Region + ResourceID - general translator endpoint with regional Translator resource
+
     :keyword str endpoint: Supported Text Translation endpoints (protocol and hostname, for example:
-    https://api.cognitive.microsofttranslator.com). If not provided, global translator endpoint will be used.
+     https://api.cognitive.microsofttranslator.com). If not provided, global translator endpoint will be used.
     :keyword credential: Credential used to authenticate with the Translator service
     :paramtype credential: Union[AzureKeyCredential, TokenCredential]
     :keyword str region: Used for National Clouds.
     :keyword str resource_id: Used with both a TokenCredential combined with a region.
     :keyword str scopes: Scopes of the credentials.
-    :keyword  str api_version: Default value is "3.0". Note that overriding this default value may
-    result in unsupported behavior.
+    :keyword str api_version: Default value is "3.0". Note that overriding this default value may
+     result in unsupported behavior.
     """
 
     @overload
@@ -154,7 +155,7 @@ class TextTranslationClient(ServiceClientGenerated):
         endpoint: Optional[str] = None,
         resource_id: Optional[str] = None,
         scopes: Optional[str] = None,
-        api_version="3.0",
+        api_version: str = "3.0",
         **kwargs
     ): ...
 
@@ -165,7 +166,7 @@ class TextTranslationClient(ServiceClientGenerated):
         credential: AzureKeyCredential,
         region: Optional[str] = None,
         endpoint: Optional[str] = None,
-        api_version="3.0",
+        api_version: = "3.0",
         **kwargs
     ): ...
 
@@ -174,7 +175,7 @@ class TextTranslationClient(ServiceClientGenerated):
         self,
         *,
         endpoint: str,
-        api_version="3.0",
+        api_version: = "3.0",
         **kwargs
     ): ...
 
