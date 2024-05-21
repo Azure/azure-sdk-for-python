@@ -6,10 +6,8 @@
 import base64
 import random
 import tempfile
-import uuid
 from io import BytesIO
 from math import ceil
-from os import path, remove
 
 import pytest
 from azure.core.exceptions import HttpResponseError
@@ -18,11 +16,12 @@ from azure.storage.blob import BlobProperties, BlobServiceClient, StorageErrorCo
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
-from test_helpers import ProgressTracker
+from test_helpers import NonSeekableStream, ProgressTracker
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
 # ------------------------------------------------------------------------------
+
 
 class TestStorageGetBlob(StorageRecordedTestCase):
     def _setup(self, storage_account_name, key):
@@ -56,21 +55,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
     def _get_blob_reference(self):
         return self.get_resource_name(TEST_BLOB_PREFIX)
 
-    class NonSeekableFile(object):
-        def __init__(self, wrapped_file):
-            self.wrapped_file = wrapped_file
-
-        def write(self, data):
-            self.wrapped_file.write(data)
-
-        def read(self, count):
-            return self.wrapped_file.read(count)
-
-        def seekable(self):
-            return False
-
     # -- Get test cases for blobs ----------------------------------------------
-
     @BlobPreparer()
     @recorded_by_proxy
     def test_unicode_get_blob_unicode_data(self, **kwargs):
@@ -539,7 +524,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             read_bytes = downloader.readinto(temp_file)
 
             # Assert
-            assert read_bytes == blob_size
+            assert read_bytes == blob_size - 1
             temp_file.seek(0)
             actual = temp_file.read()
             assert blob_data[1:blob_size] == actual
@@ -566,7 +551,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             read_bytes = downloader.readinto(temp_file)
 
             # Assert
-            assert read_bytes == blob_size
+            assert read_bytes == blob_size - 1
             temp_file.seek(0)
             actual = temp_file.read()
             assert blob_data[1:blob_size] == actual
@@ -754,7 +739,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
-            non_seekable_stream = TestStorageGetBlob.NonSeekableFile(temp_file)
+            non_seekable_stream = NonSeekableStream(temp_file)
             downloader = blob.download_blob(max_concurrency=1)
             read_bytes = downloader.readinto(non_seekable_stream)
 
@@ -777,7 +762,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
-            non_seekable_stream = TestStorageGetBlob.NonSeekableFile(temp_file)
+            non_seekable_stream = NonSeekableStream(temp_file)
 
             with pytest.raises(ValueError):
                 downloader = blob.download_blob(max_concurrency=2)
@@ -1494,8 +1479,8 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         class CustomProgressTracker:
             def __init__(self):
                 self.num_read = 0
-                self.totals = [5125, 5125, 5125, 5125, 5125, 5125, 5125, 5125, 5125]
-                self.currents = [500, 1000, 1024, 1500, 2000, 3024, 4048, 5072, 5125]
+                self.currents = [500, 1000, 1024, 1500, 2000, 2048, 3072, 4096, 5120, 5125]
+                self.totals = [5125] * len(self.currents)
 
             def assert_progress(self, current, total):
                 assert total == self.totals[self.num_read]
