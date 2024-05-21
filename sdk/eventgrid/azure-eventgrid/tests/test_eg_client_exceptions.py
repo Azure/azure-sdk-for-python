@@ -18,9 +18,9 @@ from eventgrid_preparer import EventGridPreparer
 
 class TestEGClientExceptions(AzureRecordedTestCase):
     def create_eg_client(self, endpoint, key, topic):
-        client = EventGridPublisherClient(endpoint=endpoint, credential=AzureKeyCredential(key), namespace_topic=topic)
-        client = EventGridConsumerClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-        return client
+        publisher = EventGridPublisherClient(endpoint=endpoint, credential=AzureKeyCredential(key), namespace_topic=topic)
+        consumer = EventGridConsumerClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+        return publisher, consumer
 
     @EventGridPreparer()
     @recorded_by_proxy
