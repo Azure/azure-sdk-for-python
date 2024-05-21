@@ -203,13 +203,11 @@ Translate text from known source language to target language.
 
 ```python
 try:
-    source_language = "en"
-    target_languages = ["cs"]
+    from_parameter = "en"
+    to = ["cs"]
     input_text_elements = ["This is a test"]
 
-    response = text_translator.translate(
-        body=input_text_elements, to=target_languages, source_language=source_language
-    )
+    response = text_translator.translate(body=input_text_elements, to=to, from_parameter=from_parameter)
     translation = response[0] if response else None
 
     if translation:
@@ -237,17 +235,17 @@ You can omit source language of the input text. In this case, API will try to au
 
 ```python
 try:
-    target_languages = ["cs"]
+    to = ["cs"]
     input_text_elements = ["This is a test"]
 
-    response = text_translator.translate(body=input_text_elements, to=target_languages)
+    response = text_translator.translate(body=input_text_elements, to=to)
     translation = response[0] if response else None
 
     if translation:
         detected_language = translation.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
             )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
@@ -269,18 +267,18 @@ You can combine both Translation and Transliteration in one Translate call. Your
 
 ```python
 try:
-    source_language_script = "Latn"
+    from_script = "Latn"
     from_language = "ar"
-    target_language_script = "Latn"
-    target_languages = ["zh-Hans"]
+    to_script = "Latn"
+    to = ["zh-Hans"]
     input_text_elements = ["hudha akhtabar."]
 
     response = text_translator.translate(
         body=input_text_elements,
-        to=target_languages,
-        source_language_script=source_language_script,
-        source_language=from_language,
-        target_language_script=target_language_script,
+        to=to,
+        from_script=from_script,
+        from_parameter=from_language,
+        to_script=to_script,
     )
     translation = response[0] if response else None
 
@@ -311,18 +309,18 @@ You can translate multiple text elements with a various length. Each input eleme
 
 ```python
 try:
-    target_languages = ["cs"]
+    to = ["cs"]
     input_text_elements = [
         "This is a test.",
         "Esto es una prueba.",
         "Dies ist ein Test.",
     ]
 
-    translations = text_translator.translate(body=input_text_elements, to=target_languages)
+    translations = text_translator.translate(body=input_text_elements, to=to)
 
     for translation in translations:
         print(
-            f"Detected languages of the input text: {translation.detected_language.language if translation.detected_language else None} with score: {translation.detected_language.confidence if translation.detected_language else None}."
+            f"Detected languages of the input text: {translation.detected_language.language if translation.detected_language else None} with score: {translation.detected_language.score if translation.detected_language else None}."
         )
         print(
             f"Text was translated to: '{translation.translations[0].to if translation.translations else None}' and the result is: '{translation.translations[0].text if translation.translations else None}'."
@@ -344,17 +342,17 @@ You can provide multiple target languages which results to each input element be
 
 ```python
 try:
-    target_languages = ["cs", "es", "de"]
+    to = ["cs", "es", "de"]
     input_text_elements = ["This is a test"]
 
-    response = text_translator.translate(body=input_text_elements, to=target_languages)
+    response = text_translator.translate(body=input_text_elements, to=to)
     translation = response[0] if response else None
 
     if translation:
         detected_language = translation.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
             )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
@@ -376,17 +374,17 @@ You can select whether the translated text is plain text or HTML text. Any HTML 
 ```python
 try:
     text_type = TextType.HTML
-    target_languages = ["cs"]
+    to = ["cs"]
     input_text_elements = ["<html><body>This <b>is</b> a test.</body></html>"]
 
-    response = text_translator.translate(body=input_text_elements, to=target_languages, text_type=text_type)
+    response = text_translator.translate(body=input_text_elements, to=to, text_type=text_type)
     translation = response[0] if response else None
 
     if translation:
         detected_language = translation.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
             )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
@@ -408,14 +406,17 @@ It's sometimes useful to exclude specific content from translation. You can use 
 ```python
 try:
     text_type = TextType.HTML
-    source_language = "en"
-    target_languages = ["cs"]
+    from_parameter = "en"
+    to = ["cs"]
     input_text_elements = [
         '<div class="notranslate">This will not be translated.</div><div>This will be translated. </div>'
     ]
 
     response = text_translator.translate(
-        body=input_text_elements, to=target_languages, source_language=source_language, text_type=text_type
+        body=input_text_elements,
+        to=to,
+        from_parameter=from_parameter,
+        text_type=text_type,
     )
     translation = response[0] if response else None
 
@@ -441,15 +442,13 @@ If you already know the translation you want to apply to a word or a phrase, you
 
 ```python
 try:
-    source_language = "en"
-    target_languages = ["cs"]
+    from_parameter = "en"
+    to = ["cs"]
     input_text_elements = [
         'The word <mstrans:dictionary translation="wordomatic">wordomatic</mstrans:dictionary> is a dictionary entry.'
     ]
 
-    response = text_translator.translate(
-        body=input_text_elements, to=target_languages, source_language=source_language
-    )
+    response = text_translator.translate(body=input_text_elements, to=to, from_parameter=from_parameter)
     translation = response[0] if response else None
 
     if translation:
@@ -476,12 +475,12 @@ If you want to avoid getting profanity in the translation, regardless of the pre
 try:
     profanity_action = ProfanityAction.MARKED
     profanity_maker = ProfanityMarker.ASTERISK
-    target_languages = ["cs"]
+    to = ["cs"]
     input_text_elements = ["This is ***."]
 
     response = text_translator.translate(
         body=input_text_elements,
-        to=target_languages,
+        to=to,
         profanity_action=profanity_action,
         profanity_marker=profanity_maker,
     )
@@ -491,7 +490,7 @@ try:
         detected_language = translation.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
             )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
@@ -513,19 +512,17 @@ You can ask translation service to include alignment projection from source text
 ```python
 try:
     include_alignment = True
-    target_languages = ["cs"]
+    to = ["cs"]
     input_text_elements = ["The answer lies in machine translation."]
 
-    response = text_translator.translate(
-        body=input_text_elements, to=target_languages, include_alignment=include_alignment
-    )
+    response = text_translator.translate(body=input_text_elements, to=to, include_alignment=include_alignment)
     translation = response[0] if response else None
 
     if translation:
         detected_language = translation.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
             )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
@@ -549,11 +546,11 @@ You can ask translator service to include sentence boundaries for the input text
 ```python
 try:
     include_sentence_length = True
-    target_languages = ["cs"]
+    to = ["cs"]
     input_text_elements = ["The answer lies in machine translation. This is a test."]
 
     response = text_translator.translate(
-        body=input_text_elements, to=target_languages, include_sentence_length=include_sentence_length
+        body=input_text_elements, to=to, include_sentence_length=include_sentence_length
     )
     translation = response[0] if response else None
 
@@ -561,15 +558,13 @@ try:
         detected_language = translation.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
             )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
-            if translated_text.sentences_lengths:
-                print(f"Source Sentence length: {translated_text.sentences_lengths.src_sentences_lengths}")
-                print(
-                    f"Translated Sentence length: {translated_text.sentences_lengths.translated_sentences_lengths}"
-                )
+            if translated_text.sent_len:
+                print(f"Source Sentence length: {translated_text.sent_len.src_sent_len}")
+                print(f"Translated Sentence length: {translated_text.sent_len.trans_sent_len}")
 
 except HttpResponseError as exception:
     if exception.error is not None:
@@ -592,17 +587,17 @@ It is possible to set `allow_fallback` parameter. It specifies that the service 
 ```python
 try:
     category = "<<Category ID>>"
-    target_languages = ["cs"]
+    to = ["cs"]
     input_text_elements = ["This is a test"]
 
-    response = text_translator.translate(body=input_text_elements, to=target_languages, category=category)
+    response = text_translator.translate(body=input_text_elements, to=to, category=category)
     translation = response[0] if response else None
 
     if translation:
         detected_language = translation.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
             )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
@@ -626,15 +621,15 @@ Converts characters or letters of a source language to the corresponding charact
 ```python
 try:
     language = "zh-Hans"
-    source_language_script = "Hans"
-    target_language_script = "Latn"
+    from_script = "Hans"
+    to_script = "Latn"
     input_text_elements = ["这是个测试。"]
 
     response = text_translator.transliterate(
         body=input_text_elements,
         language=language,
-        source_language_script=source_language_script,
-        target_language_script=target_language_script,
+        from_script=from_script,
+        to_script=to_script,
     )
     transliteration = response[0] if response else None
 
@@ -662,12 +657,12 @@ When the input language is known, you can provide those to the service call.
 
 ```python
 try:
-    source_language = "zh-Hans"
+    from_parameter = "zh-Hans"
     source_script = "Latn"
     input_text_elements = ["zhè shì gè cè shì。"]
 
     response = text_translator.find_sentence_boundaries(
-        body=input_text_elements, language=source_language, script=source_script
+        body=input_text_elements, language=from_parameter, script=source_script
     )
     sentence_boundaries = response[0] if response else None
 
@@ -675,10 +670,10 @@ try:
         detected_language = sentence_boundaries.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
             )
         print(f"The detected sentence boundaries:")
-        for boundary in sentence_boundaries.sentences_lengths:
+        for boundary in sentence_boundaries.sent_len:
             print(boundary)
 
 except HttpResponseError as exception:
@@ -707,10 +702,10 @@ try:
         detected_language = sentence_boundaries.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
             )
         print(f"The detected sentence boundaries:")
-        for boundary in sentence_boundaries.sentences_lengths:
+        for boundary in sentence_boundaries.sent_len:
             print(boundary)
 
 except HttpResponseError as exception:
@@ -731,12 +726,12 @@ Returns equivalent words for the source term in the target language.
 
 ```python
 try:
-    source_language = "en"
-    target_language = "es"
+    from_parameter = "en"
+    to = "es"
     input_text_elements = ["fly"]
 
     response = text_translator.lookup_dictionary_entries(
-        body=input_text_elements, source_language=source_language, to=target_language
+        body=input_text_elements, from_parameter=from_parameter, to=to
     )
     dictionary_entry = response[0] if response else None
 
@@ -763,12 +758,12 @@ Returns grammatical structure and context examples for the source term and targe
 
 ```python
 try:
-    source_language = "en"
-    target_language = "es"
+    from_parameter = "en"
+    to = "es"
     input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
 
     response = text_translator.lookup_dictionary_examples(
-        content=input_text_elements, source_language=source_language, to=target_language
+        body=input_text_elements, from_parameter=from_parameter, to=to
     )
     dictionary_entry = response[0] if response else None
 

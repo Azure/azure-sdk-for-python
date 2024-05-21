@@ -140,17 +140,17 @@ Renders single source-language text to multiple target-language texts with a sin
 
 ```python
 try:
-    target_languages = ["cs", "es", "de"]
+    to = ["cs", "es", "de"]
     input_text_elements = ["This is a test"]
 
-    response = text_translator.translate(body=input_text_elements, to=target_languages)
+    response = text_translator.translate(body=input_text_elements, to=to)
     translation = response[0] if response else None
 
     if translation:
         detected_language = translation.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
             )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
@@ -177,15 +177,15 @@ Converts characters or letters of a source language to the corresponding charact
 ```python
 try:
     language = "zh-Hans"
-    source_language_script = "Hans"
-    target_language_script = "Latn"
+    from_script = "Hans"
+    to_script = "Latn"
     input_text_elements = ["这是个测试。"]
 
     response = text_translator.transliterate(
         body=input_text_elements,
         language=language,
-        source_language_script=source_language_script,
-        target_language_script=target_language_script,
+        from_script=from_script,
+        to_script=to_script,
     )
     transliteration = response[0] if response else None
 
@@ -215,11 +215,11 @@ Identifies the positioning of sentence boundaries in a piece of text.
 ```python
 try:
     include_sentence_length = True
-    target_languages = ["cs"]
+    to = ["cs"]
     input_text_elements = ["The answer lies in machine translation. This is a test."]
 
     response = text_translator.translate(
-        body=input_text_elements, to=target_languages, include_sentence_length=include_sentence_length
+        body=input_text_elements, to=to, include_sentence_length=include_sentence_length
     )
     translation = response[0] if response else None
 
@@ -227,15 +227,13 @@ try:
         detected_language = translation.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
             )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
-            if translated_text.sentences_lengths:
-                print(f"Source Sentence length: {translated_text.sentences_lengths.src_sentences_lengths}")
-                print(
-                    f"Translated Sentence length: {translated_text.sentences_lengths.translated_sentences_lengths}"
-                )
+            if translated_text.sent_len:
+                print(f"Source Sentence length: {translated_text.sent_len.src_sent_len}")
+                print(f"Translated Sentence length: {translated_text.sent_len.trans_sent_len}")
 
 except HttpResponseError as exception:
     if exception.error is not None:
@@ -257,12 +255,12 @@ Returns equivalent words for the source term in the target language.
 
 ```python
 try:
-    source_language = "en"
-    target_language = "es"
+    from_parameter = "en"
+    to = "es"
     input_text_elements = ["fly"]
 
     response = text_translator.lookup_dictionary_entries(
-        body=input_text_elements, source_language=source_language, to=target_language
+        body=input_text_elements, from_parameter=from_parameter, to=to
     )
     dictionary_entry = response[0] if response else None
 
@@ -293,12 +291,12 @@ Returns grammatical structure and context examples for the source term and targe
 
 ```python
 try:
-    source_language = "en"
-    target_language = "es"
+    from_parameter = "en"
+    to = "es"
     input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
 
     response = text_translator.lookup_dictionary_examples(
-        content=input_text_elements, source_language=source_language, to=target_language
+        body=input_text_elements, from_parameter=from_parameter, to=to
     )
     dictionary_entry = response[0] if response else None
 
