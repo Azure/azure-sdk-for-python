@@ -235,8 +235,8 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         :rtype: ~azure.storage.fileshare.ShareDirectoryClient
         """
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable = protected-access
+            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
         )
 
         return ShareDirectoryClient(
@@ -256,8 +256,8 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         :rtype: ~azure.storage.fileshare.ShareFileClient
         """
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable = protected-access
+            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
         )
 
         return ShareFileClient(

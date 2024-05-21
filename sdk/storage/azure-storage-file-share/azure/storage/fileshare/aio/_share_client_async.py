@@ -6,12 +6,12 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only, invalid-overridden-method, too-many-lines
 
 import sys
+import warnings
 from typing import (
     Any, Dict, Iterable, Literal, Optional, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
-import warnings
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import AsyncPipeline
@@ -240,8 +240,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         :rtype: ~azure.storage.fileshare.aio.ShareDirectoryClient
         """
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable = protected-access
+            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
         )
 
         return ShareDirectoryClient(
@@ -260,8 +260,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         :rtype: ~azure.storage.fileshare.aio.ShareFileClient
         """
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable = protected-access
+            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
         )
 
         return ShareFileClient(
