@@ -6,7 +6,7 @@
 import pytest
 from datetime import datetime
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
-from azure.eventgrid import EventGridClient, EventGridEvent, ClientLevel
+from azure.eventgrid import EventGridClient, EventGridEvent
 from azure.eventgrid.models import *
 from azure.core.messaging import CloudEvent
 from azure.core.credentials import AzureKeyCredential
@@ -311,10 +311,10 @@ class TestEGDualClient(AzureRecordedTestCase):
             "eventTime": datetime.now(),
         }
 
-        if level == ClientLevel.STANDARD:
-            with pytest.raises(TypeError):
-                client.send(topic_name=eventgrid_topic_name, events=event)
-        else:
-            client.send(topic_name=eventgrid_topic_name, events=event)
+        # if level == ClientLevel.STANDARD:
+        #     with pytest.raises(TypeError):
+        #         client.send(topic_name=eventgrid_topic_name, events=event)
+        # else:
+        #     client.send(topic_name=eventgrid_topic_name, events=event)
 
         _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level)

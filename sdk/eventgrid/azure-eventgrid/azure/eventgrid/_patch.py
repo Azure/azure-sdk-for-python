@@ -29,11 +29,6 @@ from ._client import (
 from ._serialization import Serializer, Deserializer
 
 
-class ClientLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    STANDARD = ("Standard",)
-    BASIC = "Basic"
-
-
 DEFAULT_STANDARD_API_VERSION = "2023-10-01-preview"
 DEFAULT_BASIC_API_VERSION = "2018-01-01"
 
@@ -116,5 +111,4 @@ __all__: List[str] = [
     "SystemEventNames",
     "EventGridEvent",
     "generate_sas",
-    "ClientLevel",
 ]  # Add all objects you want publicly available to users at this package level
