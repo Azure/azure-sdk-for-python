@@ -6,20 +6,20 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 import functools
+import warnings
 from typing import (
     Any, Dict, List, Optional, Union,
     TYPE_CHECKING
 )
-import warnings
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-from ._container_client import ContainerClient
 from ._blob_client import BlobClient
 from ._blob_service_client_helpers import _parse_url
+from ._container_client import ContainerClient
 from ._deserialize import service_properties_deserialize, service_stats_deserialize
 from ._encryption import StorageEncryptionMixin
 from ._generated import AzureBlobStorage

@@ -10,12 +10,11 @@ from typing import Callable, List, Optional, TYPE_CHECKING
 
 from azure.core.async_paging import AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
+
 from .._deserialize import parse_tags
-
-from .._models import ContainerProperties, FilteredBlob, parse_page_list
-
-from .._shared.response_handlers import process_storage_error, return_context_and_deserialized
 from .._generated.models import FilterBlobItem
+from .._models import ContainerProperties, FilteredBlob, parse_page_list
+from .._shared.response_handlers import process_storage_error, return_context_and_deserialized
 
 if TYPE_CHECKING:
     from .._models import BlobProperties

@@ -5,8 +5,8 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines, invalid-overridden-method, docstring-keyword-should-match-keyword-only
 
-from datetime import datetime
 import warnings
+from datetime import datetime
 from functools import partial
 from typing import (
     Any, AnyStr, AsyncIterable, cast, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
@@ -20,6 +20,14 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from ._download_async import StorageStreamDownloader
+from ._lease_async import BlobLeaseClient
+from ._models import PageRangePaged
+from ._upload_helpers import (
+    upload_append_blob,
+    upload_block_blob,
+    upload_page_blob
+)
 from .._blob_client import StorageAccountHostsMixin
 from .._blob_client_helpers import (
     _abort_copy_options,
@@ -52,11 +60,6 @@ from .._blob_client_helpers import (
     _upload_page_options,
     _upload_pages_from_url_options
 )
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
-from .._shared.policies_async import ExponentialRetry
-from .._shared.response_handlers import return_response_headers, process_storage_error
-from .._generated.aio import AzureBlobStorage
-from .._generated.models import CpkInfo
 from .._deserialize import (
     deserialize_blob_properties,
     deserialize_pipeline_response_into_cls,
@@ -64,16 +67,13 @@ from .._deserialize import (
     parse_tags
 )
 from .._encryption import StorageEncryptionMixin, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
+from .._generated.aio import AzureBlobStorage
+from .._generated.models import CpkInfo
 from .._models import BlobType, BlobBlock, BlobProperties, PageRange
-from .._serialize import get_modify_conditions, get_api_version, get_access_conditions, get_version_id
-from ._download_async import StorageStreamDownloader
-from ._lease_async import BlobLeaseClient
-from ._models import PageRangePaged
-from ._upload_helpers import (
-    upload_block_blob,
-    upload_append_blob,
-    upload_page_blob
-)
+from .._serialize import get_access_conditions, get_api_version, get_modify_conditions, get_version_id
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
+from .._shared.policies_async import ExponentialRetry
+from .._shared.response_handlers import process_storage_error, return_response_headers
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -84,8 +84,8 @@ if TYPE_CHECKING:
         ContentSettings,
         ImmutabilityPolicy,
         PremiumPageBlobTier,
-        StandardBlobTier,
-        SequenceNumberAction
+        SequenceNumberAction,
+        StandardBlobTier
     )
 
 
@@ -420,7 +420,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
     @distributed_trace_async
     async def upload_blob(
-        self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+        self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[bytes]],
         blob_type: Union[str, BlobType] = BlobType.BLOCKBLOB,
         length: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,

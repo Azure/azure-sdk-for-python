@@ -5,14 +5,14 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines, invalid-overridden-method, docstring-keyword-should-match-keyword-only
 
-from datetime import datetime
 import functools
 import warnings
-from typing import (  # pylint: disable=unused-import
+from datetime import datetime
+from typing import (
     Any, AnyStr, AsyncIterable, AsyncIterator, cast, Dict, List, IO, Iterable, Optional, overload, Union,
     TYPE_CHECKING
 )
-from urllib.parse import urlparse, unquote
+from urllib.parse import unquote, urlparse
 from typing_extensions import Self
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -22,33 +22,33 @@ from azure.core.pipeline.transport import AsyncHttpResponse  # pylint: disable=C
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .._shared.base_client import StorageAccountHostsMixin
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
-from .._shared.policies_async import ExponentialRetry
-from .._shared.request_handlers import add_metadata_headers, serialize_iso
-from .._shared.response_handlers import (
-    process_storage_error,
-    return_response_headers,
-    return_headers_and_deserialized
-)
-from .._generated.aio import AzureBlobStorage
-from .._generated.models import SignedIdentifier
-from .._deserialize import deserialize_container_properties
-from ._download_async import StorageStreamDownloader
-from .._encryption import StorageEncryptionMixin
-from .._models import ContainerProperties, BlobType, BlobProperties, FilteredBlob
-from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 from ._blob_client_async import BlobClient
+from ._download_async import StorageStreamDownloader
+from ._lease_async import BlobLeaseClient
+from ._list_blobs_helper import BlobNamesPaged, BlobPropertiesPaged, BlobPrefix
+from ._models import FilteredBlobPaged
 from .._container_client_helpers import (
     _format_url,
     _generate_delete_blobs_options,
     _generate_set_tiers_options,
     _parse_url
 )
-from ._lease_async import BlobLeaseClient
-from ._list_blobs_helper import BlobNamesPaged, BlobPropertiesPaged, BlobPrefix
+from .._deserialize import deserialize_container_properties
+from .._encryption import StorageEncryptionMixin
+from .._generated.aio import AzureBlobStorage
+from .._generated.models import SignedIdentifier
 from .._list_blobs_helper import IgnoreListBlobsDeserializer
-from ._models import FilteredBlobPaged
+from .._models import ContainerProperties, BlobType, BlobProperties, FilteredBlob
+from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
+from .._shared.base_client import StorageAccountHostsMixin
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
+from .._shared.policies_async import ExponentialRetry
+from .._shared.request_handlers import add_metadata_headers, serialize_iso
+from .._shared.response_handlers import (
+    process_storage_error,
+    return_headers_and_deserialized,
+    return_response_headers
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -869,7 +869,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
     def walk_blobs(
         self, name_starts_with: Optional[str] = None,
         include: Optional[Union[List[str], str]] = None,
-        delimiter: str ="/",
+        delimiter: str = "/",
         **kwargs: Any
     ) -> AsyncItemPaged[BlobProperties]:
         """Returns a generator to list the blobs under the specified container.

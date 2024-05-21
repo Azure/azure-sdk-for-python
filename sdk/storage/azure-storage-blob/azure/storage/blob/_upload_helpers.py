@@ -99,8 +99,6 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
                 raise TypeError('Blob data should be of type bytes.')
 
             if encryption_options.get('key'):
-                if not isinstance(data, bytes):
-                    raise TypeError('Blob data should be of type bytes.')
                 encryption_data, data = encrypt_blob(data, encryption_options['key'], encryption_options['version'])
                 headers['x-ms-meta-encryptiondata'] = encryption_data
 

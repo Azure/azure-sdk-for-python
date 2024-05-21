@@ -6,7 +6,6 @@
 # pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
 
 import uuid
-
 from typing import Any, Optional, Union, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError

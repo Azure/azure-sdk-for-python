@@ -10,6 +10,7 @@ from typing import Any, cast, Dict, IO, Optional, TypeVar, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError, ResourceModifiedError
 
+from ._encryption_async import GCMBlobEncryptionStream
 from .._encryption import (
     encrypt_blob,
     get_adjusted_upload_size,
@@ -23,7 +24,6 @@ from .._generated.models import (
     BlockLookupList,
     ModifiedAccessConditions
 )
-from .._upload_helpers import _any_conditions, _convert_mod_error
 from .._shared.response_handlers import process_storage_error, return_response_headers
 from .._shared.uploads_async import (
     AppendBlobChunkUploader,
@@ -32,7 +32,7 @@ from .._shared.uploads_async import (
     upload_data_chunks,
     upload_substream_blocks
 )
-from ._encryption_async import GCMBlobEncryptionStream
+from .._upload_helpers import _any_conditions, _convert_mod_error
 
 if TYPE_CHECKING:
     from .._generated.aio.operations import AppendBlobOperations, BlockBlobOperations, PageBlobOperations

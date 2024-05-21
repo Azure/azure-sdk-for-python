@@ -677,7 +677,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         :rtype: T
         """
         stream = BytesIO()
-        self.readinto(stream)  # type: ignore [arg-type]
+        self.readinto(stream)
         data = stream.getvalue()
         if self._encoding:
             return data.decode(self._encoding)  # type: ignore [return-value]
@@ -755,7 +755,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         # Write the content to the user stream if there is data left
         if self._offset < len(self._current_content):
             content = self._current_content[self._offset:]
-            stream.write(content)  # type: ignore [call-overload]
+            stream.write(content)
             self._offset += len(content)
             if self._progress_hook:
                 self._progress_hook(len(content), self.size)

@@ -6,6 +6,7 @@
 # pylint: disable=invalid-overridden-method
 # mypy: disable-error-code=override
 
+import asyncio
 import sys
 import warnings
 from io import BytesIO
@@ -17,12 +18,10 @@ from typing import (
     Tuple, TypeVar, TYPE_CHECKING
 )
 
-import asyncio
-
 from azure.core.exceptions import HttpResponseError
 
 from .._shared.request_handlers import validate_and_format_range_headers
-from .._shared.response_handlers import process_storage_error, parse_length_from_content_range
+from .._shared.response_handlers import parse_length_from_content_range, process_storage_error
 from .._deserialize import deserialize_blob_properties, get_page_ranges_result
 from .._download import process_range_and_offset, _ChunkDownloader
 from .._encryption import (
@@ -32,11 +31,9 @@ from .._encryption import (
     parse_encryption_data
 )
 
-
 if TYPE_CHECKING:
     from .._encryption import _EncryptionData
     from .._generated.aio import AzureBlobStorage
-    from .._generated.aio.operations import BlobOperations
     from .._models import BlobProperties
     from .._shared.models import StorageConfiguration
 
@@ -577,7 +574,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         :rtype: T
         """
         stream = BytesIO()
-        await self.readinto(stream)  # type: ignore [arg-type]
+        await self.readinto(stream)
         data = stream.getvalue()
         if self._encoding:
             return data.decode(self._encoding)  # type: ignore [return-value]

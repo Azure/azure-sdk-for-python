@@ -112,7 +112,7 @@ def deserialize_container_properties(
 
 def get_page_ranges_result(ranges: "PageList") -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:
     page_range = []
-    clear_range: List = []
+    clear_range = []
     if ranges.page_range:
         page_range = [{'start': b.start, 'end': b.end} for b in ranges.page_range]
     if ranges.clear_range:

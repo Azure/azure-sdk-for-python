@@ -418,8 +418,7 @@ class ContainerProperties(DictMixin):
     last_modified: "datetime"
     """A datetime object representing the last time the container was modified."""
     etag: str
-    """The ETag contains a value that you can use to perform operations
-        conditionally."""
+    """The ETag contains a value that you can use to perform operations conditionally."""
     lease: "LeaseProperties"
     """Stores all the lease information for the container."""
     public_access: Optional[str]
@@ -435,8 +434,7 @@ class ContainerProperties(DictMixin):
             This was introduced in API version '2020-10-02'.
     """
     metadata: Dict[str, Any]
-    """A dict with name-value pairs to associate with the
-        container as metadata."""
+    """A dict with name-value pairs to associate with the container as metadata."""
     encryption_scope: Optional["ContainerEncryptionScope"]
     """The default encryption scope configuration for the container."""
     deleted: Optional[bool]
@@ -488,8 +486,7 @@ class ContainerPropertiesPaged(PageIterator):
     :param Callable command: Function to retrieve the next page of items.
     :param Optional[str] prefix: Filters the results to return only containers whose names
         begin with the specified prefix.
-    :param Optional[int] results_per_page: The maximum number of container names to retrieve per
-        call.
+    :param Optional[int] results_per_page: The maximum number of container names to retrieve per call.
     :param Optional[str] continuation_token: An opaque continuation token.
     """
 
@@ -762,6 +759,7 @@ class BlobBlock(DictMixin):
     """
     block_id: str
     state: BlockState
+    size: Optional[int]
 
     def __init__(self, block_id: str, state: BlockState = BlockState.LATEST) -> None:
         self.id = block_id
@@ -1011,12 +1009,12 @@ class AccessPolicy(GenAccessPolicy):
         be UTC.
     :paramtype start: Optional[Union[str, datetime]]
     """
-    permission: Optional[Union[ContainerSasPermissions, str]]  #type: ignore [assignment]
+    permission: Optional[Union[ContainerSasPermissions, str]]  # type: ignore [assignment]
     """The permissions associated with the shared access signature. The user is restricted to
         operations allowed by the permissions."""
-    expiry: Optional[Union["datetime", str]]  #type: ignore [assignment]
+    expiry: Optional[Union["datetime", str]]  # type: ignore [assignment]
     """The time at which the shared access signature becomes invalid."""
-    start: Optional[Union["datetime", str]]  #type: ignore [assignment]
+    start: Optional[Union["datetime", str]]  # type: ignore [assignment]
     """The time at which the shared access signature becomes valid."""
     def __init__(
         self, permission: Optional[Union["ContainerSasPermissions", str]] = None,
@@ -1271,7 +1269,7 @@ class ObjectReplicationPolicy(DictMixin):
 
     def __init__(self, **kwargs: Any) -> None:
         self.policy_id = kwargs.pop('policy_id', None)  # type: ignore [assignment]
-        self.rules = kwargs.pop('rules', None)  # type: ignore [assignment]
+        self.rules = kwargs.pop('rules', [])
 
 
 class BlobProperties(DictMixin):

@@ -411,7 +411,7 @@ def generate_container_sas(
     policy_id: Optional[str] = None,
     ip: Optional[str] = None,
     **kwargs: Any
-) -> Any:
+) -> str:
     """Generates a shared access signature for a container.
 
     Use the returned signature with the credential parameter of any BlobServiceClient,
@@ -532,7 +532,7 @@ def generate_blob_sas(
     policy_id: Optional[str] = None,
     ip: Optional[str] = None,
     **kwargs: Any
-) -> Any:
+) -> str:
     """Generates a shared access signature for a blob.
 
     Use the returned signature with the credential parameter of any BlobServiceClient,

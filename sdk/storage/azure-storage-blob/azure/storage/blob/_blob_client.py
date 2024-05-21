@@ -5,14 +5,13 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines, docstring-keyword-should-match-keyword-only
 
+import warnings
 from datetime import datetime
 from functools import partial
 from typing import (
     Any, AnyStr, cast, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
-import warnings
-
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
@@ -431,7 +430,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     @distributed_trace
     def upload_blob(
-        self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        self, data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
         blob_type: Union[str, BlobType] = BlobType.BLOCKBLOB,
         length: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,

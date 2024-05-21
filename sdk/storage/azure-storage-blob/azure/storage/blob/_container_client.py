@@ -5,16 +5,15 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines, docstring-keyword-should-match-keyword-only
 
-from datetime import datetime
 import functools
+import warnings
+from datetime import datetime
 from typing import (
     Any, AnyStr, cast, Dict, List, IO, Iterable, Iterator, Optional, overload, Union,
     TYPE_CHECKING
 )
-from urllib.parse import urlparse, unquote
-import warnings
-
 from typing_extensions import Self
+from urllib.parse import unquote, urlparse
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
@@ -740,7 +739,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: Container-updated property dict (Etag and last modified).
-        :rtype: dict[str, str or datetime]
+        :rtype: dict[str, str or ~datetime.datetime]
 
         .. admonition:: Example:
 
@@ -881,7 +880,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
     def walk_blobs(
         self, name_starts_with: Optional[str] = None,
         include: Optional[Union[List[str], str]] = None,
-        delimiter: str ="/",
+        delimiter: str = "/",
         **kwargs: Any
     ) -> ItemPaged[BlobProperties]:
         """Returns a generator to list the blobs under the specified container.

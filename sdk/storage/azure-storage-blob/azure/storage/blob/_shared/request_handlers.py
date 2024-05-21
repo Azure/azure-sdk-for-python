@@ -4,14 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, Optional
-
+import isodate
 import logging
-from os import fstat
 import stat
 from io import (SEEK_END, SEEK_SET, UnsupportedOperation)
-
-import isodate
+from os import fstat
+from typing import Dict, Optional
 
 
 _LOGGER = logging.getLogger(__name__)

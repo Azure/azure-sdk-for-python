@@ -13,10 +13,10 @@ from itertools import islice
 from math import ceil
 from typing import AsyncGenerator, Union
 
-from . import encode_base64, url_quote
+from .import encode_base64, url_quote
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
-from .uploads import SubStream, IterStreamer  # pylint: disable=unused-import
+from .uploads import SubStream
 
 
 async def _async_parallel_uploads(uploader, pending, running):

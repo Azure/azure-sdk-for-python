@@ -134,7 +134,7 @@ def _encode_source_url(source_url: str) -> str:
     return '?'.join(result)
 
 def _upload_blob_options(  # pylint:disable=too-many-statements
-    data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+    data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[bytes]],
     blob_type: Union[str, BlobType],
     length: Optional[int],
     metadata: Optional[Dict[str, str]],
@@ -1112,7 +1112,7 @@ def _get_blob_tags_options(version_id: Optional[str], snapshot: Optional[str], *
         'cls': return_headers_and_deserialized}
     return options
 
-def _get_page_ranges_options( # type: ignore
+def _get_page_ranges_options(
     snapshot: Optional[str],
     offset: Optional[int] = None,
     length: Optional[int] = None,
@@ -1437,7 +1437,7 @@ def _append_block_options(
     :rtype: Dict[str, Any]
     """
     if isinstance(data, str):
-        data = data.encode(kwargs.pop('encoding', 'UTF-8')) # type: ignore
+        data = data.encode(kwargs.pop('encoding', 'UTF-8'))
     if length is None:
         length = get_length(data)
         if length is None:

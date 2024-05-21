@@ -53,7 +53,7 @@ class BlobPropertiesPaged(PageIterator):
     options include "primary" and "secondary"."""
     current_page: Optional[List[BlobProperties]]
     """The current page of listed results."""
-    container: Optional[str]
+    container: str
     """The container that the blobs are listed from."""
     delimiter: Optional[str]
     """A delimiting character used for hierarchy listing."""
@@ -62,7 +62,7 @@ class BlobPropertiesPaged(PageIterator):
 
     def __init__(
         self, command: Callable,
-        container: Optional[str] = None,
+        container: str,
         prefix: Optional[str] = None,
         results_per_page: Optional[int] = None,
         continuation_token: Optional[str] = None,
@@ -111,7 +111,7 @@ class BlobPropertiesPaged(PageIterator):
             return item
         if isinstance(item, BlobItemInternal):
             blob = get_blob_properties_from_generated_code(item)  # pylint: disable=protected-access
-            blob.container = self.container  # type: ignore [assignment]
+            blob.container = self.container
             return blob
         return item
 
@@ -278,12 +278,12 @@ class FilteredBlobPaged(PageIterator):
     """The current page of listed results."""
     command: Callable
     """Function to retrieve the next page of items."""
-    container: Optional[str]
+    container: str
     """The name of the container."""
 
     def __init__(
         self, command: Callable,
-        container: Optional[str] = None,
+        container: str,
         results_per_page: Optional[int] = None,
         continuation_token: Optional[str] = None,
         location_mode: Optional[str] = None
