@@ -376,6 +376,10 @@
             "type": "string",
             "value": "[variables('txtCustomEndpointValue')]"
         },
+        "TRANSLATION_TEXT_CUSTOM_APIKEY": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('docTranslationBaseName')), variables('docTranslationApiVersion')).key1]"
+        },
         "TRANSLATION_TEXT_REGION": {
             "type": "string",
             "value": "[variables('txtRegionValue')]"

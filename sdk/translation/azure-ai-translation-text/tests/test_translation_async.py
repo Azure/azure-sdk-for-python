@@ -283,7 +283,7 @@ class TestTranslationAsync(TextTranslationTest):
     @recorded_by_proxy_async
     async def test_custom_endpoint(self, **kwargs):
         endpoint = kwargs.get("translation_text_custom_endpoint")
-        apikey = kwargs.get("translation_text_apikey")
+        apikey = kwargs.get("translation_text_custom_apikey")
         region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
