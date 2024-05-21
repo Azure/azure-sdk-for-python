@@ -10,11 +10,9 @@ from ._models import ErrorAdditionalInfo
 from ._models import ErrorDetail
 from ._models import ErrorResponse
 from ._models import ExtendedZone
-from ._models import ExtendedZoneListResult
 from ._models import ExtendedZoneProperties
 from ._models import Operation
 from ._models import OperationDisplay
-from ._models import PagedOperation
 from ._models import ProxyResource
 from ._models import Resource
 from ._models import SystemData
@@ -33,11 +31,9 @@ __all__ = [
     "ErrorDetail",
     "ErrorResponse",
     "ExtendedZone",
-    "ExtendedZoneListResult",
     "ExtendedZoneProperties",
     "Operation",
     "OperationDisplay",
-    "PagedOperation",
     "ProxyResource",
     "Resource",
     "SystemData",

@@ -186,41 +186,6 @@ class ExtendedZone(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ExtendedZoneListResult(_model_base.Model):
-    """The response of a ExtendedZone list operation.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: The ExtendedZone items on this page. Required.
-    :vartype value: list[~azure.mgmt.edgezones.models.ExtendedZone]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: List["_models.ExtendedZone"] = rest_field()
-    """The ExtendedZone items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.ExtendedZone"],
-        next_link: Optional[str] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class ExtendedZoneProperties(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     """The properties of an Extended Zone resource.
 
@@ -382,42 +347,6 @@ class OperationDisplay(_model_base.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class PagedOperation(_model_base.Model):
-    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link
-    to get the next set of results.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: The Operation items on this page. Required.
-    :vartype value: list[~azure.mgmt.edgezones.models.Operation]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: List["_models.Operation"] = rest_field()
-    """The Operation items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.Operation"],
-        next_link: Optional[str] = None,
     ): ...
 
     @overload
