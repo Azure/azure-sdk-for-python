@@ -316,7 +316,7 @@ class TestTranslationAsync(TextTranslationTest):
         assert response[0].detected_language.language == "en"
         assert response[0].detected_language.score == 1
 
-    @pytest.mark.live_test_only
+    @pytest.mark.skip
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_translate_aad(self, **kwargs):
