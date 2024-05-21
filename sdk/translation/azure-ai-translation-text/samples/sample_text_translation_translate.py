@@ -41,11 +41,11 @@ text_translator = sample_text_translation_client.create_text_translation_client_
 def get_text_translation():
     # [START get_text_translation]
     try:
-        from_parameter = "en"
+        from_language = "en"
         to = ["cs"]
         input_text_elements = ["This is a test"]
 
-        response = text_translator.translate(body=input_text_elements, to=to, from_parameter=from_parameter)
+        response = text_translator.translate(body=input_text_elements, to=to, from_language=from_language)
         translation = response[0] if response else None
 
         if translation:
@@ -99,7 +99,7 @@ def get_text_translation_with_transliteration():
             body=input_text_elements,
             to=to,
             from_script=from_script,
-            from_parameter=from_language,
+            from_language=from_language,
             to_script=to_script,
         )
         translation = response[0] if response else None
@@ -204,7 +204,7 @@ def get_text_translation_exclude():
     # [START get_text_translation_exclude]
     try:
         text_type = TextType.HTML
-        from_parameter = "en"
+        from_language = "en"
         to = ["cs"]
         input_text_elements = [
             '<div class="notranslate">This will not be translated.</div><div>This will be translated. </div>'
@@ -213,7 +213,7 @@ def get_text_translation_exclude():
         response = text_translator.translate(
             body=input_text_elements,
             to=to,
-            from_parameter=from_parameter,
+            from_language=from_language,
             text_type=text_type,
         )
         translation = response[0] if response else None
@@ -232,13 +232,13 @@ def get_text_translation_exclude():
 def get_text_translation_entity():
     # [START get_text_translation_entity]
     try:
-        from_parameter = "en"
+        from_language = "en"
         to = ["cs"]
         input_text_elements = [
             'The word <mstrans:dictionary translation="wordomatic">wordomatic</mstrans:dictionary> is a dictionary entry.'
         ]
 
-        response = text_translator.translate(body=input_text_elements, to=to, from_parameter=from_parameter)
+        response = text_translator.translate(body=input_text_elements, to=to, from_language=from_language)
         translation = response[0] if response else None
 
         if translation:
