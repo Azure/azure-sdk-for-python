@@ -131,22 +131,22 @@ class TextTranslationClient(ServiceClientGenerated):
     def __init__(
         self,
         *,
-        credential: AzureKeyCredential = None,
+        credential: AsyncTokenCredential = None,
         region: Optional[str] = None,
         endpoint: Optional[str] = None,
+        resource_id: Optional[str] = None,
+        scopes: Optional[str] = None,
         api_version="3.0",
         **kwargs
     ): ...
 
     @overload
-    def __init__( # pyright: ignore[reportOverlappingOverload]
+    def __init__(
         self,
         *,
-        credential: AsyncTokenCredential = None,
+        credential: AzureKeyCredential = None,
         region: Optional[str] = None,
-        resource_id: Optional[str] = None,
         endpoint: Optional[str] = None,
-        scopes: Optional[str] = None,
         api_version="3.0",
         **kwargs
     ): ...
