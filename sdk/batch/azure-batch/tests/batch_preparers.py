@@ -11,9 +11,7 @@ import azure.batch
 import azure.batch.models
 from azure.core.credentials import AzureNamedKeyCredential
 
-from azure_devtools.scenario_tests.exceptions import AzureTestError
-
-from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer, FakeResource
+from devtools_testutils import AzureMgmtPreparer, AzureTestError, ResourceGroupPreparer, FakeResource
 from devtools_testutils.fake_credentials import BATCH_TEST_PASSWORD
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 
@@ -27,7 +25,7 @@ class AccountPreparer(AzureMgmtPreparer):
     def __init__(
         self,
         name_prefix="batch",
-        location="westus",
+        location="eastus",
         parameter_name=BATCH_ACCOUNT_PARAM,
         resource_group_parameter_name=RESOURCE_GROUP_PARAM,
         disable_recording=True,
@@ -289,7 +287,7 @@ class JobPreparer(AzureMgmtPreparer):
                 pool_lifetime_option=azure.batch.models.PoolLifetimeOption.job,
                 pool=azure.batch.models.PoolSpecification(
                     vm_size="small",
-                    cloud_service_configuration=azure.batch.models.CloudServiceConfiguration(os_family="5"),
+                    vm_configuration=azure.batch.models.VirtualMachineConfiguration(os_family="5"),
                 ),
             )
             return azure.batch.models.PoolInformation(auto_pool_specification=auto_pool)
