@@ -13,7 +13,6 @@ from .._legacy.aio import EventGridPublisherClient as GAEventGridPublisherClient
 from ._client import EventGridPublisherClient as InternalEventGridPublisherClient, EventGridConsumerClient as InternalEventGridConsumerClient
 from .._serialization import Deserializer, Serializer
 from .._patch import (
-    ClientLevel,
     DEFAULT_BASIC_API_VERSION,
     DEFAULT_STANDARD_API_VERSION,
 )
