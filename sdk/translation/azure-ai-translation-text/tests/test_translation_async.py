@@ -15,9 +15,9 @@ class TestTranslationAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_translate(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
         from_parameter = "es"
@@ -34,9 +34,9 @@ class TestTranslationAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_autodetect(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
         to = ["cs"]
@@ -54,9 +54,9 @@ class TestTranslationAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_no_translate_tag(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
         from_parameter = "zh-chs"
@@ -77,9 +77,9 @@ class TestTranslationAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_dictionary_tag(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
         from_parameter = "en"
@@ -98,9 +98,9 @@ class TestTranslationAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_transliteration(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
         from_parameter = "ar"
@@ -124,9 +124,9 @@ class TestTranslationAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_from_to_latin(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
         from_parameter = "hi"
@@ -149,9 +149,9 @@ class TestTranslationAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_multiple_input(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
         to = ["cs"]
@@ -178,9 +178,9 @@ class TestTranslationAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_multiple_target_languages(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
         to = ["cs", "es", "de"]
@@ -199,9 +199,9 @@ class TestTranslationAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_different_texttypes(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
         to = ["cs"]
@@ -217,9 +217,9 @@ class TestTranslationAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_profanity(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
         to = ["zh-cn"]
@@ -241,9 +241,9 @@ class TestTranslationAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_alignment(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
         to = ["cs"]
@@ -260,9 +260,9 @@ class TestTranslationAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_sentence_length(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
         to = ["fr"]
@@ -282,9 +282,9 @@ class TestTranslationAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_custom_endpoint(self, **kwargs):
-        endpoint = kwargs.get("text_translation_custom_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_custom_endpoint")
+        apikey = kwargs.get("translation_text_custom_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
         to = ["fr"]
@@ -301,9 +301,9 @@ class TestTranslationAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_token(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_async_client_token(endpoint, apikey, region)
 
         to = ["cs"]
@@ -316,12 +316,12 @@ class TestTranslationAsync(TextTranslationTest):
         assert response[0].detected_language.language == "en"
         assert response[0].detected_language.score == 1
 
-    @pytest.mark.live_test_only
+    @pytest.mark.skip
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_translate_aad(self, **kwargs):
         aadRegion = "westus2"
-        aadResourceId = kwargs.get("text_translation_aadresourceid")
+        aadResourceId = kwargs.get("translation_text_resource_id")
         token_credential = self.get_mt_credential(True)
         client = self.create_async_text_translation_client_with_aad(token_credential, aadRegion, aadResourceId)
 
