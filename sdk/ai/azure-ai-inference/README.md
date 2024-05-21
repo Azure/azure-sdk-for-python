@@ -1,8 +1,6 @@
 # Azure model inference client library for Python
 
-<!-- TODO: link to this once published: https://review.learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api?branch=release-build-azure-ai-studio&tabs=azure-studio -->
-
-The client Library allows you to do inference using AI models you deployed to Azure. It supports both serverless endpoints (aka "model as a service" (MaaS) or "pay as you go") and selfhosted endpoints (aka "model as a platform" (MaaP) or "real-time endpoints"). The client library makes services calls using REST AP version `2024-05-01-preview` [specificed here](https://www.microsoft.com/). For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
+The client Library allows you to do inference using AI models you deployed to Azure. It supports both Serverless Endpoints (aka "model as a service" (MaaS) or "pay as you go") and Selfhosted Endpoints (aka "model as a platform" (MaaP) or "real-time endpoints"). The client library makes services calls using REST AP version `2024-05-01-preview`, as documented in [Azure AI Model Inference API](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api). For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
 
 Use the model inference client library to:
 
@@ -10,13 +8,14 @@ Use the model inference client library to:
 * Get information about the model
 * Do chat completions
 * Get text embeddings
+* Get image embeddings
 
 Note that for inference using OpenAI models hosted on Azure you should be using the [OpenAI Python client library](https://github.com/openai/openai-python) instead of this client.
 
-[Product documentation](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview)
+[Product documentation](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api)
 | [Samples](https://aka.ms/azsdk/model-client/samples/python)
-| [API reference documentation](https://aka.ms/azsdk/model-client/ref-docs/python)
-| [Package (Pypi)](https://aka.ms/azsdk/model-client/package/pypi)
+| [API reference documentation](https://aka.ms/azsdk/azure-ai-inference/ref-docs/python)
+| [Package (Pypi)](https://aka.ms/azsdk/azure-ai-inference/package/pypi)
 | [SDK source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/azure/ai/inference)
 
 ## Getting started
@@ -82,12 +81,11 @@ client = ChatCompletionsClient(
 
 ## Key concepts
 
-### AI Model information
+### Loading the client and getting AI model information
 
 TODO: Add overview and link to explain AI model info
 
 The operation to get AI model information targets the URL route `/info` on the provided endpoint.
-
 
 ### Chat Completions
 
@@ -107,17 +105,13 @@ TODO: Add overview and link to explain image embeddings.
 
 Embeddings operations target the URL route `images/embeddings` on the provided endpoint.
 
-### Loading a client
-
-TODO
-
 ## Examples
 
 In the following sections you will find simple examples of:
 
 * [Chat completions](#chat-completions-example)
 * [Streaming chat completions](#streaming-chat-completions-example)
-* [Text Embeddings](#embeddings-example)
+* [Text Embeddings](#text-embeddings-example)
 * [Image Embeddings](#image-embeddings-example)
 * [Get model information](#get-model-information-example)
 * [Loading a client using `load_client` function](#loading-a-client-using-load_client-function)
@@ -169,6 +163,7 @@ from azure.core.credentials import AzureKeyCredential
 client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
 response = client.complete(
+    stream=True,
     messages=[
         SystemMessage(content="You are a helpful assistant."),
         UserMessage(content="Give me 5 good reasons why I should exercise every day."),
@@ -178,7 +173,7 @@ response = client.complete(
 for update in response:
     print(update.choices[0].delta.content or "", end="")
 
-response.close()
+client.close()
 ```
 
 <!-- END SNIPPET -->
