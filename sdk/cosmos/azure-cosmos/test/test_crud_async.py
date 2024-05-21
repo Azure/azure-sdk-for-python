@@ -187,7 +187,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
         created_properties = await created_collection.read()
         assert 'consistent' == created_properties['indexingPolicy']['indexingMode']
-        assert PartitionKey(path='/pk', kind='Hash') == created_collection._properties['partitionKey']
+        assert PartitionKey(path='/pk', kind='Hash') == created_properties['partitionKey']
 
         # read collections after creation
         collections = [collection async for collection in created_db.list_containers()]
