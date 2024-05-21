@@ -281,7 +281,6 @@ class CodeOperations(_ScopeDependentOperations):
                 self._datastore_operation,
                 # always use WORKSPACE_BLOB_STORE
                 name=_get_datastore_name(),
-                credential=self._service_client._config.credential,
                 container_name=m.group("container_name"),
             )
         storage_client = get_storage_client(**datastore_info)

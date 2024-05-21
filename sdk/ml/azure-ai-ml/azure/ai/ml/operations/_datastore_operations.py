@@ -93,9 +93,10 @@ class DatastoreOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(ops_logger, "Datastore.ListSecrets", ActivityType.PUBLICAPI)
-    def _list_secrets(self, name: str) -> DatastoreSecrets:
+    def _list_secrets(self, name: str, expirable_secret: bool) -> DatastoreSecrets:
         return self._operation.list_secrets(
             name=name,
+            expirable_secret=expirable_secret,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
             **self._init_kwargs,
