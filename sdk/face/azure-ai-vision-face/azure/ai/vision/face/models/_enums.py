@@ -213,10 +213,21 @@ class LivenessModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class LivenessOperationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The operation mode for the liveness modal."""
+    """The liveness operation mode to drive the client’s end-user experience."""
 
     PASSIVE = "Passive"
-    """The operation mode for the liveness modal."""
+    """Utilizes a passive liveness technique that requires no additional actions from the user.
+    Requires normal indoor lighting and high screen brightness for optimal performance. And thus,
+    this mode has a narrow operational envelope and will not be suitable for scenarios that
+    requires the end-user’s to be in bright lighting conditions. Note: this is the only supported
+    mode for the Mobile (iOS and Android) solution."""
+    PASSIVE_ACTIVE = "PassiveActive"
+    """This mode utilizes a hybrid passive or active liveness technique that necessitates user
+    cooperation. It is optimized to require active motion only under suboptimal lighting
+    conditions. Unlike the passive mode, this mode has no lighting restrictions, and thus offering
+    a broader operational envelope. This mode is preferable on Web based solutions due to the lack
+    of automatic screen brightness control available on browsers which hinders the Passive mode’s
+    operational envelope on Web based solutions."""
 
 
 class MaskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -65,6 +65,7 @@ class DetectFaces:
                 recognition_model=FaceRecognitionModel.RECOGNITION_04,
                 return_face_id=True,
                 return_face_attributes=[
+                    FaceAttributeTypeDetection03.BLUR,
                     FaceAttributeTypeDetection03.HEAD_POSE,
                     FaceAttributeTypeDetection03.MASK,
                     FaceAttributeTypeRecognition04.QUALITY_FOR_RECOGNITION,
