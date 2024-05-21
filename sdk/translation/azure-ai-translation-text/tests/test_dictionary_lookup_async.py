@@ -17,13 +17,13 @@ class TestDictionaryLookupAsync(TextTranslationTest):
         region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
-        from_parameter = "en"
+        from_language = "en"
         to = "es"
         input_text_elements = ["fly"]
 
         async with client:
             response = await client.lookup_dictionary_entries(
-                body=input_text_elements, from_parameter=from_parameter, to=to
+                body=input_text_elements, from_language=from_language, to=to
             )
         assert response is not None
         assert response[0].normalized_source == "fly"
@@ -37,13 +37,13 @@ class TestDictionaryLookupAsync(TextTranslationTest):
         region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
-        from_parameter = "en"
+        from_language = "en"
         to = "es"
         input_text_elements = ["fly", "fox"]
 
         async with client:
             response = await client.lookup_dictionary_entries(
-                body=input_text_elements, from_parameter=from_parameter, to=to
+                body=input_text_elements, from_language=from_language, to=to
             )
         assert response is not None
         assert len(response) == 2

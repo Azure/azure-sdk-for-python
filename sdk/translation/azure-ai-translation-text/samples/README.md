@@ -203,11 +203,11 @@ Translate text from known source language to target language.
 
 ```python
 try:
-    from_parameter = "en"
+    from_language = "en"
     to = ["cs"]
     input_text_elements = ["This is a test"]
 
-    response = text_translator.translate(body=input_text_elements, to=to, from_parameter=from_parameter)
+    response = text_translator.translate(body=input_text_elements, to=to, from_language=from_language)
     translation = response[0] if response else None
 
     if translation:
@@ -277,7 +277,7 @@ try:
         body=input_text_elements,
         to=to,
         from_script=from_script,
-        from_parameter=from_language,
+        from_language=from_language,
         to_script=to_script,
     )
     translation = response[0] if response else None
@@ -406,7 +406,7 @@ It's sometimes useful to exclude specific content from translation. You can use 
 ```python
 try:
     text_type = TextType.HTML
-    from_parameter = "en"
+    from_language = "en"
     to = ["cs"]
     input_text_elements = [
         '<div class="notranslate">This will not be translated.</div><div>This will be translated. </div>'
@@ -415,7 +415,7 @@ try:
     response = text_translator.translate(
         body=input_text_elements,
         to=to,
-        from_parameter=from_parameter,
+        from_language=from_language,
         text_type=text_type,
     )
     translation = response[0] if response else None
@@ -442,13 +442,13 @@ If you already know the translation you want to apply to a word or a phrase, you
 
 ```python
 try:
-    from_parameter = "en"
+    from_language = "en"
     to = ["cs"]
     input_text_elements = [
         'The word <mstrans:dictionary translation="wordomatic">wordomatic</mstrans:dictionary> is a dictionary entry.'
     ]
 
-    response = text_translator.translate(body=input_text_elements, to=to, from_parameter=from_parameter)
+    response = text_translator.translate(body=input_text_elements, to=to, from_language=from_language)
     translation = response[0] if response else None
 
     if translation:
@@ -657,12 +657,12 @@ When the input language is known, you can provide those to the service call.
 
 ```python
 try:
-    from_parameter = "zh-Hans"
+    from_language = "zh-Hans"
     source_script = "Latn"
     input_text_elements = ["zhè shì gè cè shì。"]
 
     response = text_translator.find_sentence_boundaries(
-        body=input_text_elements, language=from_parameter, script=source_script
+        body=input_text_elements, language=from_language, script=source_script
     )
     sentence_boundaries = response[0] if response else None
 
@@ -726,12 +726,12 @@ Returns equivalent words for the source term in the target language.
 
 ```python
 try:
-    from_parameter = "en"
+    from_language = "en"
     to = "es"
     input_text_elements = ["fly"]
 
     response = text_translator.lookup_dictionary_entries(
-        body=input_text_elements, from_parameter=from_parameter, to=to
+        body=input_text_elements, from_language=from_language, to=to
     )
     dictionary_entry = response[0] if response else None
 
@@ -758,12 +758,12 @@ Returns grammatical structure and context examples for the source term and targe
 
 ```python
 try:
-    from_parameter = "en"
+    from_language = "en"
     to = "es"
     input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
 
     response = text_translator.lookup_dictionary_examples(
-        body=input_text_elements, from_parameter=from_parameter, to=to
+        body=input_text_elements, from_language=from_language, to=to
     )
     dictionary_entry = response[0] if response else None
 

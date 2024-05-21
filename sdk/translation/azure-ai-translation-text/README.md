@@ -255,12 +255,12 @@ Returns equivalent words for the source term in the target language.
 
 ```python
 try:
-    from_parameter = "en"
+    from_language = "en"
     to = "es"
     input_text_elements = ["fly"]
 
     response = text_translator.lookup_dictionary_entries(
-        body=input_text_elements, from_parameter=from_parameter, to=to
+        body=input_text_elements, from_language=from_language, to=to
     )
     dictionary_entry = response[0] if response else None
 
@@ -291,12 +291,12 @@ Returns grammatical structure and context examples for the source term and targe
 
 ```python
 try:
-    from_parameter = "en"
+    from_language = "en"
     to = "es"
     input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
 
     response = text_translator.lookup_dictionary_examples(
-        body=input_text_elements, from_parameter=from_parameter, to=to
+        body=input_text_elements, from_language=from_language, to=to
     )
     dictionary_entry = response[0] if response else None
 
