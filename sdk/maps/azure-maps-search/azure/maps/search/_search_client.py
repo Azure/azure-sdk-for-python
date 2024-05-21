@@ -178,33 +178,12 @@ class MapsSearchClient(MapsSearchClientBase):
         408 response) if the request takes longer than 60 seconds. The number of batch items is limited
         to **100** for this API.
 
-        .. code-block::
-
-           POST https://atlas.microsoft.com/geocode:batch?api-version=2023-06-01
-
         POST Body for Batch Request
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
         To send the *geocoding* queries you will use a ``POST`` request where the request body will
         contain the ``batchItems`` array in ``json`` format and the ``Content-Type`` header will be set
         to ``application/json``. Here's a sample request body containing 2 *geocoding* queries:
-
-        .. code-block::
-
-           {
-             "batchItems": [
-               {
-                 "addressLine": "One, Microsoft Way, Redmond, WA 98052",
-                 "top": 2
-               },
-               {
-                 "addressLine": "Pike Pl",
-                 "adminDistrict": "WA",
-                 "locality": "Seattle",
-                 "top": 3
-               }
-             ]
-           }
 
         A *geocoding* batchItem object can accept any of the supported *geocoding* `URI parameters
         </rest/api/maps/search/get-geocoding#uri-parameters>`__.
@@ -323,10 +302,6 @@ class MapsSearchClient(MapsSearchClientBase):
         408 response) if the request takes longer than 60 seconds. The number of batch items is limited
         to **100** for this API.
 
-        .. code-block::
-
-           POST https://atlas.microsoft.com/reverseGeocode:batch?api-version=2023-06-01
-
         POST Body for Batch Request
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -334,20 +309,6 @@ class MapsSearchClient(MapsSearchClientBase):
         will contain the ``batchItems`` array in ``json`` format and the ``Content-Type`` header will
         be set to ``application/json``. Here's a sample request body containing 2 *reverse geocoding*
         queries:
-
-        .. code-block::
-
-           {
-             "batchItems": [
-               {
-                 "coordinates": [-122.128275, 47.639429],
-                 "resultTypes": ["Address", "PopulatedPlace"]
-               },
-               {
-                 "coordinates": [-122.341979399674, 47.6095253501216]
-               }
-             ]
-           }
 
         A *reverse geocoding* batchItem object can accept any of the supported *reverse geocoding* `URI
         parameters </rest/api/maps/search/get-reverse-geocoding#uri-parameters>`__.
