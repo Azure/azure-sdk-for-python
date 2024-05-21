@@ -31,10 +31,10 @@ from ._models import ToolMessage
 from ._models import UserMessage
 
 from ._enums import CapacityType
+from ._enums import CompletionsFinishReason
 from ._enums import ChatCompletionsResponseFormat
 from ._enums import ChatCompletionsToolSelectionPreset
 from ._enums import ChatRole
-from ._enums import CompletionsFinishReason
 from ._enums import EmbeddingEncodingFormat
 from ._enums import EmbeddingInputType
 from ._enums import ModelType
@@ -47,6 +47,7 @@ __all__ = [
     "ChatChoice",
     "ChatChoiceUpdate",
     "ChatCompletions",
+    "CompletionsFinishReason",
     "ChatCompletionsFunctionToolCall",
     "ChatCompletionsFunctionToolDefinition",
     "ChatCompletionsNamedToolSelection",
@@ -70,7 +71,6 @@ __all__ = [
     "ChatCompletionsResponseFormat",
     "ChatCompletionsToolSelectionPreset",
     "ChatRole",
-    "CompletionsFinishReason",
     "EmbeddingEncodingFormat",
     "EmbeddingInputType",
     "ModelType",

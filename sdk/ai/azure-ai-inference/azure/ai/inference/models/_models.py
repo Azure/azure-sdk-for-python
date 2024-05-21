@@ -127,7 +127,7 @@ class ChatChoice(_model_base.Model):
 
     index: int = rest_field()
     """The ordered index associated with this chat completions choice. Required."""
-    finish_reason: Union[str, "_models.CompletionsFinishReason"] = rest_field()
+    finish_reason: Union[str, "_models._enums.CompletionsFinishReason"] = rest_field()
     """The reason that this chat completions choice completed its generated. Required. Known values
      are: \"stop\", \"length\", \"content_filter\", and \"tool_calls\"."""
     message: "_models.ChatResponseMessage" = rest_field()
@@ -138,7 +138,7 @@ class ChatChoice(_model_base.Model):
         self,
         *,
         index: int,
-        finish_reason: Union[str, "_models.CompletionsFinishReason"],
+        finish_reason: Union[str, "_models._enums.CompletionsFinishReason"],
         message: "_models.ChatResponseMessage",
     ): ...
 
@@ -172,7 +172,7 @@ class ChatChoiceUpdate(_model_base.Model):
 
     index: int = rest_field()
     """The ordered index associated with this chat completions choice. Required."""
-    finish_reason: Union[str, "_models.CompletionsFinishReason"] = rest_field()
+    finish_reason: Union[str, "_models._enums.CompletionsFinishReason"] = rest_field()
     """The reason that this chat completions choice completed its generated. Required. Known values
      are: \"stop\", \"length\", \"content_filter\", and \"tool_calls\"."""
     delta: "_models.ChatResponseMessage" = rest_field()
@@ -183,7 +183,7 @@ class ChatChoiceUpdate(_model_base.Model):
         self,
         *,
         index: int,
-        finish_reason: Union[str, "_models.CompletionsFinishReason"],
+        finish_reason: Union[str, "_models._enums.CompletionsFinishReason"],
         delta: "_models.ChatResponseMessage",
     ): ...
 

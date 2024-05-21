@@ -39,7 +39,8 @@ async def sample_chat_completions_streaming_async():
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Do a single streaming chat completion operation. Start the operation and get a Future object.
-    response = await client.streaming_complete(
+    response = await client.complete(
+        stream=True,
         messages=[
             SystemMessage(content="You are a helpful assistant."),
             UserMessage(content="Give me 5 good reasons why I should exercise every day."),

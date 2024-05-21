@@ -117,9 +117,7 @@ def sample_chat_completions_with_tools():
             print(f"Function response = {function_response}")
 
             # Provide the tool response to the model, by appending it to the chat history
-            messages.append(
-                ToolMessage(tool_call_id=tool_call.id, content=function_response)
-            )
+            messages.append(ToolMessage(tool_call_id=tool_call.id, content=function_response))
 
             # With the additional tools information on hand, get another response from the model
             response = client.complete(messages=messages, tools=[flight_info])

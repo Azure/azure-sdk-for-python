@@ -41,7 +41,8 @@ class TestModelClient(ModelClientTestBase):
     @recorded_by_proxy
     def test_chat_completions_streaming_error_free(self, **kwargs):
         client = self._create_chat_client(**kwargs)
-        result = client.streaming_complete(
+        result = client.complete(
+            stream=True,
             messages=[
                 sdk.models.SystemMessage(content="You are a helpful assistant."),
                 sdk.models.UserMessage(content="Give me 3 good reasons why I should exercise every day."),

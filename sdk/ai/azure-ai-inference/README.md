@@ -168,7 +168,7 @@ from azure.core.credentials import AzureKeyCredential
 
 client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-response = client.streaming_complete(
+response = client.complete(
     messages=[
         SystemMessage(content="You are a helpful assistant."),
         UserMessage(content="Give me 5 good reasons why I should exercise every day."),

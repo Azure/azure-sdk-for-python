@@ -11,7 +11,7 @@ import logging
 import sys
 
 from io import IOBase
-from typing import Any, Dict, Union, IO, List, Optional, overload
+from typing import Any, Dict, Union, IO, List, Optional, overload, Type
 from azure.core.pipeline import PipelineResponse
 from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -25,10 +25,15 @@ from azure.core.exceptions import (
     map_error,
 )
 from .. import models as _models
-from .._model_base import SdkJSONEncoder
+from .._model_base import SdkJSONEncoder, _deserialize
 from ._client import ChatCompletionsClient as ChatCompletionsClientGenerated
-from ._client import EmbeddingsClient, ImageEmbeddingsClient
-from .._operations._operations import build_chat_completions_complete_request
+from ._client import EmbeddingsClient as EmbeddingsClientGenerated
+from ._client import ImageEmbeddingsClient as ImageEmbeddingsClientGenerated
+from .._operations._operations import  (
+    build_chat_completions_complete_request,
+    build_embeddings_embedding_request,
+    build_image_embeddings_embedding_request
+)
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -41,7 +46,7 @@ _LOGGER = logging.getLogger(__name__)
 
 async def load_client(
     endpoint: str, credential: AzureKeyCredential, **kwargs: Any
-) -> Union[ChatCompletionsClientGenerated, EmbeddingsClient, ImageEmbeddingsClient]:
+) -> Union[ChatCompletionsClientGenerated, EmbeddingsClientGenerated, ImageEmbeddingsClientGenerated]:
     client = ChatCompletionsClient(endpoint, credential, **kwargs)  # Pick any of the clients, it does not matter...
     model_info = await client.get_model_info()
     await client.close()
@@ -63,19 +68,19 @@ async def load_client(
 class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
     @overload
-    async def streaming_complete(
+    async def complete(
         self,
         body: JSON,
         *,
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.AsyncStreamingChatCompletions:
+    ) -> Union[_models.AsyncStreamingChatCompletions, _models.ChatCompletions]:
         # pylint: disable=line-too-long
-        """Gets streaming chat completions for the provided chat messages.
+        """Gets chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
-        "completes" provided prompt data. When using this method, the response is streamed
-        back to the client. Iterate over the resulting ~azure.ai.inference.models.AsyncStreamingChatCompletions
+        "completes" provided prompt data. When using this method with `stream=True`, the response is streamed
+        back to the client. Iterate over the resulting ~azure.ai.inference.models.StreamingChatCompletions
         object to get content updates as they arrive.
 
         :param body: Required.
@@ -88,18 +93,19 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.AsyncStreamingChatCompletions
+        :return: ChatCompletions for non-streaming, or AsyncStreamingChatCompletions for streaming.
+        :rtype: ~azure.ai.inference.models.ChatCompletions or ~azure.ai.inference.models.AsyncStreamingChatCompletions
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def streaming_complete(
+    async def complete(
         self,
         *,
         messages: List[_models.ChatRequestMessage],
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
+        hyper_params: Optional[Dict[str, Any]] = None,
         extras: Optional[Dict[str, str]] = None,
         frequency_penalty: Optional[float] = None,
         presence_penalty: Optional[float] = None,
@@ -108,18 +114,19 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         max_tokens: Optional[int] = None,
         response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = None,
         stop: Optional[List[str]] = None,
+        stream: Optional[bool] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
             Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
         ] = None,
         seed: Optional[int] = None,
         **kwargs: Any,
-    ) -> _models.AsyncStreamingChatCompletions:
+    ) -> Union[_models.AsyncStreamingChatCompletions, _models.ChatCompletions]:
         # pylint: disable=line-too-long
-        """Gets streaming chat completions for the provided chat messages.
+        """Gets chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
-        "completes" provided prompt data. When using this method, the response is streamed
-        back to the client. Iterate over the resulting ~azure.ai.inference.models.AsyncStreamingChatCompletions
+        "completes" provided prompt data. When using this method with `stream=True`, the response is streamed
+        back to the client. Iterate over the resulting ~azure.ai.inference.models.StreamingChatCompletions
         object to get content updates as they arrive.
 
         :keyword messages: The collection of context messages associated with this chat completions
@@ -136,6 +143,11 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword hyper_params: Additional, model-specific parameters that are not in the
+         standard request payload. They will be added as-is to the root of the JSON in the request body.
+         How the service handles these hypter parameters depends on the value of the
+         ``unknown-parameters`` request header. Default value is None.
+        :paramtype hyper_params: dict[str, Any]
         :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
          standard request payload.
          They will be passed to the service as-is in the root of the JSON request payload.
@@ -180,6 +192,10 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :keyword stop: A collection of textual sequences that will end completions generation. Default
          value is None.
         :paramtype stop: list[str]
+        :keyword stream: A value indicating whether chat completions should be streamed for this request.
+         Default value is False. If streaming is enabled, the response will be a StreamingChatCompletions.
+         Otherwise the response will be a ChatCompletions.
+        :paramtype stream: bool
         :keyword tools: The available tool definitions that the chat completions request can use,
          including caller-defined functions. Default value is None.
         :paramtype tools: list[~azure.ai.inference.models.ChatCompletionsToolDefinition]
@@ -194,25 +210,25 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
          same seed and parameters should return the same result. Determinism is not guaranteed.".
          Default value is None.
         :paramtype seed: int
-        :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.ChatCompletions
+        :return: ChatCompletions for non-streaming, or AsyncStreamingChatCompletions for streaming.
+        :rtype: ~azure.ai.inference.models.ChatCompletions or ~azure.ai.inference.models.AsyncStreamingChatCompletions
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def streaming_complete(
+    async def complete(
         self,
         body: IO[bytes],
         *,
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.AsyncStreamingChatCompletions:
+    ) -> Union[_models.AsyncStreamingChatCompletions, _models.ChatCompletions]:
         # pylint: disable=line-too-long
-        """Gets streaming chat completions for the provided chat messages.
+        """Gets chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
-        "completes" provided prompt data. When using this method, the response is streamed
-        back to the client. Iterate over the resulting ~azure.ai.inference.models.AsyncStreamingChatCompletions
+        "completes" provided prompt data. When using this method with `stream=True`, the response is streamed
+        back to the client. Iterate over the resulting ~azure.ai.inference.models.StreamingChatCompletions
         object to get content updates as they arrive.
 
         :param body: Required.
@@ -225,18 +241,19 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.ChatCompletions
+        :return: ChatCompletions for non-streaming, or AsyncStreamingChatCompletions for streaming.
+        :rtype: ~azure.ai.inference.models.ChatCompletions or ~azure.ai.inference.models.AsyncStreamingChatCompletions
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def streaming_complete(
+    async def complete(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         messages: List[_models.ChatRequestMessage] = _Unset,
         model_deployment: Optional[str] = None,
+        hyper_params: Optional[Dict[str, Any]] = None,
         extras: Optional[Dict[str, str]] = None,
         frequency_penalty: Optional[float] = None,
         presence_penalty: Optional[float] = None,
@@ -245,18 +262,19 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         max_tokens: Optional[int] = None,
         response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = None,
         stop: Optional[List[str]] = None,
+        stream: Optional[bool] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
             Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
         ] = None,
         seed: Optional[int] = None,
         **kwargs: Any,
-    ) -> _models.AsyncStreamingChatCompletions:
+    ) -> Union[_models.AsyncStreamingChatCompletions, _models.ChatCompletions]:
         # pylint: disable=line-too-long
-        """Gets streaming chat completions for the provided chat messages.
+        """Gets chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
-        "completes" provided prompt data. When using this method, the response is streamed
-        back to the client. Iterate over the resulting ~azure.ai.inference.models.AsyncStreamingChatCompletions
+        "completes" provided prompt data. When using this method with `stream=True`, the response is streamed
+        back to the client. Iterate over the resulting ~azure.ai.inference.models.StreamingChatCompletions
         object to get content updates as they arrive.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
@@ -272,6 +290,11 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
+        :keyword hyper_params: Additional, model-specific parameters that are not in the
+         standard request payload. They will be added as-is to the root of the JSON in the request body.
+         How the service handles these hypter parameters depends on the value of the
+         ``unknown-parameters`` request header. Default value is None.
+        :paramtype hyper_params: dict[str, Any]
         :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
          standard request payload.
          They will be passed to the service as-is in the root of the JSON request payload.
@@ -316,6 +339,10 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :keyword stop: A collection of textual sequences that will end completions generation. Default
          value is None.
         :paramtype stop: list[str]
+        :keyword stream: A value indicating whether chat completions should be streamed for this request.
+         Default value is False. If streaming is enabled, the response will be a StreamingChatCompletions.
+         Otherwise the response will be a ChatCompletions.
+        :paramtype stream: bool
         :keyword tools: The available tool definitions that the chat completions request can use,
          including caller-defined functions. Default value is None.
         :paramtype tools: list[~azure.ai.inference.models.ChatCompletionsToolDefinition]
@@ -330,8 +357,8 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
          same seed and parameters should return the same result. Determinism is not guaranteed.".
          Default value is None.
         :paramtype seed: int
-        :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.ChatCompletions
+        :return: ChatCompletions for non-streaming, or AsyncStreamingChatCompletions for streaming.
+        :rtype: ~azure.ai.inference.models.ChatCompletions or ~azure.ai.inference.models.AsyncStreamingChatCompletions
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -359,12 +386,14 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
                 "response_format": response_format,
                 "seed": seed,
                 "stop": stop,
-                "stream": True,
+                "stream": stream,
                 "temperature": temperature,
                 "tool_choice": tool_choice,
                 "tools": tools,
                 "top_p": top_p,
             }
+            if hyper_params is not None:
+                body.update(hyper_params)
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -386,24 +415,494 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        kwargs.pop("stream", True)  # Remove stream from kwargs (ignore value set by the application)
+        _stream = stream or False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=True, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            await response.read()  # Load the body in memory and close the socket
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        return _models.AsyncStreamingChatCompletions(response)
+        if _stream:
+            return _models.AsyncStreamingChatCompletions(response)
+        else:
+            return _deserialize(_models.ChatCompletions, response.json())  # pylint: disable=protected-access
+
+
+class EmbeddingsClient(EmbeddingsClientGenerated):
+
+    @overload
+    async def embedding(
+        self,
+        body: JSON,
+        *,
+        model_deployment: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EmbeddingsResult:
+        """Return the embeddings for a given text prompt.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.EmbeddingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def embedding(
+        self,
+        *,
+        hyper_params: Optional[Dict[str, Any]] = None,
+        input: List[str],
+        model_deployment: Optional[str] = None,
+        content_type: str = "application/json",
+        dimensions: Optional[int] = None,
+        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
+        input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
+        **kwargs: Any
+    ) -> _models.EmbeddingsResult:
+        """Return the embeddings for a given text prompt.
+
+        :keyword hyper_params: Additional, model-specific parameters that are not in the
+         standard request payload. They will be added as-is to the root of the JSON in the request body.
+         How the service handles these hypter parameters depends on the value of the
+         ``unknown-parameters`` request header. Default value is None.
+        :paramtype hyper_params: dict[str, Any]
+        :keyword input: Input text to embed, encoded as a string or array of tokens.
+         To embed multiple inputs in a single request, pass an array
+         of strings or array of token arrays. Required.
+        :paramtype input: list[str]
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
+         standard request payload.
+         They will be passed to the service as-is in the root of the JSON request payload.
+         How the service handles these extra parameters depends on the value of the
+         ``extra-parameters``
+         HTTP request header. Default value is None.
+        :paramtype extras: dict[str, str]
+        :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
+         have.
+         Passing null causes the model to use its default value.
+         Returns a 422 error if the model doesn't support the value or parameter. Default value is
+         None.
+        :paramtype dimensions: int
+        :keyword encoding_format: Optional. The number of dimensions the resulting output embeddings
+         should have.
+         Passing null causes the model to use its default value.
+         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+         "base64", "binary", "float", "int8", "ubinary", and "uint8". Default value is None.
+        :paramtype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
+        :keyword input_type: Optional. The type of the input.
+         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+         "text", "query", and "document". Default value is None.
+        :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
+        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.EmbeddingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def embedding(
+        self,
+        body: IO[bytes],
+        *,
+        model_deployment: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EmbeddingsResult:
+        """Return the embeddings for a given text prompt.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.EmbeddingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def embedding(
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        hyper_params: Optional[Dict[str, Any]] = None,
+        input: List[str] = _Unset,
+        model_deployment: Optional[str] = None,
+        dimensions: Optional[int] = None,
+        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
+        input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
+        **kwargs: Any
+    ) -> _models.EmbeddingsResult:
+        # pylint: disable=line-too-long
+        """Return the embeddings for a given text prompt.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword hyper_params: Additional, model-specific parameters that are not in the
+         standard request payload. They will be added as-is to the root of the JSON in the request body.
+         How the service handles these hypter parameters depends on the value of the
+         ``unknown-parameters`` request header. Default value is None.
+        :paramtype hyper_params: dict[str, Any]
+        :keyword input: Input text to embed, encoded as a string or array of tokens.
+         To embed multiple inputs in a single request, pass an array
+         of strings or array of token arrays. Required.
+        :paramtype input: list[str]
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
+         have.
+         Passing null causes the model to use its default value.
+         Returns a 422 error if the model doesn't support the value or parameter. Default value is
+         None.
+        :paramtype dimensions: int
+        :keyword encoding_format: Optional. The number of dimensions the resulting output embeddings
+         should have.
+         Passing null causes the model to use its default value.
+         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+         "base64", "binary", "float", "int8", "ubinary", and "uint8". Default value is None.
+        :paramtype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
+        :keyword input_type: Optional. The type of the input.
+         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+         "text", "query", and "document". Default value is None.
+        :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
+        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.EmbeddingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+
+        if body is _Unset:
+            if input is _Unset:
+                raise TypeError("missing required argument: input")
+            body = {
+                "dimensions": dimensions,
+                "encoding_format": encoding_format,
+                "input": input,
+                "input_type": input_type,
+            }
+            if hyper_params is not None:
+                body.update(hyper_params)
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_embeddings_embedding_request(
+            model_deployment=model_deployment,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EmbeddingsResult, response.json())
+
+        return deserialized  # type: ignore
+
+
+class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
+
+    @overload
+    async def embedding(
+        self,
+        body: JSON,
+        *,
+        model_deployment: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EmbeddingsResult:
+        """Return the embeddings for given images.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.EmbeddingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def embedding(
+        self,
+        *,
+        hyper_params: Optional[Dict[str, Any]] = None,
+        input: List[_models.EmbeddingInput],
+        model_deployment: Optional[str] = None,
+        content_type: str = "application/json",
+        dimensions: Optional[int] = None,
+        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
+        input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
+        **kwargs: Any
+    ) -> _models.EmbeddingsResult:
+        """Return the embeddings for given images.
+
+        :keyword hyper_params: Additional, model-specific parameters that are not in the
+         standard request payload. They will be added as-is to the root of the JSON in the request body.
+         How the service handles these hypter parameters depends on the value of the
+         ``unknown-parameters`` request header. Default value is None.
+        :paramtype hyper_params: dict[str, Any]
+        :keyword input: Input image to embed. To embed multiple inputs in a single request, pass an
+         array.
+         The input must not exceed the max input tokens for the model. Required.
+        :paramtype input: list[~azure.ai.inference.models.EmbeddingInput]
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
+         standard request payload.
+         They will be passed to the service as-is in the root of the JSON request payload.
+         How the service handles these extra parameters depends on the value of the
+         ``extra-parameters``
+         HTTP request header. Default value is None.
+        :paramtype extras: dict[str, str]
+        :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
+         have.
+         Passing null causes the model to use its default value.
+         Returns a 422 error if the model doesn't support the value or parameter. Default value is
+         None.
+        :paramtype dimensions: int
+        :keyword encoding_format: Optional. The number of dimensions the resulting output embeddings
+         should have.
+         Passing null causes the model to use its default value.
+         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+         "base64", "binary", "float", "int8", "ubinary", and "uint8". Default value is None.
+        :paramtype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
+        :keyword input_type: Optional. The type of the input.
+         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+         "text", "query", and "document". Default value is None.
+        :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
+        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.EmbeddingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def embedding(
+        self,
+        body: IO[bytes],
+        *,
+        model_deployment: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EmbeddingsResult:
+        """Return the embeddings for given images.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.EmbeddingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def embedding(
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        hyper_params: Optional[Dict[str, Any]] = None,
+        input: List[_models.EmbeddingInput] = _Unset,
+        model_deployment: Optional[str] = None,
+        dimensions: Optional[int] = None,
+        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
+        input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
+        **kwargs: Any
+    ) -> _models.EmbeddingsResult:
+        # pylint: disable=line-too-long
+        """Return the embeddings for given images.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword hyper_params: Additional, model-specific parameters that are not in the
+         standard request payload. They will be added as-is to the root of the JSON in the request body.
+         How the service handles these hypter parameters depends on the value of the
+         ``unknown-parameters`` request header. Default value is None.
+        :paramtype hyper_params: dict[str, Any]
+        :keyword input: Input image to embed. To embed multiple inputs in a single request, pass an
+         array.
+         The input must not exceed the max input tokens for the model. Required.
+        :paramtype input: list[~azure.ai.inference.models.EmbeddingInput]
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
+         have.
+         Passing null causes the model to use its default value.
+         Returns a 422 error if the model doesn't support the value or parameter. Default value is
+         None.
+        :paramtype dimensions: int
+        :keyword encoding_format: Optional. The number of dimensions the resulting output embeddings
+         should have.
+         Passing null causes the model to use its default value.
+         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+         "base64", "binary", "float", "int8", "ubinary", and "uint8". Default value is None.
+        :paramtype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
+        :keyword input_type: Optional. The type of the input.
+         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+         "text", "query", and "document". Default value is None.
+        :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
+        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.EmbeddingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+
+        if body is _Unset:
+            if input is _Unset:
+                raise TypeError("missing required argument: input")
+            body = {
+                "dimensions": dimensions,
+                "encoding_format": encoding_format,
+                "input": input,
+                "input_type": input_type,
+            }
+            if hyper_params is not None:
+                body.update(hyper_params)
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_image_embeddings_embedding_request(
+            model_deployment=model_deployment,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EmbeddingsResult, response.json())
+
+        return deserialized  # type: ignore
 
 
 __all__: List[str] = [
     "load_client",
     "ChatCompletionsClient",
+    "EmbeddingsClient",
+    "ImageEmbeddingsClient",
 ]  # Add all objects you want publicly available to users at this package level
 
 

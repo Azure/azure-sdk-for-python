@@ -49,142 +49,23 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
 
     @overload
-    async def complete(
+    async def _complete(
         self,
         body: JSON,
         *,
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ChatCompletions:
-        # pylint: disable=line-too-long
-        """Gets chat completions for the provided chat messages.
-        Completions support a wide variety of tasks and generate text that continues from or
-        "completes"
-        provided prompt data.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword model_deployment: Name of the deployment to which you would like to route the request.
-         Relevant only to Model-as-a-Platform (MaaP) deployments.
-         Typically used when you want to target a test environment instead of production environment.
-         Default value is None.
-        :paramtype model_deployment: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.ChatCompletions
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "messages": [
-                        chat_request_message
-                    ],
-                    "extras": {
-                        "str": "str"  # Optional. Extra parameters (in the form of string
-                          key-value pairs) that are not in the standard request payload. They will be
-                          passed to the service as-is in the root of the JSON request payload. How the
-                          service handles these extra parameters depends on the value of the
-                          ``extra-parameters`` HTTP request header.
-                    },
-                    "frequency_penalty": 0.0,  # Optional. A value that influences the
-                      probability of generated tokens appearing based on their cumulative frequency in
-                      generated text. Positive values will make tokens less likely to appear as their
-                      frequency increases and decrease the likelihood of the model repeating the same
-                      statements verbatim.
-                    "max_tokens": 0,  # Optional. The maximum number of tokens to generate.
-                    "presence_penalty": 0.0,  # Optional. A value that influences the probability
-                      of generated tokens appearing based on their existing presence in generated text.
-                      Positive values will make tokens less likely to appear when they already exist
-                      and increase the model's likelihood to output new topics.
-                    "response_format": "str",  # Optional. An object specifying the format that
-                      the model must output. Used to enable JSON mode. Known values are: "text" and
-                      "json_object".
-                    "seed": 0,  # Optional. If specified, the system will make a best effort to
-                      sample deterministically such that repeated requests with the same seed and
-                      parameters should return the same result. Determinism is not guaranteed.".
-                    "stop": [
-                        "str"  # Optional. A collection of textual sequences that will end
-                          completions generation.
-                    ],
-                    "temperature": 0.0,  # Optional. The sampling temperature to use that
-                      controls the apparent creativity of generated completions. Higher values will
-                      make output more random while lower values will make results more focused and
-                      deterministic. It is not recommended to modify temperature and top_p for the same
-                      completions request as the interaction of these two settings is difficult to
-                      predict.
-                    "tool_choice": "str",  # Optional. If specified, the model will configure
-                      which of the provided tools it can use for the chat completions response. Is
-                      either a Union[str, "_models.ChatCompletionsToolSelectionPreset"] type or a
-                      ChatCompletionsNamedToolSelection type.
-                    "tools": [
-                        chat_completions_tool_definition
-                    ],
-                    "top_p": 0.0  # Optional. An alternative to sampling with temperature called
-                      nucleus sampling. This value causes the model to consider the results of tokens
-                      with the provided probability mass. As an example, a value of 0.15 will cause
-                      only the tokens comprising the top 15% of probability mass to be considered. It
-                      is not recommended to modify temperature and top_p for the same completions
-                      request as the interaction of these two settings is difficult to predict.
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "choices": [
-                        {
-                            "finish_reason": "str",  # The reason that this chat
-                              completions choice completed its generated. Required. Known values are:
-                              "stop", "length", "content_filter", and "tool_calls".
-                            "index": 0,  # The ordered index associated with this chat
-                              completions choice. Required.
-                            "message": {
-                                "content": "str",  # The content of the message.
-                                  Required.
-                                "role": "str",  # The chat role associated with the
-                                  message. Required. Known values are: "system", "user", "assistant",
-                                  and "tool".
-                                "tool_calls": [
-                                    chat_completions_tool_call
-                                ]
-                            }
-                        }
-                    ],
-                    "created": "2020-02-20 00:00:00",  # The first timestamp associated with
-                      generation activity for this completions response, represented as seconds since
-                      the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required.
-                    "id": "str",  # A unique identifier associated with this chat completions
-                      response. Required.
-                    "model": "str",  # The model used for the chat completion. Required.
-                    "object": "str",  # The response object type, which is always
-                      ``chat.completion``. Required.
-                    "usage": {
-                        "capacity_type": "str",  # Indicates whether your capacity has been
-                          affected by the usage amount (token count) reported here. Required. Known
-                          values are: "usage" and "fixed".
-                        "completion_tokens": 0,  # The number of tokens generated across all
-                          completions emissions. Required.
-                        "prompt_tokens": 0,  # The number of tokens in the provided prompts
-                          for the completions request. Required.
-                        "total_tokens": 0  # The total number of tokens processed for the
-                          completions request and response. Required.
-                    }
-                }
-        """
-
+    ) -> _models.ChatCompletions: ...
     @overload
-    async def complete(
+    async def _complete(
         self,
         *,
         messages: List[_models.ChatRequestMessage],
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
-        extras: Optional[Dict[str, str]] = None,
         frequency_penalty: Optional[float] = None,
+        stream_parameter: Optional[bool] = None,
         presence_penalty: Optional[float] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -197,219 +78,26 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         ] = None,
         seed: Optional[int] = None,
         **kwargs: Any
-    ) -> _models.ChatCompletions:
-        # pylint: disable=line-too-long
-        """Gets chat completions for the provided chat messages.
-        Completions support a wide variety of tasks and generate text that continues from or
-        "completes"
-        provided prompt data.
-
-        :keyword messages: The collection of context messages associated with this chat completions
-         request.
-         Typical usage begins with a chat message for the System role that provides instructions for
-         the behavior of the assistant, followed by alternating messages between the User and
-         Assistant roles. Required.
-        :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage]
-        :keyword model_deployment: Name of the deployment to which you would like to route the request.
-         Relevant only to Model-as-a-Platform (MaaP) deployments.
-         Typically used when you want to target a test environment instead of production environment.
-         Default value is None.
-        :paramtype model_deployment: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
-         standard request payload.
-         They will be passed to the service as-is in the root of the JSON request payload.
-         How the service handles these extra parameters depends on the value of the
-         ``extra-parameters``
-         HTTP request header. Default value is None.
-        :paramtype extras: dict[str, str]
-        :keyword frequency_penalty: A value that influences the probability of generated tokens
-         appearing based on their cumulative
-         frequency in generated text.
-         Positive values will make tokens less likely to appear as their frequency increases and
-         decrease the likelihood of the model repeating the same statements verbatim. Default value is
-         None.
-        :paramtype frequency_penalty: float
-        :keyword presence_penalty: A value that influences the probability of generated tokens
-         appearing based on their existing
-         presence in generated text.
-         Positive values will make tokens less likely to appear when they already exist and increase
-         the
-         model's likelihood to output new topics. Default value is None.
-        :paramtype presence_penalty: float
-        :keyword temperature: The sampling temperature to use that controls the apparent creativity of
-         generated completions.
-         Higher values will make output more random while lower values will make results more focused
-         and deterministic.
-         It is not recommended to modify temperature and top_p for the same completions request as the
-         interaction of these two settings is difficult to predict. Default value is None.
-        :paramtype temperature: float
-        :keyword top_p: An alternative to sampling with temperature called nucleus sampling. This value
-         causes the
-         model to consider the results of tokens with the provided probability mass. As an example, a
-         value of 0.15 will cause only the tokens comprising the top 15% of probability mass to be
-         considered.
-         It is not recommended to modify temperature and top_p for the same completions request as the
-         interaction of these two settings is difficult to predict. Default value is None.
-        :paramtype top_p: float
-        :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
-        :paramtype max_tokens: int
-        :keyword response_format: An object specifying the format that the model must output. Used to
-         enable JSON mode. Known values are: "text" and "json_object". Default value is None.
-        :paramtype response_format: str or ~azure.ai.inference.models.ChatCompletionsResponseFormat
-        :keyword stop: A collection of textual sequences that will end completions generation. Default
-         value is None.
-        :paramtype stop: list[str]
-        :keyword tools: The available tool definitions that the chat completions request can use,
-         including caller-defined functions. Default value is None.
-        :paramtype tools: list[~azure.ai.inference.models.ChatCompletionsToolDefinition]
-        :keyword tool_choice: If specified, the model will configure which of the provided tools it can
-         use for the chat completions response. Is either a Union[str,
-         "_models.ChatCompletionsToolSelectionPreset"] type or a ChatCompletionsNamedToolSelection type.
-         Default value is None.
-        :paramtype tool_choice: str or ~azure.ai.inference.models.ChatCompletionsToolSelectionPreset or
-         ~azure.ai.inference.models.ChatCompletionsNamedToolSelection
-        :keyword seed: If specified, the system will make a best effort to sample deterministically
-         such that repeated requests with the
-         same seed and parameters should return the same result. Determinism is not guaranteed.".
-         Default value is None.
-        :paramtype seed: int
-        :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.ChatCompletions
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "choices": [
-                        {
-                            "finish_reason": "str",  # The reason that this chat
-                              completions choice completed its generated. Required. Known values are:
-                              "stop", "length", "content_filter", and "tool_calls".
-                            "index": 0,  # The ordered index associated with this chat
-                              completions choice. Required.
-                            "message": {
-                                "content": "str",  # The content of the message.
-                                  Required.
-                                "role": "str",  # The chat role associated with the
-                                  message. Required. Known values are: "system", "user", "assistant",
-                                  and "tool".
-                                "tool_calls": [
-                                    chat_completions_tool_call
-                                ]
-                            }
-                        }
-                    ],
-                    "created": "2020-02-20 00:00:00",  # The first timestamp associated with
-                      generation activity for this completions response, represented as seconds since
-                      the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required.
-                    "id": "str",  # A unique identifier associated with this chat completions
-                      response. Required.
-                    "model": "str",  # The model used for the chat completion. Required.
-                    "object": "str",  # The response object type, which is always
-                      ``chat.completion``. Required.
-                    "usage": {
-                        "capacity_type": "str",  # Indicates whether your capacity has been
-                          affected by the usage amount (token count) reported here. Required. Known
-                          values are: "usage" and "fixed".
-                        "completion_tokens": 0,  # The number of tokens generated across all
-                          completions emissions. Required.
-                        "prompt_tokens": 0,  # The number of tokens in the provided prompts
-                          for the completions request. Required.
-                        "total_tokens": 0  # The total number of tokens processed for the
-                          completions request and response. Required.
-                    }
-                }
-        """
-
+    ) -> _models.ChatCompletions: ...
     @overload
-    async def complete(
+    async def _complete(
         self,
         body: IO[bytes],
         *,
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ChatCompletions:
-        # pylint: disable=line-too-long
-        """Gets chat completions for the provided chat messages.
-        Completions support a wide variety of tasks and generate text that continues from or
-        "completes"
-        provided prompt data.
-
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword model_deployment: Name of the deployment to which you would like to route the request.
-         Relevant only to Model-as-a-Platform (MaaP) deployments.
-         Typically used when you want to target a test environment instead of production environment.
-         Default value is None.
-        :paramtype model_deployment: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.ChatCompletions
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "choices": [
-                        {
-                            "finish_reason": "str",  # The reason that this chat
-                              completions choice completed its generated. Required. Known values are:
-                              "stop", "length", "content_filter", and "tool_calls".
-                            "index": 0,  # The ordered index associated with this chat
-                              completions choice. Required.
-                            "message": {
-                                "content": "str",  # The content of the message.
-                                  Required.
-                                "role": "str",  # The chat role associated with the
-                                  message. Required. Known values are: "system", "user", "assistant",
-                                  and "tool".
-                                "tool_calls": [
-                                    chat_completions_tool_call
-                                ]
-                            }
-                        }
-                    ],
-                    "created": "2020-02-20 00:00:00",  # The first timestamp associated with
-                      generation activity for this completions response, represented as seconds since
-                      the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required.
-                    "id": "str",  # A unique identifier associated with this chat completions
-                      response. Required.
-                    "model": "str",  # The model used for the chat completion. Required.
-                    "object": "str",  # The response object type, which is always
-                      ``chat.completion``. Required.
-                    "usage": {
-                        "capacity_type": "str",  # Indicates whether your capacity has been
-                          affected by the usage amount (token count) reported here. Required. Known
-                          values are: "usage" and "fixed".
-                        "completion_tokens": 0,  # The number of tokens generated across all
-                          completions emissions. Required.
-                        "prompt_tokens": 0,  # The number of tokens in the provided prompts
-                          for the completions request. Required.
-                        "total_tokens": 0  # The total number of tokens processed for the
-                          completions request and response. Required.
-                    }
-                }
-        """
+    ) -> _models.ChatCompletions: ...
 
     @distributed_trace_async
-    async def complete(  # pylint: disable=too-many-locals
+    async def _complete(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         messages: List[_models.ChatRequestMessage] = _Unset,
         model_deployment: Optional[str] = None,
-        extras: Optional[Dict[str, str]] = None,
         frequency_penalty: Optional[float] = None,
+        stream_parameter: Optional[bool] = None,
         presence_penalty: Optional[float] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -442,13 +130,6 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
-        :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
-         standard request payload.
-         They will be passed to the service as-is in the root of the JSON request payload.
-         How the service handles these extra parameters depends on the value of the
-         ``extra-parameters``
-         HTTP request header. Default value is None.
-        :paramtype extras: dict[str, str]
         :keyword frequency_penalty: A value that influences the probability of generated tokens
          appearing based on their cumulative
          frequency in generated text.
@@ -456,6 +137,9 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
          decrease the likelihood of the model repeating the same statements verbatim. Default value is
          None.
         :paramtype frequency_penalty: float
+        :keyword stream_parameter: A value indicating whether chat completions should be streamed for
+         this request. Default value is None.
+        :paramtype stream_parameter: bool
         :keyword presence_penalty: A value that influences the probability of generated tokens
          appearing based on their existing
          presence in generated text.
@@ -512,13 +196,6 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
                     "messages": [
                         chat_request_message
                     ],
-                    "extras": {
-                        "str": "str"  # Optional. Extra parameters (in the form of string
-                          key-value pairs) that are not in the standard request payload. They will be
-                          passed to the service as-is in the root of the JSON request payload. How the
-                          service handles these extra parameters depends on the value of the
-                          ``extra-parameters`` HTTP request header.
-                    },
                     "frequency_penalty": 0.0,  # Optional. A value that influences the
                       probability of generated tokens appearing based on their cumulative frequency in
                       generated text. Positive values will make tokens less likely to appear as their
@@ -539,6 +216,8 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
                         "str"  # Optional. A collection of textual sequences that will end
                           completions generation.
                     ],
+                    "stream": bool,  # Optional. A value indicating whether chat completions
+                      should be streamed for this request.
                     "temperature": 0.0,  # Optional. The sampling temperature to use that
                       controls the apparent creativity of generated completions. Higher values will
                       make output more random while lower values will make results more focused and
@@ -620,7 +299,6 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
             if messages is _Unset:
                 raise TypeError("missing required argument: messages")
             body = {
-                "extras": extras,
                 "frequency_penalty": frequency_penalty,
                 "max_tokens": max_tokens,
                 "messages": messages,
@@ -628,6 +306,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
                 "response_format": response_format,
                 "seed": seed,
                 "stop": stop,
+                "stream": stream_parameter,
                 "temperature": temperature,
                 "tool_choice": tool_choice,
                 "tools": tools,
@@ -750,262 +429,43 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
 class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
 
     @overload
-    async def embedding(
+    async def _embedding(
         self,
         body: JSON,
         *,
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.EmbeddingsResult:
-        # pylint: disable=line-too-long
-        """Return the embeddings for a given text prompt.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword model_deployment: Name of the deployment to which you would like to route the request.
-         Relevant only to Model-as-a-Platform (MaaP) deployments.
-         Typically used when you want to target a test environment instead of production environment.
-         Default value is None.
-        :paramtype model_deployment: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "input": [
-                        "str"  # Input text to embed, encoded as a string or array of tokens.
-                          To embed multiple inputs in a single request, pass an array of strings or
-                          array of token arrays. Required.
-                    ],
-                    "dimensions": 0,  # Optional. Optional. The number of dimensions the
-                      resulting output embeddings should have. Passing null causes the model to use its
-                      default value. Returns a 422 error if the model doesn't support the value or
-                      parameter.
-                    "encoding_format": "str",  # Optional. Optional. The number of dimensions the
-                      resulting output embeddings should have. Passing null causes the model to use its
-                      default value. Returns a 422 error if the model doesn't support the value or
-                      parameter. Known values are: "base64", "binary", "float", "int8", "ubinary", and
-                      "uint8".
-                    "extras": {
-                        "str": "str"  # Optional. Extra parameters (in the form of string
-                          key-value pairs) that are not in the standard request payload. They will be
-                          passed to the service as-is in the root of the JSON request payload. How the
-                          service handles these extra parameters depends on the value of the
-                          ``extra-parameters`` HTTP request header.
-                    },
-                    "input_type": "str"  # Optional. Optional. The type of the input. Returns a
-                      422 error if the model doesn't support the value or parameter. Known values are:
-                      "text", "query", and "document".
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "data": [
-                        {
-                            "embedding": [
-                                0.0  # List of embeddings value for the input prompt.
-                                  These represent a measurement of the vector-based relatedness of the
-                                  provided input. Required.
-                            ],
-                            "index": 0,  # Index of the prompt to which the EmbeddingItem
-                              corresponds. Required.
-                            "object": "str"  # The object type of this embeddings item.
-                              Will always be ``embedding``. Required.
-                        }
-                    ],
-                    "id": "str",  # Unique identifier for the embeddings result. Required.
-                    "model": "str",  # The model ID used to generate this result. Required.
-                    "object": "str",  # The object type of the embeddings result. Will always be
-                      ``list``. Required.
-                    "usage": {
-                        "capacity_type": "str",  # Indicates whether your capacity has been
-                          affected by the usage amount (token count) reported here. Required. Known
-                          values are: "usage" and "fixed".
-                        "input_tokens": 0,  # Number of tokens in the request prompt.
-                          Required.
-                        "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
-                          the AI model. Typically identical to ``input_tokens``. However, certain AI
-                          models may add extra tokens to the input hence the number can be higher. (for
-                          example when input_type="query"). Required.
-                        "total_tokens": 0  # Total number of tokens transacted in this
-                          request/response. Required.
-                    }
-                }
-        """
-
+    ) -> _models.EmbeddingsResult: ...
     @overload
-    async def embedding(
+    async def _embedding(
         self,
         *,
         input: List[str],
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
-        extras: Optional[Dict[str, str]] = None,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
         **kwargs: Any
-    ) -> _models.EmbeddingsResult:
-        # pylint: disable=line-too-long
-        """Return the embeddings for a given text prompt.
-
-        :keyword input: Input text to embed, encoded as a string or array of tokens.
-         To embed multiple inputs in a single request, pass an array
-         of strings or array of token arrays. Required.
-        :paramtype input: list[str]
-        :keyword model_deployment: Name of the deployment to which you would like to route the request.
-         Relevant only to Model-as-a-Platform (MaaP) deployments.
-         Typically used when you want to target a test environment instead of production environment.
-         Default value is None.
-        :paramtype model_deployment: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
-         standard request payload.
-         They will be passed to the service as-is in the root of the JSON request payload.
-         How the service handles these extra parameters depends on the value of the
-         ``extra-parameters``
-         HTTP request header. Default value is None.
-        :paramtype extras: dict[str, str]
-        :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
-         have.
-         Passing null causes the model to use its default value.
-         Returns a 422 error if the model doesn't support the value or parameter. Default value is
-         None.
-        :paramtype dimensions: int
-        :keyword encoding_format: Optional. The number of dimensions the resulting output embeddings
-         should have.
-         Passing null causes the model to use its default value.
-         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
-         "base64", "binary", "float", "int8", "ubinary", and "uint8". Default value is None.
-        :paramtype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
-        :keyword input_type: Optional. The type of the input.
-         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
-         "text", "query", and "document". Default value is None.
-        :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
-        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "data": [
-                        {
-                            "embedding": [
-                                0.0  # List of embeddings value for the input prompt.
-                                  These represent a measurement of the vector-based relatedness of the
-                                  provided input. Required.
-                            ],
-                            "index": 0,  # Index of the prompt to which the EmbeddingItem
-                              corresponds. Required.
-                            "object": "str"  # The object type of this embeddings item.
-                              Will always be ``embedding``. Required.
-                        }
-                    ],
-                    "id": "str",  # Unique identifier for the embeddings result. Required.
-                    "model": "str",  # The model ID used to generate this result. Required.
-                    "object": "str",  # The object type of the embeddings result. Will always be
-                      ``list``. Required.
-                    "usage": {
-                        "capacity_type": "str",  # Indicates whether your capacity has been
-                          affected by the usage amount (token count) reported here. Required. Known
-                          values are: "usage" and "fixed".
-                        "input_tokens": 0,  # Number of tokens in the request prompt.
-                          Required.
-                        "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
-                          the AI model. Typically identical to ``input_tokens``. However, certain AI
-                          models may add extra tokens to the input hence the number can be higher. (for
-                          example when input_type="query"). Required.
-                        "total_tokens": 0  # Total number of tokens transacted in this
-                          request/response. Required.
-                    }
-                }
-        """
-
+    ) -> _models.EmbeddingsResult: ...
     @overload
-    async def embedding(
+    async def _embedding(
         self,
         body: IO[bytes],
         *,
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.EmbeddingsResult:
-        # pylint: disable=line-too-long
-        """Return the embeddings for a given text prompt.
-
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword model_deployment: Name of the deployment to which you would like to route the request.
-         Relevant only to Model-as-a-Platform (MaaP) deployments.
-         Typically used when you want to target a test environment instead of production environment.
-         Default value is None.
-        :paramtype model_deployment: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "data": [
-                        {
-                            "embedding": [
-                                0.0  # List of embeddings value for the input prompt.
-                                  These represent a measurement of the vector-based relatedness of the
-                                  provided input. Required.
-                            ],
-                            "index": 0,  # Index of the prompt to which the EmbeddingItem
-                              corresponds. Required.
-                            "object": "str"  # The object type of this embeddings item.
-                              Will always be ``embedding``. Required.
-                        }
-                    ],
-                    "id": "str",  # Unique identifier for the embeddings result. Required.
-                    "model": "str",  # The model ID used to generate this result. Required.
-                    "object": "str",  # The object type of the embeddings result. Will always be
-                      ``list``. Required.
-                    "usage": {
-                        "capacity_type": "str",  # Indicates whether your capacity has been
-                          affected by the usage amount (token count) reported here. Required. Known
-                          values are: "usage" and "fixed".
-                        "input_tokens": 0,  # Number of tokens in the request prompt.
-                          Required.
-                        "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
-                          the AI model. Typically identical to ``input_tokens``. However, certain AI
-                          models may add extra tokens to the input hence the number can be higher. (for
-                          example when input_type="query"). Required.
-                        "total_tokens": 0  # Total number of tokens transacted in this
-                          request/response. Required.
-                    }
-                }
-        """
+    ) -> _models.EmbeddingsResult: ...
 
     @distributed_trace_async
-    async def embedding(
+    async def _embedding(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         input: List[str] = _Unset,
         model_deployment: Optional[str] = None,
-        extras: Optional[Dict[str, str]] = None,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
@@ -1025,13 +485,6 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
-        :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
-         standard request payload.
-         They will be passed to the service as-is in the root of the JSON request payload.
-         How the service handles these extra parameters depends on the value of the
-         ``extra-parameters``
-         HTTP request header. Default value is None.
-        :paramtype extras: dict[str, str]
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
          have.
          Passing null causes the model to use its default value.
@@ -1071,13 +524,6 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
                       default value. Returns a 422 error if the model doesn't support the value or
                       parameter. Known values are: "base64", "binary", "float", "int8", "ubinary", and
                       "uint8".
-                    "extras": {
-                        "str": "str"  # Optional. Extra parameters (in the form of string
-                          key-value pairs) that are not in the standard request payload. They will be
-                          passed to the service as-is in the root of the JSON request payload. How the
-                          service handles these extra parameters depends on the value of the
-                          ``extra-parameters`` HTTP request header.
-                    },
                     "input_type": "str"  # Optional. Optional. The type of the input. Returns a
                       422 error if the model doesn't support the value or parameter. Known values are:
                       "text", "query", and "document".
@@ -1137,7 +583,6 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
             body = {
                 "dimensions": dimensions,
                 "encoding_format": encoding_format,
-                "extras": extras,
                 "input": input,
                 "input_type": input_type,
             }
@@ -1258,265 +703,43 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
 class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
 
     @overload
-    async def embedding(
+    async def _embedding(
         self,
         body: JSON,
         *,
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.EmbeddingsResult:
-        # pylint: disable=line-too-long
-        """Return the embeddings for given images.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword model_deployment: Name of the deployment to which you would like to route the request.
-         Relevant only to Model-as-a-Platform (MaaP) deployments.
-         Typically used when you want to target a test environment instead of production environment.
-         Default value is None.
-        :paramtype model_deployment: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "input": [
-                        {
-                            "image": "str",  # The input image, in PNG format. Required.
-                            "text": "str"  # Optional. Optional. The text input to feed
-                              into the model (like DINO, CLIP). Returns a 422 error if the model
-                              doesn't support the value or parameter.
-                        }
-                    ],
-                    "dimensions": 0,  # Optional. Optional. The number of dimensions the
-                      resulting output embeddings should have. Passing null causes the model to use its
-                      default value. Returns a 422 error if the model doesn't support the value or
-                      parameter.
-                    "encoding_format": "str",  # Optional. Optional. The number of dimensions the
-                      resulting output embeddings should have. Passing null causes the model to use its
-                      default value. Returns a 422 error if the model doesn't support the value or
-                      parameter. Known values are: "base64", "binary", "float", "int8", "ubinary", and
-                      "uint8".
-                    "extras": {
-                        "str": "str"  # Optional. Extra parameters (in the form of string
-                          key-value pairs) that are not in the standard request payload. They will be
-                          passed to the service as-is in the root of the JSON request payload. How the
-                          service handles these extra parameters depends on the value of the
-                          ``extra-parameters`` HTTP request header.
-                    },
-                    "input_type": "str"  # Optional. Optional. The type of the input. Returns a
-                      422 error if the model doesn't support the value or parameter. Known values are:
-                      "text", "query", and "document".
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "data": [
-                        {
-                            "embedding": [
-                                0.0  # List of embeddings value for the input prompt.
-                                  These represent a measurement of the vector-based relatedness of the
-                                  provided input. Required.
-                            ],
-                            "index": 0,  # Index of the prompt to which the EmbeddingItem
-                              corresponds. Required.
-                            "object": "str"  # The object type of this embeddings item.
-                              Will always be ``embedding``. Required.
-                        }
-                    ],
-                    "id": "str",  # Unique identifier for the embeddings result. Required.
-                    "model": "str",  # The model ID used to generate this result. Required.
-                    "object": "str",  # The object type of the embeddings result. Will always be
-                      ``list``. Required.
-                    "usage": {
-                        "capacity_type": "str",  # Indicates whether your capacity has been
-                          affected by the usage amount (token count) reported here. Required. Known
-                          values are: "usage" and "fixed".
-                        "input_tokens": 0,  # Number of tokens in the request prompt.
-                          Required.
-                        "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
-                          the AI model. Typically identical to ``input_tokens``. However, certain AI
-                          models may add extra tokens to the input hence the number can be higher. (for
-                          example when input_type="query"). Required.
-                        "total_tokens": 0  # Total number of tokens transacted in this
-                          request/response. Required.
-                    }
-                }
-        """
-
+    ) -> _models.EmbeddingsResult: ...
     @overload
-    async def embedding(
+    async def _embedding(
         self,
         *,
         input: List[_models.EmbeddingInput],
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
-        extras: Optional[Dict[str, str]] = None,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
         **kwargs: Any
-    ) -> _models.EmbeddingsResult:
-        # pylint: disable=line-too-long
-        """Return the embeddings for given images.
-
-        :keyword input: Input image to embed. To embed multiple inputs in a single request, pass an
-         array.
-         The input must not exceed the max input tokens for the model. Required.
-        :paramtype input: list[~azure.ai.inference.models.EmbeddingInput]
-        :keyword model_deployment: Name of the deployment to which you would like to route the request.
-         Relevant only to Model-as-a-Platform (MaaP) deployments.
-         Typically used when you want to target a test environment instead of production environment.
-         Default value is None.
-        :paramtype model_deployment: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
-         standard request payload.
-         They will be passed to the service as-is in the root of the JSON request payload.
-         How the service handles these extra parameters depends on the value of the
-         ``extra-parameters``
-         HTTP request header. Default value is None.
-        :paramtype extras: dict[str, str]
-        :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
-         have.
-         Passing null causes the model to use its default value.
-         Returns a 422 error if the model doesn't support the value or parameter. Default value is
-         None.
-        :paramtype dimensions: int
-        :keyword encoding_format: Optional. The number of dimensions the resulting output embeddings
-         should have.
-         Passing null causes the model to use its default value.
-         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
-         "base64", "binary", "float", "int8", "ubinary", and "uint8". Default value is None.
-        :paramtype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
-        :keyword input_type: Optional. The type of the input.
-         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
-         "text", "query", and "document". Default value is None.
-        :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
-        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "data": [
-                        {
-                            "embedding": [
-                                0.0  # List of embeddings value for the input prompt.
-                                  These represent a measurement of the vector-based relatedness of the
-                                  provided input. Required.
-                            ],
-                            "index": 0,  # Index of the prompt to which the EmbeddingItem
-                              corresponds. Required.
-                            "object": "str"  # The object type of this embeddings item.
-                              Will always be ``embedding``. Required.
-                        }
-                    ],
-                    "id": "str",  # Unique identifier for the embeddings result. Required.
-                    "model": "str",  # The model ID used to generate this result. Required.
-                    "object": "str",  # The object type of the embeddings result. Will always be
-                      ``list``. Required.
-                    "usage": {
-                        "capacity_type": "str",  # Indicates whether your capacity has been
-                          affected by the usage amount (token count) reported here. Required. Known
-                          values are: "usage" and "fixed".
-                        "input_tokens": 0,  # Number of tokens in the request prompt.
-                          Required.
-                        "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
-                          the AI model. Typically identical to ``input_tokens``. However, certain AI
-                          models may add extra tokens to the input hence the number can be higher. (for
-                          example when input_type="query"). Required.
-                        "total_tokens": 0  # Total number of tokens transacted in this
-                          request/response. Required.
-                    }
-                }
-        """
-
+    ) -> _models.EmbeddingsResult: ...
     @overload
-    async def embedding(
+    async def _embedding(
         self,
         body: IO[bytes],
         *,
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.EmbeddingsResult:
-        # pylint: disable=line-too-long
-        """Return the embeddings for given images.
-
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword model_deployment: Name of the deployment to which you would like to route the request.
-         Relevant only to Model-as-a-Platform (MaaP) deployments.
-         Typically used when you want to target a test environment instead of production environment.
-         Default value is None.
-        :paramtype model_deployment: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "data": [
-                        {
-                            "embedding": [
-                                0.0  # List of embeddings value for the input prompt.
-                                  These represent a measurement of the vector-based relatedness of the
-                                  provided input. Required.
-                            ],
-                            "index": 0,  # Index of the prompt to which the EmbeddingItem
-                              corresponds. Required.
-                            "object": "str"  # The object type of this embeddings item.
-                              Will always be ``embedding``. Required.
-                        }
-                    ],
-                    "id": "str",  # Unique identifier for the embeddings result. Required.
-                    "model": "str",  # The model ID used to generate this result. Required.
-                    "object": "str",  # The object type of the embeddings result. Will always be
-                      ``list``. Required.
-                    "usage": {
-                        "capacity_type": "str",  # Indicates whether your capacity has been
-                          affected by the usage amount (token count) reported here. Required. Known
-                          values are: "usage" and "fixed".
-                        "input_tokens": 0,  # Number of tokens in the request prompt.
-                          Required.
-                        "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
-                          the AI model. Typically identical to ``input_tokens``. However, certain AI
-                          models may add extra tokens to the input hence the number can be higher. (for
-                          example when input_type="query"). Required.
-                        "total_tokens": 0  # Total number of tokens transacted in this
-                          request/response. Required.
-                    }
-                }
-        """
+    ) -> _models.EmbeddingsResult: ...
 
     @distributed_trace_async
-    async def embedding(
+    async def _embedding(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         input: List[_models.EmbeddingInput] = _Unset,
         model_deployment: Optional[str] = None,
-        extras: Optional[Dict[str, str]] = None,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
@@ -1536,13 +759,6 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
-        :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
-         standard request payload.
-         They will be passed to the service as-is in the root of the JSON request payload.
-         How the service handles these extra parameters depends on the value of the
-         ``extra-parameters``
-         HTTP request header. Default value is None.
-        :paramtype extras: dict[str, str]
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
          have.
          Passing null causes the model to use its default value.
@@ -1585,13 +801,6 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
                       default value. Returns a 422 error if the model doesn't support the value or
                       parameter. Known values are: "base64", "binary", "float", "int8", "ubinary", and
                       "uint8".
-                    "extras": {
-                        "str": "str"  # Optional. Extra parameters (in the form of string
-                          key-value pairs) that are not in the standard request payload. They will be
-                          passed to the service as-is in the root of the JSON request payload. How the
-                          service handles these extra parameters depends on the value of the
-                          ``extra-parameters`` HTTP request header.
-                    },
                     "input_type": "str"  # Optional. Optional. The type of the input. Returns a
                       422 error if the model doesn't support the value or parameter. Known values are:
                       "text", "query", and "document".
@@ -1651,7 +860,6 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
             body = {
                 "dimensions": dimensions,
                 "encoding_format": encoding_format,
-                "extras": extras,
                 "input": input,
                 "input_type": input_type,
             }

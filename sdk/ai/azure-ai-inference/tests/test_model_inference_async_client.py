@@ -52,7 +52,8 @@ class TestModelAsyncClient(ModelClientTestBase):
     @recorded_by_proxy_async
     async def test_async_chat_completions_streaming_error_free(self, **kwargs):
         client = self._create_async_chat_client(Sync=False, **kwargs)
-        result = await client.streaming_complete(
+        result = await client.complete(
+            stream=True,
             messages=[
                 sdk.models.SystemMessage(content="You are a helpful assistant."),
                 sdk.models.UserMessage(content="Give me 3 good reasons why I should exercise every day."),
