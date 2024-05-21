@@ -148,7 +148,7 @@ class TextTranslationClient(ServiceClientGenerated):
         credential: AzureKeyCredential,
         region: Optional[str] = None,
         endpoint: Optional[str] = None,
-        api_version="3.0",
+        api_version: str = "3.0",
         **kwargs
     ): ...
 
@@ -157,7 +157,7 @@ class TextTranslationClient(ServiceClientGenerated):
         self,
         *,
         endpoint: str,
-        api_version="3.0",
+        api_version: str = "3.0",
         **kwargs
     ): ...
 
