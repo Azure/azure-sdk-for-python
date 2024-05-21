@@ -18,13 +18,11 @@ class TestDictionaryExamples(TextTranslationTest):
         region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
-        source_language = "en"
-        target_language = "es"
+        from_parameter = "en"
+        to = "es"
         input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
 
-        response = client.lookup_dictionary_examples(
-            request_body=input_text_elements, from_parameter=source_language, to=target_language
-        )
+        response = client.lookup_dictionary_examples(body=input_text_elements, from_parameter=from_parameter, to=to)
         assert response is not None
         assert response[0].normalized_source == "fly"
         assert response[0].normalized_target == "volar"
@@ -37,16 +35,14 @@ class TestDictionaryExamples(TextTranslationTest):
         region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
-        source_language = "en"
-        target_language = "es"
+        from_parameter = "en"
+        to = "es"
         input_text_elements = [
             DictionaryExampleTextItem(text="fly", translation="volar"),
             DictionaryExampleTextItem(text="beef", translation="came"),
         ]
 
-        response = client.lookup_dictionary_examples(
-            request_body=input_text_elements, from_parameter=source_language, to=target_language
-        )
+        response = client.lookup_dictionary_examples(body=input_text_elements, from_parameter=from_parameter, to=to)
         assert response is not None
         assert len(response) == 2
         assert response[0].normalized_source == "fly"
