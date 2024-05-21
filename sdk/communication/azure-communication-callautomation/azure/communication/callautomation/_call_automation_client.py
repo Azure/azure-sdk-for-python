@@ -169,7 +169,7 @@ class CallAutomationClient:
         )
 
     @overload
-    def connect(
+    def connect_call(
         self,
         *,
         server_call_id: str,
@@ -197,7 +197,7 @@ class CallAutomationClient:
         """
 
     @overload
-    def connect(
+    def connect_call(
         self,
         *,
         group_call_id: str,
@@ -224,7 +224,7 @@ class CallAutomationClient:
         """
 
     @overload
-    def connect(
+    def connect_call(
         self,
         *,
         room_id: str,
@@ -251,7 +251,7 @@ class CallAutomationClient:
         """
 
     @distributed_trace
-    def connect(
+    def connect_call(
         self,
         *args: Union['ServerCallLocator', 'GroupCallLocator', 'RoomCallLocator'],
         **kwargs

@@ -532,9 +532,6 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
-        :keyword interrupt_call_media_operation: If set play can barge into other existing
-         queued-up/currently-processing requests.
-        :paramtype interrupt_call_media_operation: bool
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:

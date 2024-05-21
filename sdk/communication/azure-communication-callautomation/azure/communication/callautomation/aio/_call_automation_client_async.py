@@ -155,7 +155,7 @@ class CallAutomationClient:
         )
 
     @overload
-    async def connect(
+    async def connect_call(
         self,
         *,
         server_call_id: str,
@@ -183,7 +183,7 @@ class CallAutomationClient:
         """
 
     @overload
-    async def connect(
+    async def connect_call(
         self,
         *,
         group_call_id: str,
@@ -210,7 +210,7 @@ class CallAutomationClient:
         """
 
     @overload
-    async def connect(
+    async def connect_call(
         self,
         *,
         room_id: str,
@@ -237,7 +237,7 @@ class CallAutomationClient:
         """
 
     @distributed_trace_async
-    async def connect(
+    async def connect_call(
         self,
         *args: Union['ServerCallLocator', 'GroupCallLocator', 'RoomCallLocator'],
         **kwargs
