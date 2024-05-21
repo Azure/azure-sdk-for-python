@@ -131,7 +131,7 @@ class TextTranslationClient(ServiceClientGenerated):
     def __init__(
         self,
         *,
-        credential: AsyncTokenCredential = None,
+        credential: AsyncTokenCredential,
         region: Optional[str] = None,
         endpoint: Optional[str] = None,
         resource_id: Optional[str] = None,
@@ -144,7 +144,7 @@ class TextTranslationClient(ServiceClientGenerated):
     def __init__(
         self,
         *,
-        credential: AzureKeyCredential = None,
+        credential: AzureKeyCredential,
         region: Optional[str] = None,
         endpoint: Optional[str] = None,
         api_version="3.0",
