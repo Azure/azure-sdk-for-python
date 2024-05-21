@@ -46,7 +46,7 @@ class TranslatorEntraIdAuthenticationPolicy(BearerTokenCredentialPolicy):
     Ocp-Apim-ResourceId header contains Azure resource Id - Translator resource.
 
     :param credential: Translator Entra Id Credentials used to access Translator Resource for global endpoint.
-    :type credential: ~azure.ai.translation.text.TranslatorEntraIdCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     """
 
     def __init__(self, credential: TokenCredential, resource_id: str, region: str, scopes: str, **kwargs: Any) -> None:
