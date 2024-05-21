@@ -163,7 +163,9 @@ class TextTranslationClient(ServiceClientGenerated):
     def __init__(self, **kwargs):
         api_version = kwargs.get("api_version", "3.0")
         set_authentication_policy(kwargs.get("credential"), kwargs)
-        translation_endpoint = get_translation_endpoint(kwargs.pop("endpoint"), api_version)
+        translation_endpoint = get_translation_endpoint(
+            kwargs.pop("endpoint", "https://api.cognitive.microsofttranslator.com"), api_version
+        )
         super().__init__(endpoint=translation_endpoint, api_version=api_version, **kwargs)
 
 
