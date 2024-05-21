@@ -29,7 +29,6 @@ from ._models import OperationDisplay
 from ._models import Organization
 from ._models import OrganizationProfile
 from ._models import OsProfile
-from ._models import PagedOperation
 from ._models import Pool
 from ._models import PoolImage
 from ._models import PoolListResult
@@ -108,7 +107,6 @@ __all__ = [
     "Organization",
     "OrganizationProfile",
     "OsProfile",
-    "PagedOperation",
     "Pool",
     "PoolImage",
     "PoolListResult",
