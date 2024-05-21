@@ -19,10 +19,10 @@ class TestTranslation(TextTranslationTest):
         region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
-        from_parameter = "es"
+        from_language = "es"
         to = ["cs"]
         input_text_elements = ["Hola mundo"]
-        response = client.translate(body=input_text_elements, to=to, from_parameter=from_parameter)
+        response = client.translate(body=input_text_elements, to=to, from_language=from_language)
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -56,13 +56,13 @@ class TestTranslation(TextTranslationTest):
         region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
-        from_parameter = "zh-chs"
+        from_language = "zh-chs"
         to = ["en"]
         input_text_elements = ["<span class=notranslate>今天是怎么回事是</span>非常可怕的"]
         response = client.translate(
             body=input_text_elements,
             to=to,
-            from_parameter=from_parameter,
+            from_language=from_language,
             text_type=TextType.HTML,
         )
 
@@ -78,12 +78,12 @@ class TestTranslation(TextTranslationTest):
         region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
-        from_parameter = "en"
+        from_language = "en"
         to = ["es"]
         input_text_elements = [
             'The word < mstrans:dictionary translation ="wordomatic">wordomatic</mstrans:dictionary> is a dictionary entry.'
         ]
-        response = client.translate(body=input_text_elements, to=to, from_parameter=from_parameter)
+        response = client.translate(body=input_text_elements, to=to, from_language=from_language)
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -98,13 +98,13 @@ class TestTranslation(TextTranslationTest):
         region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
-        from_parameter = "ar"
+        from_language = "ar"
         to = ["zh-Hans"]
         input_text_elements = ["hudha akhtabar."]
         response = client.translate(
             body=input_text_elements,
             to=to,
-            from_parameter=from_parameter,
+            from_language=from_language,
             from_script="Latn",
             to_script="Latn",
         )
@@ -123,13 +123,13 @@ class TestTranslation(TextTranslationTest):
         region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
-        from_parameter = "hi"
+        from_language = "hi"
         to = ["ta"]
         input_text_elements = ["ap kaise ho"]
         response = client.translate(
             body=input_text_elements,
             to=to,
-            from_parameter=from_parameter,
+            from_language=from_language,
             from_script="Latn",
             to_script="Latn",
         )
@@ -310,10 +310,10 @@ class TestTranslation(TextTranslationTest):
         token_credential = self.get_mt_credential(False)
         client = self.create_text_translation_client_with_aad(token_credential, aadRegion, aadResourceId)
 
-        from_parameter = "es"
+        from_language = "es"
         to = ["cs"]
         input_text_elements = ["Hola mundo"]
-        response = client.translate(body=input_text_elements, to=to, from_parameter=from_parameter)
+        response = client.translate(body=input_text_elements, to=to, from_language=from_language)
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
