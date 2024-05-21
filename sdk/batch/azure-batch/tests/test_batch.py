@@ -295,10 +295,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 )
             ],
         )
-        response = await async_wrapper(client.batch_api.create_pool(test_iaas_pool))
+        response = await async_wrapper(client.create_pool(test_iaas_pool))
         assert response is None
 
-        mount_pool = await async_wrapper(client.batch_api.get_pool(test_iaas_pool.id))
+        mount_pool = await async_wrapper(client.get_pool(test_iaas_pool.id))
         assert mount_pool.mount_configuration is not None
         assert len(mount_pool.mount_configuration) == 1
         assert mount_pool.mount_configuration[0].azure_blob_file_system_configuration is not None
@@ -326,7 +326,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 ),
             ),
         )
-        response = await async_wrapper(client.batch_api.create_pool(test_paas_pool))
+        response = await async_wrapper(client.create_pool(test_paas_pool))
         assert response is None
 
         # Test Update Pool Options
@@ -363,7 +363,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert pool.target_node_communication_mode == models.BatchNodeCommunicationMode.classic
 
         # Test Get Pool with OData Clauses
-        pool = await async_wrapper(client.batch_api.get_pool(pool_id=test_paas_pool.id, select=["id,state"], expand=["stats"]))
+        pool = await async_wrapper(client.get_pool(pool_id=test_paas_pool.id, select=["id,state"], expand=["stats"]))
         assert isinstance(pool, models.BatchPool)
         assert pool.id == test_paas_pool.id
         assert pool.state == models.BatchPoolState.active
@@ -407,18 +407,18 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert result.results == "$TargetDedicatedNodes=3;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
 
         # Test Disable Autoscale
-        pool = await async_wrapper(client.batch_api.get_pool(batch_pool.name))
+        pool = await async_wrapper(client.get_pool(batch_pool.name))
         while self.is_live and pool.allocation_state != models.AllocationState.steady:
             time.sleep(5)
-            pool = await async_wrapper(client.batch_api.get_pool(batch_pool.name))
+            pool = await async_wrapper(client.get_pool(batch_pool.name))
         response = await async_wrapper(client.disable_pool_auto_scale(batch_pool.name))
         assert response is None
 
         # Test Pool Resize
-        pool = await async_wrapper(client.batch_api.get_pool(batch_pool.name))
+        pool = await async_wrapper(client.get_pool(batch_pool.name))
         while self.is_live and pool.allocation_state != models.AllocationState.steady:
             time.sleep(5)
-            pool = await async_wrapper(client.batch_api.get_pool(batch_pool.name))
+            pool = await async_wrapper(client.get_pool(batch_pool.name))
         params = models.BatchPoolResizeParameters(target_dedicated_nodes=0, target_low_priority_nodes=2)
         response = await async_wrapper(client.resize_pool(batch_pool.name, params))
         assert response is None
@@ -426,10 +426,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Stop Pool Resize
         response = await async_wrapper(client.stop_pool_resize(batch_pool.name))
         assert response is None
-        pool = await async_wrapper(client.batch_api.get_pool(batch_pool.name))
+        pool = await async_wrapper(client.get_pool(batch_pool.name))
         while self.is_live and pool.allocation_state != models.AllocationState.steady:
             time.sleep(5)
-            pool = await async_wrapper(client.batch_api.get_pool(batch_pool.name))
+            pool = await async_wrapper(client.get_pool(batch_pool.name))
 
         # Test Get Pool Usage Info
         info = list(await async_wrapper(client.list_pool_usage_metrics()))
@@ -542,11 +542,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
             network_configuration=network_config,
         )
 
-        await async_wrapper(client.batch_api.create_pool(pool))
-        network_pool: models.BatchPool = await async_wrapper(client.batch_api.get_pool(pool.id))
+        await async_wrapper(client.create_pool(pool))
+        network_pool: models.BatchPool = await async_wrapper(client.get_pool(pool.id))
         while self.is_live and network_pool.allocation_state != models.AllocationState.steady:
             time.sleep(10)
-            network_pool = await async_wrapper(client.batch_api.get_pool(pool.id))
+            network_pool = await async_wrapper(client.get_pool(pool.id))
 
         # Test Batch Node Config
         nodes = list(await async_wrapper(client.list_nodes(pool.id)))
@@ -673,13 +673,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
             virtual_machine_configuration=virtual_machine_config,
             network_configuration=network_config,
         )
-        response = await async_wrapper(client.batch_api.create_pool(batch_pool))
+        response = await async_wrapper(client.create_pool(batch_pool))
         assert response is None
 
-        batch_pool = await async_wrapper(client.batch_api.get_pool(batch_pool.id))
+        batch_pool = await async_wrapper(client.get_pool(batch_pool.id))
         while self.is_live and batch_pool.allocation_state != models.AllocationState.steady:
             time.sleep(10)
-            batch_pool = await async_wrapper(client.batch_api.get_pool(batch_pool.id))
+            batch_pool = await async_wrapper(client.get_pool(batch_pool.id))
 
         nodes = list(await async_wrapper(client.list_nodes(batch_pool.id)))
         assert len(nodes) == 1

@@ -25,7 +25,7 @@ class AccountPreparer(AzureMgmtPreparer):
     def __init__(
         self,
         name_prefix="batch",
-        location="eastus",
+        location="westus",
         parameter_name=BATCH_ACCOUNT_PARAM,
         resource_group_parameter_name=RESOURCE_GROUP_PARAM,
         disable_recording=True,
@@ -287,7 +287,7 @@ class JobPreparer(AzureMgmtPreparer):
                 pool_lifetime_option=azure.batch.models.PoolLifetimeOption.job,
                 pool=azure.batch.models.PoolSpecification(
                     vm_size="small",
-                    vm_configuration=azure.batch.models.VirtualMachineConfiguration(os_family="5"),
+                    cloud_service_configuration=azure.batch.models.CloudServiceConfiguration(os_family="5"),
                 ),
             )
             return azure.batch.models.PoolInformation(auto_pool_specification=auto_pool)
