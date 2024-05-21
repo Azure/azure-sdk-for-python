@@ -31,11 +31,6 @@ extends:
     ServiceDirectory: storage
     TestProxy: true
     TestTimeoutInMinutes: 120
-    MatrixConfigs:
-      - Name: storage_ci_matrix
-        Path: eng/pipelines/templates/stages/platform-matrix-excluding-pypy.json
-        Selection: sparse
-        GenerateVMJobs: true
     AdvancedBuild: true
     Artifacts:
     - name: azure-storage-blob
