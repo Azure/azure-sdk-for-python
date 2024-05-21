@@ -19,7 +19,6 @@ from ._models import FabricProfile
 from ._models import GitHubOrganization
 from ._models import GitHubOrganizationProfile
 from ._models import ImageVersion
-from ._models import ImageVersionListResult
 from ._models import ImageVersionProperties
 from ._models import ManagedServiceIdentity
 from ._models import ManualResourcePredictionsProfile
@@ -31,24 +30,20 @@ from ._models import OrganizationProfile
 from ._models import OsProfile
 from ._models import Pool
 from ._models import PoolImage
-from ._models import PoolListResult
 from ._models import PoolProperties
 from ._models import PoolUpdate
 from ._models import PoolUpdateProperties
 from ._models import ProxyResource
 from ._models import Quota
-from ._models import QuotaListResult
 from ._models import QuotaName
 from ._models import QuotaProperties
 from ._models import Resource
 from ._models import ResourceDetailsObject
-from ._models import ResourceDetailsObjectListResult
 from ._models import ResourceDetailsObjectProperties
 from ._models import ResourcePredictions
 from ._models import ResourcePredictionsProfile
 from ._models import ResourceSku
 from ._models import ResourceSkuCapabilities
-from ._models import ResourceSkuListResult
 from ._models import ResourceSkuLocationInfo
 from ._models import ResourceSkuProperties
 from ._models import ResourceSkuRestrictionInfo
@@ -97,7 +92,6 @@ __all__ = [
     "GitHubOrganization",
     "GitHubOrganizationProfile",
     "ImageVersion",
-    "ImageVersionListResult",
     "ImageVersionProperties",
     "ManagedServiceIdentity",
     "ManualResourcePredictionsProfile",
@@ -109,24 +103,20 @@ __all__ = [
     "OsProfile",
     "Pool",
     "PoolImage",
-    "PoolListResult",
     "PoolProperties",
     "PoolUpdate",
     "PoolUpdateProperties",
     "ProxyResource",
     "Quota",
-    "QuotaListResult",
     "QuotaName",
     "QuotaProperties",
     "Resource",
     "ResourceDetailsObject",
-    "ResourceDetailsObjectListResult",
     "ResourceDetailsObjectProperties",
     "ResourcePredictions",
     "ResourcePredictionsProfile",
     "ResourceSku",
     "ResourceSkuCapabilities",
-    "ResourceSkuListResult",
     "ResourceSkuLocationInfo",
     "ResourceSkuProperties",
     "ResourceSkuRestrictionInfo",

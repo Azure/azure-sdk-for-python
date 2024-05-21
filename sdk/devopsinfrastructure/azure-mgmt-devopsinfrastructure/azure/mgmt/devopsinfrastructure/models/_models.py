@@ -619,41 +619,6 @@ class ImageVersion(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ImageVersionListResult(_model_base.Model):
-    """The response of a ImageVersion list operation.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: The ImageVersion items on this page. Required.
-    :vartype value: list[~azure.mgmt.devopsinfrastructure.models.ImageVersion]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: List["_models.ImageVersion"] = rest_field()
-    """The ImageVersion items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.ImageVersion"],
-        next_link: Optional[str] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class ImageVersionProperties(_model_base.Model):
     """Details of the ImageVersionProperties.
 
@@ -1114,41 +1079,6 @@ class PoolImage(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PoolListResult(_model_base.Model):
-    """The response of a Pool list operation.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: The Pool items on this page. Required.
-    :vartype value: list[~azure.mgmt.devopsinfrastructure.models.Pool]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: List["_models.Pool"] = rest_field()
-    """The Pool items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.Pool"],
-        next_link: Optional[str] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class PoolProperties(_model_base.Model):
     """Pool properties.
 
@@ -1342,41 +1272,6 @@ class Quota(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class QuotaListResult(_model_base.Model):
-    """The response of a Quota list operation.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: The Quota items on this page. Required.
-    :vartype value: list[~azure.mgmt.devopsinfrastructure.models.Quota]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: List["_models.Quota"] = rest_field()
-    """The Quota items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.Quota"],
-        next_link: Optional[str] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class QuotaName(_model_base.Model):
     """The Quota Names.
 
@@ -1483,41 +1378,6 @@ class ResourceDetailsObject(ProxyResource):
         self,
         *,
         properties: Optional["_models.ResourceDetailsObjectProperties"] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class ResourceDetailsObjectListResult(_model_base.Model):
-    """The response of a ResourceDetailsObject list operation.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: The ResourceDetailsObject items on this page. Required.
-    :vartype value: list[~azure.mgmt.devopsinfrastructure.models.ResourceDetailsObject]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: List["_models.ResourceDetailsObject"] = rest_field()
-    """The ResourceDetailsObject items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.ResourceDetailsObject"],
-        next_link: Optional[str] = None,
     ): ...
 
     @overload
@@ -1642,41 +1502,6 @@ class ResourceSkuCapabilities(_model_base.Model):
         *,
         name: str,
         value: str,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class ResourceSkuListResult(_model_base.Model):
-    """The response of a ResourceSku list operation.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: The ResourceSku items on this page. Required.
-    :vartype value: list[~azure.mgmt.devopsinfrastructure.models.ResourceSku]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: List["_models.ResourceSku"] = rest_field()
-    """The ResourceSku items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.ResourceSku"],
-        next_link: Optional[str] = None,
     ): ...
 
     @overload
