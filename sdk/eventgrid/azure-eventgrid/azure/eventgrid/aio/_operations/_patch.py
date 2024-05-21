@@ -136,7 +136,7 @@ class EventGridPublisherClientOperationsMixin(OperationsPubMixin):
                 :language: python
                 :dedent: 0
                 :caption: Publishing a Cloud Event to a Namespace Topic.
-            .. literalinclude:: ../samples/async_samples/sample_publish_events_using_cloud_events_1.0_schema_async.py
+            .. literalinclude:: ../samples/async_samples/sample_publish_events_using_1.0_schema_async.py
                 :start-after: [START publish_cloud_event_to_topic_async]
                 :end-before: [END publish_cloud_event_to_topic_async]
                 :language: python
@@ -218,7 +218,7 @@ class EventGridPublisherClientOperationsMixin(OperationsPubMixin):
 class EventGridConsumerClientOperationsMixin(OperationsConsumerMixin):
 
     @distributed_trace_async
-    async def receive_cloud_events(
+    async def receive(
         self,
         topic_name: str,
         subscription_name: str,
@@ -268,7 +268,7 @@ class EventGridConsumerClientOperationsMixin(OperationsConsumerMixin):
         return receive_result_deserialized
 
     @distributed_trace_async
-    async def acknowledge_cloud_events(
+    async def acknowledge(
         self,
         topic_name: str,
         subscription_name: str,
@@ -298,7 +298,7 @@ class EventGridConsumerClientOperationsMixin(OperationsConsumerMixin):
     @api_version_validation(
         params_added_on={"2023-10-01-preview": ["release_delay"]},
     )
-    async def release_cloud_events(
+    async def release(
         self,
         topic_name: str,
         subscription_name: str,
@@ -334,7 +334,7 @@ class EventGridConsumerClientOperationsMixin(OperationsConsumerMixin):
         )
 
     @distributed_trace_async
-    async def reject_cloud_events(
+    async def reject(
         self,
         topic_name: str,
         subscription_name: str,

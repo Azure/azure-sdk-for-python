@@ -17,12 +17,14 @@ from azure.core.credentials import (
 )
 
 from ._legacy import (
+    EventGridPublisherClient as GAEventGridPublisherClient,
     SystemEventNames,
     EventGridEvent,
     generate_sas,
 )
 from ._client import (
     EventGridPublisherClient as InternalEventGridPublisherClient,
+    EventGridConsumerClient as InternalEventGridConsumerClient,
 )
 from ._serialization import Serializer, Deserializer
 
@@ -62,14 +64,15 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
         credential: Union[AzureKeyCredential, AzureSasCredential, "TokenCredential"],
         *,
         api_version: Optional[str] = None,
-        level: Union[str, ClientLevel] = ClientLevel.STANDARD,
+        level: Union[str, ClientLevel] = ClientLevel.BASIC,
         **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
         self._level = level
+        self.credential = credential
 
         if level == ClientLevel.BASIC:
-            self._client = EventGridPublisherClient(
+            self._client = GAEventGridPublisherClient(
                 endpoint,
                 credential,
                 api_version=api_version or DEFAULT_BASIC_API_VERSION,
@@ -92,6 +95,17 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
+    def __repr__(self) -> str:
+        return "<EventGridPublisherClient [level={}] and credential type [{}]>".format(self._level, type(self.credential))
+
+class EventGridConsumerClient(InternalEventGridConsumerClient):
+
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
+        return super().__init__(endpoint=endpoint, credential=credential, **kwargs)
+    
+
+    def __repr__(self) -> str:
+        return "<EventGridConsumerClient [level={}] and credential type [{}]>".format(self._level, type(self.credential))
 
 def patch_sdk():
     """Do not remove from this file.

@@ -203,7 +203,7 @@ class EventGridPublisherClientOperationsMixin(OperationsPubMixin):
                 :dedent: 0
                 :caption: Publishing a Cloud Event to a Namespace Topic.
 
-            .. literalinclude:: ../samples/sync_samples/sample_publish_events_using_cloud_events_1.0_schema.py
+            .. literalinclude:: ../samples/sync_samples/sample_publish_events_using_1.0_schema.py
                 :start-after: [START publish_cloud_event_to_topic]
                 :end-before: [END publish_cloud_event_to_topic]
                 :language: python
@@ -285,7 +285,7 @@ class EventGridPublisherClientOperationsMixin(OperationsPubMixin):
 class EventGridConsumerClientOperationsMixin(OperationsConsumerMixin):
 
     @distributed_trace
-    def receive_cloud_events(
+    def receive(
         self,
         topic_name: str,
         subscription_name: str,
@@ -335,7 +335,7 @@ class EventGridConsumerClientOperationsMixin(OperationsConsumerMixin):
         return receive_result_deserialized
 
     @distributed_trace
-    def acknowledge_cloud_events(
+    def acknowledge(
         self,
         topic_name: str,
         subscription_name: str,
@@ -370,7 +370,7 @@ class EventGridConsumerClientOperationsMixin(OperationsConsumerMixin):
     @api_version_validation(
         params_added_on={"2023-10-01-preview": ["release_delay"]},
     )
-    def release_cloud_events(
+    def release(
         self,
         topic_name: str,
         subscription_name: str,
@@ -406,7 +406,7 @@ class EventGridConsumerClientOperationsMixin(OperationsConsumerMixin):
         )
 
     @distributed_trace
-    def reject_cloud_events(
+    def reject(
         self,
         topic_name: str,
         subscription_name: str,

@@ -9,6 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List, Union, Any, TYPE_CHECKING, Optional
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 
+from .._legacy.aio import EventGridPublisherClient as GAEventGridPublisherClient
 from ._client import EventGridPublisherClient as InternalEventGridPublisherClient
 from .._serialization import Deserializer, Serializer
 from .._patch import (
@@ -54,7 +55,7 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
         self._level = level
 
         if level == ClientLevel.BASIC:
-            self._client = EventGridPublisherClient(  # type: ignore[assignment]
+            self._client = GAEventGridPublisherClient(  # type: ignore[assignment]
                 endpoint, credential, api_version=api_version or DEFAULT_BASIC_API_VERSION, **kwargs
             )
             self._send = self._client.send  # type: ignore[attr-defined]
