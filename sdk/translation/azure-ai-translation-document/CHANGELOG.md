@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b1 (Unreleased)
+## 1.1.0b1 (2024-05-21)
 
 ### Features Added
 - Added SingleDocumentTranslationClient that is used to invoke `document_translate` API.
