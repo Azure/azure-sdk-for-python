@@ -1551,6 +1551,36 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
+    def test_get_blob_read_chars_ranged(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        data = '你好世界' * 256  # 3 KiB
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, encoding='utf-8', overwrite=True)
+
+        # Offset and length need to be multiple of 3 to meet unicode boundaries
+        offset, length = 9, 1500
+        expected = data[offset//3: offset//3 + length//3]
+        stream = blob.download_blob(offset=offset, length=length, encoding='utf-8')
+        assert stream.read() == expected
+
+        stream = blob.download_blob(offset=offset, length=length, encoding='utf-8')
+        assert stream.read(chars=100000) == expected
+
+        result = ''
+        stream = blob.download_blob(offset=offset, length=length, encoding='utf-8')
+        for _ in range(4):
+            chunk = stream.read(chars=100)
+            result += chunk
+            assert len(chunk) == 100
+
+        result += stream.readall()
+        assert result == expected
+
+    @BlobPreparer()
+    @recorded_by_proxy
     def test_get_blob_read_chars_mixed(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")

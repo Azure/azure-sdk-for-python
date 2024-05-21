@@ -320,7 +320,6 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         self._clients = clients
         self._config = config
-        # User specified start and end
         self._start_range = start_range
         self._end_range = end_range
         self._max_concurrency = max_concurrency
@@ -330,11 +329,9 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._progress_hook = kwargs.pop('progress_hook', None)
         self._request_options = kwargs
         self._location_mode = None
-        self._download_complete = False
         self._current_content = b''
         self._file_size = None
         self._non_empty_ranges = None
-        self._response = None
         self._encryption_data = None
 
         self._download_start = self._start_range or 0
@@ -356,14 +353,14 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         # The service only provides transactional MD5s for chunks under 4MB.
         # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
         # chunk so a transactional MD5 can be retrieved.
-        self._first_get_size = (
+        first_get_size = (
             self._config.max_single_get_size if not self._validate_content else self._config.max_chunk_get_size
         )
         initial_request_start = self._download_start
-        if self._end_range is not None and self._end_range - initial_request_start < self._first_get_size:
+        if self._end_range is not None and self._end_range - initial_request_start < first_get_size:
             initial_request_end = self._end_range
         else:
-            initial_request_end = initial_request_start + self._first_get_size - 1
+            initial_request_end = initial_request_start + first_get_size - 1
 
         self._initial_range, self._initial_offset = process_range_and_offset(
             initial_request_start,
@@ -373,8 +370,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             self._encryption_data
         )
 
-        self._response = self._initial_request()
-        self.properties = self._response.properties
+        initial_response = self._initial_request()
+        self.properties = initial_response.properties
         self.properties.name = self.name
         self.properties.container = self.container
 
@@ -506,11 +503,11 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         # If file size is large, download the rest of the file in chunks.
         # For encryption V2, calculate based on size of decrypted content, not download size.
         if is_encryption_v2(self._encryption_data):
-            self._download_complete = len(self._current_content) >= self.size
+            download_complete = len(self._current_content) >= self.size
         else:
-            self._download_complete = response.properties.size >= self.size
+            download_complete = response.properties.size >= self.size
 
-        if not self._download_complete and self._request_options.get("modified_access_conditions"):
+        if not download_complete and self._request_options.get("modified_access_conditions"):
             self._request_options["modified_access_conditions"].if_match = response.properties.etag
 
         return response
