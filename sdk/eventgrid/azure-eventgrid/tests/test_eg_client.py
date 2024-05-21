@@ -26,7 +26,9 @@ def _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name):
 
 class TestEGClientExceptions(AzureRecordedTestCase):
     def create_eg_client(self, endpoint, key, topic):
-        publisher = EventGridPublisherClient(endpoint=endpoint, credential=AzureKeyCredential(key), namespace_topic=topic)
+        publisher = EventGridPublisherClient(
+            endpoint=endpoint, credential=AzureKeyCredential(key), namespace_topic=topic
+        )
         consumer = EventGridConsumerClient(endpoint=endpoint, credential=AzureKeyCredential(key))
         return publisher, consumer
 

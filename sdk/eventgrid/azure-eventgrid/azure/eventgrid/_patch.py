@@ -86,16 +86,19 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
         self._serialize.client_side_validation = False
 
     def __repr__(self) -> str:
-        return "<EventGridPublisherClient [namespace_topic={}] and credential type [{}]>".format(self._namespace, type(self.credential))
+        return "<EventGridPublisherClient [namespace_topic={}] and credential type [{}]>".format(
+            self._namespace, type(self.credential)
+        )
+
 
 class EventGridConsumerClient(InternalEventGridConsumerClient):
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         return super().__init__(endpoint=endpoint, credential=credential, **kwargs)
-    
 
     def __repr__(self) -> str:
         return "<EventGridConsumerClient>"
+
 
 def patch_sdk():
     """Do not remove from this file.

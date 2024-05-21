@@ -121,7 +121,7 @@ class EventGridPublisherClientOperationsMixin(OperationsPubMixin):
         channel_name: Optional[str] = None,
         content_type: Optional[str] = None,
         **kwargs: Any,
-    ) -> None: # pylint: disable=docstring-should-be-keyword, docstring-missing-param
+    ) -> None:  # pylint: disable=docstring-should-be-keyword, docstring-missing-param
         """Send events to the Event Grid Service.
 
         :param topic_name: The name of the topic to send the event to.

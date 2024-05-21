@@ -39,13 +39,13 @@ class AcknowledgeResult(_model_base.Model):
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
      error code and description). Required.
-    :vartype failed_lock_tokens: list[~azure.eventgrid.models._models.FailedLockToken]
+    :vartype failed_lock_tokens: list[~azure.eventgrid.models.FailedLockToken]
     :ivar succeeded_lock_tokens: Array of lock tokens for the successfully acknowledged cloud
      events. Required.
     :vartype succeeded_lock_tokens: list[str]
     """
 
-    failed_lock_tokens: List["_models._models.FailedLockToken"] = rest_field(name="failedLockTokens")
+    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
     """Array of FailedLockToken for failed cloud events. Each FailedLockToken includes the lock token
      along with the related error information (namely, the error code and description). Required."""
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
@@ -55,7 +55,7 @@ class AcknowledgeResult(_model_base.Model):
     def __init__(
         self,
         *,
-        failed_lock_tokens: List["_models._models.FailedLockToken"],
+        failed_lock_tokens: List["_models.FailedLockToken"],
         succeeded_lock_tokens: List[str],
     ): ...
 
@@ -190,6 +190,24 @@ class FailedLockToken(_model_base.Model):
     error: "_models._models.Error" = rest_field()
     """Error information of the failed operation result for the lock token in the request. Required."""
 
+    @overload
+    def __init__(
+        self,
+        *,
+        lock_token: str,
+        error: "_models._models.Error",
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
 
 class InnerError(_model_base.Model):
     """An object containing more specific information about the error. As per Microsoft One API
@@ -280,13 +298,13 @@ class RejectResult(_model_base.Model):
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
      error code and description). Required.
-    :vartype failed_lock_tokens: list[~azure.eventgrid.models._models.FailedLockToken]
+    :vartype failed_lock_tokens: list[~azure.eventgrid.models.FailedLockToken]
     :ivar succeeded_lock_tokens: Array of lock tokens for the successfully rejected cloud events.
      Required.
     :vartype succeeded_lock_tokens: list[str]
     """
 
-    failed_lock_tokens: List["_models._models.FailedLockToken"] = rest_field(name="failedLockTokens")
+    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
     """Array of FailedLockToken for failed cloud events. Each FailedLockToken includes the lock token
      along with the related error information (namely, the error code and description). Required."""
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
@@ -296,7 +314,7 @@ class RejectResult(_model_base.Model):
     def __init__(
         self,
         *,
-        failed_lock_tokens: List["_models._models.FailedLockToken"],
+        failed_lock_tokens: List["_models.FailedLockToken"],
         succeeded_lock_tokens: List[str],
     ): ...
 
@@ -332,13 +350,13 @@ class ReleaseResult(_model_base.Model):
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
      error code and description). Required.
-    :vartype failed_lock_tokens: list[~azure.eventgrid.models._models.FailedLockToken]
+    :vartype failed_lock_tokens: list[~azure.eventgrid.models.FailedLockToken]
     :ivar succeeded_lock_tokens: Array of lock tokens for the successfully released cloud events.
      Required.
     :vartype succeeded_lock_tokens: list[str]
     """
 
-    failed_lock_tokens: List["_models._models.FailedLockToken"] = rest_field(name="failedLockTokens")
+    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
     """Array of FailedLockToken for failed cloud events. Each FailedLockToken includes the lock token
      along with the related error information (namely, the error code and description). Required."""
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
@@ -348,7 +366,7 @@ class ReleaseResult(_model_base.Model):
     def __init__(
         self,
         *,
-        failed_lock_tokens: List["_models._models.FailedLockToken"],
+        failed_lock_tokens: List["_models.FailedLockToken"],
         succeeded_lock_tokens: List[str],
     ): ...
 
@@ -371,12 +389,12 @@ class RenewCloudEventLocksResult(_model_base.Model):
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
      error code and description). Required.
-    :vartype failed_lock_tokens: list[~azure.eventgrid.models._models.FailedLockToken]
+    :vartype failed_lock_tokens: list[~azure.eventgrid.models.FailedLockToken]
     :ivar succeeded_lock_tokens: Array of lock tokens for the successfully renewed locks. Required.
     :vartype succeeded_lock_tokens: list[str]
     """
 
-    failed_lock_tokens: List["_models._models.FailedLockToken"] = rest_field(name="failedLockTokens")
+    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
     """Array of FailedLockToken for failed cloud events. Each FailedLockToken includes the lock token
      along with the related error information (namely, the error code and description). Required."""
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
@@ -386,7 +404,7 @@ class RenewCloudEventLocksResult(_model_base.Model):
     def __init__(
         self,
         *,
-        failed_lock_tokens: List["_models._models.FailedLockToken"],
+        failed_lock_tokens: List["_models.FailedLockToken"],
         succeeded_lock_tokens: List[str],
     ): ...
 

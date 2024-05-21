@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from ._models import AcknowledgeResult
+from ._models import FailedLockToken
 from ._models import ReceiveResult
 from ._models import RejectResult
 from ._models import ReleaseResult
@@ -19,6 +20,7 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AcknowledgeResult",
+    "FailedLockToken",
     "ReceiveResult",
     "RejectResult",
     "ReleaseResult",
