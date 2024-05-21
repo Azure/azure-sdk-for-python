@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 (Unreleased)
+## 1.0.0 (2024-05-21)
 
 ### Features Added
   - Added support for Entra Id authentication.
@@ -15,10 +15,6 @@
   - score parameter was renamed to confidence.
   - from_script parameter was renamed to from_script.
   - to_script parameter was renamed to _target_langauge_script.
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0b1 (2023-04-19)
 
