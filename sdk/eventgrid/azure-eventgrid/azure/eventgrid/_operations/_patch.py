@@ -366,7 +366,7 @@ class EventGridConsumerClientOperationsMixin(OperationsConsumerMixin):
     @api_version_validation(
         method_added_on="2023-10-01-preview",
     )
-    def renew_cloud_event_locks(
+    def renew_locks(
         self,
         topic_name: str,
         subscription_name: str,
