@@ -13,22 +13,24 @@ from typing import (
     Any, AnyStr, Dict, IO, Iterable, Optional, Union,
     TYPE_CHECKING
 )
-from urllib.parse import urlparse, quote, unquote
-
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-from ._directory_client_helpers import _parse_url
+from ._deserialize import deserialize_directory_properties
+from ._directory_client_helpers import (
+    _format_url,
+    _from_directory_url,
+    _parse_snapshot,
+    _parse_url)
 from ._generated import AzureFileStorage
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._shared.parser import _str
 from ._parser import _get_file_permission, _datetime_to_str
-from ._deserialize import deserialize_directory_properties
 from ._serialize import get_api_version, get_dest_access_conditions, get_rename_smb_properties
 from ._file_client import ShareFileClient
 from ._models import DirectoryPropertiesPaged, HandlesPaged
@@ -119,14 +121,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         if not sas_token and not credential:
             raise ValueError(
                 'You need to provide either an account shared key or SAS token when creating a storage service.')
-        try:
-            self.snapshot = snapshot.snapshot  # type: ignore
-        except AttributeError:
-            try:
-                self.snapshot = snapshot['snapshot']  # type: ignore
-            except TypeError:
-                self.snapshot = snapshot or path_snapshot
-
+        self.snapshot = _parse_snapshot(snapshot, path_snapshot)
         self.share_name = share_name
         self.directory_path = directory_path
 
@@ -145,11 +140,11 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
 
     @classmethod
     def from_directory_url(
-            cls, directory_url: str,
-            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> Self:
+        cls, directory_url: str,
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
         """Create a ShareDirectoryClient from a directory url.
 
         :param str directory_url:
@@ -177,44 +172,29 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         :returns: A directory client.
         :rtype: ~azure.storage.fileshare.ShareDirectoryClient
         """
-        try:
-            if not directory_url.lower().startswith('http'):
-                directory_url = "https://" + directory_url
-        except AttributeError as exc:
-            raise ValueError("Directory URL must be a string.") from exc
-        parsed_url = urlparse(directory_url.rstrip('/'))
-        if not parsed_url.path and not parsed_url.netloc:
-            raise ValueError(f"Invalid URL: {directory_url}")
-        account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
-        path_snapshot, _ = parse_query(parsed_url.query)
-
-        share_name, _, path_dir = parsed_url.path.lstrip('/').partition('/')
-        share_name = unquote(share_name)
-
-        directory_path = path_dir
-        snapshot = snapshot or path_snapshot
-
+        account_url, share_name, directory_path, snapshot = _from_directory_url(directory_url, snapshot)
         return cls(
             account_url=account_url, share_name=share_name, directory_path=directory_path,
-            credential=credential, **kwargs)
+            snapshot=snapshot, credential=credential, **kwargs)
 
-    def _format_url(self, hostname):
-        share_name = self.share_name
-        if isinstance(share_name, str):
-            share_name = share_name.encode('UTF-8')
-        directory_path = ""
-        if self.directory_path:
-            directory_path = "/" + quote(self.directory_path, safe='~')
-        return f"{self.scheme}://{hostname}/{quote(share_name)}{directory_path}{self._query_str}"
+    def _format_url(self, hostname: str) -> str:
+        """Format the endpoint URL according to the current location mode hostname.
+
+        :param str hostname:
+            The hostname of the current location mode.
+        :returns: A formatted endpoint URL including the current location mode hostname.
+        :rtype: str
+        """
+        return _format_url(self.scheme, hostname, self.share_name, self.directory_path, self._query_str)
 
     @classmethod
     def from_connection_string(
-            cls, conn_str: str,
-            share_name: str,
-            directory_path: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> Self:
+        cls, conn_str: str,
+        share_name: str,
+        directory_path: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
         """Create ShareDirectoryClient from a Connection String.
 
         :param str conn_str:
@@ -246,8 +226,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         return cls(
             account_url, share_name=share_name, directory_path=directory_path, credential=credential, **kwargs)
 
-    def get_file_client(self, file_name, **kwargs):
-        # type: (str, Any) -> ShareFileClient
+    def get_file_client(self, file_name: str, **kwargs: Any) -> ShareFileClient:
         """Get a client to interact with a specific file.
 
         The file need not already exist.
@@ -260,8 +239,8 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             file_name = self.directory_path.rstrip('/') + "/" + file_name
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
         )
         return ShareFileClient(
             self.url, file_path=file_name, share_name=self.share_name, snapshot=self.snapshot,
@@ -271,8 +250,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             allow_trailing_dot=self.allow_trailing_dot,
             allow_source_trailing_dot=self.allow_source_trailing_dot, **kwargs)
 
-    def get_subdirectory_client(self, directory_name, **kwargs):
-        # type: (str, Any) -> ShareDirectoryClient
+    def get_subdirectory_client(self, directory_name: str, **kwargs: Any) -> Self:
         """Get a client to interact with a specific subdirectory.
 
         The subdirectory need not already exist.
@@ -296,8 +274,8 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             directory_path = self.directory_path.rstrip('/') + "/" + directory_name
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
         )
         return ShareDirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot,
@@ -307,8 +285,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             allow_source_trailing_dot=self.allow_source_trailing_dot, **kwargs)
 
     @distributed_trace
-    def create_directory(self, **kwargs):
-        # type: (Any) -> Dict[str, Any]
+    def create_directory(self, **kwargs: Any) -> Dict[str, Any]:
         """Creates a new directory under the directory referenced by the client.
 
         :keyword file_attributes:
@@ -363,7 +340,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         metadata = kwargs.pop('metadata', None)
         headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata)) # type: ignore
+        headers.update(add_metadata_headers(metadata))  # type: ignore
 
         file_attributes = kwargs.pop('file_attributes', 'none')
         file_creation_time = kwargs.pop('file_creation_time', 'now')
@@ -374,7 +351,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         file_permission = _get_file_permission(file_permission, file_permission_key, 'inherit')
 
         try:
-            return self._client.directory.create( # type: ignore
+            return self._client.directory.create(  # type: ignore
                 file_attributes=str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
@@ -389,8 +366,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def delete_directory(self, **kwargs):
-        # type: (**Any) -> None
+    def delete_directory(self, **kwargs: Any) -> None:
         """Marks the directory for deletion. The directory is
         later deleted during garbage collection.
 
@@ -418,11 +394,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def rename_directory(
-            self, new_name, # type: str
-            **kwargs # type: Any
-        ):
-        # type: (...) -> ShareDirectoryClient
+    def rename_directory(self, new_name: str, **kwargs: Any) -> Self:
         """
         Rename the source directory.
 
@@ -521,8 +493,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def list_directories_and_files(self, name_starts_with=None, **kwargs):
-        # type: (Optional[str], **Any) -> ItemPaged
+    def list_directories_and_files(self, name_starts_with: Optional[str] = None, **kwargs: Any) -> ItemPaged:
         """Lists all the directories and files under the directory.
 
         :param str name_starts_with:
@@ -571,8 +542,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             page_iterator_class=DirectoryPropertiesPaged)
 
     @distributed_trace
-    def list_handles(self, recursive=False, **kwargs):
-        # type: (bool, Any) -> ItemPaged[Handle]
+    def list_handles(self, recursive: bool = False, **kwargs: Any) -> ItemPaged["Handle"]:
         """Lists opened handles on a directory or a file under the directory.
 
         :param bool recursive:
@@ -600,8 +570,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             page_iterator_class=HandlesPaged)
 
     @distributed_trace
-    def close_handle(self, handle, **kwargs):
-        # type: (Union[str, Handle], Any) -> Dict[str, int]
+    def close_handle(self, handle: Union[str, "Handle"], **kwargs: Any) -> Dict[str, int]:
         """Close an open file handle.
 
         :param handle:
@@ -619,7 +588,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         :rtype: dict[str, int]
         """
         try:
-            handle_id = handle.id # type: ignore
+            handle_id = handle.id  # type: ignore
         except AttributeError:
             handle_id = handle
         if handle_id == '*':
@@ -641,8 +610,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def close_all_handles(self, recursive=False, **kwargs):
-        # type: (bool, Any) -> Dict[str, int]
+    def close_all_handles(self, recursive: bool = False, **kwargs: Any) -> Dict[str, int]:
         """Close any open file handles.
 
         This operation will block until the service has closed all open handles.
@@ -692,8 +660,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         }
 
     @distributed_trace
-    def get_directory_properties(self, **kwargs):
-        # type: (Any) -> DirectoryProperties
+    def get_directory_properties(self, **kwargs: Any) -> "DirectoryProperties":
         """Returns all user-defined metadata and system properties for the
         specified directory. The data returned does not include the directory's
         list of files.
@@ -715,11 +682,10 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        return response # type: ignore
+        return response  # type: ignore
 
     @distributed_trace
-    def set_directory_metadata(self, metadata, **kwargs):
-        # type: (Dict[str, Any], Any) ->  Dict[str, Any]
+    def set_directory_metadata(self, metadata: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
         """Sets the metadata for the directory.
 
         Each call to this operation replaces all existing metadata
@@ -742,7 +708,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         try:
-            return self._client.directory.set_metadata( # type: ignore
+            return self._client.directory.set_metadata(  # type: ignore
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
@@ -751,8 +717,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def exists(self, **kwargs):
-        # type: (**Any) -> bool
+    def exists(self, **kwargs: Any) -> bool:
         """
         Returns True if a directory exists and returns False otherwise.
 
@@ -775,14 +740,14 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 return False
 
     @distributed_trace
-    def set_http_headers(self, file_attributes="none",  # type: Union[str, NTFSAttributes]
-                         file_creation_time="preserve",  # type: Optional[Union[str, datetime]]
-                         file_last_write_time="preserve",  # type: Optional[Union[str, datetime]]
-                         file_permission=None,   # type: Optional[str]
-                         permission_key=None,   # type: Optional[str]
-                         **kwargs  # type: Any
-                         ):
-        # type: (...) -> Dict[str, Any]
+    def set_http_headers(
+        self, file_attributes: Union[str, "NTFSAttributes"] = "none",
+        file_creation_time: Optional[Union[str, datetime]] = "preserve",
+        file_last_write_time: Optional[Union[str, datetime]] = "preserve",
+        file_permission: Optional[str] = None,
+        permission_key: Optional[str] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Sets HTTP headers on the directory.
 
         :param file_attributes:
@@ -841,10 +806,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def create_subdirectory(
-            self, directory_name,  # type: str
-            **kwargs):
-        # type: (...) -> ShareDirectoryClient
+    def create_subdirectory(self, directory_name: str, **kwargs: Any) -> Self:
         """Creates a new subdirectory and returns a client to interact
         with the subdirectory.
 
@@ -875,14 +837,10 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         subdir = self.get_subdirectory_client(directory_name)
         subdir.create_directory(metadata=metadata, timeout=timeout, **kwargs)
-        return subdir # type: ignore
+        return subdir  # type: ignore
 
     @distributed_trace
-    def delete_subdirectory(
-            self, directory_name,  # type: str
-            **kwargs
-        ):
-        # type: (...) -> None
+    def delete_subdirectory(self, directory_name: str, **kwargs: Any) -> None:
         """Deletes a subdirectory.
 
         :param str directory_name:
@@ -910,11 +868,11 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def upload_file(
-            self, file_name: str,
-            data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
-            length: Optional[int] = None,
-            **kwargs
-        ) -> ShareFileClient:
+        self, file_name: str,
+        data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> ShareFileClient:
         """Creates a new file in the directory and returns a ShareFileClient
         to interact with the file.
 
@@ -973,11 +931,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         return file_client
 
     @distributed_trace
-    def delete_file(
-            self, file_name,  # type: str
-            **kwargs  # type: Optional[Any]
-        ):
-        # type: (...) -> None
+    def delete_file(self, file_name: str, **kwargs: Any) -> None:
         """Marks the specified file for deletion. The file is later
         deleted during garbage collection.
 
