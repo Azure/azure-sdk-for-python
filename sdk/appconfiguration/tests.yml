@@ -22,8 +22,6 @@ extends:
         China:
           SubscriptionConfiguration: $(sub-config-cn-test-resources)
           Location: chinanorth3
-      MatrixReplace:
-        - TestSamples=.*/true
       EnvVars:
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'true'
