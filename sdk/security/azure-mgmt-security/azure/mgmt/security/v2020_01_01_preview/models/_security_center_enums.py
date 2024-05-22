@@ -76,7 +76,7 @@ class PermissionProperty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This permission grants access to read security configuration metadata."""
     AWS_AMAZON_SSM_AUTOMATION_ROLE = "AWS::AmazonSSMAutomationRole"
     """The permission provides for EC2 Automation service to execute activities defined within
-    #: Automation documents."""
+    Automation documents."""
     GCP_SECURITY_CENTER_ADMIN_VIEWER = "GCP::Security Center Admin Viewer"
     """This permission provides read only access to GCP Security Command Center."""
 

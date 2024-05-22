@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -43,6 +44,10 @@ from ...operations._table_resources_operations import (
     build_update_table_throughput_request,
 )
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -77,7 +82,6 @@ class TableResourcesOperations:
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either TableGetResults or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.TableGetResults]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -88,7 +92,7 @@ class TableResourcesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.TableListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -99,17 +103,16 @@ class TableResourcesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_tables_request(
+                _request = build_list_tables_request(
                     resource_group_name=resource_group_name,
                     account_name=account_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_tables.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -121,13 +124,13 @@ class TableResourcesOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("TableListResult", pipeline_response)
@@ -137,11 +140,11 @@ class TableResourcesOperations:
             return None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -152,10 +155,6 @@ class TableResourcesOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_tables.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/tables"
-    }
 
     @distributed_trace_async
     async def get_table(
@@ -170,12 +169,11 @@ class TableResourcesOperations:
         :type account_name: str
         :param table_name: Cosmos DB table name. Required.
         :type table_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableGetResults or the result of cls(response)
         :rtype: ~azure.mgmt.cosmosdb.models.TableGetResults
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -189,22 +187,21 @@ class TableResourcesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.TableGetResults] = kwargs.pop("cls", None)
 
-        request = build_get_table_request(
+        _request = build_get_table_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             table_name=table_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_table.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -216,23 +213,19 @@ class TableResourcesOperations:
         deserialized = self._deserialize("TableGetResults", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_table.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/tables/{tableName}"
-    }
+        return deserialized  # type: ignore
 
     async def _create_update_table_initial(
         self,
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        create_update_table_parameters: Union[_models.TableCreateUpdateParameters, IO],
+        create_update_table_parameters: Union[_models.TableCreateUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.TableGetResults]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -255,7 +248,7 @@ class TableResourcesOperations:
         else:
             _json = self._serialize.body(create_update_table_parameters, "TableCreateUpdateParameters")
 
-        request = build_create_update_table_request(
+        _request = build_create_update_table_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             table_name=table_name,
@@ -264,16 +257,15 @@ class TableResourcesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_update_table_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -294,13 +286,9 @@ class TableResourcesOperations:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _create_update_table_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/tables/{tableName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def begin_create_update_table(
@@ -328,14 +316,6 @@ class TableResourcesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either TableGetResults or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.TableGetResults]
@@ -348,7 +328,7 @@ class TableResourcesOperations:
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        create_update_table_parameters: IO,
+        create_update_table_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -364,18 +344,10 @@ class TableResourcesOperations:
         :type table_name: str
         :param create_update_table_parameters: The parameters to provide for the current Table.
          Required.
-        :type create_update_table_parameters: IO
+        :type create_update_table_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either TableGetResults or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.TableGetResults]
@@ -388,7 +360,7 @@ class TableResourcesOperations:
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        create_update_table_parameters: Union[_models.TableCreateUpdateParameters, IO],
+        create_update_table_parameters: Union[_models.TableCreateUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.TableGetResults]:
         """Create or update an Azure Cosmos DB Table.
@@ -401,20 +373,9 @@ class TableResourcesOperations:
         :param table_name: Cosmos DB table name. Required.
         :type table_name: str
         :param create_update_table_parameters: The parameters to provide for the current Table. Is
-         either a TableCreateUpdateParameters type or a IO type. Required.
+         either a TableCreateUpdateParameters type or a IO[bytes] type. Required.
         :type create_update_table_parameters: ~azure.mgmt.cosmosdb.models.TableCreateUpdateParameters
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either TableGetResults or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.TableGetResults]
@@ -447,7 +408,7 @@ class TableResourcesOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("TableGetResults", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -457,22 +418,20 @@ class TableResourcesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.TableGetResults].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_update_table.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/tables/{tableName}"
-    }
+        return AsyncLROPoller[_models.TableGetResults](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _delete_table_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, account_name: str, table_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -486,22 +445,21 @@ class TableResourcesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_table_request(
+        _request = build_delete_table_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             table_name=table_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_table_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -518,11 +476,7 @@ class TableResourcesOperations:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _delete_table_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/tables/{tableName}"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def begin_delete_table(
@@ -537,14 +491,6 @@ class TableResourcesOperations:
         :type account_name: str
         :param table_name: Cosmos DB table name. Required.
         :type table_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -572,7 +518,7 @@ class TableResourcesOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -581,17 +527,13 @@ class TableResourcesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete_table.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/tables/{tableName}"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
     async def get_table_throughput(
@@ -607,12 +549,11 @@ class TableResourcesOperations:
         :type account_name: str
         :param table_name: Cosmos DB table name. Required.
         :type table_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ThroughputSettingsGetResults or the result of cls(response)
         :rtype: ~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -626,22 +567,21 @@ class TableResourcesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ThroughputSettingsGetResults] = kwargs.pop("cls", None)
 
-        request = build_get_table_throughput_request(
+        _request = build_get_table_throughput_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             table_name=table_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_table_throughput.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -653,23 +593,19 @@ class TableResourcesOperations:
         deserialized = self._deserialize("ThroughputSettingsGetResults", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_table_throughput.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/tables/{tableName}/throughputSettings/default"
-    }
+        return deserialized  # type: ignore
 
     async def _update_table_throughput_initial(
         self,
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, IO],
+        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.ThroughputSettingsGetResults]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -692,7 +628,7 @@ class TableResourcesOperations:
         else:
             _json = self._serialize.body(update_throughput_parameters, "ThroughputSettingsUpdateParameters")
 
-        request = build_update_table_throughput_request(
+        _request = build_update_table_throughput_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             table_name=table_name,
@@ -701,16 +637,15 @@ class TableResourcesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_table_throughput_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -731,13 +666,9 @@ class TableResourcesOperations:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _update_table_throughput_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/tables/{tableName}/throughputSettings/default"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def begin_update_table_throughput(
@@ -766,14 +697,6 @@ class TableResourcesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ThroughputSettingsGetResults or the
          result of cls(response)
         :rtype:
@@ -787,7 +710,7 @@ class TableResourcesOperations:
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        update_throughput_parameters: IO,
+        update_throughput_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -803,18 +726,10 @@ class TableResourcesOperations:
         :type table_name: str
         :param update_throughput_parameters: The parameters to provide for the RUs per second of the
          current Table. Required.
-        :type update_throughput_parameters: IO
+        :type update_throughput_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ThroughputSettingsGetResults or the
          result of cls(response)
         :rtype:
@@ -828,7 +743,7 @@ class TableResourcesOperations:
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, IO],
+        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ThroughputSettingsGetResults]:
         """Update RUs per second of an Azure Cosmos DB Table.
@@ -841,20 +756,10 @@ class TableResourcesOperations:
         :param table_name: Cosmos DB table name. Required.
         :type table_name: str
         :param update_throughput_parameters: The parameters to provide for the RUs per second of the
-         current Table. Is either a ThroughputSettingsUpdateParameters type or a IO type. Required.
+         current Table. Is either a ThroughputSettingsUpdateParameters type or a IO[bytes] type.
+         Required.
         :type update_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either ThroughputSettingsGetResults or the
          result of cls(response)
         :rtype:
@@ -888,7 +793,7 @@ class TableResourcesOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("ThroughputSettingsGetResults", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -898,22 +803,20 @@ class TableResourcesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.ThroughputSettingsGetResults].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update_table_throughput.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/tables/{tableName}/throughputSettings/default"
-    }
+        return AsyncLROPoller[_models.ThroughputSettingsGetResults](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _migrate_table_to_autoscale_initial(
         self, resource_group_name: str, account_name: str, table_name: str, **kwargs: Any
     ) -> Optional[_models.ThroughputSettingsGetResults]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -927,22 +830,21 @@ class TableResourcesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[Optional[_models.ThroughputSettingsGetResults]] = kwargs.pop("cls", None)
 
-        request = build_migrate_table_to_autoscale_request(
+        _request = build_migrate_table_to_autoscale_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             table_name=table_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._migrate_table_to_autoscale_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -963,13 +865,9 @@ class TableResourcesOperations:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _migrate_table_to_autoscale_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/tables/{tableName}/throughputSettings/default/migrateToAutoscale"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_migrate_table_to_autoscale(
@@ -984,14 +882,6 @@ class TableResourcesOperations:
         :type account_name: str
         :param table_name: Cosmos DB table name. Required.
         :type table_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ThroughputSettingsGetResults or the
          result of cls(response)
         :rtype:
@@ -1022,7 +912,7 @@ class TableResourcesOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("ThroughputSettingsGetResults", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1032,22 +922,20 @@ class TableResourcesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.ThroughputSettingsGetResults].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[_models.ThroughputSettingsGetResults](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
-    begin_migrate_table_to_autoscale.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/tables/{tableName}/throughputSettings/default/migrateToAutoscale"
-    }
-
-    async def _migrate_table_to_manual_throughput_initial(
+    async def _migrate_table_to_manual_throughput_initial(  # pylint: disable=name-too-long
         self, resource_group_name: str, account_name: str, table_name: str, **kwargs: Any
     ) -> Optional[_models.ThroughputSettingsGetResults]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1061,22 +949,21 @@ class TableResourcesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[Optional[_models.ThroughputSettingsGetResults]] = kwargs.pop("cls", None)
 
-        request = build_migrate_table_to_manual_throughput_request(
+        _request = build_migrate_table_to_manual_throughput_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             table_name=table_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._migrate_table_to_manual_throughput_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1097,13 +984,9 @@ class TableResourcesOperations:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _migrate_table_to_manual_throughput_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/tables/{tableName}/throughputSettings/default/migrateToManualThroughput"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_migrate_table_to_manual_throughput(
@@ -1118,14 +1001,6 @@ class TableResourcesOperations:
         :type account_name: str
         :param table_name: Cosmos DB table name. Required.
         :type table_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ThroughputSettingsGetResults or the
          result of cls(response)
         :rtype:
@@ -1156,7 +1031,7 @@ class TableResourcesOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("ThroughputSettingsGetResults", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1166,27 +1041,25 @@ class TableResourcesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.ThroughputSettingsGetResults].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[_models.ThroughputSettingsGetResults](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
-    begin_migrate_table_to_manual_throughput.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/tables/{tableName}/throughputSettings/default/migrateToManualThroughput"
-    }
-
-    async def _retrieve_continuous_backup_information_initial(
+    async def _retrieve_continuous_backup_information_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        location: Union[_models.ContinuousBackupRestoreLocation, IO],
+        location: Union[_models.ContinuousBackupRestoreLocation, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.BackupInformation]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1209,7 +1082,7 @@ class TableResourcesOperations:
         else:
             _json = self._serialize.body(location, "ContinuousBackupRestoreLocation")
 
-        request = build_retrieve_continuous_backup_information_request(
+        _request = build_retrieve_continuous_backup_information_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             table_name=table_name,
@@ -1218,16 +1091,15 @@ class TableResourcesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._retrieve_continuous_backup_information_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1241,16 +1113,12 @@ class TableResourcesOperations:
             deserialized = self._deserialize("BackupInformation", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _retrieve_continuous_backup_information_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/tables/{tableName}/retrieveContinuousBackupInformation"
-    }
+        return deserialized  # type: ignore
 
     @overload
-    async def begin_retrieve_continuous_backup_information(
+    async def begin_retrieve_continuous_backup_information(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
@@ -1274,14 +1142,6 @@ class TableResourcesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either BackupInformation or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.BackupInformation]
@@ -1289,12 +1149,12 @@ class TableResourcesOperations:
         """
 
     @overload
-    async def begin_retrieve_continuous_backup_information(
+    async def begin_retrieve_continuous_backup_information(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        location: IO,
+        location: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1309,18 +1169,10 @@ class TableResourcesOperations:
         :param table_name: Cosmos DB table name. Required.
         :type table_name: str
         :param location: The name of the continuous backup restore location. Required.
-        :type location: IO
+        :type location: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either BackupInformation or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.BackupInformation]
@@ -1328,12 +1180,12 @@ class TableResourcesOperations:
         """
 
     @distributed_trace_async
-    async def begin_retrieve_continuous_backup_information(
+    async def begin_retrieve_continuous_backup_information(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        location: Union[_models.ContinuousBackupRestoreLocation, IO],
+        location: Union[_models.ContinuousBackupRestoreLocation, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BackupInformation]:
         """Retrieves continuous backup information for a table.
@@ -1346,19 +1198,8 @@ class TableResourcesOperations:
         :param table_name: Cosmos DB table name. Required.
         :type table_name: str
         :param location: The name of the continuous backup restore location. Is either a
-         ContinuousBackupRestoreLocation type or a IO type. Required.
-        :type location: ~azure.mgmt.cosmosdb.models.ContinuousBackupRestoreLocation or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ContinuousBackupRestoreLocation type or a IO[bytes] type. Required.
+        :type location: ~azure.mgmt.cosmosdb.models.ContinuousBackupRestoreLocation or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either BackupInformation or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.BackupInformation]
@@ -1391,7 +1232,7 @@ class TableResourcesOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("BackupInformation", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1403,14 +1244,12 @@ class TableResourcesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.BackupInformation].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_retrieve_continuous_backup_information.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/tables/{tableName}/retrieveContinuousBackupInformation"
-    }
+        return AsyncLROPoller[_models.BackupInformation](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )

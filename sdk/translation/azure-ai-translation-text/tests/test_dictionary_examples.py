@@ -13,18 +13,16 @@ class TestDictionaryExamples(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_single_input_element(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_client(endpoint, apikey, region)
 
-        source_language = "en"
-        target_language = "es"
+        from_language = "en"
+        to = "es"
         input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
 
-        response = client.lookup_dictionary_examples(
-            request_body=input_text_elements, from_parameter=source_language, to=target_language
-        )
+        response = client.lookup_dictionary_examples(body=input_text_elements, from_language=from_language, to=to)
         assert response is not None
         assert response[0].normalized_source == "fly"
         assert response[0].normalized_target == "volar"
@@ -32,21 +30,19 @@ class TestDictionaryExamples(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_multiple_input_elements(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_client(endpoint, apikey, region)
 
-        source_language = "en"
-        target_language = "es"
+        from_language = "en"
+        to = "es"
         input_text_elements = [
             DictionaryExampleTextItem(text="fly", translation="volar"),
             DictionaryExampleTextItem(text="beef", translation="came"),
         ]
 
-        response = client.lookup_dictionary_examples(
-            request_body=input_text_elements, from_parameter=source_language, to=target_language
-        )
+        response = client.lookup_dictionary_examples(body=input_text_elements, from_language=from_language, to=to)
         assert response is not None
         assert len(response) == 2
         assert response[0].normalized_source == "fly"

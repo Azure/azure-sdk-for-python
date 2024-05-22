@@ -156,6 +156,29 @@ class TestConfig(object):
         assert list(map(lambda doc: doc['pk'], [item async for item in query_iterable])) == results
 
 
+def get_vector_indexing_policy(embedding_type):
+    return {
+        "indexingMode": "consistent",
+        "includedPaths": [{"path": "/*"}],
+        'excludedPaths': [{'path': '/"_etag"/?'}],
+        "vectorIndexes": [
+            {"path": "/embedding", "type": f"{embedding_type}"}
+        ]
+    }
+
+
+def get_vector_embedding_policy(distance_function, data_type, dimensions):
+    return {
+        "vectorEmbeddings": [
+            {
+                "path": "/embedding",
+                "dataType": f"{data_type}",
+                "dimensions": dimensions,
+                "distanceFunction": f"{distance_function}"
+            }
+        ]
+    }
+
 class FakeResponse:
     def __init__(self, headers):
         self.headers = headers

@@ -5,11 +5,12 @@
 
 import os
 from devtools_testutils.fake_credentials_async import AsyncFakeCredential
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AzureKeyCredential
 from devtools_testutils import AzureRecordedTestCase
-from azure.ai.translation.text import TextTranslationClient, TranslatorCredential, TranslatorAADCredential
+from azure.ai.translation.text import TextTranslationClient
 
 from static_access_token_credential import StaticAccessTokenCredential
+
 
 class TextTranslationTest(AzureRecordedTestCase):
     def create_getlanguage_client(self, endpoint):
@@ -17,18 +18,17 @@ class TextTranslationTest(AzureRecordedTestCase):
         return client
 
     def create_client(self, endpoint, apikey, region):
-        credential = TranslatorCredential(apikey, region)
-        client = TextTranslationClient(endpoint=endpoint, credential=credential)
+        credential = AzureKeyCredential(apikey)
+        client = TextTranslationClient(endpoint=endpoint, credential=credential, region=region)
         return client
 
     def create_client_token(self, endpoint, apikey, region):
         credential = StaticAccessTokenCredential(apikey, region)
         client = TextTranslationClient(endpoint=endpoint, credential=credential)
         return client
-    
+
     def create_text_translation_client_with_aad(self, innerCredential, aadRegion, aadResourceId):
-        credential = TranslatorAADCredential(innerCredential, aadResourceId, aadRegion)
-        text_translator = TextTranslationClient(credential=credential)
+        text_translator = TextTranslationClient(credential=innerCredential, resource_id=aadResourceId, region=aadRegion)
         return text_translator
 
     def create_async_getlanguage_client(self, endpoint):
@@ -38,10 +38,10 @@ class TextTranslationTest(AzureRecordedTestCase):
         return client
 
     def create_async_client(self, endpoint, apikey, region):
-        credential = TranslatorCredential(apikey, region)
+        credential = AzureKeyCredential(apikey)
         from azure.ai.translation.text.aio import TextTranslationClient as TextTranslationClientAsync
 
-        client = TextTranslationClientAsync(endpoint=endpoint, credential=credential)
+        client = TextTranslationClientAsync(endpoint=endpoint, credential=credential, region=region)
         return client
 
     def create_async_client_token(self, endpoint, apikey, region):
@@ -50,11 +50,13 @@ class TextTranslationTest(AzureRecordedTestCase):
 
         client = TextTranslationClientAsync(endpoint=endpoint, credential=credential)
         return client
-    
+
     def create_async_text_translation_client_with_aad(self, innerCredential, aadRegion, aadResourceId):
-        from azure.ai.translation.text.aio import TextTranslationClient as TextTranslationClientAsync, AsyncTranslatorAADCredential
-        credential = AsyncTranslatorAADCredential(innerCredential, aadResourceId, aadRegion)
-        text_translator = TextTranslationClientAsync(credential=credential)
+        from azure.ai.translation.text.aio import TextTranslationClient as TextTranslationClientAsync
+
+        text_translator = TextTranslationClientAsync(
+            credential=innerCredential, resource_id=aadResourceId, region=aadRegion
+        )
         return text_translator
 
     def get_mt_credential(self, is_async, **kwargs):
@@ -65,7 +67,6 @@ class TextTranslationTest(AzureRecordedTestCase):
             if is_async:
                 from azure.identity.aio import ClientSecretCredential
 
-                
             tenant_id = os.environ.get("AZURE_TENANT_ID", getattr(os.environ, "TENANT_ID", None))
             client_id = os.environ.get("AZURE_CLIENT_ID", getattr(os.environ, "CLIENT_ID", None))
             secret = os.environ.get("AZURE_CLIENT_SECRET", getattr(os.environ, "CLIENT_SECRET", None))
