@@ -12,7 +12,8 @@ from azure.core.credentials import TokenCredential, AzureKeyCredential
 from ._client import TextTranslationClient as ServiceClientGenerated
 
 DEFAULT_TOKEN_SCOPE = "https://api.microsofttranslator.com/"
-DEFAULT_ENTRA_ID_SCOPE = "https://cognitiveservices.azure.com/.default"
+DEFAULT_ENTRA_ID_SCOPE = "https://cognitiveservices.azure.com"
+DEFAULT_SCOPE = "/.default"
 
 
 def patch_sdk():
@@ -49,7 +50,14 @@ class TranslatorEntraIdAuthenticationPolicy(BearerTokenCredentialPolicy):
     :type credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, credential: TokenCredential, resource_id: str, region: str, audience: str, **kwargs: Any) -> None:
+    def __init__(
+            self,
+            credential: TokenCredential,
+            resource_id: str,
+            region: str,
+            audience: str,
+            **kwargs: Any
+        ) -> None:
         super(TranslatorEntraIdAuthenticationPolicy, self).__init__(credential, audience, **kwargs)
         self.resource_id = resource_id
         self.region = region
@@ -86,16 +94,18 @@ def set_authentication_policy(credential, kwargs):
     elif hasattr(credential, "get_token"):
         if not kwargs.get("authentication_policy"):
             if kwargs.get("region") and kwargs.get("resource_id"):
+                scope = kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE) + DEFAULT_SCOPE
                 kwargs["authentication_policy"] = TranslatorEntraIdAuthenticationPolicy(
                     credential,
                     kwargs["resource_id"],
                     kwargs["region"],
-                    kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE),
+                    scope,
                 )
             else:
                 if kwargs.get("resource_id") or kwargs.get("region"):
                     raise ValueError(
-                        "Both 'resource_id' and 'region' must be provided with a TokenCredential for regional resource authentication."
+                        """Both 'resource_id' and 'region' must be provided with a TokenCredential for
+                         regional resource authentication."""
                     )
                 kwargs["authentication_policy"] = BearerTokenCredentialPolicy(
                     credential, *kwargs.pop("audience", [DEFAULT_TOKEN_SCOPE]), kwargs
