@@ -41,6 +41,9 @@ class AsyncTranslatorEntraIdAuthenticationPolicy(AsyncBearerTokenCredentialPolic
 
     :param credential: Translator Entra Id Credentials used to access Translator Resource for global endpoint.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword str region: Used for National Clouds.
+    :keyword str resource_id: Used with both a TokenCredential combined with a region.
+    :keyword str audience: Scopes of the credentials.
     """
 
     def __init__(
