@@ -12,7 +12,8 @@ from azure.core.credentials import TokenCredential, AzureKeyCredential
 from ._client import TextTranslationClient as ServiceClientGenerated
 
 DEFAULT_TOKEN_SCOPE = "https://api.microsofttranslator.com/"
-DEFAULT_ENTRA_ID_SCOPE = "https://cognitiveservices.azure.com/.default"
+DEFAULT_ENTRA_ID_SCOPE = "https://cognitiveservices.azure.com"
+DEFAULT_SCOPE = "/.default"
 
 
 def patch_sdk():
@@ -47,10 +48,20 @@ class TranslatorEntraIdAuthenticationPolicy(BearerTokenCredentialPolicy):
 
     :param credential: Translator Entra Id Credentials used to access Translator Resource for global endpoint.
     :type credential: ~azure.core.credentials.TokenCredential
+    :keyword str region: Used for National Clouds.
+    :keyword str resource_id: Used with both a TokenCredential combined with a region.
+    :keyword str audience: Scopes of the credentials.
     """
 
-    def __init__(self, credential: TokenCredential, resource_id: str, region: str, scopes: str, **kwargs: Any) -> None:
-        super(TranslatorEntraIdAuthenticationPolicy, self).__init__(credential, scopes, **kwargs)
+    def __init__(
+            self,
+            credential: TokenCredential,
+            resource_id: str,
+            region: str,
+            audience: str,
+            **kwargs: Any
+        ) -> None:
+        super(TranslatorEntraIdAuthenticationPolicy, self).__init__(credential, audience, **kwargs)
         self.resource_id = resource_id
         self.region = region
         self.translator_credential = credential
@@ -86,19 +97,21 @@ def set_authentication_policy(credential, kwargs):
     elif hasattr(credential, "get_token"):
         if not kwargs.get("authentication_policy"):
             if kwargs.get("region") and kwargs.get("resource_id"):
+                scope = kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE).rstrip("/") + DEFAULT_SCOPE
                 kwargs["authentication_policy"] = TranslatorEntraIdAuthenticationPolicy(
                     credential,
                     kwargs["resource_id"],
                     kwargs["region"],
-                    kwargs.pop("scopes", DEFAULT_ENTRA_ID_SCOPE),
+                    scope,
                 )
             else:
                 if kwargs.get("resource_id") or kwargs.get("region"):
                     raise ValueError(
-                        "Both 'resource_id' and 'region' must be provided with a TokenCredential for authentication."
+                        """Both 'resource_id' and 'region' must be provided with a TokenCredential for
+                         regional resource authentication."""
                     )
                 kwargs["authentication_policy"] = BearerTokenCredentialPolicy(
-                    credential, *kwargs.pop("scopes", [DEFAULT_TOKEN_SCOPE]), kwargs
+                    credential, *[kwargs.pop("audience", DEFAULT_TOKEN_SCOPE)], kwargs
                 )
 
 
@@ -134,15 +147,16 @@ class TextTranslationClient(ServiceClientGenerated):
     None + AzureKeyCredential - used for global translator endpoint with global Translator resource
     None + TokenCredential - general translator endpoint with token authentication
     None + TokenCredential + Region - general translator endpoint with regional Translator resource
+
     :keyword str endpoint: Supported Text Translation endpoints (protocol and hostname, for example:
-    https://api.cognitive.microsofttranslator.com). If not provided, global translator endpoint will be used.
+     https://api.cognitive.microsofttranslator.com). If not provided, global translator endpoint will be used.
     :keyword credential: Credential used to authenticate with the Translator service
     :paramtype credential: Union[AzureKeyCredential, TokenCredential]
     :keyword str region: Used for National Clouds.
     :keyword str resource_id: Used with both a TokenCredential combined with a region.
-    :keyword str scopes: Scopes of the credentials.
+    :keyword str audience: Scopes of the credentials.
     :keyword  str api_version: Default value is "3.0". Note that overriding this default value may
-    result in unsupported behavior.
+     result in unsupported behavior.
     """
 
     @overload
@@ -153,8 +167,8 @@ class TextTranslationClient(ServiceClientGenerated):
         region: Optional[str] = None,
         endpoint: Optional[str] = None,
         resource_id: Optional[str] = None,
-        scopes: Optional[str] = None,
-        api_version="3.0",
+        audience: Optional[str] = None,
+        api_version: str = "3.0",
         **kwargs
     ): ...
 
@@ -165,7 +179,7 @@ class TextTranslationClient(ServiceClientGenerated):
         credential: AzureKeyCredential,
         region: Optional[str] = None,
         endpoint: Optional[str] = None,
-        api_version="3.0",
+        api_version: str = "3.0",
         **kwargs
     ): ...
 
@@ -174,7 +188,7 @@ class TextTranslationClient(ServiceClientGenerated):
         self,
         *,
         endpoint: str,
-        api_version="3.0",
+        api_version: str ="3.0",
         **kwargs
     ): ...
 
