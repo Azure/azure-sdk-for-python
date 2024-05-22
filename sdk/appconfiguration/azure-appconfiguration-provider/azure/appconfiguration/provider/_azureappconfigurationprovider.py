@@ -313,7 +313,7 @@ def _get_headers(request_type, **kwargs) -> str:
 
 
 def _uses_feature_flags(**kwargs):
-    if "uses_feature_flags" not in kwargs or not kwargs.pop("uses_feature_flags", False):
+    if not kwargs.pop("uses_feature_flags", False):
         return ""
     package_name = "featuremanagement"
     try:
@@ -508,7 +508,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         self._keyvault_client_configs = kwargs.pop("keyvault_client_configs", {})
         self._uses_key_vault = (
             self._keyvault_credential is not None
-            or len(self._keyvault_client_configs) > 0
+            or (self._keyvault_client_configs is not None and len(self._keyvault_client_configs) > 0)
             or self._secret_resolver is not None
         )
         self._feature_flag_enabled = kwargs.pop("feature_flag_enabled", False)
