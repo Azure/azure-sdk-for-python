@@ -44,11 +44,13 @@ class TestUserAgentSuffix(unittest.TestCase):
 
     def test_user_agent_suffix_unicode_character(self):
         user_agent_suffix = "UnicodeChar鱀InUserAgent"
-        self.client = CosmosClient(self.host, self.masterKey, user_agent=user_agent_suffix)
-        self.created_database = self.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
-
-        read_result = self.created_database.read()
-        assert read_result['id'] == self.created_database.id
+        try:
+            self.client = CosmosClient(self.host, self.masterKey, user_agent=user_agent_suffix)
+            self.created_database = self.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
+            self.created_database.read()
+            pytest.fail("Unicode characters should not be allowed.")
+        except UnicodeEncodeError as e:
+            assert "ordinal not in range(256)" in e.reason
 
     def test_user_agent_suffix_space_character(self):
         user_agent_suffix = "UserAgent with space$%_^()*&"

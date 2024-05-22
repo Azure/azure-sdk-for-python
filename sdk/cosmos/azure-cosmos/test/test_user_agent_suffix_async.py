@@ -46,11 +46,13 @@ class TestUserAgentSuffixAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_user_agent_suffix_unicode_character_async(self):
         user_agent_suffix = "UnicodeChar鱀InUserAgent"
-        self.client = CosmosClient(self.host, self.masterKey, user_agent=user_agent_suffix)
-        self.created_database = self.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
-
-        read_result = await self.created_database.read()
-        assert read_result['id'] == self.created_database.id
+        try:
+            self.client = CosmosClient(self.host, self.masterKey, user_agent=user_agent_suffix)
+            self.created_database = self.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
+            await self.created_database.read()
+            pytest.fail("Unicode characters should not be allowed.")
+        except UnicodeEncodeError as e:
+            assert "ordinal not in range(256)" in e.reason
         await self.client.close()
 
     async def test_user_agent_suffix_space_character_async(self):
