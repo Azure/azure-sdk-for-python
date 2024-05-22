@@ -381,7 +381,7 @@ class MediaStreamingSubscription:
         self.state = state
         self.subscribed_content_types = subscribed_content_types
 
-    def to_generated(self):
+    def _to_generated(self):
         return MediaStreamingSubscriptionInternal(
             id=self.id,
             state=self.state ,
@@ -430,7 +430,7 @@ class MediaStreamingOptions:
         self.audio_channel_type = audio_channel_type
         self.start_media_streaming = start_media_streaming
 
-    def to_generated(self):
+    def _to_generated(self):
         return MediaStreamingOptionsRest(
             transport_url=self.transport_url,
             transport_type=self.transport_type,
@@ -487,7 +487,7 @@ class TranscriptionOptions:
         self.start_transcription = start_transcription
         self.enable_intermediate_results = enable_intermediate_results
 
-    def to_generated(self):
+    def _to_generated(self):
         return TranscriptionOptionsRest(
             transport_url=self.transport_url,
             transport_type=self.transport_type,
@@ -541,7 +541,7 @@ class TranscriptionSubscription:
         self.state = state
         self.subscribed_result_types = subscribed_result_types
 
-    def to_generated(self):
+    def _to_generated(self):
         return TranscriptionSubscriptionInternal(
             id=self.id,
             state=self.state ,
