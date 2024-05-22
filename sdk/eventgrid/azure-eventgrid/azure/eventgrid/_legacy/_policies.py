@@ -36,11 +36,9 @@ class CloudEventDistributedTracingPolicy(SansIOHTTPPolicy):
             return
 
         if (
-            request.http_request.headers["content-type"]
-            == CloudEventDistributedTracingPolicy._CONTENT_TYPE
+            request.http_request.headers["content-type"] == CloudEventDistributedTracingPolicy._CONTENT_TYPE
             and traceparent is not None
         ):
-
             body = json.loads(request.http_request.body)
             for item in body:
                 if "traceparent" not in item and "tracestate" not in item:

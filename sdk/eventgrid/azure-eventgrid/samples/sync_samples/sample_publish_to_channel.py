@@ -17,7 +17,7 @@ USAGE:
 """
 # [START publish_cloud_event_to_topic]
 import os
-from azure.eventgrid import EventGridPublisherClient
+from azure.eventgrid import EventGridClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.messaging import CloudEvent
 
@@ -27,7 +27,7 @@ endpoint = os.environ["EVENTGRID_PARTNER_NAMESPACE_TOPIC_ENDPOINT"]
 channel_name = os.environ["EVENTGRID_PARTNER_CHANNEL_NAME"]
 
 credential = AzureKeyCredential(topic_key)
-client = EventGridPublisherClient(endpoint, credential)
+client = EventGridClient(endpoint, credential, level="Basic")
 
 client.send(
     [
