@@ -7,6 +7,7 @@
 import pytest
 import time
 from azure.core.exceptions import HttpResponseError
+from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
@@ -19,7 +20,7 @@ class TestSearchClientIndexDocument(AzureRecordedTestCase):
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
     def test_search_client_index_document(self, endpoint, api_key, index_name):
-        client = SearchClient(endpoint, index_name, api_key, retry_backoff_factor=60)
+        client = SearchClient(endpoint, index_name, DefaultAzureCredential(), retry_backoff_factor=60)
         doc_count = 10
         doc_count = self._test_upload_documents_new(client, doc_count)
         doc_count = self._test_upload_documents_existing(client, doc_count)

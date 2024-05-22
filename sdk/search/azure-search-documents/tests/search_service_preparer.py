@@ -50,9 +50,10 @@ def _load_batch(filename):
 
 
 def _clean_up_indexes(endpoint, api_key):
+    from azure.identity import DefaultAzureCredential
     from azure.search.documents.indexes import SearchIndexClient
 
-    client = SearchIndexClient(endpoint, AzureKeyCredential(api_key), retry_backoff_factor=60)
+    client = SearchIndexClient(endpoint, DefaultAzureCredential(), retry_backoff_factor=60)
 
     # wipe the synonym maps which seem to survive the index
     for map in client.get_synonym_maps():
@@ -69,8 +70,9 @@ def _clean_up_indexes(endpoint, api_key):
 
 def _clean_up_indexers(endpoint, api_key):
     from azure.search.documents.indexes import SearchIndexerClient
+    from azure.identity import DefaultAzureCredential
 
-    client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key), retry_backoff_factor=60)
+    client = SearchIndexerClient(endpoint, DefaultAzureCredential(), retry_backoff_factor=60)
     for indexer in client.get_indexers():
         client.delete_indexer(indexer)
     for datasource in client.get_data_source_connection_names():
@@ -87,6 +89,7 @@ def _clean_up_indexers(endpoint, api_key):
 
 def _set_up_index(service_name, endpoint, api_key, schema, index_batch):
     from azure.core.credentials import AzureKeyCredential
+    from azure.identity import DefaultAzureCredential
     from azure.search.documents import SearchClient
     from azure.search.documents._generated.models import IndexBatch
 
@@ -105,7 +108,7 @@ def _set_up_index(service_name, endpoint, api_key, schema, index_batch):
     # optionally load data into the index
     if index_batch and schema:
         batch = IndexBatch.deserialize(index_batch)
-        index_client = SearchClient(endpoint, index_name, AzureKeyCredential(api_key))
+        index_client = SearchClient(endpoint, index_name, DefaultAzureCredential())
         results = index_client.index_documents(batch)
         if not all(result.succeeded for result in results):
             raise AzureTestError("Document upload to search index failed")

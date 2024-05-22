@@ -9,6 +9,7 @@ import pytest
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
+from azure.identity import DefaultAzureCredential
 from azure.search.documents.indexes import SearchIndexClient
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from azure.search.documents.indexes.models import (
@@ -29,7 +30,7 @@ class TestSearchClientAlias(AzureRecordedTestCase):
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
     def test_alias(self, endpoint, api_key):
-        client = SearchIndexClient(endpoint, api_key, retry_backoff_factor=60)
+        client = SearchIndexClient(endpoint, DefaultAzureCredential(), retry_backoff_factor=60)
         aliases = ["resort", "motel"]
         index_name = next(client.list_index_names())
         self._test_list_aliases_empty(client)

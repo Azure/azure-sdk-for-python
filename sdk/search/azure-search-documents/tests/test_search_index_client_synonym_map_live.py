@@ -8,6 +8,7 @@ import pytest
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
+from azure.identity import DefaultAzureCredential
 from azure.search.documents.indexes import SearchIndexClient
 from azure.search.documents.indexes.models import SynonymMap
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
@@ -20,7 +21,7 @@ class TestSearchClientSynonymMaps(AzureRecordedTestCase):
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
     def test_synonym_map(self, endpoint, api_key):
-        client = SearchIndexClient(endpoint, api_key, retry_backoff_factor=60)
+        client = SearchIndexClient(endpoint, DefaultAzureCredential(), retry_backoff_factor=60)
         self._test_create_synonym_map(client)
         self._test_delete_synonym_map(client)
         self._test_delete_synonym_map_if_unchanged(client)
