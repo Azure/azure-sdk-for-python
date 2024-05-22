@@ -11,11 +11,12 @@ param storageAccountName string = 'storage${uniqueString(resourceGroup().id)}'
 param storageContainerName string = 'storage-container-${resourceGroup().name}'
 param storageApiVersion string = '2021-06-01'
 
-resource id 'Microsoft.Authorization/roleAssignments@2018-09-01-preview' = {
-  name: guid(resourceGroup().id)
+resource roleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  name: guid(resourceGroup().id, 'ownerRoleAssignment')
   properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b')
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635') // Owner role ID
     principalId: testApplicationOid
+    principalType: 'ServicePrincipal'
   }
 }
 
