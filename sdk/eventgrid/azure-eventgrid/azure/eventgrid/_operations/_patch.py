@@ -92,7 +92,7 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
     @distributed_trace
     def send(  
         self,
-        events: Union[CloudEvent, List[CloudEvent], Dict[str, Any], List[Dict[str, Any]], CNCFCloudEvent, List[CNCFCloudEvent],
+        events: Union[CloudEvent, List[CloudEvent], Dict[str, Any], List[Dict[str, Any]], "CNCFCloudEvent", List["CNCFCloudEvent"],
                       EventGridEvent, List[EventGridEvent]],
         *,
         channel_name: Optional[str] = None,
