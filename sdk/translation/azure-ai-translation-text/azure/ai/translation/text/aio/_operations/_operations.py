@@ -272,7 +272,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
          It's possible to translate to multiple languages simultaneously by repeating the parameter in
          the query string.
          For example, use to_language=de&to_language=it to translate to German and Italian. Required.
-        :paramtype to: list[str]
+        :paramtype to_language: list[str]
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
@@ -448,7 +448,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
          It's possible to translate to multiple languages simultaneously by repeating the parameter in
          the query string.
          For example, use to_language=de&to_language=it to translate to German and Italian. Required.
-        :paramtype to: list[str]
+        :paramtype to_language: list[str]
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
@@ -617,7 +617,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
          It's possible to translate to multiple languages simultaneously by repeating the parameter in
          the query string.
          For example, use to_language=de&to_language=it to translate to German and Italian. Required.
-        :paramtype to: list[str]
+        :paramtype to_language: list[str]
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
