@@ -14,22 +14,19 @@ from typing import (
     Any, AnyStr, Dict, IO, Iterable, List, Optional, Tuple, Union,
     TYPE_CHECKING
 )
-from urllib.parse import urlparse, quote, unquote
-
+from urllib.parse import quote, unquote, urlparse
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
+from ._deserialize import deserialize_file_properties, deserialize_file_stream, get_file_ranges_result
+from ._download import StorageStreamDownloader
 from ._generated import AzureFileStorage
 from ._generated.models import FileHTTPHeaders
-from ._shared.uploads import IterStreamer, FileChunkUploader, upload_data_chunks
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
-from ._shared.request_handlers import add_metadata_headers, get_length
-from ._shared.response_handlers import return_response_headers, process_storage_error
-from ._shared.parser import _str
-from ._parser import _get_file_permission, _datetime_to_str
 from ._lease import ShareLeaseClient
+from ._models import HandlesPaged
+from ._parser import _get_file_permission, _datetime_to_str
 from ._serialize import (
     get_access_conditions,
     get_api_version,
@@ -37,10 +34,13 @@ from ._serialize import (
     get_rename_smb_properties,
     get_smb_properties,
     get_source_conditions,
-    get_source_access_conditions)
-from ._deserialize import deserialize_file_properties, deserialize_file_stream, get_file_ranges_result
-from ._models import HandlesPaged
-from ._download import StorageStreamDownloader
+    get_source_access_conditions
+)
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.parser import _str
+from ._shared.request_handlers import add_metadata_headers, get_length
+from ._shared.response_handlers import return_response_headers, process_storage_error
+from ._shared.uploads import IterStreamer, FileChunkUploader, upload_data_chunks
 
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
