@@ -213,7 +213,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 :caption: Acquiring a lease on a blob.
         """
         kwargs['lease_duration'] = -1
-        lease = ShareLeaseClient(self, lease_id=lease_id)  # type: ignore
+        lease = ShareLeaseClient(self, lease_id=lease_id)
         await lease.acquire(**kwargs)
         return lease
 
@@ -241,7 +241,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 return False
 
     @distributed_trace_async
-    async def create_file(  # type: ignore
+    async def create_file(
         self,
         size,  # type: int
         file_attributes="none",  # type: Union[str, NTFSAttributes]
@@ -338,7 +338,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         file_permission = _get_file_permission(file_permission, permission_key, 'Inherit')
         file_change_time = kwargs.pop('file_change_time', None)
         try:
-            return await self._client.file.create(  # type: ignore
+            return await self._client.file.create(
                 file_content_length=size,
                 metadata=metadata,
                 file_attributes=_str(file_attributes),
@@ -949,7 +949,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         file_props.share = self.share_name
         file_props.snapshot = self.snapshot
         file_props.path = "/".join(self.file_path)
-        return file_props  # type: ignore
+        return file_props
 
     @distributed_trace_async
     async def set_http_headers(self, content_settings,  # type: ContentSettings
@@ -1025,7 +1025,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
         file_change_time = kwargs.pop('file_change_time', None)
         try:
-            return await self._client.file.set_http_headers(  # type: ignore
+            return await self._client.file.set_http_headers(
                 file_content_length=file_content_length,
                 file_http_headers=file_http_headers,
                 file_attributes=_str(file_attributes),
@@ -1043,7 +1043,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def set_file_metadata(self, metadata=None, **kwargs):  # type: ignore
+    async def set_file_metadata(self, metadata=None, **kwargs):
         # type: (Optional[Dict[str, Any]], Any) -> Dict[str, Any]
         """Sets user-defined metadata for the specified file as one or more
         name-value pairs.
@@ -1074,9 +1074,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop("headers", {})
-        headers.update(add_metadata_headers(metadata))  # type: ignore
+        headers.update(add_metadata_headers(metadata))
         try:
-            return await self._client.file.set_metadata(  # type: ignore
+            return await self._client.file.set_metadata(
                 metadata=metadata, lease_access_conditions=access_conditions,
                 timeout=timeout, cls=return_response_headers, headers=headers, **kwargs
             )
@@ -1084,7 +1084,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def upload_range(  # type: ignore
+    async def upload_range(
         self,
         data,  # type: bytes
         offset,  # type: int
@@ -1146,7 +1146,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         content_range = f'bytes={offset}-{end_range}'
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         try:
-            return await self._client.file.upload_range(  # type: ignore
+            return await self._client.file.upload_range(
                 range=content_range,
                 content_length=length,
                 optionalbody=data,
@@ -1242,12 +1242,12 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             **kwargs
         )
         try:
-            return await self._client.file.upload_range_from_url(**options)  # type: ignore
+            return await self._client.file.upload_range_from_url(**options)
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_ranges(  # type: ignore
+    async def get_ranges(
             self, offset=None,  # type: Optional[int]
             length=None,  # type: Optional[int]
             **kwargs  # type: Any
@@ -1343,7 +1343,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         return get_file_ranges_result(ranges)
 
     @distributed_trace_async
-    async def clear_range(  # type: ignore
+    async def clear_range(
         self,
         offset,  # type: int
         length,  # type: int
@@ -1385,7 +1385,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         end_range = length + offset - 1  # Reformat to an inclusive range index
         content_range = f"bytes={offset}-{end_range}"
         try:
-            return await self._client.file.upload_range(  # type: ignore
+            return await self._client.file.upload_range(
                 timeout=timeout,
                 cls=return_response_headers,
                 content_length=0,
@@ -1424,7 +1424,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         try:
-            return await self._client.file.set_http_headers(  # type: ignore
+            return await self._client.file.set_http_headers(
                 file_content_length=size,
                 file_attributes="preserve",
                 file_creation_time="preserve",
@@ -1483,7 +1483,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :rtype: dict[str, int]
         """
         try:
-            handle_id = handle.id # type: ignore
+            handle_id = handle.id
         except AttributeError:
             handle_id = handle
         if handle_id == '*':
