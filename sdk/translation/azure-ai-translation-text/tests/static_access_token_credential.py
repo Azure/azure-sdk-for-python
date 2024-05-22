@@ -16,7 +16,7 @@ class StaticAccessTokenCredential(object):
             region, apikey
         )
 
-    def get_token(self, *scopes, **kwargs):
+    def get_token(self, *audience, **kwargs):
         response = requests.post(self.request_url)
         access_token = response.content.decode("UTF-8")
         expires_on = datetime.datetime.now() + datetime.timedelta(days=1)
