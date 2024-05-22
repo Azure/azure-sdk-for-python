@@ -13,12 +13,6 @@ if TYPE_CHECKING:
 
 
 def _parse_url(account_url: str) -> "ParseResult":
-    """Performs initial input validation and returns the parsed URL and SAS token.
-
-    :param str account_url: The URL to the storage account.
-    :returns: The parsed URL and SAS token.
-    :rtype: ParseResult
-    """
     try:
         if not account_url.lower().startswith("http"):
             account_url = "https://" + account_url

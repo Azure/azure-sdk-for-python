@@ -112,7 +112,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
             "APIs in Python 3.8 and is no longer supported.", DeprecationWarning)
 
         if hasattr(credential, 'get_token') and not token_intent:
-            raise ValueError("'token_intent' keyword is required when 'credential' is an TokenCredential.")
+            raise ValueError("'token_intent' keyword is required when 'credential' is an AsyncTokenCredential.")
         parsed_url = _parse_url(account_url=account_url)
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
