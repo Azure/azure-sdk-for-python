@@ -155,10 +155,10 @@ class Error(_model_base.Model):
     :ivar target: The target of the error.
     :vartype target: str
     :ivar details: An array of details about specific errors that led to this reported error.
-    :vartype details: list[~azure.eventgrid.models.Error]
+    :vartype details: list[~azure.eventgrid.models._models.Error]
     :ivar innererror: An object containing more specific information than the current object about
      the error.
-    :vartype innererror: ~azure.eventgrid.models.InnerError
+    :vartype innererror: ~azure.eventgrid.models._models.InnerError
     """
 
     code: str = rest_field()
@@ -182,7 +182,7 @@ class FailedLockToken(_model_base.Model):
     :vartype lock_token: str
     :ivar error: Error information of the failed operation result for the lock token in the
      request. Required.
-    :vartype error: ~azure.eventgrid.models.Error
+    :vartype error: ~azure.eventgrid.models._models.Error
     """
 
     lock_token: str = rest_field(name="lockToken")
@@ -217,7 +217,7 @@ class InnerError(_model_base.Model):
     :ivar code: One of a server-defined set of error codes.
     :vartype code: str
     :ivar innererror: Inner error.
-    :vartype innererror: ~azure.eventgrid.models.InnerError
+    :vartype innererror: ~azure.eventgrid.models._models.InnerError
     """
 
     code: Optional[str] = rest_field()
@@ -236,9 +236,9 @@ class ReceiveDetails(_model_base.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar broker_properties: The Event Broker details. Required.
-    :vartype broker_properties: ~azure.eventgrid.models.BrokerProperties
+    :vartype broker_properties: ~azure.eventgrid.models._models.BrokerProperties
     :ivar event: Cloud Event details. Required.
-    :vartype event: ~azure.eventgrid.models.CloudEvent
+    :vartype event: ~azure.eventgrid.models._models.CloudEvent
     """
 
     broker_properties: "_models._models.BrokerProperties" = rest_field(name="brokerProperties")
@@ -252,11 +252,11 @@ class ReceiveResult(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar value: Array of receive responses, one per cloud event. Required.
-    :vartype value: list[~azure.eventgrid.models.ReceiveDetails]
+    :ivar details: Array of receive responses, one per cloud event. Required.
+    :vartype details: list[~azure.eventgrid.models._models.ReceiveDetails]
     """
 
-    value: List["_models._models.ReceiveDetails"] = rest_field()
+    details: List["_models._models.ReceiveDetails"] = rest_field(name="value")
     """Array of receive responses, one per cloud event. Required."""
 
 
@@ -364,7 +364,20 @@ class ReleaseResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RenewCloudEventLocksResult(_model_base.Model):
+class RenewLockOptions(_model_base.Model):
+    """Array of lock tokens for the corresponding received Cloud Events to be renewed.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar lock_tokens: Array of lock tokens. Required.
+    :vartype lock_tokens: list[str]
+    """
+
+    lock_tokens: List[str] = rest_field(name="lockTokens")
+    """Array of lock tokens. Required."""
+
+
+class RenewLocksResult(_model_base.Model):
     """The result of the RenewLock operation.
 
     All required parameters must be populated in order to send to server.
@@ -400,16 +413,3 @@ class RenewCloudEventLocksResult(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-
-
-class RenewLockOptions(_model_base.Model):
-    """Array of lock tokens for the corresponding received Cloud Events to be renewed.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar lock_tokens: Array of lock tokens. Required.
-    :vartype lock_tokens: list[str]
-    """
-
-    lock_tokens: List[str] = rest_field(name="lockTokens")
-    """Array of lock tokens. Required."""

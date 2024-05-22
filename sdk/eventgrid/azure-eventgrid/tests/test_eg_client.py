@@ -14,15 +14,15 @@ from azure.core.credentials import AzureKeyCredential
 
 from eventgrid_preparer import EventGridPreparer
 
+
 def _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name):
     events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=100)
     tokens = []
     for detail in events.value:
         token = detail.broker_properties.lock_token
         tokens.append(token)
-    ack = client.acknowledge_cloud_events(
-        eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=tokens
-    )
+    ack = client.acknowledge_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=tokens)
+
 
 class TestEGClientExceptions(AzureRecordedTestCase):
     def create_eg_client(self, endpoint, key):
@@ -199,10 +199,13 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=1)
         assert events.value[0].broker_properties.delivery_count > 1
 
-        client.reject_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=[events.value[0].broker_properties.lock_token])
+        client.reject_cloud_events(
+            eventgrid_topic_name,
+            eventgrid_event_subscription_name,
+            lock_tokens=[events.value[0].broker_properties.lock_token],
+        )
 
         _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name)
-
 
     @pytest.mark.live_test_only()
     @EventGridPreparer()

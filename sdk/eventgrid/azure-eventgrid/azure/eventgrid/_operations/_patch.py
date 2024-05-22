@@ -198,7 +198,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         }
     )
     @distributed_trace
-    def send(self, *args, **kwargs) -> None: # pylint: disable=docstring-should-be-keyword, docstring-missing-param
+    def send(self, *args, **kwargs) -> None:  # pylint: disable=docstring-should-be-keyword, docstring-missing-param
         """Send events to the Event Grid Service.
 
         :param topic_name: The name of the topic to send the event to.
