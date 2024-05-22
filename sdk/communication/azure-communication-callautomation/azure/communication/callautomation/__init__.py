@@ -60,11 +60,6 @@ from ._generated.models._enums import (
     VoiceKind
 )
 
-from .streaming.models import (
-    TranscriptionMetadata,
-    TranscriptionData
-)
-
 __all__ = [
     # clients
     "CallAutomationClient",
@@ -104,10 +99,6 @@ __all__ = [
     "CommunicationIdentifierKind",
     "CommunicationCloudEnvironment",
     "UnknownIdentifier",
-
-    # streaming models
-    "TranscriptionMetadata",
-    "TranscriptionData",
 
     # enums
     "CallRejectReason",
