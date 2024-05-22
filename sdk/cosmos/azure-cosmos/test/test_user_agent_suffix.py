@@ -3,9 +3,11 @@
 
 import unittest
 import test_config
+import pytest
 from azure.cosmos import CosmosClient
 
 
+@pytest.mark.cosmosEmulator
 class TestUserAgentSuffix(unittest.TestCase):
     client: CosmosClient = None
     host = test_config.TestConfig.host
@@ -52,7 +54,6 @@ class TestUserAgentSuffix(unittest.TestCase):
 
         read_result = self.created_database.read()
         assert read_result['id'] == self.created_database.id
-
 
 
 if __name__ == '__main__':
