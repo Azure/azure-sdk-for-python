@@ -127,7 +127,7 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
             pass
 
         if self._namespace:
-            kwargs["content_type"] = kwargs.get("content_type", "application/cloudevents-batch+json; charset=utf-8")
+            kwargs["content_type"] = content_type or "application/cloudevents-batch+json; charset=utf-8"
             if not isinstance(events, list):
                 events = [events]
 
@@ -141,7 +141,7 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
                 raise exception
         else:
             try:
-                self._send(events, channel_name=channel_name, **kwargs)
+                self._send(events, channel_name=channel_name, content_type=content_type, **kwargs)
             except Exception as exception:
                 self._http_response_error_handler(exception, "Basic")
                 raise exception
