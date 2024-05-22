@@ -77,7 +77,7 @@ class AsyncEventHandler(AsyncAssistantEventHandler):
         assert message.object == "thread.message"
         assert message.id
         assert message.created_at
-        assert message.file_ids is not None
+        assert message.attachments is not None
         assert message.status
         assert message.thread_id
 
@@ -262,7 +262,6 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             assert delete_thread.id == thread.id
             assert delete_thread.deleted is True
 
-    @pytest.mark.skip(reason="AOAI doesn't support assistants v2 yet")
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
@@ -333,6 +332,151 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             )
             assert delete_thread.id == thread.id
             assert delete_thread.deleted is True
+            delete_file = await client_async.files.delete(file.id)
+            assert delete_file.deleted is True
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    async def test_assistants_vector_stores_crud(self, client_async, api_type, api_version, **kwargs):
+        file_name = f"test{uuid.uuid4()}.txt"
+        with open(file_name, "w") as f:
+            f.write("test")
+
+        path = pathlib.Path(file_name)
+
+        file = await client_async.files.create(
+            file=open(path, "rb"),
+            purpose="assistants"
+        )
+
+        try:
+            vector_store = await client_async.beta.vector_stores.create(
+                name="Support FAQ"
+            )
+            assert vector_store.name == "Support FAQ"
+            assert vector_store.id
+            assert vector_store.object == "vector_store"
+            assert vector_store.created_at
+            assert vector_store.file_counts.total == 0
+
+            vectors = client_async.beta.vector_stores.list()
+            async for vector in vectors:
+                assert vector.id
+                assert vector_store.object == "vector_store"
+                assert vector_store.created_at
+
+            vector_store = await client_async.beta.vector_stores.update(
+                vector_store_id=vector_store.id,
+                name="Support FAQ and more",
+                metadata={"Q": "A"}
+            )
+            retrieved_vector = await client_async.beta.vector_stores.retrieve(
+                vector_store_id=vector_store.id
+            )
+            assert retrieved_vector.id == vector_store.id
+            assert retrieved_vector.name == "Support FAQ and more"
+            assert retrieved_vector.metadata == {"Q": "A"}
+
+            vector_store_file = await client_async.beta.vector_stores.files.create(
+                vector_store_id=vector_store.id,
+                file_id=file.id
+            )
+            assert vector_store_file.id
+            assert vector_store_file.object == "vector_store.file"
+            assert vector_store_file.created_at
+            assert vector_store_file.vector_store_id == vector_store.id
+
+            vector_store_files = client_async.beta.vector_stores.files.list(
+                vector_store_id=vector_store.id
+            )
+            async for vector_file in vector_store_files:
+                assert vector_file.id
+                assert vector_file.object == "vector_store.file"
+                assert vector_store_file.created_at
+                assert vector_store_file.vector_store_id == vector_store.id
+
+            vector_store_file_2 = await client_async.beta.vector_stores.files.retrieve(
+                vector_store_id=vector_store.id,
+                file_id=file.id
+            )
+            assert vector_store_file_2.id == vector_store_file.id
+            assert vector_store_file.vector_store_id == vector_store.id
+
+        finally:
+            os.remove(path)
+            deleted_vector_store_file = await client_async.beta.vector_stores.files.delete(
+                vector_store_id=vector_store.id,
+                file_id=file.id
+            )
+            assert deleted_vector_store_file.deleted is True
+            deleted_vector_store = await client_async.beta.vector_stores.delete(
+                vector_store_id=vector_store.id
+            )
+            assert deleted_vector_store.deleted is True
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    async def test_assistants_vector_stores_batch_crud(self, client_async, api_type, api_version, **kwargs):
+        file_name = f"test{uuid.uuid4()}.txt"
+        file_name_2 = f"test{uuid.uuid4()}.txt"
+        with open(file_name, "w") as f:
+            f.write("test")
+
+        path = pathlib.Path(file_name)
+
+        file = await client_async.files.create(
+            file=open(path, "rb"),
+            purpose="assistants"
+        )
+        with open(file_name_2, "w") as f:
+            f.write("test")
+        path_2 = pathlib.Path(file_name_2)
+
+        file_2 = await client_async.files.create(
+            file=open(path_2, "rb"),
+            purpose="assistants"
+        )
+        try:
+            vector_store = await client_async.beta.vector_stores.create(
+                name="Support FAQ"
+            )
+            vector_store_file_batch = await client_async.beta.vector_stores.file_batches.create(
+                vector_store_id=vector_store.id,
+                file_ids=[file.id, file_2.id]
+            )
+            assert vector_store_file_batch.id
+            assert vector_store_file_batch.object == "vector_store.file_batch"
+            assert vector_store_file_batch.created_at
+            assert vector_store_file_batch.status
+
+            vectors = await client_async.beta.vector_stores.file_batches.list_files(
+                vector_store_id=vector_store.id,
+                batch_id=vector_store_file_batch.id
+            )
+            for vector in vectors:
+                assert vector.id
+                assert vector.object == "vector_store.file"
+                assert vector.created_at
+
+            retrieved_vector_store_file_batch = await client_async.beta.vector_stores.file_batches.retrieve(
+                vector_store_id=vector_store.id,
+                batch_id=vector_store_file_batch.id
+            )
+            assert retrieved_vector_store_file_batch.id == vector_store_file_batch.id
+
+        finally:
+            os.remove(path)
+            os.remove(path_2)
+            delete_file = await client_async.files.delete(file.id)
+            assert delete_file.deleted is True
+            delete_file = await client_async.files.delete(file_2.id)
+            assert delete_file.deleted is True
+            deleted_vector_store = await client_async.beta.vector_stores.delete(
+                vector_store_id=vector_store.id
+            )
+            assert deleted_vector_store.deleted is True
 
     @configure_async
     @pytest.mark.asyncio
@@ -358,7 +502,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                 thread_id=thread.id,
                 assistant_id=assistant.id,
                 instructions="Please address the user as Jane Doe.",
-                # additional_instructions="After solving each equation, say 'Isn't math fun?'",  # not supported by AOAI yet
+                additional_instructions="After solving each equation, say 'Isn't math fun?'",
             )
 
             start_time = time.time()
@@ -400,11 +544,10 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             assert delete_thread.id == thread.id
             assert delete_thread.deleted is True
 
-    @pytest.mark.skip("AOAI does not support retrieval tools yet")
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
-    async def test_assistants_runs_retrieval(self, client_async, api_type, api_version, **kwargs):
+    async def test_assistants_runs_file_search(self, client_async, api_type, api_version, **kwargs):
         file_name = f"test{uuid.uuid4()}.txt"
         with open(file_name, "w") as f:
             f.write("Contoso company policy requires that all employees take at least 10 vacation days a year.")
@@ -416,15 +559,23 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             purpose="assistants"
         )
         try:
+            vector_store = await client_async.beta.vector_stores.create(
+                name="Support FAQ",
+                file_ids=[file.id]
+            )
             assistant = await client_async.beta.assistants.create(
                 name="python test",
                 instructions="You help answer questions about Contoso company policy.",
-                tools=[{"type": "retrieval"}],
-                file_ids=[file.id],
+                tools=[{"type": "file_search"}],
+                tool_resources={
+                    "file_search": {
+                        "vector_store_ids": [vector_store.id]
+                    }
+                },
                 **kwargs
             )
 
-            run = await client_async.beta.threads.create_and_run(
+            run = await client_async.beta.threads.create_and_run_poll(
                 assistant_id=assistant.id,
                 thread={
                     "messages": [
@@ -433,24 +584,12 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                 }
             )
 
-            start_time = time.time()
+            if run.status == "completed":
+                messages = client_async.beta.threads.messages.list(thread_id=run.thread_id)
 
-            while True:
-                if time.time() - start_time > TIMEOUT:
-                    raise TimeoutError("Run timed out")
-
-                run = await client_async.beta.threads.runs.retrieve(thread_id=run.thread_id, run_id=run.id)
-
-                if run.status == "completed":
-                    messages = client_async.beta.threads.messages.list(thread_id=run.thread_id)
-
-                    async for message in messages:
-                        assert message.content[0].type == "text"
-                        assert message.content[0].text.value
-
-                    break
-
-                time.sleep(5)
+                async for message in messages:
+                    assert message.content[0].type == "text"
+                    assert message.content[0].text.value
 
         finally:
             os.remove(path)
@@ -465,6 +604,15 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             )
             assert delete_thread.id
             assert delete_thread.deleted is True
+            deleted_vector_store_file = await client_async.beta.vector_stores.files.delete(
+                vector_store_id=vector_store.id,
+                file_id=file.id
+            )
+            assert deleted_vector_store_file.deleted is True
+            deleted_vector_store = await client_async.beta.vector_stores.delete(
+                vector_store_id=vector_store.id
+            )
+            assert deleted_vector_store.deleted is True
 
     @configure_async
     @pytest.mark.asyncio

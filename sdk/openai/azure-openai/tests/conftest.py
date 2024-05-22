@@ -20,7 +20,7 @@ from azure.identity.aio import (
 
 # for pytest.parametrize
 GA = "2024-02-01"
-PREVIEW = "2024-03-01-preview"
+PREVIEW = "2024-05-01-preview"
 LATEST = PREVIEW
 
 AZURE = "azure"
