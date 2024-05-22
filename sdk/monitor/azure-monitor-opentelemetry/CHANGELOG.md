@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Enable live metrics feature
+    ([#35566](https://github.com/Azure/azure-sdk-for-python/pull/35566))
+
 ### Breaking Changes
 
 ### Bugs Fixed
@@ -14,8 +17,6 @@
 
 ### Features Added
 
-- Enable live metrics feature
-    ([#35566](https://github.com/Azure/azure-sdk-for-python/pull/35566))
 - Add diagnostics for sdk detection and backoff
     ([#35610](https://github.com/Azure/azure-sdk-for-python/pull/35610))
 
