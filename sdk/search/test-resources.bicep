@@ -14,9 +14,11 @@ param storageApiVersion string = '2021-06-01'
 resource roleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
   name: guid(resourceGroup().id, 'ownerRoleAssignment')
   properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635') // Owner role ID
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c') // Contributor role ID
+
     principalId: testApplicationOid
     principalType: 'ServicePrincipal'
+    scope: resourceGroup().id
   }
 }
 
