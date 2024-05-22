@@ -1635,6 +1635,9 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         await self._setup(storage_account_name, storage_account_key)
+        self.bsc._config.max_single_get_size = 1024
+        self.bsc._config.max_chunk_get_size = 1024
+
         data = '你好世界' * 5
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         await blob.upload_blob(data, encoding='utf-8', overwrite=True)
@@ -1662,6 +1665,9 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         await self._setup(storage_account_name, storage_account_key)
+        self.bsc._config.max_single_get_size = 1024
+        self.bsc._config.max_chunk_get_size = 1024
+
         data = '你好世界' * 256  # 3 KiB
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         await blob.upload_blob(data, encoding='utf-8', overwrite=True)
@@ -1689,6 +1695,9 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         await self._setup(storage_account_name, storage_account_key)
+        self.bsc._config.max_single_get_size = 1024
+        self.bsc._config.max_chunk_get_size = 1024
+
         data = '你好世界' * 256  # 3 KiB
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         await blob.upload_blob(data, encoding='utf-8', overwrite=True)
@@ -1719,6 +1728,9 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         await self._setup(storage_account_name, storage_account_key)
+        self.bsc._config.max_single_get_size = 1024
+        self.bsc._config.max_chunk_get_size = 1024
+
         initial_data = 'abcde' * 2
         data = initial_data + ('你好世界' * 2)
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())

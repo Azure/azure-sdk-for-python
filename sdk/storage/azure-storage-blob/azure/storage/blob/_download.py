@@ -377,8 +377,6 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         # Set the content length to the download size instead of the size of the last range
         self.properties.size = self.size
-
-        # Set content range
         self.properties.content_range = (f"bytes {self._download_start}-"
                                          f"{self._end_range if self._end_range is not None else self._file_size}/"
                                          f"{self._file_size}")

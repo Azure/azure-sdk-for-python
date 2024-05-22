@@ -229,11 +229,9 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._progress_hook = kwargs.pop('progress_hook', None)
         self._request_options = kwargs
         self._location_mode = None
-        self._download_complete = False
         self._current_content = None
         self._file_size = None
         self._non_empty_ranges = None
-        self._response = None
         self._encryption_data = None
 
         self._download_start = self._start_range or 0
@@ -248,12 +246,6 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         # The cls is passed in via download_cls to avoid conflicting arg name with Generic.__new__
         # but needs to be changed to cls in the request options.
         self._request_options['cls'] = download_cls
-
-        # The service only provides transactional MD5s for chunks under 4MB.
-        # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
-        # chunk so a transactional MD5 can be retrieved.
-        self._first_get_size = self._config.max_single_get_size if not self._validate_content \
-            else self._config.max_chunk_get_size
 
     def __len__(self):
         return self.size
@@ -277,11 +269,17 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
             await self._get_encryption_data_request()
 
+        # The service only provides transactional MD5s for chunks under 4MB.
+        # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
+        # chunk so a transactional MD5 can be retrieved.
+        first_get_size = (
+            self._config.max_single_get_size if not self._validate_content else self._config.max_chunk_get_size
+        )
         initial_request_start = self._start_range if self._start_range is not None else 0
-        if self._end_range is not None and self._end_range - self._start_range < self._first_get_size:
+        if self._end_range is not None and self._end_range - initial_request_start < first_get_size:
             initial_request_end = self._end_range
         else:
-            initial_request_end = initial_request_start + self._first_get_size - 1
+            initial_request_end = initial_request_start + first_get_size - 1
 
         self._initial_range, self._initial_offset = process_range_and_offset(
             initial_request_start,
@@ -291,46 +289,22 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             self._encryption_data
         )
 
-        self._response = await self._initial_request()
+        response = await self._initial_request()
 
-        self.properties = self._response.properties
+        self.properties = response.properties
         self.properties.name = self.name
         self.properties.container = self.container
 
-        # Set the content length to the download size instead of the size of
-        # the last range
-        initial_size = self._response.properties.size
+        # Set the content length to the download size instead of the size of the last range
         self.properties.size = self.size
-
-        # Overwrite the content range to the user requested range
-        self.properties.content_range = f'bytes {self._start_range}-{self._end_range}/{self._file_size}'
+        self.properties.content_range = (f"bytes {self._download_start}-"
+                                         f"{self._end_range if self._end_range is not None else self._file_size}/"
+                                         f"{self._file_size}")
 
         # Overwrite the content MD5 as it is the MD5 for the last range instead
         # of the stored MD5
         # TODO: Set to the stored MD5 when the service returns this
         self.properties.content_md5 = None
-
-        if self.size == 0:
-            self._current_content = b""
-        else:
-            self._current_content = await process_content(
-                self._response,
-                self._initial_offset[0],
-                self._initial_offset[1],
-                self._encryption_options
-            )
-        self._download_offset += len(self._current_content)
-
-        # If the file is small, the download is complete at this point.
-        # If file size is large, download the rest of the file in chunks.
-        # For encryption V2, calculate based on size of decrypted content, not download size.
-        if is_encryption_v2(self._encryption_data):
-            self._download_complete = len(self._current_content) >= self.size
-        else:
-            self._download_complete = initial_size >= self.size
-
-        if not self._download_complete and self._request_options.get("modified_access_conditions"):
-            self._request_options["modified_access_conditions"].if_match = self._response.properties.etag
 
     async def _initial_request(self):
         range_header, range_validation = validate_and_format_range_headers(
@@ -389,6 +363,17 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             else:
                 process_storage_error(error)
 
+        if self.size == 0:
+            self._current_content = b""
+        else:
+            self._current_content = await process_content(
+                response,
+                self._initial_offset[0],
+                self._initial_offset[1],
+                self._encryption_options
+            )
+        self._download_offset += len(self._current_content)
+
         # get page ranges to optimize downloading sparse page blob
         if response.properties.blob_type == 'PageBlob':
             try:
@@ -396,6 +381,17 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 self._non_empty_ranges = get_page_ranges_result(page_ranges)[0]
             except HttpResponseError:
                 pass
+
+        # If the file is small, the download is complete at this point.
+        # If file size is large, download the rest of the file in chunks.
+        # For encryption V2, calculate based on size of decrypted content, not download size.
+        if is_encryption_v2(self._encryption_data):
+            download_complete = len(self._current_content) >= self.size
+        else:
+            download_complete = response.properties.size >= self.size
+
+        if not download_complete and self._request_options.get("modified_access_conditions"):
+            self._request_options["modified_access_conditions"].if_match = response.properties.etag
 
         return response
 
