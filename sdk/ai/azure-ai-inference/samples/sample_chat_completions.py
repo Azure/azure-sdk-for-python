@@ -21,6 +21,13 @@ USAGE:
 
 def sample_chat_completions():
     import os
+    import sys
+    import logging
+
+    logger = logging.getLogger("azure")
+    logger.setLevel(logging.DEBUG)
+    handler = logging.StreamHandler(stream=sys.stdout)
+    logger.addHandler(handler)
 
     try:
         endpoint = os.environ["CHAT_COMPLETIONS_ENDPOINT"]
@@ -35,7 +42,11 @@ def sample_chat_completions():
     from azure.ai.inference.models import SystemMessage, UserMessage
     from azure.core.credentials import AzureKeyCredential
 
-    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key),logging_enable=True)
+    print(client)
+    model_info = client.get_model_info()
+    print(model_info)
+    print(client)
 
     response = client.complete(
         messages=[

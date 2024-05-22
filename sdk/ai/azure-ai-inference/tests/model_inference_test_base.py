@@ -71,7 +71,24 @@ class ModelClientTestBase(AzureRecordedTestCase):
         credential = AzureKeyCredential(key)
         return endpoint, credential
 
-    # Methos to create the different sync and async clients
+    # Methods to create sync and async clients using Load_client() function
+    async def _load_async_chat_client(self, *, bad_key: bool = False, **kwargs) -> async_sdk.ChatCompletionsClient:
+        endpoint, credential = self._load_chat_credentials(bad_key=bad_key, **kwargs)
+        return await async_sdk.load_client(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
+
+    def _load_chat_client(self, *, bad_key: bool = False, **kwargs) -> sdk.ChatCompletionsClient:
+        endpoint, credential = self._load_chat_credentials(bad_key=bad_key, **kwargs)
+        return sdk.load_client(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
+
+    async def _load_async_embeddings_client(self, *, bad_key: bool = False, **kwargs) -> async_sdk.EmbeddingsClient:
+        endpoint, credential = self._load_embeddings_credentials(bad_key=bad_key, **kwargs)
+        return await async_sdk.load_client(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
+
+    def _load_embeddings_client(self, *, bad_key: bool = False, **kwargs) -> sdk.EmbeddingsClient:
+        endpoint, credential = self._load_embeddings_credentials(bad_key=bad_key, **kwargs)
+        return sdk.load_client(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
+
+    # Methos to create the different sync and async clients directly
     def _create_async_chat_client(self, *, bad_key: bool = False, **kwargs) -> async_sdk.ChatCompletionsClient:
         endpoint, credential = self._load_chat_credentials(bad_key=bad_key, **kwargs)
         return async_sdk.ChatCompletionsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
@@ -103,15 +120,13 @@ class ModelClientTestBase(AzureRecordedTestCase):
             print("\tmodel_provider_name: {}".format(model_info.model_provider_name))
 
     @staticmethod
-    def _validate_model_info_result(model_info: sdk.models.ModelInfo):
+    def _validate_model_info_result(model_info: sdk.models.ModelInfo, expected_model_type: Union[str, sdk.models.ModelType]):
         assert model_info.model_name is not None
         assert len(model_info.model_name) > 0
         assert model_info.model_provider_name is not None
         assert len(model_info.model_provider_name) > 0
         assert model_info.model_type is not None
-        assert (
-            model_info.model_type == "completion"
-        )  # This should be sdk.models.ModelType.CHAT_COMPLETION once the model is fixed
+        assert model_info.model_type == expected_model_type
 
     @staticmethod
     def _validate_chat_completions_result(result: sdk.models.ChatCompletions, contains: List[str]):

@@ -21,16 +21,63 @@ class TestModelClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
-    def test_get_model_info_error_free(self, **kwargs):
-        client = self._create_chat_client(**kwargs)
-        result = client.get_model_info()
-        self._print_model_info_result(result)
-        self._validate_model_info_result(result)
+    def test_load_chat_completions_client(self, **kwargs):
+
+        client = self._load_chat_client(**kwargs)
+        assert isinstance(client, sdk.ChatCompletionsClient)
+        result1 = client.get_model_info()
+        self._print_model_info_result(result1)
+        self._validate_model_info_result(result1, "completion") # TODO: This should be ModelType.CHAT once the model is fixed
+        client.close()
+
+    @ServicePreparerEmbeddings()
+    @recorded_by_proxy
+    def test_load_embeddings_client(self, **kwargs):
+
+        client = self._load_embeddings_client(**kwargs)
+        assert isinstance(client, sdk.EmbeddingsClient)
+        result1 = client.get_model_info()
+        self._print_model_info_result(result1)
+        self._validate_model_info_result(result1, "embedding") # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
         client.close()
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
-    def test_chat_completions_error_free(self, **kwargs):
+    def test_get_model_info_on_chat_client(self, **kwargs):
+
+        client = self._create_chat_client(**kwargs)
+        result1 = client.get_model_info()
+        self._print_model_info_result(result1)
+        self._validate_model_info_result(result1, "completion") # TODO: This should be ModelType.CHAT once the model is fixed
+
+        # Get the model info again. No network calls should be made here,
+        # as the result is cached in the client.
+        result2 = client.get_model_info()
+        self._print_model_info_result(result2)
+        assert result1 == result2
+
+        client.close()
+
+    @ServicePreparerEmbeddings()
+    @recorded_by_proxy
+    def test_get_model_info_on_embeddings_client(self, **kwargs):
+
+        client = self._create_embeddings_client(**kwargs)
+        result1 = client.get_model_info()
+        self._print_model_info_result(result1)
+        self._validate_model_info_result(result1, "embedding") # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
+
+        # Get the model info again. No network calls should be made here,
+        # as the result is cached in the client.
+        result2 = client.get_model_info()
+        self._print_model_info_result(result2)
+        assert result1 == result2
+
+        client.close()
+    
+    @ServicePreparerChatCompletions()
+    @recorded_by_proxy
+    def test_chat_completions(self, **kwargs):
         client = self._create_chat_client(**kwargs)
         result = client.complete(messages=[sdk.models.UserMessage(content="How many feet are in a mile?")])
         self._print_chat_completions_result(result)
@@ -39,21 +86,21 @@ class TestModelClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
-    def test_chat_completions_streaming_error_free(self, **kwargs):
+    def test_chat_completions_streaming(self, **kwargs):
         client = self._create_chat_client(**kwargs)
         result = client.complete(
             stream=True,
             messages=[
                 sdk.models.SystemMessage(content="You are a helpful assistant."),
                 sdk.models.UserMessage(content="Give me 3 good reasons why I should exercise every day."),
-            ]
+            ],
         )
         self._validate_chat_completions_streaming_result(result)
         client.close()
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
-    def test_chat_completions_with_tool_error_free(self, **kwargs):
+    def test_chat_completions_with_tool(self, **kwargs):
         forecast_tool = sdk.models.ChatCompletionsFunctionToolDefinition(
             function=sdk.models.FunctionDefinition(
                 name="get_max_temperature",
@@ -101,7 +148,7 @@ class TestModelClient(ModelClientTestBase):
 
     @ServicePreparerEmbeddings()
     @recorded_by_proxy
-    def test_embeddings_error_free(self, **kwargs):
+    def test_embeddings(self, **kwargs):
         client = self._create_embeddings_client(**kwargs)
         result = client.embedding(input=["first phrase", "second phrase", "third phrase"])
         self._print_embeddings_result(result)

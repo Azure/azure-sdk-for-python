@@ -6,17 +6,17 @@
 DESCRIPTION:
     This sample demonstrates how to create an asynchronous client from a given endpoint URL using
     the load_client() function, imported from azure.ai.inference.aio.
-    In this sample, we get an asynchronous client and do a chat completions call.
+    In this sample, we get an asynchronous embeddings client and do one embeddings call.
 
 USAGE:
     python sample_load_client_async.py
 
     Set these two environment variables before running the sample:
-    1) CHAT_COMPLETIONS_ENDPOINT - Your endpoint URL, in the form 
+    1) EMBEDDINGS_ENDPOINT - Your endpoint URL, in the form 
         https://<your-deployment-name>.<your-azure-region>.inference.ai.azure.com
         where `your-deployment-name` is your unique AI Model deployment name, and
         `your-azure-region` is the Azure region where your model is deployed.
-    2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
+    2) EMBEDDINGS_KEY - Your model key (a 32-character string). Keep it secret.
 """
 import asyncio
 
@@ -25,34 +25,30 @@ async def sample_load_client_async():
     import os
 
     try:
-        endpoint = os.environ["CHAT_COMPLETIONS_ENDPOINT"]
-        key = os.environ["CHAT_COMPLETIONS_KEY"]
+        endpoint = os.environ["EMBEDDINGS_ENDPOINT"]
+        key = os.environ["EMBEDDINGS_KEY"]
     except KeyError:
-        print("Missing environment variable 'CHAT_COMPLETIONS_ENDPOINT' or 'CHAT_COMPLETIONS_KEY'")
+        print("Missing environment variable 'EMBEDDINGS_ENDPOINT' or 'EMBEDDINGS_KEY'")
         print("Set them before running this sample.")
         exit()
 
-    from azure.ai.inference.aio import load_client, ChatCompletionsClient
-    from azure.ai.inference.models import SystemMessage, UserMessage
+    from azure.ai.inference.aio import load_client, EmbeddingsClient
     from azure.core.credentials import AzureKeyCredential
 
     client = await load_client(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    # This should create a client of type `ChatCompletionsClient`
+    # This should create a client of type `EmbeddingsClient`
     print(f"Created client of type `{type(client).__name__}`.")
 
-    # TODO: Why does this return False?
-    # if isinstance(client, ChatCompletionsClient):
-    # Do a single chat completion operation. Start the operation and get a Future object.
-    response = await client.complete(
-        messages=[
-            SystemMessage(content="You are a helpful assistant."),
-            UserMessage(content="How many feet are in a mile?"),
-        ]
-    )
+    if isinstance(client, EmbeddingsClient):
+        response = await client.embedding(input=["first phrase", "second phrase", "third phrase"])
 
-    # Print response the the console
-    print(response.choices[0].message.content)
+        print("Embeddings response:")
+        for item in response.data:
+            length = len(item.embedding)
+            print(
+                f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, ..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+            )
 
     await client.close()
 

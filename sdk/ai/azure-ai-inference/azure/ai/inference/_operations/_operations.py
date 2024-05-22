@@ -35,12 +35,19 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
+T = TypeVar("T")
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_chat_completions_complete_request(*, model_deployment: Optional[str] = None, **kwargs: Any) -> HttpRequest:
+def build_chat_completions_complete_request(
+    *,
+    model_deployment: Optional[str] = None,
+    unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -57,6 +64,8 @@ def build_chat_completions_complete_request(*, model_deployment: Optional[str] =
     # Construct headers
     if model_deployment is not None:
         _headers["azureml-model-deployment"] = _SERIALIZER.header("model_deployment", model_deployment, "str")
+    if unknown_params is not None:
+        _headers["unknown-parameters"] = _SERIALIZER.header("unknown_params", unknown_params, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -83,7 +92,12 @@ def build_chat_completions_get_model_info_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_embeddings_embedding_request(*, model_deployment: Optional[str] = None, **kwargs: Any) -> HttpRequest:
+def build_embeddings_embedding_request(
+    *,
+    model_deployment: Optional[str] = None,
+    unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -100,6 +114,8 @@ def build_embeddings_embedding_request(*, model_deployment: Optional[str] = None
     # Construct headers
     if model_deployment is not None:
         _headers["azureml-model-deployment"] = _SERIALIZER.header("model_deployment", model_deployment, "str")
+    if unknown_params is not None:
+        _headers["unknown-parameters"] = _SERIALIZER.header("unknown_params", unknown_params, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -126,7 +142,12 @@ def build_embeddings_get_model_info_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_image_embeddings_embedding_request(*, model_deployment: Optional[str] = None, **kwargs: Any) -> HttpRequest:
+def build_image_embeddings_embedding_request(
+    *,
+    model_deployment: Optional[str] = None,
+    unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -143,6 +164,8 @@ def build_image_embeddings_embedding_request(*, model_deployment: Optional[str] 
     # Construct headers
     if model_deployment is not None:
         _headers["azureml-model-deployment"] = _SERIALIZER.header("model_deployment", model_deployment, "str")
+    if unknown_params is not None:
+        _headers["unknown-parameters"] = _SERIALIZER.header("unknown_params", unknown_params, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -177,6 +200,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         body: JSON,
         *,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ChatCompletions: ...
@@ -186,6 +210,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         *,
         messages: List[_models.ChatRequestMessage],
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         frequency_penalty: Optional[float] = None,
         stream_parameter: Optional[bool] = None,
@@ -208,6 +233,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         body: IO[bytes],
         *,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ChatCompletions: ...
@@ -219,6 +245,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         *,
         messages: List[_models.ChatRequestMessage] = _Unset,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         frequency_penalty: Optional[float] = None,
         stream_parameter: Optional[bool] = None,
         presence_penalty: Optional[float] = None,
@@ -253,6 +280,9 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword frequency_penalty: A value that influences the probability of generated tokens
          appearing based on their cumulative
          frequency in generated text.
@@ -416,6 +446,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ChatCompletions] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if messages is _Unset:
@@ -444,6 +475,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
 
         _request = build_chat_completions_complete_request(
             model_deployment=model_deployment,
+            unknown_params=unknown_params,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -473,10 +505,13 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         else:
             deserialized = _deserialize(_models.ChatCompletions, response.json())
 
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
+    def _get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
         # pylint: disable=line-too-long
         """Returns information about the AI model.
 
@@ -509,6 +544,8 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        cls: ClsType[_models.ModelInfo] = kwargs.pop("cls", None)
+
         _request = build_chat_completions_get_model_info_request(
             api_version=self._config.api_version,
             headers=_headers,
@@ -537,6 +574,9 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         else:
             deserialized = _deserialize(_models.ModelInfo, response.json())
 
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
         return deserialized  # type: ignore
 
 
@@ -548,6 +588,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         body: JSON,
         *,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EmbeddingsResult: ...
@@ -557,6 +598,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         *,
         input: List[str],
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
@@ -569,6 +611,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         body: IO[bytes],
         *,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EmbeddingsResult: ...
@@ -580,6 +623,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         *,
         input: List[str] = _Unset,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
@@ -599,6 +643,9 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
          have.
          Passing null causes the model to use its default value.
@@ -689,6 +736,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EmbeddingsResult] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if input is _Unset:
@@ -709,6 +757,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
 
         _request = build_embeddings_embedding_request(
             model_deployment=model_deployment,
+            unknown_params=unknown_params,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -738,10 +787,13 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         else:
             deserialized = _deserialize(_models.EmbeddingsResult, response.json())
 
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
+    def _get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
         # pylint: disable=line-too-long
         """Returns information about the AI model.
 
@@ -774,6 +826,8 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        cls: ClsType[_models.ModelInfo] = kwargs.pop("cls", None)
+
         _request = build_embeddings_get_model_info_request(
             api_version=self._config.api_version,
             headers=_headers,
@@ -802,6 +856,9 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         else:
             deserialized = _deserialize(_models.ModelInfo, response.json())
 
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
         return deserialized  # type: ignore
 
 
@@ -813,6 +870,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         body: JSON,
         *,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EmbeddingsResult: ...
@@ -822,6 +880,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         *,
         input: List[_models.EmbeddingInput],
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
@@ -834,6 +893,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         body: IO[bytes],
         *,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EmbeddingsResult: ...
@@ -845,6 +905,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         *,
         input: List[_models.EmbeddingInput] = _Unset,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
@@ -864,6 +925,9 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
          have.
          Passing null causes the model to use its default value.
@@ -978,6 +1042,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
 
         _request = build_image_embeddings_embedding_request(
             model_deployment=model_deployment,
+            unknown_params=unknown_params,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1013,7 +1078,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
+    def _get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
         # pylint: disable=line-too-long
         """Returns information about the AI model.
 

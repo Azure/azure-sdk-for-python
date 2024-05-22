@@ -889,7 +889,7 @@ class ModelInfo(_model_base.Model):
 
     model_name: str = rest_field()
     """The name of the AI model. For example: ``Phi21``. Required."""
-    model_type: Union[str, "_models.ModelType"] = rest_field()
+    model_type: Union[str, "_models._enums.ModelType"] = rest_field()
     """The type of the AI model. A Unique identifier for the profile. Required. Known values are:
      \"embeddings\", \"image_generation\", \"text_generation\", \"image_embeddings\",
      \"audio_generation\", and \"chat\"."""
@@ -901,7 +901,7 @@ class ModelInfo(_model_base.Model):
         self,
         *,
         model_name: str,
-        model_type: Union[str, "_models.ModelType"],
+        model_type: Union[str, "_models._enums.ModelType"],
         model_provider_name: str,
     ): ...
 

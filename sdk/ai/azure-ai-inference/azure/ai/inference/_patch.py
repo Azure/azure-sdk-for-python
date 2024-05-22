@@ -36,6 +36,9 @@ from ._operations._operations import (
     build_chat_completions_complete_request,
     build_embeddings_embedding_request,
     build_image_embeddings_embedding_request,
+    build_chat_completions_get_model_info_request,
+    build_embeddings_get_model_info_request,
+    build_image_embeddings_get_model_info_request
 )
 from ._client import ChatCompletionsClient as ChatCompletionsClientGenerated
 from ._client import EmbeddingsClient as EmbeddingsClientGenerated
@@ -57,22 +60,29 @@ _LOGGER = logging.getLogger(__name__)
 def load_client(
     endpoint: str, credential: AzureKeyCredential, **kwargs: Any
 ) -> Union[ChatCompletionsClientGenerated, EmbeddingsClientGenerated, ImageEmbeddingsClientGenerated]:
+    
     client = ChatCompletionsClient(endpoint, credential, **kwargs)  # Pick any of the clients, it does not matter...
     model_info = client.get_model_info()
     client.close()
+
     _LOGGER.info("model_info=%s", model_info)
     if model_info.model_type in (None, ""):
         raise ValueError(
             "The AI model information is missing a value for `model type`. Cannot create an appropriate client."
         )
-    # TODO: Remove "completions" once Mistral Large fixes their model type
+
+    # TODO: Remove "completions" and "embedding" once Mistral Large and Cohere fixes their model type
     if model_info.model_type in (_models.ModelType.CHAT, "completion"):
-        return ChatCompletionsClient(endpoint, credential, **kwargs)
-    if model_info.model_type == _models.ModelType.EMBEDDINGS:
-        return EmbeddingsClient(endpoint, credential, **kwargs)
-    if model_info.model_type == _models.ModelType.IMAGE_EMBEDDINGS:
-        return ImageEmbeddingsClient(endpoint, credential, **kwargs)
-    raise ValueError(f"No client available to support AI model type `{model_info.model_type}`")
+        client = ChatCompletionsClient(endpoint, credential, **kwargs)
+    elif model_info.model_type in (_models.ModelType.EMBEDDINGS, "embedding"):
+        client = EmbeddingsClient(endpoint, credential, **kwargs)
+    elif model_info.model_type == _models.ModelType.IMAGE_EMBEDDINGS:
+        client = ImageEmbeddingsClient(endpoint, credential, **kwargs)
+    else:
+        raise ValueError(f"No client available to support AI model type `{model_info.model_type}`")
+
+    client._model_info = model_info  # pylint: disable=protected-access
+    return  client
 
 
 class ChatCompletionsClient(ChatCompletionsClientGenerated):
@@ -83,6 +93,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         body: JSON,
         *,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> Union[_models.StreamingChatCompletions, _models.ChatCompletions]:
@@ -101,6 +112,10 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         The service defaults to "error" in this case.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -115,6 +130,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         *,
         messages: List[_models.ChatRequestMessage],
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         hyper_params: Optional[Dict[str, Any]] = None,
         frequency_penalty: Optional[float] = None,
@@ -150,6 +166,10 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         The service defaults to "error" in this case.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams        
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -224,6 +244,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         body: IO[bytes],
         *,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> Union[_models.StreamingChatCompletions, _models.ChatCompletions]:
@@ -241,6 +262,10 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         The service defaults to "error" in this case.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams        
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -256,6 +281,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         *,
         messages: List[_models.ChatRequestMessage] = _Unset,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         hyper_params: Optional[Dict[str, Any]] = None,
         frequency_penalty: Optional[float] = None,
         presence_penalty: Optional[float] = None,
@@ -292,6 +318,10 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         The service defaults to "error" in this case.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword hyper_params: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
          How the service handles these hypter parameters depends on the value of the
@@ -398,6 +428,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
         _request = build_chat_completions_complete_request(
             model_deployment=model_deployment,
+            unknown_params=unknown_params,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -427,6 +458,25 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         else:
             return _deserialize(_models._models.ChatCompletions, response.json())  # pylint: disable=protected-access
 
+    # Cache here the results of get_model_info call
+    _model_info: Optional[_models.ModelInfo] = None
+
+    @distributed_trace
+    def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
+        # pylint: disable=line-too-long
+        """Returns information about the AI model.
+
+        :return: ModelInfo. The ModelInfo is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.ModelInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if self._model_info == None:
+            self._model_info = self._get_model_info(**kwargs)
+        return self._model_info
+    
+    def __str__(self) -> str:
+        return super().__str__() + f"\n_model_info={self._model_info}"
+
 
 class EmbeddingsClient(EmbeddingsClientGenerated):
 
@@ -436,8 +486,9 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         body: JSON,
         *,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EmbeddingsResult:
         """Return the embeddings for a given text prompt.
 
@@ -448,6 +499,10 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         The service defaults to "error" in this case.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams        
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -463,11 +518,12 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         hyper_params: Optional[Dict[str, Any]] = None,
         input: List[str],
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EmbeddingsResult:
         """Return the embeddings for a given text prompt.
 
@@ -485,6 +541,10 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         The service defaults to "error" in this case.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -522,8 +582,9 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         body: IO[bytes],
         *,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EmbeddingsResult:
         """Return the embeddings for a given text prompt.
 
@@ -534,6 +595,10 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         The service defaults to "error" in this case.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -550,10 +615,11 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         hyper_params: Optional[Dict[str, Any]] = None,
         input: List[str] = _Unset,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EmbeddingsResult:
         # pylint: disable=line-too-long
         """Return the embeddings for a given text prompt.
@@ -574,6 +640,10 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         The service defaults to "error" in this case.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
          have.
          Passing null causes the model to use its default value.
@@ -628,6 +698,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
 
         _request = build_embeddings_embedding_request(
             model_deployment=model_deployment,
+            unknown_params=unknown_params,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -659,6 +730,25 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
 
         return deserialized  # type: ignore
 
+    # Cache here the results of get_model_info call
+    _model_info: Optional[_models.ModelInfo] = None
+
+    @distributed_trace
+    def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
+        # pylint: disable=line-too-long
+        """Returns information about the AI model.
+
+        :return: ModelInfo. The ModelInfo is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.ModelInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if self._model_info == None:
+            self._model_info = self._get_model_info(**kwargs)
+        return self._model_info
+
+    def __str__(self) -> str:
+        return super().__str__() + f"\n_model_info={self._model_info}"
+
 class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
 
     @overload
@@ -667,8 +757,9 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         body: JSON,
         *,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EmbeddingsResult:
         """Return the embeddings for given images.
 
@@ -679,6 +770,10 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         The service defaults to "error" in this case.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -694,11 +789,12 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         hyper_params: Optional[Dict[str, Any]] = None,
         input: List[_models.EmbeddingInput],
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EmbeddingsResult:
         """Return the embeddings for given images.
 
@@ -716,6 +812,10 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         The service defaults to "error" in this case.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -753,8 +853,9 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         body: IO[bytes],
         *,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EmbeddingsResult:
         """Return the embeddings for given images.
 
@@ -765,6 +866,10 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         The service defaults to "error" in this case.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -781,10 +886,11 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         hyper_params: Optional[Dict[str, Any]] = None,
         input: List[_models.EmbeddingInput] = _Unset,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EmbeddingsResult:
         # pylint: disable=line-too-long
         """Return the embeddings for given images.
@@ -805,6 +911,10 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         The service defaults to "error" in this case.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
          have.
          Passing null causes the model to use its default value.
@@ -859,6 +969,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
 
         _request = build_image_embeddings_embedding_request(
             model_deployment=model_deployment,
+            unknown_params=unknown_params,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -889,6 +1000,24 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
             deserialized = _deserialize(_models.EmbeddingsResult, response.json())
 
         return deserialized  # type: ignore
+
+    _model_info: Optional[_models.ModelInfo] = None
+
+    @distributed_trace
+    def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
+        # pylint: disable=line-too-long
+        """Returns information about the AI model.
+
+        :return: ModelInfo. The ModelInfo is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.ModelInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if self._model_info == None:
+            self._model_info = self._get_model_info(**kwargs)
+        return self._model_info
+
+    def __str__(self) -> str:
+        return super().__str__() + f"\n_model_info={self._model_info}"
 
 
 __all__: List[str] = [

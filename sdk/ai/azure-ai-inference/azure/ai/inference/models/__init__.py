@@ -31,49 +31,51 @@ from ._models import ToolMessage
 from ._models import UserMessage
 
 from ._enums import CapacityType
-from ._enums import CompletionsFinishReason
 from ._enums import ChatCompletionsResponseFormat
 from ._enums import ChatCompletionsToolSelectionPreset
+from ._enums import CompletionsFinishReason
 from ._enums import ChatRole
 from ._enums import EmbeddingEncodingFormat
 from ._enums import EmbeddingInputType
 from ._enums import ModelType
+from ._enums import UnknownParams
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AssistantMessage",
+    "CapacityType",
     "ChatChoice",
     "ChatChoiceUpdate",
     "ChatCompletions",
-    "CompletionsFinishReason",
     "ChatCompletionsFunctionToolCall",
     "ChatCompletionsFunctionToolDefinition",
     "ChatCompletionsNamedToolSelection",
+    "ChatCompletionsResponseFormat",
     "ChatCompletionsToolCall",
     "ChatCompletionsToolDefinition",
+    "ChatCompletionsToolSelectionPreset",
     "ChatCompletionsUpdate",
     "ChatRequestMessage",
     "ChatResponseMessage",
+    "ChatRole",
+    "CompletionsFinishReason",
     "CompletionsUsage",
+    "EmbeddingEncodingFormat",
     "EmbeddingInput",
+    "EmbeddingInputType",
     "EmbeddingItem",
     "EmbeddingsResult",
     "EmbeddingsUsage",
     "FunctionCall",
     "FunctionDefinition",
     "ModelInfo",
+    "ModelType",
     "SystemMessage",
     "ToolMessage",
+    "UnknownParams"
     "UserMessage",
-    "CapacityType",
-    "ChatCompletionsResponseFormat",
-    "ChatCompletionsToolSelectionPreset",
-    "ChatRole",
-    "EmbeddingEncodingFormat",
-    "EmbeddingInputType",
-    "ModelType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

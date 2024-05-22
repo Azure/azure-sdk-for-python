@@ -119,3 +119,15 @@ class ModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Audio generation"""
     CHAT = "chat"
     """Chat completions"""
+
+
+class UnknownParams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Controls what happens if unknown parameters are passed in the JSON request payload."""
+
+    ERROR = "error"
+    """The service will error if it detected unknown parameters in the request payload. This is the
+    default."""
+    INGORE = "ignore"
+    """The servcie will ignore unknown parameters in the request payload."""
+    ALLOW = "allow"
+    """The service will pass unknown parameters to the back-end AI model."""

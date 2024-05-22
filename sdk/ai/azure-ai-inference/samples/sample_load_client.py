@@ -6,7 +6,8 @@
 DESCRIPTION:
     This sample demonstrates how to create a client from a given endpoint URL using
     the load_client() function, imported from azure.ai.inference.
-    In this sample, we get a synchronous client and do a chat completions call.
+    In this sample, we get a synchronous chat completions client and do one
+    chat completions call.
 
 USAGE:
     python sample_load_client.py
@@ -40,6 +41,8 @@ def sample_load_client():
 
     # This should create a client of type `ChatCompletionsClient`
     print(f"Created client of type `{type(client).__name__}`.")
+
+    print(client)
 
     if isinstance(client, ChatCompletionsClient):
         response = client.complete(

@@ -54,6 +54,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         body: JSON,
         *,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ChatCompletions: ...
@@ -63,6 +64,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         *,
         messages: List[_models.ChatRequestMessage],
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         frequency_penalty: Optional[float] = None,
         stream_parameter: Optional[bool] = None,
@@ -85,6 +87,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         body: IO[bytes],
         *,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ChatCompletions: ...
@@ -96,6 +99,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         *,
         messages: List[_models.ChatRequestMessage] = _Unset,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         frequency_penalty: Optional[float] = None,
         stream_parameter: Optional[bool] = None,
         presence_penalty: Optional[float] = None,
@@ -130,6 +134,10 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         The service defaults to "error" in this case.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword frequency_penalty: A value that influences the probability of generated tokens
          appearing based on their cumulative
          frequency in generated text.
@@ -322,6 +330,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
 
         _request = build_chat_completions_complete_request(
             model_deployment=model_deployment,
+            unknown_params=unknown_params,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -357,7 +366,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
+    async def _get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
         # pylint: disable=line-too-long
         """Returns information about the AI model.
 
@@ -434,6 +443,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         body: JSON,
         *,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EmbeddingsResult: ...
@@ -443,6 +453,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         *,
         input: List[str],
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
@@ -455,6 +466,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         body: IO[bytes],
         *,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EmbeddingsResult: ...
@@ -466,6 +478,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         *,
         input: List[str] = _Unset,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
@@ -485,6 +498,9 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
          have.
          Passing null causes the model to use its default value.
@@ -596,6 +612,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
 
         _request = build_embeddings_embedding_request(
             model_deployment=model_deployment,
+            unknown_params=unknown_params,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -631,7 +648,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
+    async def _get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
         # pylint: disable=line-too-long
         """Returns information about the AI model.
 
@@ -708,6 +725,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         body: JSON,
         *,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EmbeddingsResult: ...
@@ -717,6 +735,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         *,
         input: List[_models.EmbeddingInput],
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
@@ -729,6 +748,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         body: IO[bytes],
         *,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EmbeddingsResult: ...
@@ -740,6 +760,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         *,
         input: List[_models.EmbeddingInput] = _Unset,
         model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
@@ -759,6 +780,9 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
          have.
          Passing null causes the model to use its default value.
@@ -873,6 +897,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
 
         _request = build_image_embeddings_embedding_request(
             model_deployment=model_deployment,
+            unknown_params=unknown_params,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -908,7 +933,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
+    async def _get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
         # pylint: disable=line-too-long
         """Returns information about the AI model.
 
