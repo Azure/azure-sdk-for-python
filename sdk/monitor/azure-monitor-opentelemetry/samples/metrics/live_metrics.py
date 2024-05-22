@@ -25,7 +25,7 @@ configure_azure_monitor(
 tracer = trace.get_tracer(__name__)
 logger = logging.getLogger(__name__)
 
-# Contiuously send metrics
+# Continuously send metrics
 while True:
     with tracer.start_as_current_span("parent"):
         logger.warning("sending request")
