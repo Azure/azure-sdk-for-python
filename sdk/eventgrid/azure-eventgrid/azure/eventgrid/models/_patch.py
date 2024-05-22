@@ -10,7 +10,6 @@ from typing import List, overload, Mapping, Any
 from azure.core.messaging import CloudEvent
 from ._models import (
     ReceiveDetails as InternalReceiveDetails,
-    ReceiveResult as InternalReceiveResult,
     BrokerProperties as InternalBrokerProperties,
 )
 
@@ -32,33 +31,6 @@ class ReceiveDetails(InternalReceiveDetails):
         *,
         broker_properties: "BrokerProperties",
         event: "CloudEvent",
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class ReceiveResult(InternalReceiveResult):
-    """Details of the Receive operation response.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: Array of receive responses, one per cloud event. Required.
-    :vartype value: list[~azure.eventgrid.models.ReceiveDetails]
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["ReceiveDetails"],
     ): ...
 
     @overload
@@ -104,7 +76,6 @@ class BrokerProperties(InternalBrokerProperties):
 
 __all__: List[str] = [
     "ReceiveDetails",
-    "ReceiveResult",
     "BrokerProperties",
 ]  # Add all objects you want publicly available to users at this package level
 
