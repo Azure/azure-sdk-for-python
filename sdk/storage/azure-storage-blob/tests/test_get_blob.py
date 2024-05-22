@@ -24,7 +24,7 @@ TEST_BLOB_PREFIX = 'blob'
 
 
 class TestStorageGetBlob(StorageRecordedTestCase):
-    def _setup(self, storage_account_name, key):
+    def _setup(self, storage_account_name, key, upload_blob=True):
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
         # the tests would take too long to execute
@@ -46,7 +46,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         self.byte_blob = self.get_resource_name('byteblob')
         self.byte_data = self.get_random_bytes(64 * 1024 + 5)
 
-        if self.is_live:
+        if self.is_live and upload_blob:
             blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
             blob.upload_blob(self.byte_data, overwrite=True)
 
@@ -1470,7 +1470,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key, upload_blob=False)
         data = b'12345' * 205 * 5  # 5125 bytes
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
@@ -1501,7 +1501,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key, upload_blob=False)
         data = '你好世界' * 5
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, encoding='utf-8', overwrite=True)
@@ -1528,7 +1528,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key, upload_blob=False)
         data = '你好世界' * 256  # 3 KiB
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, encoding='utf-8', overwrite=True)
@@ -1555,7 +1555,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key, upload_blob=False)
         data = '你好世界' * 256  # 3 KiB
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, encoding='utf-8', overwrite=True)
@@ -1585,7 +1585,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key, upload_blob=False)
         initial_data = 'abcde' * 2
         data = initial_data + ('你好世界' * 2)
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
