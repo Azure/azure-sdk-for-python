@@ -16,7 +16,7 @@ USAGE:
 """
 # [START publish_cloud_event_to_topic]
 import os
-from azure.eventgrid import EventGridClient
+from azure.eventgrid import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.messaging import CloudEvent
 
@@ -24,16 +24,16 @@ topic_key = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_KEY"]
 endpoint = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT"]
 
 credential = AzureKeyCredential(topic_key)
-client = EventGridClient(endpoint, credential, level="Basic")
+client = EventGridPublisherClient(endpoint, credential)
 
-client.send(
-    [
-        CloudEvent(
-            type="Contoso.Items.ItemReceived",
-            source="/contoso/items",
-            data={"itemSku": "Contoso Item SKU #1"},
-            subject="Door1",
-        )
-    ]
-)
+client.send([
+    CloudEvent(
+        type="Contoso.Items.ItemReceived",
+        source="/contoso/items",
+        data={
+            "itemSku": "Contoso Item SKU #1"
+        },
+        subject="Door1"
+    )
+])
 # [END publish_cloud_event_to_topic]

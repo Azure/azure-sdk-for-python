@@ -19,37 +19,39 @@ USAGE:
 import os
 from datetime import datetime
 from msrest.serialization import UTC
-from azure.eventgrid import EventGridClient, EventGridEvent
+from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 from azure.core.credentials import AzureKeyCredential
 
 topic_key = os.environ["EVENTGRID_TOPIC_KEY"]
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
-
 def publish():
     # [START publish_eg_event_dict]
     credential = AzureKeyCredential(topic_key)
-    client = EventGridClient(endpoint, credential, level="Basic")
+    client = EventGridPublisherClient(endpoint, credential)
 
-    event0 = {
-        "eventType": "Contoso.Items.ItemReceived",
-        "data": {"itemSku": "Contoso Item SKU #1"},
-        "subject": "Door1",
-        "dataVersion": "2.0",
-        "id": "randomuuid11",
-        "eventTime": datetime.now(UTC()),
-    }
-    event1 = {
-        "eventType": "Contoso.Items.ItemReceived",
-        "data": {"itemSku": "Contoso Item SKU #2"},
-        "subject": "Door1",
-        "dataVersion": "2.0",
-        "id": "randomuuid12",
-        "eventTime": datetime.now(UTC()),
-    }
+    event0 = {	
+        "eventType": "Contoso.Items.ItemReceived",	
+        "data": {	
+            "itemSku": "Contoso Item SKU #1"	
+        },	
+        "subject": "Door1",	
+        "dataVersion": "2.0",	
+        "id": "randomuuid11",	
+        "eventTime": datetime.now(UTC())
+    }	
+    event1 = {	
+        "eventType": "Contoso.Items.ItemReceived",	
+        "data": {	
+            "itemSku": "Contoso Item SKU #2"	
+        },	
+        "subject": "Door1",	
+        "dataVersion": "2.0",	
+        "id": "randomuuid12",	
+        "eventTime": datetime.now(UTC())
+    }	
     client.send([event0, event1])
     # [END publish_eg_event_dict]
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     publish()

@@ -16,23 +16,23 @@ USAGE:
 """
 # [START publish_eg_event_to_topic]
 import os
-from azure.eventgrid import EventGridClient, EventGridEvent
+from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 from azure.core.credentials import AzureKeyCredential
 
 topic_key = os.environ["EVENTGRID_TOPIC_KEY"]
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
 credential = AzureKeyCredential(topic_key)
-client = EventGridClient(endpoint, credential, level="Basic")
+client = EventGridPublisherClient(endpoint, credential)
 
-client.send(
-    [
-        EventGridEvent(
-            event_type="Contoso.Items.ItemReceived",
-            data={"itemSku": "Contoso Item SKU #1"},
-            subject="Door1",
-            data_version="2.0",
-        )
-    ]
-)
+client.send([
+	EventGridEvent(
+		event_type="Contoso.Items.ItemReceived",
+		data={
+			"itemSku": "Contoso Item SKU #1"
+		},
+		subject="Door1",
+		data_version="2.0"
+	)
+])
 # [END publish_eg_event_to_topic]

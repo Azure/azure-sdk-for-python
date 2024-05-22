@@ -17,29 +17,27 @@ USAGE:
 import os
 import asyncio
 from azure.eventgrid import EventGridEvent
-from azure.eventgrid.aio import EventGridClient
+from azure.eventgrid.aio import EventGridPublisherClient
 from azure.core.credentials import AzureSasCredential
 
 sas = os.environ["EVENTGRID_SAS"]
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
-
 async def publish():
     credential = AzureSasCredential(sas)
-    client = EventGridClient(endpoint, credential, level="Basic")
+    client = EventGridPublisherClient(endpoint, credential)
 
     async with client:
-        await client.send(
-            [
-                EventGridEvent(
-                    event_type="Contoso.Items.ItemReceived",
-                    data={"itemSku": "Contoso Item SKU #1"},
-                    subject="Door1",
-                    data_version="2.0",
-                )
-            ]
-        )
+        await client.send([
+            EventGridEvent(
+                event_type="Contoso.Items.ItemReceived",
+                data={
+                    "itemSku": "Contoso Item SKU #1"
+                },
+                subject="Door1",
+                data_version="2.0"
+            )
+        ])
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     asyncio.run(publish())

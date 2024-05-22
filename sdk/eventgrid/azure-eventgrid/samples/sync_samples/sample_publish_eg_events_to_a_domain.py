@@ -15,30 +15,32 @@ USAGE:
     "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
 import os
-from azure.eventgrid import EventGridClient, EventGridEvent
+from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 from azure.core.credentials import AzureKeyCredential
 
 domain_key = os.environ["EVENTGRID_DOMAIN_KEY"]
 domain_hostname = os.environ["EVENTGRID_DOMAIN_ENDPOINT"]
 
 credential = AzureKeyCredential(domain_key)
-client = EventGridClient(domain_hostname, credential, level="Basic")
+client = EventGridPublisherClient(domain_hostname, credential)
 
-client.send(
-    [
-        EventGridEvent(
-            topic="MyCustomDomainTopic1",
-            event_type="Contoso.Items.ItemReceived",
-            data={"itemSku": "Contoso Item SKU #1"},
-            subject="Door1",
-            data_version="2.0",
-        ),
-        EventGridEvent(
-            topic="MyCustomDomainTopic2",
-            event_type="Contoso.Items.ItemReceived",
-            data={"itemSku": "Contoso Item SKU #2"},
-            subject="Door1",
-            data_version="2.0",
-        ),
-    ]
-)
+client.send([
+    EventGridEvent(
+        topic="MyCustomDomainTopic1",
+        event_type="Contoso.Items.ItemReceived",
+        data={
+            "itemSku": "Contoso Item SKU #1"
+        },
+        subject="Door1",
+        data_version="2.0"
+    ),
+    EventGridEvent(
+        topic="MyCustomDomainTopic2",
+        event_type="Contoso.Items.ItemReceived",
+        data={
+            "itemSku": "Contoso Item SKU #2"
+        },
+        subject="Door1",
+        data_version="2.0"
+    )
+])

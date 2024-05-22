@@ -17,41 +17,41 @@ USAGE:
 """
 # [START client_auth_with_key_cred_async]
 import os
-from azure.eventgrid.aio import EventGridClient
+from azure.eventgrid.aio import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
 
 topic_key = os.environ["EVENTGRID_TOPIC_KEY"]
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
 credential_key = AzureKeyCredential(topic_key)
-client = EventGridClient(endpoint, credential_key, level="Basic")
+client = EventGridPublisherClient(endpoint, credential_key)
 # [END client_auth_with_key_cred_async]
 
 # [START client_auth_with_sas_cred_async]
 import os
-from azure.eventgrid.aio import EventGridClient
+from azure.eventgrid.aio import EventGridPublisherClient
 from azure.core.credentials import AzureSasCredential
 
 signature = os.environ["EVENTGRID_SAS"]
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
 credential_sas = AzureSasCredential(signature)
-client = EventGridClient(endpoint, credential_sas, level="Basic")
+client = EventGridPublisherClient(endpoint, credential_sas)
 # [END client_auth_with_sas_cred_async]
 
 # [START client_auth_with_token_cred_async]
 from azure.identity.aio import DefaultAzureCredential
-from azure.eventgrid.aio import EventGridClient
+from azure.eventgrid.aio import EventGridPublisherClient
 from azure.eventgrid import EventGridEvent
 
 event = EventGridEvent(
     data={"team": "azure-sdk"},
     subject="Door1",
     event_type="Azure.Sdk.Demo",
-    data_version="2.0",
+    data_version="2.0"
 )
 
 default_az_credential = DefaultAzureCredential()
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
-client = EventGridClient(endpoint, default_az_credential, level="Basic")
+client = EventGridPublisherClient(endpoint, default_az_credential)
 # [END client_auth_with_token_cred_async]

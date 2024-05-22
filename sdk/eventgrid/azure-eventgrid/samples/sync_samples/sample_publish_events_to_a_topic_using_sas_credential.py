@@ -16,22 +16,22 @@ USAGE:
     "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
 import os
-from azure.eventgrid import EventGridClient, EventGridEvent, generate_sas
+from azure.eventgrid import EventGridPublisherClient, EventGridEvent, generate_sas
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 
 sas = os.environ["EVENTGRID_SAS"]
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
 credential = AzureSasCredential(sas)
-client = EventGridClient(endpoint, credential, level="Basic")
+client = EventGridPublisherClient(endpoint, credential)
 
-client.send(
-    [
-        EventGridEvent(
-            event_type="Contoso.Items.ItemReceived",
-            data={"itemSku": "Contoso Item SKU #1"},
-            subject="Door1",
-            data_version="2.0",
-        )
-    ]
-)
+client.send([
+	EventGridEvent(
+		event_type="Contoso.Items.ItemReceived",
+		data={
+			"itemSku": "Contoso Item SKU #1"
+		},
+		subject="Door1",
+		data_version="2.0"
+	)
+])

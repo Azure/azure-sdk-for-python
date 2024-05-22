@@ -15,7 +15,7 @@ USAGE:
     "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
 import os
-from azure.eventgrid import EventGridClient
+from azure.eventgrid import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
 from cloudevents.http import CloudEvent
 
@@ -23,17 +23,15 @@ topic_key = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_KEY"]
 endpoint = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT"]
 
 credential = AzureKeyCredential(topic_key)
-client = EventGridClient(endpoint, credential, level="Basic")
+client = EventGridPublisherClient(endpoint, credential)
 
-client.send(
-    [
-        CloudEvent(
-            attributes={
-                "type": "cloudevent",
-                "source": "/cncf/cloud/event/1.0",
-                "subject": "testing-cncf-event",
-            },
-            data=b"This is a cncf cloud event.",
-        )
-    ]
-)
+client.send([
+    CloudEvent(
+        attributes={
+            "type": "cloudevent",
+            "source": "/cncf/cloud/event/1.0",
+            "subject": "testing-cncf-event"
+        },
+        data=b'This is a cncf cloud event.',
+    )
+])

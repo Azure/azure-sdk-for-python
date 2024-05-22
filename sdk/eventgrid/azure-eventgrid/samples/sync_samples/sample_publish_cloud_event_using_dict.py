@@ -16,26 +16,26 @@ USAGE:
     "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
 import os
-from azure.eventgrid import EventGridClient
+from azure.eventgrid import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
 
 topic_key = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_KEY"]
 endpoint = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT"]
 
 credential = AzureKeyCredential(topic_key)
-client = EventGridClient(endpoint, credential, level="Basic")
+client = EventGridPublisherClient(endpoint, credential)
 
 # [START publish_cloud_event_dict]
-client.send(
-    [
-        {
-            "type": "Contoso.Items.ItemReceived",
-            "source": "/contoso/items",
-            "data": {"itemSku": "Contoso Item SKU #1"},
-            "subject": "Door1",
-            "specversion": "1.0",
-            "id": "randomclouduuid11",
-        }
-    ]
-)
+client.send([
+    {
+        "type": "Contoso.Items.ItemReceived",
+        "source": "/contoso/items",	
+        "data": {	
+            "itemSku": "Contoso Item SKU #1"	
+        },	
+        "subject": "Door1",	
+        "specversion": "1.0",	
+        "id": "randomclouduuid11"
+    }
+])
 # [END publish_cloud_event_dict]
