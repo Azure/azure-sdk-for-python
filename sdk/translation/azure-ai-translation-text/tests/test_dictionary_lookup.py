@@ -18,10 +18,12 @@ class TestDictionaryLookup(TextTranslationTest):
         client = self.create_client(endpoint, apikey, region)
 
         from_language = "en"
-        to = "es"
+        to_language = "es"
         input_text_elements = ["fly"]
 
-        response = client.lookup_dictionary_entries(body=input_text_elements, from_language=from_language, to=to)
+        response = client.lookup_dictionary_entries(
+            body=input_text_elements, from_language=from_language, to_language=to_language
+        )
         assert response is not None
         assert response[0].normalized_source == "fly"
         assert response[0].display_source == "fly"
@@ -35,10 +37,12 @@ class TestDictionaryLookup(TextTranslationTest):
         client = self.create_client(endpoint, apikey, region)
 
         from_language = "en"
-        to = "es"
+        to_language = "es"
         input_text_elements = ["fly", "fox"]
 
-        response = client.lookup_dictionary_entries(body=input_text_elements, from_language=from_language, to=to)
+        response = client.lookup_dictionary_entries(
+            body=input_text_elements, from_language=from_language, to_language=to_language
+        )
         assert response is not None
         assert len(response) == 2
         assert response[0].normalized_source == "fly"

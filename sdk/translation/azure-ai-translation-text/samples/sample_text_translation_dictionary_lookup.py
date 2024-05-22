@@ -41,11 +41,11 @@ def get_text_translation_dictionary_lookup():
     # [START get_text_translation_dictionary_lookup]
     try:
         from_language = "en"
-        to = "es"
+        to_language = "es"
         input_text_elements = ["fly"]
 
         response = text_translator.lookup_dictionary_entries(
-            body=input_text_elements, from_language=from_language, to=to
+            body=input_text_elements, from_language=from_language, to_language=to_language
         )
         dictionary_entry = response[0] if response else None
 
