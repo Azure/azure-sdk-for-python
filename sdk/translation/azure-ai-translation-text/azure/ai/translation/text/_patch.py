@@ -54,13 +54,8 @@ class TranslatorEntraIdAuthenticationPolicy(BearerTokenCredentialPolicy):
     """
 
     def __init__(
-            self,
-            credential: TokenCredential,
-            resource_id: str,
-            region: str,
-            audience: str,
-            **kwargs: Any
-        ) -> None:
+        self, credential: TokenCredential, resource_id: str, region: str, audience: str, **kwargs: Any
+    ) -> None:
         super(TranslatorEntraIdAuthenticationPolicy, self).__init__(credential, audience, **kwargs)
         self.resource_id = resource_id
         self.region = region
@@ -184,13 +179,7 @@ class TextTranslationClient(ServiceClientGenerated):
     ): ...
 
     @overload
-    def __init__(
-        self,
-        *,
-        endpoint: str,
-        api_version: str ="3.0",
-        **kwargs
-    ): ...
+    def __init__(self, *, endpoint: str, api_version: str = "3.0", **kwargs): ...
 
     def __init__(self, **kwargs):
         api_version = kwargs.get("api_version", "3.0")

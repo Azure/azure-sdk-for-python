@@ -21,10 +21,12 @@ class TestTranslationAsync(TextTranslationTest):
         client = self.create_async_client(endpoint, apikey, region)
 
         from_language = "es"
-        to = ["cs"]
+        to_language = ["cs"]
         input_text_elements = ["Hola mundo"]
         async with client:
-            response = await client.translate(body=input_text_elements, to=to, from_language=from_language)
+            response = await client.translate(
+                body=input_text_elements, to_language=to_language, from_language=from_language
+            )
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -39,10 +41,10 @@ class TestTranslationAsync(TextTranslationTest):
         region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
-        to = ["cs"]
+        to_language = ["cs"]
         input_text_elements = ["This is a test."]
         async with client:
-            response = await client.translate(body=input_text_elements, to=to)
+            response = await client.translate(body=input_text_elements, to_language=to_language)
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -60,12 +62,12 @@ class TestTranslationAsync(TextTranslationTest):
         client = self.create_async_client(endpoint, apikey, region)
 
         from_language = "zh-chs"
-        to = ["en"]
+        to_language = ["en"]
         input_text_elements = ["<span class=notranslate>今天是怎么回事是</span>非常可怕的"]
         async with client:
             response = await client.translate(
                 body=input_text_elements,
-                to=to,
+                to_language=to_language,
                 from_language=from_language,
                 text_type=TextType.HTML,
             )
@@ -83,12 +85,14 @@ class TestTranslationAsync(TextTranslationTest):
         client = self.create_async_client(endpoint, apikey, region)
 
         from_language = "en"
-        to = ["es"]
+        to_language = ["es"]
         input_text_elements = [
             'The word < mstrans:dictionary translation ="wordomatic">wordomatic</mstrans:dictionary> is a dictionary entry.'
         ]
         async with client:
-            response = await client.translate(body=input_text_elements, to=to, from_language=from_language)
+            response = await client.translate(
+                body=input_text_elements, to_language=to_language, from_language=from_language
+            )
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -104,12 +108,12 @@ class TestTranslationAsync(TextTranslationTest):
         client = self.create_async_client(endpoint, apikey, region)
 
         from_language = "ar"
-        to = ["zh-Hans"]
+        to_language = ["zh-Hans"]
         input_text_elements = ["hudha akhtabar."]
         async with client:
             response = await client.translate(
                 body=input_text_elements,
-                to=to,
+                to_language=to_language,
                 from_language=from_language,
                 from_script="Latn",
                 to_script="Latn",
@@ -130,12 +134,12 @@ class TestTranslationAsync(TextTranslationTest):
         client = self.create_async_client(endpoint, apikey, region)
 
         from_language = "hi"
-        to = ["ta"]
+        to_language = ["ta"]
         input_text_elements = ["ap kaise ho"]
         async with client:
             response = await client.translate(
                 body=input_text_elements,
-                to=to,
+                to_language=to_language,
                 from_language=from_language,
                 from_script="Latn",
                 to_script="Latn",
@@ -154,14 +158,14 @@ class TestTranslationAsync(TextTranslationTest):
         region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
-        to = ["cs"]
+        to_language = ["cs"]
         input_text_elements = [
             "This is a test.",
             "Esto es una prueba.",
             "Dies ist ein Test.",
         ]
         async with client:
-            response = await client.translate(body=input_text_elements, to=to)
+            response = await client.translate(body=input_text_elements, to_language=to_language)
 
         assert len(response) == 3
         assert response[0].detected_language.language == "en"
@@ -183,10 +187,10 @@ class TestTranslationAsync(TextTranslationTest):
         region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
-        to = ["cs", "es", "de"]
+        to_language = ["cs", "es", "de"]
         input_text_elements = ["This is a test."]
         async with client:
-            response = await client.translate(body=input_text_elements, to=to)
+            response = await client.translate(body=input_text_elements, to_language=to_language)
 
         assert len(response) == 1
         assert len(response[0].translations) == 3
@@ -204,10 +208,12 @@ class TestTranslationAsync(TextTranslationTest):
         region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
-        to = ["cs"]
+        to_language = ["cs"]
         input_text_elements = ["<html><body>This <b>is</b> a test.</body></html>"]
         async with client:
-            response = await client.translate(body=input_text_elements, to=to, text_type=TextType.HTML)
+            response = await client.translate(
+                body=input_text_elements, to_language=to_language, text_type=TextType.HTML
+            )
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -222,12 +228,12 @@ class TestTranslationAsync(TextTranslationTest):
         region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
-        to = ["zh-cn"]
+        to_language = ["zh-cn"]
         input_text_elements = ["shit this is fucking crazy"]
         async with client:
             response = await client.translate(
                 body=input_text_elements,
-                to=to,
+                to_language=to_language,
                 profanity_action=ProfanityAction.MARKED,
                 profanity_marker=ProfanityMarker.ASTERISK,
             )
@@ -246,10 +252,10 @@ class TestTranslationAsync(TextTranslationTest):
         region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
-        to = ["cs"]
+        to_language = ["cs"]
         input_text_elements = ["It is a beautiful morning"]
         async with client:
-            response = await client.translate(body=input_text_elements, to=to, include_alignment=True)
+            response = await client.translate(body=input_text_elements, to_language=to_language, include_alignment=True)
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -265,12 +271,14 @@ class TestTranslationAsync(TextTranslationTest):
         region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
-        to = ["fr"]
+        to_language = ["fr"]
         input_text_elements = [
             "La réponse se trouve dans la traduction automatique. La meilleure technologie de traduction automatique ne peut pas toujours fournir des traductions adaptées à un site ou des utilisateurs comme un être humain. Il suffit de copier et coller un extrait de code n'importe où."
         ]
         async with client:
-            response = await client.translate(body=input_text_elements, to=to, include_sentence_length=True)
+            response = await client.translate(
+                body=input_text_elements, to_language=to_language, include_sentence_length=True
+            )
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -287,10 +295,10 @@ class TestTranslationAsync(TextTranslationTest):
         region = kwargs.get("translation_text_region")
         client = self.create_async_client(endpoint, apikey, region)
 
-        to = ["fr"]
+        to_language = ["fr"]
         input_text_elements = ["It is a beautiful morning"]
         async with client:
-            response = await client.translate(body=input_text_elements, to=to)
+            response = await client.translate(body=input_text_elements, to_language=to_language)
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -306,10 +314,10 @@ class TestTranslationAsync(TextTranslationTest):
         region = kwargs.get("translation_text_region")
         client = self.create_async_client_token(endpoint, apikey, region)
 
-        to = ["cs"]
+        to_language = ["cs"]
         input_text_elements = ["This is a test."]
         async with client:
-            response = await client.translate(body=input_text_elements, to=to)
+            response = await client.translate(body=input_text_elements, to_language=to_language)
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -326,9 +334,11 @@ class TestTranslationAsync(TextTranslationTest):
         client = self.create_async_text_translation_client_with_aad(token_credential, aadRegion, aadResourceId)
 
         from_language = "es"
-        to = ["cs"]
+        to_language = ["cs"]
         input_text_elements = ["Hola mundo"]
-        response = await client.translate(body=input_text_elements, to=to, from_language=from_language)
+        response = await client.translate(
+            body=input_text_elements, to_language=to_language, from_language=from_language
+        )
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
