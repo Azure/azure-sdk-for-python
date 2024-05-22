@@ -106,6 +106,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["sampling_ratio"], 1.0)
         self.assertTrue("credential" not in configurations)
         self.assertTrue("storage_directory" not in configurations)
+        self.assertEqual(configurations["enable_live_metrics"], False)
 
     @patch.dict(
         "os.environ",
