@@ -45,7 +45,7 @@ if TYPE_CHECKING:
 
 
 
-class EventGridClientOperationsMixin(PublisherOperationsMixin):
+class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
 
     @distributed_trace_async
     async def send(  
