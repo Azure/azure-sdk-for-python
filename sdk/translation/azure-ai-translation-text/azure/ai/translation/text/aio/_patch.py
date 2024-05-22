@@ -72,7 +72,7 @@ def set_authentication_policy(credential, kwargs):
     elif hasattr(credential, "get_token"):
         if not kwargs.get("authentication_policy"):
             if kwargs.get("region") and kwargs.get("resource_id"):
-                scope = kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE) + DEFAULT_SCOPE
+                scope = kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE).rstrip("/") + DEFAULT_SCOPE
                 kwargs["authentication_policy"] = AsyncTranslatorEntraIdAuthenticationPolicy(
                     credential,
                     kwargs["resource_id"],
@@ -86,7 +86,7 @@ def set_authentication_policy(credential, kwargs):
                          for regional resource authentication."""
                     )
                 kwargs["authentication_policy"] = AsyncBearerTokenCredentialPolicy(
-                    credential, *kwargs.pop("audience", [DEFAULT_TOKEN_SCOPE]), kwargs
+                    credential, *[kwargs.pop("audience", DEFAULT_TOKEN_SCOPE)], kwargs
                 )
 
 

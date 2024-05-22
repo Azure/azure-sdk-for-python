@@ -111,7 +111,7 @@ def set_authentication_policy(credential, kwargs):
                          regional resource authentication."""
                     )
                 kwargs["authentication_policy"] = BearerTokenCredentialPolicy(
-                    credential, *kwargs.pop("audience", [DEFAULT_TOKEN_SCOPE]), kwargs
+                    credential, *[kwargs.pop("audience", DEFAULT_TOKEN_SCOPE)], kwargs
                 )
 
 
