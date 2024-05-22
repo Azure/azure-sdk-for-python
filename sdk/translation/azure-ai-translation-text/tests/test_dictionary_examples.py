@@ -22,7 +22,9 @@ class TestDictionaryExamples(TextTranslationTest):
         to_language = "es"
         input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
 
-        response = client.lookup_dictionary_examples(body=input_text_elements, from_language=from_language, to_language=to_language)
+        response = client.lookup_dictionary_examples(
+            body=input_text_elements, from_language=from_language, to_language=to_language
+        )
         assert response is not None
         assert response[0].normalized_source == "fly"
         assert response[0].normalized_target == "volar"
@@ -42,7 +44,9 @@ class TestDictionaryExamples(TextTranslationTest):
             DictionaryExampleTextItem(text="beef", translation="came"),
         ]
 
-        response = client.lookup_dictionary_examples(body=input_text_elements, from_language=from_language, to_language=to_language)
+        response = client.lookup_dictionary_examples(
+            body=input_text_elements, from_language=from_language, to_language=to_language
+        )
         assert response is not None
         assert len(response) == 2
         assert response[0].normalized_source == "fly"

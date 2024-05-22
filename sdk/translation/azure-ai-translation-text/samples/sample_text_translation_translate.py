@@ -45,7 +45,9 @@ def get_text_translation():
         to_language = ["cs"]
         input_text_elements = ["This is a test"]
 
-        response = text_translator.translate(body=input_text_elements, to_language=to_language, from_language=from_language)
+        response = text_translator.translate(
+            body=input_text_elements, to_language=to_language, from_language=from_language
+        )
         translation = response[0] if response else None
 
         if translation:
@@ -238,7 +240,9 @@ def get_text_translation_entity():
             'The word <mstrans:dictionary translation="wordomatic">wordomatic</mstrans:dictionary> is a dictionary entry.'
         ]
 
-        response = text_translator.translate(body=input_text_elements, to_language=to_language, from_language=from_language)
+        response = text_translator.translate(
+            body=input_text_elements, to_language=to_language, from_language=from_language
+        )
         translation = response[0] if response else None
 
         if translation:
@@ -291,7 +295,9 @@ def get_text_translation_alignment():
         to_language = ["cs"]
         input_text_elements = ["The answer lies in machine translation."]
 
-        response = text_translator.translate(body=input_text_elements, to_language=to_language, include_alignment=include_alignment)
+        response = text_translator.translate(
+            body=input_text_elements, to_language=to_language, include_alignment=include_alignment
+        )
         translation = response[0] if response else None
 
         if translation:

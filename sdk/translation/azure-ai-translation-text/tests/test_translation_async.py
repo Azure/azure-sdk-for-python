@@ -24,7 +24,9 @@ class TestTranslationAsync(TextTranslationTest):
         to_language = ["cs"]
         input_text_elements = ["Hola mundo"]
         async with client:
-            response = await client.translate(body=input_text_elements, to_language=to_language, from_language=from_language)
+            response = await client.translate(
+                body=input_text_elements, to_language=to_language, from_language=from_language
+            )
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -88,7 +90,9 @@ class TestTranslationAsync(TextTranslationTest):
             'The word < mstrans:dictionary translation ="wordomatic">wordomatic</mstrans:dictionary> is a dictionary entry.'
         ]
         async with client:
-            response = await client.translate(body=input_text_elements, to_language=to_language, from_language=from_language)
+            response = await client.translate(
+                body=input_text_elements, to_language=to_language, from_language=from_language
+            )
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -207,7 +211,9 @@ class TestTranslationAsync(TextTranslationTest):
         to_language = ["cs"]
         input_text_elements = ["<html><body>This <b>is</b> a test.</body></html>"]
         async with client:
-            response = await client.translate(body=input_text_elements, to_language=to_language, text_type=TextType.HTML)
+            response = await client.translate(
+                body=input_text_elements, to_language=to_language, text_type=TextType.HTML
+            )
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -270,7 +276,9 @@ class TestTranslationAsync(TextTranslationTest):
             "La réponse se trouve dans la traduction automatique. La meilleure technologie de traduction automatique ne peut pas toujours fournir des traductions adaptées à un site ou des utilisateurs comme un être humain. Il suffit de copier et coller un extrait de code n'importe où."
         ]
         async with client:
-            response = await client.translate(body=input_text_elements, to_language=to_language, include_sentence_length=True)
+            response = await client.translate(
+                body=input_text_elements, to_language=to_language, include_sentence_length=True
+            )
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -328,7 +336,9 @@ class TestTranslationAsync(TextTranslationTest):
         from_language = "es"
         to_language = ["cs"]
         input_text_elements = ["Hola mundo"]
-        response = await client.translate(body=input_text_elements, to_language=to_language, from_language=from_language)
+        response = await client.translate(
+            body=input_text_elements, to_language=to_language, from_language=from_language
+        )
 
         assert len(response) == 1
         assert len(response[0].translations) == 1

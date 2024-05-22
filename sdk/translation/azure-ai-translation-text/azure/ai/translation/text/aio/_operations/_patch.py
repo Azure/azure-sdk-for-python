@@ -533,7 +533,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
                 ]
         """
 
-    async def translate( # pyright: ignore[reportIncompatibleMethodOverride]
+    async def translate(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
         body: Union[List[str], List[_models.InputTextItem], IO[bytes]],
         *,
@@ -755,7 +755,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
                 ]
         """
 
-    async def transliterate( # pyright: ignore[reportIncompatibleMethodOverride]
+    async def transliterate(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
         body: Union[List[str], List[_models.InputTextItem], IO[bytes]],
         *,
@@ -971,7 +971,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
                 ]
         """
 
-    async def find_sentence_boundaries( # pyright: ignore[reportIncompatibleMethodOverride]
+    async def find_sentence_boundaries(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
         body: Union[List[str], List[_models.InputTextItem], IO[bytes]],
         *,
@@ -1332,7 +1332,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
                 ]
         """
 
-    async def lookup_dictionary_entries( # pyright: ignore[reportIncompatibleMethodOverride]
+    async def lookup_dictionary_entries(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
         body: Union[List[str], List[_models.InputTextItem], IO[bytes]],
         *,

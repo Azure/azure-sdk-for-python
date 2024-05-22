@@ -266,12 +266,12 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
 
         :param body: Defines the content of the request. Required.
         :type body: list[~azure.ai.translation.text.models.InputTextItem]
-        :keyword to_language: Specifies the language of the output text. The target language must be one of the
-         supported languages included
-         in the translation scope. For example, use to_language=de to translate to German.
+        :keyword to_language: Specifies the language of the output text. The target language must be
+         one of the supported languages included
+         in the translation scope. For example, use to=de to translate to German.
          It's possible to translate to multiple languages simultaneously by repeating the parameter in
          the query string.
-         For example, use to_language=de&to_language=it to translate to German and Italian. Required.
+         For example, use to=de&to=it to translate to German and Italian. Required.
         :paramtype to_language: list[str]
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
@@ -442,12 +442,12 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
 
         :param body: Defines the content of the request. Required.
         :type body: IO[bytes]
-        :keyword to_language: Specifies the language of the output text. The target language must be one of the
-         supported languages included
-         in the translation scope. For example, use to_language=de to translate to German.
+        :keyword to_language: Specifies the language of the output text. The target language must be
+         one of the supported languages included
+         in the translation scope. For example, use to=de to translate to German.
          It's possible to translate to multiple languages simultaneously by repeating the parameter in
          the query string.
-         For example, use to_language=de&to_language=it to translate to German and Italian. Required.
+         For example, use to=de&to=it to translate to German and Italian. Required.
         :paramtype to_language: list[str]
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
@@ -611,12 +611,12 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :param body: Defines the content of the request. Is either a [InputTextItem] type or a
          IO[bytes] type. Required.
         :type body: list[~azure.ai.translation.text.models.InputTextItem] or IO[bytes]
-        :keyword to_language: Specifies the language of the output text. The target language must be one of the
-         supported languages included
-         in the translation scope. For example, use to_language=de to translate to German.
+        :keyword to_language: Specifies the language of the output text. The target language must be
+         one of the supported languages included
+         in the translation scope. For example, use to=de to translate to German.
          It's possible to translate to multiple languages simultaneously by repeating the parameter in
          the query string.
-         For example, use to_language=de&to_language=it to translate to German and Italian. Required.
+         For example, use to=de&to=it to translate to German and Italian. Required.
         :paramtype to_language: list[str]
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
