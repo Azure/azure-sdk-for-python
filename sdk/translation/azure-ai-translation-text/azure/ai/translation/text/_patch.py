@@ -95,7 +95,7 @@ def set_authentication_policy(credential, kwargs):
             else:
                 if kwargs.get("resource_id") or kwargs.get("region"):
                     raise ValueError(
-                        "Both 'resource_id' and 'region' must be provided with a TokenCredential for authentication."
+                        "Both 'resource_id' and 'region' must be provided with a TokenCredential for regional resource authentication."
                     )
                 kwargs["authentication_policy"] = BearerTokenCredentialPolicy(
                     credential, *kwargs.pop("scopes", [DEFAULT_TOKEN_SCOPE]), kwargs
@@ -166,7 +166,7 @@ class TextTranslationClient(ServiceClientGenerated):
         credential: AzureKeyCredential,
         region: Optional[str] = None,
         endpoint: Optional[str] = None,
-        api_version: = "3.0",
+        api_version: str = "3.0",
         **kwargs
     ): ...
 
@@ -175,7 +175,7 @@ class TextTranslationClient(ServiceClientGenerated):
         self,
         *,
         endpoint: str,
-        api_version: = "3.0",
+        api_version: str = "3.0",
         **kwargs
     ): ...
 
