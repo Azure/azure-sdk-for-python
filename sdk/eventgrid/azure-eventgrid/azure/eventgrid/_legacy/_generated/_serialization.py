@@ -63,7 +63,11 @@ import xml.etree.ElementTree as ET
 
 import isodate  # type: ignore
 
-from azure.core.exceptions import DeserializationError, SerializationError, raise_with_traceback
+from azure.core.exceptions import (
+    DeserializationError,
+    SerializationError,
+    raise_with_traceback,
+)
 from azure.core.serialization import NULL as AzureCoreNull
 
 _BOM = codecs.BOM_UTF8.decode(encoding="utf-8")
@@ -73,7 +77,6 @@ JSON = MutableMapping[str, Any]
 
 
 class RawDeserializer:
-
     # Accept "text" because we're open minded people...
     JSON_REGEXP = re.compile(r"^(application|text)/([a-z+.]+\+)?json$")
 
@@ -115,7 +118,6 @@ class RawDeserializer:
                 raise DeserializationError("JSON is invalid: {}".format(err), err)
         elif "xml" in (content_type or []):
             try:
-
                 try:
                     if isinstance(data, unicode):  # type: ignore
                         # If I'm Python 2.7 and unicode XML will scream if I try a "fromstring" on unicode string
@@ -298,9 +300,17 @@ class Model(object):
         self.additional_properties: Dict[str, Any] = {}
         for k in kwargs:
             if k not in self._attribute_map:
-                _LOGGER.warning("%s is not a known attribute of class %s and will be ignored", k, self.__class__)
+                _LOGGER.warning(
+                    "%s is not a known attribute of class %s and will be ignored",
+                    k,
+                    self.__class__,
+                )
             elif k in self._validation and self._validation[k].get("readonly", False):
-                _LOGGER.warning("Readonly attribute %s will be ignored in class %s", k, self.__class__)
+                _LOGGER.warning(
+                    "Readonly attribute %s will be ignored in class %s",
+                    k,
+                    self.__class__,
+                )
             else:
                 setattr(self, k, kwargs[k])
 
@@ -337,7 +347,11 @@ class Model(object):
         except AttributeError:
             xml_map = {}
 
-        return _create_xml_node(xml_map.get("name", cls.__name__), xml_map.get("prefix", None), xml_map.get("ns", None))
+        return _create_xml_node(
+            xml_map.get("name", cls.__name__),
+            xml_map.get("prefix", None),
+            xml_map.get("ns", None),
+        )
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> JSON:
         """Return the JSON that would be sent to azure from this model.
@@ -486,7 +500,11 @@ class Model(object):
                     )
                     break
             else:
-                _LOGGER.warning("Discriminator %s is absent or null, use base class %s.", subtype_key, cls.__name__)
+                _LOGGER.warning(
+                    "Discriminator %s is absent or null, use base class %s.",
+                    subtype_key,
+                    cls.__name__,
+                )
                 break
         return cls
 
@@ -610,7 +628,6 @@ class Serializer(object):
                         serialized.update(target_obj.additional_properties)
                     continue
                 try:
-
                     orig_attr = getattr(target_obj, attr)
                     if is_xml_model_serialization:
                         pass  # Don't provide "transformer" for XML for now. Keep "orig_attr"
@@ -929,7 +946,11 @@ class Serializer(object):
                 if isinstance(el, ET.Element):
                     el_node = el
                 else:
-                    el_node = _create_xml_node(node_name, xml_desc.get("prefix", None), xml_desc.get("ns", None))
+                    el_node = _create_xml_node(
+                        node_name,
+                        xml_desc.get("prefix", None),
+                        xml_desc.get("ns", None),
+                    )
                     if el is not None:  # Otherwise it writes "None" :-p
                         el_node.text = str(el)
                 final_result.append(el_node)
@@ -1155,7 +1176,12 @@ class Serializer(object):
             if microseconds:
                 microseconds = "." + microseconds
             date = "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}".format(
-                utc.tm_year, utc.tm_mon, utc.tm_mday, utc.tm_hour, utc.tm_min, utc.tm_sec
+                utc.tm_year,
+                utc.tm_mon,
+                utc.tm_mday,
+                utc.tm_hour,
+                utc.tm_min,
+                utc.tm_sec,
             )
             return date + microseconds + "Z"
         except (ValueError, OverflowError) as err:
@@ -1532,7 +1558,8 @@ class Deserializer(object):
             return self(target_obj, data, content_type=content_type)
         except:
             _LOGGER.debug(
-                "Ran into a deserialization error. Ignoring since this is failsafe deserialization", exc_info=True
+                "Ran into a deserialization error. Ignoring since this is failsafe deserialization",
+                exc_info=True,
             )
             return None
 
@@ -1811,7 +1838,11 @@ class Deserializer(object):
                 if enum_value.value.lower() == str(data).lower():
                     return enum_value
             # We don't fail anymore for unknown value, we deserialize as a string
-            _LOGGER.warning("Deserializer is not able to find %s as valid enum in %s", data, enum_obj)
+            _LOGGER.warning(
+                "Deserializer is not able to find %s as valid enum in %s",
+                data,
+                enum_obj,
+            )
             return Deserializer.deserialize_unicode(data)
 
     @staticmethod

@@ -22,15 +22,16 @@ from msrest.serialization import UTC
 import datetime as dt
 
 from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import EventGridPublisherClient
+from azure.eventgrid import EventGridClient
 
 key = os.environ["EVENTGRID_CUSTOM_EVENT_TOPIC_KEY"]
 endpoint = os.environ["EVENTGRID_CUSTOM_EVENT_TOPIC_ENDPOINT"]
 
+
 def publish_event():
     # authenticate client
     credential = AzureKeyCredential(key)
-    client = EventGridPublisherClient(endpoint, credential)
+    client = EventGridClient(endpoint, credential, level="Basic")
 
     # [START publish_custom_schema]
     custom_schema_event = {
@@ -39,11 +40,12 @@ def publish_event():
         "customDataVersion": "2.0",
         "customId": uuid.uuid4(),
         "customEventTime": dt.datetime.now(UTC()).isoformat(),
-        "customData": "sample data"
+        "customData": "sample data",
     }
 
     client.send(custom_schema_event)
     # [END publish_custom_schema]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     publish_event()
