@@ -19,12 +19,12 @@ class TestDictionaryExamplesAsync(TextTranslationTest):
         client = self.create_async_client(endpoint, apikey, region)
 
         from_language = "en"
-        to = "es"
+        to_language = "es"
         input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
 
         async with client:
             response = await client.lookup_dictionary_examples(
-                body=input_text_elements, from_language=from_language, to=to
+                body=input_text_elements, from_language=from_language, to_language=to_language
             )
         assert response is not None
         assert response[0].normalized_source == "fly"
@@ -39,7 +39,7 @@ class TestDictionaryExamplesAsync(TextTranslationTest):
         client = self.create_async_client(endpoint, apikey, region)
 
         from_language = "en"
-        to = "es"
+        to_language = "es"
         input_text_elements = [
             DictionaryExampleTextItem(text="fly", translation="volar"),
             DictionaryExampleTextItem(text="beef", translation="came"),
@@ -47,7 +47,7 @@ class TestDictionaryExamplesAsync(TextTranslationTest):
 
         async with client:
             response = await client.lookup_dictionary_examples(
-                body=input_text_elements, from_language=from_language, to=to
+                body=input_text_elements, from_language=from_language, to_language=to_language
             )
         assert response is not None
         assert len(response) == 2

@@ -19,7 +19,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         self,
         body: List[str],
         *,
-        to: List[str],
+        to_language: List[str],
         client_trace_id: Optional[str] = None,
         from_language: Optional[str] = None,
         text_type: Optional[Union[str, _models.TextType]] = None,
@@ -42,12 +42,12 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
         :param body: Defines the content of the request. Required.
         :type body: list[str]
-        :keyword to: Specifies the language of the output text. The target language must be one of the
+        :keyword to_language: Specifies the language of the output text. The target language must be one of the
          supported languages included
-         in the translation scope. For example, use to=de to translate to German.
+         in the translation scope. For example, use to_language=de to translate to German.
          It's possible to translate to multiple languages simultaneously by repeating the parameter in
          the query string.
-         For example, use to=de&to=it to translate to German and Italian. Required.
+         For example, use to_language=de&to_language=it to translate to German and Italian. Required.
         :paramtype to: list[str]
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
@@ -193,7 +193,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         self,
         body: List[_models.InputTextItem],
         *,
-        to: List[str],
+        to_language: List[str],
         client_trace_id: Optional[str] = None,
         from_language: Optional[str] = None,
         text_type: Optional[Union[str, _models.TextType]] = None,
@@ -216,12 +216,12 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
         :param body: Defines the content of the request. Required.
         :type body: list[~azure.ai.translation.text.models.InputTextItem]
-        :keyword to: Specifies the language of the output text. The target language must be one of the
+        :keyword to_language: Specifies the language of the output text. The target language must be one of the
          supported languages included
-         in the translation scope. For example, use to=de to translate to German.
+         in the translation scope. For example, use to_language=de to translate to German.
          It's possible to translate to multiple languages simultaneously by repeating the parameter in
          the query string.
-         For example, use to=de&to=it to translate to German and Italian. Required.
+         For example, use to_language=de&to_language=it to translate to German and Italian. Required.
         :paramtype to: list[str]
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
@@ -369,7 +369,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         self,
         body: IO[bytes],
         *,
-        to: List[str],
+        to_language: List[str],
         client_trace_id: Optional[str] = None,
         from_language: Optional[str] = None,
         text_type: Optional[Union[str, _models.TextType]] = None,
@@ -392,12 +392,12 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
         :param body: Defines the content of the request. Required.
         :type body: IO[bytes]
-        :keyword to: Specifies the language of the output text. The target language must be one of the
+        :keyword to_language: Specifies the language of the output text. The target language must be one of the
          supported languages included
-         in the translation scope. For example, use to=de to translate to German.
+         in the translation scope. For example, use to_language=de to translate to German.
          It's possible to translate to multiple languages simultaneously by repeating the parameter in
          the query string.
-         For example, use to=de&to=it to translate to German and Italian. Required.
+         For example, use to_language=de&to_language=it to translate to German and Italian. Required.
         :paramtype to: list[str]
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
@@ -537,7 +537,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         self,
         body: Union[List[str], List[_models.InputTextItem], IO[bytes]],
         *,
-        to: List[str],
+        to_language: List[str],
         client_trace_id: Optional[str] = None,
         from_language: Optional[str] = None,
         text_type: Optional[Union[str, _models.TextType]] = None,
@@ -563,7 +563,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
         return super().translate(
             body=request_body,
-            to=to,
+            to_language=to_language,
             client_trace_id=client_trace_id,
             from_language=from_language,
             text_type=text_type,
@@ -1000,7 +1000,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         body: List[str],
         *,
         from_language: str,
-        to: str,
+        to_language: str,
         client_trace_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1016,10 +1016,10 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
         :paramtype from_language: str
-        :keyword to: Specifies the language of the output text.
+        :keyword to_language: Specifies the language of the output text.
          The target language must be one of the supported languages included in the dictionary scope.
          Required.
-        :paramtype to: str
+        :paramtype to_language: str
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
@@ -1115,7 +1115,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         body: List[_models.InputTextItem],
         *,
         from_language: str,
-        to: str,
+        to_language: str,
         client_trace_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1131,10 +1131,10 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
         :paramtype from_language: str
-        :keyword to: Specifies the language of the output text.
+        :keyword to_language: Specifies the language of the output text.
          The target language must be one of the supported languages included in the dictionary scope.
          Required.
-        :paramtype to: str
+        :paramtype to_language: str
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
@@ -1230,7 +1230,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         body: IO[bytes],
         *,
         from_language: str,
-        to: str,
+        to_language: str,
         client_trace_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1246,10 +1246,10 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
         :paramtype from_language: str
-        :keyword to: Specifies the language of the output text.
+        :keyword to_language: Specifies the language of the output text.
          The target language must be one of the supported languages included in the dictionary scope.
          Required.
-        :paramtype to: str
+        :paramtype to_language: str
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
@@ -1337,7 +1337,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         body: Union[List[str], List[_models.InputTextItem], IO[bytes]],
         *,
         from_language: str,
-        to: str,
+        to_language: str,
         client_trace_id: Optional[str] = None,
         **kwargs: Any
     ) -> List[_models.DictionaryLookupItem]:
@@ -1351,7 +1351,11 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
             request_body = cast(Union[List[_models.InputTextItem], IO[bytes]], body)
 
         return super().lookup_dictionary_entries(
-            body=request_body, from_language=from_language, to=to, client_trace_id=client_trace_id, **kwargs
+            body=request_body,
+            from_language=from_language,
+            to_language=to_language,
+            client_trace_id=client_trace_id,
+            **kwargs
         )
 
 
