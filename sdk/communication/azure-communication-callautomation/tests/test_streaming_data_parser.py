@@ -37,15 +37,15 @@ class TestStreamDataParser(unittest.TestCase):
         self.validate_transcription_data(parsedData)
 
     def validate_transcription_metadata(self, transcriptionMetadata):
-        self.assertEqual(transcriptionMetadata.subscriptionId, "0000a000-9999-5555-ae00-cd00e0bc0000")
+        self.assertEqual(transcriptionMetadata.subscription_id, "0000a000-9999-5555-ae00-cd00e0bc0000")
         self.assertEqual(transcriptionMetadata.locale, "en-US")
-        self.assertEqual(transcriptionMetadata.correlationId, "6d09449c-6677-4f91-8cb7-012c338e6ec1")
-        self.assertEqual(transcriptionMetadata.callConnectionId, "6d09449c-6677-4f91-8cb7-012c338e6ec1")
+        self.assertEqual(transcriptionMetadata.correlation_id, "6d09449c-6677-4f91-8cb7-012c338e6ec1")
+        self.assertEqual(transcriptionMetadata.callConnection_id, "6d09449c-6677-4f91-8cb7-012c338e6ec1")
 
     def validate_transcription_data(self, transcriptionData):
         self.assertEqual(transcriptionData.text, "Is everything fine.")
         self.assertEqual(transcriptionData.format, "display")
-        self.assertEqual(transcriptionData.resultStatus, "Final")
+        self.assertEqual(transcriptionData.result_status, "Final")
         self.assertAlmostEqual(transcriptionData.confidence, 0.8138430714607239)
         self.assertEqual(transcriptionData.offset, 868464674)
         self.assertEqual(transcriptionData.duration, 11600000)

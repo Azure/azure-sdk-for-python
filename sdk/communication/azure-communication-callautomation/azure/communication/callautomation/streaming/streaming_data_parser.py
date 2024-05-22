@@ -45,7 +45,7 @@ class StreamingDataParser:
                 duration=json_object['transcriptionData']['duration'],
                 words=words,
                 participant=participant,
-                resultStatus=json_object['transcriptionData']['resultStatus']
+                result_status=json_object['transcriptionData']['resultStatus']
             )
             return transcription_data
         raise ValueError(string_json)

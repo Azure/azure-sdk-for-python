@@ -45,29 +45,29 @@ class WordData:
 class TranscriptionMetadata:
     """
     Metadata for Transcription Streaming.
-    :keyword subscriptionId: Transcription Subscription Id.
-    :paramtype subscriptionId: str
+    :keyword subscription_id: Transcription Subscription Id.
+    :paramtype subscription_id: str
     :keyword locale: The target locale in which the translated text needs to be.
     :paramtype locale: str
-    :keyword callConnectionId: call connection Id.
-    :paramtype callConnectionId: str
-    :keyword correlationId: correlation Id.
-    :paramtype correlationId: str
+    :keyword callConnection_id: call connection Id.
+    :paramtype callConnection_id: str
+    :keyword correlation_id: correlation Id.
+    :paramtype correlation_id: str
     """
 
-    subscriptionId: str
+    subscription_id: str
     """ Transcription Subscription Id. """
     locale: str
     """ The target locale in which the translated text needs to be. """
-    callConnectionId: str
+    callConnection_id: str
     """ call connection Id. """
-    correlationId: str
+    correlation_id: str
     """ correlation Id. """
-    def __init__(self, subscriptionId: str, locale: str, callConnectionId: str, correlationId: str):
-        self.subscriptionId = subscriptionId
+    def __init__(self, subscription_id: str, locale: str, callConnection_id: str, correlation_id: str):
+        self.subscriptionId = subscription_id
         self.locale = locale
-        self.callConnectionId = callConnectionId
-        self.correlationId = correlationId
+        self.callConnection_id = callConnection_id
+        self.correlation_id = correlation_id
 
 class TranscriptionData:
     """
@@ -103,10 +103,10 @@ class TranscriptionData:
     """ The result for each word of the phrase. """
     participant: CommunicationIdentifier
     """ The identified speaker based on participant raw ID. """
-    resultStatus: ResultStatus
+    result_status: ResultStatus
     """ Status of the result of transcription. """
     def __init__(self, text: str, format: TextFormat, confidence: float, offset: int, duration: int,
-    words: List[WordData], participant: CommunicationIdentifier, resultStatus: ResultStatus):
+    words: List[WordData], participant: CommunicationIdentifier, result_status: ResultStatus):
         self.text = text
         self.format = format
         self.confidence = confidence
@@ -114,4 +114,4 @@ class TranscriptionData:
         self.duration = duration
         self.words = words
         self.participant = participant
-        self.resultStatus = resultStatus
+        self.result_status = result_status
