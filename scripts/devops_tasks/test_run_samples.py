@@ -79,6 +79,9 @@ TIMEOUT_SAMPLES = {
 
 # Add your library + sample file if you do not want a particular sample to be run
 IGNORED_SAMPLES = {
+    "azure-appconfiguration-provider": [
+        "refresh_sample_feature_flags.py"
+    ],
     "azure-ai-ml": [
         "ml_samples_authentication_sovereign_cloud.py"
     ],
