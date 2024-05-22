@@ -25,9 +25,9 @@ class TestModelAsyncClient(ModelClientTestBase):
 
         client = await self._load_async_chat_client(**kwargs)
         assert isinstance(client, async_sdk.ChatCompletionsClient)
-        result1 = await client.get_model_info()
-        self._print_model_info_result(result1)
-        self._validate_model_info_result(result1, "completion") # TODO: This should be ModelType.CHAT once the model is fixed
+        response1 = await client.get_model_info()
+        self._print_model_info_result(response1)
+        self._validate_model_info_result(response1, "completion") # TODO: This should be ModelType.CHAT once the model is fixed
         await client.close()
 
     @ServicePreparerEmbeddings()
@@ -36,24 +36,24 @@ class TestModelAsyncClient(ModelClientTestBase):
 
         client = await self._load_async_embeddings_client(**kwargs)
         assert isinstance(client, async_sdk.EmbeddingsClient)
-        result1 = await client.get_model_info()
-        self._print_model_info_result(result1)
-        self._validate_model_info_result(result1, "embedding") # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
+        response1 = await client.get_model_info()
+        self._print_model_info_result(response1)
+        self._validate_model_info_result(response1, "embedding") # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
         await client.close()
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy_async
     async def test_async_get_model_info_on_chat_client(self, **kwargs):
         client = self._create_async_chat_client(**kwargs)
-        result1 = await client.get_model_info()
-        self._print_model_info_result(result1)
-        self._validate_model_info_result(result1, "completion") # TODO: This should be ModelType.CHAT once the model is fixed
+        response1 = await client.get_model_info()
+        self._print_model_info_result(response1)
+        self._validate_model_info_result(response1, "completion") # TODO: This should be ModelType.CHAT once the model is fixed
 
         # Get the model info again. No network calls should be made here,
-        # as the result is cached in the client.
-        result2 = await client.get_model_info()
-        self._print_model_info_result(result2)
-        assert result1 == result2
+        # as the response is cached in the client.
+        response2 = await client.get_model_info()
+        self._print_model_info_result(response2)
+        assert response1 == response2
 
         await client.close()
 
@@ -61,15 +61,15 @@ class TestModelAsyncClient(ModelClientTestBase):
     @recorded_by_proxy_async
     async def test_async_get_model_info_on_embeddings_client(self, **kwargs):
         client = self._create_async_embeddings_client(**kwargs)
-        result1 = await client.get_model_info()
-        self._print_model_info_result(result1)
-        self._validate_model_info_result(result1, "embedding") # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
+        response1 = await client.get_model_info()
+        self._print_model_info_result(response1)
+        self._validate_model_info_result(response1, "embedding") # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
 
         # Get the model info again. No network calls should be made here,
-        # as the result is cached in the client.
-        result2 = await client.get_model_info()
-        self._print_model_info_result(result2)
-        assert result1 == result2
+        # as the response is cached in the client.
+        response2 = await client.get_model_info()
+        self._print_model_info_result(response2)
+        assert response1 == response2
 
         await client.close()
 
@@ -82,38 +82,38 @@ class TestModelAsyncClient(ModelClientTestBase):
         ]
 
         client = self._create_async_chat_client(**kwargs)
-        result = await client.complete(messages=messages)
-        self._print_chat_completions_result(result)
-        self._validate_chat_completions_result(result, ["5280", "5,280"])
+        response = await client.complete(messages=messages)
+        self._print_chat_completions_result(response)
+        self._validate_chat_completions_result(response, ["5280", "5,280"])
 
-        messages.append(sdk.models.AssistantMessage(content=result.choices[0].message.content))
+        messages.append(sdk.models.AssistantMessage(content=response.choices[0].message.content))
         messages.append(sdk.models.UserMessage(content="and how many yards?"))
-        result = await client.complete(messages=messages)
-        self._print_chat_completions_result(result)
-        self._validate_chat_completions_result(result, ["1760", "1,760"])
+        response = await client.complete(messages=messages)
+        self._print_chat_completions_result(response)
+        self._validate_chat_completions_result(response, ["1760", "1,760"])
         await client.close()
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy_async
     async def test_async_chat_completions_streaming(self, **kwargs):
         client = self._create_async_chat_client(Sync=False, **kwargs)
-        result = await client.complete(
+        response = await client.complete(
             stream=True,
             messages=[
                 sdk.models.SystemMessage(content="You are a helpful assistant."),
                 sdk.models.UserMessage(content="Give me 3 good reasons why I should exercise every day."),
             ],
         )
-        await self._validate_async_chat_completions_streaming_result(result)
+        await self._validate_async_chat_completions_streaming_result(response)
         await client.close()
 
     @ServicePreparerEmbeddings()
     @recorded_by_proxy_async
     async def test_async_embeddings(self, **kwargs):
         client = self._create_async_embeddings_client(**kwargs)
-        result = await client.embedding(input=["first phrase", "second phrase", "third phrase"])
-        self._print_embeddings_result(result)
-        self._validate_embeddings_result(result)
+        response = await client.embedding(input=["first phrase", "second phrase", "third phrase"])
+        self._print_embeddings_result(response)
+        self._validate_embeddings_result(response)
         await client.close()
 
     # **********************************************************************************
@@ -128,7 +128,7 @@ class TestModelAsyncClient(ModelClientTestBase):
         client = self._create_async_embeddings_client(bad_key=True, **kwargs)
         exception_caught = False
         try:
-            result = await client.embedding(input=["first phrase", "second phrase", "third phrase"])
+            response = await client.embedding(input=["first phrase", "second phrase", "third phrase"])
         except AzureError as e:
             exception_caught = True
             print(e)

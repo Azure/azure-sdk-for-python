@@ -208,8 +208,6 @@ class ChatCompletions(_model_base.Model):
 
     :ivar id: A unique identifier associated with this chat completions response. Required.
     :vartype id: str
-    :ivar object: The response object type, which is always ``chat.completion``. Required.
-    :vartype object: str
     :ivar created: The first timestamp associated with generation activity for this completions
      response,
      represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required.
@@ -227,8 +225,6 @@ class ChatCompletions(_model_base.Model):
 
     id: str = rest_field()
     """A unique identifier associated with this chat completions response. Required."""
-    object: str = rest_field()
-    """The response object type, which is always ``chat.completion``. Required."""
     created: datetime.datetime = rest_field(format="unix-timestamp")
     """The first timestamp associated with generation activity for this completions response,
      represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required."""
@@ -247,7 +243,6 @@ class ChatCompletions(_model_base.Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        object: str,
         created: datetime.datetime,
         model: str,
         usage: "_models.CompletionsUsage",
@@ -442,8 +437,6 @@ class ChatCompletionsUpdate(_model_base.Model):
 
     :ivar id: A unique identifier associated with this chat completions response. Required.
     :vartype id: str
-    :ivar object: The response object type, which is always ``chat.completion``. Required.
-    :vartype object: str
     :ivar created: The first timestamp associated with generation activity for this completions
      response,
      represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required.
@@ -462,8 +455,6 @@ class ChatCompletionsUpdate(_model_base.Model):
 
     id: str = rest_field()
     """A unique identifier associated with this chat completions response. Required."""
-    object: str = rest_field()
-    """The response object type, which is always ``chat.completion``. Required."""
     created: datetime.datetime = rest_field(format="unix-timestamp")
     """The first timestamp associated with generation activity for this completions response,
      represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required."""
@@ -482,7 +473,6 @@ class ChatCompletionsUpdate(_model_base.Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        object: str,
         created: datetime.datetime,
         model: str,
         usage: "_models.CompletionsUsage",
@@ -646,8 +636,6 @@ class EmbeddingItem(_model_base.Model):
     :vartype embedding: list[float]
     :ivar index: Index of the prompt to which the EmbeddingItem corresponds. Required.
     :vartype index: int
-    :ivar object: The object type of this embeddings item. Will always be ``embedding``. Required.
-    :vartype object: str
     """
 
     embedding: List[float] = rest_field()
@@ -655,8 +643,6 @@ class EmbeddingItem(_model_base.Model):
      vector-based relatedness of the provided input. Required."""
     index: int = rest_field()
     """Index of the prompt to which the EmbeddingItem corresponds. Required."""
-    object: str = rest_field()
-    """The object type of this embeddings item. Will always be ``embedding``. Required."""
 
     @overload
     def __init__(
@@ -664,7 +650,6 @@ class EmbeddingItem(_model_base.Model):
         *,
         embedding: List[float],
         index: int,
-        object: str,
     ): ...
 
     @overload
@@ -692,8 +677,6 @@ class EmbeddingsResult(_model_base.Model):
     :vartype data: list[~azure.ai.inference.models.EmbeddingItem]
     :ivar usage: Usage counts for tokens input using the embeddings API. Required.
     :vartype usage: ~azure.ai.inference.models.EmbeddingsUsage
-    :ivar object: The object type of the embeddings result. Will always be ``list``. Required.
-    :vartype object: str
     :ivar model: The model ID used to generate this result. Required.
     :vartype model: str
     """
@@ -704,8 +687,6 @@ class EmbeddingsResult(_model_base.Model):
     """Embedding values for the prompts submitted in the request. Required."""
     usage: "_models.EmbeddingsUsage" = rest_field()
     """Usage counts for tokens input using the embeddings API. Required."""
-    object: str = rest_field()
-    """The object type of the embeddings result. Will always be ``list``. Required."""
     model: str = rest_field()
     """The model ID used to generate this result. Required."""
 
@@ -716,7 +697,6 @@ class EmbeddingsResult(_model_base.Model):
         id: str,  # pylint: disable=redefined-builtin
         data: List["_models.EmbeddingItem"],
         usage: "_models.EmbeddingsUsage",
-        object: str,
         model: str,
     ): ...
 

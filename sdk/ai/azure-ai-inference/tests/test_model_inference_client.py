@@ -25,9 +25,9 @@ class TestModelClient(ModelClientTestBase):
 
         client = self._load_chat_client(**kwargs)
         assert isinstance(client, sdk.ChatCompletionsClient)
-        result1 = client.get_model_info()
-        self._print_model_info_result(result1)
-        self._validate_model_info_result(result1, "completion") # TODO: This should be ModelType.CHAT once the model is fixed
+        response1 = client.get_model_info()
+        self._print_model_info_result(response1)
+        self._validate_model_info_result(response1, "completion") # TODO: This should be ModelType.CHAT once the model is fixed
         client.close()
 
     @ServicePreparerEmbeddings()
@@ -36,9 +36,9 @@ class TestModelClient(ModelClientTestBase):
 
         client = self._load_embeddings_client(**kwargs)
         assert isinstance(client, sdk.EmbeddingsClient)
-        result1 = client.get_model_info()
-        self._print_model_info_result(result1)
-        self._validate_model_info_result(result1, "embedding") # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
+        response1 = client.get_model_info()
+        self._print_model_info_result(response1)
+        self._validate_model_info_result(response1, "embedding") # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
         client.close()
 
     @ServicePreparerChatCompletions()
@@ -46,15 +46,15 @@ class TestModelClient(ModelClientTestBase):
     def test_get_model_info_on_chat_client(self, **kwargs):
 
         client = self._create_chat_client(**kwargs)
-        result1 = client.get_model_info()
-        self._print_model_info_result(result1)
-        self._validate_model_info_result(result1, "completion") # TODO: This should be ModelType.CHAT once the model is fixed
+        response1 = client.get_model_info()
+        self._print_model_info_result(response1)
+        self._validate_model_info_result(response1, "completion") # TODO: This should be ModelType.CHAT once the model is fixed
 
         # Get the model info again. No network calls should be made here,
-        # as the result is cached in the client.
-        result2 = client.get_model_info()
-        self._print_model_info_result(result2)
-        assert result1 == result2
+        # as the response is cached in the client.
+        response2 = client.get_model_info()
+        self._print_model_info_result(response2)
+        assert response1 == response2
 
         client.close()
 
@@ -63,39 +63,49 @@ class TestModelClient(ModelClientTestBase):
     def test_get_model_info_on_embeddings_client(self, **kwargs):
 
         client = self._create_embeddings_client(**kwargs)
-        result1 = client.get_model_info()
-        self._print_model_info_result(result1)
-        self._validate_model_info_result(result1, "embedding") # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
+        response1 = client.get_model_info()
+        self._print_model_info_result(response1)
+        self._validate_model_info_result(response1, "embedding") # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
 
         # Get the model info again. No network calls should be made here,
-        # as the result is cached in the client.
-        result2 = client.get_model_info()
-        self._print_model_info_result(result2)
-        assert result1 == result2
+        # as the response is cached in the client.
+        response2 = client.get_model_info()
+        self._print_model_info_result(response2)
+        assert response1 == response2
 
         client.close()
     
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
-    def test_chat_completions(self, **kwargs):
+    def test_chat_completions_with_hyper_params(self, **kwargs):
         client = self._create_chat_client(**kwargs)
-        result = client.complete(messages=[sdk.models.UserMessage(content="How many feet are in a mile?")])
-        self._print_chat_completions_result(result)
-        self._validate_chat_completions_result(result, ["5280", "5,280"])
+        response = client.complete(
+            messages=[sdk.models.UserMessage(content="How many feet are in a mile?")],
+            unknown_params=sdk.models.UnknownParams.IGNORE,
+            hyper_params={
+                "key1": 1,
+                "key2": True,
+                "key3": "Some value",
+                "key4": [1, 2, 3],
+                "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
+            },
+        )
+        self._print_chat_completions_result(response)
+        self._validate_chat_completions_result(response, ["5280", "5,280"])
         client.close()
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
     def test_chat_completions_streaming(self, **kwargs):
         client = self._create_chat_client(**kwargs)
-        result = client.complete(
+        response = client.complete(
             stream=True,
             messages=[
                 sdk.models.SystemMessage(content="You are a helpful assistant."),
                 sdk.models.UserMessage(content="Give me 3 good reasons why I should exercise every day."),
             ],
         )
-        self._validate_chat_completions_streaming_result(result)
+        self._validate_chat_completions_streaming_result(response)
         client.close()
 
     @ServicePreparerChatCompletions()
@@ -126,33 +136,33 @@ class TestModelClient(ModelClientTestBase):
             sdk.models.SystemMessage(content="You are an assistant that helps users find weather information."),
             sdk.models.UserMessage(content="what's the maximum temperature in Seattle two days from now?"),
         ]
-        result = client.complete(
+        response = client.complete(
             messages=messages,
             tools=[forecast_tool],
         )
-        self._print_chat_completions_result(result)
-        self._validate_chat_completions_tool_result(result)
-        messages.append(sdk.models.AssistantMessage(tool_calls=result.choices[0].message.tool_calls))
+        self._print_chat_completions_result(response)
+        self._validate_chat_completions_tool_result(response)
+        messages.append(sdk.models.AssistantMessage(tool_calls=response.choices[0].message.tool_calls))
         messages.append(
             sdk.models.ToolMessage(
                 content="62",
-                tool_call_id=result.choices[0].message.tool_calls[0].id,
+                tool_call_id=response.choices[0].message.tool_calls[0].id,
             )
         )
-        result = client.complete(
+        response = client.complete(
             messages=messages,
             tools=[forecast_tool],
         )
-        self._validate_chat_completions_result(result, ["62"])
+        self._validate_chat_completions_result(response, ["62"])
         client.close()
 
     @ServicePreparerEmbeddings()
     @recorded_by_proxy
     def test_embeddings(self, **kwargs):
         client = self._create_embeddings_client(**kwargs)
-        result = client.embedding(input=["first phrase", "second phrase", "third phrase"])
-        self._print_embeddings_result(result)
-        self._validate_embeddings_result(result)
+        response = client.embedding(input=["first phrase", "second phrase", "third phrase"])
+        self._print_embeddings_result(response)
+        self._validate_embeddings_result(response)
         client.close()
 
     # **********************************************************************************
@@ -167,7 +177,7 @@ class TestModelClient(ModelClientTestBase):
         client = self._create_chat_client(bad_key=True, **kwargs)
         exception_caught = False
         try:
-            result = client.complete(messages=[sdk.models.UserMessage(content="How many feet are in a mile?")])
+            response = client.complete(messages=[sdk.models.UserMessage(content="How many feet are in a mile?")])
         except AzureError as e:
             exception_caught = True
             print(e)
@@ -183,7 +193,7 @@ class TestModelClient(ModelClientTestBase):
         client = self._create_embeddings_client_with_chat_completions_credentials(**kwargs)
         exception_caught = False
         try:
-            result = client.embedding(input=["first phrase", "second phrase", "third phrase"])
+            response = client.embedding(input=["first phrase", "second phrase", "third phrase"])
         except AzureError as e:
             exception_caught = True
             print(e)

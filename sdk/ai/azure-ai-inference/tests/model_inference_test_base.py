@@ -114,7 +114,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
     @staticmethod
     def _print_model_info_result(model_info: sdk.models.ModelInfo):
         if ModelClientTestBase.PRINT_RESULT:
-            print(" Model info result:")
+            print(" Model info:")
             print("\tmodel_name: {}".format(model_info.model_name))
             print("\tmodel_type: {}".format(model_info.model_type))
             print("\tmodel_provider_name: {}".format(model_info.model_provider_name))
@@ -129,40 +129,38 @@ class ModelClientTestBase(AzureRecordedTestCase):
         assert model_info.model_type == expected_model_type
 
     @staticmethod
-    def _validate_chat_completions_result(result: sdk.models.ChatCompletions, contains: List[str]):
-        assert any(item in result.choices[0].message.content for item in contains)
-        assert result.choices[0].message.role == sdk.models.ChatRole.ASSISTANT
-        assert result.choices[0].finish_reason == sdk.models.CompletionsFinishReason.STOPPED
-        assert result.choices[0].index == 0
-        assert bool(ModelClientTestBase.REGEX_RESULT_ID.match(result.id))
-        assert result.created is not None
-        assert result.created != ""
-        assert result.model is not None
-        assert result.model != ""
-        assert result.object == "chat.completion"
-        assert result.usage.prompt_tokens > 0
-        assert result.usage.completion_tokens > 0
-        assert result.usage.total_tokens == result.usage.prompt_tokens + result.usage.completion_tokens
+    def _validate_chat_completions_result(response: sdk.models.ChatCompletions, contains: List[str]):
+        assert any(item in response.choices[0].message.content for item in contains)
+        assert response.choices[0].message.role == sdk.models.ChatRole.ASSISTANT
+        assert response.choices[0].finish_reason == sdk.models.CompletionsFinishReason.STOPPED
+        assert response.choices[0].index == 0
+        assert bool(ModelClientTestBase.REGEX_RESULT_ID.match(response.id))
+        assert response.created is not None
+        assert response.created != ""
+        assert response.model is not None
+        assert response.model != ""
+        assert response.usage.prompt_tokens > 0
+        assert response.usage.completion_tokens > 0
+        assert response.usage.total_tokens == response.usage.prompt_tokens + response.usage.completion_tokens
 
     @staticmethod
-    def _validate_chat_completions_tool_result(result: sdk.models.ChatCompletions):
-        assert result.choices[0].message.content == None or result.choices[0].message.content == ""
-        assert result.choices[0].message.role == sdk.models.ChatRole.ASSISTANT
-        assert result.choices[0].finish_reason == sdk.models.CompletionsFinishReason.TOOL_CALLS
-        assert result.choices[0].index == 0
-        function_args = json.loads(result.choices[0].message.tool_calls[0].function.arguments.replace("'", '"'))
+    def _validate_chat_completions_tool_result(response: sdk.models.ChatCompletions):
+        assert response.choices[0].message.content == None or response.choices[0].message.content == ""
+        assert response.choices[0].message.role == sdk.models.ChatRole.ASSISTANT
+        assert response.choices[0].finish_reason == sdk.models.CompletionsFinishReason.TOOL_CALLS
+        assert response.choices[0].index == 0
+        function_args = json.loads(response.choices[0].message.tool_calls[0].function.arguments.replace("'", '"'))
         print(function_args)
         assert function_args["city"].lower() == "seattle"
         assert function_args["days"] == "2"
-        assert bool(ModelClientTestBase.REGEX_RESULT_ID.match(result.id))
-        assert result.created is not None
-        assert result.created != ""
-        assert result.model is not None
-        # assert result.model != ""
-        assert result.object == "chat.completion"
-        assert result.usage.prompt_tokens > 0
-        assert result.usage.completion_tokens > 0
-        assert result.usage.total_tokens == result.usage.prompt_tokens + result.usage.completion_tokens
+        assert bool(ModelClientTestBase.REGEX_RESULT_ID.match(response.id))
+        assert response.created is not None
+        assert response.created != ""
+        assert response.model is not None
+        # assert response.model != ""
+        assert response.usage.prompt_tokens > 0
+        assert response.usage.completion_tokens > 0
+        assert response.usage.total_tokens == response.usage.prompt_tokens + response.usage.completion_tokens
 
     @staticmethod
     def _validate_chat_completions_update(update: sdk.models.ChatCompletionsUpdate, first: bool) -> str:
@@ -174,7 +172,6 @@ class ModelClientTestBase(AzureRecordedTestCase):
             assert update.choices[0].delta.content != None
             assert update.created is not None
             assert update.created != ""
-            assert update.object == "chat.completion.chunk"
         assert update.choices[0].delta.tool_calls == None
         assert update.choices[0].index == 0
         assert update.id is not None
@@ -187,10 +184,10 @@ class ModelClientTestBase(AzureRecordedTestCase):
             return ""
 
     @staticmethod
-    def _validate_chat_completions_streaming_result(result: sdk.models.StreamingChatCompletions):
+    def _validate_chat_completions_streaming_result(response: sdk.models.StreamingChatCompletions):
         count = 0
         content = ""
-        for update in result:
+        for update in response:
             content += ModelClientTestBase._validate_chat_completions_update(update, count == 0)
             count += 1
         assert count > 2
@@ -204,10 +201,10 @@ class ModelClientTestBase(AzureRecordedTestCase):
             print(content)
 
     @staticmethod
-    async def _validate_async_chat_completions_streaming_result(result: sdk.models.StreamingChatCompletions):
+    async def _validate_async_chat_completions_streaming_result(response: sdk.models.StreamingChatCompletions):
         count = 0
         content = ""
-        async for update in result:
+        async for update in response:
             content += ModelClientTestBase._validate_chat_completions_update(update, count == 0)
             count += 1
         assert count > 2
@@ -221,55 +218,51 @@ class ModelClientTestBase(AzureRecordedTestCase):
             print(content)
 
     @staticmethod
-    def _print_chat_completions_result(result: sdk.models.ChatCompletions):
+    def _print_chat_completions_result(response: sdk.models.ChatCompletions):
         if ModelClientTestBase.PRINT_RESULT:
-            print(" Chat Completions result:")
-            for choice in result.choices:
+            print(" Chat Completions response:")
+            for choice in response.choices:
                 print(f"\tchoices[0].message.content: {choice.message.content}")
                 print(f"\tchoices[0].message.tool_calls: {choice.message.tool_calls}")
                 print("\tchoices[0].message.role: {}".format(choice.message.role))
                 print("\tchoices[0].finish_reason: {}".format(choice.finish_reason))
                 print("\tchoices[0].index: {}".format(choice.index))
-            print("\tid: {}".format(result.id))
-            print("\tcreated: {}".format(result.created))
-            print("\tmodel: {}".format(result.model))
-            print("\tobject: {}".format(result.object))
-            print("\tusage.prompt_tokens: {}".format(result.usage.prompt_tokens))
-            print("\tusage.completion_tokens: {}".format(result.usage.completion_tokens))
-            print("\tusage.total_tokens: {}".format(result.usage.total_tokens))
+            print("\tid: {}".format(response.id))
+            print("\tcreated: {}".format(response.created))
+            print("\tmodel: {}".format(response.model))
+            print("\tusage.prompt_tokens: {}".format(response.usage.prompt_tokens))
+            print("\tusage.completion_tokens: {}".format(response.usage.completion_tokens))
+            print("\tusage.total_tokens: {}".format(response.usage.total_tokens))
 
     @staticmethod
-    def _validate_embeddings_result(result: sdk.models.EmbeddingsResult):
-        assert result is not None
-        assert result.data is not None
-        assert len(result.data) == 3
+    def _validate_embeddings_result(response: sdk.models.EmbeddingsResult):
+        assert response is not None
+        assert response.data is not None
+        assert len(response.data) == 3
         for i in [0, 1, 2]:
-            assert result.data[i] is not None
-            assert result.data[i].object == "embedding"
-            assert result.data[i].index == i
-            assert len(result.data[i].embedding) == 1024
-            assert result.data[i].embedding[0] != 0.0
-            assert result.data[i].embedding[1023] != 0.0
-        assert bool(ModelClientTestBase.REGEX_RESULT_ID.match(result.id))
-        # assert len(result.model) > 0  # At the time of writing this test, this JSON field existed but was empty
-        assert result.object == "list"
+            assert response.data[i] is not None
+            assert response.data[i].index == i
+            assert len(response.data[i].embedding) == 1024
+            assert response.data[i].embedding[0] != 0.0
+            assert response.data[i].embedding[1023] != 0.0
+        assert bool(ModelClientTestBase.REGEX_RESULT_ID.match(response.id))
+        # assert len(response.model) > 0  # At the time of writing this test, this JSON field existed but was empty
         # At the time of writing this test, input_tokens did not exist (I see completion tokens instead)
-        # assert result.usage.input_tokens > 0
-        # assert result.usage.prompt_tokens > 0
-        # assert result.total_tokens == result.usage.input_tokens + result.usage.prompt_tokens
+        # assert response.usage.input_tokens > 0
+        # assert response.usage.prompt_tokens > 0
+        # assert response.total_tokens == response.usage.input_tokens + response.usage.prompt_tokens
 
     @staticmethod
-    def _print_embeddings_result(result: sdk.models.EmbeddingsResult):
+    def _print_embeddings_result(response: sdk.models.EmbeddingsResult):
         if ModelClientTestBase.PRINT_RESULT:
-            print("Embeddings result:")
-            for item in result.data:
+            print("Embeddings response:")
+            for item in response.data:
                 length = len(item.embedding)
                 print(
-                    f"\tdata[{item.index}]: length={length}, object={item.object}, [{item.embedding[0]}, {item.embedding[1]}, ..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+                    f"\tdata[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, ..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
                 )
-            print(f"\tid: {result.id}")
-            print(f"\tmodel: {result.model}")
-            print(f"\tobject: {result.object}")
-            # print(f"\tusage.input_tokens: {result.usage.input_tokens}") # At the time of writing this test, this JSON field does not exist
-            print(f"\tusage.prompt_tokens: {result.usage.prompt_tokens}")
-            print(f"\tusage.total_tokens: {result.usage.total_tokens}")
+            print(f"\tid: {response.id}")
+            print(f"\tmodel: {response.model}")
+            # print(f"\tusage.input_tokens: {response.usage.input_tokens}") # At the time of writing this test, this JSON field does not exist
+            print(f"\tusage.prompt_tokens: {response.usage.prompt_tokens}")
+            print(f"\tusage.total_tokens: {response.usage.total_tokens}")
