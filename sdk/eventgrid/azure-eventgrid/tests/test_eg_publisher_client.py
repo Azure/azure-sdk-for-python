@@ -33,9 +33,9 @@ from eventgrid_preparer import (
 
 
 class TestEventGridPublisherClient(AzureRecordedTestCase):
-    def create_eg_publisher_client(self, endpoint):
+    def create_eg_publisher_client(self, endpoint, topic=None):
         credential = self.get_credential(EventGridPublisherClient)
-        client = self.create_client_from_credential(EventGridPublisherClient, credential=credential, endpoint=endpoint)
+        client = self.create_client_from_credential(EventGridPublisherClient, credential=credential, endpoint=endpoint, namespace_topic=topic)
         return client
 
     @EventGridPreparer()
@@ -143,6 +143,17 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_send_cloud_event_data_dict(self, eventgrid_cloud_event_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
+        cloud_event = CloudEvent(
+            source="http://samplesource.dev",
+            data={"sample": "cloudevent"},
+            type="Sample.Cloud.Event",
+        )
+        client.send(cloud_event)
+
+    @EventGridPreparer()
+    @recorded_by_proxy
+    def test_send_cloud_event_data_dict(self, eventgrid_endpoint, eventgrid_topic_name):
+        client = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
             data={"sample": "cloudevent"},
