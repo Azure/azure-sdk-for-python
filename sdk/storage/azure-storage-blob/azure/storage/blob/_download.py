@@ -514,7 +514,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
     def chunks(self):
         # type: () -> Iterator[bytes]
-        """Iterate over chunks in the download stream. Note, the iterator returned will
+        """
+        Iterate over chunks in the download stream. Note, the iterator returned will
         iterate over the entire download content, regardless of any data that was
         previously read.
 
@@ -571,15 +572,17 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
     def read(self, size: int = -1, *, chars: Optional[int] = None) -> T:
         """
-        Read up to size bytes from the stream and return them. If size
-        is unspecified or is -1, all bytes will be read.
+        Read the specified bytes or chars from the stream. If `encoding`
+        was specified on `download_blob`, it is recommended to use the
+        chars parameter to read a specific number of chars to avoid decoding
+        errors. If size/chars is unspecified or negative all bytes will be read.
 
         :param int size:
             The number of bytes to download from the stream. Leave unspecified
-            or set to -1 to download all bytes.
+            or set negative to download all bytes.
         :param Optional[int] chars:
             The number of chars to download from the stream. Leave unspecified
-            or set to -1 to download all chars. Note, this can only be used
+            or set negative to download all chars. Note, this can only be used
             when encoding is specified on `download_blob`.
         :returns:
             The requested data as bytes or a string if encoding was specified. If
@@ -635,7 +638,6 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             start = self._download_start + self._download_offset
             end = self._download_start + self.size
 
-            self._first_chunk = False
             parallel = self._max_concurrency > 1
             downloader = _ChunkDownloader(
                 client=self._clients.blob,
@@ -654,6 +656,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 progress_hook=self._progress_hook,
                 **self._request_options
             )
+            self._first_chunk = False
 
             # When reading all data, have the downloader read everything into the stream.
             # Else, read one chunk at a time (using the downloader as an iterator) until
@@ -671,6 +674,9 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 else:
                     for chunk in chunks_iter:
                         downloader.process_chunk(chunk)
+
+                self._download_offset = self.size
+                self._offset = self.size
 
             else:
                 while (chunk := next(chunks_iter, None)) is not None and remaining > 0:
