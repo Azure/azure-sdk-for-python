@@ -193,7 +193,7 @@ class EventGridConsumerClientOperationsMixin(ConsumerOperationsMixin):
             max_wait_time=max_wait_time,
             **kwargs,
         )
-        for detail_item in received_result.value:
+        for detail_item in received_result.details:
             deserialized_cloud_event = CloudEvent.from_dict(detail_item.event)
             detail_item.event = deserialized_cloud_event
             detail_items.append(

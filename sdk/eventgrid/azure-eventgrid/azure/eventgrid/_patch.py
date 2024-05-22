@@ -117,7 +117,7 @@ class EventGridConsumerClient(InternalEventGridConsumerClient):
         super().__init__(
             endpoint=endpoint,
             credential=credential,
-            api_version=api_version,
+            api_version=api_version or DEFAULT_STANDARD_API_VERSION,
             **kwargs
         )
 
