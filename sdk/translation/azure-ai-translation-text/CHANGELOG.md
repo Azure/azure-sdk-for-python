@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 (2024-05-21)
+## 1.0.0 (2024-05-23)
 
 ### Features Added
   - Added support for Entra Id authentication.
