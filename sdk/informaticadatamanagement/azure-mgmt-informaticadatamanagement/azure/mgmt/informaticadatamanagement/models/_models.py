@@ -749,42 +749,6 @@ class InformaticaOrganizationResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class InformaticaOrganizationResourceListResult(_model_base.Model):  # pylint: disable=name-too-long
-    """The response of a InformaticaOrganizationResource list operation.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: The InformaticaOrganizationResource items on this page. Required.
-    :vartype value:
-     list[~azure.mgmt.informaticadatamanagement.models.InformaticaOrganizationResource]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: List["_models.InformaticaOrganizationResource"] = rest_field()
-    """The InformaticaOrganizationResource items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.InformaticaOrganizationResource"],
-        next_link: Optional[str] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class InformaticaOrganizationResourceUpdate(_model_base.Model):
     """The template for adding optional properties.
 
@@ -1056,42 +1020,6 @@ class InformaticaServerlessRuntimeResourceList(_model_base.Model):
         self,
         *,
         informatica_runtime_resources: List["_models.InfaRuntimeResourceFetchMetaData"],
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class InformaticaServerlessRuntimeResourceListResult(_model_base.Model):  # pylint: disable=name-too-long
-    """The response of a InformaticaServerlessRuntimeResource list operation.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: The InformaticaServerlessRuntimeResource items on this page. Required.
-    :vartype value:
-     list[~azure.mgmt.informaticadatamanagement.models.InformaticaServerlessRuntimeResource]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: List["_models.InformaticaServerlessRuntimeResource"] = rest_field()
-    """The InformaticaServerlessRuntimeResource items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.InformaticaServerlessRuntimeResource"],
-        next_link: Optional[str] = None,
     ): ...
 
     @overload
@@ -1627,42 +1555,6 @@ class OrganizationPropertiesCustomUpdate(_model_base.Model):
         user_details: Optional["_models.UserDetailsUpdate"] = None,
         company_details: Optional["_models.CompanyDetailsUpdate"] = None,
         existing_resource_id: Optional[str] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class PagedOperation(_model_base.Model):
-    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link
-    to get the next set of results.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: The Operation items on this page. Required.
-    :vartype value: list[~azure.mgmt.informaticadatamanagement.models.Operation]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: List["_models.Operation"] = rest_field()
-    """The Operation items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.Operation"],
-        next_link: Optional[str] = None,
     ): ...
 
     @overload

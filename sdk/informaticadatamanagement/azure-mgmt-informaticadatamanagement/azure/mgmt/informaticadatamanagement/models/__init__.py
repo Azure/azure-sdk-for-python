@@ -20,13 +20,11 @@ from ._models import ErrorResponse
 from ._models import InfaRuntimeResourceFetchMetaData
 from ._models import InfaServerlessFetchConfigProperties
 from ._models import InformaticaOrganizationResource
-from ._models import InformaticaOrganizationResourceListResult
 from ._models import InformaticaOrganizationResourceUpdate
 from ._models import InformaticaProperties
 from ._models import InformaticaServerlessRuntimeProperties
 from ._models import InformaticaServerlessRuntimeResource
 from ._models import InformaticaServerlessRuntimeResourceList
-from ._models import InformaticaServerlessRuntimeResourceListResult
 from ._models import InformaticaServerlessRuntimeResourceUpdate
 from ._models import LinkOrganization
 from ._models import MarketplaceDetails
@@ -39,7 +37,6 @@ from ._models import Operation
 from ._models import OperationDisplay
 from ._models import OrganizationProperties
 from ._models import OrganizationPropertiesCustomUpdate
-from ._models import PagedOperation
 from ._models import ProxyResource
 from ._models import RegionsMetadata
 from ._models import Resource
@@ -85,13 +82,11 @@ __all__ = [
     "InfaRuntimeResourceFetchMetaData",
     "InfaServerlessFetchConfigProperties",
     "InformaticaOrganizationResource",
-    "InformaticaOrganizationResourceListResult",
     "InformaticaOrganizationResourceUpdate",
     "InformaticaProperties",
     "InformaticaServerlessRuntimeProperties",
     "InformaticaServerlessRuntimeResource",
     "InformaticaServerlessRuntimeResourceList",
-    "InformaticaServerlessRuntimeResourceListResult",
     "InformaticaServerlessRuntimeResourceUpdate",
     "LinkOrganization",
     "MarketplaceDetails",
@@ -104,7 +99,6 @@ __all__ = [
     "OperationDisplay",
     "OrganizationProperties",
     "OrganizationPropertiesCustomUpdate",
-    "PagedOperation",
     "ProxyResource",
     "RegionsMetadata",
     "Resource",
