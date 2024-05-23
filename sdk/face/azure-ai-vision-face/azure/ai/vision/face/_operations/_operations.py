@@ -18860,7 +18860,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
                 # JSON input template you can fill out and use as your body input.
                 body = {
                     "livenessOperationMode": "str",  # Type of liveness mode the client should
-                      follow. Required. "Passive"
+                      follow. Required. Known values are: "Passive" and "PassiveActive".
                     "authTokenTimeToLiveInSeconds": 0,  # Optional. Seconds the session should
                       last for. Range is 60 to 86400 seconds. Default value is 600.
                     "deviceCorrelationId": "str",  # Optional. Unique Guid per each end-user
@@ -19034,7 +19034,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
                 # JSON input template you can fill out and use as your body input.
                 body = {
                     "livenessOperationMode": "str",  # Type of liveness mode the client should
-                      follow. Required. "Passive"
+                      follow. Required. Known values are: "Passive" and "PassiveActive".
                     "authTokenTimeToLiveInSeconds": 0,  # Optional. Seconds the session should
                       last for. Range is 60 to 86400 seconds. Default value is 600.
                     "deviceCorrelationId": "str",  # Optional. Unique Guid per each end-user
@@ -19687,7 +19687,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
                 # JSON input template you can fill out and use as your body input.
                 body = {
                     "livenessOperationMode": "str",  # Type of liveness mode the client should
-                      follow. Required. "Passive"
+                      follow. Required. Known values are: "Passive" and "PassiveActive".
                     "authTokenTimeToLiveInSeconds": 0,  # Optional. Seconds the session should
                       last for. Range is 60 to 86400 seconds. Default value is 600.
                     "deviceCorrelationId": "str",  # Optional. Unique Guid per each end-user
@@ -19845,7 +19845,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
                 body = {
                     "Parameters": {
                         "livenessOperationMode": "str",  # Type of liveness mode the client
-                          should follow. Required. "Passive"
+                          should follow. Required. Known values are: "Passive" and "PassiveActive".
                         "authTokenTimeToLiveInSeconds": 0,  # Optional. Seconds the session
                           should last for. Range is 60 to 86400 seconds. Default value is 600.
                         "deviceCorrelationId": "str",  # Optional. Unique Guid per each

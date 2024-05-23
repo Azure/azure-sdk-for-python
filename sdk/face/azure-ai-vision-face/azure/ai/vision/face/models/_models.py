@@ -231,8 +231,8 @@ class CreateLivenessSessionContent(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar liveness_operation_mode: Type of liveness mode the client should follow. Required.
-     "Passive"
+    :ivar liveness_operation_mode: Type of liveness mode the client should follow. Required. Known
+     values are: "Passive" and "PassiveActive".
     :vartype liveness_operation_mode: str or ~azure.ai.vision.face.models.LivenessOperationMode
     :ivar send_results_to_client: Whether or not to allow a '200 - Success' response body to be
      sent to the client, which may be undesirable for security reasons. Default is false, clients
@@ -253,7 +253,8 @@ class CreateLivenessSessionContent(_model_base.Model):
     """
 
     liveness_operation_mode: Union[str, "_models.LivenessOperationMode"] = rest_field(name="livenessOperationMode")
-    """Type of liveness mode the client should follow. Required. \"Passive\""""
+    """Type of liveness mode the client should follow. Required. Known values are: \"Passive\" and
+     \"PassiveActive\"."""
     send_results_to_client: Optional[bool] = rest_field(name="sendResultsToClient")
     """Whether or not to allow a '200 - Success' response body to be sent to the client, which may be
      undesirable for security reasons. Default is false, clients will receive a '204 - NoContent'
