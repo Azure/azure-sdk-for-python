@@ -828,7 +828,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             timeout=timeout,
             **kwargs)
         return ItemPaged(
-            command, prefix=name_starts_with, results_per_page=results_per_page,
+            command, prefix=name_starts_with, results_per_page=results_per_page, container=self.container_name,
             page_iterator_class=BlobPropertiesPaged)
 
     @distributed_trace
@@ -874,6 +874,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             command,
             prefix=name_starts_with,
             results_per_page=results_per_page,
+            container=self.container_name,
             page_iterator_class=BlobNamesPaged)
 
     @distributed_trace
@@ -929,6 +930,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             command,
             prefix=name_starts_with,
             results_per_page=results_per_page,
+            container=self.container_name,
             delimiter=delimiter)
 
     @distributed_trace
@@ -963,7 +965,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             where=filter_expression,
             **kwargs)
         return ItemPaged(
-            command, results_per_page=results_per_page,
+            command, results_per_page=results_per_page, container=self.container_name,
             page_iterator_class=FilteredBlobPaged)
 
     @distributed_trace

@@ -92,7 +92,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         validate_content: bool,
         encryption_options: Dict[str, Any],
         encryption_data: Optional["_EncryptionData"] = None,
-        stream = None,
+        stream: Any = None,
         parallel: Optional[int] = None,
         non_empty_ranges: Optional[List[Dict[str, Any]]] = None,
         progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
