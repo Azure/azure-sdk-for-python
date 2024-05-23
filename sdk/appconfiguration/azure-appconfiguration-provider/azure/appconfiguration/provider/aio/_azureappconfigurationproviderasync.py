@@ -403,7 +403,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         except (ServiceRequestError, ServiceResponseError, HttpResponseError) as e:
             # If we get an error we should retry sooner than the next refresh interval
             if self._on_refresh_error:
-                self._on_refresh_error(e)
+                await self._on_refresh_error(e)
                 return
             raise
         finally:
