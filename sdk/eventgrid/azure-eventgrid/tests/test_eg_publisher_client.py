@@ -273,7 +273,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     def test_send_signature_credential(self, **kwargs):
         eventgrid_topic_endpoint = kwargs.pop("eventgrid_topic_endpoint")
-        eventgrid_topic_key = kwargs.oop("eventgrid_topic_key")
+        eventgrid_topic_key = kwargs.pop("eventgrid_topic_key")
         expiration_date_utc = dt.datetime.now(UTC()) + timedelta(hours=1)
         signature = generate_sas(eventgrid_topic_endpoint, eventgrid_topic_key, expiration_date_utc)
         credential = AzureSasCredential(signature)
