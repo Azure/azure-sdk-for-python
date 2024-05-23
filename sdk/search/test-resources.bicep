@@ -1,5 +1,3 @@
-@description('The principal to assign the role to. This is application object id.')
-param testApplicationOid string
 param isPublicCloud bool = environment().name == 'AzureCloud'
 param searchEndpointSuffix string = 'search.windows.net'
 param storageEndpointSuffix string = 'core.windows.net'
@@ -10,14 +8,6 @@ param searchApiVersion string = '2021-04-01-Preview'
 param storageAccountName string = 'storage${uniqueString(resourceGroup().id)}'
 param storageContainerName string = 'storage-container-${resourceGroup().name}'
 param storageApiVersion string = '2021-06-01'
-
-resource roleAssignment 'Microsoft.Authorization/roleAssignments@2018-09-01-preview' = {
-  name: guid(resourceGroup().id, 'roleAssignment')
-  properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
-    principalId: testApplicationOid
-  }
-}
 
 resource searchService 'Microsoft.Search/searchServices@2021-04-01-Preview' = {
   name: searchServiceName

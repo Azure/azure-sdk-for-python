@@ -26,7 +26,7 @@ class TestSearchIndexClient(AzureRecordedTestCase):
     @search_decorator(schema=None, index_batch=None)
     @recorded_by_proxy
     def test_search_index_client(self, api_key, endpoint, index_name):
-        client = SearchIndexClient(endpoint, DefaultAzureCredential(), retry_backoff_factor=60)
+        client = SearchIndexClient(endpoint, DefaultAzureCredential(exclude_managed_identity_credential=True), retry_backoff_factor=60)
         index_name = "hotels"
         self._test_get_service_statistics(client)
         self._test_list_indexes_empty(client)
