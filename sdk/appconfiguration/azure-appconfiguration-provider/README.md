@@ -110,37 +110,6 @@ Once the provider is refreshed, the configurations can be accessed as normal. An
 
 For additional info check out [Dynamic Refresh](https://learn.microsoft.com/azure/azure-app-configuration/enable-dynamic-configuration-python) on MS Learn.
 
-## Selecting Feature Flags
-
-You can enable loading of feature flags by setting `feature_flags_enabled` to `True`. By default all feature flags with no label are loaded.
-
-```python
-config = load(
-    connection_string=connection_string,
-    feature_flag_enabled=True,
-)
-```
-
-If you want to load feature flags with a specific label you can use `feature_flag_selectors` and provide a list of `SettingSelector`s to filter the feature flags.
-
-```python
-config = load(
-    connection_string=connection_string,
-    feature_flag_enabled=True,
-    feature_flag_selectors=[SettingSelector(key_filter="*", label_filter="dev")]
-)
-```
-
-Feature flags can be refreshed in a similar way to configurations. You can set `feature_flag_refresh_enabled` to `True` and call `refresh` on the provider to reload feature flags.
-
-```python
-config = load(
-    connection_string=connection_string,
-    feature_flag_enabled=True,
-    feature_flag_refresh_enabled=True,
-)
-```
-
 ### Trimming Keys
 
 You can trim the prefix off of keys by providing a list of trimmed key prefixes to the provider. For example, if you have the key(s) like `/application/message` in your configuration store, you could trim `/application/` from them.
@@ -209,7 +178,7 @@ alpha = config["feature_management"]["feature_flags"]["Alpha"]
 print(alpha["enabled"])
 ```
 
-By default all feature flags with no label are loaded. If you want to load feature flags with a specific label you can use `SettingSelector` to filter the feature flags.
+By default all feature flags with no label are loaded when `feature_flags_enabled` is set to `True`. . If you want to load feature flags with a specific label you can use `SettingSelector` to filter the feature flags.
 
 ```python
 from azure.appconfiguration.provider import load, SettingSelector
@@ -223,6 +192,9 @@ To enable refresh for feature flags you need to enable refresh. This will allow 
 
 ```python
 config = load(endpoint=endpoint, credential=DefaultAzureCredential(), feature_flags_enabled=True, feature_flag_refresh_enabled=True)
+
+...
+
 config.refresh()
 ```
 
