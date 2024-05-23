@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.netapp import NetAppManagementClient
 
 """
@@ -14,7 +17,7 @@ from azure.mgmt.netapp import NetAppManagementClient
     pip install azure-identity
     pip install azure-mgmt-netapp
 # USAGE
-    python volumes_restore_status.py
+    python backup_vaults_create.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,15 +32,15 @@ def main():
         subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
     )
 
-    response = client.backups.get_volume_restore_status(
+    response = client.backup_vaults.begin_create_or_update(
         resource_group_name="myRG",
         account_name="account1",
-        pool_name="pool1",
-        volume_name="volume1",
-    )
+        backup_vault_name="backupVault1",
+        body={"location": "eastus"},
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2023-07-01/examples/Volumes_RestoreStatus.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2023-11-01/examples/BackupVaults_Create.json
 if __name__ == "__main__":
     main()
