@@ -504,7 +504,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin,
             timeout=timeout,
             **kwargs)
         return AsyncItemPaged(
-            command, results_per_page=results_per_page,
+            command, results_per_page=results_per_page, container=None,
             page_iterator_class=FilteredBlobPaged)
 
     @distributed_trace_async

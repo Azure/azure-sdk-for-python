@@ -501,7 +501,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             timeout=timeout,
             **kwargs)
         return ItemPaged(
-            command, results_per_page=results_per_page,
+            command, results_per_page=results_per_page, container=None,
             page_iterator_class=FilteredBlobPaged)
 
     @distributed_trace
