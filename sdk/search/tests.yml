@@ -3,7 +3,6 @@ trigger: none
 extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      UseFederatedAuth: true
       BuildTargetingString: azure-search-documents
       # TODO: change/remove location back to default westus2 after search RP fixes deletion metadata issue
       # https://github.com/Azure/azure-sdk-tools/issues/2216
