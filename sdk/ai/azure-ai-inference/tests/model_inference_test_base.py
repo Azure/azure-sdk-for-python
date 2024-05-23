@@ -174,7 +174,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         assert response.usage.total_tokens == response.usage.prompt_tokens + response.usage.completion_tokens
 
     @staticmethod
-    def _validate_chat_completions_update(update: sdk.models.ChatCompletionsUpdate, first: bool) -> str:
+    def _validate_chat_completions_update(update: sdk.models.StreamingChatCompletionsUpdate, first: bool) -> str:
         if first:
             # Why is 'content','created' and 'object' missing in the first update?
             assert update.choices[0].delta.role == sdk.models.ChatRole.ASSISTANT

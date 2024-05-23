@@ -8,14 +8,14 @@
 
 from ._models import AssistantMessage
 from ._models import ChatChoice
-from ._models import ChatChoiceUpdate
+from ._models import StreamingChatChoiceUpdate
 from ._models import ChatCompletions
 from ._models import ChatCompletionsFunctionToolCall
 from ._models import ChatCompletionsFunctionToolDefinition
 from ._models import ChatCompletionsNamedToolSelection
 from ._models import ChatCompletionsToolCall
 from ._models import ChatCompletionsToolDefinition
-from ._models import ChatCompletionsUpdate
+from ._models import StreamingChatCompletionsUpdate
 from ._models import ChatRequestMessage
 from ._models import ChatResponseMessage
 from ._models import CompletionsUsage
@@ -47,7 +47,7 @@ __all__ = [
     "AssistantMessage",
     "CapacityType",
     "ChatChoice",
-    "ChatChoiceUpdate",
+    "StreamingChatChoiceUpdate",
     "ChatCompletions",
     "ChatCompletionsFunctionToolCall",
     "ChatCompletionsFunctionToolDefinition",
@@ -56,7 +56,7 @@ __all__ = [
     "ChatCompletionsToolCall",
     "ChatCompletionsToolDefinition",
     "ChatCompletionsToolSelectionPreset",
-    "ChatCompletionsUpdate",
+    "StreamingChatCompletionsUpdate",
     "ChatRequestMessage",
     "ChatResponseMessage",
     "ChatRole",

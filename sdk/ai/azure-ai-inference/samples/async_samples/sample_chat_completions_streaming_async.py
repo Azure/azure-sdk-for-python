@@ -23,7 +23,7 @@ import asyncio
 async def sample_chat_completions_streaming_async():
     import os
     from azure.ai.inference.aio import ChatCompletionsClient
-    from azure.ai.inference.models import SystemMessage, UserMessage, ChatCompletionsUpdate
+    from azure.ai.inference.models import SystemMessage, UserMessage, StreamingChatCompletionsUpdate
     from azure.core.credentials import AzureKeyCredential
 
     # Read the values of your model endpoint and key from environment variables

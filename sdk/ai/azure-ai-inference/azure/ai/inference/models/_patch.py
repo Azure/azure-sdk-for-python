@@ -22,27 +22,27 @@ logger = logging.getLogger(__name__)
 class BaseStreamingChatCompletions:
     """A base class for the sync and async streaming chat completions responses, holding any common code
     to deserializes the Server Sent Events (SSE) response stream into chat completions updates, each one
-    represented by a ChatCompletionsUpdate object.
+    represented by a StreamingChatCompletionsUpdate object.
     """
 
     # Enable detailed logs of SSE parsing. For development only, should be `False` by default.
     _ENABLE_CLASS_LOGS = False
 
     # The prefix of each line in the SSE stream that contains a JSON string
-    # to deserialize into a ChatCompletionsUpdate object
+    # to deserialize into a StreamingChatCompletionsUpdate object
     _SSE_DATA_EVENT_PREFIX = "data: "
 
     # The line indicating the end of the SSE stream
     _SSE_DATA_EVENT_DONE = "data: [DONE]"
 
     def __init__(self):
-        self._queue: "queue.Queue[_models.ChatCompletionsUpdate]" = queue.Queue()
+        self._queue: "queue.Queue[_models.StreamingChatCompletionsUpdate]" = queue.Queue()
         self._incomplete_json = ""
         self._done = False  # Will be set to True when reading 'data: [DONE]' line
 
     def _deserialize_and_add_to_queue(self, element: bytes) -> bool:
 
-        # Clear the queue of ChatCompletionsUpdate before processing the next block
+        # Clear the queue of StreamingChatCompletionsUpdate before processing the next block
         self._queue.queue.clear()
 
         # Convert `bytes` to string and split the string by newline, while keeping the new line char.
@@ -76,11 +76,11 @@ class BaseStreamingChatCompletions:
                 return True
 
             # If you reached here, the line should contain `data: {...}\n`
-            # where the curly braces contain a valid JSON object. Deserialize it into a ChatCompletionsUpdate object
+            # where the curly braces contain a valid JSON object. Deserialize it into a StreamingChatCompletionsUpdate object
             # and add it to the queue.
             self._queue.put(
                 # pylint: disable=W0212 # Access to a protected member _deserialize of a client class
-                _models.ChatCompletionsUpdate._deserialize(json.loads(line[len(self._SSE_DATA_EVENT_PREFIX) : -1]), [])
+                _models.StreamingChatCompletionsUpdate._deserialize(json.loads(line[len(self._SSE_DATA_EVENT_PREFIX) : -1]), [])
             )
 
             if self._ENABLE_CLASS_LOGS:
@@ -90,9 +90,9 @@ class BaseStreamingChatCompletions:
 
 
 class StreamingChatCompletions(BaseStreamingChatCompletions):
-    """Represents an interator over ChatCompletionsUpdate objects. It can be used for either synchronous or
+    """Represents an interator over StreamingChatCompletionsUpdate objects. It can be used for either synchronous or
     asynchronous iterations. The class deserializes the Server Sent Events (SSE) response stream
-    into chat completions updates, each one represented by a ChatCompletionsUpdate object.
+    into chat completions updates, each one represented by a StreamingChatCompletionsUpdate object.
     """
 
     def __init__(self, response: HttpResponse):
@@ -103,7 +103,7 @@ class StreamingChatCompletions(BaseStreamingChatCompletions):
     def __iter__(self):
         return self
 
-    def __next__(self) -> _models.ChatCompletionsUpdate:
+    def __next__(self) -> _models.StreamingChatCompletionsUpdate:
         while self._queue.empty() and not self._done:
             self._done = self._read_next_block()
         if self._queue.empty():
@@ -132,9 +132,9 @@ class StreamingChatCompletions(BaseStreamingChatCompletions):
 
 
 class AsyncStreamingChatCompletions(BaseStreamingChatCompletions):
-    """Represents an async interator over ChatCompletionsUpdate objects. It can be used for either synchronous or
+    """Represents an async interator over StreamingChatCompletionsUpdate objects. It can be used for either synchronous or
     asynchronous iterations. The class deserializes the Server Sent Events (SSE) response stream
-    into chat completions updates, each one represented by a ChatCompletionsUpdate object.
+    into chat completions updates, each one represented by a StreamingChatCompletionsUpdate object.
     """
 
     def __init__(self, response: AsyncHttpResponse):
@@ -145,7 +145,7 @@ class AsyncStreamingChatCompletions(BaseStreamingChatCompletions):
     def __aiter__(self):
         return self
 
-    async def __anext__(self) -> _models.ChatCompletionsUpdate:
+    async def __anext__(self) -> _models.StreamingChatCompletionsUpdate:
         while self._queue.empty() and not self._done:
             self._done = await self._read_next_block_async()
         if self._queue.empty():

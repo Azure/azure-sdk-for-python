@@ -153,7 +153,7 @@ class ChatChoice(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ChatChoiceUpdate(_model_base.Model):
+class StreamingChatChoiceUpdate(_model_base.Model):
     """Represents an update to a single prompt completion when the service is streaming updates
     using Server Sent Events (SSE).
     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
@@ -425,7 +425,7 @@ class ChatCompletionsNamedToolSelection(_model_base.Model):
     """The object type. Required."""
 
 
-class ChatCompletionsUpdate(_model_base.Model):
+class StreamingChatCompletionsUpdate(_model_base.Model):
     """Represents a response update to a chat completions request, when the service is streaming
     updates
     using Server Sent Events (SSE).
@@ -450,7 +450,7 @@ class ChatCompletionsUpdate(_model_base.Model):
      completions response.
      Generally, ``n`` choices are generated per provided prompt with a default value of 1.
      Token limits and other settings may limit the number of choices generated. Required.
-    :vartype choices: list[~azure.ai.inference.models.ChatChoiceUpdate]
+    :vartype choices: list[~azure.ai.inference.models.StreamingChatChoiceUpdate]
     """
 
     id: str = rest_field()
@@ -463,7 +463,7 @@ class ChatCompletionsUpdate(_model_base.Model):
     usage: "_models.CompletionsUsage" = rest_field()
     """Usage information for tokens processed and generated as part of this completions operation.
      Required."""
-    choices: List["_models.ChatChoiceUpdate"] = rest_field()
+    choices: List["_models.StreamingChatChoiceUpdate"] = rest_field()
     """An update to the collection of completion choices associated with this completions response.
      Generally, ``n`` choices are generated per provided prompt with a default value of 1.
      Token limits and other settings may limit the number of choices generated. Required."""
@@ -476,7 +476,7 @@ class ChatCompletionsUpdate(_model_base.Model):
         created: datetime.datetime,
         model: str,
         usage: "_models.CompletionsUsage",
-        choices: List["_models.ChatChoiceUpdate"],
+        choices: List["_models.StreamingChatChoiceUpdate"],
     ): ...
 
     @overload
