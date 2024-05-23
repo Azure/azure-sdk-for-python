@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._patch import FaceClient
-from ._client import FaceAdministrationClient
 from ._patch import FaceSessionClient
 from ._version import VERSION
 
@@ -18,7 +17,6 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "FaceClient",
-    "FaceAdministrationClient",
     "FaceSessionClient",
 ]
 
