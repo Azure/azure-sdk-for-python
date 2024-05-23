@@ -471,9 +471,11 @@ def service_properties_deserialize(generated: GenTableServiceProperties) -> Dict
         ),
         "hour_metrics": TableMetrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
         "minute_metrics": TableMetrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
-        "cors": [TableCorsRule._from_generated(cors) for cors in generated.cors]  # pylint: disable=protected-access
-        if generated.cors
-        else generated.cors,
+        "cors": (
+            [TableCorsRule._from_generated(cors) for cors in generated.cors]  # pylint: disable=protected-access
+            if generated.cors
+            else generated.cors
+        ),
     }
 
 

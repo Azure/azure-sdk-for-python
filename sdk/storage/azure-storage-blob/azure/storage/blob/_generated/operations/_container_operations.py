@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,8 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import sys
-from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union
+from typing import Any, Callable, Dict, IO, Iterator, List, Literal, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -28,10 +27,6 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import _convert_request
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -412,7 +407,7 @@ def build_submit_batch_request(
     url: str,
     *,
     content_length: int,
-    content: IO,
+    content: IO[bytes],
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     **kwargs: Any
@@ -799,7 +794,7 @@ def build_list_blob_flat_segment_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_blob_hierarchy_segment_request(
+def build_list_blob_hierarchy_segment_request(  # pylint: disable=name-too-long
     url: str,
     *,
     delimiter: str,
@@ -933,10 +928,6 @@ class ContainerOperations:
         :type request_id_parameter: str
         :param container_cpk_scope_info: Parameter group. Default value is None.
         :type container_cpk_scope_info: ~azure.storage.blob.models.ContainerCpkScopeInfo
-        :keyword restype: restype. Default value is "container". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -961,7 +952,7 @@ class ContainerOperations:
             _default_encryption_scope = container_cpk_scope_info.default_encryption_scope
             _prevent_encryption_scope_override = container_cpk_scope_info.prevent_encryption_scope_override
 
-        request = build_create_request(
+        _request = build_create_request(
             url=self._config.url,
             timeout=timeout,
             metadata=metadata,
@@ -971,16 +962,15 @@ class ContainerOperations:
             prevent_encryption_scope_override=_prevent_encryption_scope_override,
             restype=restype,
             version=self._config.version,
-            template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1001,9 +991,7 @@ class ContainerOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    create.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def get_properties(  # pylint: disable=inconsistent-return-statements
@@ -1027,10 +1015,6 @@ class ContainerOperations:
         :type request_id_parameter: str
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :keyword restype: restype. Default value is "container". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1053,23 +1037,22 @@ class ContainerOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_get_properties_request(
+        _request = build_get_properties_request(
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             restype=restype,
             version=self._config.version,
-            template_url=self.get_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1110,9 +1093,7 @@ class ContainerOperations:
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    get_properties.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -1139,10 +1120,6 @@ class ContainerOperations:
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword restype: restype. Default value is "container". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1170,7 +1147,7 @@ class ContainerOperations:
             _if_modified_since = modified_access_conditions.if_modified_since
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_delete_request(
+        _request = build_delete_request(
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
@@ -1179,16 +1156,15 @@ class ContainerOperations:
             request_id_parameter=request_id_parameter,
             restype=restype,
             version=self._config.version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1207,9 +1183,7 @@ class ContainerOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    delete.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def set_metadata(  # pylint: disable=inconsistent-return-statements
@@ -1244,13 +1218,6 @@ class ContainerOperations:
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword restype: restype. Default value is "container". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "metadata". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1277,7 +1244,7 @@ class ContainerOperations:
         if modified_access_conditions is not None:
             _if_modified_since = modified_access_conditions.if_modified_since
 
-        request = build_set_metadata_request(
+        _request = build_set_metadata_request(
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
@@ -1287,16 +1254,15 @@ class ContainerOperations:
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.set_metadata.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1317,9 +1283,7 @@ class ContainerOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_metadata.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def get_access_policy(
@@ -1343,13 +1307,6 @@ class ContainerOperations:
         :type request_id_parameter: str
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :keyword restype: restype. Default value is "container". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "acl". Note that overriding this default value may result
-         in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of SignedIdentifier or the result of cls(response)
         :rtype: list[~azure.storage.blob.models.SignedIdentifier]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1373,7 +1330,7 @@ class ContainerOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_get_access_policy_request(
+        _request = build_get_access_policy_request(
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
@@ -1381,16 +1338,15 @@ class ContainerOperations:
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.get_access_policy.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1416,11 +1372,9 @@ class ContainerOperations:
         deserialized = self._deserialize("[SignedIdentifier]", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    get_access_policy.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def set_access_policy(  # pylint: disable=inconsistent-return-statements
@@ -1454,13 +1408,6 @@ class ContainerOperations:
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :param container_acl: the acls for the container. Default value is None.
         :type container_acl: list[~azure.storage.blob.models.SignedIdentifier]
-        :keyword restype: restype. Default value is "container". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "acl". Note that overriding this default value may result
-         in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1497,7 +1444,7 @@ class ContainerOperations:
         else:
             _content = None
 
-        request = build_set_access_policy_request(
+        _request = build_set_access_policy_request(
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
@@ -1510,16 +1457,15 @@ class ContainerOperations:
             content_type=content_type,
             version=self._config.version,
             content=_content,
-            template_url=self.set_access_policy.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1540,9 +1486,7 @@ class ContainerOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_access_policy.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def restore(  # pylint: disable=inconsistent-return-statements
@@ -1570,13 +1514,6 @@ class ContainerOperations:
         :param deleted_container_version: Optional.  Version 2019-12-12 and later.  Specifies the
          version of the deleted container to restore. Default value is None.
         :type deleted_container_version: str
-        :keyword restype: restype. Default value is "container". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "undelete". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1596,7 +1533,7 @@ class ContainerOperations:
         comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_restore_request(
+        _request = build_restore_request(
             url=self._config.url,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
@@ -1605,16 +1542,15 @@ class ContainerOperations:
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.restore.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1633,9 +1569,7 @@ class ContainerOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    restore.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def rename(  # pylint: disable=inconsistent-return-statements
@@ -1663,13 +1597,6 @@ class ContainerOperations:
         :param source_lease_id: A lease ID for the source path. If specified, the source path must have
          an active lease and the lease ID must match. Default value is None.
         :type source_lease_id: str
-        :keyword restype: restype. Default value is "container". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "rename". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1689,7 +1616,7 @@ class ContainerOperations:
         comp: Literal["rename"] = kwargs.pop("comp", _params.pop("comp", "rename"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_rename_request(
+        _request = build_rename_request(
             url=self._config.url,
             source_container_name=source_container_name,
             timeout=timeout,
@@ -1698,16 +1625,15 @@ class ContainerOperations:
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.rename.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1726,15 +1652,13 @@ class ContainerOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    rename.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def submit_batch(
         self,
         content_length: int,
-        body: IO,
+        body: IO[bytes],
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
@@ -1744,7 +1668,7 @@ class ContainerOperations:
         :param content_length: The length of the request. Required.
         :type content_length: int
         :param body: Initial data. Required.
-        :type body: IO
+        :type body: IO[bytes]
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1754,14 +1678,7 @@ class ContainerOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword restype: restype. Default value is "container". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "batch". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Iterator of the response bytes or the result of cls(response)
+        :return: Iterator[bytes] or the result of cls(response)
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -1785,7 +1702,7 @@ class ContainerOperations:
 
         _content = body
 
-        request = build_submit_batch_request(
+        _request = build_submit_batch_request(
             url=self._config.url,
             content_length=content_length,
             timeout=timeout,
@@ -1795,16 +1712,15 @@ class ContainerOperations:
             multipart_content_type=multipart_content_type,
             version=self._config.version,
             content=_content,
-            template_url=self.submit_batch.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1825,8 +1741,6 @@ class ContainerOperations:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
-
-    submit_batch.metadata = {"url": "{url}"}
 
     @distributed_trace
     def filter_blobs(
@@ -1871,13 +1785,6 @@ class ContainerOperations:
         :param include: Include this parameter to specify one or more datasets to include in the
          response. Default value is None.
         :type include: list[str or ~azure.storage.blob.models.FilterBlobsIncludeItem]
-        :keyword restype: restype. Default value is "container". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "blobs". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FilterBlobSegment or the result of cls(response)
         :rtype: ~azure.storage.blob.models.FilterBlobSegment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1897,7 +1804,7 @@ class ContainerOperations:
         comp: Literal["blobs"] = kwargs.pop("comp", _params.pop("comp", "blobs"))
         cls: ClsType[_models.FilterBlobSegment] = kwargs.pop("cls", None)
 
-        request = build_filter_blobs_request(
+        _request = build_filter_blobs_request(
             url=self._config.url,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
@@ -1908,16 +1815,15 @@ class ContainerOperations:
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.filter_blobs.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1938,11 +1844,9 @@ class ContainerOperations:
         deserialized = self._deserialize("FilterBlobSegment", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    filter_blobs.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def acquire_lease(  # pylint: disable=inconsistent-return-statements
@@ -1976,16 +1880,6 @@ class ContainerOperations:
         :type request_id_parameter: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword restype: restype. Default value is "container". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword action: Describes what lease action to take. Default value is "acquire". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype action: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2012,7 +1906,7 @@ class ContainerOperations:
             _if_modified_since = modified_access_conditions.if_modified_since
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_acquire_lease_request(
+        _request = build_acquire_lease_request(
             url=self._config.url,
             timeout=timeout,
             duration=duration,
@@ -2024,16 +1918,15 @@ class ContainerOperations:
             restype=restype,
             action=action,
             version=self._config.version,
-            template_url=self.acquire_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2055,9 +1948,7 @@ class ContainerOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    acquire_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def release_lease(  # pylint: disable=inconsistent-return-statements
@@ -2084,16 +1975,6 @@ class ContainerOperations:
         :type request_id_parameter: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword restype: restype. Default value is "container". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword action: Describes what lease action to take. Default value is "release". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype action: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2120,7 +2001,7 @@ class ContainerOperations:
             _if_modified_since = modified_access_conditions.if_modified_since
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_release_lease_request(
+        _request = build_release_lease_request(
             url=self._config.url,
             lease_id=lease_id,
             timeout=timeout,
@@ -2131,16 +2012,15 @@ class ContainerOperations:
             restype=restype,
             action=action,
             version=self._config.version,
-            template_url=self.release_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2161,9 +2041,7 @@ class ContainerOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    release_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def renew_lease(  # pylint: disable=inconsistent-return-statements
@@ -2190,16 +2068,6 @@ class ContainerOperations:
         :type request_id_parameter: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword restype: restype. Default value is "container". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword action: Describes what lease action to take. Default value is "renew". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype action: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2226,7 +2094,7 @@ class ContainerOperations:
             _if_modified_since = modified_access_conditions.if_modified_since
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_renew_lease_request(
+        _request = build_renew_lease_request(
             url=self._config.url,
             lease_id=lease_id,
             timeout=timeout,
@@ -2237,16 +2105,15 @@ class ContainerOperations:
             restype=restype,
             action=action,
             version=self._config.version,
-            template_url=self.renew_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2268,9 +2135,7 @@ class ContainerOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    renew_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def break_lease(  # pylint: disable=inconsistent-return-statements
@@ -2303,16 +2168,6 @@ class ContainerOperations:
         :type request_id_parameter: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword restype: restype. Default value is "container". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword action: Describes what lease action to take. Default value is "break". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype action: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2339,7 +2194,7 @@ class ContainerOperations:
             _if_modified_since = modified_access_conditions.if_modified_since
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_break_lease_request(
+        _request = build_break_lease_request(
             url=self._config.url,
             timeout=timeout,
             break_period=break_period,
@@ -2350,16 +2205,15 @@ class ContainerOperations:
             restype=restype,
             action=action,
             version=self._config.version,
-            template_url=self.break_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2381,9 +2235,7 @@ class ContainerOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    break_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def change_lease(  # pylint: disable=inconsistent-return-statements
@@ -2415,16 +2267,6 @@ class ContainerOperations:
         :type request_id_parameter: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword restype: restype. Default value is "container". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword action: Describes what lease action to take. Default value is "change". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype action: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2451,7 +2293,7 @@ class ContainerOperations:
             _if_modified_since = modified_access_conditions.if_modified_since
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_change_lease_request(
+        _request = build_change_lease_request(
             url=self._config.url,
             lease_id=lease_id,
             proposed_lease_id=proposed_lease_id,
@@ -2463,16 +2305,15 @@ class ContainerOperations:
             restype=restype,
             action=action,
             version=self._config.version,
-            template_url=self.change_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2494,9 +2335,7 @@ class ContainerOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    change_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def list_blob_flat_segment(
@@ -2540,13 +2379,6 @@ class ContainerOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword restype: restype. Default value is "container". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "list". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListBlobsFlatSegmentResponse or the result of cls(response)
         :rtype: ~azure.storage.blob.models.ListBlobsFlatSegmentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2566,7 +2398,7 @@ class ContainerOperations:
         comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
         cls: ClsType[_models.ListBlobsFlatSegmentResponse] = kwargs.pop("cls", None)
 
-        request = build_list_blob_flat_segment_request(
+        _request = build_list_blob_flat_segment_request(
             url=self._config.url,
             prefix=prefix,
             marker=marker,
@@ -2577,16 +2409,15 @@ class ContainerOperations:
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.list_blob_flat_segment.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2608,11 +2439,9 @@ class ContainerOperations:
         deserialized = self._deserialize("ListBlobsFlatSegmentResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    list_blob_flat_segment.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_blob_hierarchy_segment(
@@ -2662,13 +2491,6 @@ class ContainerOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword restype: restype. Default value is "container". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "list". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListBlobsHierarchySegmentResponse or the result of cls(response)
         :rtype: ~azure.storage.blob.models.ListBlobsHierarchySegmentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2688,7 +2510,7 @@ class ContainerOperations:
         comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
         cls: ClsType[_models.ListBlobsHierarchySegmentResponse] = kwargs.pop("cls", None)
 
-        request = build_list_blob_hierarchy_segment_request(
+        _request = build_list_blob_hierarchy_segment_request(
             url=self._config.url,
             delimiter=delimiter,
             prefix=prefix,
@@ -2700,16 +2522,15 @@ class ContainerOperations:
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.list_blob_hierarchy_segment.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2731,23 +2552,14 @@ class ContainerOperations:
         deserialized = self._deserialize("ListBlobsHierarchySegmentResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    list_blob_hierarchy_segment.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_account_info(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Returns the sku name and account kind.
 
-        :keyword restype: restype. Default value is "account". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2767,21 +2579,20 @@ class ContainerOperations:
         comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_get_account_info_request(
+        _request = build_get_account_info_request(
             url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.get_account_info.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2802,6 +2613,4 @@ class ContainerOperations:
         response_headers["x-ms-account-kind"] = self._deserialize("str", response.headers.get("x-ms-account-kind"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    get_account_info.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore

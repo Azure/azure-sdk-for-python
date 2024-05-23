@@ -6,11 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import datetime
 import isodate
+from typing import List, TYPE_CHECKING, Union
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.cdn import CdnManagementClient
 
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 """
 # PREREQUISITES
     pip install azure-identity
@@ -42,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cdn/resource-manager/Microsoft.Cdn/stable/2023-05-01/examples/LogAnalytics_GetWafLogAnalyticsMetrics.json
+# x-ms-original-file: specification/cdn/resource-manager/Microsoft.Cdn/stable/2024-02-01/examples/LogAnalytics_GetWafLogAnalyticsMetrics.json
 if __name__ == "__main__":
     main()

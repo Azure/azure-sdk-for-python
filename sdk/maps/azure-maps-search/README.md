@@ -145,7 +145,9 @@ coordinates=(47.60323, -122.33028)
 
 reverse_search_result = client.reverse_search_address(coordinates=coordinates);
 
-result_summary = reverse_search_result.summary
+query_type = reverse_search_result.query_type
+query_time = reverse_search_result.query_time
+results = reverse_search_result.results
 ```
 
 ### Translate coordinate location into a human understandable cross street

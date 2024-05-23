@@ -1,0 +1,7 @@
+name: one_lake_with_id
+type: azure_one_lake
+endpoint: www.endpoint.com
+one_lake_workspace_name: the_workspace_name
+artifact:
+  name: 1234567-1234-1234-1234-123456789012
+  type: lake_house

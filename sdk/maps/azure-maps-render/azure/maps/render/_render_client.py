@@ -10,12 +10,12 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.polling import LROPoller
 from ._base_client import MapsRenderClientBase
+from ._generated.models import Copyright
 
 from .models import (
     LatLon,
     BoundingBox,
     TilesetID,
-    Copyright,
     MapTileset,
     CopyrightCaption,
     RasterTileFormat,
@@ -212,7 +212,7 @@ class MapsRenderClient(MapsRenderClientBase):
                 :dedent: 4
                 :caption: Return map copyright attribution information for a section of a tileset.
         """
-        bounds=[
+        bounds_list = [
             bounds.south,
             bounds.west,
             bounds.north,
@@ -222,7 +222,7 @@ class MapsRenderClient(MapsRenderClientBase):
         return self._render_client.get_map_attribution(
             tileset_id=tileset_id,
             zoom=zoom,
-            bounds=bounds,
+            bounds=bounds_list,
             **kwargs
         )
 
@@ -442,8 +442,8 @@ class MapsRenderClient(MapsRenderClientBase):
         _include_text=kwargs.pop("include_text", True)
 
         return self._render_client.get_copyright_from_bounding_box(
-            south_west=(bounding_box.south,bounding_box.west),
-            north_east=(bounding_box.north,bounding_box.east),
+            south_west=[bounding_box.south,bounding_box.west],
+            north_east=[bounding_box.north,bounding_box.east],
             include_text= "yes" if _include_text else "no",
             **kwargs
         )

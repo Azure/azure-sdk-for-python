@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -106,7 +106,6 @@ class JobTargetExecutionsOperations:
         :type skip: int
         :param top: The number of elements to return from the collection. Default value is None.
         :type top: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either JobExecution or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.JobExecution]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -128,7 +127,7 @@ class JobTargetExecutionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_job_execution_request(
+                _request = build_list_by_job_execution_request(
                     resource_group_name=resource_group_name,
                     server_name=server_name,
                     job_agent_name=job_agent_name,
@@ -143,19 +142,18 @@ class JobTargetExecutionsOperations:
                     skip=skip,
                     top=top,
                     api_version=api_version,
-                    template_url=self.list_by_job_execution.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("JobExecutionListResult", pipeline_response)
@@ -165,11 +163,11 @@ class JobTargetExecutionsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -180,10 +178,6 @@ class JobTargetExecutionsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_job_execution.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}/targets"
-    }
 
     @distributed_trace
     def list_by_step(
@@ -237,7 +231,6 @@ class JobTargetExecutionsOperations:
         :type skip: int
         :param top: The number of elements to return from the collection. Default value is None.
         :type top: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either JobExecution or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.JobExecution]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -259,7 +252,7 @@ class JobTargetExecutionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_step_request(
+                _request = build_list_by_step_request(
                     resource_group_name=resource_group_name,
                     server_name=server_name,
                     job_agent_name=job_agent_name,
@@ -275,19 +268,18 @@ class JobTargetExecutionsOperations:
                     skip=skip,
                     top=top,
                     api_version=api_version,
-                    template_url=self.list_by_step.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("JobExecutionListResult", pipeline_response)
@@ -297,11 +289,11 @@ class JobTargetExecutionsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -312,10 +304,6 @@ class JobTargetExecutionsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_step.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}/steps/{stepName}/targets"
-    }
 
     @distributed_trace_async
     async def get(
@@ -346,7 +334,6 @@ class JobTargetExecutionsOperations:
         :type step_name: str
         :param target_id: The target id. Required.
         :type target_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: JobExecution or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.JobExecution
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -365,7 +352,7 @@ class JobTargetExecutionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
         cls: ClsType[_models.JobExecution] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             job_agent_name=job_agent_name,
@@ -375,16 +362,15 @@ class JobTargetExecutionsOperations:
             target_id=target_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -396,10 +382,6 @@ class JobTargetExecutionsOperations:
         deserialized = self._deserialize("JobExecution", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}/steps/{stepName}/targets/{targetId}"
-    }
+        return deserialized  # type: ignore

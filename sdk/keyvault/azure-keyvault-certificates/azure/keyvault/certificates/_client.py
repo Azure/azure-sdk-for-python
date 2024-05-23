@@ -1041,3 +1041,7 @@ class CertificateClient(KeyVaultClientBase):
             cls=lambda objs: [IssuerProperties._from_issuer_item(issuer_item=x) for x in objs],
             **kwargs
         )
+
+    def __enter__(self) -> "CertificateClient":
+        self._client.__enter__()
+        return self

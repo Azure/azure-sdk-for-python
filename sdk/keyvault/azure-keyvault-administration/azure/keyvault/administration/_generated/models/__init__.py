@@ -11,6 +11,8 @@ from ._models import Error
 from ._models import FullBackupOperation
 from ._models import KeyVaultError
 from ._models import Permission
+from ._models import PreBackupOperationParameters
+from ._models import PreRestoreOperationParameters
 from ._models import RestoreOperation
 from ._models import RestoreOperationParameters
 from ._models import RoleAssignment
@@ -44,6 +46,8 @@ __all__ = [
     "FullBackupOperation",
     "KeyVaultError",
     "Permission",
+    "PreBackupOperationParameters",
+    "PreRestoreOperationParameters",
     "RestoreOperation",
     "RestoreOperationParameters",
     "RoleAssignment",

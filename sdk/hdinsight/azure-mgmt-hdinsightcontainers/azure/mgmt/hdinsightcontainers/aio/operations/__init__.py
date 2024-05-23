@@ -7,7 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._cluster_pools_operations import ClusterPoolsOperations
+from ._cluster_pool_available_upgrades_operations import ClusterPoolAvailableUpgradesOperations
 from ._clusters_operations import ClustersOperations
+from ._cluster_available_upgrades_operations import ClusterAvailableUpgradesOperations
 from ._cluster_jobs_operations import ClusterJobsOperations
 from ._locations_operations import LocationsOperations
 from ._operations import Operations
@@ -20,7 +22,9 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "ClusterPoolsOperations",
+    "ClusterPoolAvailableUpgradesOperations",
     "ClustersOperations",
+    "ClusterAvailableUpgradesOperations",
     "ClusterJobsOperations",
     "LocationsOperations",
     "Operations",

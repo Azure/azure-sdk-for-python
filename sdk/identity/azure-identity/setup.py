@@ -63,5 +63,6 @@ setup(
         "cryptography>=2.5",
         "msal>=1.24.0",
         "msal-extensions>=0.3.0",
+        "typing-extensions>=4.0.0",
     ],
 )

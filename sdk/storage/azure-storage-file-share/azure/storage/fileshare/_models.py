@@ -451,6 +451,7 @@ class Handle(DictMixin):
 
     All required parameters must be populated in order to send to Azure.
 
+    :keyword str client_name: Required. Name of the client machine where the share is being mounted.
     :keyword str handle_id: Required. XSMB service handle ID
     :keyword str path: Required. File or directory name including full path starting
      from share root
@@ -469,6 +470,7 @@ class Handle(DictMixin):
     """
 
     def __init__(self, **kwargs):
+        self.client_name = kwargs.get('client_name')
         self.id = kwargs.get('handle_id')
         self.path = kwargs.get('path')
         self.file_id = kwargs.get('file_id')
@@ -482,6 +484,7 @@ class Handle(DictMixin):
     @classmethod
     def _from_generated(cls, generated):
         handle = cls()
+        handle.client_name = generated.client_name
         handle.id = generated.handle_id
         handle.path = unquote(generated.path.content) if generated.path.encoded else generated.path.content
         handle.file_id = generated.file_id
@@ -621,7 +624,7 @@ class DirectoryPropertiesPaged(PageIterator):
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
-    :vartype current_page: list(dict(str, Any))
+    :vartype current_page: list[dict[str, Any]]
 
     :param callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only directories whose names

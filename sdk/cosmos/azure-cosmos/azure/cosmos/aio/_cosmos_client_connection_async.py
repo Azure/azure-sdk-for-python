@@ -23,6 +23,7 @@
 
 """Document client class for the Azure Cosmos database service.
 """
+import os
 from urllib.parse import urlparse
 from typing import (
     Callable, Dict, Any, Iterable, Mapping, Optional, List,
@@ -2335,9 +2336,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Reads all users in a database.
 
-        :params str database_link:
+        :param str database_link:
             The link to the database.
-        :params dict options:
+        :param dict[str, Any] options:
             The request options for the request.
         :return:
             Query iterable of Users.
@@ -3112,7 +3113,16 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                     documents._QueryFeature.MultipleOrderBy + "," +
                                     documents._QueryFeature.OffsetAndLimit + "," +
                                     documents._QueryFeature.OrderBy + "," +
-                                    documents._QueryFeature.Top)
+                                    documents._QueryFeature.Top + "," +
+                                    documents._QueryFeature.NonStreamingOrderBy)
+        if os.environ.get('AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY', False):
+            supported_query_features = (documents._QueryFeature.Aggregate + "," +
+                                        documents._QueryFeature.CompositeAggregate + "," +
+                                        documents._QueryFeature.Distinct + "," +
+                                        documents._QueryFeature.MultipleOrderBy + "," +
+                                        documents._QueryFeature.OffsetAndLimit + "," +
+                                        documents._QueryFeature.OrderBy + "," +
+                                        documents._QueryFeature.Top)
 
         options = {
             "contentType": runtime_constants.MediaTypes.Json,

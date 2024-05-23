@@ -56,7 +56,7 @@ credential = InteractiveBrowserBrokerCredential(parent_window_handle=current_win
 client = BlobServiceClient(account_url, credential=credential)
 ```
 
-To bypass the account selection dialog and use the account currently signed into the operating system, set the `use_default_broker_account` argument to `True`. The credential will attempt to silently use the default broker account. If using the default account fails, the credential will fall back to interactive authentication.
+To bypass the account selection dialog and use the default broker account, set the `use_default_broker_account` argument to `True`. The credential will attempt to silently use the default broker account. If using the default account fails, the credential will fall back to interactive authentication.
 
 ```python
 credential = InteractiveBrowserBrokerCredential(

@@ -26,7 +26,7 @@ class SecretsClientPreparer(AzureRecordedTestCase):
         if is_live():
             os.environ["AZURE_TENANT_ID"] = os.environ["KEYVAULT_TENANT_ID"]
             os.environ["AZURE_CLIENT_ID"] = os.environ["KEYVAULT_CLIENT_ID"]
-            os.environ["AZURE_CLIENT_SECRET"] = os.environ["KEYVAULT_CLIENT_SECRET"]
+            os.environ["AZURE_CLIENT_SECRET"] = os.getenv("KEYVAULT_CLIENT_SECRET", "")  # empty for user-based auth
 
     def __call__(self, fn):
         def _preparer(test_class, api_version, **kwargs):

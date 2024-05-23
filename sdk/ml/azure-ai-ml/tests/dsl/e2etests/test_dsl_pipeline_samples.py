@@ -3,6 +3,7 @@ This file covers all sample pipeline in https://github.com/Azure/azureml-preview
 in dsl.pipeline.
 The samples are copied to test_configs/dsl_pipeline_samples
 """
+
 import json
 import sys
 from pathlib import Path

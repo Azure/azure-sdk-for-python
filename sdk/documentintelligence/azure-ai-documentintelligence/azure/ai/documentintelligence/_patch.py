@@ -39,8 +39,8 @@ class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-a
         credential: Union[AzureKeyCredential, TokenCredential],
         **kwargs: Any,
     ) -> None:
-        # The default polling interval should be 5 seconds.
-        polling_interval = kwargs.pop("polling_interval", 5)
+        # Patch the default polling interval to be 1s.
+        polling_interval = kwargs.pop("polling_interval", 1)
         super().__init__(
             endpoint=endpoint,
             credential=credential,
@@ -74,8 +74,8 @@ class DocumentIntelligenceAdministrationClient(
         credential: Union[AzureKeyCredential, TokenCredential],
         **kwargs: Any,
     ) -> None:
-        # The default polling interval should be 5 seconds.
-        polling_interval = kwargs.pop("polling_interval", 5)
+        # Patch the default polling interval to be 1s.
+        polling_interval = kwargs.pop("polling_interval", 1)
         super().__init__(
             endpoint=endpoint,
             credential=credential,

@@ -41,8 +41,7 @@ class TestMgmtResourceDeploymentScript(AzureMgmtRecordedTestCase):
             self.msi_client.user_assigned_identities.create_or_update(
                 resource_group.name,
                 identity_name,
-                "westus",
-                {"key1": "value1"}
+                {"location": "westus", "tags": {"key1": "value1"}}
             )
 
         # Create script

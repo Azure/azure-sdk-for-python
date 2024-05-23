@@ -1,10 +1,22 @@
 # Release History
 
-## 5.11.7 (Unreleased)
+## 5.12.1 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 5.12.0 (2024-05-16)
+
+### Features Added
+
+- Added support for non-tls connections (#34272)
+
+## 5.11.7 (2024-04-10)
 
 ### Bugs Fixed
 

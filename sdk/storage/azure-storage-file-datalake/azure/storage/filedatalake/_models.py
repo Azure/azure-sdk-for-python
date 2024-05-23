@@ -142,6 +142,7 @@ class DirectoryProperties(DictMixin):
     :ivar str group: The owning group of the file or directory.
     :ivar str permissions: The permissions that are set for user, group, and other on the file or directory.
         Each individual permission is in [r,w,x,-]{3} format.
+    :ivar str acl: The POSIX ACL permissions of the file or directory.
     :ivar str etag: The ETag contains a value that you can use to perform operations
         conditionally.
     :ivar bool deleted: if the current directory marked as deleted
@@ -178,6 +179,7 @@ class DirectoryProperties(DictMixin):
         self.owner = kwargs.get('owner', None)
         self.group = kwargs.get('group', None)
         self.permissions = kwargs.get('permissions', None)
+        self.acl = kwargs.get('acl', None)
 
 
 class FileProperties(DictMixin):
@@ -187,6 +189,7 @@ class FileProperties(DictMixin):
     :ivar str group: The owning group of the file or directory.
     :ivar str permissions: The permissions that are set for user, group, and other on the file or directory.
         Each individual permission is in [r,w,x,-]{3} format.
+    :ivar str acl: The POSIX ACL permissions of the file or directory.
     :ivar str etag: The ETag contains a value that you can use to perform operations
         conditionally.
     :ivar bool deleted: if the current file marked as deleted
@@ -229,6 +232,7 @@ class FileProperties(DictMixin):
         self.owner = kwargs.get('owner', None)
         self.group = kwargs.get('group', None)
         self.permissions = kwargs.get('permissions', None)
+        self.acl = kwargs.get('acl', None)
 
 
 class PathProperties(DictMixin):
@@ -766,7 +770,7 @@ class LocationMode(object):
 class DelimitedJsonDialect(BlobDelimitedJSON):
     """Defines the input or output JSON serialization for a datalake query.
 
-    :keyword str delimiter: The line separator character, default value is '\n'
+    :keyword str delimiter: The line separator character, default value is '\\\\n'.
     """
 
 
@@ -778,7 +782,7 @@ class DelimitedTextDialect(BlobDelimitedTextDialect):
     :keyword str quotechar:
         Field quote, defaults to '"'.
     :keyword str lineterminator:
-        Record separator, defaults to '\n'.
+        Record separator, defaults to '\\\\n'.
     :keyword str escapechar:
         Escape char, defaults to empty.
     :keyword bool has_header:

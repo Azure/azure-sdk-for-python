@@ -756,6 +756,60 @@ def build_call_media_update_transcription_request(  # pylint: disable=name-too-l
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_call_media_hold_request(call_connection_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-03-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/calling/callConnections/{callConnectionId}:hold"
+    path_format_arguments = {
+        "callConnectionId": _SERIALIZER.url("call_connection_id", call_connection_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_call_media_unhold_request(call_connection_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-03-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/calling/callConnections/{callConnectionId}:unhold"
+    path_format_arguments = {
+        "callConnectionId": _SERIALIZER.url("call_connection_id", call_connection_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_call_media_start_hold_music_request(  # pylint: disable=name-too-long
     call_connection_id: str, **kwargs: Any
 ) -> HttpRequest:
@@ -3644,6 +3698,241 @@ class CallMediaOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
+    def hold(  # pylint: disable=inconsistent-return-statements
+        self,
+        call_connection_id: str,
+        hold_request: _models.HoldRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> None:
+        """Hold participant from the call using identifier.
+
+        Hold participant from the call using identifier.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param hold_request: The participants to be hold from the call. Required.
+        :type hold_request: ~azure.communication.callautomation.models.HoldRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def hold(  # pylint: disable=inconsistent-return-statements
+        self, call_connection_id: str, hold_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """Hold participant from the call using identifier.
+
+        Hold participant from the call using identifier.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param hold_request: The participants to be hold from the call. Required.
+        :type hold_request: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def hold(  # pylint: disable=inconsistent-return-statements
+        self, call_connection_id: str, hold_request: Union[_models.HoldRequest, IO[bytes]], **kwargs: Any
+    ) -> None:
+        """Hold participant from the call using identifier.
+
+        Hold participant from the call using identifier.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param hold_request: The participants to be hold from the call. Is either a HoldRequest type or
+         a IO[bytes] type. Required.
+        :type hold_request: ~azure.communication.callautomation.models.HoldRequest or IO[bytes]
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(hold_request, (IOBase, bytes)):
+            _content = hold_request
+        else:
+            _json = self._serialize.body(hold_request, "HoldRequest")
+
+        _request = build_call_media_hold_request(
+            call_connection_id=call_connection_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @overload
+    def unhold(  # pylint: disable=inconsistent-return-statements
+        self,
+        call_connection_id: str,
+        unhold_request: _models.UnholdRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> None:
+        """Unhold participants from the call using identifier.
+
+        Unhold participants from the call using identifier.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param unhold_request: The participants to be hold from the call. Required.
+        :type unhold_request: ~azure.communication.callautomation.models.UnholdRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def unhold(  # pylint: disable=inconsistent-return-statements
+        self,
+        call_connection_id: str,
+        unhold_request: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> None:
+        """Unhold participants from the call using identifier.
+
+        Unhold participants from the call using identifier.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param unhold_request: The participants to be hold from the call. Required.
+        :type unhold_request: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def unhold(  # pylint: disable=inconsistent-return-statements
+        self, call_connection_id: str, unhold_request: Union[_models.UnholdRequest, IO[bytes]], **kwargs: Any
+    ) -> None:
+        """Unhold participants from the call using identifier.
+
+        Unhold participants from the call using identifier.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param unhold_request: The participants to be hold from the call. Is either a UnholdRequest
+         type or a IO[bytes] type. Required.
+        :type unhold_request: ~azure.communication.callautomation.models.UnholdRequest or IO[bytes]
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(unhold_request, (IOBase, bytes)):
+            _content = unhold_request
+        else:
+            _json = self._serialize.body(unhold_request, "UnholdRequest")
+
+        _request = build_call_media_unhold_request(
+            call_connection_id=call_connection_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @overload
     def start_hold_music(  # pylint: disable=inconsistent-return-statements
         self,
         call_connection_id: str,
@@ -4062,7 +4351,7 @@ class CallDialogOperations:
         :type call_connection_id: str
         :param dialog_id: The dialog id. Required.
         :type dialog_id: str
-        :keyword operation_callback_uri: Opeation callback URI. Default value is None.
+        :keyword operation_callback_uri: Operation callback URI. Default value is None.
         :paramtype operation_callback_uri: str
         :return: None
         :rtype: None

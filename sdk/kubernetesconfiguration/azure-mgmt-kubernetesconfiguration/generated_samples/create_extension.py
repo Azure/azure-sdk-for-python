@@ -41,7 +41,7 @@ def main():
                 "configurationProtectedSettings": {"omsagent.secret.key": "secretKeyValue01"},
                 "configurationSettings": {
                     "omsagent.env.clusterName": "clusterName1",
-                    "omsagent.secret.wsid": "a38cef99-5a89-52ed-b6db-22095c23664b",
+                    "omsagent.secret.wsid": "omsagent.secret.wsid",
                 },
                 "extensionType": "azuremonitor-containers",
                 "releaseTrain": "Preview",

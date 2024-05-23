@@ -22,7 +22,7 @@ class AnalyzeDocumentRequest(GeneratedAnalyzeDocumentRequest):
     :ivar bytes_source: Document bytes to analyze.  Either url_source or bytes_source must be specified.
     :vartype bytes_source: bytes
     """
-    
+
     bytes_source: Optional[bytes] = rest_field(name="base64Source", format="base64")
     """Document bytes to analyze.  Either url_source or bytes_source must be specified."""
 
@@ -40,7 +40,11 @@ class ClassifyDocumentRequest(GeneratedClassifyDocumentRequest):
     bytes_source: Optional[bytes] = rest_field(name="base64Source", format="base64")
     """Document bytes to classify.  Either url_source or bytes_source must be specified."""
 
-__all__: List[str] = ["AnalyzeDocumentRequest", "ClassifyDocumentRequest"]  # Add all objects you want publicly available to users at this package level
+
+__all__: List[str] = [
+    "AnalyzeDocumentRequest",
+    "ClassifyDocumentRequest",
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
