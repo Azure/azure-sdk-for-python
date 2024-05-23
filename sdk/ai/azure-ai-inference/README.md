@@ -13,9 +13,9 @@ Use the model inference client library to:
 Note that for inference using OpenAI models hosted on Azure you should be using the [OpenAI Python client library](https://github.com/openai/openai-python) instead of this client.
 
 [Product documentation](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api)
-| [Samples](https://aka.ms/azsdk/model-client/samples/python)
-| [API reference documentation](https://aka.ms/azsdk/azure-ai-inference/ref-docs/python)
-| [Package (Pypi)](https://aka.ms/azsdk/azure-ai-inference/package/pypi)
+| [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples)
+| [API reference documentation](https://aka.ms/azsdk/azure-ai-inference/python/reference)
+| [Package (Pypi)](https://aka.ms/azsdk/azure-ai-inference/python/package)
 | [SDK source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/azure/ai/inference)
 
 ## Getting started
@@ -99,7 +99,6 @@ print(f"Created client of type `{type(client).__name__}`.")
 
 To load an asynchronous client, import the `load_client` function from `azure.ai.inference.aio` instead.
 
-
 ### Getting AI model information
 
 All clients provide a `get_model_info` method to retrive AI model information. This makes a REST call to the `/info` route on the provided endpoint, as documented in [the REST API reference](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-info).
@@ -113,23 +112,24 @@ print(f"Model name: {model_info.model_name}")
 print(f"Model provider name: {model_info.model_provider_name}")
 print(f"Model type: {model_info.model_type}")
 ```
+
+<!-- END SNIPPET -->
+
 AI model information is cached in the client, and futher calls to `get_model_info` will access the cached value and wil not result in a REST API call. Note that if you created the client using `load_client` function, model information will already be cached in the client.
 
 AI model information is displayed (if available) when you `print(client)`.
-
-<!-- END SNIPPET -->
 
 ### Chat Completions
 
 The `ChatCompletionsClient` has a method named `complete`. The method makes a REST API call to the `/chat/completions` route on the provided endpoint, as documented in [the REST API reference](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-chat-completions).
 
-See simple chat completion examples below. More can be found in the [samples](https://github.com/Azure/azure-sdk-for-python/tree/azure-ai-inference/sdk/ai/azure-ai-inference/samples) folder.
+See simple chat completion examples below. More can be found in the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder.
 
 ### Text Embeddings
 
 The `EmbeddingsClient` has a method named `embedding`. The method makes a REST API call to the `/embeddings` route on the provided endpoint, as documented in [the REST API reference](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-embeddings).
 
-See simple text embedding example below. More can be found in the [samples](https://github.com/Azure/azure-sdk-for-python/tree/azure-ai-inference/sdk/ai/azure-ai-inference/samples) folder.
+See simple text embedding example below. More can be found in the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder.
 
 <!-- 
 ### Image Embeddings
@@ -139,12 +139,17 @@ TODO: Add overview and link to explain image embeddings.
 Embeddings operations target the URL route `images/embeddings` on the provided endpoint.
 -->
 
+### Sending proprietary model parameters
+
+The REST API defines common model parameters for chat completions, text embeddings, etc. If the model you are targeting has additional parameters you would like to set, the client library allows you easily do so. See [Chat completions with additional model-specific parameters](#chat-completions-with-additional-model-specific-parameters). It similarly applies to other clients.
+
 ## Examples
 
 In the following sections you will find simple examples of:
 
 * [Chat completions](#chat-completions-example)
 * [Streaming chat completions](#streaming-chat-completions-example)
+* [Chat completions with additional model-specific parameters](#chat-completions-with-additional-model-specific-parameters)
 * [Text Embeddings](#text-embeddings-example)
 <!-- * [Image Embeddings](#image-embeddings-example) -->
 
@@ -211,6 +216,35 @@ client.close()
 The printed result of course depends on the model, but you should see the answer progressively get longer as updates get streamed to the client.
 
 To generate completions for additional messages, simply call `client.complete` multiple times using the same `client`.
+
+### Chat completions with additional model-specific parameters
+
+In this example, additional JSON elements are inserted at the root of the request body by setting `hyper_params` when calling the `complete` method.
+
+Note that by default, the service will reject any request payload that includes unknown parameters (ones that are not defined in the REST API [Request Body table](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-chat-completions#request-body)). In order to change that behaviour, the request must include an additional HTTP header that described the intended behaviour with regards to unknown parameters. This is done by setting `unknown_params` to allow passing the unknown parameers to the AI model, or by ingnoring them (dropping them), and only passing the known parameters to the model.
+
+The settings `hyper_params` and `unknown_params` are suppored for all other clients as well.
+
+<!-- SNIPPET:sample_chat_completions_with_hyper_params.hyper_params -->
+
+```python
+response = client.complete(
+    messages=[
+        SystemMessage(content="You are a helpful assistant."),
+        UserMessage(content="How many feet are in a mile?"),
+    ],
+    unknown_params=UnknownParams.ALLOW,  # Optional. Supported values: "ALLOW", "IGNORE", "ERROR" (service default)
+    hyper_params={  # Optional. Additional parameters to pass to the model.
+        "key1": 1,
+        "key2": True,
+        "key3": "Some value",
+        "key4": [1, 2, 3],
+        "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
+    },
+)
+```
+
+<!-- END SNIPPET -->
 
 ### Text Embeddings example
 

@@ -40,6 +40,7 @@ def sample_chat_completions_with_hyper_params():
 
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
+    # [START hyper_params]
     response = client.complete(
         messages=[
             SystemMessage(content="You are a helpful assistant."),
@@ -54,6 +55,7 @@ def sample_chat_completions_with_hyper_params():
             "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
         },
     )
+    # [END chat_completions]
 
     print(response.choices[0].message.content)
 
