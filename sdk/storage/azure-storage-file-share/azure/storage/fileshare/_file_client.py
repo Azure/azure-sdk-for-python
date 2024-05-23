@@ -298,8 +298,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             account_url, share_name=share_name, file_path=file_path, snapshot=snapshot, credential=credential, **kwargs)
 
     @distributed_trace
-    def acquire_lease(self, lease_id=None, **kwargs):
-        # type: (Optional[str], **Any) -> ShareLeaseClient
+    def acquire_lease(self, lease_id: Optional[str] = None, **kwargs: Any) -> ShareLeaseClient:
         """Requests a new lease.
 
         If the file does not have an active lease, the File
@@ -357,15 +356,14 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def create_file(
-            self, size,  # type: int
-            file_attributes="none",  # type: Union[str, NTFSAttributes]
-            file_creation_time="now",  # type: Optional[Union[str, datetime]]
-            file_last_write_time="now",  # type: Optional[Union[str, datetime]]
-            file_permission=None,   # type: Optional[str]
-            permission_key=None,  # type: Optional[str]
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> Dict[str, Any]
+        self, size: int,
+        file_attributes: Optional[Union[str, "NTFSAttributes"]] = "none",
+        file_creation_time: Optional[Union[str, datetime]] = "now",
+        file_last_write_time: Optional[Union[str, datetime]] = "now",
+        file_permission: Optional[str] = None,
+        permission_key: Optional[str] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Creates a new file.
 
         Note that it only initializes the file with no content.
@@ -472,15 +470,15 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def upload_file(
-            self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
-            length: Optional[int] = None,
-            file_attributes: Union[str, "NTFSAttributes"] = "none",
-            file_creation_time: Optional[Union[str, datetime]] = "now",
-            file_last_write_time: Optional[Union[str, datetime]] = "now",
-            file_permission: Optional[str] = None,
-            permission_key: Optional[str] = None,
-            **kwargs
-        ) -> Dict[str, Any]:
+        self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        length: Optional[int] = None,
+        file_attributes: Union[str, "NTFSAttributes"] = "none",
+        file_creation_time: Optional[Union[str, datetime]] = "now",
+        file_last_write_time: Optional[Union[str, datetime]] = "now",
+        file_permission: Optional[str] = None,
+        permission_key: Optional[str] = None,
+        **kwargs
+    ) -> Dict[str, Any]:
         """Uploads a new file.
 
         :param data:
@@ -607,8 +605,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             **kwargs)
 
     @distributed_trace
-    def start_copy_from_url(self, source_url, **kwargs):
-        # type: (str, Any) -> Dict[str, Any]
+    def start_copy_from_url(self, source_url: str, **kwargs: Any) -> Dict[str, Any]:
         """Initiates the copying of data from a source URL into the file
         referenced by the client.
 
@@ -735,8 +732,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def abort_copy(self, copy_id, **kwargs):
-        # type: (Union[str, FileProperties], Any) -> None
+    def abort_copy(self, copy_id: Union[str, "FileProperties"], **kwargs: Any) -> None:
         """Abort an ongoing copy operation.
 
         This will leave a destination file with zero length and full metadata.
@@ -779,11 +775,10 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def download_file(
-            self, offset=None,  # type: Optional[int]
-            length=None,  # type: Optional[int]
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> StorageStreamDownloader
+        self, offset: Optional[int] = None,
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> StorageStreamDownloader:
         """Downloads a file to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the file into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
@@ -857,8 +852,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             **kwargs)
 
     @distributed_trace
-    def delete_file(self, **kwargs):
-        # type: (Any) -> None
+    def delete_file(self, **kwargs: Any) -> None:
         """Marks the specified file for deletion. The file is
         later deleted during garbage collection.
 
@@ -894,11 +888,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def rename_file(
-            self, new_name, # type: str
-            **kwargs # type: Any
-        ):
-        # type: (...) -> ShareFileClient
+    def rename_file(self, new_name: str, **kwargs: Any) -> Self:
         """
         Rename the source file.
 
@@ -1017,8 +1007,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_file_properties(self, **kwargs):
-        # type: (Any) -> FileProperties
+    def get_file_properties(self, **kwargs: Any) -> "FileProperties":
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the file.
 
@@ -1056,15 +1045,15 @@ class ShareFileClient(StorageAccountHostsMixin):
         return file_props
 
     @distributed_trace
-    def set_http_headers(self, content_settings,  # type: ContentSettings
-                         file_attributes="preserve",  # type: Union[str, NTFSAttributes]
-                         file_creation_time="preserve",  # type: Optional[Union[str, datetime]]
-                         file_last_write_time="preserve",  # type: Optional[Union[str, datetime]]
-                         file_permission=None,  # type: Optional[str]
-                         permission_key=None,  # type: Optional[str]
-                         **kwargs  # type: Any
-                         ):
-        # type: (...) -> Dict[str, Any]
+    def set_http_headers(
+        self, content_settings: "ContentSettings",
+        file_attributes: Union[str, "NTFSAttributes"] = "preserve",
+        file_creation_time: Optional[Union[str, datetime]] = "preserve",
+        file_last_write_time: Optional[Union[str, datetime]] = "preserve",
+        file_permission: Optional[str] = None,
+        permission_key: Optional[str] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Sets HTTP headers on the file.
 
         :param ~azure.storage.fileshare.ContentSettings content_settings:
@@ -1146,8 +1135,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def set_file_metadata(self, metadata=None, **kwargs):
-        # type: (Optional[Dict[str, Any]], Any) -> Dict[str, Any]
+    def set_file_metadata(self, metadata: Optional[Dict[str, Any]] = None, **kwargs: Any) -> Dict[str, Any]:
         """Sets user-defined metadata for the specified file as one or more
         name-value pairs.
 
@@ -1191,12 +1179,11 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def upload_range(
-            self, data,  # type: bytes
-            offset,  # type: int
-            length,  # type: int
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
+        self, data: bytes,
+        offset: int,
+        length: int,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Upload a range of bytes to a file.
 
         :param bytes data:
@@ -1394,8 +1381,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def get_ranges_diff(
-        self,
-        previous_sharesnapshot: Union[str, Dict[str, Any]],
+        self, previous_sharesnapshot: Union[str, Dict[str, Any]],
         offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
@@ -1449,12 +1435,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         return get_file_ranges_result(ranges)
 
     @distributed_trace
-    def clear_range(
-            self, offset,  # type: int
-            length,  # type: int
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
+    def clear_range(self, offset: int, length: int, **kwargs: Any) -> Dict[str, Any]:
         """Clears the specified range and releases the space used in storage for
         that range.
 
@@ -1503,8 +1484,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def resize_file(self, size, **kwargs):
-        # type: (int, Any) -> Dict[str, Any]
+    def resize_file(self, size: int, **kwargs: Any) -> Dict[str, Any]:
         """Resizes a file to the specified size.
 
         :param int size:
@@ -1542,8 +1522,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def list_handles(self, **kwargs):
-        # type: (Any) -> ItemPaged[Handle]
+    def list_handles(self, **kwargs: Any) -> ItemPaged["Handle"]:
         """Lists handles for file.
 
         :keyword int timeout:
@@ -1567,8 +1546,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             page_iterator_class=HandlesPaged)
 
     @distributed_trace
-    def close_handle(self, handle, **kwargs):
-        # type: (Union[str, Handle], Any) -> Dict[str, int]
+    def close_handle(self, handle: Union[str, "Handle"], **kwargs: Any) -> Dict[str, int]:
         """Close an open file handle.
 
         :param handle:
@@ -1607,8 +1585,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def close_all_handles(self, **kwargs):
-        # type: (Any) -> Dict[str, int]
+    def close_all_handles(self, **kwargs: Any) -> Dict[str, int]:
         """Close any open file handles.
 
         This operation will block until the service has closed all open handles.
