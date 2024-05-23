@@ -320,6 +320,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
         with pytest.raises(ValueError, match="Parameter 'self._credential' must not be None."):
             client = EventGridPublisherClient(eventgrid_topic_endpoint, None)
 
+    @pytest.mark.live_test_only
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
