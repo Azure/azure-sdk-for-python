@@ -131,7 +131,7 @@ config = load(
 )
 ```
 
-Feature flags can be refreshed in a similar way to configurations. By setting `feature_flag_refresh_enabled` to `True` and calling `refresh` on the provider.
+Feature flags can be refreshed in a similar way to configurations. You can set `feature_flag_refresh_enabled` to `True` and call `refresh` on the provider to reload feature flags.
 
 ```python
 config = load(
