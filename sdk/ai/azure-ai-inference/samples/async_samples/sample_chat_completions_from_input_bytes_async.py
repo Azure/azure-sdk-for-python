@@ -5,10 +5,11 @@
 """
 DESCRIPTION:
     This sample demonstrates how to get a chat completions response from
-    the service using a synchronous client.
+    the service using an asynchronous client, and directly providing the 
+    IO[bytes] request body (containing input chat messages).
 
 USAGE:
-    python sample_chat_completions.py
+    python sample_chat_completions_from_input_bytes_async.py
 
     Set these two environment variables before running the sample:
     1) CHAT_COMPLETIONS_ENDPOINT - Your endpoint URL, in the form 
@@ -17,11 +18,12 @@ USAGE:
         `your-azure-region` is the Azure region where your model is deployed.
     2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
+import asyncio
+import io
 
-
-def sample_chat_completions():
+async def sample_chat_completions_from_input_bytes_async():
     import os
-    
+
     try:
         endpoint = os.environ["CHAT_COMPLETIONS_ENDPOINT"]
         key = os.environ["CHAT_COMPLETIONS_KEY"]
@@ -30,23 +32,33 @@ def sample_chat_completions():
         print("Set them before running this sample.")
         exit()
 
-    # [START chat_completions]
-    from azure.ai.inference import ChatCompletionsClient
-    from azure.ai.inference.models import SystemMessage, UserMessage
+    from azure.ai.inference.aio import ChatCompletionsClient
     from azure.core.credentials import AzureKeyCredential
-
+    
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    response = client.complete(
-        messages=[
-            SystemMessage(content="You are a helpful assistant."),
-            UserMessage(content="How many feet are in a mile?"),
-        ]
-    )
+    # Make a chat completion call, by directly providing the
+    # HTTP request body as IO[bytes], containing chat messages.
+    response = await client.complete(read_text_file("example_chat.json"))
 
     print(response.choices[0].message.content)
-    # [END chat_completions]
+
+    await client.close()
+
+
+def read_text_file(file_name: str) -> io.BytesIO:
+    """
+    Reads a text file and returns a BytesIO object with the file content in UTF-8 encoding.
+    The file is expected to be in the same directory as this Python script.
+    """
+    from pathlib import Path
+    with Path(__file__).with_name(file_name).open("r") as f:
+        return io.BytesIO(f.read().encode("utf-8"))
+
+
+async def main():
+    await sample_chat_completions_from_input_bytes_async()
 
 
 if __name__ == "__main__":
-    sample_chat_completions()
+    asyncio.run(main())

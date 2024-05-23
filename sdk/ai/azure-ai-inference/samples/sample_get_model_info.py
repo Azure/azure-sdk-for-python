@@ -31,12 +31,12 @@ def sample_get_model_info():
         print("Set them before running this sample.")
         exit()
 
-    # [START get_model_info]
     from azure.ai.inference import ChatCompletionsClient
     from azure.core.credentials import AzureKeyCredential
 
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
+    # [START get_model_info]
     model_info = client.get_model_info()
 
     print(f"Model name: {model_info.model_name}")

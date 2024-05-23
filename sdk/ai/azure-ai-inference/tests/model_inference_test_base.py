@@ -2,15 +2,17 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import functools
-import logging
-import sys
 import azure.ai.inference as sdk
 import azure.ai.inference.aio as async_sdk
-import re
+import functools
+import io
 import json
+import logging
+import re
+import sys
 
 from os import path
+from pathlib import Path
 from typing import List, Optional, Union
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.core.credentials import AzureKeyCredential
@@ -112,6 +114,15 @@ class ModelClientTestBase(AzureRecordedTestCase):
         return sdk.EmbeddingsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
 
     @staticmethod
+    def read_text_file(file_name: str) -> io.BytesIO:
+        """
+        Reads a text file and returns a BytesIO object with the file content in UTF-8 encoding.
+        The file is expected to be in the same directory as this Python script.
+        """
+        with Path(__file__).with_name(file_name).open("r") as f:
+            return io.BytesIO(f.read().encode("utf-8"))
+    
+    @staticmethod
     def _print_model_info_result(model_info: sdk.models.ModelInfo):
         if ModelClientTestBase.PRINT_RESULT:
             print(" Model info:")
@@ -201,7 +212,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
             print(content)
 
     @staticmethod
-    async def _validate_async_chat_completions_streaming_result(response: sdk.models.StreamingChatCompletions):
+    async def _validate_async_chat_completions_streaming_result(response: sdk.models.AsyncStreamingChatCompletions):
         count = 0
         content = ""
         async for update in response:

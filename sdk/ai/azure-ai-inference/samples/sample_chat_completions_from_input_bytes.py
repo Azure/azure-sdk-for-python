@@ -20,7 +20,6 @@ USAGE:
 """
 import io
 
-
 def sample_chat_completions_from_input_bytes():
     import os
 
@@ -33,9 +32,8 @@ def sample_chat_completions_from_input_bytes():
         exit()
 
     from azure.ai.inference import ChatCompletionsClient
-    from azure.ai.inference.models import SystemMessage, UserMessage
     from azure.core.credentials import AzureKeyCredential
-
+    
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Make a chat completion call, by directly providing the
@@ -45,10 +43,14 @@ def sample_chat_completions_from_input_bytes():
     print(response.choices[0].message.content)
 
 
-def read_text_file(file_path: str) -> io.BytesIO:
-    """Reads a text file and returns a BytesIO object with the file content in UTF-8 encoding."""
-    with open(file_path, "r") as file:
-        return io.BytesIO(file.read().encode("utf-8"))
+def read_text_file(file_name: str) -> io.BytesIO:
+    """
+    Reads a text file and returns a BytesIO object with the file content in UTF-8 encoding.
+    The file is expected to be in the same directory as this Python script.
+    """
+    from pathlib import Path
+    with Path(__file__).with_name(file_name).open("r") as f:
+        return io.BytesIO(f.read().encode("utf-8"))
 
 
 if __name__ == "__main__":

@@ -42,8 +42,6 @@ def sample_load_client():
     # This should create a client of type `ChatCompletionsClient`
     print(f"Created client of type `{type(client).__name__}`.")
 
-    print(client)
-
     if isinstance(client, ChatCompletionsClient):
         response = client.complete(
             messages=[

@@ -1,4 +1,4 @@
-# Azure model inference client library for Python
+# Azure AI Inference client library for Python
 
 The client Library allows you to do inference using AI models you deployed to Azure. It supports both Serverless Endpoints (aka "model as a service" (MaaS) or "pay as you go") and Selfhosted Endpoints (aka "model as a platform" (MaaP) or "real-time endpoints"). The client library makes services calls using REST AP version `2024-05-01-preview`, as documented in [Azure AI Model Inference API](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api). For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
 
@@ -8,7 +8,7 @@ Use the model inference client library to:
 * Get information about the model
 * Do chat completions
 * Get text embeddings
-* Get image embeddings
+<!-- * Get image embeddings -->
 
 Note that for inference using OpenAI models hosted on Azure you should be using the [OpenAI Python client library](https://github.com/openai/openai-python) instead of this client.
 
@@ -44,9 +44,11 @@ To update an existing installation of the package, use:
 pip install --upgrade azure-ai-inferencing
 ```
 
-### Create and authenticate clients
+## Key concepts
 
-The package includes three clients `ChatCompletionsClient`, `EmbeddingsClient` and `ImageGenerationClients`. They are all created in the similar manner. For example, assuming `endpoint` and `key` are strings holding your endpoint URL and key, this Python code will create and authenticate a synchronous `ChatCompletionsClient`:
+### Create and authenticate a client directly
+
+The package includes two clients `ChatCompletionsClient` and `EmbeddingsClient` <!-- and `ImageGenerationClients`-->. Both can be created in the similar manner. For example, assuming `endpoint` and `key` are strings holding your endpoint URL and key, this Python code will create and authenticate a synchronous `ChatCompletionsClient`:
 
 ```python
 from azure.ai.inference import ChatCompletionsClient
@@ -79,31 +81,63 @@ client = ChatCompletionsClient(
 )
 ```
 
-## Key concepts
+### Create and authentice clients using `load_client`
 
-### Loading the client and getting AI model information
+As an alternative to creating a specific client directly, you can use the function `load_client` to return the relevant client (of types `ChatCompletionsClient` or `EmbeddingsClient`) based on the provided endpoint:
 
-TODO: Add overview and link to explain AI model info
+```python
+from azure.ai.inference import load_client
+from azure.core.credentials import AzureKeyCredential
 
-The operation to get AI model information targets the URL route `/info` on the provided endpoint.
+client = load_client(
+    endpoint=endpoint,
+    credential=AzureKeyCredential(key)
+)
+
+print(f"Created client of type `{type(client).__name__}`.")
+```
+
+To load an asynchronous client, import the `load_client` function from `azure.ai.inference.aio` instead.
+
+
+### Getting AI model information
+
+All clients provide a `get_model_info` method to retrive AI model information. This makes a REST call to the `/info` route on the provided endpoint, as documented in [the REST API reference](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-info).
+
+<!-- SNIPPET:sample_get_model_info.get_model_info -->
+
+```python
+model_info = client.get_model_info()
+
+print(f"Model name: {model_info.model_name}")
+print(f"Model provider name: {model_info.model_provider_name}")
+print(f"Model type: {model_info.model_type}")
+```
+AI model information is cached in the client, and futher calls to `get_model_info` will access the cached value and wil not result in a REST API call. Note that if you created the client using `load_client` function, model information will already be cached in the client.
+
+AI model information is displayed (if available) when you `print(client)`.
+
+<!-- END SNIPPET -->
 
 ### Chat Completions
 
-TODO: Add overview and link to explain chat completions.
+The `ChatCompletionsClient` has a method named `complete`. The method makes a REST API call to the `/chat/completions` route on the provided endpoint, as documented in [the REST API reference](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-chat-completions).
 
-Chat completion operations target the URL route `/chat/completions` on the provided endpoint.
+See simple chat completion examples below. More can be found in the [samples](https://github.com/Azure/azure-sdk-for-python/tree/azure-ai-inference/sdk/ai/azure-ai-inference/samples) folder.
 
 ### Text Embeddings
 
-TODO: Add overview and link to explain embeddings.
+The `EmbeddingsClient` has a method named `embedding`. The method makes a REST API call to the `/embeddings` route on the provided endpoint, as documented in [the REST API reference](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-embeddings).
 
-Embeddings operations target the URL route `/embeddings` on the provided endpoint.
+See simple text embedding example below. More can be found in the [samples](https://github.com/Azure/azure-sdk-for-python/tree/azure-ai-inference/sdk/ai/azure-ai-inference/samples) folder.
 
+<!-- 
 ### Image Embeddings
 
 TODO: Add overview and link to explain image embeddings.
 
 Embeddings operations target the URL route `images/embeddings` on the provided endpoint.
+-->
 
 ## Examples
 
@@ -112,9 +146,7 @@ In the following sections you will find simple examples of:
 * [Chat completions](#chat-completions-example)
 * [Streaming chat completions](#streaming-chat-completions-example)
 * [Text Embeddings](#text-embeddings-example)
-* [Image Embeddings](#image-embeddings-example)
-* [Get model information](#get-model-information-example)
-* [Loading a client using `load_client` function](#loading-a-client-using-load_client-function)
+<!-- * [Image Embeddings](#image-embeddings-example) -->
 
 The examples create a synchronous client as mentioned in [Create and authenticate clients](#create-and-authenticate-clients). Only mandatory input settings are shown for simplicity.
 
@@ -145,13 +177,11 @@ print(response.choices[0].message.content)
 
 <!-- END SNIPPET -->
 
-The printed result of course depends on the model, but you should get something like this: `Hello! I'd be happy to help answer your question. There are 5,280 feet in a mile`.
-
 To generate completions for additional messages, simply call `client.create` multiple times using the same `client`.
 
 ### Streaming chat completions example
 
-This example demonstrates how to generate a single chat completions with streaming response.
+This example demonstrates how to generate a single chat completions with streaming response. You need to add `stream=True` to the `complete` call to enable streaming.
 
 <!-- SNIPPET:sample_chat_completions_streaming.chat_completions_streaming -->
 
@@ -167,7 +197,7 @@ response = client.complete(
     messages=[
         SystemMessage(content="You are a helpful assistant."),
         UserMessage(content="Give me 5 good reasons why I should exercise every day."),
-    ]
+    ],
 )
 
 for update in response:
@@ -180,11 +210,11 @@ client.close()
 
 The printed result of course depends on the model, but you should see the answer progressively get longer as updates get streamed to the client.
 
-To generate completions for additional messages, simply call `client.create_streaming` multiple times using the same `client`.
+To generate completions for additional messages, simply call `client.complete` multiple times using the same `client`.
 
 ### Text Embeddings example
 
-This example demonstrates how to get embeddings.
+This example demonstrates how to get text embeddings.
 
 <!-- SNIPPET:sample_embeddings.embeddings -->
 
@@ -207,6 +237,7 @@ for item in response.data:
 <!-- END SNIPPET -->
 
 The printed result of course depends on the model, but you should see something like this:
+
 ```txt
 data[0]: length=1024, [0.0013399124, -0.01576233, ..., 0.007843018, 0.000238657]
 data[1]: length=1024, [0.036590576, -0.0059547424, ..., 0.011405945, 0.004863739]
@@ -215,11 +246,12 @@ data[2]: length=1024, [0.04196167, 0.029083252, ..., -0.0027484894, 0.0073127747
 
 To generate embeddings for additional phrases, simply call `client.create` multiple times using the same `client`.
 
+<!--
 ### Image Embeddings example
 
 This example demonstrates how to get image embeddings.
 
-<!-- SNIPPET:sample_image_embeddings.image_embeddings -->
+ <! -- SNIPPET:sample_image_embeddings.image_embeddings -- >
 
 ```python
 from azure.ai.inference import ImageEmbeddingsClient
@@ -243,7 +275,7 @@ for item in response.data:
     )
 ```
 
-<!-- END SNIPPET -->
+-- END SNIPPET --
 
 The printed result of course depends on the model, but you should see something like this:
 
@@ -252,58 +284,7 @@ TBD
 ```
 
 To generate embeddings for additional phrases, simply call `client.create` multiple times using the same `client`.
-
-### Get model information example
-
-Each one of the clients supports a `get_model_info` method that can be used to retreive infomation about the AI model. This example shows how to get model information from the `ChatCompletionsClient`, but similarly can be done with the other clients.
-
-<!-- SNIPPET:sample_get_model_info.get_model_info -->
-
-```python
-from azure.ai.inference import ChatCompletionsClient
-from azure.core.credentials import AzureKeyCredential
-
-client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-
-model_info = client.get_model_info()
-
-print(f"Model name: {model_info.model_name}")
-print(f"Model provider name: {model_info.model_provider_name}")
-print(f"Model type: {model_info.model_type}")
-```
-
-<!-- END SNIPPET -->
-
-### Loading a client using `load_client` function
-
-Instead of creating a specific client directly (`ChatCompletionsClient`, `EmbeddingsClient` or `ImageEmbeddingsClient`) you can use the `load_client` function to create the appropriate synchronous client associated with the provided endpoint URL. In the example below, we use it to create a synchronous `ChatCompletionsClient`. Similarly, call the `load_async_client` to get the appropriate asynchronous client.
-
-The `load_client` function makes a REST API call to the `/info` route on the given endpoint, which provides the model type. Based on the model type, the correct client is returned. In most cases you know the model type (chat completions, embeddings, image embeddings) so you can create the appropriate client directly and avoid doing this addition REST API call.
-
-<!-- SNIPPET:sample_load_client.load_client -->
-
-```python
-from azure.ai.inference import load_client, ChatCompletionsClient
-from azure.ai.inference.models import SystemMessage, UserMessage
-from azure.core.credentials import AzureKeyCredential
-
-client = load_client(endpoint=endpoint, credential=AzureKeyCredential(key))
-
-# This should create a client of type `ChatCompletionsClient`
-print(f"Created client of type `{type(client).__name__}`.")
-
-if isinstance(client, ChatCompletionsClient):
-    response = client.complete(
-        messages=[
-            SystemMessage(content="You are a helpful assistant."),
-            UserMessage(content="How many feet are in a mile?"),
-        ]
-    )
-
-    print(response.choices[0].message.content)
-```
-
-<!-- END SNIPPET -->
+-->
 
 ## Troubleshooting
 

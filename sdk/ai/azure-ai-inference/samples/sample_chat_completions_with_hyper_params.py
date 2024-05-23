@@ -25,13 +25,6 @@ USAGE:
 
 def sample_chat_completions_with_hyper_params():
     import os
-    import sys
-    import logging
-
-    logger = logging.getLogger("azure")
-    logger.setLevel(logging.DEBUG)
-    handler = logging.StreamHandler(stream=sys.stdout)
-    logger.addHandler(handler)
 
     try:
         endpoint = os.environ["CHAT_COMPLETIONS_ENDPOINT"]
@@ -44,23 +37,15 @@ def sample_chat_completions_with_hyper_params():
     from azure.ai.inference import ChatCompletionsClient
     from azure.ai.inference.models import SystemMessage, UserMessage, UnknownParams
     from azure.core.credentials import AzureKeyCredential
-    from azure.core.pipeline.policies import HeadersPolicy
 
-    client = ChatCompletionsClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key),
-        #headers={
-        #    "unknown-parameters": "allow"
-        #},  # Optional. Supported values: "allow", "ignore", "error" (the default).
-        logging_enable=True,
-    )
+    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     response = client.complete(
         messages=[
             SystemMessage(content="You are a helpful assistant."),
             UserMessage(content="How many feet are in a mile?"),
         ],
-        unknown_params=UnknownParams.ALLOW,  # Optional. Supported values: "allow", "ignore", "error" (the default)
+        unknown_params=UnknownParams.ALLOW,  # Optional. Supported values: "ALLOW", "IGNORE", "ERROR" (service default)
         hyper_params={  # Optional. Additional parameters to pass to the model.
             "key1": 1,
             "key2": True,

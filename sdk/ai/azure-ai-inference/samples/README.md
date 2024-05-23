@@ -8,13 +8,13 @@ products:
 urlFragment: model-inference-samples
 ---
 
-# Samples for the model client library for Python
+# Samples for Azure AI Inference client library for Python
 
-These are runnable console Python programs that show how to do chat completion, embeddings and image geneartion using the clients in this package. Samples are in this folder
-and use the a synchronous client. Samples in the subfolder `async_samples` use the asynchronous client.
-The concepts are similar, you can easily modify any of the samples to your needs.
+These are runnable console Python scripts that show how to do chat completion, text embeddings and image embeddings using the clients in this package. Samples in this folder use the a synchronous clients. Samples in the subfolder `async_samples` use the asynchronous clients. The concepts are similar, you can easily modify any of the  synchronous samples to asynchronous.
 
 ## Synchronous client samples
+
+### Chat completions
 
 |**File Name**|**Description**|
 |----------------|-------------|
@@ -25,19 +25,49 @@ The concepts are similar, you can easily modify any of the samples to your needs
 |[sample_chat_completions_from_input_json.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_from_input_json.py) | One chat completion operation using a synchronous client, with input messages provided as `MutableMapping[str, Any]` |
 |[sample_chat_completions_with_tools.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_tools.py) | Shows how do use a tool (function) in chat completions, for an AI model that supports tools |
 |[sample_load_client.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_load_client.py) | Shows how do use the function `load_client` to create the appropriate synchronous client based on the provided endpoint URL. In this example, it creates a synchronous `ChatCompletionsClient`. |
-|[sample_embeddings.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_embeddings.py) | One embeddings operation using a synchronous client. |
-|[sample_image_embeddings.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_image_embeddings.py) | One image embeddings operation, on two input images, using a synchronous client. |
 |[sample_get_model_info.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_get_model_info.py) | Get AI model information using the chat completions client. Similarly can be done with all other clients. |
+|[sample_chat_completions_with_hyper_params.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_hyper_params.py) | Chat completions with additional model-specific parameters. |
+
+
+### Text embeddings
+
+|**File Name**|**Description**|
+|----------------|-------------|
+|[sample_embeddings.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_embeddings.py) | One embeddings operation using a synchronous client. |
+
+<!--
+### Image embeddings
+
+|**File Name**|**Description**|
+|----------------|-------------|
+|[sample_image_embeddings.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_image_embeddings.py) | One image embeddings operation, on two input images, using a synchronous client. |
+-->
 
 ## Asynchronous client samples
+
+### Chat completions
 
 |**File Name**|**Description**|
 |----------------|-------------|
 |[sample_chat_completions_streaming_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_chat_completions_streaming_async.py) | One chat completion operation using an asynchronous client and streaming response. |
 |[sample_chat_completions_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_chat_completions_async.py) | One chat completion operation using an asynchronous client. |
-|[sample_embeddings_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_embeddings_async.py) | One embeddings operation using an asynchronous client. |
-|[sample_image_embeddings_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_image_embeddings_async.py) | One image embeddings operation, on two input images, using an asynchronous client. |
 |[sample_load_client_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_load_client_async.py) | Shows how do use the function `load_async_client` to create the appropriate asynchronous client based on the provided endpoint URL. In this example, it creates an asynchronous `ChatCompletionsClient`. |
+|[sample_chat_completions_from_input_bytes_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_chat_completions_from_input_bytes_async.py) | One chat completion operation using a synchronous client, with input messages provided as `IO[bytes]`. |
+|[sample_chat_completions_from_input_json_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_chat_completions_from_input_json_async.py) | One chat completion operation using a synchronous client, with input messages provided as `MutableMapping[str, Any]` |
+
+### Text embeddings
+
+|**File Name**|**Description**|
+|----------------|-------------|
+|[sample_embeddings_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_embeddings_async.py) | One embeddings operation using an asynchronous client. |
+
+<!--
+### Image embeddings
+
+|**File Name**|**Description**|
+|----------------|-------------|
+|[sample_image_embeddings_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_image_embeddings_async.py) | One image embeddings operation, on two input images, using an asynchronous client. |
+-->
 
 ## Prerequisites
 

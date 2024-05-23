@@ -80,42 +80,6 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
     @overload
     async def complete(
         self,
-        body: JSON,
-        *,
-        model_deployment: Optional[str] = None,
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> Union[_models.AsyncStreamingChatCompletions, _models.ChatCompletions]:
-        # pylint: disable=line-too-long
-        """Gets chat completions for the provided chat messages.
-        Completions support a wide variety of tasks and generate text that continues from or
-        "completes" provided prompt data. When using this method with `stream=True`, the response is streamed
-        back to the client. Iterate over the resulting ~azure.ai.inference.models.StreamingChatCompletions
-        object to get content updates as they arrive.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword model_deployment: Name of the deployment to which you would like to route the request.
-         Relevant only to Model-as-a-Platform (MaaP) deployments.
-         Typically used when you want to target a test environment instead of production environment.
-         Default value is None.
-        :paramtype model_deployment: str
-        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
-         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
-         The service defaults to "error" in this case.
-        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ChatCompletions for non-streaming, or AsyncStreamingChatCompletions for streaming.
-        :rtype: ~azure.ai.inference.models.ChatCompletions or ~azure.ai.inference.models.AsyncStreamingChatCompletions
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def complete(
-        self,
         *,
         messages: List[_models.ChatRequestMessage],
         model_deployment: Optional[str] = None,
@@ -161,7 +125,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :paramtype content_type: str
         :keyword hyper_params: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
-         How the service handles these hypter parameters depends on the value of the
+         How the service handles these hyper parameters depends on the value of the
          ``unknown-parameters`` request header. Default value is None.
         :paramtype hyper_params: dict[str, Any]
         :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
@@ -230,6 +194,42 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
          same seed and parameters should return the same result. Determinism is not guaranteed.".
          Default value is None.
         :paramtype seed: int
+        :return: ChatCompletions for non-streaming, or AsyncStreamingChatCompletions for streaming.
+        :rtype: ~azure.ai.inference.models.ChatCompletions or ~azure.ai.inference.models.AsyncStreamingChatCompletions
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def complete(
+        self,
+        body: JSON,
+        *,
+        model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> Union[_models.AsyncStreamingChatCompletions, _models.ChatCompletions]:
+        # pylint: disable=line-too-long
+        """Gets chat completions for the provided chat messages.
+        Completions support a wide variety of tasks and generate text that continues from or
+        "completes" provided prompt data. When using this method with `stream=True`, the response is streamed
+        back to the client. Iterate over the resulting ~azure.ai.inference.models.StreamingChatCompletions
+        object to get content updates as they arrive.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         The service defaults to "error" in this case.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: ChatCompletions for non-streaming, or AsyncStreamingChatCompletions for streaming.
         :rtype: ~azure.ai.inference.models.ChatCompletions or ~azure.ai.inference.models.AsyncStreamingChatCompletions
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -318,7 +318,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :paramtype model_deployment: str
         :keyword hyper_params: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
-         How the service handles these hypter parameters depends on the value of the
+         How the service handles these hyper parameters depends on the value of the
          ``unknown-parameters`` request header. Default value is None.
         :paramtype hyper_params: dict[str, Any]
         :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
@@ -425,6 +425,8 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
             if hyper_params is not None:
                 body.update(hyper_params)
             body = {k: v for k, v in body.items() if v is not None}
+        elif isinstance(body, dict) and "stream" in body and isinstance(body["stream"], bool):
+            stream = body["stream"]
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -489,37 +491,6 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
     @overload
     async def embedding(
         self,
-        body: JSON,
-        *,
-        model_deployment: Optional[str] = None,
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> _models.EmbeddingsResult:
-        """Return the embeddings for a given text prompt.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword model_deployment: Name of the deployment to which you would like to route the request.
-         Relevant only to Model-as-a-Platform (MaaP) deployments.
-         Typically used when you want to target a test environment instead of production environment.
-         Default value is None.
-        :paramtype model_deployment: str
-        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
-         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
-         The service defaults to "error" in this case.
-        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def embedding(
-        self,
         *,
         hyper_params: Optional[Dict[str, Any]] = None,
         input: List[str],
@@ -535,7 +506,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
 
         :keyword hyper_params: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
-         How the service handles these hypter parameters depends on the value of the
+         How the service handles these hyper parameters depends on the value of the
          ``unknown-parameters`` request header. Default value is None.
         :paramtype hyper_params: dict[str, Any]
         :keyword input: Input text to embed, encoded as a string or array of tokens.
@@ -577,6 +548,37 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
          Returns a 422 error if the model doesn't support the value or parameter. Known values are:
          "text", "query", and "document". Default value is None.
         :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
+        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.EmbeddingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def embedding(
+        self,
+        body: JSON,
+        *,
+        model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.EmbeddingsResult:
+        """Return the embeddings for a given text prompt.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         The service defaults to "error" in this case.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -634,7 +636,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :type body: JSON or IO[bytes]
         :keyword hyper_params: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
-         How the service handles these hypter parameters depends on the value of the
+         How the service handles these hyper parameters depends on the value of the
          ``unknown-parameters`` request header. Default value is None.
         :paramtype hyper_params: dict[str, Any]
         :keyword input: Input text to embed, encoded as a string or array of tokens.
@@ -761,37 +763,6 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
     @overload
     async def embedding(
         self,
-        body: JSON,
-        *,
-        model_deployment: Optional[str] = None,
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> _models.EmbeddingsResult:
-        """Return the embeddings for given images.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword model_deployment: Name of the deployment to which you would like to route the request.
-         Relevant only to Model-as-a-Platform (MaaP) deployments.
-         Typically used when you want to target a test environment instead of production environment.
-         Default value is None.
-        :paramtype model_deployment: str
-        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
-         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
-         The service defaults to "error" in this case.
-        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
-        :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def embedding(
-        self,
         *,
         hyper_params: Optional[Dict[str, Any]] = None,
         input: List[_models.EmbeddingInput],
@@ -807,7 +778,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
 
         :keyword hyper_params: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
-         How the service handles these hypter parameters depends on the value of the
+         How the service handles these hyper parameters depends on the value of the
          ``unknown-parameters`` request header. Default value is None.
         :paramtype hyper_params: dict[str, Any]
         :keyword input: Input image to embed. To embed multiple inputs in a single request, pass an
@@ -849,6 +820,37 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
          Returns a 422 error if the model doesn't support the value or parameter. Known values are:
          "text", "query", and "document". Default value is None.
         :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
+        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.EmbeddingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def embedding(
+        self,
+        body: JSON,
+        *,
+        model_deployment: Optional[str] = None,
+        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.EmbeddingsResult:
+        """Return the embeddings for given images.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         The service defaults to "error" in this case.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -906,7 +908,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :type body: JSON or IO[bytes]
         :keyword hyper_params: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
-         How the service handles these hypter parameters depends on the value of the
+         How the service handles these hyper parameters depends on the value of the
          ``unknown-parameters`` request header. Default value is None.
         :paramtype hyper_params: dict[str, Any]
         :keyword input: Input image to embed. To embed multiple inputs in a single request, pass an

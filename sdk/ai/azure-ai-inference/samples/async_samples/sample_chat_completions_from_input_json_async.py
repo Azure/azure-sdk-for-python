@@ -5,11 +5,11 @@
 """
 DESCRIPTION:
     This sample demonstrates how to get a chat completions response from
-    the service using a synchronous client, and directly providing the 
+    the service using an asynchronous client, and directly providing the 
     JSON request body (containing input chat messages).
 
 USAGE:
-    python sample_chat_completions_from_input_json.py
+    python sample_chat_completions_from_input_json_async
 
     Set these two environment variables before running the sample:
     1) CHAT_COMPLETIONS_ENDPOINT - Your endpoint URL, in the form 
@@ -18,11 +18,11 @@ USAGE:
         `your-azure-region` is the Azure region where your model is deployed.
     2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
+import asyncio
 
-
-def sample_chat_completions_from_input_json():
+async def sample_chat_completions_from_input_json_async():
     import os
-    from azure.ai.inference import ChatCompletionsClient
+    from azure.ai.inference.aio import ChatCompletionsClient
     from azure.core.credentials import AzureKeyCredential
 
     try:
@@ -50,12 +50,15 @@ def sample_chat_completions_from_input_json():
         ]
     }
 
-    response = client.complete(request_body)
+    response = await client.complete(request_body)
 
     print(response.choices[0].message.content)
     
-    client.close()
+    await client.close()
+
+async def main():
+    await sample_chat_completions_from_input_json_async()
 
 
 if __name__ == "__main__":
-    sample_chat_completions_from_input_json()
+    asyncio.run(main())
