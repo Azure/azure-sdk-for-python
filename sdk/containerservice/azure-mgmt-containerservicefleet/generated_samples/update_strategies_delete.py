@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/fleet/stable/2023-10-15/examples/UpdateStrategies_Delete.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/fleet/stable/2024-04-01/examples/UpdateStrategies_Delete.json
 if __name__ == "__main__":
     main()
