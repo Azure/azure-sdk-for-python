@@ -16,13 +16,21 @@ from typing import (
     Any, AnyStr, AsyncIterable, Dict, IO, Iterable, List, Optional, Tuple, Union,
     TYPE_CHECKING
 )
+from typing_extensions import Self
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._deserialize import deserialize_file_properties, deserialize_file_stream, get_file_ranges_result
-from .._file_client import ShareFileClient as ShareFileClientBase
+from .._file_client_helpers import (
+    _format_url,
+    _from_file_url,
+    _get_ranges_options,
+    _parse_snapshot,
+    _parse_url,
+    _upload_range_from_url_options
+)
 from .._generated.aio import AzureFileStorage
 from .._generated.models import FileHTTPHeaders
 from .._parser import _datetime_to_str, _get_file_permission
@@ -34,7 +42,8 @@ from .._serialize import (
     get_smb_properties,
     get_source_access_conditions
 )
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from .._shared.base_client import StorageAccountHostsMixin, parse_query
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str
 from .._shared.parser import _str
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers, get_length
@@ -106,7 +115,7 @@ async def _upload_file_helper(
         process_storage_error(error)
 
 
-class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
+class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
     """A client to interact with a specific file, although that file may not yet exist.
 
     :param str account_url:
@@ -125,7 +134,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
         an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
-        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an account shared access key, or an instance of a AsyncTokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
@@ -136,8 +145,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         ~azure.core.credentials_async.AsyncTokenCredential or
         str or dict[str, str] or None
     :keyword token_intent:
-        Required when using `TokenCredential` for authentication and ignored for other forms of authentication.
-        Specifies the intent for all requests when using `TokenCredential` authentication. Possible values are:
+        Required when using `AsyncTokenCredential` for authentication and ignored for other forms of authentication.
+        Specifies the intent for all requests when using `AsyncTokenCredential` authentication. Possible values are:
 
         backup - Specifies requests are intended for backup/admin type operations, meaning that all file/directory
                  ACLs are bypassed and full permissions are granted. User must also have required RBAC permission.
@@ -155,33 +164,143 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         The hostname of the secondary endpoint.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
-        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        authentication. Only has an effect when credential is of type Async TokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
     """
     def __init__(
-            self, account_url: str,
-            share_name: str,
-            file_path: str,
-            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
-            *,
-            token_intent: Optional[Literal['backup']] = None,
-            **kwargs: Any
-        ) -> None:
+        self, account_url: str,
+        share_name: str,
+        file_path: str,
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        *,
+        token_intent: Optional[Literal['backup']] = None,
+        **kwargs: Any
+    ) -> None:
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         if loop and sys.version_info >= (3, 8):
             warnings.warn("The 'loop' parameter was deprecated from asyncio's high-level"
             "APIs in Python 3.8 and is no longer supported.", DeprecationWarning)
+        if hasattr(credential, 'get_token') and not token_intent:
+            raise ValueError("'token_intent' keyword is required when 'credential' is an TokenCredential.")
+        parsed_url = _parse_url(account_url, share_name, file_path)
+        path_snapshot, sas_token = parse_query(parsed_url.query)
+        if not sas_token and not credential:
+            raise ValueError(
+                'You need to provide either an account shared key or SAS token when creating a storage service.')
+        self.snapshot = _parse_snapshot(snapshot, path_snapshot)
+        self.share_name = share_name
+        self.file_path = file_path.split('/')
+        self.file_name = self.file_path[-1]
+        self.directory_path = "/".join(self.file_path[:-1])
+
+        self._query_str, credential = self._format_query_string(
+            sas_token, credential, share_snapshot=self.snapshot)
         super(ShareFileClient, self).__init__(
-            account_url, share_name=share_name, file_path=file_path, snapshot=snapshot,
-            credential=credential, token_intent=token_intent, **kwargs
-        )
+            parsed_url, service='file-share', credential=credential, **kwargs)
+        self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
+        self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
+        self.file_request_intent = token_intent
         self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline,
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
                                         file_request_intent=self.file_request_intent)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+
+    @classmethod
+    def from_file_url(
+        cls, file_url: str,
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
+        """A client to interact with a specific file, although that file may not yet exist.
+
+        :param str file_url: The full URI to the file.
+        :param str snapshot:
+            An optional file snapshot on which to operate. This can be the snapshot ID string
+            or the response returned from :func:`ShareClient.create_snapshot`.
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be a SAS token string,
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a AsyncTokenCredentials class from azure.identity.
+            If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+            - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials_async.AsyncTokenCredential or
+            str or dict[str, str] or None
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
+        :returns: A File client.
+        :rtype: ~azure.storage.fileshare.ShareFileClient
+        """
+        account_url, share_name, file_path, snapshot = _from_file_url(file_url, snapshot)
+        return cls(account_url, share_name, file_path, snapshot, credential, **kwargs)
+
+    def _format_url(self, hostname: str):
+        return _format_url(self.scheme, hostname, self.share_name, self.file_path, self._query_str)
+
+    @classmethod
+    def from_connection_string(
+        cls, conn_str: str,
+        share_name: str,
+        file_path: str,
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
+        """Create ShareFileClient from a Connection String.
+
+        :param str conn_str:
+            A connection string to an Azure Storage account.
+        :param share_name: The name of the share.
+        :type share_name: str
+        :param str file_path:
+            The file path.
+        :param str snapshot:
+            An optional file snapshot on which to operate. This can be the snapshot ID string
+            or the response returned from :func:`ShareClient.create_snapshot`.
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be a SAS token string,
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a AsyncTokenCredentials class from azure.identity.
+            If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+            - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials_async.AsyncTokenCredential or
+            str or dict[str, str] or None
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
+        :returns: A File client.
+        :rtype: ~azure.storage.fileshare.ShareFileClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/file_samples_hello_world.py
+                :start-after: [START create_file_client]
+                :end-before: [END create_file_client]
+                :language: python
+                :dedent: 12
+                :caption: Creates the file client with connection string.
+        """
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
+        return cls(
+            account_url, share_name=share_name, file_path=file_path, snapshot=snapshot, credential=credential, **kwargs)
 
     @distributed_trace_async
     async def acquire_lease(self, lease_id=None, **kwargs):
@@ -1162,13 +1281,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def upload_range_from_url(self, source_url,
-                                    offset,
-                                    length,
-                                    source_offset,
-                                    **kwargs
-                                    ):
-        # type: (str, int, int, int, **Any) -> Dict[str, Any]
+    async def upload_range_from_url(
+        self, source_url: str,
+        offset: int,
+        length: int,
+        source_offset: int,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """
         Writes the bytes from one Azure File endpoint into the specified range of another Azure File endpoint.
 
@@ -1235,7 +1354,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :returns: Result after writing to the specified range of the destination Azure File endpoint.
         :rtype: dict[str, Any]
         """
-        options = self._upload_range_from_url_options(
+        options = _upload_range_from_url_options(
             source_url=source_url,
             offset=offset,
             length=length,
@@ -1249,11 +1368,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
     @distributed_trace_async
     async def get_ranges(
-            self, offset=None,  # type: Optional[int]
-            length=None,  # type: Optional[int]
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> List[Dict[str, int]]
+        self, offset: Optional[int] = None,
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> List[Dict[str, int]]:
         """Returns the list of valid page ranges for a file or snapshot
         of a file.
 
@@ -1278,7 +1396,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             A list of valid ranges.
         :rtype: List[dict[str, int]]
         """
-        options = self._get_ranges_options(
+        options = _get_ranges_options(
+            snapshot=self.snapshot,
             offset=offset,
             length=length,
             **kwargs)
@@ -1331,7 +1450,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             The first element are filled file ranges, the 2nd element is cleared file ranges.
         :rtype: tuple[list[dict[str, int]], list[dict[str, int]]]
         """
-        options = self._get_ranges_options(
+        options = _get_ranges_options(
+            snapshot=self.snapshot,
             offset=offset,
             length=length,
             previous_sharesnapshot=previous_sharesnapshot,

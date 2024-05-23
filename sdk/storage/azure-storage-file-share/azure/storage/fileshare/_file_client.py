@@ -14,7 +14,6 @@ from typing import (
     Any, AnyStr, Dict, IO, Iterable, List, Optional, Tuple, Union,
     TYPE_CHECKING
 )
-from urllib.parse import quote, unquote, urlparse
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
@@ -22,6 +21,14 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from ._deserialize import deserialize_file_properties, deserialize_file_stream, get_file_ranges_result
 from ._download import StorageStreamDownloader
+from ._file_client_helpers import (
+    _format_url,
+    _from_file_url,
+    _get_ranges_options,
+    _parse_snapshot,
+    _parse_url,
+    _upload_range_from_url_options
+)
 from ._generated import AzureFileStorage
 from ._generated.models import FileHTTPHeaders
 from ._lease import ShareLeaseClient
@@ -33,7 +40,6 @@ from ._serialize import (
     get_dest_access_conditions,
     get_rename_smb_properties,
     get_smb_properties,
-    get_source_conditions,
     get_source_access_conditions
 )
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
@@ -53,22 +59,23 @@ if TYPE_CHECKING:
 
 
 def _upload_file_helper(
-        client,
-        stream,
-        size,
-        metadata,
-        content_settings,
-        validate_content,
-        timeout,
-        max_concurrency,
-        file_settings,
-        file_attributes="none",
-        file_creation_time="now",
-        file_last_write_time="now",
-        file_permission=None,
-        file_permission_key=None,
-        progress_hook=None,
-        **kwargs):
+    client,
+    stream,
+    size,
+    metadata,
+    content_settings,
+    validate_content,
+    timeout,
+    max_concurrency,
+    file_settings,
+    file_attributes="none",
+    file_creation_time="now",
+    file_last_write_time="now",
+    file_permission=None,
+    file_permission_key=None,
+    progress_hook=None,
+    **kwargs
+):
     try:
         if size is None or size < 0:
             raise ValueError("A content size must be specified for a File.")
@@ -161,41 +168,23 @@ class ShareFileClient(StorageAccountHostsMixin):
         https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
     """
     def __init__(
-            self, account_url: str,
-            share_name: str,
-            file_path: str,
-            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            *,
-            token_intent: Optional[Literal['backup']] = None,
-            **kwargs: Any
-        ) -> None:
+        self, account_url: str,
+        share_name: str,
+        file_path: str,
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        *,
+        token_intent: Optional[Literal['backup']] = None,
+        **kwargs: Any
+    ) -> None:
         if hasattr(credential, 'get_token') and not token_intent:
             raise ValueError("'token_intent' keyword is required when 'credential' is an TokenCredential.")
-        try:
-            if not account_url.lower().startswith('http'):
-                account_url = "https://" + account_url
-        except AttributeError as exc:
-            raise ValueError("Account URL must be a string.") from exc
-        parsed_url = urlparse(account_url.rstrip('/'))
-        if not (share_name and file_path):
-            raise ValueError("Please specify a share name and file name.")
-        if not parsed_url.netloc:
-            raise ValueError(f"Invalid URL: {account_url}")
-
-        path_snapshot = None
+        parsed_url = _parse_url(account_url, share_name, file_path)
         path_snapshot, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError(
                 'You need to provide either an account shared key or SAS token when creating a storage service.')
-        try:
-            self.snapshot = snapshot.snapshot
-        except AttributeError:
-            try:
-                self.snapshot = snapshot['snapshot']
-            except TypeError:
-                self.snapshot = snapshot or path_snapshot
-
+        self.snapshot = _parse_snapshot(snapshot, path_snapshot)
         self.share_name = share_name
         self.file_path = file_path.split('/')
         self.file_name = self.file_path[-1]
@@ -216,11 +205,11 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @classmethod
     def from_file_url(
-            cls, file_url: str,
-            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> Self:
+        cls, file_url: str,
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
         """A client to interact with a specific file, although that file may not yet exist.
 
         :param str file_url: The full URI to the file.
@@ -247,40 +236,21 @@ class ShareFileClient(StorageAccountHostsMixin):
         :returns: A File client.
         :rtype: ~azure.storage.fileshare.ShareFileClient
         """
-        try:
-            if not file_url.lower().startswith('http'):
-                file_url = "https://" + file_url
-        except AttributeError as exc:
-            raise ValueError("File URL must be a string.") from exc
-        parsed_url = urlparse(file_url.rstrip('/'))
-
-        if not (parsed_url.netloc and parsed_url.path):
-            raise ValueError(f"Invalid URL: {file_url}")
-        account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
-
-        path_share, _, path_file = parsed_url.path.lstrip('/').partition('/')
-        path_snapshot, _ = parse_query(parsed_url.query)
-        snapshot = snapshot or path_snapshot
-        share_name = unquote(path_share)
-        file_path = '/'.join([unquote(p) for p in path_file.split('/')])
+        account_url, share_name, file_path, snapshot = _from_file_url(file_url, snapshot)
         return cls(account_url, share_name, file_path, snapshot, credential, **kwargs)
 
-    def _format_url(self, hostname):
-        share_name = self.share_name
-        if isinstance(share_name, str):
-            share_name = share_name.encode('UTF-8')
-        return (f"{self.scheme}://{hostname}/{quote(share_name)}"
-                f"/{'/'.join([quote(p, safe='~') for p in self.file_path])}{self._query_str}")
+    def _format_url(self, hostname: str):
+        return _format_url(self.scheme, hostname, self.share_name, self.file_path, self._query_str)
 
     @classmethod
     def from_connection_string(
-            cls, conn_str: str,
-            share_name: str,
-            file_path: str,
-            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> Self:
+        cls, conn_str: str,
+        share_name: str,
+        file_path: str,
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
         """Create ShareFileClient from a Connection String.
 
         :param str conn_str:
@@ -1295,53 +1265,14 @@ class ShareFileClient(StorageAccountHostsMixin):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    @staticmethod
-    def _upload_range_from_url_options(source_url,  # type: str
-                                       offset,  # type: int
-                                       length,  # type: int
-                                       source_offset,  # type: int
-                                       **kwargs  # type: Any
-                                       ):
-        # type: (...) -> Dict[str, Any]
-
-        if offset is None:
-            raise ValueError("offset must be provided.")
-        if length is None:
-            raise ValueError("length must be provided.")
-        if source_offset is None:
-            raise ValueError("source_offset must be provided.")
-
-        # Format range
-        end_range = offset + length - 1
-        destination_range = f'bytes={offset}-{end_range}'
-        source_range = f'bytes={source_offset}-{source_offset + length - 1}'
-        source_authorization = kwargs.pop('source_authorization', None)
-        source_mod_conditions = get_source_conditions(kwargs)
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        file_last_write_mode = kwargs.pop('file_last_write_mode', None)
-
-        options = {
-            'copy_source_authorization': source_authorization,
-            'copy_source': source_url,
-            'content_length': 0,
-            'source_range': source_range,
-            'range': destination_range,
-            'file_last_written_mode': file_last_write_mode,
-            'source_modified_access_conditions': source_mod_conditions,
-            'lease_access_conditions': access_conditions,
-            'timeout': kwargs.pop('timeout', None),
-            'cls': return_response_headers}
-        options.update(kwargs)
-        return options
-
     @distributed_trace
-    def upload_range_from_url(self, source_url,
-                              offset,
-                              length,
-                              source_offset,
-                              **kwargs
-                              ):
-        # type: (str, int, int, int, **Any) -> Dict[str, Any]
+    def upload_range_from_url(
+        self, source_url: str,
+        offset: int,
+        length: int,
+        source_offset: int,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """
         Writes the bytes from one Azure File endpoint into the specified range of another Azure File endpoint.
 
@@ -1408,7 +1339,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         :returns: Result after writing to the specified range of the destination Azure File endpoint.
         :rtype: dict[str, Any]
         """
-        options = self._upload_range_from_url_options(
+        options = _upload_range_from_url_options(
             source_url=source_url,
             offset=offset,
             length=length,
@@ -1420,45 +1351,12 @@ class ShareFileClient(StorageAccountHostsMixin):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def _get_ranges_options(
-            self, offset=None, # type: Optional[int]
-            length=None, # type: Optional[int]
-            previous_sharesnapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-
-        content_range = None
-        if offset is not None:
-            if length is not None:
-                end_range = offset + length - 1  # Reformat to an inclusive range index
-                content_range = f'bytes={offset}-{end_range}'
-            else:
-                content_range = f'bytes={offset}-'
-        options = {
-            'sharesnapshot': self.snapshot,
-            'lease_access_conditions': access_conditions,
-            'timeout': kwargs.pop('timeout', None),
-            'range': content_range}
-        if previous_sharesnapshot:
-            try:
-                options['prevsharesnapshot'] = previous_sharesnapshot.snapshot
-            except AttributeError:
-                try:
-                    options['prevsharesnapshot'] = previous_sharesnapshot['snapshot']
-                except TypeError:
-                    options['prevsharesnapshot'] = previous_sharesnapshot
-        options.update(kwargs)
-        return options
-
     @distributed_trace
     def get_ranges(
-            self, offset=None,  # type: Optional[int]
-            length=None,  # type: Optional[int]
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> List[Dict[str, int]]
+        self, offset: Optional[int] = None,
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> List[Dict[str, int]]:
         """Returns the list of valid page ranges for a file or snapshot
         of a file.
 
@@ -1483,7 +1381,8 @@ class ShareFileClient(StorageAccountHostsMixin):
             A list of valid ranges.
         :rtype: List[dict[str, int]]
         """
-        options = self._get_ranges_options(
+        options = _get_ranges_options(
+            snapshot=self.snapshot,
             offset=offset,
             length=length,
             **kwargs)
@@ -1536,7 +1435,8 @@ class ShareFileClient(StorageAccountHostsMixin):
             The first element are filled file ranges, the 2nd element is cleared file ranges.
         :rtype: tuple[list[dict[str, str], list[dict[str, str]]
         """
-        options = self._get_ranges_options(
+        options = _get_ranges_options(
+            snapshot=self.snapshot,
             offset=offset,
             length=length,
             previous_sharesnapshot=previous_sharesnapshot,
