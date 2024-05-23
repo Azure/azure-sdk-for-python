@@ -9,6 +9,7 @@
   - Model AmlFilesystemHsmSettings has a new parameter import_prefixes_initial
   - Model AmlFilesystemUpdate has a new parameter root_squash_settings
   - Model ErrorResponse has a new parameter error
+  - Model AscOperation.error changes type from ErrorResponse to AscOperationErrorResponse
 
 ### Breaking Changes
 
