@@ -10,21 +10,18 @@ This package's [documentation](https://github.com/Azure/azure-sdk-for-python/tre
 ### Features Added
 
 - Added support for Liveness detection.
-- Added support for `person` and `dynamic_person_group` operations.
-- Added support for face recognition with `PersonDirectory` (`identify_from_person_directory()` and `identify_from_dynamic_person_group()`).
 - Asynchronous APIs are added under `azure.ai.vision.face.aio` namespace.
 - Authentication with Microsoft Entra ID is supported using `DefaultAzureCredential()` from `azure.identity`.
 
 ### Breaking Changes
 
-- This library supports only the Azure AI Face v1.1-preview.1 API.
+- This library only supports the API of the the operation groups below of [Azure AI Face v1.1-preview.1](https://learn.microsoft.com/rest/api/face/operation-groups?view=rest-face-v1.1-preview.1):
+  - Face Detection Operations
+  - Face Recognition Operations: only `Find Similiar`, `Group` and `Verify Face To Face`.
+  - Liveness Session Operations
 - The namespace/package name for Azure AI Face has changed from `azure.cognitiveservices.vision.face` to `azure.ai.vision.face`.
-- Three client design:
-  - `FaceClient` to perform core Face functions such as face detection, recognition(identification and verification),
-    finding similar faces and grouping faces.
-  - `FaceAdministrationClient` to managed the following data structures that hold data on faces and persons for
-    Face recognition, like `face_list`, `large_face_list`, `person_group`, `large_person_group`, `person` and
-	`dynamic_person_group`.
+- Two client design:
+  - `FaceClient` to perform core Face functions such as face detection, verification, finding similar faces and grouping faces.
   - `FaceSessionClient` to interact with sessions which is used for Liveness detection.
 - New function names that comply with [Azure Python SDK Design Guidelines](https://azure.github.io/azure-sdk/python_design.html):
   - For example, the method `person_group_person.create()` is changed to `create_person_group_person()`.

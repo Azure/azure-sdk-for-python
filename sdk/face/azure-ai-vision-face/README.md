@@ -6,7 +6,6 @@ The Azure AI Face service provides AI algorithms that detect, recognize, and ana
 - Liveness detection
 - Face recognition
   - Face verification ("one-to-one" matching)
-  - Face identification ("one-to-many" matching)
 - Find similar faces
 - Group faces
 
@@ -130,33 +129,6 @@ face_client = FaceClient(endpoint, credential)
  - Finding similar faces from a smaller set of faces that look similar to the target face.
  - Grouping faces into several smaller groups based on similarity.
 
-### FaceAdministrationClient
-
-`FaceAdministrationClient` is provided to interact with the following data structures that hold data on faces and
-persons for Face recognition:
-
- - `person`: It is a container that holds faces and is used by face recognition. It can either not belong to any group or be a member of multiple `dynamic_person_group` simultaneously.
-   - Each person can have up to 248 faces, and the total number of persons can reach 75 million.
-   - For [face verification][face_verification], call `verify_from_person_directory()`.
-   - For [face identification][face_identification], training is not needed before calling `identify_from_person_directory()`.
-   - See [Use the PersonDirectory structure][use_person_directory_structure] to get more information.
- - `dynamic_person_group`: It is a group that can hold several `person`, and is used by face identification.
-   - The total `dynamic_person_group` is unlimited.
-   - Training is not needed before calling `identify_from_dynamic_person_group()`.
-   - See [Use the PersonDirectory structure][use_person_directory_structure] to get more information.
- - `face_list`: It is a list of faces and used by [find similar faces][find_similar] (call `find_similar_from_face_list()`).
-   - It can up to 1,000 faces.
- - `large_face_list`: It is a list of faces which can hold more faces and used by [find similar faces][find_similar].
-   - It can up to 1,000,000 faces.
-   - Training (`begin_train_large_face_list()`) is required before calling `find_similar_from_large_face_list()`.
- - `person_group`: It is a container that store the uploaded person data, including their face recognition features, and is used by face recognition.
-   - It can up to 10,000 persons, with each person capable of holding up to 248 faces.
-   - For [face verification][face_verification], call `verify_from_person_group()`.
-   - For [face identification][face_identification], training (`begin_train_person_group()`) is required before calling `identify_from_person_group()`.
- - `large_person_group`: It is a container which can hold more persons, and is used by face recognition.
-   - It can up to 1,000,000 persons, with each person capable of holding up to 248 faces. The total persons in all `large_person_group` should not exceed 1,000,000,000.
-   - For [face verification][face_verification], call `verify_from_large_person_group()`.
-   - For [face identification][face_identification], training (`begin_train_large_person_group()`) is required before calling `identify_from_large_person_group()`.
 
 ### FaceSessionClient
 
@@ -166,24 +138,12 @@ persons for Face recognition:
  - Query the liveness and verification result.
  - Query the audit result.
 
-### Long-running operations
-
-Long-running operations are operations which consist of an initial request sent to the service to start an operation,
-followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
-succeeded, to get the result.
-
-Methods that train a group (LargeFaceList, PersonGroup or LargePersonGroup), create/delete a Person/DynamicPersonGroup, 
-add a face or delete a face from a Person are modeled as long-running operations.
-The client exposes a `begin_<method-name>` method that returns an `LROPoller` or `AsyncLROPoller`. Callers should wait
-for the operation to complete by calling `result()` on the poller object returned from the `begin_<method-name>` method.
-Sample code snippets are provided to illustrate using long-running operations [below](#examples "Examples").
 
 ## Examples
 
 The following section provides several code snippets covering some of the most common Face tasks, including:
 
 * [Detecting faces in an image](#face-detection "Face Detection")
-* [Identifying the specific face from a LargePersonGroup](#face-recognition-from-largepersongroup "Face Recognition from LargePersonGroup")
 * [Determining if a face in an video is real (live) or fake (spoof)](#liveness-detection "Liveness Detection")
 
 ### Face Detection
@@ -229,103 +189,6 @@ with FaceClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as face_c
     for idx, face in enumerate(result):
         print(f"----- Detection result: #{idx+1} -----")
         print(f"Face: {face.as_dict()}")
-```
-
-### Face Recognition from LargePersonGroup
-Identify a face against a defined LargePersonGroup.
-
-First, we have to use `FaceAdministrationClient` to create a `LargePersonGroup`, add a few `Person` to it,
-and then register faces with these `Person`.
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.vision.face import FaceAdministrationClient, FaceClient
-from azure.ai.vision.face.models import FaceDetectionModel, FaceRecognitionModel
-
-
-def read_file_content(file_path: str):
-    with open(file_path, "rb") as fd:
-        file_content = fd.read()
-
-    return file_content
-
-
-endpoint = "<your endpoint>"
-key = "<your api key>"
-
-large_person_group_id = "lpg_family"
-
-with FaceAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as face_admin_client:
-    print(f"Create a large person group with id: {large_person_group_id}")
-    face_admin_client.create_large_person_group(
-        large_person_group_id, name="My Family", recognition_model=FaceRecognitionModel.RECOGNITION_04
-    )
-
-    print("Create a Person Bill and add a face to him.")
-    bill_person_id = face_admin_client.create_large_person_group_person(
-        large_person_group_id, name="Bill", user_data="Dad"
-    ).person_id
-    bill_image_file_path = "./samples/images/Family1-Dad1.jpg"
-    face_admin_client.add_large_person_group_person_face(
-        large_person_group_id,
-        bill_person_id,
-        read_file_content(bill_image_file_path),
-        detection_model=FaceDetectionModel.DETECTION_03,
-        user_data="Dad-0001",
-    )
-
-    print("Create a Person Clare and add a face to her.")
-    clare_person_id = face_admin_client.create_large_person_group_person(
-        large_person_group_id, name="Clare", user_data="Mom"
-    ).person_id
-    clare_image_file_path = "./samples/images/Family1-Mom1.jpg"
-    face_admin_client.add_large_person_group_person_face(
-        large_person_group_id,
-        clare_person_id,
-        read_file_content(clare_image_file_path),
-        detection_model=FaceDetectionModel.DETECTION_03,
-        user_data="Mom-0001",
-    )
-```
-
-Before doing the identification, we need to train the LargePersonGroup first.
-```python
-    print(f"Start to train the large person group: {large_person_group_id}.")
-    poller = face_admin_client.begin_train_large_person_group(large_person_group_id)
-
-    # Wait for the train operation to be completed.
-    # If the training status isn't succeed, an exception will be thrown from the poller.
-    training_result = poller.result()
-```
-
-When the training operation is completed successfully, we can identify the faces in this LargePersonGroup through
-`FaceClient`.
-```python
-with FaceClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as face_client:
-    # Detect the face from the target image.
-    target_image_file_path = "./samples/images/identification1.jpg"
-    detect_result = face_client.detect(
-        read_file_content(target_image_file_path),
-        detection_model=FaceDetectionModel.DETECTION_03,
-        recognition_model=FaceRecognitionModel.RECOGNITION_04,
-        return_face_id=True,
-    )
-    target_face_ids = list(f.face_id for f in detect_result)
-
-    # Identify the faces in the large person group.
-    result = face_client.identify_from_large_person_group(
-        face_ids=target_face_ids, large_person_group_id=large_person_group_id
-    )
-    for idx, r in enumerate(result):
-        print(f"----- Identification result: #{idx+1} -----")
-        print(f"{r.as_dict()}")
-```
-
-Finally, use `FaceAdministrationClient` to remove the large person group if you don't need it anymore.
-```python
-with FaceAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as face_admin_client:
-    print(f"Delete the large person group: {large_person_group_id}")
-    face_admin_client.delete_large_person_group(large_person_group_id)
 ```
 
 ### Liveness detection
