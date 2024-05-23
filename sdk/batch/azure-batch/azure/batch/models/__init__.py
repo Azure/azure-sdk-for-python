@@ -89,6 +89,7 @@ from ._models import BatchPoolUsageStatistics
 from ._models import BatchStartTask
 from ._models import BatchStartTaskInfo
 from ._models import BatchSubtask
+from ._models import BatchSupportedImage
 from ._models import BatchTask
 from ._models import BatchTaskAddCollectionResult
 from ._models import BatchTaskAddResult
@@ -111,7 +112,7 @@ from ._models import BatchTaskSlotCounts
 from ._models import BatchTaskStatistics
 from ._models import CifsMountConfiguration
 from ._models import ContainerConfiguration
-from ._models import ContainerRegistry
+from ._models import ContainerRegistryReference
 from ._models import DataDisk
 from ._models import DiffDiskSettings
 from ._models import DiskEncryptionConfiguration
@@ -122,10 +123,9 @@ from ._models import ExitConditions
 from ._models import ExitOptions
 from ._models import FileProperties
 from ._models import HttpHeader
-from ._models import ImageInfo
 from ._models import ImageReference
 from ._models import InboundEndpoint
-from ._models import InboundNATPool
+from ._models import InboundNatPool
 from ._models import InstanceViewStatus
 from ._models import LinuxUserConfiguration
 from ._models import ManagedDisk
@@ -297,6 +297,7 @@ __all__ = [
     "BatchStartTask",
     "BatchStartTaskInfo",
     "BatchSubtask",
+    "BatchSupportedImage",
     "BatchTask",
     "BatchTaskAddCollectionResult",
     "BatchTaskAddResult",
@@ -319,7 +320,7 @@ __all__ = [
     "BatchTaskStatistics",
     "CifsMountConfiguration",
     "ContainerConfiguration",
-    "ContainerRegistry",
+    "ContainerRegistryReference",
     "DataDisk",
     "DiffDiskSettings",
     "DiskEncryptionConfiguration",
@@ -330,10 +331,9 @@ __all__ = [
     "ExitOptions",
     "FileProperties",
     "HttpHeader",
-    "ImageInfo",
     "ImageReference",
     "InboundEndpoint",
-    "InboundNATPool",
+    "InboundNatPool",
     "InstanceViewStatus",
     "LinuxUserConfiguration",
     "ManagedDisk",

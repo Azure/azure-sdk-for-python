@@ -5,9 +5,27 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Optional
+from abc import ABC
+from typing import Optional, TYPE_CHECKING
 
 from azure.core import MatchConditions
+
+from ._configuration import BatchClientConfiguration
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core import PipelineClient
+
+    from ._serialization import Deserializer, Serializer
+
+
+class BatchClientMixinABC(ABC):
+    """DO NOT use this class. It is for internal typing use only."""
+
+    _client: "PipelineClient"
+    _config: BatchClientConfiguration
+    _serialize: "Serializer"
+    _deserialize: "Deserializer"
 
 
 def quote_etag(etag: Optional[str]) -> Optional[str]:

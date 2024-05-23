@@ -32,7 +32,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     def create_task_collection(
         self,
         job_id: str,
-        task_collection: _models.BatchTaskCollection,
+        task_collection: _models.BatchTaskAddCollectionResult,
         concurrencies: Optional[int] = 0,
         *,
         time_out_in_seconds: Optional[int] = None,
@@ -59,7 +59,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param job_id: The ID of the Job to which the Task collection is to be added. Required.
         :type job_id: str
         :param task_collection: The Tasks to be added. Required.
-        :type task_collection: ~azure.batch.models.BatchTaskCollection
+        :type task_collection: ~azure.batch.models.BatchTaskAddCollectionResult
         :param concurrencies: number of threads to use in parallel when adding tasks. If specified
         and greater than 0, will start additional threads to submit requests and wait for them to finish.
         Otherwise will submit create_task_collection requests sequentially on main thread
@@ -434,7 +434,7 @@ class _TaskWorkflowManager(object):
     """
 
     def __init__(
-        self, original_create_task_collection, job_id: str, task_collection: _models.BatchTaskCollection, **kwargs
+        self, original_create_task_collection, job_id: str, task_collection: _models.BatchTaskAddCollectionResult, **kwargs
     ):
         # Append operations thread safe - Only read once all threads have completed
         # List of tasks which failed to add due to a returned client error
@@ -471,7 +471,7 @@ class _TaskWorkflowManager(object):
             create_task_collection_response: _models.BatchTaskAddCollectionResult = (
                 self._original_create_task_collection(
                     job_id=self._job_id,
-                    task_collection=_models.BatchTaskCollection(value=chunk_tasks_to_add),
+                    task_collection=_models.BatchTaskAddCollectionResult(value=chunk_tasks_to_add),
                     **self._kwargs
                 )
             )

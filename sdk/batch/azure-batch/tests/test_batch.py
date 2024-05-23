@@ -37,6 +37,7 @@ from devtools_testutils import (
     CachedResourceGroupPreparer,
     set_custom_default_matcher,
 )
+
 # from azure_devtools.scenario_tests.recording_processors import (
 #     GeneralNameReplacer,
 #     RecordingProcessor,
@@ -118,7 +119,6 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 pytest.fail("Inner BatchErrorException expected but not exist")
         except Exception as err:
             pytest.fail("Expected CreateTasksError, instead got: {!r}".format(err))
-
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -255,7 +255,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test List Pools with Filter
         pools = list(
             await async_wrapper(
-                client.batch_api.list_pools(
+                client.list_pools(
                     filter="startswith(id,'batch_ade_')",
                     select=["id,state"],
                     expand=["stats"],
@@ -337,7 +337,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             target_node_communication_mode=models.BatchNodeCommunicationMode.classic,
         )
         # certRef = { "certificateReferences": [] }
-        response = await async_wrapper(client.batch_api.replace_pool_properties(test_paas_pool.id, params))
+        response = await async_wrapper(client.replace_pool_properties(test_paas_pool.id, params))
         assert response is None
 
         # Test Patch Pool Options
@@ -350,7 +350,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response
 
         # Test Get Pool
-        pool = await async_wrapper(client.batch_api.get_pool(test_paas_pool.id))
+        pool = await async_wrapper(client.get_pool(test_paas_pool.id))
         assert isinstance(pool, models.BatchPool)
         assert pool.id == test_paas_pool.id
         assert pool.state == models.BatchPoolState.active

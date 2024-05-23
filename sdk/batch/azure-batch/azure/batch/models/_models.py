@@ -410,12 +410,12 @@ class BatchAccountListSupportedImagesResult(_model_base.Model):
     """The result of listing the supported Virtual Machine Images.
 
     :ivar value: The list of supported Virtual Machine Images.
-    :vartype value: list[~azure.batch.models.ImageInfo]
+    :vartype value: list[~azure.batch.models.BatchSupportedImage]
     :ivar odata_next_link: The URL to get the next set of results.
     :vartype odata_next_link: str
     """
 
-    value: Optional[List["_models.ImageInfo"]] = rest_field()
+    value: Optional[List["_models.BatchSupportedImage"]] = rest_field()
     """The list of supported Virtual Machine Images."""
     odata_next_link: Optional[str] = rest_field(name="odata.nextLink")
     """The URL to get the next set of results."""
@@ -424,7 +424,7 @@ class BatchAccountListSupportedImagesResult(_model_base.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.ImageInfo"]] = None,
+        value: Optional[List["_models.BatchSupportedImage"]] = None,
         odata_next_link: Optional[str] = None,
     ): ...
 
@@ -4907,10 +4907,10 @@ class BatchPoolEndpointConfiguration(_model_base.Model):
      Pool is 5. If the maximum number of inbound NAT Pools is exceeded the request fails with HTTP
      status code 400. This cannot be specified if the IPAddressProvisioningType is
      NoPublicIPAddresses. Required.
-    :vartype inbound_nat_pools: list[~azure.batch.models.InboundNATPool]
+    :vartype inbound_nat_pools: list[~azure.batch.models.InboundNatPool]
     """
 
-    inbound_nat_pools: List["_models.InboundNATPool"] = rest_field(name="inboundNATPools")
+    inbound_nat_pools: List["_models.InboundNatPool"] = rest_field(name="inboundNATPools")
     """A list of inbound NAT Pools that can be used to address specific ports on an individual Compute
      Node externally. The maximum number of inbound NAT Pools per Batch Pool is 5. If the maximum
      number of inbound NAT Pools is exceeded the request fails with HTTP status code 400. This
@@ -4920,7 +4920,7 @@ class BatchPoolEndpointConfiguration(_model_base.Model):
     def __init__(
         self,
         *,
-        inbound_nat_pools: List["_models.InboundNATPool"],
+        inbound_nat_pools: List["_models.InboundNatPool"],
     ): ...
 
     @overload
@@ -6267,6 +6267,74 @@ class BatchSubtask(_model_base.Model):  # pylint: disable=too-many-instance-attr
         super().__init__(*args, **kwargs)
 
 
+class BatchSupportedImage(_model_base.Model):
+    """A reference to the Azure Virtual Machines Marketplace Image and additional
+    information about the Image.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar node_agent_sku_id: The ID of the Compute Node agent SKU which the Image supports.
+     Required.
+    :vartype node_agent_sku_id: str
+    :ivar image_reference: The reference to the Azure Virtual Machine's Marketplace Image.
+     Required.
+    :vartype image_reference: ~azure.batch.models.ImageReference
+    :ivar os_type: The type of operating system (e.g. Windows or Linux) of the Image. Required.
+     Known values are: "linux" and "windows".
+    :vartype os_type: str or ~azure.batch.models.OSType
+    :ivar capabilities: The capabilities or features which the Image supports. Not every capability
+     of the Image is listed. Capabilities in this list are considered of special interest and are
+     generally related to integration with other features in the Azure Batch service.
+    :vartype capabilities: list[str]
+    :ivar batch_support_end_of_life: The time when the Azure Batch service will stop accepting
+     create Pool requests for the Image.
+    :vartype batch_support_end_of_life: ~datetime.datetime
+    :ivar verification_type: Whether the Azure Batch service actively verifies that the Image is
+     compatible with the associated Compute Node agent SKU. Required. Known values are: "verified"
+     and "unverified".
+    :vartype verification_type: str or ~azure.batch.models.ImageVerificationType
+    """
+
+    node_agent_sku_id: str = rest_field(name="nodeAgentSKUId")
+    """The ID of the Compute Node agent SKU which the Image supports. Required."""
+    image_reference: "_models.ImageReference" = rest_field(name="imageReference")
+    """The reference to the Azure Virtual Machine's Marketplace Image. Required."""
+    os_type: Union[str, "_models.OSType"] = rest_field(name="osType")
+    """The type of operating system (e.g. Windows or Linux) of the Image. Required. Known values are:
+     \"linux\" and \"windows\"."""
+    capabilities: Optional[List[str]] = rest_field()
+    """The capabilities or features which the Image supports. Not every capability of the Image is
+     listed. Capabilities in this list are considered of special interest and are generally related
+     to integration with other features in the Azure Batch service."""
+    batch_support_end_of_life: Optional[datetime.datetime] = rest_field(name="batchSupportEndOfLife", format="rfc3339")
+    """The time when the Azure Batch service will stop accepting create Pool requests for the Image."""
+    verification_type: Union[str, "_models.ImageVerificationType"] = rest_field(name="verificationType")
+    """Whether the Azure Batch service actively verifies that the Image is compatible with the
+     associated Compute Node agent SKU. Required. Known values are: \"verified\" and \"unverified\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        node_agent_sku_id: str,
+        image_reference: "_models.ImageReference",
+        os_type: Union[str, "_models.OSType"],
+        verification_type: Union[str, "_models.ImageVerificationType"],
+        capabilities: Optional[List[str]] = None,
+        batch_support_end_of_life: Optional[datetime.datetime] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class BatchTask(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     """Batch will retry Tasks when a recovery operation is triggered on a Node.
     Examples of recovery operations include (but are not limited to) when an
@@ -6741,7 +6809,7 @@ class BatchTaskContainerSettings(_model_base.Model):
     :vartype image_name: str
     :ivar registry: The private registry which contains the container Image. This setting can be
      omitted if was already provided at Pool creation.
-    :vartype registry: ~azure.batch.models.ContainerRegistry
+    :vartype registry: ~azure.batch.models.ContainerRegistryReference
     :ivar working_directory: The location of the container Task working directory. The default is
      'taskWorkingDirectory'. Known values are: "taskWorkingDirectory" and "containerImageDefault".
     :vartype working_directory: str or ~azure.batch.models.ContainerWorkingDirectory
@@ -6755,7 +6823,7 @@ class BatchTaskContainerSettings(_model_base.Model):
     """The Image to use to create the container in which the Task will run. This is the full Image
      reference, as would be specified to \"docker pull\". If no tag is provided as part of the Image
      name, the tag \":latest\" is used as a default. Required."""
-    registry: Optional["_models.ContainerRegistry"] = rest_field()
+    registry: Optional["_models.ContainerRegistryReference"] = rest_field()
     """The private registry which contains the container Image. This setting can be omitted if was
      already provided at Pool creation."""
     working_directory: Optional[Union[str, "_models.ContainerWorkingDirectory"]] = rest_field(name="workingDirectory")
@@ -6768,7 +6836,7 @@ class BatchTaskContainerSettings(_model_base.Model):
         *,
         image_name: str,
         container_run_options: Optional[str] = None,
-        registry: Optional["_models.ContainerRegistry"] = None,
+        registry: Optional["_models.ContainerRegistryReference"] = None,
         working_directory: Optional[Union[str, "_models.ContainerWorkingDirectory"]] = None,
     ): ...
 
@@ -7751,7 +7819,7 @@ class ContainerConfiguration(_model_base.Model):
     :ivar container_registries: Additional private registries from which containers can be pulled.
      If any Images must be downloaded from a private registry which requires credentials, then those
      credentials must be provided here.
-    :vartype container_registries: list[~azure.batch.models.ContainerRegistry]
+    :vartype container_registries: list[~azure.batch.models.ContainerRegistryReference]
     """
 
     type: Union[str, "_models.ContainerType"] = rest_field()
@@ -7761,7 +7829,7 @@ class ContainerConfiguration(_model_base.Model):
     """The collection of container Image names. This is the full Image reference, as would be
      specified to \"docker pull\". An Image will be sourced from the default Docker registry unless
      the Image is fully qualified with an alternative registry."""
-    container_registries: Optional[List["_models.ContainerRegistry"]] = rest_field(name="containerRegistries")
+    container_registries: Optional[List["_models.ContainerRegistryReference"]] = rest_field(name="containerRegistries")
     """Additional private registries from which containers can be pulled. If any Images must be
      downloaded from a private registry which requires credentials, then those credentials must be
      provided here."""
@@ -7772,7 +7840,7 @@ class ContainerConfiguration(_model_base.Model):
         *,
         type: Union[str, "_models.ContainerType"],
         container_image_names: Optional[List[str]] = None,
-        container_registries: Optional[List["_models.ContainerRegistry"]] = None,
+        container_registries: Optional[List["_models.ContainerRegistryReference"]] = None,
     ): ...
 
     @overload
@@ -7786,7 +7854,7 @@ class ContainerConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerRegistry(_model_base.Model):
+class ContainerRegistryReference(_model_base.Model):
     """A private container registry.
 
     :ivar username: The user name to log into the registry server.
@@ -8287,74 +8355,6 @@ class HttpHeader(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageInfo(_model_base.Model):
-    """A reference to the Azure Virtual Machines Marketplace Image and additional
-    information about the Image.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar node_agent_sku_id: The ID of the Compute Node agent SKU which the Image supports.
-     Required.
-    :vartype node_agent_sku_id: str
-    :ivar image_reference: The reference to the Azure Virtual Machine's Marketplace Image.
-     Required.
-    :vartype image_reference: ~azure.batch.models.ImageReference
-    :ivar os_type: The type of operating system (e.g. Windows or Linux) of the Image. Required.
-     Known values are: "linux" and "windows".
-    :vartype os_type: str or ~azure.batch.models.OSType
-    :ivar capabilities: The capabilities or features which the Image supports. Not every capability
-     of the Image is listed. Capabilities in this list are considered of special interest and are
-     generally related to integration with other features in the Azure Batch service.
-    :vartype capabilities: list[str]
-    :ivar batch_support_end_of_life: The time when the Azure Batch service will stop accepting
-     create Pool requests for the Image.
-    :vartype batch_support_end_of_life: ~datetime.datetime
-    :ivar verification_type: Whether the Azure Batch service actively verifies that the Image is
-     compatible with the associated Compute Node agent SKU. Required. Known values are: "verified"
-     and "unverified".
-    :vartype verification_type: str or ~azure.batch.models.ImageVerificationType
-    """
-
-    node_agent_sku_id: str = rest_field(name="nodeAgentSKUId")
-    """The ID of the Compute Node agent SKU which the Image supports. Required."""
-    image_reference: "_models.ImageReference" = rest_field(name="imageReference")
-    """The reference to the Azure Virtual Machine's Marketplace Image. Required."""
-    os_type: Union[str, "_models.OSType"] = rest_field(name="osType")
-    """The type of operating system (e.g. Windows or Linux) of the Image. Required. Known values are:
-     \"linux\" and \"windows\"."""
-    capabilities: Optional[List[str]] = rest_field()
-    """The capabilities or features which the Image supports. Not every capability of the Image is
-     listed. Capabilities in this list are considered of special interest and are generally related
-     to integration with other features in the Azure Batch service."""
-    batch_support_end_of_life: Optional[datetime.datetime] = rest_field(name="batchSupportEndOfLife", format="rfc3339")
-    """The time when the Azure Batch service will stop accepting create Pool requests for the Image."""
-    verification_type: Union[str, "_models.ImageVerificationType"] = rest_field(name="verificationType")
-    """Whether the Azure Batch service actively verifies that the Image is compatible with the
-     associated Compute Node agent SKU. Required. Known values are: \"verified\" and \"unverified\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        node_agent_sku_id: str,
-        image_reference: "_models.ImageReference",
-        os_type: Union[str, "_models.OSType"],
-        verification_type: Union[str, "_models.ImageVerificationType"],
-        capabilities: Optional[List[str]] = None,
-        batch_support_end_of_life: Optional[datetime.datetime] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class ImageReference(_model_base.Model):
     """A reference to an Azure Virtual Machines Marketplace Image or a Azure Compute Gallery Image.
     To get the list of all Azure Marketplace Image references verified by Azure Batch, see the
@@ -8498,7 +8498,7 @@ class InboundEndpoint(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class InboundNATPool(_model_base.Model):
+class InboundNatPool(_model_base.Model):
     """A inbound NAT Pool that can be used to address specific ports on Compute Nodes
     in a Batch Pool externally.
 
