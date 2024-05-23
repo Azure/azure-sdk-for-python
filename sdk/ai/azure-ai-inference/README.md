@@ -24,11 +24,9 @@ Note that for inference using OpenAI models hosted on Azure you should be using 
 
 * [Python 3.8](https://www.python.org/) or later installed, including [pip](https://pip.pypa.io/en/stable/).
 * An [Azure subscription](https://azure.microsoft.com/free).
-* An [AI Model from the catalog](https://ai.azure.com/explore/models) deployed through Azure AI Studio. To construct the client library, you will need to pass in the endpoint URL and key associated with your deployed AI model.
-
-  * The endpoint URL has the form `https://your-deployment-name.your-azure-region.inference.ai.azure.com`, where `your-deployment-name` is your unique model deployment name and `your-azure-region` is the Azure region where the model is deployed (e.g. `eastus2`).
-
-  * The key is a 32-character string.
+* An [AI Model from the catalog](https://ai.azure.com/explore/models) deployed through Azure AI Studio.
+* To construct the client library, you will need to pass in the endpoint URL. The endpoint URL has the form `https://your-deployment-name.your-azure-region.inference.ai.azure.com`, where `your-deployment-name` is your unique model deployment name and `your-azure-region` is the Azure region where the model is deployed (e.g. `eastus2`).
+* Depending on your model deployment, you either need a key to authenticate against the service, or Entra ID credentials. The key is a 32-character string.
 
 ### Install the package
 
@@ -46,7 +44,7 @@ pip install --upgrade azure-ai-inferencing
 
 ## Key concepts
 
-### Create and authenticate a client directly
+### Create and authenticate a client directly, using key
 
 The package includes two clients `ChatCompletionsClient` and `EmbeddingsClient` <!-- and `ImageGenerationClients`-->. Both can be created in the similar manner. For example, assuming `endpoint` and `key` are strings holding your endpoint URL and key, this Python code will create and authenticate a synchronous `ChatCompletionsClient`:
 
@@ -81,6 +79,26 @@ client = ChatCompletionsClient(
 )
 ```
 
+### Create and authenticate a client directly, using Entra ID
+
+To use an Entra ID token credential, firs install the [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity) package:
+
+```python
+pip install azure.identity
+```
+
+You will need to provide the desired credential type obtained from that package. A common selection is [DefaultAzureCredential](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential) and it can be used as follows:
+
+```python
+from azure.ai.inference import ChatCompletionsClient
+from azure.identity import DefaultAzureCredential
+
+client = ChatCompletionsClient(
+    endpoint=endpoint,
+    credential=DefaultAzureCredential()
+)
+```
+
 ### Create and authentice clients using `load_client`
 
 As an alternative to creating a specific client directly, you can use the function `load_client` to return the relevant client (of types `ChatCompletionsClient` or `EmbeddingsClient`) based on the provided endpoint:
@@ -98,6 +116,8 @@ print(f"Created client of type `{type(client).__name__}`.")
 ```
 
 To load an asynchronous client, import the `load_client` function from `azure.ai.inference.aio` instead.
+
+Entra ID authentication is also supported by the `load_client` function. Replace the key authentication above with `credential=DefaultAzureCredential()` for example.
 
 ### Getting AI model information
 

@@ -9,7 +9,7 @@ DESCRIPTION:
     JSON request body (containing input chat messages).
 
 USAGE:
-    python sample_chat_completions_from_input_json_async
+    python sample_chat_completions_from_input_json_async.py
 
     Set these two environment variables before running the sample:
     1) CHAT_COMPLETIONS_ENDPOINT - Your endpoint URL, in the form 

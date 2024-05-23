@@ -9,7 +9,7 @@ DESCRIPTION:
     clients.
 
 USAGE:
-    python sample_get_model_info
+    python sample_get_model_info.py
 
     Set these two environment variables before running the sample:
     1) CHAT_COMPLETIONS_ENDPOINT - Your endpoint URL, in the form 

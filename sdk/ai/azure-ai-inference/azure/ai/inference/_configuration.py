@@ -47,7 +47,7 @@ class ChatCompletionsClientConfiguration:  # pylint: disable=too-many-instance-a
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop("credential_scopes", ["https://cognitiveservices.azure.com/.default"])
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://ml.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "ai-inference/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)

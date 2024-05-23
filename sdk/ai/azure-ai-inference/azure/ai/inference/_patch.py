@@ -126,13 +126,15 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage]
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
+         This sets the HTTP request header `azureml-model-deployment`.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
         :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
-         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         request payload. This sets the HTTP request header `unknown-parameters`.
+         Known values are: "error", "ignore", and "allow". Default value is None.
          The service defaults to "error" in this case.
-        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams        
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -223,11 +225,13 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to self-hosted endpoints (previously known as Model-as-a-Platform (MaaP)
          or "real-time endpoints").
+         This sets the HTTP request header `azureml-model-deployment`.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
         :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
-         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         request payload. This sets the HTTP request header `unknown-parameters`.
+         Known values are: "error", "ignore", and "allow". Default value is None.
          The service defaults to "error" in this case.
         :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -259,11 +263,13 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :type body: IO[bytes]
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
+         This sets the HTTP request header `azureml-model-deployment`.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
         :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
-         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         request payload. This sets the HTTP request header `unknown-parameters`.
+         Known values are: "error", "ignore", and "allow". Default value is None.
          The service defaults to "error" in this case.
         :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams        
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -315,11 +321,13 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage]
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
+         This sets the HTTP request header `azureml-model-deployment`.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
         :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
-         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         request payload. This sets the HTTP request header `unknown-parameters`.
+         Known values are: "error", "ignore", and "allow". Default value is None.
          The service defaults to "error" in this case.
         :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword hyper_params: Additional, model-specific parameters that are not in the
@@ -509,11 +517,13 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :paramtype input: list[str]
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
+         This sets the HTTP request header `azureml-model-deployment`.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
         :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
-         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         request payload. This sets the HTTP request header `unknown-parameters`.
+         Known values are: "error", "ignore", and "allow". Default value is None.
          The service defaults to "error" in this case.
         :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -563,11 +573,13 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :type body: JSON
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
+         This sets the HTTP request header `azureml-model-deployment`.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
         :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
-         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         request payload. This sets the HTTP request header `unknown-parameters`.
+         Known values are: "error", "ignore", and "allow". Default value is None.
          The service defaults to "error" in this case.
         :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams        
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -594,11 +606,13 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :type body: IO[bytes]
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
+         This sets the HTTP request header `azureml-model-deployment`.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
         :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
-         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         request payload. This sets the HTTP request header `unknown-parameters`.
+         Known values are: "error", "ignore", and "allow". Default value is None.
          The service defaults to "error" in this case.
         :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -639,11 +653,13 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :paramtype input: list[str]
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
+         This sets the HTTP request header `azureml-model-deployment`.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
         :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
-         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         request payload. This sets the HTTP request header `unknown-parameters`.
+         Known values are: "error", "ignore", and "allow". Default value is None.
          The service defaults to "error" in this case.
         :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
@@ -780,11 +796,13 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :paramtype input: list[~azure.ai.inference.models.EmbeddingInput]
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
+         This sets the HTTP request header `azureml-model-deployment`.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
         :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
-         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         request payload. This sets the HTTP request header `unknown-parameters`.
+         Known values are: "error", "ignore", and "allow". Default value is None.
          The service defaults to "error" in this case.
         :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -834,11 +852,13 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :type body: JSON
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
+         This sets the HTTP request header `azureml-model-deployment`.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
         :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
-         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         request payload. This sets the HTTP request header `unknown-parameters`.
+         Known values are: "error", "ignore", and "allow". Default value is None.
          The service defaults to "error" in this case.
         :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -865,11 +885,13 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :type body: IO[bytes]
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
+         This sets the HTTP request header `azureml-model-deployment`.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
         :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
-         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         request payload. This sets the HTTP request header `unknown-parameters`.
+         Known values are: "error", "ignore", and "allow". Default value is None.
          The service defaults to "error" in this case.
         :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -910,11 +932,13 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :paramtype input: list[~azure.ai.inference.models.EmbeddingInput]
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
+         This sets the HTTP request header `azureml-model-deployment`.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
         :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
-         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         request payload. This sets the HTTP request header `unknown-parameters`.
+         Known values are: "error", "ignore", and "allow". Default value is None.
          The service defaults to "error" in this case.
         :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
