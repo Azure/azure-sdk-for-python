@@ -219,10 +219,6 @@ def _get_process_time_normalized_old(options: CallbackOptions) -> Iterable[Obser
         _set_quickpulse_process_elapsed_time(current_time)
         # Obtain cpu % by dividing by elapsed time
         cpu_percentage = process_time_s / elapsed_time_s
-        print(process_time_s)
-        print(elapsed_time_s)
-        print(cpu_percentage)
-        print(NUM_CPUS)
         # Normalize by dividing by amount of logical cpus
         normalized_cpu_percentage = cpu_percentage / NUM_CPUS
         _set_quickpulse_last_process_cpu(normalized_cpu_percentage)
@@ -233,7 +229,6 @@ def _get_process_time_normalized_old(options: CallbackOptions) -> Iterable[Obser
 
 # pylint: disable=unused-argument
 def _get_process_time_normalized(options: CallbackOptions) -> Iterable[Observation]:
-    normalized_cpu_percentage = _get_quickpulse_last_process_cpu()
     yield Observation(_get_quickpulse_last_process_cpu(), {})
 
 # cSpell:enable

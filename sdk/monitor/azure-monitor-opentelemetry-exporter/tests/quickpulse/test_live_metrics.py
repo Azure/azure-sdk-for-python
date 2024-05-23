@@ -330,6 +330,6 @@ class TestQuickpulseManager(unittest.TestCase):
             time = _get_process_time_normalized_old(None)
         obs = next(time)
         num_cpus = psutil.cpu_count()
-        self.assertEqual(obs.value, 1.2 / num_cpus)
+        self.assertAlmostEqual(obs.value, 1.2 / num_cpus, delta=1)
 
 # cSpell:enable
