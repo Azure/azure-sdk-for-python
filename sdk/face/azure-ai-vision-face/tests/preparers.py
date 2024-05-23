@@ -48,7 +48,7 @@ class ClientPreparer(AzureMgmtPreparer):
 FacePreparer = functools.partial(
     EnvironmentVariableLoader,
     "face",
-    azure_face_api_endpoint="https://fakeendpoint.cognitiveservices.azure.com/",
+    azure_face_api_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
     azure_face_api_name="fakeaccountname",
     azure_face_api_account_key="fakeaccountkey",
 )
