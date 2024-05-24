@@ -29,6 +29,8 @@ SUPPORTED_RETURN_TYPES_PRIMITIVE = list(IOConstants.PRIMITIVE_TYPE_2_STR.keys())
 
 Annotation: TypeAlias = Union[str, Type, Annotated, None]  # type: ignore
 
+# Use `get_type_hints` from `typing_extensions` instead of `typing` because the former has annotations for the signature
+# Python 3.8 and older
 @overload
 def get_type_hints(
     obj: Callable[..., Any],
@@ -37,6 +39,8 @@ def get_type_hints(
 ) -> Dict[str, Any]:
     ...
 
+# Python 3.9 and newer
+# The `include_extras` parameter was added in Python 3.9 as part of PEP 593
 @overload
 def get_type_hints(
     obj: Callable[..., Any],
@@ -354,9 +358,10 @@ def _get_param_with_standard_annotation(
     # From annotations get field with type
     annotations: Dict[str, Annotation]
     try:
+        # Python 3.9 and newer
         annotations = get_type_hints(cls_or_func, include_extras=True)
-    # `include_extras` parameter was added in Python 3.9 as part of PEP 593
     except TypeError:
+        # Python 3.8 and older
         annotations = get_type_hints(cls_or_func)
     annotations = {k: v for k, v in annotations.items() if k not in skip_params}
     annotations = _update_io_from_mldesigner(annotations)
