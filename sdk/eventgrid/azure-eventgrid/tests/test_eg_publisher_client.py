@@ -152,9 +152,11 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
         )
         client.send(cloud_event)
 
+    @pytest.mark.live_test_only
     @EventGridPreparer()
-    @recorded_by_proxy
-    def test_send_cloud_event_data_dict_namespace(self, eventgrid_endpoint, eventgrid_topic_name):
+    def test_send_cloud_event_data_dict_namespace(self, **kwargs):
+        eventgrid_endpoint = kwargs["eventgrid_endpoint"]
+        eventgrid_topic_name = kwargs["eventgrid_topic_name"]
         client = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
