@@ -135,13 +135,13 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
                 raise TypeError("EventGridEvent is not supported for Event Grid Namespaces.")
             try:
                 # Try to send via namespace
-                self._send(self._namespace, _serialize_events(events), **kwargs)
+                self._publish(self._namespace, _serialize_events(events), **kwargs)
             except Exception as exception:  # pylint: disable=broad-except
                 self._http_response_error_handler(exception, "Namespaces")
                 raise exception
         else:
             try:
-                self._send(events, channel_name=channel_name, content_type=content_type, **kwargs)
+                self._publish(events, channel_name=channel_name, content_type=content_type, **kwargs)
             except Exception as exception:
                 self._http_response_error_handler(exception, "Basic")
                 raise exception

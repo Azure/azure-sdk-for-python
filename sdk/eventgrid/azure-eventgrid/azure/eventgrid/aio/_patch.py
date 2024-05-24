@@ -60,7 +60,7 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
             self._client = LegacyEventGridPublisherClient(  # type: ignore[assignment]
                 endpoint, credential, api_version=api_version or DEFAULT_BASIC_API_VERSION, **kwargs
             )
-            self._send = self._client.send  # type: ignore[attr-defined]
+            self._publish = self._client.send  # type: ignore[attr-defined]
         else:
             if isinstance(credential, AzureSasCredential):
                 raise TypeError("SAS token authentication is not supported for the standard client.")
@@ -71,7 +71,7 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
                 api_version=api_version or DEFAULT_STANDARD_API_VERSION,
                 **kwargs
             )
-            self._send = self._send_events
+            self._publish = self._send_events
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
