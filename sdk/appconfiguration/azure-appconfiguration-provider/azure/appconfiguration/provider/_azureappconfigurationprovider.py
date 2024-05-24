@@ -29,15 +29,18 @@ from typing import (
     TypeVar,
 )
 from azure.core import MatchConditions
-from azure.appconfiguration import (
-    SecretReferenceConfigurationSetting,
+from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     FeatureFlagConfigurationSetting,
+    SecretReferenceConfigurationSetting,
     ConfigurationSetting,
 )
 from azure.core.exceptions import HttpResponseError
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
 from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 from ._constants import (
+    FEATURE_MANAGEMENT_KEY,
+    FEATURE_FLAG_KEY,
+    FEATURE_FLAG_PREFIX,
     REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE,
     ServiceFabricEnvironmentVariable,
     AzureFunctionEnvironmentVariable,
@@ -45,9 +48,6 @@ from ._constants import (
     ContainerAppEnvironmentVariable,
     KubernetesEnvironmentVariable,
     EMPTY_LABEL,
-    FEATURE_MANAGEMENT_KEY,
-    FEATURE_FLAG_KEY,
-    FEATURE_FLAG_PREFIX,
     PERCENTAGE_FILTER_NAMES,
     TIME_WINDOW_FILTER_NAMES,
     TARGETING_FILTER_NAMES,
@@ -233,6 +233,15 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     return provider
 
 
+def _delay_failure(start_time: datetime.datetime) -> None:
+    # We want to make sure we are up a minimum amount of time before we kill the process. Otherwise, we could get stuck
+    # in a quick restart loop.
+    min_time = datetime.timedelta(seconds=min_uptime)
+    current_time = datetime.datetime.now()
+    if current_time - start_time < min_time:
+        time.sleep((min_time - (current_time - start_time)).total_seconds())
+
+
 def _get_headers(request_type, **kwargs) -> str:
     headers = kwargs.pop("headers", {})
     if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, default="").lower() == "true":
@@ -277,15 +286,6 @@ def _get_headers(request_type, **kwargs) -> str:
 
     headers["Correlation-Context"] = correlation_context
     return headers
-
-
-def _delay_failure(start_time: datetime.datetime) -> None:
-    # We want to make sure we are up a minimum amount of time before we kill the process. Otherwise, we could get stuck
-    # in a quick restart loop.
-    min_time = datetime.timedelta(seconds=min_uptime)
-    current_time = datetime.datetime.now()
-    if current_time - start_time < min_time:
-        time.sleep((min_time - (current_time - start_time)).total_seconds())
 
 
 def _uses_feature_flags(**kwargs):
@@ -639,9 +639,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         """
         Checks if the configuration setting have been updated since the last refresh.
         :param str key: key to check for chances
-        :param str key: key to check for chances
-        :param str key: key to check for chances
-        :param str key: key to check for chances
+        :param str label: label to check for changes
+        :param str etag: etag to check for changes
+        :param Mapping[str, str] headers: headers to use for the request
         :return: A tuple with the first item being true/false if a change is detected. The second item is the updated
         value if a change was detected.
         :rtype: Tuple[bool, Union[ConfigurationSetting, None]]
