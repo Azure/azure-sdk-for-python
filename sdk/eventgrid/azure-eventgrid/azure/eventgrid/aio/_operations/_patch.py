@@ -86,7 +86,7 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
             pass
 
         if self._namespace:
-            kwargs["content_type"] = content_type or "application/cloudevents-batch+json; charset=utf-8"
+            kwargs["content_type"] = content_type if content_type else "application/cloudevents-batch+json; charset=utf-8"
             if not isinstance(events, list):
                 events = [events]
 
@@ -99,6 +99,7 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
                 self._http_response_error_handler(exception, "Namespaces")
                 raise exception
         else:
+            kwargs["content_type"] = content_type if content_type else "application/json; charset=utf-8"
             try:
                 await self._publish(events, channel_name=channel_name, content_type=content_type, **kwargs)
             except Exception as exception:
