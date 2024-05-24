@@ -33,17 +33,6 @@ def _parse_url(account_url: str, share_name: str, file_path: str) -> "ParseResul
     return parsed_url
 
 
-def _parse_snapshot(
-    snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-    path_snapshot: Optional[str] = None
-) -> Optional[str]:
-    if hasattr(snapshot, 'snapshot'):
-        return snapshot.snapshot
-    if isinstance(snapshot, Dict):
-        return snapshot['snapshot']
-    return snapshot or path_snapshot
-
-
 def _from_file_url(
     file_url: str,
     snapshot: Optional[Union[str, Dict[str, Any]]] = None

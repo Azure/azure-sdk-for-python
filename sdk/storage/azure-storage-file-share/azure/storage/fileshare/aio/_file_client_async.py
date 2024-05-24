@@ -27,13 +27,12 @@ from .._file_client_helpers import (
     _format_url,
     _from_file_url,
     _get_ranges_options,
-    _parse_snapshot,
     _parse_url,
     _upload_range_from_url_options
 )
 from .._generated.aio import AzureFileStorage
 from .._generated.models import FileHTTPHeaders
-from .._parser import _datetime_to_str, _get_file_permission
+from .._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
 from .._serialize import (
     get_access_conditions,
     get_api_version,
