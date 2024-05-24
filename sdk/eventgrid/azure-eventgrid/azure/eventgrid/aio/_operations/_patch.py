@@ -101,7 +101,7 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
         else:
             kwargs["content_type"] = content_type if content_type else "application/json; charset=utf-8"
             try:
-                await self._publish(events, channel_name=channel_name, content_type=content_type, **kwargs)
+                await self._publish(events, channel_name=channel_name, **kwargs)
             except Exception as exception:
                 self._http_response_error_handler(exception, "Basic")
                 raise exception
