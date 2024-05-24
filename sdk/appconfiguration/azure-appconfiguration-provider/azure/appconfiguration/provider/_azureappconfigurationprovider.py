@@ -28,12 +28,12 @@ from typing import (
     ValuesView,
     TypeVar,
 )
-from azure.core import MatchConditions
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
     ConfigurationSetting,
 )
+from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
 from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
@@ -638,6 +638,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     ) -> Tuple[bool, Union[ConfigurationSetting, None]]:
         """
         Checks if the configuration setting have been updated since the last refresh.
+
         :param str key: key to check for chances
         :param str label: label to check for changes
         :param str etag: etag to check for changes
