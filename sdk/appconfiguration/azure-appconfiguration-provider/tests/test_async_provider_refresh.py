@@ -108,7 +108,7 @@ try:
                 assert has_feature_flag(client, "Alpha")
 
                 appconfig_client = client._client
-                
+
                 setting = await appconfig_client.get_configuration_setting(key="refresh_message")
                 setting.value = "updated value"
                 await appconfig_client.set_configuration_setting(setting)

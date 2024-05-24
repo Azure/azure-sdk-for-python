@@ -29,7 +29,11 @@ from typing import (
     TypeVar,
 )
 from azure.core import MatchConditions
-from azure.appconfiguration import SecretReferenceConfigurationSetting, FeatureFlagConfigurationSetting, ConfigurationSetting
+from azure.appconfiguration import (
+    SecretReferenceConfigurationSetting,
+    FeatureFlagConfigurationSetting,
+    ConfigurationSetting,
+)
 from azure.core.exceptions import HttpResponseError
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
 from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
@@ -282,6 +286,7 @@ def _delay_failure(start_time: datetime.datetime) -> None:
     current_time = datetime.datetime.now()
     if current_time - start_time < min_time:
         time.sleep((min_time - (current_time - start_time)).total_seconds())
+
 
 def _uses_feature_flags(**kwargs):
     if not kwargs.pop("uses_feature_flags", False):
@@ -628,20 +633,15 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 return True
         return False
 
-
     def _check_configuration_setting(
         self, key, label, etag, headers, **kwargs
     ) -> Tuple[bool, Union[ConfigurationSetting, None]]:
         """
         Checks if the configuration setting have been updated since the last refresh.
-        :keyword key: key to check for chances
-        :paramtype key: str
-        :keyword label: label to check for changes
-        :paramtype label: str
-        :keyword etag: etag to check for changes
-        :paramtype etag: str
-        :keyword headers: headers to use for the request
-        :paramtype headers: Mapping[str, str]
+        :param str key: key to check for chances
+        :param str key: key to check for chances
+        :param str key: key to check for chances
+        :param str key: key to check for chances
         :return: A tuple with the first item being true/false if a change is detected. The second item is the updated
         value if a change was detected.
         :rtype: Tuple[bool, Union[ConfigurationSetting, None]]
@@ -659,15 +659,14 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 return True, updated_sentinel
         except HttpResponseError as e:
             if e.status_code == 404:
-                 if etag is not None:
+                if etag is not None:
                     # If the sentinel is not found, it means the key/label was deleted, so we should refresh
                     logging.debug("Refresh all triggered by key: %s label %s.", key, label)
                     return True, None
             else:
                 raise e
         return False, None
-    
-    
+
     def _load_all(self, **kwargs):
         active_clients = self._replica_client_manager.get_active_clients()
 
@@ -812,8 +811,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             return (self._dict).values()
 
     @overload
-    def get(self, key: str, default: None = None) -> Union[str, JSON, None]:
-        ...
+    def get(self, key: str, default: None = None) -> Union[str, JSON, None]: ...
 
     @overload
     def get(self, key: str, default: Union[str, JSON, _T]) -> Union[str, JSON, _T]:  # pylint: disable=signature-differs
