@@ -18,3 +18,11 @@ KubernetesEnvironmentVariable = "KUBERNETES_PORT"
 ServiceFabricEnvironmentVariable = "Fabric_NodeName"  # cspell:disable-line
 
 DISABLE_APPCONFIGURATION_DISCOVERY = "AZURE_APP_CONFIGURATION_DISABLE_DISCOVERY"
+PERCENTAGE_FILTER_NAMES = ["Percentage", "PercentageFilter", "Microsoft.Percentage", "Microsoft.PercentageFilter"]
+TIME_WINDOW_FILTER_NAMES = ["TimeWindow", "TimeWindowFilter", "Microsoft.TimeWindow", "Microsoft.TimeWindowFilter"]
+TARGETING_FILTER_NAMES = ["Targeting", "TargetingFilter", "Microsoft.Targeting", "Microsoft.TargetingFilter"]
+
+CUSTOM_FILTER_KEY = "CSTM"  # cspell:disable-line
+PERCENTAGE_FILTER_KEY = "PRCNT"  # cspell:disable-line
+TIME_WINDOW_FILTER_KEY = "TIME"
+TARGETING_FILTER_KEY = "TRGT"  # cspell:disable-line

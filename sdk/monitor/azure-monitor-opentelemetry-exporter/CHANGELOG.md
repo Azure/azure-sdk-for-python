@@ -1,5 +1,18 @@
 # Release History
 
+## 1.0.0b26 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Update live metrics to use typespec generated swagger
+    ([#34840](https://github.com/Azure/azure-sdk-for-python/pull/34840))
+
 ## 1.0.0b25 (2024-04-19)
 
 ### Features Added

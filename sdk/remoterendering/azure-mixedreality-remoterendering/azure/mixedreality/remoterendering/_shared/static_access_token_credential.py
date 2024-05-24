@@ -3,13 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
-    from azure.core.credentials import TokenCredential
-    from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken
 
 class StaticAccessTokenCredential(object):
     """ Represents a static access token credential.
@@ -18,10 +12,8 @@ class StaticAccessTokenCredential(object):
     :param AccessToken access_token: An access token.
     """
 
-    def __init__(self, access_token):
-        # type: (AccessToken) -> None
+    def __init__(self, access_token: AccessToken) -> None:
         self._access_token = access_token
 
-    def get_token(self, *scopes, **kwargs): #pylint: disable=unused-argument
-        # type: (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs) -> AccessToken: #pylint: disable=unused-argument
         return self._access_token

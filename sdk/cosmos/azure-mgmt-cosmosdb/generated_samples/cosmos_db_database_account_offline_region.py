@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.cosmosdb import CosmosDBManagementClient
 
 """
@@ -32,10 +35,10 @@ def main():
     client.database_accounts.begin_offline_region(
         resource_group_name="rg1",
         account_name="ddb1",
-        region_parameter_for_offline={"region": "North Europe"},
+        region_parameter_for_offline=[{"region": "North Europe"}],
     ).result()
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2024-02-15-preview/examples/CosmosDBDatabaseAccountOfflineRegion.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBDatabaseAccountOfflineRegion.json
 if __name__ == "__main__":
     main()

@@ -33,12 +33,12 @@ from azure.ai.ml._utils._workspace_utils import (
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_min_sec
 from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
-from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants, WorkspaceKind
+from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceKind, WorkspaceResourceConstants
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
-from azure.ai.ml.entities import Workspace, Project, Hub
+from azure.ai.ml.entities import Hub, Project, Workspace
 from azure.ai.ml.entities._credentials import IdentityConfiguration
-from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 from azure.ai.ml.entities._workspace._ai_workspaces._constants import ENDPOINT_AI_SERVICE_KIND
+from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller, PollingMethod
@@ -115,7 +115,7 @@ class WorkspaceOperationsBase(ABC):
 
         try:
             existing_workspace = self.get(workspace.name, resource_group=resource_group)
-        except Exception:  # pylint: disable=broad-except
+        except Exception:  # pylint: disable=W0718
             pass
 
         # idempotent behavior
@@ -740,13 +740,6 @@ class WorkspaceOperationsBase(ABC):
                 _set_val(param["endpoint_resource_id"], endpoint_resource_id)
                 _set_val(param["endpoint_kind"], endpoint_kind)
 
-            # Hubs must have an azure container registry on-provision. If none was provided, create one.
-            if not workspace.container_registry:
-                _set_val(param["containerRegistryOption"], "new")
-                container_registry = _generate_container_registry(workspace.name, resources_being_deployed)
-                _set_val(param["containerRegistryName"], container_registry)
-                _set_val(param["containerRegistryResourceGroupName"], self._resource_group_name)
-
         # Lean related param
         if (
             hasattr(workspace, "_kind")
@@ -1043,7 +1036,7 @@ class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
 
             if self.poller._exception is not None:
                 error = self.poller._exception
-        except Exception as e:  # pylint: disable=broad-except
+        except Exception as e:  # pylint: disable=W0718
             error = e
         finally:
             # one last check to make sure all print statements make it

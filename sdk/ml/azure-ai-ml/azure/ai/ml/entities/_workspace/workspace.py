@@ -6,7 +6,8 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, Optional, Union, Type, Tuple, List
+from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Type, Union
+
 from azure.ai.ml._restclient.v2023_08_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
@@ -19,22 +20,16 @@ from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
-    WorkspaceResourceConstants,
-    WorkspaceKind,
     CommonYamlFields,
+    WorkspaceKind,
+    WorkspaceResourceConstants,
 )
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
-from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.entities._util import find_field_in_override, load_from_dict
 from azure.ai.ml.entities._workspace.serverless_compute import ServerlessComputeSettings
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
-from azure.ai.ml.entities._util import find_field_in_override
-from azure.ai.ml.exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-)
 from .customer_managed_key import CustomerManagedKey
 from .feature_store_settings import FeatureStoreSettings
 from .networking import ManagedNetwork
@@ -91,6 +86,9 @@ class Workspace(Resource):
     :type enable_data_isolation: bool
     :param serverless_compute: The serverless compute settings for the workspace.
     :type: ~azure.ai.ml.entities.ServerlessComputeSettings
+    :param workspace_hub: Deprecated resource ID of an existing workspace hub to help create project workspace.
+        Use the Project class instead now.
+    :type workspace_hub: Optional[str]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
@@ -124,6 +122,7 @@ class Workspace(Resource):
         managed_network: Optional[ManagedNetwork] = None,
         enable_data_isolation: bool = False,
         hub_id: Optional[str] = None,  # Hidden input, surfaced by Project
+        workspace_hub: Optional[str] = None,  # Deprecated input maintained for backwards compat.
         serverless_compute: Optional[ServerlessComputeSettings] = None,
         **kwargs: Any,
     ):
@@ -161,6 +160,8 @@ class Workspace(Resource):
         self.primary_user_assigned_identity = primary_user_assigned_identity
         self.managed_network = managed_network
         self.enable_data_isolation = enable_data_isolation
+        if workspace_hub and not hub_id:
+            hub_id = workspace_hub
         self.__hub_id = hub_id
         # Overwrite kind if hub_id is provided. Technically not needed anymore,
         # but kept for backwards if people try to just use a normal workspace like
@@ -307,7 +308,7 @@ class Workspace(Resource):
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["Workspace"]:
-        # import pdb; pdb.set_trace()
+
         if not rest_obj:
             return None
         customer_managed_key = (
@@ -355,7 +356,7 @@ class Workspace(Resource):
                     rest_obj.serverless_compute_settings
                 )
 
-        return Workspace(
+        return cls(
             name=rest_obj.name,
             id=rest_obj.id,
             description=rest_obj.description,

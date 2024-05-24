@@ -32,10 +32,13 @@ class TestUtils(unittest.TestCase):
     def setUpClass(cls):
         cls.base_mdp = MonitoringDataPoint(
             version=1.0,
+            invariant_version=1,
             instance="test_instance",
             role_name="test_role_name",
             machine_name="test_machine_name",
-            stream_id="test_stream_id"
+            stream_id="test_stream_id",
+            is_web_app=False,
+            performance_collection_supported=True,
         )
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils.datetime")
