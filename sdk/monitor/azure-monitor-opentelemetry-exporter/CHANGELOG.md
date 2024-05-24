@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Handle invalid status codes in std metric payload
+    ([#34840](https://github.com/Azure/azure-sdk-for-python/pull/34840))
+
 ### Other Changes
 
 - Update live metrics to use typespec generated swagger
