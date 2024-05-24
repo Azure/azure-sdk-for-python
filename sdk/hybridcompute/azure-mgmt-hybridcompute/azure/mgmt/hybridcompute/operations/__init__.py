@@ -13,6 +13,8 @@ from ._extension_metadata_operations import ExtensionMetadataOperations
 from ._operations import Operations
 from ._network_profile_operations import NetworkProfileOperations
 from ._machine_run_commands_operations import MachineRunCommandsOperations
+from ._gateways_operations import GatewaysOperations
+from ._settings_operations import SettingsOperations
 from ._private_link_scopes_operations import PrivateLinkScopesOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
@@ -29,6 +31,8 @@ __all__ = [
     "Operations",
     "NetworkProfileOperations",
     "MachineRunCommandsOperations",
+    "GatewaysOperations",
+    "SettingsOperations",
     "PrivateLinkScopesOperations",
     "PrivateLinkResourcesOperations",
     "PrivateEndpointConnectionsOperations",

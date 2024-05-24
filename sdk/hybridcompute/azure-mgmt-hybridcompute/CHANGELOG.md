@@ -1,5 +1,13 @@
 # Release History
 
+## 9.0.0b3 (2024-06-17)
+
+### Features Added
+
+  - Added operation group GatewaysOperations
+  - Added operation group SettingsOperations
+  - Model LicenseDetails has a new parameter volume_license_details
+
 ## 9.0.0b2 (2024-04-22)
 
 ### Features Added

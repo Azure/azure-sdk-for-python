@@ -111,6 +111,12 @@ class ExtensionsStatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ERROR = "Error"
 
 
+class GatewayType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the Gateway resource."""
+
+    PUBLIC = "Public"
+
+
 class LastAttemptStatusEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the status of Agent Upgrade."""
 
@@ -241,6 +247,14 @@ class PatchServiceUsed(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ZYPPER = "Zypper"
 
 
+class ProgramYear(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes the program year the volume license is for."""
+
+    YEAR1 = "Year 1"
+    YEAR2 = "Year 2"
+    YEAR3 = "Year 3"
+
+
 class ProvisioningIssueSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Severity of the provisioning issue."""
 
@@ -287,6 +301,9 @@ class PublicNetworkAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISABLED = "Disabled"
     """Does not allow Azure Arc agents to communicate with Azure Arc services over public (internet)
     endpoints. The agents must use the private link."""
+    SECURED_BY_PERIMETER = "SecuredByPerimeter"
+    """Azure Arc agent communication with Azure Arc services over public (internet) is enforced by
+    Network Security Perimeter (NSP)"""
 
 
 class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
