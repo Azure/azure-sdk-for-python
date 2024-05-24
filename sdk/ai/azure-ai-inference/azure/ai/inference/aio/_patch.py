@@ -85,7 +85,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         model_deployment: Optional[str] = None,
         unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
-        hyper_params: Optional[Dict[str, Any]] = None,
+        model_extras: Optional[Dict[str, Any]] = None,
         extras: Optional[Dict[str, str]] = None,
         frequency_penalty: Optional[float] = None,
         presence_penalty: Optional[float] = None,
@@ -124,11 +124,11 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword hyper_params: Additional, model-specific parameters that are not in the
+        :keyword model_extras: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
          How the service handles these hyper parameters depends on the value of the
          ``unknown-parameters`` request header. Default value is None.
-        :paramtype hyper_params: dict[str, Any]
+        :paramtype model_extras: dict[str, Any]
         :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
          standard request payload.
          They will be passed to the service as-is in the root of the JSON request payload.
@@ -285,7 +285,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         messages: List[_models.ChatRequestMessage] = _Unset,
         model_deployment: Optional[str] = None,
         unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
-        hyper_params: Optional[Dict[str, Any]] = None,
+        model_extras: Optional[Dict[str, Any]] = None,
         extras: Optional[Dict[str, str]] = None,
         frequency_penalty: Optional[float] = None,
         presence_penalty: Optional[float] = None,
@@ -323,11 +323,11 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
         :paramtype model_deployment: str
-        :keyword hyper_params: Additional, model-specific parameters that are not in the
+        :keyword model_extras: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
          How the service handles these hyper parameters depends on the value of the
          ``unknown-parameters`` request header. Default value is None.
-        :paramtype hyper_params: dict[str, Any]
+        :paramtype model_extras: dict[str, Any]
         :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
          standard request payload.
          They will be passed to the service as-is in the root of the JSON request payload.
@@ -430,8 +430,8 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
                 "tools": tools,
                 "top_p": top_p,
             }
-            if hyper_params is not None:
-                body.update(hyper_params)
+            if model_extras is not None:
+                body.update(model_extras)
             body = {k: v for k, v in body.items() if v is not None}
         elif isinstance(body, dict) and "stream" in body and isinstance(body["stream"], bool):
             stream = body["stream"]
@@ -491,7 +491,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         return self._model_info
 
     def __str__(self) -> str:
-        return super().__str__() + f"\n_model_info={self._model_info}"
+        return super().__str__() + f"\n{self._model_info}"
 
 
 class EmbeddingsClient(EmbeddingsClientGenerated):
@@ -500,7 +500,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
     async def embedding(
         self,
         *,
-        hyper_params: Optional[Dict[str, Any]] = None,
+        model_extras: Optional[Dict[str, Any]] = None,
         input: List[str],
         model_deployment: Optional[str] = None,
         unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
@@ -512,11 +512,11 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
     ) -> _models.EmbeddingsResult:
         """Return the embeddings for a given text prompt.
 
-        :keyword hyper_params: Additional, model-specific parameters that are not in the
+        :keyword model_extras: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
          How the service handles these hyper parameters depends on the value of the
          ``unknown-parameters`` request header. Default value is None.
-        :paramtype hyper_params: dict[str, Any]
+        :paramtype model_extras: dict[str, Any]
         :keyword input: Input text to embed, encoded as a string or array of tokens.
          To embed multiple inputs in a single request, pass an array
          of strings or array of token arrays. Required.
@@ -634,7 +634,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        hyper_params: Optional[Dict[str, Any]] = None,
+        model_extras: Optional[Dict[str, Any]] = None,
         input: List[str] = _Unset,
         model_deployment: Optional[str] = None,
         unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
@@ -648,11 +648,11 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword hyper_params: Additional, model-specific parameters that are not in the
+        :keyword model_extras: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
          How the service handles these hyper parameters depends on the value of the
          ``unknown-parameters`` request header. Default value is None.
-        :paramtype hyper_params: dict[str, Any]
+        :paramtype model_extras: dict[str, Any]
         :keyword input: Input text to embed, encoded as a string or array of tokens.
          To embed multiple inputs in a single request, pass an array
          of strings or array of token arrays. Required.
@@ -710,8 +710,8 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
                 "input": input,
                 "input_type": input_type,
             }
-            if hyper_params is not None:
-                body.update(hyper_params)
+            if model_extras is not None:
+                body.update(model_extras)
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -771,7 +771,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         return self._model_info
 
     def __str__(self) -> str:
-        return super().__str__() + f"\n_model_info={self._model_info}"
+        return super().__str__() + f"\n{self._model_info}"
 
 
 class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
@@ -780,7 +780,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
     async def embedding(
         self,
         *,
-        hyper_params: Optional[Dict[str, Any]] = None,
+        model_extras: Optional[Dict[str, Any]] = None,
         input: List[_models.EmbeddingInput],
         model_deployment: Optional[str] = None,
         unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
@@ -792,11 +792,11 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
     ) -> _models.EmbeddingsResult:
         """Return the embeddings for given images.
 
-        :keyword hyper_params: Additional, model-specific parameters that are not in the
+        :keyword model_extras: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
          How the service handles these hyper parameters depends on the value of the
          ``unknown-parameters`` request header. Default value is None.
-        :paramtype hyper_params: dict[str, Any]
+        :paramtype model_extras: dict[str, Any]
         :keyword input: Input image to embed. To embed multiple inputs in a single request, pass an
          array.
          The input must not exceed the max input tokens for the model. Required.
@@ -914,7 +914,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        hyper_params: Optional[Dict[str, Any]] = None,
+        model_extras: Optional[Dict[str, Any]] = None,
         input: List[_models.EmbeddingInput] = _Unset,
         model_deployment: Optional[str] = None,
         unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
@@ -928,11 +928,11 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword hyper_params: Additional, model-specific parameters that are not in the
+        :keyword model_extras: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
          How the service handles these hyper parameters depends on the value of the
          ``unknown-parameters`` request header. Default value is None.
-        :paramtype hyper_params: dict[str, Any]
+        :paramtype model_extras: dict[str, Any]
         :keyword input: Input image to embed. To embed multiple inputs in a single request, pass an
          array.
          The input must not exceed the max input tokens for the model. Required.
@@ -990,8 +990,8 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
                 "input": input,
                 "input_type": input_type,
             }
-            if hyper_params is not None:
-                body.update(hyper_params)
+            if model_extras is not None:
+                body.update(model_extras)
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -1051,7 +1051,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         return self._model_info
 
     def __str__(self) -> str:
-        return super().__str__() + f"\n_model_info={self._model_info}"
+        return super().__str__() + f"\n{self._model_info}"
 
 
 __all__: List[str] = [

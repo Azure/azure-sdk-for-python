@@ -239,13 +239,13 @@ To generate completions for additional messages, simply call `client.complete` m
 
 ### Chat completions with additional model-specific parameters
 
-In this example, additional JSON elements are inserted at the root of the request body by setting `hyper_params` when calling the `complete` method.
+In this example, extra JSON elements are inserted at the root of the request body by setting `model_extras` when calling the `complete` method. These are indended for AI models that require extra parameters beyond what is defined in the REST API.
 
 Note that by default, the service will reject any request payload that includes unknown parameters (ones that are not defined in the REST API [Request Body table](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-chat-completions#request-body)). In order to change that behaviour, the request must include an additional HTTP header that described the intended behaviour with regards to unknown parameters. This is done by setting `unknown_params` to allow passing the unknown parameers to the AI model, or by ingnoring them (dropping them), and only passing the known parameters to the model.
 
-The settings `hyper_params` and `unknown_params` are suppored for all other clients as well.
+The settings `model_extras` and `unknown_params` are suppored for all other clients as well.
 
-<!-- SNIPPET:sample_chat_completions_with_hyper_params.hyper_params -->
+<!-- SNIPPET:sample_chat_completions_with_model_extras.model_extras -->
 
 ```python
 response = client.complete(
@@ -254,7 +254,7 @@ response = client.complete(
         UserMessage(content="How many feet are in a mile?"),
     ],
     unknown_params=UnknownParams.ALLOW,  # Optional. Supported values: "ALLOW", "IGNORE", "ERROR" (service default)
-    hyper_params={  # Optional. Additional parameters to pass to the model.
+    model_extras={  # Optional. Additional parameters to pass to the model.
         "key1": 1,
         "key2": True,
         "key3": "Some value",

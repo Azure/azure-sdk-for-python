@@ -110,12 +110,12 @@ class TestModelAsyncClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy_async
-    async def test_async_chat_completions_with_hyper_params(self, **kwargs):
+    async def test_async_chat_completions_with_model_extras(self, **kwargs):
         client = self._create_async_chat_client(**kwargs)
         response = await client.complete(
             messages=[sdk.models.UserMessage(content="How many feet are in a mile?")],
             unknown_params=sdk.models.UnknownParams.IGNORE,
-            hyper_params={
+            model_extras={
                 "key1": 1,
                 "key2": True,
                 "key3": "Some value",

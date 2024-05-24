@@ -7,12 +7,12 @@ DESCRIPTION:
     This sample demonstrates how to get a chat completions response from
     the service using a synchronous client, while supplying additional
     model-specific parameters as part of the request.
-    See setting of an optional `unknown-parameters` request header via the
-    `headers_policy` in the client constructor.
-    See setting of `hyper_params` in the `complete` method.
+    See setting of the optional `model_extras` in the `complete` method.
+    Also see related setting of the optional `unknown-parameters`
+    parameter in the `complete` method.
 
 USAGE:
-    python sample_chat_completions_with_hyper_params.py
+    python sample_chat_completions_with_model_extras.py
 
     Set these two environment variables before running the sample:
     1) CHAT_COMPLETIONS_ENDPOINT - Your endpoint URL, in the form 
@@ -23,7 +23,7 @@ USAGE:
 """
 
 
-def sample_chat_completions_with_hyper_params():
+def sample_chat_completions_with_model_extras():
     import os
 
     try:
@@ -40,14 +40,14 @@ def sample_chat_completions_with_hyper_params():
 
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    # [START hyper_params]
+    # [START model_extras]
     response = client.complete(
         messages=[
             SystemMessage(content="You are a helpful assistant."),
             UserMessage(content="How many feet are in a mile?"),
         ],
         unknown_params=UnknownParams.ALLOW,  # Optional. Supported values: "ALLOW", "IGNORE", "ERROR" (service default)
-        hyper_params={  # Optional. Additional parameters to pass to the model.
+        model_extras={  # Optional. Additional parameters to pass to the model.
             "key1": 1,
             "key2": True,
             "key3": "Some value",
@@ -61,4 +61,4 @@ def sample_chat_completions_with_hyper_params():
 
 
 if __name__ == "__main__":
-    sample_chat_completions_with_hyper_params()
+    sample_chat_completions_with_model_extras()

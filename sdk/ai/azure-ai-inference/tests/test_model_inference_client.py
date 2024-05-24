@@ -105,17 +105,17 @@ class TestModelClient(ModelClientTestBase):
         messages.append(sdk.models.UserMessage(content="and how many yards?"))
         response = client.complete(messages=messages)
         self._print_chat_completions_result(response)
-        self._validate_chat_completions_result(response, ["1760", "1,760"])        
+        self._validate_chat_completions_result(response, ["1760", "1,760"])
         client.close()
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
-    def test_chat_completions_with_hyper_params(self, **kwargs):
+    def test_chat_completions_with_model_extras(self, **kwargs):
         client = self._create_chat_client(**kwargs)
         response = client.complete(
             messages=[sdk.models.UserMessage(content="How many feet are in a mile?")],
             unknown_params=sdk.models.UnknownParams.IGNORE,
-            hyper_params={
+            model_extras={
                 "key1": 1,
                 "key2": True,
                 "key3": "Some value",

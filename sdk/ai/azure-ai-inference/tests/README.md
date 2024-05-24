@@ -8,7 +8,7 @@ The live tests were written against the AI models mentioned below. You will need
 
 - `Mistral-Large` for chat completion tests
 - `Cohere-embed-v3-english` for embedding tests
-- `TBD` for image generation tests
+<!-- - `TBD` for image generation tests -->
 
 ## Setup
 
