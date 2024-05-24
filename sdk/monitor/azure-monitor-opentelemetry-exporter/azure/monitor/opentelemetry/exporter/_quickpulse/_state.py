@@ -44,7 +44,7 @@ def _set_quickpulse_last_process_time(time: float) -> None:
     _QUICKPULSE_LAST_PROCESS_TIME = time
 
 
-def _get_quickpulse_last_process_time() -> _QuickpulseState:
+def _get_quickpulse_last_process_time() -> float:
     return _QUICKPULSE_LAST_PROCESS_TIME
 
 
@@ -54,7 +54,7 @@ def _set_quickpulse_process_elapsed_time(time: datetime) -> None:
     _QUICKPULSE_PROCESS_ELAPSED_TIME = time
 
 
-def _get_quickpulse_process_elapsed_time() -> _QuickpulseState:
+def _get_quickpulse_process_elapsed_time() -> datetime:
     return _QUICKPULSE_PROCESS_ELAPSED_TIME
 
 
@@ -64,7 +64,7 @@ def _set_quickpulse_last_process_cpu(time: float) -> None:
     _QUICKPULSE_LAST_PROCESS_CPU = time
 
 
-def _get_quickpulse_last_process_cpu() -> _QuickpulseState:
+def _get_quickpulse_last_process_cpu() -> float:
     return _QUICKPULSE_LAST_PROCESS_CPU
 
 
