@@ -32,7 +32,8 @@ class TestEventGridPublisherClientExceptionsAsync(AzureRecordedTestCase):
     @pytest.mark.live_test_only
     @EventGridPreparer()
     @pytest.mark.asyncio
-    async def test_raise_on_auth_error(self, *, eventgrid_topic_endpoint, **kwargs):
+    async def test_raise_on_auth_error(self, **kwargs):
+        eventgrid_topic_endpoint = kwargs.pop("eventgrid_topic_endpoint")
         akc_credential = AzureKeyCredential("bad credential")
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         eg_event = EventGridEvent(
@@ -47,7 +48,8 @@ class TestEventGridPublisherClientExceptionsAsync(AzureRecordedTestCase):
     @pytest.mark.live_test_only
     @EventGridPreparer()
     @pytest.mark.asyncio
-    async def test_raise_on_bad_resource(self, *, eventgrid_topic_key, **kwargs):
+    async def test_raise_on_bad_resource(self, **kwargs):
+        eventgrid_topic_key = kwargs.pop("eventgrid_topic_key")
         akc_credential = AzureKeyCredential(eventgrid_topic_key)
         client = EventGridPublisherClient("https://bad-resource.westus-1.eventgrid.azure.net/api/events", akc_credential)
         eg_event = EventGridEvent(
