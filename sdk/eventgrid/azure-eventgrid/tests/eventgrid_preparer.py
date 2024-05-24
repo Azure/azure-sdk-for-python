@@ -4,7 +4,7 @@ from devtools_testutils import EnvironmentVariableLoader
 from azure.mgmt.eventgrid.models import Topic, InputSchema, JsonInputSchemaMapping, JsonField, JsonFieldWithDefault
 
 EVENTGRID_TOPIC_PARAM = 'eventgrid_topic'
-EVENTGRID_TOPIC_LOCATION = 'eastus'
+EVENTGRID_TOPIC_LOCATION = 'westus'
 CLOUD_EVENT_SCHEMA = InputSchema.cloud_event_schema_v1_0
 CUSTOM_EVENT_SCHEMA = InputSchema.custom_event_schema
 ID_JSON_FIELD = JsonField(source_field='customId')
