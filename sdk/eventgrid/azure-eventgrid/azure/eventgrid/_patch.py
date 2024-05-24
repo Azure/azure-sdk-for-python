@@ -51,7 +51,7 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
         *,
         namespace_topic: Optional[str] = None,
         api_version: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._namespace = namespace_topic
         self._credential = credential
@@ -70,7 +70,7 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
                 endpoint=endpoint,
                 credential=credential,
                 api_version=api_version or DEFAULT_STANDARD_API_VERSION,
-                **kwargs
+                **kwargs,
             )
 
             self._publish = self._send_events
@@ -78,9 +78,11 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-
     def __repr__(self) -> str:
-        return f"<EventGridPublisherClient: namespace_topic={self._namespace}, credential type={type(self._credential)}>"
+        return (
+            f"<EventGridPublisherClient: namespace_topic={self._namespace}, credential type={type(self._credential)}>"
+        )
+
 
 class EventGridConsumerClient(InternalEventGridConsumerClient):
     """EventGridConsumerClient.
@@ -109,16 +111,13 @@ class EventGridConsumerClient(InternalEventGridConsumerClient):
         namespace_topic: str,
         subscription: str,
         api_version: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._namespace = namespace_topic
         self._subscription = subscription
         self._credential = credential
         super().__init__(
-            endpoint=endpoint,
-            credential=credential,
-            api_version=api_version or DEFAULT_STANDARD_API_VERSION,
-            **kwargs
+            endpoint=endpoint, credential=credential, api_version=api_version or DEFAULT_STANDARD_API_VERSION, **kwargs
         )
 
     def __repr__(self) -> str:

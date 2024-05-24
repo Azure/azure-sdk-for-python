@@ -51,11 +51,11 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
         *,
         namespace_topic: Optional[str] = None,
         api_version: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._namespace = namespace_topic
         self._credential = credential
-      
+
         if not self._namespace:
             self._client = LegacyEventGridPublisherClient(  # type: ignore[assignment]
                 endpoint, credential, api_version=api_version or DEFAULT_BASIC_API_VERSION, **kwargs
@@ -69,7 +69,7 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
                 endpoint=endpoint,
                 credential=credential,
                 api_version=api_version or DEFAULT_STANDARD_API_VERSION,
-                **kwargs
+                **kwargs,
             )
             self._publish = self._send_events
         self._serialize = Serializer()
@@ -77,7 +77,10 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
         self._serialize.client_side_validation = False
 
     def __repr__(self) -> str:
-        return f"<EventGridPublisherClient: namespace_topic={self._namespace}, credential type={type(self._credential)}>"
+        return (
+            f"<EventGridPublisherClient: namespace_topic={self._namespace}, credential type={type(self._credential)}>"
+        )
+
 
 class EventGridConsumerClient(InternalEventGridConsumerClient):
     """EventGridConsumerClient.
@@ -106,17 +109,12 @@ class EventGridConsumerClient(InternalEventGridConsumerClient):
         namespace_topic: str,
         subscription: str,
         api_version: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._namespace = namespace_topic
         self._subscription = subscription
         self._credential = credential
-        super().__init__(
-            endpoint=endpoint,
-            credential=credential,
-            api_version=api_version,
-            **kwargs
-        )
+        super().__init__(endpoint=endpoint, credential=credential, api_version=api_version, **kwargs)
 
     def __repr__(self) -> str:
         return f"<EventGridConsumerClient: namespace_topic={self._namespace}, subscription={self._subscription}, credential type={type(self._credential)}>"

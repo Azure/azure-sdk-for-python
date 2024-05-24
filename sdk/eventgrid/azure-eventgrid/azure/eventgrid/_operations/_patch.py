@@ -90,14 +90,23 @@ def use_standard_only(func):
 class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
 
     @distributed_trace
-    def send(  
+    def send(
         self,
-        events: Union[CloudEvent, List[CloudEvent], Dict[str, Any], List[Dict[str, Any]], "CNCFCloudEvent", List["CNCFCloudEvent"],
-                      EventGridEvent, List[EventGridEvent]],
+        events: Union[
+            CloudEvent,
+            List[CloudEvent],
+            Dict[str, Any],
+            List[Dict[str, Any]],
+            "CNCFCloudEvent",
+            List["CNCFCloudEvent"],
+            EventGridEvent,
+            List[EventGridEvent],
+        ],
         *,
         channel_name: Optional[str] = None,
         content_type: Optional[str] = None,
-        **kwargs: Any,) -> None:  # pylint: disable=docstring-should-be-keyword, docstring-missing-param
+        **kwargs: Any,
+    ) -> None:  # pylint: disable=docstring-should-be-keyword, docstring-missing-param
         """Send events to the Event Grid Service.
 
         :param topic_name: The name of the topic to send the event to.
@@ -117,7 +126,6 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
         if self._namespace and channel_name:
             raise ValueError("Channel name is not supported for Event Grid Namespaces.")
 
-
         try:
             if isinstance(events, dict):
                 events = CloudEvent.from_dict(events)
@@ -127,7 +135,9 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
             pass
 
         if self._namespace:
-            kwargs["content_type"] = content_type if content_type else "application/cloudevents-batch+json; charset=utf-8"
+            kwargs["content_type"] = (
+                content_type if content_type else "application/cloudevents-batch+json; charset=utf-8"
+            )
             if not isinstance(events, list):
                 events = [events]
 
@@ -291,9 +301,7 @@ class EventGridConsumerClientOperationsMixin(ConsumerOperationsMixin):
     @distributed_trace
     @api_version_validation(
         method_added_on="2023-10-01-preview",
-        params_added_on={
-            "2023-10-01-preview": ["api_version", "content_type", "accept"]
-        },
+        params_added_on={"2023-10-01-preview": ["api_version", "content_type", "accept"]},
     )
     def renew_locks(
         self,

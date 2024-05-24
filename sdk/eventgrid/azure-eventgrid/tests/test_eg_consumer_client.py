@@ -24,30 +24,39 @@ from eventgrid_preparer import (
 class TestEventGridPublisherClient(AzureRecordedTestCase):
     def create_eg_publisher_client(self, endpoint, topic=None):
         credential = self.get_credential(EventGridPublisherClient)
-        client = self.create_client_from_credential(EventGridPublisherClient, credential=credential, endpoint=endpoint, namespace_topic=topic)
+        client = self.create_client_from_credential(
+            EventGridPublisherClient, credential=credential, endpoint=endpoint, namespace_topic=topic
+        )
         return client
-
 
     def create_eg_consumer_client(self, endpoint, topic, subscription):
         credential = self.get_credential(EventGridConsumerClient)
-        client = self.create_client_from_credential(EventGridConsumerClient, credential=credential, endpoint=endpoint, namespace_topic=topic, subscription=subscription)
+        client = self.create_client_from_credential(
+            EventGridConsumerClient,
+            credential=credential,
+            endpoint=endpoint,
+            namespace_topic=topic,
+            subscription=subscription,
+        )
         return client
 
     @pytest.mark.live_test_only
     @EventGridPreparer()
     def test_receive_data(self, **kwargs):
-        eventgrid_endpoint = kwargs['eventgrid_endpoint']
-        eventgrid_topic_name = kwargs['eventgrid_topic_name']
-        eventgrid_event_subscription_name = kwargs['eventgrid_event_subscription_name']
+        eventgrid_endpoint = kwargs["eventgrid_endpoint"]
+        eventgrid_topic_name = kwargs["eventgrid_topic_name"]
+        eventgrid_event_subscription_name = kwargs["eventgrid_event_subscription_name"]
         publisher = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
-        consumer = self.create_eg_consumer_client(eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name)
+        consumer = self.create_eg_consumer_client(
+            eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name
+        )
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
             data={"sample": "cloudevent"},
             type="Sample.Cloud.Event",
         )
         publisher.send(cloud_event)
-        
+
         received_event = consumer.receive(max_events=1)
         assert len(received_event) == 1
 
@@ -58,18 +67,20 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @pytest.mark.live_test_only
     @EventGridPreparer()
     def test_receive_renew_data(self, **kwargs):
-        eventgrid_endpoint = kwargs['eventgrid_endpoint']
-        eventgrid_topic_name = kwargs['eventgrid_topic_name']
-        eventgrid_event_subscription_name = kwargs['eventgrid_event_subscription_name']
+        eventgrid_endpoint = kwargs["eventgrid_endpoint"]
+        eventgrid_topic_name = kwargs["eventgrid_topic_name"]
+        eventgrid_event_subscription_name = kwargs["eventgrid_event_subscription_name"]
         publisher = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
-        consumer = self.create_eg_consumer_client(eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name)
+        consumer = self.create_eg_consumer_client(
+            eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name
+        )
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
             data={"sample": "cloudevent"},
             type="Sample.Cloud.Event",
         )
         publisher.send(cloud_event)
-        
+
         received_event = consumer.receive(max_events=1)
         assert len(received_event) == 1
 
@@ -81,18 +92,20 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @pytest.mark.live_test_only
     @EventGridPreparer()
     def test_receive_release_data(self, **kwargs):
-        eventgrid_endpoint = kwargs['eventgrid_endpoint']
-        eventgrid_topic_name = kwargs['eventgrid_topic_name']
-        eventgrid_event_subscription_name = kwargs['eventgrid_event_subscription_name']
+        eventgrid_endpoint = kwargs["eventgrid_endpoint"]
+        eventgrid_topic_name = kwargs["eventgrid_topic_name"]
+        eventgrid_event_subscription_name = kwargs["eventgrid_event_subscription_name"]
         publisher = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
-        consumer = self.create_eg_consumer_client(eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name)
+        consumer = self.create_eg_consumer_client(
+            eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name
+        )
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
             data={"sample": "cloudevent"},
             type="Sample.Cloud.Event",
         )
         publisher.send(cloud_event)
-        
+
         received_event = consumer.receive(max_events=1)
         assert len(received_event) == 1
 
@@ -103,24 +116,23 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @pytest.mark.live_test_only
     @EventGridPreparer()
     def test_receive_reject_data(self, **kwargs):
-        eventgrid_endpoint = kwargs['eventgrid_endpoint']
-        eventgrid_topic_name = kwargs['eventgrid_topic_name']
-        eventgrid_event_subscription_name = kwargs['eventgrid_event_subscription_name']
+        eventgrid_endpoint = kwargs["eventgrid_endpoint"]
+        eventgrid_topic_name = kwargs["eventgrid_topic_name"]
+        eventgrid_event_subscription_name = kwargs["eventgrid_event_subscription_name"]
         publisher = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
-        consumer = self.create_eg_consumer_client(eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name)
+        consumer = self.create_eg_consumer_client(
+            eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name
+        )
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
             data={"sample": "cloudevent"},
             type="Sample.Cloud.Event",
         )
         publisher.send(cloud_event)
-        
+
         received_event = consumer.receive(max_events=1)
         assert len(received_event) == 1
 
         for event in received_event:
             reject = consumer.reject(lock_tokens=[event.broker_properties.lock_token])
             assert reject.succeeded_lock_tokens == [event.broker_properties.lock_token]
-
-        
-            

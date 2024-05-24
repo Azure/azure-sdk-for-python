@@ -16,7 +16,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from ...models._patch import ReceiveDetails
-from ..._operations._patch import  use_standard_only
+from ..._operations._patch import use_standard_only
 from ._operations import (
     EventGridPublisherClientOperationsMixin as PublisherOperationsMixin,
     EventGridConsumerClientOperationsMixin as ConsumerOperationsMixin,
@@ -44,18 +44,26 @@ if TYPE_CHECKING:
     from cloudevents.http.event import CloudEvent as CNCFCloudEvent
 
 
-
 class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
 
     @distributed_trace_async
-    async def send(  
+    async def send(
         self,
-        events: Union[CloudEvent, List[CloudEvent], Dict[str, Any], List[Dict[str, Any]], "CNCFCloudEvent", List["CNCFCloudEvent"],
-                      EventGridEvent, List[EventGridEvent]],
+        events: Union[
+            CloudEvent,
+            List[CloudEvent],
+            Dict[str, Any],
+            List[Dict[str, Any]],
+            "CNCFCloudEvent",
+            List["CNCFCloudEvent"],
+            EventGridEvent,
+            List[EventGridEvent],
+        ],
         *,
         channel_name: Optional[str] = None,
         content_type: Optional[str] = None,
-        **kwargs: Any,) -> None:  # pylint: disable=docstring-should-be-keyword, docstring-missing-param
+        **kwargs: Any,
+    ) -> None:  # pylint: disable=docstring-should-be-keyword, docstring-missing-param
         """Send events to the Event Grid Service.
 
         :param topic_name: The name of the topic to send the event to.
@@ -75,7 +83,6 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
         if self._namespace and channel_name:
             raise ValueError("Channel name is not supported for Event Grid Namespaces.")
 
-
         # If a cloud event dict, convert to CloudEvent for serializing
         try:
             if isinstance(events, dict):
@@ -86,7 +93,9 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
             pass
 
         if self._namespace:
-            kwargs["content_type"] = content_type if content_type else "application/cloudevents-batch+json; charset=utf-8"
+            kwargs["content_type"] = (
+                content_type if content_type else "application/cloudevents-batch+json; charset=utf-8"
+            )
             if not isinstance(events, list):
                 events = [events]
 
@@ -117,6 +126,7 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
                     "endpoint and/or topic name."
                 ) from exception
             raise exception
+
 
 class EventGridConsumerClientOperationsMixin(ConsumerOperationsMixin):
 
@@ -240,9 +250,7 @@ class EventGridConsumerClientOperationsMixin(ConsumerOperationsMixin):
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2023-10-01-preview",
-        params_added_on={
-            "2023-10-01-preview": ["api_version", "content_type", "accept"]
-        },
+        params_added_on={"2023-10-01-preview": ["api_version", "content_type", "accept"]},
     )
     async def renew_locks(
         self,
