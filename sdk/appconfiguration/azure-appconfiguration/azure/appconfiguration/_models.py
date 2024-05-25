@@ -235,19 +235,22 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
         filters = None
         display_name = None
         description = None
+        feature_id = None
         try:
             temp = json.loads(key_value.value)  # type: ignore
             if isinstance(temp, dict):
                 enabled = temp.get("enabled", False)
                 display_name = temp.get("display_name")
                 description = temp.get("description")
+                feature_id = temp.get("id")
+
                 if "conditions" in temp.keys():
                     filters = temp["conditions"].get("client_filters")
         except (ValueError, json.JSONDecodeError):
             pass
 
         return cls(
-            feature_id=key_value.key.lstrip(".appconfig.featureflag").lstrip("/"),  # type: ignore
+            feature_id=feature_id or key_value.key.lstrip(".appconfig.featureflag").lstrip("/"),  # type: ignore
             label=key_value.label,
             content_type=key_value.content_type,
             last_modified=key_value.last_modified,
