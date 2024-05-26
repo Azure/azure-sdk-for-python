@@ -114,7 +114,7 @@ class EventGridConsumerClient(InternalEventGridConsumerClient):
         self._namespace = namespace_topic
         self._subscription = subscription
         self._credential = credential
-        super().__init__(endpoint=endpoint, credential=credential, api_version=api_version, **kwargs)
+        super().__init__(endpoint=endpoint, credential=credential, api_version=api_version or DEFAULT_STANDARD_API_VERSION, **kwargs)
 
     def __repr__(self) -> str:
         return f"<EventGridConsumerClient: namespace_topic={self._namespace}, subscription={self._subscription}, credential type={type(self._credential)}>"
