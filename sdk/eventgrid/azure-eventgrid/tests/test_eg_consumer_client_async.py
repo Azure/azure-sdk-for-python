@@ -9,6 +9,7 @@ import sys
 import os
 import json
 import pytest
+import asyncio
 import uuid
 from msrest.serialization import UTC
 import datetime as dt
@@ -16,13 +17,13 @@ import datetime as dt
 from devtools_testutils import AzureRecordedTestCase
 from azure.core.messaging import CloudEvent
 from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import EventGridConsumerClient, EventGridPublisherClient
+from azure.eventgrid.aio import EventGridConsumerClient, EventGridPublisherClient
 from eventgrid_preparer import (
     EventGridPreparer,
 )
 
 
-class TestEventGridConsumerClient(AzureRecordedTestCase):
+class TestEventGridConsumerClientAsync(AzureRecordedTestCase):
     def create_eg_publisher_client(self, endpoint, topic=None):
         credential = self.get_credential(EventGridPublisherClient)
         client = self.create_client_from_credential(
@@ -43,7 +44,8 @@ class TestEventGridConsumerClient(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @EventGridPreparer()
-    def test_receive_data(self, **kwargs):
+    @pytest.mark.asyncio
+    async def test_receive_data(self, **kwargs):
         eventgrid_endpoint = kwargs["eventgrid_endpoint"]
         eventgrid_key = kwargs["eventgrid_key"]
         eventgrid_topic_name = kwargs["eventgrid_topic_name"]
@@ -55,18 +57,19 @@ class TestEventGridConsumerClient(AzureRecordedTestCase):
             data={"sample": "cloudevent"},
             type="Sample.Cloud.Event",
         )
-        publisher.send(cloud_event)
+        await publisher.send(cloud_event)
 
-        received_event = consumer.receive(max_events=1)
+        received_event = await consumer.receive(max_events=1)
         assert len(received_event) == 1
 
         for event in received_event:
-            ack_result = consumer.acknowledge(lock_tokens=[event.broker_properties.lock_token])
+            ack_result = await consumer.acknowledge(lock_tokens=[event.broker_properties.lock_token])
             assert ack_result.succeeded_lock_tokens == [event.broker_properties.lock_token]
 
     @pytest.mark.live_test_only
     @EventGridPreparer()
-    def test_receive_renew_data(self, **kwargs):
+    @pytest.mark.asyncio
+    async def test_receive_renew_data(self, **kwargs):
         eventgrid_endpoint = kwargs["eventgrid_endpoint"]
         eventgrid_key = kwargs["eventgrid_key"]
         eventgrid_topic_name = kwargs["eventgrid_topic_name"]
@@ -78,19 +81,20 @@ class TestEventGridConsumerClient(AzureRecordedTestCase):
             data={"sample": "cloudevent"},
             type="Sample.Cloud.Event",
         )
-        publisher.send(cloud_event)
+        await publisher.send(cloud_event)
 
-        received_event = consumer.receive(max_events=1)
+        received_event = await consumer.receive(max_events=1)
         assert len(received_event) == 1
 
         for event in received_event:
-            renew_lock = consumer.renew_locks(lock_tokens=[event.broker_properties.lock_token])
-            ack_result = consumer.acknowledge(lock_tokens=[event.broker_properties.lock_token])
+            renew_lock = await consumer.renew_locks(lock_tokens=[event.broker_properties.lock_token])
+            ack_result = await consumer.acknowledge(lock_tokens=[event.broker_properties.lock_token])
             assert ack_result.succeeded_lock_tokens == [event.broker_properties.lock_token]
 
     @pytest.mark.live_test_only
     @EventGridPreparer()
-    def test_receive_release_data(self, **kwargs):
+    @pytest.mark.asyncio
+    async def test_receive_release_data(self, **kwargs):
         eventgrid_endpoint = kwargs["eventgrid_endpoint"]
         eventgrid_key = kwargs["eventgrid_key"]
         eventgrid_topic_name = kwargs["eventgrid_topic_name"]
@@ -102,18 +106,19 @@ class TestEventGridConsumerClient(AzureRecordedTestCase):
             data={"sample": "cloudevent"},
             type="Sample.Cloud.Event",
         )
-        publisher.send(cloud_event)
+        await publisher.send(cloud_event)
 
-        received_event = consumer.receive(max_events=1)
+        received_event = await consumer.receive(max_events=1)
         assert len(received_event) == 1
 
         for event in received_event:
-            release = consumer.release(lock_tokens=[event.broker_properties.lock_token])
+            release = await consumer.release(lock_tokens=[event.broker_properties.lock_token])
             assert release.succeeded_lock_tokens == [event.broker_properties.lock_token]
 
     @pytest.mark.live_test_only
     @EventGridPreparer()
-    def test_receive_reject_data(self, **kwargs):
+    @pytest.mark.asyncio
+    async def test_receive_reject_data(self, **kwargs):
         eventgrid_endpoint = kwargs["eventgrid_endpoint"]
         eventgrid_key = kwargs["eventgrid_key"]
         eventgrid_topic_name = kwargs["eventgrid_topic_name"]
@@ -125,11 +130,11 @@ class TestEventGridConsumerClient(AzureRecordedTestCase):
             data={"sample": "cloudevent"},
             type="Sample.Cloud.Event",
         )
-        publisher.send(cloud_event)
+        await publisher.send(cloud_event)
 
-        received_event = consumer.receive(max_events=1)
+        received_event = await consumer.receive(max_events=1)
         assert len(received_event) == 1
 
         for event in received_event:
-            reject = consumer.reject(lock_tokens=[event.broker_properties.lock_token])
+            reject = await consumer.reject(lock_tokens=[event.broker_properties.lock_token])
             assert reject.succeeded_lock_tokens == [event.broker_properties.lock_token]
