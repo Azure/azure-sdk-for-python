@@ -21,11 +21,11 @@ from azure.core.messaging import CloudEvent
 from azure.eventgrid.aio import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
 
-# To Event Grid Basic
-topic_key = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_KEY"]
-endpoint = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT"]
-
 async def publish():
+    # To Event Grid Basic
+    topic_key = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_KEY"]
+    endpoint = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT"]
+
     credential = AzureKeyCredential(topic_key)
     client = EventGridPublisherClient(endpoint, credential)
 
