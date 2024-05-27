@@ -27,10 +27,11 @@ from azure.mgmt.selfhelp import SelfHelpMgmtClient
 def main():
     client = SelfHelpMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="0d0fcd2e-c4fd-4349-8497-200edb3923c6",
     )
 
-    response = client.discovery_solution_nlp_subscription_scope.post()
+    response = client.discovery_solution_nlp.discover_solutions_by_subscription(
+        subscription_id="0d0fcd2e-c4fd-4349-8497-200edb3923c6",
+    )
     print(response)
 
 
