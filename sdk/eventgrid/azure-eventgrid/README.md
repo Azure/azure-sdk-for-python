@@ -75,11 +75,11 @@ For example, you can use `DefaultAzureCredential` to construct a client which wi
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.eventgrid import EventGridClient, EventGridEvent
+from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 
 default_az_credential = DefaultAzureCredential()
 endpoint = os.environ["EVENTGRID_ENDPOINT"]
-client = EventGridClient(endpoint, default_az_credential)
+client = EventGridPublisherClient(endpoint, default_az_credential)
 ```
 
 <!-- END SNIPPET -->
@@ -105,14 +105,14 @@ pass the key as a string into an instance of [AzureKeyCredential][azure-key-cred
 
 ```python
 import os
-from azure.eventgrid import EventGridClient
+from azure.eventgrid import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
 
 key = os.environ["EVENTGRID_KEY"]
 endpoint = os.environ["EVENTGRID_ENDPOINT"]
 
 credential_key = AzureKeyCredential(key)
-client = EventGridClient(endpoint, credential_key)
+client = EventGridPublisherClient(endpoint, credential_key)
 ```
 
 <!-- END SNIPPET -->
