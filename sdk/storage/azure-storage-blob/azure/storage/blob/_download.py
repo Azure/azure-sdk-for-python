@@ -330,7 +330,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._request_options = kwargs
         self._location_mode = None
         self._current_content = b''
-        self._file_size = None
+        self._file_size = 0
         self._non_empty_ranges = None
         self._encryption_data = None
 
@@ -378,7 +378,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         # Set the content length to the download size instead of the size of the last range
         self.properties.size = self.size
         self.properties.content_range = (f"bytes {self._download_start}-"
-                                         f"{self._end_range if self._end_range is not None else self._file_size}/"
+                                         f"{self._end_range if self._end_range is not None else self._file_size - 1}/"
                                          f"{self._file_size}")
 
         # Overwrite the content MD5 as it is the MD5 for the last range instead
@@ -403,6 +403,10 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         # Restore cls for download
         self._request_options['cls'] = download_cls
+
+    @property
+    def _download_complete(self):
+        return self._download_offset >= self.size
 
     def _initial_request(self):
         range_header, range_validation = validate_and_format_range_headers(
@@ -497,15 +501,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             except HttpResponseError:
                 pass
 
-        # If the file is small, the download is complete at this point.
-        # If file size is large, download the rest of the file in chunks.
-        # For encryption V2, calculate based on size of decrypted content, not download size.
-        if is_encryption_v2(self._encryption_data):
-            download_complete = len(self._current_content) >= self.size
-        else:
-            download_complete = response.properties.size >= self.size
-
-        if not download_complete and self._request_options.get("modified_access_conditions"):
+        if not self._download_complete and self._request_options.get("modified_access_conditions"):
             self._request_options["modified_access_conditions"].if_match = response.properties.etag
 
         return response
@@ -536,7 +532,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         iter_downloader = None
         # If we still have the first chunk buffered, use it. Otherwise, download all content again
-        if not self._first_chunk or self._download_offset != self.size:
+        if not self._first_chunk or not self._download_complete:
             if self._first_chunk:
                 start = self._download_start + len(self._current_content)
                 current_progress = len(self._current_content)
@@ -544,7 +540,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 start = self._download_start
                 current_progress = 0
 
-            end = self._download_start + self._total_size
+            end = self._download_start + self.size
 
             iter_downloader = _ChunkDownloader(
                 client=self._clients.blob,
@@ -563,10 +559,10 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         initial_content = self._current_content if self._first_chunk else b''
         return _ChunkIterator(
-            size=self._total_size,
+            size=self.size,
             content=initial_content,
             downloader=iter_downloader,
-            chunk_size=self._chunk_size)
+            chunk_size=self._config.max_chunk_get_size)
 
     def read(self, size: int = -1, *, chars: Optional[int] = None) -> T:
         """
@@ -603,11 +599,10 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         if self._text_mode and size > -1:
             raise ValueError("Stream has been partially read in text mode. Please use chars.")
 
-        download_complete = self._download_offset >= self.size
         if not self._text_mode and chars is not None:
             self._text_mode = True
             self._decoder = codecs.getincrementaldecoder(self._encoding)('strict')
-            self._current_content = self._decoder.decode(self._current_content, final=download_complete)
+            self._current_content = self._decoder.decode(self._current_content, final=self._download_complete)
 
         output_stream: Union[BytesIO, StringIO]
         if self._text_mode:
@@ -631,7 +626,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             self._progress_hook(self._offset, self.size)
 
         remaining = size - count
-        if remaining > 0 and not download_complete:
+        if remaining > 0 and not self._download_complete:
             # Create a downloader than can download the rest of the file
             start = self._download_start + self._download_offset
             end = self._download_start + self.size
@@ -754,7 +749,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             self._progress_hook(self._offset, self.size)
 
         # If all the data was already downloaded/buffered
-        if self.size - self._download_offset == 0:
+        if self._download_complete:
             return remaining_size
 
         data_start = self._download_start + self._offset

@@ -1250,7 +1250,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        await self._setup(storage_account_name, storage_account_key)
+        await self._setup(storage_account_name, storage_account_key, upload_blob=False)
         self.bsc._config.max_single_get_size = 1024
         self.bsc._config.max_chunk_get_size = 1024
 
@@ -1279,7 +1279,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        await self._setup(storage_account_name, storage_account_key)
+        await self._setup(storage_account_name, storage_account_key, upload_blob=False)
         self.bsc._config.max_single_get_size = 1024
         self.bsc._config.max_chunk_get_size = 1024
         data = b'12345' * 205 * 5  # 5125 bytes
@@ -1443,7 +1443,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        await self._setup(storage_account_name, storage_account_key)
+        await self._setup(storage_account_name, storage_account_key, upload_blob=False)
         self.bsc._config.max_single_get_size = 1024
         self.bsc._config.max_chunk_get_size = 1024
 
@@ -1521,7 +1521,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        await self._setup(storage_account_name, storage_account_key)
+        await self._setup(storage_account_name, storage_account_key, upload_blob=False)
         self.bsc._config.max_single_get_size = 1024
         self.bsc._config.max_chunk_get_size = 1024
 
@@ -1560,7 +1560,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        await self._setup(storage_account_name, storage_account_key)
+        await self._setup(storage_account_name, storage_account_key, upload_blob=False)
         self.bsc._config.max_single_get_size = 1024
         self.bsc._config.max_chunk_get_size = 1024
 

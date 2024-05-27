@@ -1150,7 +1150,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key, upload_blob=False)
         data = b'12345' * 205 * 5  # 5125 bytes
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
@@ -1176,7 +1176,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key, upload_blob=False)
         data = b'12345' * 205 * 5  # 5125 bytes
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
@@ -1324,7 +1324,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key, upload_blob=False)
         data = b'12345' * 205 * 5  # 5125 bytes
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
@@ -1396,7 +1396,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key, upload_blob=False)
         data = b'12345' * 205 * 10  # 10250 bytes
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
@@ -1432,7 +1432,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(storage_account_name, storage_account_key, upload_blob=False)
         data = b'12345' * 205 * 10  # 10250 bytes
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
