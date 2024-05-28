@@ -7,14 +7,15 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.netapp import NetAppManagementClient
+
+from azure.mgmt.network import NetworkManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-netapp
+    pip install azure-mgmt-network
 # USAGE
-    python volumes_restore_status.py
+    python firewall_policy_draft_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -24,20 +25,18 @@ from azure.mgmt.netapp import NetAppManagementClient
 
 
 def main():
-    client = NetAppManagementClient(
+    client = NetworkManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
+        subscription_id="subid",
     )
 
-    response = client.backups.get_volume_restore_status(
-        resource_group_name="myRG",
-        account_name="account1",
-        pool_name="pool1",
-        volume_name="volume1",
+    response = client.firewall_policy_drafts.get(
+        resource_group_name="rg1",
+        firewall_policy_name="firewallPolicy",
     )
     print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2023-07-01/examples/Volumes_RestoreStatus.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-11-01/examples/FirewallPolicyDraftGet.json
 if __name__ == "__main__":
     main()
