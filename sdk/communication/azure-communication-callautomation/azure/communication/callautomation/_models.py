@@ -943,13 +943,6 @@ class CancelAddParticipantOperationResult:
             operation_context=cancel_add_participant_operation_result_generated.operation_context
         )
 
-class ResultState(Enum):
-    """
-    The status of the result of transcription.
-    """
-    INTERMEDIATE = "intermediate"
-    FINAL = "final"
-
 class TextFormat(Enum):
     """
     The format of transcription text.
