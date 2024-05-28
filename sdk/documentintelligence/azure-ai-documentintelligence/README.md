@@ -315,7 +315,7 @@ for page in result.pages:
 
     if page.lines:
         for line_idx, line in enumerate(page.lines):
-            words = get_words(page.words, line)
+            words = get_words(page, line)
             print(
                 f"...Line #{line_idx} has {len(words)} words and text '{line.content}' within "
                 f"bounding polygon '{line.polygon}'"
