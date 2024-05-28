@@ -60,9 +60,9 @@ def load_client(
     endpoint: str, credential: AzureKeyCredential, **kwargs: Any
 ) -> Union[ChatCompletionsClientGenerated, EmbeddingsClientGenerated, ImageEmbeddingsClientGenerated]:
 
-    client = ChatCompletionsClient(endpoint, credential, **kwargs)  # Pick any of the clients, it does not matter...
-    model_info = client.get_model_info()
-    client.close()
+    client1 = ChatCompletionsClient(endpoint, credential, **kwargs)  # Pick any of the clients, it does not matter...
+    model_info = client1.get_model_info()
+    client1.close()
 
     _LOGGER.info("model_info=%s", model_info)
     if model_info.model_type in (None, ""):
@@ -72,16 +72,16 @@ def load_client(
 
     # TODO: Remove "completions" and "embedding" once Mistral Large and Cohere fixes their model type
     if model_info.model_type in (_models.ModelType.CHAT, "completion"):
-        client = ChatCompletionsClient(endpoint, credential, **kwargs)
+        client2 = ChatCompletionsClient(endpoint, credential, **kwargs)
     elif model_info.model_type in (_models.ModelType.EMBEDDINGS, "embedding"):
-        client = EmbeddingsClient(endpoint, credential, **kwargs)
+        client2 = EmbeddingsClient(endpoint, credential, **kwargs)
     elif model_info.model_type == _models.ModelType.IMAGE_EMBEDDINGS:
-        client = ImageEmbeddingsClient(endpoint, credential, **kwargs)
+        client2 = ImageEmbeddingsClient(endpoint, credential, **kwargs)
     else:
         raise ValueError(f"No client available to support AI model type `{model_info.model_type}`")
 
-    client._model_info = model_info  # pylint: disable=protected-access
-    return  client
+    client2._model_info = model_info  # pylint: disable=protected-access
+    return  client2
 
 
 class ChatCompletionsClient(ChatCompletionsClientGenerated):

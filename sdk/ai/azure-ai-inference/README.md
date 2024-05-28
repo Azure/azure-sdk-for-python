@@ -1,6 +1,6 @@
 # Azure AI Inference client library for Python
 
-The client Library allows you to do inference using AI models you deployed to Azure. It supports both Serverless Endpoints (aka "model as a service" (MaaS) or "pay as you go") and Selfhosted Endpoints (aka "model as a platform" (MaaP) or "real-time endpoints"). The client library makes services calls using REST AP version `2024-05-01-preview`, as documented in [Azure AI Model Inference API](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api). For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
+The client Library (in preview) allows you to do inference using AI models you deployed to Azure. It supports both Serverless Endpoints (aka "model as a service" (MaaS) or "pay as you go") and Selfhosted Endpoints (aka "model as a platform" (MaaP) or "real-time endpoints"). The client library makes services calls using REST AP version `2024-05-01-preview`, as documented in [Azure AI Model Inference API](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api). For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
 
 Use the model inference client library to:
 
@@ -33,13 +33,13 @@ Note that for inference using OpenAI models hosted on Azure you should be using 
 To install the Azure AI Inferencing package use the following command:
 
 ```bash
-pip install azure-ai-inferencing
+pip install azure-ai-inference
 ```
 
 To update an existing installation of the package, use:
 
 ```bash
-pip install --upgrade azure-ai-inferencing
+pip install --upgrade azure-ai-inference
 ```
 
 ## Key concepts
@@ -422,10 +422,10 @@ logger = logging.getLogger("azure")
 # Set the desired logging level. logging.INFO or logging.DEBUG are good options.
 logger.setLevel(logging.DEBUG)
 
-# Direct logging output to stdout (the default):
+# Direct logging output to stdout:
 handler = logging.StreamHandler(stream=sys.stdout)
 # Or direct logging output to a file:
-# handler = logging.FileHandler(filename = 'sample.log')
+# handler = logging.FileHandler(filename="sample.log")
 logger.addHandler(handler)
 
 # Optional: change the default logging format. Here we add a timestamp.
