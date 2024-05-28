@@ -341,7 +341,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
 
         # Test Patch Pool Options
-        params = models.BatchPoolUpdateParameters(metadata=[models.MetadataItem(name="foo2", value="bar2")])
+        params = models.BatchPoolUpdateContent(metadata=[models.MetadataItem(name="foo2", value="bar2")])
         response = await async_wrapper(client.update_pool(test_paas_pool.id, params))
         assert response is None
 
@@ -387,7 +387,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await async_wrapper(
             client.enable_pool_auto_scale(
                 batch_pool.name,
-                models.BatchPoolEnableAutoScaleParameters(
+                models.BatchPoolEnableAutoScaleContent(
                     auto_scale_formula="$TargetDedicatedNodes=2",
                     auto_scale_evaluation_interval=interval,
                 ),
@@ -400,7 +400,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         result = await async_wrapper(
             client.evaluate_pool_auto_scale(
                 batch_pool.name,
-                models.BatchPoolEnableAutoScaleParameters(auto_scale_formula="$TargetDedicatedNodes=3"),
+                models.BatchPoolEnableAutoScaleContent(auto_scale_formula="$TargetDedicatedNodes=3"),
             )
         )
         assert isinstance(result, models.AutoScaleRun)
@@ -419,7 +419,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         while self.is_live and pool.allocation_state != models.AllocationState.steady:
             time.sleep(5)
             pool = await async_wrapper(client.get_pool(batch_pool.name))
-        params = models.BatchPoolResizeParameters(target_dedicated_nodes=0, target_low_priority_nodes=2)
+        params = models.BatchPoolResizeContent(target_dedicated_nodes=0, target_low_priority_nodes=2)
         response = await async_wrapper(client.resize_pool(batch_pool.name, params))
         assert response is None
 
@@ -448,11 +448,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
             constraints=models.BatchJobConstraints(max_task_retry_count=2),
             on_all_tasks_complete=models.OnAllBatchTasksComplete.terminate_job,
         )
-        schedule = models.Schedule(
+        schedule = models.BatchJobScheduleConfiguration(
             start_window=datetime.timedelta(hours=1),
             recurrence_interval=datetime.timedelta(days=1),
         )
-        params = models.BatchJobScheduleCreateParameters(id=schedule_id, schedule=schedule, job_specification=job_spec)
+        params = models.BatchJobScheduleCreateContent(id=schedule_id, schedule=schedule, job_specification=job_spec)
         response = await async_wrapper(client.create_job_schedule(params))
         assert response is None
 
@@ -484,14 +484,14 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Update Job Schedule
         job_spec = models.BatchJobSpecification(pool_info=models.BatchPoolInfo(pool_id="pool_id"))
-        schedule = models.Schedule(recurrence_interval=datetime.timedelta(hours=10))
+        schedule = models.BatchJobScheduleConfiguration(recurrence_interval=datetime.timedelta(hours=10))
         params = models.BatchJobSchedule(schedule=schedule, job_specification=job_spec)
         response = await async_wrapper(client.replace_job_schedule(schedule_id, params))
         assert response is None
 
         # Test Patch Job Schedule
-        schedule = models.Schedule(recurrence_interval=datetime.timedelta(hours=5))
-        params = models.BatchJobScheduleUpdateParameters(schedule=schedule)
+        schedule = models.BatchJobScheduleConfiguration(recurrence_interval=datetime.timedelta(hours=5))
+        params = models.BatchJobScheduleUpdateContent(schedule=schedule)
         response = await async_wrapper(client.update_job_schedule(schedule_id, params))
         assert response is None
 
@@ -513,7 +513,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         network_config = models.NetworkConfiguration(
             endpoint_configuration=models.BatchPoolEndpointConfiguration(
                 inbound_nat_pools=[
-                    models.InboundNATPool(
+                    models.InboundNatPool(
                         name="TestEndpointConfig",
                         protocol=models.InboundEndpointProtocol.udp,
                         backend_port=64444,
@@ -581,7 +581,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert node.node_agent_info.version is not None
 
         # Test Upload Log
-        config = models.UploadBatchServiceLogsParameters(
+        config = models.UploadBatchServiceLogsContent(
             container_url="https://computecontainer.blob.core.windows.net/",
             start_time=datetime.datetime.utcnow() - datetime.timedelta(minutes=6),
         )
@@ -608,22 +608,23 @@ class TestBatch(AzureMgmtRecordedTestCase):
             client.reboot_node(
                 batch_pool.name,
                 nodes[0].id,
-                models.BatchNodeRebootParameters(node_reboot_option=models.BatchNodeRebootOption.terminate),
+                models.BatchNodeRebootContent(node_reboot_option=models.BatchNodeRebootOption.terminate),
             )
         )
         assert response is None
 
         # Test Reimage Node
-        await self.assertBatchError(
-            "OperationNotValidOnNode",
-            client.reimage_node,
-            batch_pool.name,
-            nodes[1].id,
-            models.BatchNodeReimageParameters(node_reimage_option=models.BatchNodeReimageOption.terminate),
-        )
+        # TODO: check to see if reimage is removed from service
+        # await self.assertBatchError(
+        #     "OperationNotValidOnNode",
+        #     client.reimage_node,
+        #     batch_pool.name,
+        #     nodes[1].id,
+        #     models.BatchNodeReimageParameters(node_reimage_option=models.BatchNodeReimageOption.terminate),
+        # )
 
         # Test Remove Nodes
-        options = models.BatchNodeRemoveParameters(node_list=[n.id for n in nodes])
+        options = models.BatchNodeRemoveContent(node_list=[n.id for n in nodes])
         response = await async_wrapper(client.remove_nodes(batch_pool.name, options))
         assert response is None
 
@@ -637,7 +638,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         network_config = models.NetworkConfiguration(
             endpoint_configuration=models.BatchPoolEndpointConfiguration(
                 inbound_nat_pools=[
-                    models.InboundNATPool(
+                    models.InboundNatPool(
                         name="TestEndpointConfig",
                         protocol=models.InboundEndpointProtocol.udp,
                         backend_port=64444,

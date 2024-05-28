@@ -6,46 +6,22 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List
-import typing
+from typing import List, Any
 from ._models import BatchPoolReplaceContent as BatchPoolReplaceContentGenerated
+from .._model_base import rest_field
 
 __all__: List[str] = [
     "BatchPoolReplaceContent",
-    "CreateTasksErrorException"
+    "CreateTasksErrorException",
 ]  # Add all objects you want publicly available to users at this package level
 
 class BatchPoolReplaceContent(BatchPoolReplaceContentGenerated):
+    certificate_references: List[str] = rest_field(name="certificateReferences")
 
-    def as_dict(self, *, exclude_readonly: bool = False) -> typing.Dict[str, typing.Any]:
-        result = super().as_dict(exclude_readonly=exclude_readonly)
-        result["certificateReferences"] = []
-        return result
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+        self.certificate_references = []
 
-    #     """Return a dict that can be JSONify using json.dump.
-
-    #     :keyword bool exclude_readonly: Whether to remove the readonly properties.
-    #     :returns: A dict JSON compatible object
-    #     :rtype: dict
-    #     """
-
-    #     result = {}
-    #     result["certificateReferences"] = []
-    #     if exclude_readonly:
-    #         readonly_props = [p._rest_name for p in self._attr_to_rest_field.values() if _is_readonly(p)]
-    #     for k, v in self.items():
-    #         if exclude_readonly and k in readonly_props:  # pyright: ignore
-    #             continue
-    #         is_multipart_file_input = False
-    #         try:
-    #             is_multipart_file_input = next(
-    #                 rf for rf in self._attr_to_rest_field.values() if rf._rest_name == k
-    #             )._is_multipart_file_input
-    #         except StopIteration:
-    #             pass
-    #         result[k] = v if is_multipart_file_input else Model._as_dict_value(v, exclude_readonly=exclude_readonly)
-    #     return result
-    
 
 class CreateTasksErrorException(Exception):
     """Aggregate Exception containing details for any failures from a task add operation.
