@@ -3353,3 +3353,24 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
             with receiver:
                 number_deleted_messages = receiver.purge_messages()
             assert number_deleted_messages == len(batch_message) * 2
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()
+    def test_message_purge_many_messages(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, uamqp_transport=uamqp_transport) as sb_client:
+
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            for _ in range(10001):
+                sender.send_messages(ServiceBusMessage("Message to be purged"))
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name)
+            number_deleted_messages = 0
+            with receiver:
+                number_deleted_messages = receiver.purge_messages()
+            assert number_deleted_messages == 10001
