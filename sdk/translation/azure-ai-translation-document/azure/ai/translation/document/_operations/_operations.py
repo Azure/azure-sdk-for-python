@@ -29,9 +29,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from ..models import _models
-from ..models import _enums
-from .. import _model_base
+from .. import _model_base, models as _models
 from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Serializer
 from .._vendor import (
@@ -260,7 +258,7 @@ def build_document_translation_get_documents_status_request(  # pylint: disable=
 
 
 def build_document_translation_get_supported_formats_request(  # pylint: disable=name-too-long
-    *, type: Optional[Union[str, _enums.FileFormatType]] = None, **kwargs: Any
+    *, type: Optional[Union[str, _models.FileFormatType]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -373,7 +371,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
-    def begin_start_translation(  # pylint: disable=protected-access
+    def begin_start_translation(
         self, body: _models.StartTranslationDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         # pylint: disable=line-too-long
@@ -400,7 +398,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         must be unique.
 
         :param body: Required.
-        :type body: ~azure.ai.translation.document.models._models.StartTranslationDetails
+        :type body: ~azure.ai.translation.document.models.StartTranslationDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -567,8 +565,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         must be unique.
 
         :param body: Is one of the following types: StartTranslationDetails, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.translation.document.models._models.StartTranslationDetails or JSON or
-         IO[bytes]
+        :type body: ~azure.ai.translation.document.models.StartTranslationDetails or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -778,8 +775,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
          asc','CreatedDateTimeUtc desc'). Default value is None.
         :paramtype orderby: list[str]
         :return: An iterator like instance of TranslationStatus
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.ai.translation.document.models._models.TranslationStatus]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.translation.document.models.TranslationStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -828,9 +824,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.TranslationStatus]] = kwargs.pop(  # pylint: disable=protected-access
-            "cls", None
-        )
+        cls: ClsType[List[_models.TranslationStatus]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -896,7 +890,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # type: ignore[annotation-unchecked] # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -912,9 +906,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_document_status(  # pylint: disable=protected-access
-        self, id: str, document_id: str, **kwargs: Any
-    ) -> _models.DocumentStatus:
+    def get_document_status(self, id: str, document_id: str, **kwargs: Any) -> _models.DocumentStatus:
         # pylint: disable=line-too-long
         """Returns the status for a specific document.
 
@@ -926,7 +918,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         :param document_id: Format - uuid.  The document id. Required.
         :type document_id: str
         :return: DocumentStatus. The DocumentStatus is compatible with MutableMapping
-        :rtype: ~azure.ai.translation.document.models._models.DocumentStatus
+        :rtype: ~azure.ai.translation.document.models.DocumentStatus
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -977,7 +969,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DocumentStatus] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models.DocumentStatus] = kwargs.pop("cls", None)
 
         _request = build_document_translation_get_document_status_request(
             id=id,
@@ -1007,9 +999,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.DocumentStatus, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.DocumentStatus, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1017,9 +1007,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_translation_status(  # pylint: disable=protected-access
-        self, id: str, **kwargs: Any
-    ) -> _models.TranslationStatus:
+    def get_translation_status(self, id: str, **kwargs: Any) -> _models.TranslationStatus:
         # pylint: disable=line-too-long
         """Returns the status for a document translation request.
 
@@ -1031,7 +1019,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         :param id: Format - uuid.  The operation id. Required.
         :type id: str
         :return: TranslationStatus. The TranslationStatus is compatible with MutableMapping
-        :rtype: ~azure.ai.translation.document.models._models.TranslationStatus
+        :rtype: ~azure.ai.translation.document.models.TranslationStatus
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1087,7 +1075,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TranslationStatus] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models.TranslationStatus] = kwargs.pop("cls", None)
 
         _request = build_document_translation_get_translation_status_request(
             id=id,
@@ -1116,9 +1104,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TranslationStatus, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.TranslationStatus, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1126,9 +1112,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         return deserialized  # type: ignore
 
     @distributed_trace
-    def cancel_translation(  # pylint: disable=protected-access
-        self, id: str, **kwargs: Any
-    ) -> _models.TranslationStatus:
+    def cancel_translation(self, id: str, **kwargs: Any) -> _models.TranslationStatus:
         # pylint: disable=line-too-long
         """Cancel a currently processing or queued translation.
 
@@ -1144,7 +1128,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         :param id: Format - uuid.  The operation-id. Required.
         :type id: str
         :return: TranslationStatus. The TranslationStatus is compatible with MutableMapping
-        :rtype: ~azure.ai.translation.document.models._models.TranslationStatus
+        :rtype: ~azure.ai.translation.document.models.TranslationStatus
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1200,7 +1184,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TranslationStatus] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models.TranslationStatus] = kwargs.pop("cls", None)
 
         _request = build_document_translation_cancel_translation_request(
             id=id,
@@ -1229,9 +1213,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TranslationStatus, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.TranslationStatus, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1343,8 +1325,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
          asc','CreatedDateTimeUtc desc'). Default value is None.
         :paramtype orderby: list[str]
         :return: An iterator like instance of DocumentStatus
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.ai.translation.document.models._models.DocumentStatus]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.translation.document.models.DocumentStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1388,7 +1369,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.DocumentStatus]] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[List[_models.DocumentStatus]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -1455,7 +1436,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(   # type: ignore[annotation-unchecked] # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -1471,8 +1452,8 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_supported_formats(  # pylint: disable=protected-access
-        self, *, type: Optional[Union[str, _enums.FileFormatType]] = None, **kwargs: Any
+    def get_supported_formats(
+        self, *, type: Optional[Union[str, _models.FileFormatType]] = None, **kwargs: Any
     ) -> _models.SupportedFileFormats:
         """Returns a list of supported document formats.
 
@@ -1485,7 +1466,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
          "glossary". Default value is None.
         :paramtype type: str or ~azure.ai.translation.document.models.FileFormatType
         :return: SupportedFileFormats. The SupportedFileFormats is compatible with MutableMapping
-        :rtype: ~azure.ai.translation.document.models._models.SupportedFileFormats
+        :rtype: ~azure.ai.translation.document.models.SupportedFileFormats
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1525,7 +1506,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.SupportedFileFormats] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models.SupportedFileFormats] = kwargs.pop("cls", None)
 
         _request = build_document_translation_get_supported_formats_request(
             type=type,
@@ -1554,9 +1535,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.SupportedFileFormats, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.SupportedFileFormats, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
