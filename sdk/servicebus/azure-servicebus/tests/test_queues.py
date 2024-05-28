@@ -71,7 +71,7 @@ from servicebus_preparer import (
     CachedServiceBusResourceGroupPreparer
 )
 from utilities import get_logger, print_message, sleep_until_expired
-from mocks import MockReceivedMessage, MockReceiver
+# from mocks import MockReceivedMessage, MockReceiver
 from utilities import uamqp_transport as get_uamqp_transport, ArgPasser
 
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
