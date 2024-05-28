@@ -29,7 +29,8 @@ USAGE:
 def sample_translation_with_glossaries():
     import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.translation.document import DocumentTranslationClient, TranslationGlossary
+    from azure.ai.translation.document import DocumentTranslationClient
+    from azure.ai.translation.document.models import Glossary
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
@@ -43,27 +44,27 @@ def sample_translation_with_glossaries():
         source_container_url,
         target_container_url,
         "es",
-        glossaries=[TranslationGlossary(glossary_url=glossary_url, file_format="TSV")],
+        glossaries=[Glossary(glossary_url=glossary_url, format="TSV")],
     )
 
     result = poller.result()
 
     print(f"Status: {poller.status()}")
-    print(f"Created on: {poller.details.created_on}")
-    print(f"Last updated on: {poller.details.last_updated_on}")
-    print(f"Total number of translations on documents: {poller.details.documents_total_count}")
+    print(f"Created on: {poller.details.created_date_time_utc}")
+    print(f"Last updated on: {poller.details.last_action_date_time_utc}")
+    print(f"Total number of translations on documents: {poller.details.summary.total}")
 
     print("\nOf total documents...")
-    print(f"{poller.details.documents_failed_count} failed")
-    print(f"{poller.details.documents_succeeded_count} succeeded")
+    print(f"{poller.details.summary.failed} failed")
+    print(f"{poller.details.summary.success} succeeded")
 
     for document in result:
         print(f"Document ID: {document.id}")
         print(f"Document status: {document.status}")
         if document.status == "Succeeded":
-            print(f"Source document location: {document.source_document_url}")
-            print(f"Translated document location: {document.translated_document_url}")
-            print(f"Translated to language: {document.translated_to}\n")
+            print(f"Source document location: {document.source_path}")
+            print(f"Translated document location: {document.path}")
+            print(f"Translated to language: {document.to}\n")
         elif document.error:
             print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
 
