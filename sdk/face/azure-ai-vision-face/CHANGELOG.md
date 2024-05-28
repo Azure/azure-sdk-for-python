@@ -1,5 +1,15 @@
 # Release History
 
+## 1.0.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0b1 (2024-05-28)
 
 This is the first preview of the `azure-ai-vision-face` client library that follows the [Azure Python SDK Design Guidelines](https://azure.github.io/azure-sdk/python_design.html).
