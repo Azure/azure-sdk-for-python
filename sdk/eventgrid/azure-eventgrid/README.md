@@ -78,7 +78,7 @@ from azure.identity import DefaultAzureCredential
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 
 default_az_credential = DefaultAzureCredential()
-endpoint = os.environ["EVENTGRID_ENDPOINT"]
+endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 client = EventGridPublisherClient(endpoint, default_az_credential)
 ```
 
@@ -108,10 +108,10 @@ import os
 from azure.eventgrid import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
 
-key = os.environ["EVENTGRID_KEY"]
-endpoint = os.environ["EVENTGRID_ENDPOINT"]
+topic_key = os.environ["EVENTGRID_TOPIC_KEY"]
+endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
-credential_key = AzureKeyCredential(key)
+credential_key = AzureKeyCredential(topic_key)
 client = EventGridPublisherClient(endpoint, credential_key)
 ```
 
