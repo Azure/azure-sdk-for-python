@@ -383,7 +383,7 @@ class WorkspaceOperationsBase(ABC):
             ):
                 module_logger.info("updating feature store materialization identity role assignments..")
                 template, param, resources_being_deployed = self._populate_feature_store_role_assignment_parameters(
-                    workspace, resource_group=resource_group, **kwargs
+                    workspace, resource_group=resource_group, location=existing_workspace.location, **kwargs
                 )
 
                 arm_submit = ArmDeploymentExecutor(
@@ -780,7 +780,8 @@ class WorkspaceOperationsBase(ABC):
         _set_val(param["workspace_name"], workspace.name)
         resource_group = kwargs.get("resource_group", workspace.resource_group)
         _set_val(param["resource_group_name"], resource_group)
-        _set_val(param["location"], workspace.location)
+        location = kwargs.get("location", workspace.location)
+        _set_val(param["location"], location)
 
         update_workspace_role_assignment = kwargs.get("update_workspace_role_assignment", None)
         if update_workspace_role_assignment:
