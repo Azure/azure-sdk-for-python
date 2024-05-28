@@ -208,8 +208,8 @@ class RecordingStorageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Storage managed by provided Azure blob"""
 
 
-class TranscriptionResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """TranscriptionResultType."""
+class TranscriptionResultState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TranscriptionResultState."""
 
     FINAL = "final"
     INTERMEDIATE = "intermediate"

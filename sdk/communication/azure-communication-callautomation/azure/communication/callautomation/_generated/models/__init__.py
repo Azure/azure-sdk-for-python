@@ -121,7 +121,7 @@ from ._enums import RecordingFormat
 from ._enums import RecordingKind
 from ._enums import RecordingState
 from ._enums import RecordingStorageKind
-from ._enums import TranscriptionResultType
+from ._enums import TranscriptionResultState
 from ._enums import TranscriptionStatus
 from ._enums import TranscriptionStatusDetails
 from ._enums import TranscriptionSubscriptionState
@@ -246,7 +246,7 @@ __all__ = [
     "RecordingKind",
     "RecordingState",
     "RecordingStorageKind",
-    "TranscriptionResultType",
+    "TranscriptionResultState",
     "TranscriptionStatus",
     "TranscriptionStatusDetails",
     "TranscriptionSubscriptionState",

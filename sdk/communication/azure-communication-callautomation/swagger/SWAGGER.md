@@ -44,6 +44,10 @@ directive:
   transform: >
     $["name"] = "RecordingContent";
 - from: swagger-document
+  where: $.definitions.TranscriptionResultType.x-ms-enum
+  transform: >
+    $["name"] = "TranscriptionResultState";
+- from: swagger-document
   where: $.definitions.RecordingChannelType.x-ms-enum
   transform: >
     $["name"] = "RecordingChannel";

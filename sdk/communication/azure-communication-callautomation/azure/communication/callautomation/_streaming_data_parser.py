@@ -31,7 +31,11 @@ class StreamingDataParser:
         kind = json_object['kind']
 
         if kind == 'TranscriptionMetadata':
-            transcription_metadata = TranscriptionMetadata(**json_object['transcriptionMetadata'])
+            transcription_metadata = TranscriptionMetadata(
+                subscription_id=json_object['transcriptionMetadata']['subscriptionId'],
+                locale=json_object['transcriptionMetadata']['locale'],
+                call_connection_id=json_object['transcriptionMetadata']['callConnectionId'],
+                correlation_id=json_object['transcriptionMetadata']['correlationId'])
             return transcription_metadata
         if kind == 'TranscriptionData':
             participant = identifier_from_raw_id(json_object['transcriptionData']['participantRawID'])
@@ -45,7 +49,7 @@ class StreamingDataParser:
                 duration=json_object['transcriptionData']['duration'],
                 words=words,
                 participant=participant,
-                result_status=json_object['transcriptionData']['resultStatus']
+                result_state=json_object['transcriptionData']['resultStatus']
             )
             return transcription_data
         raise ValueError(string_json)

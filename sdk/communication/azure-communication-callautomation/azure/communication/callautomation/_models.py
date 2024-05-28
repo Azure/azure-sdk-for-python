@@ -40,7 +40,7 @@ if TYPE_CHECKING:
         MediaStreamingAudioChannelType,
         TranscriptionTransportType,
         TranscriptionSubscriptionState,
-        TranscriptionResultType,
+        TranscriptionResultState,
         CallConnectionState,
         RecordingState,
         RecordingKind,
@@ -512,22 +512,22 @@ class TranscriptionSubscription:
      ~azure.communication.callautomation.models.TranscriptionSubscriptionState
     :keyword subscribed_result_types: Subscribed transcription result types.
     :paramtype subscribed_result_types: list[str or
-     ~azure.communication.callautomation.models.TranscriptionResultType]
+     ~azure.communication.callautomation.models.TranscriptionResultState]
     """
 
     id: Optional[str]
     """subscription id."""
     state: Optional[Union[str, 'TranscriptionSubscriptionState']]
     """transcription subscription state."""
-    subscribed_result_types: Optional[List[Union[str, 'TranscriptionResultType']]]
-    """subscribed transcription result types."""
+    subscribed_result_states: Optional[List[Union[str, 'TranscriptionResultState']]]
+    """subscribed transcription result states."""
 
     def __init__(
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         state: Optional[Union[str, "TranscriptionSubscriptionState"]] = None,
-        subscribed_result_types: Optional[List[Union[str, "TranscriptionResultType"]]] = None
+        subscribed_result_states: Optional[List[Union[str, "TranscriptionResultState"]]] = None
     ) -> None:
         """
         :keyword id: Subscription Id.
@@ -536,20 +536,20 @@ class TranscriptionSubscription:
         "active".
         :paramtype state: str or
         ~azure.communication.callautomation.models.TranscriptionSubscriptionState
-        :keyword subscribed_result_types: Subscribed transcription result types.
-        :paramtype subscribed_result_types: list[str or
-        ~azure.communication.callautomation.models.TranscriptionResultType]
+        :keyword subscribed_result_states: Subscribed transcription result types.
+        :paramtype subscribed_result_states: list[str or
+        ~azure.communication.callautomation.models.TranscriptionResultState]
         """
 
         self.id = id
         self.state = state
-        self.subscribed_result_types = subscribed_result_types
+        self.subscribed_result_states = subscribed_result_states
 
     def _to_generated(self):
         return TranscriptionSubscriptionInternal(
             id=self.id,
             state=self.state ,
-            subscribed_result_types=self.subscribed_result_types
+            subscribed_result_types=self.subscribed_result_states
         )
 
 class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
@@ -943,7 +943,7 @@ class CancelAddParticipantOperationResult:
             operation_context=cancel_add_participant_operation_result_generated.operation_context
         )
 
-class ResultStatus(Enum):
+class ResultState(Enum):
     """
     The status of the result of transcription.
     """
@@ -995,15 +995,21 @@ class TranscriptionMetadata:
     """ Transcription Subscription Id. """
     locale: str
     """ The target locale in which the translated text needs to be. """
-    callConnection_id: str
+    call_connection_id: str
     """ call connection Id. """
     correlation_id: str
     """ correlation Id. """
 
-    def __init__(self, subscription_id: str, locale: str, callConnection_id: str, correlation_id: str):
-        self.subscriptionId = subscription_id
+    def __init__(
+            self,
+            *,
+            subscription_id: str,
+            locale: str,
+            call_connection_id: str,
+            correlation_id: str):
+        self.subscription_id = subscription_id
         self.locale = locale
-        self.callConnection_id = callConnection_id
+        self.call_connection_id = call_connection_id
         self.correlation_id = correlation_id
 
 class TranscriptionData:
@@ -1023,8 +1029,9 @@ class TranscriptionData:
     :paramtype words: List[WordData]
     :keyword participant: The identified speaker based on participant raw ID.
     :paramtype participant: CommunicationIdentifier
-    :keyword resultStatus: Status of the result of transcription.
-    :paramtype resultStatus: ResultStatus
+    :keyword result_state: Status of the result of transcription.
+    :paramtype result_state: str or
+     ~azure.communication.callautomation.models.TranscriptionResultState
     """
     text: str
     """ The display form of the recognized word. """
@@ -1040,11 +1047,20 @@ class TranscriptionData:
     """ The result for each word of the phrase. """
     participant: CommunicationIdentifier
     """ The identified speaker based on participant raw ID. """
-    result_status: ResultStatus
-    """ Status of the result of transcription. """
+    result_state: 'TranscriptionResultState'
+    """ State of the result of transcription. """
 
-    def __init__(self, text: str, format: TextFormat, confidence: float, offset: int, duration: int,
-    words: List[WordData], participant: CommunicationIdentifier, result_status: ResultStatus):
+    def __init__(
+            self,
+            *,
+            text: str,
+            format: TextFormat,
+            confidence: float,
+            offset: int,
+            duration: int,
+            words: List[WordData],
+            participant: CommunicationIdentifier,
+            result_state: 'TranscriptionResultState'):
         self.text = text
         self.format = format
         self.confidence = confidence
@@ -1052,4 +1068,4 @@ class TranscriptionData:
         self.duration = duration
         self.words = words
         self.participant = participant
-        self.result_status = result_status
+        self.result_state = result_state

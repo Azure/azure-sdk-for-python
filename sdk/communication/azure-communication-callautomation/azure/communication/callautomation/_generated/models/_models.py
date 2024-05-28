@@ -4580,7 +4580,7 @@ class TranscriptionSubscription(_serialization.Model):
      ~azure.communication.callautomation.models.TranscriptionSubscriptionState
     :ivar subscribed_result_types: Subscribed transcription result types.
     :vartype subscribed_result_types: list[str or
-     ~azure.communication.callautomation.models.TranscriptionResultType]
+     ~azure.communication.callautomation.models.TranscriptionResultState]
     """
 
     _attribute_map = {
@@ -4594,7 +4594,7 @@ class TranscriptionSubscription(_serialization.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         state: Optional[Union[str, "_models.TranscriptionSubscriptionState"]] = None,
-        subscribed_result_types: Optional[List[Union[str, "_models.TranscriptionResultType"]]] = None,
+        subscribed_result_types: Optional[List[Union[str, "_models.TranscriptionResultState"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4606,7 +4606,7 @@ class TranscriptionSubscription(_serialization.Model):
          ~azure.communication.callautomation.models.TranscriptionSubscriptionState
         :keyword subscribed_result_types: Subscribed transcription result types.
         :paramtype subscribed_result_types: list[str or
-         ~azure.communication.callautomation.models.TranscriptionResultType]
+         ~azure.communication.callautomation.models.TranscriptionResultState]
         """
         super().__init__(**kwargs)
         self.id = id
