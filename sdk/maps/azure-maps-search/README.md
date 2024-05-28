@@ -163,7 +163,7 @@ def geocode_batch():
 
     result1 = result.batch_items[0]
 
-    if (result1.features and len(result1.features) > 0):
+    if result1.features
         coordinates1 = result1.features[0].geometry.coordinates
         longitude1 = coordinates1[0]
         latitude1 = coordinates1[1]
