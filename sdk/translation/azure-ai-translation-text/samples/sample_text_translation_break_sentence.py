@@ -37,12 +37,12 @@ text_translator = sample_text_translation_client.create_text_translation_client_
 def get_text_sentence_boundaries():
     # [START get_text_sentence_boundaries]
     try:
-        from_parameter = "zh-Hans"
+        from_language = "zh-Hans"
         source_script = "Latn"
         input_text_elements = ["zhè shì gè cè shì。"]
 
         response = text_translator.find_sentence_boundaries(
-            body=input_text_elements, language=from_parameter, script=source_script
+            body=input_text_elements, language=from_language, script=source_script
         )
         sentence_boundaries = response[0] if response else None
 
