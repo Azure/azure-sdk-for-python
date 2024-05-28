@@ -100,7 +100,9 @@ parameters:
   - name: Packages
     type: object
     default: []
-
+  - name: UseFederatedAuth
+    type: boolean
+    default: false
 
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
