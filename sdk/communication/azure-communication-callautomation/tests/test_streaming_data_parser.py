@@ -6,7 +6,7 @@
 
 import json
 import unittest
-from azure.communication.callautomation._models import (TranscriptionMetadata,TranscriptionData,WordData,TextFormat,ResultState)
+from azure.communication.callautomation._models import (TranscriptionMetadata,TranscriptionData,WordData,TextFormat)
 from azure.communication.callautomation._streaming_data_parser import StreamingDataParser
 
 class TestStreamDataParser(unittest.TestCase):
