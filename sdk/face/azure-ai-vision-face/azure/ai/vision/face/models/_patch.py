@@ -31,6 +31,7 @@ class FaceAttributeTypeDetection01(str, Enum, metaclass=CaseInsensitiveEnumMeta)
 class FaceAttributeTypeDetection03(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Available attribute options for detection_03 model."""
 
+    BLUR = FaceAttributeType.BLUR.value
     HEAD_POSE = FaceAttributeType.HEAD_POSE.value
     MASK = FaceAttributeType.MASK.value
 

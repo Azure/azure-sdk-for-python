@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Tracing: `DistributedTracingPolicy` will now set an attribute, `http.request.resend_count`, on HTTP spans for resent requests to indicate the resend attempt number.  #35069
+
 ### Breaking Changes
 
 ### Bugs Fixed

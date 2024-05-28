@@ -357,6 +357,8 @@
 
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Service Bus
+# ServiceOwners:  @EldertGrootenboer
+
 # PRLabel: %Service Bus
 /sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence
 
@@ -836,9 +838,6 @@
 
 # ServiceLabel: %Security %Service Attention
 #/<NotInRepo>/          @chlahav
-
-# ServiceLabel: %Service Attention %Service Bus
-#/<NotInRepo>/          @EldertGrootenboer
 
 # ServiceLabel: %Service Attention %Service Fabric
 #/<NotInRepo>/          @QingChenmsft @vaishnavk @juhacket
