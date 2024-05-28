@@ -224,7 +224,7 @@ def reverse_geocode():
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
     result = maps_search_client.get_reverse_geocoding(coordinates=[-122.138679, 47.630356])
-    if result.features and len(result.features) > 0):
+    if result.features:
         props = result.features[0].properties
         if props and props.address:
             print(props.address.formatted_address)
