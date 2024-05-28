@@ -1,5 +1,12 @@
 # Release History
 
+## 1.16.1 (2024-05-24)
+
+### Bugs Fixed
+- [Fixed idle_time_before_shutdown_minutes not appearing in GET calls for Compute Instances.](https://github.com/Azure/azure-sdk-for-python/pull/35763)
+- [Add Dependency as a new rule category](https://github.com/Azure/azure-sdk-for-python/pull/35743)
+- [fixing workspace arm template](https://github.com/Azure/azure-sdk-for-python/pull/35746)
+
 ## 1.16.0 (2024-05-14)
 
 ### Features Added
