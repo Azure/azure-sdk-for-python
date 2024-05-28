@@ -116,16 +116,32 @@ steps:
     displayName: Create Coverage Report
     condition: and(succeeded(), ${{ parameters.RunCoverage }})
 
-  - task: PythonScript@0
-    displayName: 'Test Samples'
-    condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
-    inputs:
-      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-      arguments: >-
-        "$(TargetingString)"
-        --service="${{ parameters.ServiceDirectory }}"
-        --toxenv="samples"
-    env: ${{ parameters.EnvVars }}
+  - ${{ if eq('true', parameters.UseFederatedAuth) }}:
+    - task: AzurePowerShell@5
+      displayName: Test Samples (AzurePowerShell@5)
+      condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
+      env: ${{ parameters.EnvVars }}
+      inputs:
+        azureSubscription: ${{ parameters.ServiceConnection }}
+        azurePowerShellVersion: LatestVersion
+        ScriptType: InlineScript
+        Inline: >-
+          scripts/devops_tasks/dispatch_tox.py
+          "$(TargetingString)"
+          --service="${{ parameters.ServiceDirectory }}"
+          --toxenv="samples"
+
+  - ${{ else }}: 
+    - task: PythonScript@0
+      displayName: 'Test Samples'
+      condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
+      inputs:
+        scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+        arguments: >-
+          "$(TargetingString)"
+          --service="${{ parameters.ServiceDirectory }}"
+          --toxenv="samples"
+      env: ${{ parameters.EnvVars }}
 
   - task: PublishTestResults@2
     condition: always()
