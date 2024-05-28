@@ -1,5 +1,18 @@
 # Release History
 
+## 2.0.0b4 (2024-05-27)
+
+### Features Added
+
+  - Added operation CheckNameAvailabilityOperations.check_availability
+  - Added operation group DiscoverySolutionNLPOperations
+
+### Breaking Changes
+
+  - Removed operation CheckNameAvailabilityOperations.post
+  - Removed operation group DiscoverySolutionNLPSubscriptionScopeOperations
+  - Removed operation group DiscoverySolutionNLPTenantScopeOperations
+
 ## 2.0.0b3 (2024-04-22)
 
 ### Features Added
