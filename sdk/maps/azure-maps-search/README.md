@@ -143,7 +143,7 @@ This sample demonstrates how to perform batch search address.
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.maps.search import MapsSearchClient
-from azure.maps.search._generated.models import GeocodingBatchRequestItem, GeocodingBatchRequestBody
+from azure.maps.search.models import GeocodingBatchItem, GeocodingBatch
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
