@@ -281,8 +281,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :paramtype sip_headers: dict[str, str]
         :keyword voip_headers: Custom context for VOIP
         :paramtype voip_headers: dict[str, str]
-         ivar source_caller_id_number: The source caller Id, a phone number, that's will be used as the
+        :keyword source_caller_id_number: The source caller Id, a phone number, that's will be used as the
          transferor's(Contoso) caller id when transfering a call a pstn target.
+        :paramtype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier or None
         :return: TransferCallResult
         :rtype: ~azure.communication.callautomation.TransferCallResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1010,7 +1011,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         *,
         play_source: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None,
         operation_context: Optional[str] = None,
-        operation_callback_uri: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
         **kwargs
     )-> None:
         """Play media to specific participant(s) in this call.
@@ -1045,7 +1046,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             target_participant=serialize_identifier(target_participant),
             play_source_info=play_source_single._to_generated() if play_source_single else None,  # pylint:disable=protected-access
             operation_context=operation_context,
-            operation_callback_uri=operation_callback_uri,
+            operation_callback_uri=operation_callback_url,
             kwargs=kwargs
         )
 
