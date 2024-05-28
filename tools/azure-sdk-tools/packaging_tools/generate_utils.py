@@ -11,6 +11,7 @@ from subprocess import check_output, CalledProcessError, check_call, getoutput
 from typing import Dict, Any
 from glob import glob
 import yaml
+import shutil
 
 from . import build_packaging
 from .swaggertosdk.autorest_tools import build_autorest_options, generate_code
@@ -41,11 +42,12 @@ def del_outdated_generated_files(readme: str):
     if not service_dir or not package_dir:
         _LOGGER.info(f"do not find service-dir or package-dir in tspconfig.yaml: {tspconfig}")
         return
-    target_dir = Path(service_dir) / package_dir / package_dir.split("-")[0]
-    if target_dir.exists():
+    generated_files_dir = Path(service_dir) / package_dir / package_dir.split("-")[0]
+    # remove outdated generate files
+    if generated_files_dir.exists():
         generated_files = [
             file
-            for file in target_dir.glob("**/*")
+            for file in generated_files_dir.glob("**/*")
             if all(
                 i not in str(file)
                 for i in (
@@ -61,6 +63,12 @@ def del_outdated_generated_files(readme: str):
             if file.stem != "_patch":
                 os.remove(file)
         _LOGGER.info(f"delete outdated generated files except _patch.py successfully")
+
+    # remove outdated generated samples
+    generated_samples_dir = Path(service_dir) / package_dir / "generated_samples"
+    if generated_samples_dir.exists():
+        shutil.rmtree(generated_samples_dir)
+        _LOGGER.info(f"delete outdated generated samples successfully")
 
 
 def check_api_version_in_subfolder(sdk_code_path: str):
