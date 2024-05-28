@@ -157,7 +157,7 @@ def geocode_batch():
 
     result = maps_search_client.get_geocoding_batch(batch_request_body)
 
-    if not (result.batch_items and len(result.batch_items) > 0):
+    if not result.batch_items:
         print("No geocoding")
         return
 
