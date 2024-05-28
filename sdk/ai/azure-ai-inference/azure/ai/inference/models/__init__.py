@@ -74,7 +74,7 @@ __all__ = [
     "ModelType",
     "SystemMessage",
     "ToolMessage",
-    "UnknownParams"
+    "UnknownParams",
     "UserMessage",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

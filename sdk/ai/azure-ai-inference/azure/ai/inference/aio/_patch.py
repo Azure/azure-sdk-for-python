@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# pylint: disable=too-many-lines)
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -33,9 +34,6 @@ from .._operations._operations import (
     build_chat_completions_complete_request,
     build_embeddings_embedding_request,
     build_image_embeddings_embedding_request,
-    build_chat_completions_get_model_info_request,
-    build_embeddings_get_model_info_request,
-    build_image_embeddings_get_model_info_request,
 )
 
 if sys.version_info >= (3, 9):
@@ -303,6 +301,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         **kwargs: Any,
     ) -> Union[_models.AsyncStreamingChatCompletions, _models.ChatCompletions]:
         # pylint: disable=line-too-long
+        # pylint: disable=too-many-locals
         """Gets chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
         "completes" provided prompt data. When using this method with `stream=True`, the response is streamed
@@ -471,8 +470,8 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
         if _stream:
             return _models.AsyncStreamingChatCompletions(response)
-        else:
-            return _deserialize(_models.ChatCompletions, response.json())  # pylint: disable=protected-access
+
+        return _deserialize(_models.ChatCompletions, response.json())  # pylint: disable=protected-access
 
     # Cache here the results of get_model_info call
     _model_info: Optional[_models.ModelInfo] = None
@@ -486,11 +485,12 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :rtype: ~azure.ai.inference.models.ModelInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if self._model_info == None:
+        if self._model_info is None:
             self._model_info = await self._get_model_info(**kwargs)
         return self._model_info
 
     def __str__(self) -> str:
+        # pylint: disable=client-method-name-no-double-underscore
         return super().__str__() + f"\n{self._model_info}"
 
 
@@ -766,11 +766,12 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :rtype: ~azure.ai.inference.models.ModelInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if self._model_info == None:
+        if self._model_info is None:
             self._model_info = await self._get_model_info(**kwargs)
         return self._model_info
 
     def __str__(self) -> str:
+        # pylint: disable=client-method-name-no-double-underscore
         return super().__str__() + f"\n{self._model_info}"
 
 
@@ -1046,11 +1047,12 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :rtype: ~azure.ai.inference.models.ModelInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if self._model_info == None:
+        if self._model_info is None:
             self._model_info = await self._get_model_info(**kwargs)
         return self._model_info
 
     def __str__(self) -> str:
+        # pylint: disable=client-method-name-no-double-underscore
         return super().__str__() + f"\n{self._model_info}"
 
 

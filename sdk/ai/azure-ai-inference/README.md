@@ -46,7 +46,7 @@ pip install --upgrade azure-ai-inferencing
 
 ### Create and authenticate a client directly, using key
 
-The package includes two clients `ChatCompletionsClient` and `EmbeddingsClient` <!-- and `ImageGenerationClients`-->. Both can be created in the similar manner. For example, assuming `endpoint` and `key` are strings holding your endpoint URL and key, this Python code will create and authenticate a synchronous `ChatCompletionsClient`:
+The package includes two clients `ChatCompletionsClient` and `EmbeddingsClient`<!-- and `ImageGenerationClients`-->. Both can be created in the similar manner. For example, assuming `endpoint` and `key` are strings holding your endpoint URL and key, this Python code will create and authenticate a synchronous `ChatCompletionsClient`:
 
 ```python
 from azure.ai.inference import ChatCompletionsClient
@@ -233,7 +233,7 @@ client.close()
 
 <!-- END SNIPPET -->
 
-The printed result of course depends on the model, but you should see the answer progressively get longer as updates get streamed to the client.
+In the above `for` loop that prints the results you should see the answer progressively get longer as updates get streamed to the client.
 
 To generate completions for additional messages, simply call `client.complete` multiple times using the same `client`.
 
@@ -290,7 +290,7 @@ for item in response.data:
 
 <!-- END SNIPPET -->
 
-The printed result of course depends on the model, but you should see something like this:
+The length of the embedding vector depends on the model, but you should see something like this:
 
 ```txt
 data[0]: length=1024, [0.0013399124, -0.01576233, ..., 0.007843018, 0.000238657]

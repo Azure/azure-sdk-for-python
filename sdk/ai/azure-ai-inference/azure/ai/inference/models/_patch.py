@@ -76,11 +76,14 @@ class BaseStreamingChatCompletions:
                 return True
 
             # If you reached here, the line should contain `data: {...}\n`
-            # where the curly braces contain a valid JSON object. Deserialize it into a StreamingChatCompletionsUpdate object
+            # where the curly braces contain a valid JSON object.
+            # Deserialize it into a StreamingChatCompletionsUpdate object
             # and add it to the queue.
             self._queue.put(
                 # pylint: disable=W0212 # Access to a protected member _deserialize of a client class
-                _models.StreamingChatCompletionsUpdate._deserialize(json.loads(line[len(self._SSE_DATA_EVENT_PREFIX) : -1]), [])
+                _models.StreamingChatCompletionsUpdate._deserialize(
+                    json.loads(line[len(self._SSE_DATA_EVENT_PREFIX) : -1]), []
+                )
             )
 
             if self._ENABLE_CLASS_LOGS:
@@ -132,9 +135,10 @@ class StreamingChatCompletions(BaseStreamingChatCompletions):
 
 
 class AsyncStreamingChatCompletions(BaseStreamingChatCompletions):
-    """Represents an async interator over StreamingChatCompletionsUpdate objects. It can be used for either synchronous or
-    asynchronous iterations. The class deserializes the Server Sent Events (SSE) response stream
-    into chat completions updates, each one represented by a StreamingChatCompletionsUpdate object.
+    """Represents an async interator over StreamingChatCompletionsUpdate objects.
+    It can be used for either synchronous or asynchronous iterations. The class
+    deserializes the Server Sent Events (SSE) response stream into chat
+    completions updates, each one represented by a StreamingChatCompletionsUpdate object.
     """
 
     def __init__(self, response: AsyncHttpResponse):
