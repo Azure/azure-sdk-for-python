@@ -14,22 +14,28 @@ from typing import (
     Any, AnyStr, AsyncIterable, Dict, IO, Iterable, Optional, Union,
     TYPE_CHECKING
 )
+from typing_extensions import Self
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from .._directory_client_helpers import (
+    _format_url,
+    _from_directory_url,
+    _parse_snapshot,
+    _parse_url)
 from .._parser import _get_file_permission, _datetime_to_str
 from .._shared.parser import _str
 from .._generated.aio import AzureFileStorage
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
+from .._shared.base_client import StorageAccountHostsMixin, parse_query
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._deserialize import deserialize_directory_properties
 from .._serialize import get_api_version, get_dest_access_conditions, get_rename_smb_properties
-from .._directory_client import ShareDirectoryClient as ShareDirectoryClientBase
 from ._file_client_async import ShareFileClient
 from ._models import DirectoryPropertiesPaged, HandlesPaged
 
@@ -41,10 +47,10 @@ else:
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from .._models import DirectoryProperties, Handle, NTFSAttributes
+    from .._models import FileProperties, DirectoryProperties, Handle, NTFSAttributes
 
 
-class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBase):
+class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
     """A client to interact with a specific directory, although it may not yet exist.
 
     For operations relating to a specific subdirectory or file in this share, the clients for those
@@ -66,7 +72,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
         an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
-        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an account shared access key, or an instance of an AsyncTokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
@@ -77,8 +83,8 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         ~azure.core.credentials_async.AsyncTokenCredential or
         str or dict[str, str] or None
     :keyword token_intent:
-        Required when using `TokenCredential` for authentication and ignored for other forms of authentication.
-        Specifies the intent for all requests when using `TokenCredential` authentication. Possible values are:
+        Required when using `AsyncTokenCredential` for authentication and ignored for other forms of authentication.
+        Specifies the intent for all requests when using `AsyncTokenCredential` authentication. Possible values are:
 
         backup - Specifies requests are intended for backup/admin type operations, meaning that all file/directory
                  ACLs are bypassed and full permissions are granted. User must also have required RBAC permission.
@@ -96,40 +102,137 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         The hostname of the secondary endpoint.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
-        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
     """
     def __init__(
-            self, account_url: str,
-            share_name: str,
-            directory_path: str,
-            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
-            *,
-            token_intent: Optional[Literal['backup']] = None,
-            **kwargs: Any
-        ) -> None:
+        self, account_url: str,
+        share_name: str,
+        directory_path: str,
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        *,
+        token_intent: Optional[Literal['backup']] = None,
+        **kwargs: Any
+    ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         if loop and sys.version_info >= (3, 8):
             warnings.warn("The 'loop' parameter was deprecated from asyncio's high-level"
             "APIs in Python 3.8 and is no longer supported.", DeprecationWarning)
+        if hasattr(credential, 'get_token') and not token_intent:
+            raise ValueError("'token_intent' keyword is required when 'credential' is an AsyncTokenCredential.")
+        parsed_url = _parse_url(account_url, share_name)
+        path_snapshot, sas_token = parse_query(parsed_url.query)
+        if not sas_token and not credential:
+            raise ValueError(
+                'You need to provide either an account shared key or SAS token when creating a storage service.')
+        self.snapshot = _parse_snapshot(snapshot, path_snapshot)
+        self.share_name = share_name
+        self.directory_path = directory_path
+
+        self._query_str, credential = self._format_query_string(
+            sas_token, credential, share_snapshot=self.snapshot)
         super(ShareDirectoryClient, self).__init__(
-            account_url,
-            share_name=share_name,
-            directory_path=directory_path,
-            snapshot=snapshot,
-            credential=credential,
-            token_intent=token_intent,
-            **kwargs)
+            parsed_url, service='file-share', credential=credential, **kwargs)
+        self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
+        self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
+        self.file_request_intent = token_intent
         self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline,
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
                                         file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
-    def get_file_client(self, file_name, **kwargs):
-        # type: (str, Any) -> ShareFileClient
+    @classmethod
+    def from_directory_url(
+        cls, directory_url: str,
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
+        """Create a ShareDirectoryClient from a directory url.
+
+        :param str directory_url:
+            The full URI to the directory.
+        :param str snapshot:
+            An optional share snapshot on which to operate. This can be the snapshot ID string
+            or the response returned from :func:`ShareClient.create_snapshot`.
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be a SAS token string,
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a AsyncTokenCredentials class from azure.identity.
+            If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+            - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials_async.AsyncTokenCredential or
+            str or dict[str, str] or None
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory authentication.
+            Only has an effect when credential is of type AsyncTokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
+        :returns: A directory client.
+        :rtype: ~azure.storage.fileshare.ShareDirectoryClient
+        """
+        account_url, share_name, directory_path, snapshot = _from_directory_url(directory_url, snapshot)
+        return cls(
+            account_url=account_url, share_name=share_name, directory_path=directory_path,
+            snapshot=snapshot, credential=credential, **kwargs)
+
+    def _format_url(self, hostname: str) -> str:
+        """Format the endpoint URL according to the current location mode hostname.
+
+        :param str hostname:
+            The hostname of the current location mode.
+        :returns: A formatted endpoint URL including the current location mode hostname.
+        :rtype: str
+        """
+        return _format_url(self.scheme, hostname, self.share_name, self.directory_path, self._query_str)
+
+    @classmethod
+    def from_connection_string(
+        cls, conn_str: str,
+        share_name: str,
+        directory_path: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
+        """Create ShareDirectoryClient from a Connection String.
+
+        :param str conn_str:
+            A connection string to an Azure Storage account.
+        :param share_name: The name of the share.
+        :type share_name: str
+        :param str directory_path:
+            The directory path.
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be a SAS token string,
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of an AsyncTokenCredentials class from azure.identity.
+            If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+            - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
+        :type credential:
+            Optional[Union[str, dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential"]]
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory authentication.
+            Only has an effect when credential is of type AsyncTokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
+        :returns: A directory client.
+        :rtype: ~azure.storage.fileshare.aio.ShareDirectoryClient
+        """
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
+        return cls(
+            account_url, share_name=share_name, directory_path=directory_path, credential=credential, **kwargs)
+
+    def get_file_client(self, file_name: str, **kwargs: Any) -> ShareFileClient:
         """Get a client to interact with a specific file.
 
         The file need not already exist.
@@ -143,8 +246,8 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             file_name = self.directory_path.rstrip('/') + "/" + file_name
 
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
         )
         return ShareFileClient(
             self.url, file_path=file_name, share_name=self.share_name, snapshot=self.snapshot,
@@ -153,8 +256,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             allow_source_trailing_dot=self.allow_source_trailing_dot, token_intent=self.file_request_intent,
             **kwargs)
 
-    def get_subdirectory_client(self, directory_name, **kwargs):
-        # type: (str, Any) -> ShareDirectoryClient
+    def get_subdirectory_client(self, directory_name: str, **kwargs) -> Self:
         """Get a client to interact with a specific subdirectory.
 
         The subdirectory need not already exist.
@@ -178,8 +280,8 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             directory_path = self.directory_path.rstrip('/') + "/" + directory_name
 
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
         )
         return ShareDirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot,
@@ -189,8 +291,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             **kwargs)
 
     @distributed_trace_async
-    async def create_directory(self, **kwargs):
-        # type: (Any) -> Dict[str, Any]
+    async def create_directory(self, **kwargs: Any) -> Dict[str, Any]:
         """Creates a new directory under the directory referenced by the client.
 
         :keyword file_attributes:
@@ -245,7 +346,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         metadata = kwargs.pop('metadata', None)
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata)) # type: ignore
+        headers.update(add_metadata_headers(metadata))  # type: ignore
 
         file_attributes = kwargs.pop('file_attributes', 'none')
         file_creation_time = kwargs.pop('file_creation_time', 'now')
@@ -256,7 +357,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         file_permission = _get_file_permission(file_permission, file_permission_key, 'inherit')
 
         try:
-            return await self._client.directory.create( # type: ignore
+            return await self._client.directory.create(  # type: ignore
                 file_attributes=str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
@@ -271,8 +372,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             process_storage_error(error)
 
     @distributed_trace_async
-    async def delete_directory(self, **kwargs):
-        # type: (**Any) -> None
+    async def delete_directory(self, **kwargs: Any) -> None:
         """Marks the directory for deletion. The directory is
         later deleted during garbage collection.
 
@@ -300,11 +400,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             process_storage_error(error)
 
     @distributed_trace_async
-    async def rename_directory(
-            self, new_name, # type: str
-            **kwargs # type: Any
-        ):
-        # type: (...) -> ShareDirectoryClient
+    async def rename_directory(self, new_name: str, **kwargs: Any) -> Self:
         """
         Rename the source directory.
 
@@ -403,8 +499,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             process_storage_error(error)
 
     @distributed_trace
-    def list_directories_and_files(self, name_starts_with=None, **kwargs):
-        # type: (Optional[str], Any) -> AsyncItemPaged
+    def list_directories_and_files(
+        self,
+        name_starts_with: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[Union["DirectoryProperties", "FileProperties"]]:
         """Lists all the directories and files under the directory.
 
         :param str name_starts_with:
@@ -453,8 +552,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             page_iterator_class=DirectoryPropertiesPaged)
 
     @distributed_trace
-    def list_handles(self, recursive=False, **kwargs):
-        # type: (bool, Any) -> AsyncItemPaged[Handle]
+    def list_handles(self, recursive: bool = False, **kwargs: Any) -> AsyncItemPaged["Handle"]:
         """Lists opened handles on a directory or a file under the directory.
 
         :param bool recursive:
@@ -482,8 +580,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             page_iterator_class=HandlesPaged)
 
     @distributed_trace_async
-    async def exists(self, **kwargs):
-        # type: (**Any) -> bool
+    async def exists(self, **kwargs: Any) -> bool:
         """
         Returns True if a directory exists and returns False otherwise.
 
@@ -506,8 +603,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
                 return False
 
     @distributed_trace_async
-    async def close_handle(self, handle, **kwargs):
-        # type: (Union[str, Handle], Any) -> Dict[str, int]
+    async def close_handle(self, handle: Union[str, "Handle"], **kwargs: Any) -> Dict[str, int]:
         """Close an open file handle.
 
         :param handle:
@@ -524,7 +620,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         :rtype: dict[str, int]
         """
         try:
-            handle_id = handle.id # type: ignore
+            handle_id = handle.id  # type: ignore
         except AttributeError:
             handle_id = handle
         if handle_id == '*':
@@ -546,8 +642,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             process_storage_error(error)
 
     @distributed_trace_async
-    async def close_all_handles(self, recursive=False, **kwargs):
-        # type: (bool, Any) -> Dict[str, int]
+    async def close_all_handles(self, recursive: bool = False, **kwargs: Any) -> Dict[str, int]:
         """Close any open file handles.
 
         This operation will block until the service has closed all open handles.
@@ -597,8 +692,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         }
 
     @distributed_trace_async
-    async def get_directory_properties(self, **kwargs):
-        # type: (Any) -> DirectoryProperties
+    async def get_directory_properties(self, **kwargs: Any) -> "DirectoryProperties":
         """Returns all user-defined metadata and system properties for the
         specified directory. The data returned does not include the directory's
         list of files.
@@ -620,11 +714,10 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        return response # type: ignore
+        return response  # type: ignore
 
     @distributed_trace_async
-    async def set_directory_metadata(self, metadata, **kwargs):
-        # type: (Dict[str, Any], Any) ->  Dict[str, Any]
+    async def set_directory_metadata(self, metadata: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
         """Sets the metadata for the directory.
 
         Each call to this operation replaces all existing metadata
@@ -647,7 +740,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         try:
-            return await self._client.directory.set_metadata( # type: ignore
+            return await self._client.directory.set_metadata(  # type: ignore
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
@@ -656,14 +749,14 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             process_storage_error(error)
 
     @distributed_trace_async
-    async def set_http_headers(self, file_attributes="none",  # type: Union[str, NTFSAttributes]
-                               file_creation_time="preserve",  # type: Optional[Union[str, datetime]]
-                               file_last_write_time="preserve",  # type: Optional[Union[str, datetime]]
-                               file_permission=None,  # type: Optional[str]
-                               permission_key=None,  # type: Optional[str]
-                               **kwargs  # type: Any
-                               ):
-        # type: (...) -> Dict[str, Any]
+    async def set_http_headers(
+        self, file_attributes: Union[str, "NTFSAttributes"] = "none",
+        file_creation_time: Optional[Union[str, datetime]] = "preserve",
+        file_last_write_time: Optional[Union[str, datetime]] = "preserve",
+        file_permission: Optional[str] = None,
+        permission_key: Optional[str] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Sets HTTP headers on the directory.
 
         :param file_attributes:
@@ -722,11 +815,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             process_storage_error(error)
 
     @distributed_trace_async
-    async def create_subdirectory(
-            self, directory_name,  # type: str
-            **kwargs
-        ):
-        # type: (...) -> ShareDirectoryClient
+    async def create_subdirectory(self, directory_name: str, **kwargs: Any) -> Self:
         """Creates a new subdirectory and returns a client to interact
         with the subdirectory.
 
@@ -757,14 +846,10 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         timeout = kwargs.pop('timeout', None)
         subdir = self.get_subdirectory_client(directory_name)
         await subdir.create_directory(metadata=metadata, timeout=timeout, **kwargs)
-        return subdir # type: ignore
+        return subdir  # type: ignore
 
     @distributed_trace_async
-    async def delete_subdirectory(
-            self, directory_name,  # type: str
-            **kwargs
-        ):
-        # type: (...) -> None
+    async def delete_subdirectory(self, directory_name: str, **kwargs: Any) -> None:
         """Deletes a subdirectory.
 
         :param str directory_name:
@@ -792,11 +877,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
 
     @distributed_trace_async
     async def upload_file(
-            self, file_name: str,
-            data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
-            length: Optional[int] = None,
-            **kwargs
-        ) -> ShareFileClient:
+        self, file_name: str,
+        data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> ShareFileClient:
         """Creates a new file in the directory and returns a ShareFileClient
         to interact with the file.
 
@@ -855,11 +940,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         return file_client
 
     @distributed_trace_async
-    async def delete_file(
-            self, file_name,  # type: str
-            **kwargs  # type: Optional[Any]
-        ):
-        # type: (...) -> None
+    async def delete_file(self, file_name: str, **kwargs: Any) -> None:
         """Marks the specified file for deletion. The file is later
         deleted during garbage collection.
 
