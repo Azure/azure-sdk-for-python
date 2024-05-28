@@ -1,9 +1,11 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
 from typing import List, Optional, Union, TYPE_CHECKING
+from enum import Enum
 from typing_extensions import Literal
 from ._generated.models import (
     CallLocator,
@@ -391,17 +393,17 @@ class MediaStreamingSubscription:
 class MediaStreamingOptions:
     """Configuration of Media streaming.
 
-    :param transport_url: Transport URL for media streaming.
-    :type transport_url: str
-    :param transport_type: The type of transport to be used for media streaming.
-    :type transport_type: str or ~azure.communication.callautomation.MediaStreamingTransportType
-    :param content_type: Content type to stream, eg. audio, audio/video.
-    :type content_type: str or ~azure.communication.callautomation.MediaStreamingContentType
-    :param audio_channel_type: Audio channel type to stream, eg. unmixed audio, mixed audio.
-    :type audio_channel_type: str or ~azure.communication.callautomation.MediaStreamingAudioChannelType
-    :param start_media_streaming: Determines if the media streaming should be started immediately
+    :keyword transport_url: Transport URL for media streaming.
+    :paramtype transport_url: str
+    :keyword transport_type: The type of transport to be used for media streaming.
+    :paramtype transport_type: str or ~azure.communication.callautomation.MediaStreamingTransportType
+    :keyword content_type: Content type to stream, eg. audio, audio/video.
+    :paramtype content_type: str or ~azure.communication.callautomation.MediaStreamingContentType
+    :keyword audio_channel_type: Audio channel type to stream, eg. unmixed audio, mixed audio.
+    :paramtype audio_channel_type: str or ~azure.communication.callautomation.MediaStreamingAudioChannelType
+    :keyword start_media_streaming: Determines if the media streaming should be started immediately
      after call is answered or not. Required.
-    :type start_media_streaming: bool
+    :paramtype start_media_streaming: bool
     """
 
     transport_url: str
@@ -418,6 +420,7 @@ class MediaStreamingOptions:
 
     def __init__(
         self,
+        *,
         transport_url: str,
         transport_type: Union[str, 'MediaStreamingTransportType'],
         content_type: Union[str, 'MediaStreamingContentType'],
@@ -442,20 +445,20 @@ class MediaStreamingOptions:
 class TranscriptionOptions:
     """Configuration of live transcription.
 
-    :param transport_url: Transport URL for live transcription. Required.
-    :type transport_url: str
-    :param transport_type: The type of transport to be used for live transcription, eg. Websocket.
+    :keyword transport_url: Transport URL for live transcription. Required.
+    :paramtype transport_url: str
+    :keyword transport_type: The type of transport to be used for live transcription, eg. Websocket.
      Required. "websocket"
-    :type transport_type: str or ~azure.communication.callautomation.TranscriptionTransportType
-    :param locale: Defines the locale for the data e.g en-CA, en-AU. Required.
-    :type locale: str
-    :param speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
-    :type speech_recognition_model_endpoint_id: str
-    :param start_transcription: Determines if the transcription should be started immediately after
+    :paramtype transport_type: str or ~azure.communication.callautomation.TranscriptionTransportType
+    :keyword locale: Defines the locale for the data e.g en-CA, en-AU. Required.
+    :paramtype locale: str
+    :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
+    :paramtype speech_recognition_model_endpoint_id: str
+    :keyword start_transcription: Determines if the transcription should be started immediately after
      call is answered or not. Required.
-    :type start_transcription: bool
-    :param enable_intermediate_results: Enables intermediate results for the transcribed speech.
-    :type enable_intermediate_results: bool
+    :paramtype start_transcription: bool
+    :keyword enable_intermediate_results: Enables intermediate results for the transcribed speech.
+    :paramtype enable_intermediate_results: bool
     """
 
     transport_url: str
@@ -473,6 +476,7 @@ class TranscriptionOptions:
 
     def __init__(
         self,
+        *,
         transport_url: str,
         transport_type: Union[str, 'TranscriptionTransportType'],
         locale: str,
@@ -938,3 +942,114 @@ class CancelAddParticipantOperationResult:
             invitation_id=cancel_add_participant_operation_result_generated.invitation_id,
             operation_context=cancel_add_participant_operation_result_generated.operation_context
         )
+
+class ResultStatus(Enum):
+    """
+    The status of the result of transcription.
+    """
+    INTERMEDIATE = "intermediate"
+    FINAL = "final"
+
+class TextFormat(Enum):
+    """
+    The format of transcription text.
+    """
+    DISPLAY = "display"
+
+class WordData:
+    """
+    Text in the phrase.
+    :keyword text: Text in the phrase.
+    :paramtype text: str
+    :keyword offset: The word's position within the phrase.
+    :paramtype offset: int
+    :keyword duration: Duration in ticks. 1 tick = 100 nanoseconds.
+    :paramtype duration: int
+    """
+    text:str
+    """ Text in the phrase. """
+    offset:int
+    """ The word's position within the phrase. """
+    duration:int
+    """ Duration in ticks. 1 tick = 100 nanoseconds. """
+
+    def __init__(self, text: str, offset: int, duration: int):
+        self.text = text
+        self.offset = offset
+        self.duration = duration
+
+class TranscriptionMetadata:
+    """
+    Metadata for Transcription Streaming.
+    :keyword subscription_id: Transcription Subscription Id.
+    :paramtype subscription_id: str
+    :keyword locale: The target locale in which the translated text needs to be.
+    :paramtype locale: str
+    :keyword callConnection_id: call connection Id.
+    :paramtype callConnection_id: str
+    :keyword correlation_id: correlation Id.
+    :paramtype correlation_id: str
+    """
+
+    subscription_id: str
+    """ Transcription Subscription Id. """
+    locale: str
+    """ The target locale in which the translated text needs to be. """
+    callConnection_id: str
+    """ call connection Id. """
+    correlation_id: str
+    """ correlation Id. """
+
+    def __init__(self, subscription_id: str, locale: str, callConnection_id: str, correlation_id: str):
+        self.subscriptionId = subscription_id
+        self.locale = locale
+        self.callConnection_id = callConnection_id
+        self.correlation_id = correlation_id
+
+class TranscriptionData:
+    """
+    Streaming Transcription.
+    :keyword  text: The display form of the recognized word.
+    :paramtype  text: str
+    :keyword format: The format of text.
+    :paramtype format: TextFormat
+    :keyword confidence: Confidence of recognition of the whole phrase.
+    :paramtype confidence: float
+    :keyword offset: The position of this payload.
+    :paramtype offset: int
+    :keyword duration: Duration in ticks. 1 tick = 100 nanoseconds.
+    :paramtype duration: int
+    :keyword words: The result for each word of the phrase.
+    :paramtype words: List[WordData]
+    :keyword participant: The identified speaker based on participant raw ID.
+    :paramtype participant: CommunicationIdentifier
+    :keyword resultStatus: Status of the result of transcription.
+    :paramtype resultStatus: ResultStatus
+    """
+    text: str
+    """ The display form of the recognized word. """
+    format: TextFormat
+    """ The format of text. """
+    confidence: float
+    """ Confidence of recognition of the whole phrase, from 0.0 (no confidence) to 1.0 (full confidence). """
+    offset: int
+    """ The position of this payload. """
+    duration: int
+    """ Duration in ticks. 1 tick = 100 nanoseconds. """
+    words: List[WordData]
+    """ The result for each word of the phrase. """
+    participant: CommunicationIdentifier
+    """ The identified speaker based on participant raw ID. """
+    result_status: ResultStatus
+    """ Status of the result of transcription. """
+
+    def __init__(self, text: str, format: TextFormat, confidence: float, offset: int, duration: int,
+    words: List[WordData], participant: CommunicationIdentifier, result_status: ResultStatus):
+        self.text = text
+        self.format = format
+        self.confidence = confidence
+        self.offset = offset
+        self.duration = duration
+        self.words = words
+        self.participant = participant
+        self.result_status = result_status

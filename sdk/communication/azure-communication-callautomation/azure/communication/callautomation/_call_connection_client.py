@@ -421,6 +421,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         loop: bool = False,
         operation_context: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
+        interrupt_call_media_operation: bool = False,
         **kwargs
     ) -> None:
         """Play media to specific participant(s) in this call.
@@ -444,6 +445,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
+        :keyword interrupt_call_media_operation: If set play can barge into other existing
+         queued-up/currently-processing requests. This is applicable only when play_to set to all.
+        :paramtype interrupt_call_media_operation: bool
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -454,6 +458,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             loop=loop,
             operation_context=operation_context,
             operation_callback_url=operation_callback_url,
+            interrupt_call_media_operation=interrupt_call_media_operation,
             **kwargs
         )
 
@@ -507,6 +512,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             play_source_single = play_source
 
         audience = [] if play_to == "all" else [serialize_identifier(i) for i in play_to]
+        interrupt_call_media_operation = interrupt_call_media_operation if play_to == "all" else False
         play_request = PlayRequest(
             play_sources=[play_source_single._to_generated()] if play_source_single else # pylint:disable=protected-access
             [source._to_generated() for source in play_sources] if play_sources else None,  # pylint:disable=protected-access
@@ -931,16 +937,17 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def update_transcription(
         self,
+        *,
         locale: str,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         **kwargs
     ) -> None:
         """API to change transcription language.
 
-        :param locale: Defines new locale for transcription.
-        :type locale: str
-        :param speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
-        :type speech_recognition_model_endpoint_id: str
+        :keyword locale: Defines new locale for transcription.
+        :paramtype locale: str
+        :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
+        :paramtype speech_recognition_model_endpoint_id: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1032,19 +1039,20 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def start_media_streaming(
         self,
+        *,
         operation_callback_url: Optional[str] = None,
         operation_context: Optional[str] = None,
         **kwargs
     ) -> None:
         """Starts media streaming in the call.
         
-        :param operation_callback_url: (Optional) Set a callback URL that overrides the default 
+        :keyword operation_callback_url: (Optional) Set a callback URL that overrides the default 
          callback URL set by CreateCall/AnswerCall for this operation.
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
-        :type operation_callback_url: str or None
-        :param operation_context: (Optional) Value that can be used to track this call and its associated events.
-        :type operation_context: str or None
+        :paramtype operation_callback_url: str or None
+        :keyword operation_context: (Optional) Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError: If there's an HTTP response error.
@@ -1061,16 +1069,17 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def stop_media_streaming(
         self,
+        *,
         operation_callback_url: Optional[str] = None,
         **kwargs
     ) -> None:
         """Stops media streaming in the call.
         
-        :param operation_callback_url: (Optional) Set a callback URL that overrides the default 
+        :keyword operation_callback_url: (Optional) Set a callback URL that overrides the default 
          callback URL set by CreateCall/AnswerCall for this operation.
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
-        :type operation_callback_url: str or None
+        :paramtype operation_callback_url: str or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError: If there's an HTTP response error.
