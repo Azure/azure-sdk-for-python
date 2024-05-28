@@ -47,7 +47,7 @@ def del_outdated_generated_files(readme: str):
             file
             for file in target_dir.glob("**/*")
             if all(
-                i not in file
+                i not in str(file)
                 for i in (
                     "__pycache__",
                     "node_modules",
