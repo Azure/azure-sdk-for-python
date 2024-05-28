@@ -7,8 +7,10 @@ from enum import Enum
 # (OpenTelemetry metric name, Quickpulse metric name)
 # Memory
 _COMMITTED_BYTES_NAME = ("azuremonitor.memorycommittedbytes", "\\Memory\\Committed Bytes")
+_PROCESS_PHYSICAL_BYTES_NAME = ("azuremonitor.processphysicalbytes", "\\Process\\Physical Bytes")
 # CPU
 _PROCESSOR_TIME_NAME = ("azuremonitor.processortotalprocessortime", "\\Processor(_Total)\\% Processor Time")
+_PROCESS_TIME_NORMALIZED_NAME = ("azuremonitor.processtimenormalized", "\\% Process\\Processor Time Normalized")
 # Request
 _REQUEST_RATE_NAME = ("azuremonitor.requestssec", "\\ApplicationInsights\\Requests/Sec")
 _REQUEST_FAILURE_RATE_NAME = ("azuremonitor.requestsfailedsec", "\\ApplicationInsights\\Requests Failed/Sec")
@@ -23,8 +25,9 @@ _EXCEPTION_RATE_NAME = ("azuremonitor.exceptionssec", "\\ApplicationInsights\\Ex
 _QUICKPULSE_METRIC_NAME_MAPPINGS = dict(
     [
         _COMMITTED_BYTES_NAME,
+        _PROCESS_PHYSICAL_BYTES_NAME,
         _PROCESSOR_TIME_NAME,
-        _PROCESSOR_TIME_NAME,
+        _PROCESS_TIME_NORMALIZED_NAME,
         _REQUEST_RATE_NAME,
         _REQUEST_FAILURE_RATE_NAME,
         _REQUEST_DURATION_NAME,
