@@ -71,16 +71,16 @@ steps:
         azureSubscription: ${{ parameters.ServiceConnection }}
         azurePowerShellVersion: LatestVersion
         ScriptType: InlineScript
-        Inline: |
-          python scripts/devops_tasks/dispatch_tox.py `
-            "$(TargetingString)" `
-            ${{ parameters.AdditionalTestArgs }} `
-            ${{ parameters.CoverageArg }} `
-            --mark_arg="${{ parameters.TestMarkArgument }}" `
-            --service="${{ parameters.ServiceDirectory }}" `
-            --toxenv="${{ parameters.ToxTestEnv }}" `
-            --injected-packages="${{ parameters.InjectedPackages }}" `
-            ${{ parameters.ToxEnvParallel }}
+        Inline: >-
+          python scripts/devops_tasks/dispatch_tox.py
+          "$(TargetingString)"
+          ${{ parameters.AdditionalTestArgs }}
+          ${{ parameters.CoverageArg }}
+          --mark_arg="${{ parameters.TestMarkArgument }}"
+          --service="${{ parameters.ServiceDirectory }}"
+          --toxenv="${{ parameters.ToxTestEnv }}"
+          --injected-packages="${{ parameters.InjectedPackages }}"
+          ${{ parameters.ToxEnvParallel }}
   - ${{ else }}:
     - task: PythonScript@0
       displayName: 'Run Tests'
