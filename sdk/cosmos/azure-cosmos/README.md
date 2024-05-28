@@ -273,7 +273,7 @@ The options for analytical_storage_ttl are:
 ```python
 CONTAINER_NAME = 'products'
 try:
-    container = database.create_container(id=CONTAINER_NAME, partition_key=PartitionKey(path="/productName"),analytical_storage_ttl=-1)
+    container = database.create_container(id=CONTAINER_NAME, partition_key=PartitionKey(path="/productName"))
 except exceptions.CosmosResourceExistsError:
     container = database.get_container_client(CONTAINER_NAME)
 except exceptions.CosmosHttpResponseError:
