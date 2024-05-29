@@ -20,16 +20,16 @@ USAGE:
     2) TABLES_STORAGE_ACCOUNT_NAME - the name of the storage account
     3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
-import sys
 from datetime import datetime
 import os
 from uuid import uuid4, UUID
 import asyncio
 from dotenv import find_dotenv, load_dotenv
-from typing_extensions import TypedDict
+from dataclasses import dataclass, asdict
 
 
-class EntityType(TypedDict, total=False):
+@dataclass
+class EntityType:
     PartitionKey: str
     RowKey: str
     text: str
@@ -59,26 +59,26 @@ class TableEntitySamples(object):
         async with table:
             await table.create_table()
 
-            my_entity: EntityType = {
-                "PartitionKey": "color",
-                "RowKey": "brand",
-                "text": "Marker",
-                "color": "Purple",
-                "price": 4.99,
-                "last_updated": datetime.today(),
-                "product_id": uuid4(),
-                "inventory_count": 42,
-                "barcode": b"135aefg8oj0ld58",  # cspell:disable-line
-            }
+            my_entity = EntityType(
+                PartitionKey = "color",
+                RowKey = "brand",
+                text = "Marker",
+                color = "Purple",
+                price = 4.99,
+                last_updated = datetime.today(),
+                product_id = uuid4(),
+                inventory_count = 42,
+                barcode = b"135aefg8oj0ld58",  # cspell:disable-line
+            )
 
             try:
-                created_entity = await table.create_entity(entity=my_entity)
-                print("Created entity: {}".format(created_entity))
+                created_entity = await table.create_entity(asdict(my_entity))
+                print(f"Created entity: {created_entity}")
 
                 # [START get_entity]
                 # Get Entity by partition and row key
                 got_entity = await table.get_entity(
-                    partition_key=my_entity["PartitionKey"], row_key=my_entity["RowKey"]
+                    partition_key=my_entity.PartitionKey, row_key=my_entity.RowKey
                 )
                 print(f"Received entity: {got_entity}")
                 # [END get_entity]
@@ -123,7 +123,7 @@ class TableEntitySamples(object):
                 # Query the entities in the table
                 i = 0
                 async for entity in table.list_entities():
-                    print(f"Entity #{entity}: {i}")
+                    print(f"Entity #{i}: {entity}")
                     i += 1
                 # [END list_entities]
 

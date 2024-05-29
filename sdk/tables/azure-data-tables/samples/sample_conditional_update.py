@@ -20,7 +20,6 @@ USAGE:
     2) TABLES_STORAGE_ACCOUNT_NAME - the Tables storage account name
     3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the Tables storage account access key
 """
-import sys
 import os
 from datetime import datetime
 from dotenv import find_dotenv, load_dotenv
@@ -29,19 +28,21 @@ from azure.data.tables import TableClient
 from azure.data.tables._models import UpdateMode
 from azure.core import MatchConditions
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError
-from typing_extensions import TypedDict
+from dataclasses import dataclass, asdict
+from typing import Optional
 
 
-class EntityType(TypedDict, total=False):
+@dataclass
+class EntityType:
     PartitionKey: str
     RowKey: str
-    text: str
-    color: str
-    price: float
-    last_updated: datetime
-    product_id: UUID
-    inventory_count: int
-    barcode: bytes
+    text: Optional[str] = None
+    color: Optional[str] = None
+    price: Optional[float] = None
+    last_updated: Optional[datetime] = None
+    product_id: Optional[UUID] = None
+    inventory_count: Optional[int] = None
+    barcode: Optional[bytes] = None
 
 
 class ConditionalUpdateSamples(object):
@@ -53,37 +54,37 @@ class ConditionalUpdateSamples(object):
         self.endpoint = f"{self.account_name}.table.{self.endpoint_suffix}"
         self.connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
         self.table_name_prefix = "SampleConditionalUpdate"
-        self.entity1: EntityType = {
-            "PartitionKey": "color",
-            "RowKey": "brand",
-            "text": "Marker",
-            "color": "Purple",
-            "price": 4.99,
-            "last_updated": datetime.today(),
-            "product_id": uuid4(),
-        }
-        self.entity2: EntityType = {
-            "PartitionKey": "color",
-            "RowKey": "brand",
-            "color": "Red",
-            "inventory_count": 42,
-            "barcode": b"135aefg8oj0ld58",  # cspell:disable-line
-        }
+        self.entity1 = EntityType(
+            PartitionKey = "color",
+            RowKey = "brand",
+            text = "Marker",
+            color = "Purple",
+            price = 4.99,
+            last_updated = datetime.today(),
+            product_id = uuid4(),
+        )
+        self.entity2 = EntityType(
+            PartitionKey = "color",
+            RowKey = "brand",
+            color = "Red",
+            inventory_count = 42,
+            barcode = b"135aefg8oj0ld58",  # cspell:disable-line
+        )
 
     def conditional_update_basic(self):
         with TableClient.from_connection_string(
             self.connection_string, self.table_name_prefix + uuid4().hex
         ) as table_client:
             table_client.create_table()
-            metadata1 = table_client.create_entity(entity=self.entity1)
+            metadata1 = table_client.create_entity(asdict(self.entity1))
             print("Entity:")
-            print(self.entity1)
+            print(asdict(self.entity1))
 
             # Merge properties of an entity with one that already existed in a table.
             # This operation will only succeed if the entity has not been modified since we last retrieved the Etag.
             try:
                 metadata2 = table_client.update_entity(
-                    entity=self.entity2,
+                    entity=asdict(self.entity2),
                     mode=UpdateMode.MERGE,
                     match_condition=MatchConditions.IfNotModified,
                     etag=metadata1["etag"],
@@ -91,7 +92,7 @@ class ConditionalUpdateSamples(object):
             except ResourceModifiedError:
                 print("This entity has been altered and may no longer be in the expected state.")
             entity2 = table_client.get_entity(
-                partition_key=self.entity1["PartitionKey"], row_key=self.entity1["RowKey"]
+                partition_key=self.entity1.PartitionKey, row_key=self.entity1.RowKey
             )
             print("Entity after merge:")
             print(entity2)
@@ -100,7 +101,7 @@ class ConditionalUpdateSamples(object):
             # This operation will only succeed if the entity has not been modified since we last retrieved the Etag.
             try:
                 table_client.update_entity(
-                    entity=self.entity2,
+                    entity=asdict(self.entity2),
                     mode=UpdateMode.REPLACE,
                     match_condition=MatchConditions.IfNotModified,
                     etag=metadata2["etag"],
@@ -108,7 +109,7 @@ class ConditionalUpdateSamples(object):
             except ResourceModifiedError:
                 print("This entity has been altered and may no longer be in the expected state.")
             entity3 = table_client.get_entity(
-                partition_key=self.entity1["PartitionKey"], row_key=self.entity1["RowKey"]
+                partition_key=self.entity1.PartitionKey, row_key=self.entity1.RowKey
             )
             print("Entity after replace:")
             print(entity3)
@@ -120,22 +121,22 @@ class ConditionalUpdateSamples(object):
             self.connection_string, self.table_name_prefix + uuid4().hex
         ) as table_client:
             table_client.create_table()
-            table_client.create_entity(entity=self.entity1)
+            table_client.create_entity(asdict(self.entity1))
             target_field = "barcode"
 
             # In this scenario, will try to create an entity at first. If the entity with the same PartitionKey and RowKey already exists,
             # will update the existing entity when target field is missing.
             try:
-                table_client.create_entity(entity=self.entity2)
+                table_client.create_entity(asdict(self.entity2))
             except ResourceExistsError:
                 entity = table_client.get_entity(
-                    partition_key=self.entity2["PartitionKey"], row_key=self.entity2["RowKey"]
+                    partition_key=self.entity2.PartitionKey, row_key=self.entity2.RowKey
                 )
                 if target_field not in entity:
                     table_client.update_entity(
                         entity={
-                            "PartitionKey": self.entity2["PartitionKey"],
-                            "RowKey": self.entity2["RowKey"],
+                            "PartitionKey": self.entity2.PartitionKey,
+                            "RowKey": self.entity2.RowKey,
                             target_field: "foo",
                         },
                         mode=UpdateMode.MERGE,

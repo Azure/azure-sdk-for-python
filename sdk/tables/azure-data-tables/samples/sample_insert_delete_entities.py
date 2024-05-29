@@ -21,15 +21,15 @@ USAGE:
     2) TABLES_STORAGE_ACCOUNT_NAME - the name of the storage account
     3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
-import sys
 from datetime import datetime
 import os
 from uuid import uuid4, UUID
 from dotenv import find_dotenv, load_dotenv
-from typing_extensions import TypedDict
+from dataclasses import dataclass, asdict
 
 
-class EntityType(TypedDict, total=False):
+@dataclass
+class EntityType:
     PartitionKey: str
     RowKey: str
     text: str
@@ -51,17 +51,17 @@ class InsertDeleteEntity(object):
         self.connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
         self.table_name = "SampleInsertDelete"
 
-        self.entity: EntityType = {
-            "PartitionKey": "color",
-            "RowKey": "brand",
-            "text": "Marker",
-            "color": "Purple",
-            "price": 4.99,
-            "last_updated": datetime.today(),
-            "product_id": uuid4(),
-            "inventory_count": 42,
-            "barcode": b"135aefg8oj0ld58",  # cspell:disable-line
-        }
+        self.entity = EntityType(
+            PartitionKey = "color",
+            RowKey = "brand",
+            text = "Marker",
+            color = "Purple",
+            price = 4.99,
+            last_updated = datetime.today(),
+            product_id = uuid4(),
+            inventory_count = 42,
+            barcode = b"135aefg8oj0ld58",  # cspell:disable-line
+        )
 
     def create_entity(self):
         from azure.data.tables import TableClient
@@ -77,7 +77,7 @@ class InsertDeleteEntity(object):
 
             # [START create_entity]
             try:
-                resp = table_client.create_entity(entity=self.entity)
+                resp = table_client.create_entity(asdict(self.entity))
                 print(resp)
             except ResourceExistsError:
                 print("Entity already exists")
@@ -93,12 +93,12 @@ class InsertDeleteEntity(object):
 
             # Create an entity to delete (to showcase etag)
             try:
-                table_client.create_entity(entity=self.entity)
+                table_client.create_entity(asdict(self.entity))
             except ResourceExistsError:
                 print("Entity already exists!")
 
             # [START delete_entity]
-            table_client.delete_entity(row_key=self.entity["RowKey"], partition_key=self.entity["PartitionKey"])
+            table_client.delete_entity(partition_key=self.entity.PartitionKey, row_key=self.entity.RowKey)
             print("Successfully deleted!")
             # [END delete_entity]
 
