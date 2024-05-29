@@ -55,7 +55,6 @@ from ._models import StatelessAgentProfile
 from ._models import StorageProfile
 from ._models import SystemData
 from ._models import TrackedResource
-from ._models import UserAssignedIdentities
 from ._models import UserAssignedIdentity
 from ._models import VmssFabricProfile
 
@@ -128,7 +127,6 @@ __all__ = [
     "StorageProfile",
     "SystemData",
     "TrackedResource",
-    "UserAssignedIdentities",
     "UserAssignedIdentity",
     "VmssFabricProfile",
     "ActionType",
