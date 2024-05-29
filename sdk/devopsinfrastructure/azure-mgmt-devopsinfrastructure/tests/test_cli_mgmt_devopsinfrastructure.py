@@ -23,11 +23,11 @@ class TestMgmtDevOpsInfrastructure(AzureMgmtRecordedTestCase):
 
     @recorded_by_proxy
     def test_list_sku(self):
-        assert list(self.client.sku.list_by_location(AZURE_LOCATION)) == []
+        assert list(self.client.sku.list_by_location(AZURE_LOCATION)) != []
         
     @recorded_by_proxy
     def test_list_subscription_usages(self):
-        assert list(self.client.subscription_usages.list_by_location(AZURE_LOCATION)) == []
+        assert list(self.client.subscription_usages.list_by_location(AZURE_LOCATION)) != []
 
     @recorded_by_proxy
     def test_list_operations(self):
