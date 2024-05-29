@@ -6,7 +6,7 @@ parameters:
 - name: BlobPath
   displayName: 'Container relative blob path'
   type: string
-  default: '<team>/java/<version>'
+  default: '<team>/python/<version>'
 
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
@@ -44,7 +44,7 @@ extends:
 
           - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
             parameters:
-              ArtifactName: 'partner-artifacts'
+              ArtifactName: 'artifacts-for-release'
               ArtifactPath: $(Artifacts)
 
           - task: EsrpRelease@7
