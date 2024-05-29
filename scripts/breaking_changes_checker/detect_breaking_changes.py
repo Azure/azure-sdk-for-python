@@ -85,15 +85,17 @@ def get_parameter_default(param: inspect.Parameter) -> None:
         default_value = param.default
         if default_value is None:  # the default is actually None
             default_value = "none"
-        if inspect.isfunction(default_value):
-            default_value = default_value.__name__
-        if inspect.isclass(default_value):
-            default_value = default_value.__name__
-        if hasattr(default_value, "value"):
+        elif hasattr(default_value, "value"):
             if not isinstance(default_value.value, object):
                 default_value = default_value.value
-        if hasattr(default_value, "name"):
-            default_value = default_value.name
+        elif inspect.isfunction(default_value):
+            default_value = default_value.__name__
+        elif inspect.isclass(default_value):
+            default_value = default_value.__name__
+        # elif hasattr(default_value, "name"):
+        #     default_value = default_value.name
+        elif hasattr(default_value, "__class__") and default_value.__class__ == object:
+            default_value = default_value.__class__.__name__
 
     return default_value
 
