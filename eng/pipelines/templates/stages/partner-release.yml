@@ -8,9 +8,9 @@ parameters:
   type: string
   default: '<team>/python/<version>'
 
-extends:
-  template: /eng/pipelines/templates/stages/1es-redirect.yml
-  parameters:
+# extends:
+#   template: /eng/pipelines/templates/stages/1es-redirect.yml
+#   parameters:
     stages:
       - stage:
         displayName: 'Partner Release'
@@ -42,10 +42,10 @@ extends:
             env: 
               AZCOPY_AUTO_LOGIN_TYPE: 'PSCRED'
 
-          - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
-            parameters:
-              ArtifactName: 'artifacts-for-release'
-              ArtifactPath: $(Artifacts)
+          # - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+          #   parameters:
+          #     ArtifactName: 'artifacts-for-release'
+          #     ArtifactPath: $(Artifacts)
 
           - task: EsrpRelease@7
             displayName: 'Publish via ESRP'
