@@ -139,8 +139,7 @@ class ServicesOperations:
     async def get(self, service_name: str, **kwargs: Any) -> _models.Service:
         """Gets a specific Azure service for support ticket creation.
 
-        :param service_name: Name of the Azure service for which the problem classifications need to be
-         retrieved. Required.
+        :param service_name: Name of the Azure service. Required.
         :type service_name: str
         :return: Service or the result of cls(response)
         :rtype: ~azure.mgmt.support.models.Service

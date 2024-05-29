@@ -11,7 +11,6 @@ from typing import List, Any, Dict
 from packaging.version import Version
 from ghapi.all import GhApi
 from github import Github
-from azure.storage.blob import BlobServiceClient, ContainerClient
 from datetime import datetime, timedelta
 import importlib
 
@@ -110,8 +109,6 @@ class CodegenTestPR:
         self.bot_token = os.getenv('BOT_TOKEN')
         self.spec_readme = os.getenv('SPEC_README', '')
         self.spec_repo = os.getenv('SPEC_REPO', '')
-        self.conn_str = os.getenv('STORAGE_CONN_STR')
-        self.storage_endpoint = os.getenv('STORAGE_ENDPOINT').strip('/')
         self.target_date = os.getenv('TARGET_DATE', '')
         self.test_folder = os.getenv('TEST_FOLDER', '')
 
@@ -123,8 +120,6 @@ class CodegenTestPR:
         self.next_version = ''
         self.test_result = ''
         self.pr_number = 0
-        self.container_name = ''
-        self.private_package_link = []  # List[str]
         self.tag_is_stable = False
         self.has_test = False
         self.check_package_size_result = []  # List[str]
@@ -519,17 +514,6 @@ class CodegenTestPR:
                 issue_number = int(self.issue_link.split('/')[-1])
                 api_request.issues.add_labels(issue_number=issue_number, labels=['base-branch-attention'])
 
-    def get_container_name(self) -> str:
-        container_name = current_time_month()
-        service_client = BlobServiceClient.from_connection_string(conn_str=self.conn_str)
-        containers_exist = [container for container in service_client.list_containers()]
-        containers_name = {container.name for container in containers_exist}
-        # create new container if it does not exist
-        if container_name not in containers_name:
-            container_client = service_client.get_container_client(container=container_name)
-            container_client.create_container(public_access='container', timeout=60 * 24 * 3600)
-        return container_name
-
     @property
     def after_multiapi_combiner(self) -> bool:
         content = self.get_autorest_result()
@@ -543,31 +527,6 @@ class CodegenTestPR:
     def get_whl_package(self) -> str:
         return [package for package in self.get_private_package() if package.endswith('.whl')][0]
 
-    def upload_private_package_proc(self, container_name: str):
-        container_client = ContainerClient.from_connection_string(conn_str=self.conn_str, container_name=container_name)
-        private_package = self.get_private_package()
-        for package in private_package:
-            package_name = Path(package).parts[-1]
-            # package will be uploaded to storage account in the folder : container_name / pr_number / package_name
-            blob_name = f'sdk_pr_{self.pr_number}/{package_name}'
-            blob_client = container_client.get_blob_client(blob=blob_name)
-            with open(package, 'rb') as data:
-                blob_client.upload_blob(data, overwrite=True)
-            self.private_package_link.append(f'{self.storage_endpoint}/{container_name}/{blob_name}')
-
-    def upload_private_package(self):
-        container_name = self.get_container_name()
-        self.upload_private_package_proc(container_name)
-
-    def get_private_package_link(self) -> str:
-        self.upload_private_package()
-        result = []
-        # it is for markdown
-        for link in self.private_package_link:
-            package_name = link.split('/')[-1]
-            result.append(f'* [{package_name}]({link})\n')
-        return ''.join(result)
-
     def ask_check_policy(self):
         changelog = self.get_changelog()
         if changelog == '':
@@ -578,15 +537,13 @@ class CodegenTestPR:
             issue_number = int(self.issue_link.split('/')[-1])
             api = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
             author = api.issues.get(issue_number=issue_number).user.login
-            body = f'Hi @{author}, Please check whether the package works well and the CHANGELOG info is as below:\n' \
-                f'{self.get_private_package_link()}' \
+            body = f'Hi @{author}, please check whether CHANGELOG for this release meet requirements:\n' \
                 f'```\n' \
                 f'CHANGELOG:\n' \
                 f'{changelog}\n' \
                 f'```\n' \
-                f'* (If you are not a Python User, you can mainly check whether the changelog meets your requirements)\n\n' \
-                f'* (The version of the package is only a temporary version for testing)\n\n' \
-                f'https://github.com/Azure/azure-sdk-for-python/pull/{self.pr_number}'
+                '* (If you want private package for test or development, ' \
+                f'please build it locally based on https://github.com/Azure/azure-sdk-for-python/pull/{self.pr_number} with [guidance](https://github.com/Azure/azure-sdk-for-python/wiki/Common-issues-about-Python-SDK#build-private-package-with-pr))\n\n'
             api.issues.create_comment(issue_number=issue_number, body=body)
 
             # comment for hint

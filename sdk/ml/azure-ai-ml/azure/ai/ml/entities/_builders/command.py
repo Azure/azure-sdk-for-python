@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=protected-access
+# pylint: disable=protected-access,too-many-lines
 import copy
 import logging
 import os
@@ -630,6 +630,21 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             ~azure.ai.ml.ManagedIdentityConfiguration,
             ~azure.ai.ml.AmlTokenConfiguration,
             ~azure.ai.ml.UserIdentityConfiguration]]
+        :keyword search_space: The search space to use for the sweep job.
+        :paramtype search_space: Optional[Dict[str, Union[
+            Choice,
+            LogNormal,
+            LogUniform,
+            Normal,
+            QLogNormal,
+            QLogUniform,
+            QNormal,
+            QUniform,
+            Randint,
+            Uniform
+
+        ]]]
+
         :keyword queue_settings: The queue settings for the job.
         :paramtype queue_settings: Optional[~azure.ai.ml.entities.QueueSettings]
         :keyword job_tier: **Experimental** The job tier. Accepted values are "Spot", "Basic",

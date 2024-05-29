@@ -39,7 +39,7 @@ class AdvancedFilter(_serialization.Model):
     StringEndsWithAdvancedFilter, StringInAdvancedFilter, StringNotBeginsWithAdvancedFilter,
     StringNotContainsAdvancedFilter, StringNotEndsWithAdvancedFilter, StringNotInAdvancedFilter
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -101,7 +101,7 @@ class PartnerClientAuthentication(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureADPartnerClientAuthentication
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar client_authentication_type: Type of client authentication. "AzureAD"
     :vartype client_authentication_type: str or
@@ -127,7 +127,7 @@ class PartnerClientAuthentication(_serialization.Model):
 class AzureADPartnerClientAuthentication(PartnerClientAuthentication):
     """Azure Active Directory Partner Client Authentication.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar client_authentication_type: Type of client authentication. "AzureAD"
     :vartype client_authentication_type: str or
@@ -185,7 +185,7 @@ class EventSubscriptionDestination(_serialization.Model):
     ServiceBusQueueEventSubscriptionDestination, ServiceBusTopicEventSubscriptionDestination,
     StorageQueueEventSubscriptionDestination, WebHookEventSubscriptionDestination
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: Type of the endpoint for the event subscription destination. Required.
      Known values are: "WebHook", "EventHub", "StorageQueue", "HybridConnection", "ServiceBusQueue",
@@ -222,10 +222,10 @@ class EventSubscriptionDestination(_serialization.Model):
         self.endpoint_type: Optional[str] = None
 
 
-class AzureFunctionEventSubscriptionDestination(EventSubscriptionDestination):
+class AzureFunctionEventSubscriptionDestination(EventSubscriptionDestination):  # pylint: disable=name-too-long
     """Information about the azure function destination for an event subscription.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: Type of the endpoint for the event subscription destination. Required.
      Known values are: "WebHook", "EventHub", "StorageQueue", "HybridConnection", "ServiceBusQueue",
@@ -290,7 +290,7 @@ class AzureFunctionEventSubscriptionDestination(EventSubscriptionDestination):
 class BoolEqualsAdvancedFilter(AdvancedFilter):
     """BoolEquals Advanced Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -341,7 +341,7 @@ class Filter(_serialization.Model):
     StringBeginsWithFilter, StringContainsFilter, StringEndsWithFilter, StringInFilter,
     StringNotBeginsWithFilter, StringNotContainsFilter, StringNotEndsWithFilter, StringNotInFilter
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -400,7 +400,7 @@ class Filter(_serialization.Model):
 class BoolEqualsFilter(Filter):
     """BoolEquals Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -860,10 +860,14 @@ class ClientAuthenticationSettings(_serialization.Model):
      to client authentication settings for namespace resource.
     :vartype alternative_authentication_name_sources: list[str or
      ~azure.mgmt.eventgrid.models.AlternativeAuthenticationNameSource]
+    :ivar custom_jwt_authentication: Custom JWT authentication settings for namespace resource.
+    :vartype custom_jwt_authentication:
+     ~azure.mgmt.eventgrid.models.CustomJwtAuthenticationSettings
     """
 
     _attribute_map = {
         "alternative_authentication_name_sources": {"key": "alternativeAuthenticationNameSources", "type": "[str]"},
+        "custom_jwt_authentication": {"key": "customJwtAuthentication", "type": "CustomJwtAuthenticationSettings"},
     }
 
     def __init__(
@@ -872,6 +876,7 @@ class ClientAuthenticationSettings(_serialization.Model):
         alternative_authentication_name_sources: Optional[
             List[Union[str, "_models.AlternativeAuthenticationNameSource"]]
         ] = None,
+        custom_jwt_authentication: Optional["_models.CustomJwtAuthenticationSettings"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -879,9 +884,13 @@ class ClientAuthenticationSettings(_serialization.Model):
          related to client authentication settings for namespace resource.
         :paramtype alternative_authentication_name_sources: list[str or
          ~azure.mgmt.eventgrid.models.AlternativeAuthenticationNameSource]
+        :keyword custom_jwt_authentication: Custom JWT authentication settings for namespace resource.
+        :paramtype custom_jwt_authentication:
+         ~azure.mgmt.eventgrid.models.CustomJwtAuthenticationSettings
         """
         super().__init__(**kwargs)
         self.alternative_authentication_name_sources = alternative_authentication_name_sources
+        self.custom_jwt_authentication = custom_jwt_authentication
 
 
 class ClientCertificateAuthentication(_serialization.Model):
@@ -1080,6 +1089,260 @@ class ConnectionState(_serialization.Model):
         self.actions_required = actions_required
 
 
+class CustomDomainConfiguration(_serialization.Model):
+    """A custom domain configuration that allows users to publish to their own domain name.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar fully_qualified_domain_name: Fully Qualified Domain Name (FQDN) for the custom domain.
+     Required.
+    :vartype fully_qualified_domain_name: str
+    :ivar validation_state: Validation state for the custom domain. This is a read only property
+     and is initially set to 'Pending' and will be updated to 'Approved' by Event Grid only after
+     ownership of the domain name has been successfully validated. Known values are: "Pending",
+     "Approved", and "ErrorRetrievingDnsRecord".
+    :vartype validation_state: str or ~azure.mgmt.eventgrid.models.CustomDomainValidationState
+    :ivar identity: Identity info for accessing the certificate for the custom domain. This
+     identity info must match an identity that has been set on the namespace.
+    :vartype identity: ~azure.mgmt.eventgrid.models.CustomDomainIdentity
+    :ivar certificate_url: The URL for the certificate that is used for publishing to the custom
+     domain. We currently support certificates stored in Azure Key Vault only. While certificate URL
+     can be either
+     versioned URL of the following format
+     https://{key-vault-name}.vault.azure.net/certificates/{certificate-name}/{version-id}, or
+     unversioned URL of the following format (e.g.,
+     https://contosovault.vault.azure.net/certificates/contosocert, we support unversioned
+     certificate URL only (e.g., https://contosovault.vault.azure.net/certificates/contosocert).
+    :vartype certificate_url: str
+    :ivar expected_txt_record_name: Expected DNS TXT record name. Event Grid will check for a TXT
+     record with this name in the DNS record set of the custom domain name to prove ownership over
+     the domain.
+     The values under this TXT record must contain the expected TXT record value.
+    :vartype expected_txt_record_name: str
+    :ivar expected_txt_record_value: Expected DNS TXT record value. Event Grid will check for a TXT
+     record with this value in the DNS record set of the custom domain name to prove ownership over
+     the domain.
+    :vartype expected_txt_record_value: str
+    """
+
+    _validation = {
+        "fully_qualified_domain_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "fully_qualified_domain_name": {"key": "fullyQualifiedDomainName", "type": "str"},
+        "validation_state": {"key": "validationState", "type": "str"},
+        "identity": {"key": "identity", "type": "CustomDomainIdentity"},
+        "certificate_url": {"key": "certificateUrl", "type": "str"},
+        "expected_txt_record_name": {"key": "expectedTxtRecordName", "type": "str"},
+        "expected_txt_record_value": {"key": "expectedTxtRecordValue", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        fully_qualified_domain_name: str,
+        validation_state: Optional[Union[str, "_models.CustomDomainValidationState"]] = None,
+        identity: Optional["_models.CustomDomainIdentity"] = None,
+        certificate_url: Optional[str] = None,
+        expected_txt_record_name: Optional[str] = None,
+        expected_txt_record_value: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword fully_qualified_domain_name: Fully Qualified Domain Name (FQDN) for the custom domain.
+         Required.
+        :paramtype fully_qualified_domain_name: str
+        :keyword validation_state: Validation state for the custom domain. This is a read only property
+         and is initially set to 'Pending' and will be updated to 'Approved' by Event Grid only after
+         ownership of the domain name has been successfully validated. Known values are: "Pending",
+         "Approved", and "ErrorRetrievingDnsRecord".
+        :paramtype validation_state: str or ~azure.mgmt.eventgrid.models.CustomDomainValidationState
+        :keyword identity: Identity info for accessing the certificate for the custom domain. This
+         identity info must match an identity that has been set on the namespace.
+        :paramtype identity: ~azure.mgmt.eventgrid.models.CustomDomainIdentity
+        :keyword certificate_url: The URL for the certificate that is used for publishing to the custom
+         domain. We currently support certificates stored in Azure Key Vault only. While certificate URL
+         can be either
+         versioned URL of the following format
+         https://{key-vault-name}.vault.azure.net/certificates/{certificate-name}/{version-id}, or
+         unversioned URL of the following format (e.g.,
+         https://contosovault.vault.azure.net/certificates/contosocert, we support unversioned
+         certificate URL only (e.g., https://contosovault.vault.azure.net/certificates/contosocert).
+        :paramtype certificate_url: str
+        :keyword expected_txt_record_name: Expected DNS TXT record name. Event Grid will check for a
+         TXT record with this name in the DNS record set of the custom domain name to prove ownership
+         over the domain.
+         The values under this TXT record must contain the expected TXT record value.
+        :paramtype expected_txt_record_name: str
+        :keyword expected_txt_record_value: Expected DNS TXT record value. Event Grid will check for a
+         TXT record with this value in the DNS record set of the custom domain name to prove ownership
+         over the domain.
+        :paramtype expected_txt_record_value: str
+        """
+        super().__init__(**kwargs)
+        self.fully_qualified_domain_name = fully_qualified_domain_name
+        self.validation_state = validation_state
+        self.identity = identity
+        self.certificate_url = certificate_url
+        self.expected_txt_record_name = expected_txt_record_name
+        self.expected_txt_record_value = expected_txt_record_value
+
+
+class CustomDomainIdentity(_serialization.Model):
+    """The identity information for retrieving the certificate for the custom domain.
+
+    :ivar type: The type of managed identity used. Can be either 'SystemAssigned' or
+     'UserAssigned'. Known values are: "SystemAssigned" and "UserAssigned".
+    :vartype type: str or ~azure.mgmt.eventgrid.models.CustomDomainIdentityType
+    :ivar user_assigned_identity: The user identity associated with the resource.
+    :vartype user_assigned_identity: str
+    """
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identity": {"key": "userAssignedIdentity", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.CustomDomainIdentityType"]] = None,
+        user_assigned_identity: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: The type of managed identity used. Can be either 'SystemAssigned' or
+         'UserAssigned'. Known values are: "SystemAssigned" and "UserAssigned".
+        :paramtype type: str or ~azure.mgmt.eventgrid.models.CustomDomainIdentityType
+        :keyword user_assigned_identity: The user identity associated with the resource.
+        :paramtype user_assigned_identity: str
+        """
+        super().__init__(**kwargs)
+        self.type = type
+        self.user_assigned_identity = user_assigned_identity
+
+
+class CustomDomainOwnershipValidationResult(_serialization.Model):
+    """Namespace custom domain ownership validation result.
+
+    :ivar custom_domains_for_topics_configuration: List of custom domain configurations for the
+     namespace under topics configuration.
+    :vartype custom_domains_for_topics_configuration:
+     list[~azure.mgmt.eventgrid.models.CustomDomainConfiguration]
+    :ivar custom_domains_for_topic_spaces_configuration: List of custom domain configurations for
+     the namespace under topic spaces configuration.
+    :vartype custom_domains_for_topic_spaces_configuration:
+     list[~azure.mgmt.eventgrid.models.CustomDomainConfiguration]
+    """
+
+    _attribute_map = {
+        "custom_domains_for_topics_configuration": {
+            "key": "customDomainsForTopicsConfiguration",
+            "type": "[CustomDomainConfiguration]",
+        },
+        "custom_domains_for_topic_spaces_configuration": {
+            "key": "customDomainsForTopicSpacesConfiguration",
+            "type": "[CustomDomainConfiguration]",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        custom_domains_for_topics_configuration: Optional[List["_models.CustomDomainConfiguration"]] = None,
+        custom_domains_for_topic_spaces_configuration: Optional[List["_models.CustomDomainConfiguration"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword custom_domains_for_topics_configuration: List of custom domain configurations for the
+         namespace under topics configuration.
+        :paramtype custom_domains_for_topics_configuration:
+         list[~azure.mgmt.eventgrid.models.CustomDomainConfiguration]
+        :keyword custom_domains_for_topic_spaces_configuration: List of custom domain configurations
+         for the namespace under topic spaces configuration.
+        :paramtype custom_domains_for_topic_spaces_configuration:
+         list[~azure.mgmt.eventgrid.models.CustomDomainConfiguration]
+        """
+        super().__init__(**kwargs)
+        self.custom_domains_for_topics_configuration = custom_domains_for_topics_configuration
+        self.custom_domains_for_topic_spaces_configuration = custom_domains_for_topic_spaces_configuration
+
+
+class CustomJwtAuthenticationManagedIdentity(_serialization.Model):
+    """The identity information for retrieving the certificate for custom JWT authentication.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: The type of managed identity used. Can be either 'SystemAssigned' or
+     'UserAssigned'. Required. Known values are: "SystemAssigned" and "UserAssigned".
+    :vartype type: str or ~azure.mgmt.eventgrid.models.CustomJwtAuthenticationManagedIdentityType
+    :ivar user_assigned_identity: The user identity associated with the resource.
+    :vartype user_assigned_identity: str
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identity": {"key": "userAssignedIdentity", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.CustomJwtAuthenticationManagedIdentityType"],
+        user_assigned_identity: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: The type of managed identity used. Can be either 'SystemAssigned' or
+         'UserAssigned'. Required. Known values are: "SystemAssigned" and "UserAssigned".
+        :paramtype type: str or ~azure.mgmt.eventgrid.models.CustomJwtAuthenticationManagedIdentityType
+        :keyword user_assigned_identity: The user identity associated with the resource.
+        :paramtype user_assigned_identity: str
+        """
+        super().__init__(**kwargs)
+        self.type = type
+        self.user_assigned_identity = user_assigned_identity
+
+
+class CustomJwtAuthenticationSettings(_serialization.Model):
+    """Custom JWT authentication settings for namespace resource.
+
+    :ivar token_issuer: Expected JWT token issuer.
+    :vartype token_issuer: str
+    :ivar issuer_certificates: Information about the certificate that is used for token validation.
+     We currently support maximum 2 certificates.
+    :vartype issuer_certificates: list[~azure.mgmt.eventgrid.models.IssuerCertificateInfo]
+    """
+
+    _attribute_map = {
+        "token_issuer": {"key": "tokenIssuer", "type": "str"},
+        "issuer_certificates": {"key": "issuerCertificates", "type": "[IssuerCertificateInfo]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        token_issuer: Optional[str] = None,
+        issuer_certificates: Optional[List["_models.IssuerCertificateInfo"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword token_issuer: Expected JWT token issuer.
+        :paramtype token_issuer: str
+        :keyword issuer_certificates: Information about the certificate that is used for token
+         validation. We currently support maximum 2 certificates.
+        :paramtype issuer_certificates: list[~azure.mgmt.eventgrid.models.IssuerCertificateInfo]
+        """
+        super().__init__(**kwargs)
+        self.token_issuer = token_issuer
+        self.issuer_certificates = issuer_certificates
+
+
 class DeadLetterDestination(_serialization.Model):
     """Information about the dead letter destination for an event subscription. To configure a
     deadletter destination, do not directly instantiate an object of this class. Instead,
@@ -1089,7 +1352,7 @@ class DeadLetterDestination(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     StorageBlobDeadLetterDestination
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: Type of the endpoint for the dead letter destination. Required.
      "StorageBlob"
@@ -1120,7 +1383,7 @@ class DeadLetterWithResourceIdentity(_serialization.Model):
     :ivar dead_letter_destination: Information about the destination where events have to be
      delivered for the event subscription.
      Uses the managed identity setup on the parent resource (namely, topic or domain) to acquire
-     the authentication tokens being used during delivery / dead-lettering.
+     the authentication tokens being used during dead-lettering.
     :vartype dead_letter_destination: ~azure.mgmt.eventgrid.models.DeadLetterDestination
     """
 
@@ -1142,7 +1405,7 @@ class DeadLetterWithResourceIdentity(_serialization.Model):
         :keyword dead_letter_destination: Information about the destination where events have to be
          delivered for the event subscription.
          Uses the managed identity setup on the parent resource (namely, topic or domain) to acquire
-         the authentication tokens being used during delivery / dead-lettering.
+         the authentication tokens being used during dead-lettering.
         :paramtype dead_letter_destination: ~azure.mgmt.eventgrid.models.DeadLetterDestination
         """
         super().__init__(**kwargs)
@@ -1176,7 +1439,7 @@ class DeliveryAttributeMapping(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     DynamicDeliveryAttributeMapping, StaticDeliveryAttributeMapping
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the delivery attribute or header.
     :vartype name: str
@@ -1258,8 +1521,8 @@ class DeliveryWithResourceIdentity(_serialization.Model):
     :vartype identity: ~azure.mgmt.eventgrid.models.EventSubscriptionIdentity
     :ivar destination: Information about the destination where events have to be delivered for the
      event subscription.
-     Uses Azure Event Grid's identity to acquire the authentication tokens being used during
-     delivery / dead-lettering.
+     Uses the managed identity setup on the parent resource (namely, topic or domain) to acquire
+     the authentication tokens being used during delivery.
     :vartype destination: ~azure.mgmt.eventgrid.models.EventSubscriptionDestination
     """
 
@@ -1280,8 +1543,8 @@ class DeliveryWithResourceIdentity(_serialization.Model):
         :paramtype identity: ~azure.mgmt.eventgrid.models.EventSubscriptionIdentity
         :keyword destination: Information about the destination where events have to be delivered for
          the event subscription.
-         Uses Azure Event Grid's identity to acquire the authentication tokens being used during
-         delivery / dead-lettering.
+         Uses the managed identity setup on the parent resource (namely, topic or domain) to acquire
+         the authentication tokens being used during delivery.
         :paramtype destination: ~azure.mgmt.eventgrid.models.EventSubscriptionDestination
         """
         super().__init__(**kwargs)
@@ -1294,7 +1557,7 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified identifier of the resource.
     :vartype id: str
@@ -1340,7 +1603,7 @@ class Domain(TrackedResource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified identifier of the resource.
     :vartype id: str
@@ -1358,7 +1621,7 @@ class Domain(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
     :ivar system_data: The system metadata relating to the Event Grid Domain resource.
     :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
-    :ivar private_endpoint_connections:
+    :ivar private_endpoint_connections: List of private endpoint connections.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]
     :ivar provisioning_state: Provisioning state of the Event Grid Domain Resource. Known values
@@ -1589,7 +1852,7 @@ class Domain(TrackedResource):  # pylint: disable=too-many-instance-attributes
 class DomainRegenerateKeyRequest(_serialization.Model):
     """Domain regenerate share access key request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_name: Key name to regenerate key1 or key2. Required.
     :vartype key_name: str
@@ -1843,7 +2106,7 @@ class DomainUpdateParameters(_serialization.Model):  # pylint: disable=too-many-
         :keyword public_network_access: This determines if traffic is allowed over public network. By
          default it is enabled.
          You can further restrict to specific IPs by configuring :code:`<seealso
-         cref="P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.DomainUpdateParameterProperties.InboundIpRules"
+         cref="P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.DomainUpdateParameterProperties.InboundIpRules"  # pylint: disable=line-too-long
          />`. Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
         :paramtype public_network_access: str or ~azure.mgmt.eventgrid.models.PublicNetworkAccess
         :keyword inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of
@@ -1909,7 +2172,7 @@ class DomainUpdateParameters(_serialization.Model):  # pylint: disable=too-many-
 class DynamicDeliveryAttributeMapping(DeliveryAttributeMapping):
     """Dynamic delivery attribute mapping details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the delivery attribute or header.
     :vartype name: str
@@ -2063,7 +2326,7 @@ class ErrorResponse(_serialization.Model):
 class EventHubEventSubscriptionDestination(EventSubscriptionDestination):
     """Information about the event hub destination for an event subscription.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: Type of the endpoint for the event subscription destination. Required.
      Known values are: "WebHook", "EventHub", "StorageQueue", "HybridConnection", "ServiceBusQueue",
@@ -2350,7 +2613,7 @@ class EventSubscriptionFilter(_serialization.Model):
 
 
 class EventSubscriptionFullUrl(_serialization.Model):
-    """Full endpoint url of an event subscription.
+    """Full endpoint URL of an event subscription.
 
     :ivar endpoint_url: The URL that represents the endpoint of the destination of an event
      subscription.
@@ -2374,9 +2637,8 @@ class EventSubscriptionFullUrl(_serialization.Model):
 class EventSubscriptionIdentity(_serialization.Model):
     """The identity information with the event subscription.
 
-    :ivar type: The type of managed identity used. The type 'SystemAssigned, UserAssigned' includes
-     both an implicitly created identity and a set of user-assigned identities. The type 'None' will
-     remove any identity. Known values are: "SystemAssigned" and "UserAssigned".
+    :ivar type: The type of managed identity used. Can be either 'SystemAssigned' or
+     'UserAssigned'. Known values are: "SystemAssigned" and "UserAssigned".
     :vartype type: str or ~azure.mgmt.eventgrid.models.EventSubscriptionIdentityType
     :ivar user_assigned_identity: The user identity associated with the resource.
     :vartype user_assigned_identity: str
@@ -2395,9 +2657,8 @@ class EventSubscriptionIdentity(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword type: The type of managed identity used. The type 'SystemAssigned, UserAssigned'
-         includes both an implicitly created identity and a set of user-assigned identities. The type
-         'None' will remove any identity. Known values are: "SystemAssigned" and "UserAssigned".
+        :keyword type: The type of managed identity used. Can be either 'SystemAssigned' or
+         'UserAssigned'. Known values are: "SystemAssigned" and "UserAssigned".
         :paramtype type: str or ~azure.mgmt.eventgrid.models.EventSubscriptionIdentityType
         :keyword user_assigned_identity: The user identity associated with the resource.
         :paramtype user_assigned_identity: str
@@ -2794,10 +3055,10 @@ class FiltersConfiguration(_serialization.Model):
         self.filters = filters
 
 
-class HybridConnectionEventSubscriptionDestination(EventSubscriptionDestination):
+class HybridConnectionEventSubscriptionDestination(EventSubscriptionDestination):  # pylint: disable=name-too-long
     """Information about the HybridConnection destination for an event subscription.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: Type of the endpoint for the event subscription destination. Required.
      Known values are: "WebHook", "EventHub", "StorageQueue", "HybridConnection", "ServiceBusQueue",
@@ -2859,7 +3120,7 @@ class IdentityInfo(_serialization.Model):
     :vartype tenant_id: str
     :ivar user_assigned_identities: The list of user identities associated with the resource. The
      user identity dictionary key references will be ARM resource ids in the form:
-    '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
      This property is currently not used and reserved for future usage.
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.eventgrid.models.UserIdentityProperties]
@@ -2893,7 +3154,7 @@ class IdentityInfo(_serialization.Model):
         :paramtype tenant_id: str
         :keyword user_assigned_identities: The list of user identities associated with the resource.
          The user identity dictionary key references will be ARM resource ids in the form:
-        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
          This property is currently not used and reserved for future usage.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.eventgrid.models.UserIdentityProperties]
@@ -2991,7 +3252,7 @@ class InputSchemaMapping(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     JsonInputSchemaMapping
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar input_schema_mapping_type: Type of the custom mapping. Required. "Json"
     :vartype input_schema_mapping_type: str or ~azure.mgmt.eventgrid.models.InputSchemaMappingType
@@ -3016,7 +3277,7 @@ class InputSchemaMapping(_serialization.Model):
 class IsNotNullAdvancedFilter(AdvancedFilter):
     """IsNotNull Advanced Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -3050,7 +3311,7 @@ class IsNotNullAdvancedFilter(AdvancedFilter):
 class IsNotNullFilter(Filter):
     """IsNotNull Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -3084,7 +3345,7 @@ class IsNotNullFilter(Filter):
 class IsNullOrUndefinedAdvancedFilter(AdvancedFilter):
     """IsNullOrUndefined Advanced Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -3118,7 +3379,7 @@ class IsNullOrUndefinedAdvancedFilter(AdvancedFilter):
 class IsNullOrUndefinedFilter(Filter):
     """IsNullOrUndefined Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -3147,6 +3408,48 @@ class IsNullOrUndefinedFilter(Filter):
         """
         super().__init__(key=key, **kwargs)
         self.operator_type: str = "IsNullOrUndefined"
+
+
+class IssuerCertificateInfo(_serialization.Model):
+    """Information about the certificate that is used for token validation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar certificate_url: Keyvault certificate URL in
+     https://keyvaultname.vault.azure.net/certificates/certificateName/certificateVersion format.
+     Required.
+    :vartype certificate_url: str
+    :ivar identity: The identity that will be used to access the certificate.
+    :vartype identity: ~azure.mgmt.eventgrid.models.CustomJwtAuthenticationManagedIdentity
+    """
+
+    _validation = {
+        "certificate_url": {"required": True},
+    }
+
+    _attribute_map = {
+        "certificate_url": {"key": "certificateUrl", "type": "str"},
+        "identity": {"key": "identity", "type": "CustomJwtAuthenticationManagedIdentity"},
+    }
+
+    def __init__(
+        self,
+        *,
+        certificate_url: str,
+        identity: Optional["_models.CustomJwtAuthenticationManagedIdentity"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword certificate_url: Keyvault certificate URL in
+         https://keyvaultname.vault.azure.net/certificates/certificateName/certificateVersion format.
+         Required.
+        :paramtype certificate_url: str
+        :keyword identity: The identity that will be used to access the certificate.
+        :paramtype identity: ~azure.mgmt.eventgrid.models.CustomJwtAuthenticationManagedIdentity
+        """
+        super().__init__(**kwargs)
+        self.certificate_url = certificate_url
+        self.identity = identity
 
 
 class JsonField(_serialization.Model):
@@ -3213,7 +3516,7 @@ class JsonInputSchemaMapping(InputSchemaMapping):
     """This enables publishing to Event Grid using a custom input schema. This can be used to map
     properties from a custom input JSON schema to the Event Grid event schema.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar input_schema_mapping_type: Type of the custom mapping. Required. "Json"
     :vartype input_schema_mapping_type: str or ~azure.mgmt.eventgrid.models.InputSchemaMappingType
@@ -3287,7 +3590,7 @@ class JsonInputSchemaMapping(InputSchemaMapping):
 class MonitorAlertEventSubscriptionDestination(EventSubscriptionDestination):
     """Information about the Monitor Alert destination for an event subscription.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: Type of the endpoint for the event subscription destination. Required.
      Known values are: "WebHook", "EventHub", "StorageQueue", "HybridConnection", "ServiceBusQueue",
@@ -3303,7 +3606,7 @@ class MonitorAlertEventSubscriptionDestination(EventSubscriptionDestination):
     :ivar action_groups: The list of ARM Ids of Action Groups that will be triggered on every Alert
      fired through this event subscription.
      Each resource ARM Id should follow this pattern:
-     /subscriptions/{AzureSubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Insights/actionGroups/{ActionGroupName}.
+     /subscriptions/{AzureSubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Insights/actionGroups/{ActionGroupName}.  # pylint: disable=line-too-long
     :vartype action_groups: list[str]
     """
 
@@ -3337,7 +3640,7 @@ class MonitorAlertEventSubscriptionDestination(EventSubscriptionDestination):
         :keyword action_groups: The list of ARM Ids of Action Groups that will be triggered on every
          Alert fired through this event subscription.
          Each resource ARM Id should follow this pattern:
-         /subscriptions/{AzureSubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Insights/actionGroups/{ActionGroupName}.
+         /subscriptions/{AzureSubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Insights/actionGroups/{ActionGroupName}.  # pylint: disable=line-too-long
         :paramtype action_groups: list[str]
         """
         super().__init__(**kwargs)
@@ -3352,7 +3655,7 @@ class Namespace(TrackedResource):  # pylint: disable=too-many-instance-attribute
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified identifier of the resource.
     :vartype id: str
@@ -3370,7 +3673,7 @@ class Namespace(TrackedResource):  # pylint: disable=too-many-instance-attribute
     :vartype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
     :ivar system_data: The system metadata relating to the namespace resource.
     :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
-    :ivar private_endpoint_connections:
+    :ivar private_endpoint_connections: List of private endpoint connections.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]
     :ivar provisioning_state: Provisioning state of the namespace resource. Known values are:
@@ -3463,7 +3766,7 @@ class Namespace(TrackedResource):  # pylint: disable=too-many-instance-attribute
         :paramtype sku: ~azure.mgmt.eventgrid.models.NamespaceSku
         :keyword identity: Identity information for the Namespace resource.
         :paramtype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
-        :keyword private_endpoint_connections:
+        :keyword private_endpoint_connections: List of private endpoint connections.
         :paramtype private_endpoint_connections:
          list[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]
         :keyword topics_configuration: Topics configuration information for the namespace resource.
@@ -3510,7 +3813,7 @@ class Namespace(TrackedResource):  # pylint: disable=too-many-instance-attribute
 class NamespaceRegenerateKeyRequest(_serialization.Model):
     """Namespace regenerate share access key request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_name: Key name to regenerate key1 or key2. Required.
     :vartype key_name: str
@@ -3698,10 +4001,10 @@ class NamespaceTopic(Resource):
         self.event_retention_in_days = event_retention_in_days
 
 
-class NamespaceTopicEventSubscriptionDestination(EventSubscriptionDestination):
+class NamespaceTopicEventSubscriptionDestination(EventSubscriptionDestination):  # pylint: disable=name-too-long
     """Information about the Namespace Topic destination for an event subscription.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: Type of the endpoint for the event subscription destination. Required.
      Known values are: "WebHook", "EventHub", "StorageQueue", "HybridConnection", "ServiceBusQueue",
@@ -3711,7 +4014,7 @@ class NamespaceTopicEventSubscriptionDestination(EventSubscriptionDestination):
      Namespace Topic destination of an event subscription.
      This field is required and the Namespace Topic resource listed must already exist.
      The resource ARM Id should follow this pattern:
-     /subscriptions/{AzureSubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.EventGrid/namespaces/{NamespaceName}/topics/{TopicName}.
+     /subscriptions/{AzureSubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.EventGrid/namespaces/{NamespaceName}/topics/{TopicName}.  # pylint: disable=line-too-long
     :vartype resource_id: str
     """
 
@@ -3730,7 +4033,7 @@ class NamespaceTopicEventSubscriptionDestination(EventSubscriptionDestination):
          Namespace Topic destination of an event subscription.
          This field is required and the Namespace Topic resource listed must already exist.
          The resource ARM Id should follow this pattern:
-         /subscriptions/{AzureSubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.EventGrid/namespaces/{NamespaceName}/topics/{TopicName}.
+         /subscriptions/{AzureSubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.EventGrid/namespaces/{NamespaceName}/topics/{TopicName}.  # pylint: disable=line-too-long
         :paramtype resource_id: str
         """
         super().__init__(**kwargs)
@@ -3802,10 +4105,12 @@ class NamespaceUpdateParameters(_serialization.Model):
     :ivar topic_spaces_configuration: Topic spaces configuration properties that can be updated.
     :vartype topic_spaces_configuration:
      ~azure.mgmt.eventgrid.models.UpdateTopicSpacesConfigurationInfo
+    :ivar topics_configuration: Topics configuration properties that can be updated.
+    :vartype topics_configuration: ~azure.mgmt.eventgrid.models.UpdateTopicsConfigurationInfo
     :ivar public_network_access: This determines if traffic is allowed over public network. By
      default it is enabled.
      You can further restrict to specific IPs by configuring :code:`<seealso
-     cref="P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.PubSub.NamespaceUpdateParameterProperties.InboundIpRules"
+     cref="P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.PubSub.NamespaceUpdateParameterProperties.InboundIpRules"  # pylint: disable=line-too-long
      />`. Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
     :vartype public_network_access: str or ~azure.mgmt.eventgrid.models.PublicNetworkAccess
     :ivar inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of all
@@ -3821,6 +4126,7 @@ class NamespaceUpdateParameters(_serialization.Model):
             "key": "properties.topicSpacesConfiguration",
             "type": "UpdateTopicSpacesConfigurationInfo",
         },
+        "topics_configuration": {"key": "properties.topicsConfiguration", "type": "UpdateTopicsConfigurationInfo"},
         "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
         "inbound_ip_rules": {"key": "properties.inboundIpRules", "type": "[InboundIpRule]"},
     }
@@ -3832,6 +4138,7 @@ class NamespaceUpdateParameters(_serialization.Model):
         identity: Optional["_models.IdentityInfo"] = None,
         sku: Optional["_models.NamespaceSku"] = None,
         topic_spaces_configuration: Optional["_models.UpdateTopicSpacesConfigurationInfo"] = None,
+        topics_configuration: Optional["_models.UpdateTopicsConfigurationInfo"] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         inbound_ip_rules: Optional[List["_models.InboundIpRule"]] = None,
         **kwargs: Any
@@ -3846,10 +4153,12 @@ class NamespaceUpdateParameters(_serialization.Model):
         :keyword topic_spaces_configuration: Topic spaces configuration properties that can be updated.
         :paramtype topic_spaces_configuration:
          ~azure.mgmt.eventgrid.models.UpdateTopicSpacesConfigurationInfo
+        :keyword topics_configuration: Topics configuration properties that can be updated.
+        :paramtype topics_configuration: ~azure.mgmt.eventgrid.models.UpdateTopicsConfigurationInfo
         :keyword public_network_access: This determines if traffic is allowed over public network. By
          default it is enabled.
          You can further restrict to specific IPs by configuring :code:`<seealso
-         cref="P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.PubSub.NamespaceUpdateParameterProperties.InboundIpRules"
+         cref="P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.PubSub.NamespaceUpdateParameterProperties.InboundIpRules"  # pylint: disable=line-too-long
          />`. Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
         :paramtype public_network_access: str or ~azure.mgmt.eventgrid.models.PublicNetworkAccess
         :keyword inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of
@@ -3861,6 +4170,7 @@ class NamespaceUpdateParameters(_serialization.Model):
         self.identity = identity
         self.sku = sku
         self.topic_spaces_configuration = topic_spaces_configuration
+        self.topics_configuration = topics_configuration
         self.public_network_access = public_network_access
         self.inbound_ip_rules = inbound_ip_rules
 
@@ -3952,7 +4262,7 @@ class NetworkSecurityPerimeterConfiguration(Resource):
         self.profile = profile
 
 
-class NetworkSecurityPerimeterConfigurationIssues(_serialization.Model):
+class NetworkSecurityPerimeterConfigurationIssues(_serialization.Model):  # pylint: disable=name-too-long
     """Network security perimeter configuration issues.
 
     :ivar name: Provisioning issue name.
@@ -4023,7 +4333,7 @@ class NetworkSecurityPerimeterConfigurationIssues(_serialization.Model):
         self.suggested_access_rules = suggested_access_rules
 
 
-class NetworkSecurityPerimeterConfigurationList(_serialization.Model):
+class NetworkSecurityPerimeterConfigurationList(_serialization.Model):  # pylint: disable=name-too-long
     """Network security perimeter configuration List.
 
     :ivar value: List of all network security parameter configurations.
@@ -4055,7 +4365,7 @@ class NetworkSecurityPerimeterConfigurationList(_serialization.Model):
         self.next_link = next_link
 
 
-class NetworkSecurityPerimeterConfigurationProfile(_serialization.Model):
+class NetworkSecurityPerimeterConfigurationProfile(_serialization.Model):  # pylint: disable=name-too-long
     """Nsp configuration with profile information.
 
     :ivar name: Nsp configuration profile name.
@@ -4149,7 +4459,7 @@ class NetworkSecurityPerimeterInfo(_serialization.Model):
         self.location = location
 
 
-class NetworkSecurityPerimeterProfileAccessRule(_serialization.Model):
+class NetworkSecurityPerimeterProfileAccessRule(_serialization.Model):  # pylint: disable=name-too-long
     """Network security perimeter profile access rule.
 
     :ivar fully_qualified_arm_id: Fully Qualified Arm id for network security perimeter profile
@@ -4165,7 +4475,7 @@ class NetworkSecurityPerimeterProfileAccessRule(_serialization.Model):
     :ivar address_prefixes: Address prefixes.
     :vartype address_prefixes: list[str]
     :ivar subscriptions: List of subscriptions.
-    :vartype subscriptions: list[str]
+    :vartype subscriptions: list[~azure.mgmt.eventgrid.models.NetworkSecurityPerimeterSubscription]
     :ivar network_security_perimeters: Network security perimeters.
     :vartype network_security_perimeters:
      list[~azure.mgmt.eventgrid.models.NetworkSecurityPerimeterInfo]
@@ -4183,7 +4493,7 @@ class NetworkSecurityPerimeterProfileAccessRule(_serialization.Model):
         "type": {"key": "type", "type": "str"},
         "direction": {"key": "properties.direction", "type": "str"},
         "address_prefixes": {"key": "properties.addressPrefixes", "type": "[str]"},
-        "subscriptions": {"key": "properties.subscriptions", "type": "[str]"},
+        "subscriptions": {"key": "properties.subscriptions", "type": "[NetworkSecurityPerimeterSubscription]"},
         "network_security_perimeters": {
             "key": "properties.networkSecurityPerimeters",
             "type": "[NetworkSecurityPerimeterInfo]",
@@ -4201,7 +4511,7 @@ class NetworkSecurityPerimeterProfileAccessRule(_serialization.Model):
         type: Optional[str] = None,
         direction: Optional[Union[str, "_models.NetworkSecurityPerimeterProfileAccessRuleDirection"]] = None,
         address_prefixes: Optional[List[str]] = None,
-        subscriptions: Optional[List[str]] = None,
+        subscriptions: Optional[List["_models.NetworkSecurityPerimeterSubscription"]] = None,
         network_security_perimeters: Optional[List["_models.NetworkSecurityPerimeterInfo"]] = None,
         fully_qualified_domain_names: Optional[List[str]] = None,
         email_addresses: Optional[List[str]] = None,
@@ -4222,7 +4532,8 @@ class NetworkSecurityPerimeterProfileAccessRule(_serialization.Model):
         :keyword address_prefixes: Address prefixes.
         :paramtype address_prefixes: list[str]
         :keyword subscriptions: List of subscriptions.
-        :paramtype subscriptions: list[str]
+        :paramtype subscriptions:
+         list[~azure.mgmt.eventgrid.models.NetworkSecurityPerimeterSubscription]
         :keyword network_security_perimeters: Network security perimeters.
         :paramtype network_security_perimeters:
          list[~azure.mgmt.eventgrid.models.NetworkSecurityPerimeterInfo]
@@ -4246,10 +4557,30 @@ class NetworkSecurityPerimeterProfileAccessRule(_serialization.Model):
         self.phone_numbers = phone_numbers
 
 
+class NetworkSecurityPerimeterSubscription(_serialization.Model):
+    """Network security perimeter subscription inbound access rule.
+
+    :ivar id: Subscription id.
+    :vartype id: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        """
+        :keyword id: Subscription id.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+
+
 class NumberGreaterThanAdvancedFilter(AdvancedFilter):
     """NumberGreaterThan Advanced Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -4289,7 +4620,7 @@ class NumberGreaterThanAdvancedFilter(AdvancedFilter):
 class NumberGreaterThanFilter(Filter):
     """NumberGreaterThan Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -4329,7 +4660,7 @@ class NumberGreaterThanFilter(Filter):
 class NumberGreaterThanOrEqualsAdvancedFilter(AdvancedFilter):
     """NumberGreaterThanOrEquals Advanced Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -4369,7 +4700,7 @@ class NumberGreaterThanOrEqualsAdvancedFilter(AdvancedFilter):
 class NumberGreaterThanOrEqualsFilter(Filter):
     """NumberGreaterThanOrEquals Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -4409,7 +4740,7 @@ class NumberGreaterThanOrEqualsFilter(Filter):
 class NumberInAdvancedFilter(AdvancedFilter):
     """NumberIn Advanced Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -4449,7 +4780,7 @@ class NumberInAdvancedFilter(AdvancedFilter):
 class NumberInFilter(Filter):
     """NumberIn Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -4489,7 +4820,7 @@ class NumberInFilter(Filter):
 class NumberInRangeAdvancedFilter(AdvancedFilter):
     """NumberInRange Advanced Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -4529,7 +4860,7 @@ class NumberInRangeAdvancedFilter(AdvancedFilter):
 class NumberInRangeFilter(Filter):
     """NumberInRange Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -4569,7 +4900,7 @@ class NumberInRangeFilter(Filter):
 class NumberLessThanAdvancedFilter(AdvancedFilter):
     """NumberLessThan Advanced Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -4609,7 +4940,7 @@ class NumberLessThanAdvancedFilter(AdvancedFilter):
 class NumberLessThanFilter(Filter):
     """NumberLessThan Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -4649,7 +4980,7 @@ class NumberLessThanFilter(Filter):
 class NumberLessThanOrEqualsAdvancedFilter(AdvancedFilter):
     """NumberLessThanOrEquals Advanced Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -4689,7 +5020,7 @@ class NumberLessThanOrEqualsAdvancedFilter(AdvancedFilter):
 class NumberLessThanOrEqualsFilter(Filter):
     """NumberLessThanOrEquals Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -4729,7 +5060,7 @@ class NumberLessThanOrEqualsFilter(Filter):
 class NumberNotInAdvancedFilter(AdvancedFilter):
     """NumberNotIn Advanced Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -4769,7 +5100,7 @@ class NumberNotInAdvancedFilter(AdvancedFilter):
 class NumberNotInFilter(Filter):
     """NumberNotIn Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -4809,7 +5140,7 @@ class NumberNotInFilter(Filter):
 class NumberNotInRangeAdvancedFilter(AdvancedFilter):
     """NumberNotInRange Advanced Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -4849,7 +5180,7 @@ class NumberNotInRangeAdvancedFilter(AdvancedFilter):
 class NumberNotInRangeFilter(Filter):
     """NumberNotInRange Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -5242,7 +5573,7 @@ class PartnerDestination(TrackedResource):  # pylint: disable=too-many-instance-
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified identifier of the resource.
     :vartype id: str
@@ -5363,7 +5694,7 @@ class PartnerDestinationInfo(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     WebhookPartnerDestinationInfo
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar azure_subscription_id: Azure subscription ID of the subscriber. The partner destination
      associated with the channel will be
@@ -5537,7 +5868,7 @@ class PartnerDetails(_serialization.Model):
 class PartnerEventSubscriptionDestination(EventSubscriptionDestination):
     """PartnerEventSubscriptionDestination.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: Type of the endpoint for the event subscription destination. Required.
      Known values are: "WebHook", "EventHub", "StorageQueue", "HybridConnection", "ServiceBusQueue",
@@ -5573,7 +5904,7 @@ class PartnerNamespace(TrackedResource):  # pylint: disable=too-many-instance-at
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified identifier of the resource.
     :vartype id: str
@@ -5587,7 +5918,7 @@ class PartnerNamespace(TrackedResource):  # pylint: disable=too-many-instance-at
     :vartype tags: dict[str, str]
     :ivar system_data: The system metadata relating to Partner Namespace resource.
     :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
-    :ivar private_endpoint_connections:
+    :ivar private_endpoint_connections: List of private endpoint connections.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]
     :ivar provisioning_state: Provisioning state of the partner namespace. Known values are:
@@ -5597,7 +5928,7 @@ class PartnerNamespace(TrackedResource):  # pylint: disable=too-many-instance-at
     :ivar partner_registration_fully_qualified_id: The fully qualified ARM Id of the partner
      registration that should be associated with this partner namespace. This takes the following
      format:
-    /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerRegistrations/{partnerRegistrationName}.
+    /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerRegistrations/{partnerRegistrationName}.  # pylint: disable=line-too-long
     :vartype partner_registration_fully_qualified_id: str
     :ivar minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish to
      this partner namespace. Known values are: "1.0", "1.1", and "1.2".
@@ -5682,7 +6013,7 @@ class PartnerNamespace(TrackedResource):  # pylint: disable=too-many-instance-at
         :keyword partner_registration_fully_qualified_id: The fully qualified ARM Id of the partner
          registration that should be associated with this partner namespace. This takes the following
          format:
-        /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerRegistrations/{partnerRegistrationName}.
+        /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerRegistrations/{partnerRegistrationName}.  # pylint: disable=line-too-long
         :paramtype partner_registration_fully_qualified_id: str
         :keyword minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish
          to this partner namespace. Known values are: "1.0", "1.1", and "1.2".
@@ -5724,7 +6055,7 @@ class PartnerNamespace(TrackedResource):  # pylint: disable=too-many-instance-at
 class PartnerNamespaceRegenerateKeyRequest(_serialization.Model):
     """PartnerNamespace regenerate shared access key request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_name: Key name to regenerate (key1 or key2). Required.
     :vartype key_name: str
@@ -5813,7 +6144,7 @@ class PartnerNamespaceUpdateParameters(_serialization.Model):
     :ivar public_network_access: This determines if traffic is allowed over public network. By
      default it is enabled.
      You can further restrict to specific IPs by configuring :code:`<seealso
-     cref="P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.PartnerNamespaceUpdateParameterProperties.InboundIpRules"
+     cref="P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.PartnerNamespaceUpdateParameterProperties.InboundIpRules"  # pylint: disable=line-too-long
      />`. Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
     :vartype public_network_access: str or ~azure.mgmt.eventgrid.models.PublicNetworkAccess
     :ivar inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of all
@@ -5852,7 +6183,7 @@ class PartnerNamespaceUpdateParameters(_serialization.Model):
         :keyword public_network_access: This determines if traffic is allowed over public network. By
          default it is enabled.
          You can further restrict to specific IPs by configuring :code:`<seealso
-         cref="P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.PartnerNamespaceUpdateParameterProperties.InboundIpRules"
+         cref="P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.PartnerNamespaceUpdateParameterProperties.InboundIpRules"  # pylint: disable=line-too-long
          />`. Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
         :paramtype public_network_access: str or ~azure.mgmt.eventgrid.models.PublicNetworkAccess
         :keyword inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of
@@ -5879,7 +6210,7 @@ class PartnerRegistration(TrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified identifier of the resource.
     :vartype id: str
@@ -6006,7 +6337,7 @@ class PartnerTopic(TrackedResource):  # pylint: disable=too-many-instance-attrib
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified identifier of the resource.
     :vartype id: str
@@ -6275,7 +6606,7 @@ class PartnerUpdateDestinationInfo(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     WebhookUpdatePartnerDestinationInfo
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: Type of the endpoint for the partner destination. Required. "WebHook"
     :vartype endpoint_type: str or ~azure.mgmt.eventgrid.models.PartnerEndpointType
@@ -6690,15 +7021,20 @@ class PushInfo(_serialization.Model):
      subscription. Any event that cannot be delivered to its' destination is sent to the dead letter
      destination.
      Uses the managed identity setup on the parent resource (namely, namespace) to acquire the
-     authentication tokens being used during delivery / dead-lettering.
+     authentication tokens being used during dead-lettering.
     :vartype dead_letter_destination_with_resource_identity:
      ~azure.mgmt.eventgrid.models.DeadLetterWithResourceIdentity
     :ivar delivery_with_resource_identity: Information about the destination where events have to
      be delivered for the event subscription.
      Uses the managed identity setup on the parent resource (namely, topic or domain) to acquire
-     the authentication tokens being used during delivery / dead-lettering.
+     the authentication tokens being used during delivery.
     :vartype delivery_with_resource_identity:
      ~azure.mgmt.eventgrid.models.DeliveryWithResourceIdentity
+    :ivar destination: Information about the destination where events have to be delivered for the
+     event subscription.
+     Uses Azure Event Grid's identity to acquire the authentication tokens being used during
+     delivery.
+    :vartype destination: ~azure.mgmt.eventgrid.models.EventSubscriptionDestination
     """
 
     _attribute_map = {
@@ -6712,6 +7048,7 @@ class PushInfo(_serialization.Model):
             "key": "deliveryWithResourceIdentity",
             "type": "DeliveryWithResourceIdentity",
         },
+        "destination": {"key": "destination", "type": "EventSubscriptionDestination"},
     }
 
     def __init__(
@@ -6721,6 +7058,7 @@ class PushInfo(_serialization.Model):
         event_time_to_live: Optional[str] = None,
         dead_letter_destination_with_resource_identity: Optional["_models.DeadLetterWithResourceIdentity"] = None,
         delivery_with_resource_identity: Optional["_models.DeliveryWithResourceIdentity"] = None,
+        destination: Optional["_models.EventSubscriptionDestination"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6758,21 +7096,27 @@ class PushInfo(_serialization.Model):
          event subscription. Any event that cannot be delivered to its' destination is sent to the dead
          letter destination.
          Uses the managed identity setup on the parent resource (namely, namespace) to acquire the
-         authentication tokens being used during delivery / dead-lettering.
+         authentication tokens being used during dead-lettering.
         :paramtype dead_letter_destination_with_resource_identity:
          ~azure.mgmt.eventgrid.models.DeadLetterWithResourceIdentity
         :keyword delivery_with_resource_identity: Information about the destination where events have
          to be delivered for the event subscription.
          Uses the managed identity setup on the parent resource (namely, topic or domain) to acquire
-         the authentication tokens being used during delivery / dead-lettering.
+         the authentication tokens being used during delivery.
         :paramtype delivery_with_resource_identity:
          ~azure.mgmt.eventgrid.models.DeliveryWithResourceIdentity
+        :keyword destination: Information about the destination where events have to be delivered for
+         the event subscription.
+         Uses Azure Event Grid's identity to acquire the authentication tokens being used during
+         delivery.
+        :paramtype destination: ~azure.mgmt.eventgrid.models.EventSubscriptionDestination
         """
         super().__init__(**kwargs)
         self.max_delivery_count = max_delivery_count
         self.event_time_to_live = event_time_to_live
         self.dead_letter_destination_with_resource_identity = dead_letter_destination_with_resource_identity
         self.delivery_with_resource_identity = delivery_with_resource_identity
+        self.destination = destination
 
 
 class QueueInfo(_serialization.Model):
@@ -7056,7 +7400,8 @@ class RoutingEnrichments(_serialization.Model):
 class RoutingIdentityInfo(_serialization.Model):
     """Routing identity info for topic spaces configuration.
 
-    :ivar type: Known values are: "None", "SystemAssigned", and "UserAssigned".
+    :ivar type: Routing identity type for topic spaces configuration. Known values are: "None",
+     "SystemAssigned", and "UserAssigned".
     :vartype type: str or ~azure.mgmt.eventgrid.models.RoutingIdentityType
     :ivar user_assigned_identity:
     :vartype user_assigned_identity: str
@@ -7075,7 +7420,8 @@ class RoutingIdentityInfo(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword type: Known values are: "None", "SystemAssigned", and "UserAssigned".
+        :keyword type: Routing identity type for topic spaces configuration. Known values are: "None",
+         "SystemAssigned", and "UserAssigned".
         :paramtype type: str or ~azure.mgmt.eventgrid.models.RoutingIdentityType
         :keyword user_assigned_identity:
         :paramtype user_assigned_identity: str
@@ -7085,10 +7431,10 @@ class RoutingIdentityInfo(_serialization.Model):
         self.user_assigned_identity = user_assigned_identity
 
 
-class ServiceBusQueueEventSubscriptionDestination(EventSubscriptionDestination):
+class ServiceBusQueueEventSubscriptionDestination(EventSubscriptionDestination):  # pylint: disable=name-too-long
     """Information about the service bus destination for an event subscription.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: Type of the endpoint for the event subscription destination. Required.
      Known values are: "WebHook", "EventHub", "StorageQueue", "HybridConnection", "ServiceBusQueue",
@@ -7136,10 +7482,10 @@ class ServiceBusQueueEventSubscriptionDestination(EventSubscriptionDestination):
         self.delivery_attribute_mappings = delivery_attribute_mappings
 
 
-class ServiceBusTopicEventSubscriptionDestination(EventSubscriptionDestination):
+class ServiceBusTopicEventSubscriptionDestination(EventSubscriptionDestination):  # pylint: disable=name-too-long
     """Information about the service bus topic destination for an event subscription.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: Type of the endpoint for the event subscription destination. Required.
      Known values are: "WebHook", "EventHub", "StorageQueue", "HybridConnection", "ServiceBusQueue",
@@ -7190,7 +7536,7 @@ class ServiceBusTopicEventSubscriptionDestination(EventSubscriptionDestination):
 class StaticDeliveryAttributeMapping(DeliveryAttributeMapping):
     """Static delivery attribute mapping details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the delivery attribute or header.
     :vartype name: str
@@ -7237,7 +7583,7 @@ class StaticRoutingEnrichment(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     StaticStringRoutingEnrichment
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key: Static routing enrichment key.
     :vartype key: str
@@ -7270,7 +7616,7 @@ class StaticRoutingEnrichment(_serialization.Model):
 class StaticStringRoutingEnrichment(StaticRoutingEnrichment):
     """StaticStringRoutingEnrichment.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key: Static routing enrichment key.
     :vartype key: str
@@ -7306,7 +7652,7 @@ class StaticStringRoutingEnrichment(StaticRoutingEnrichment):
 class StorageBlobDeadLetterDestination(DeadLetterDestination):
     """Information about the storage blob based dead letter destination.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: Type of the endpoint for the dead letter destination. Required.
      "StorageBlob"
@@ -7349,7 +7695,7 @@ class StorageBlobDeadLetterDestination(DeadLetterDestination):
 class StorageQueueEventSubscriptionDestination(EventSubscriptionDestination):
     """Information about the storage queue destination for an event subscription.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: Type of the endpoint for the event subscription destination. Required.
      Known values are: "WebHook", "EventHub", "StorageQueue", "HybridConnection", "ServiceBusQueue",
@@ -7408,7 +7754,7 @@ class StorageQueueEventSubscriptionDestination(EventSubscriptionDestination):
 class StringBeginsWithAdvancedFilter(AdvancedFilter):
     """StringBeginsWith Advanced Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -7448,7 +7794,7 @@ class StringBeginsWithAdvancedFilter(AdvancedFilter):
 class StringBeginsWithFilter(Filter):
     """StringBeginsWith Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -7488,7 +7834,7 @@ class StringBeginsWithFilter(Filter):
 class StringContainsAdvancedFilter(AdvancedFilter):
     """StringContains Advanced Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -7528,7 +7874,7 @@ class StringContainsAdvancedFilter(AdvancedFilter):
 class StringContainsFilter(Filter):
     """StringContains Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -7568,7 +7914,7 @@ class StringContainsFilter(Filter):
 class StringEndsWithAdvancedFilter(AdvancedFilter):
     """StringEndsWith Advanced Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -7608,7 +7954,7 @@ class StringEndsWithAdvancedFilter(AdvancedFilter):
 class StringEndsWithFilter(Filter):
     """StringEndsWith Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -7648,7 +7994,7 @@ class StringEndsWithFilter(Filter):
 class StringInAdvancedFilter(AdvancedFilter):
     """StringIn Advanced Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -7688,7 +8034,7 @@ class StringInAdvancedFilter(AdvancedFilter):
 class StringInFilter(Filter):
     """StringIn Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -7728,7 +8074,7 @@ class StringInFilter(Filter):
 class StringNotBeginsWithAdvancedFilter(AdvancedFilter):
     """StringNotBeginsWith Advanced Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -7768,7 +8114,7 @@ class StringNotBeginsWithAdvancedFilter(AdvancedFilter):
 class StringNotBeginsWithFilter(Filter):
     """StringNotBeginsWith Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -7808,7 +8154,7 @@ class StringNotBeginsWithFilter(Filter):
 class StringNotContainsAdvancedFilter(AdvancedFilter):
     """StringNotContains Advanced Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -7848,7 +8194,7 @@ class StringNotContainsAdvancedFilter(AdvancedFilter):
 class StringNotContainsFilter(Filter):
     """StringNotContains Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -7888,7 +8234,7 @@ class StringNotContainsFilter(Filter):
 class StringNotEndsWithAdvancedFilter(AdvancedFilter):
     """StringNotEndsWith Advanced Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -7928,7 +8274,7 @@ class StringNotEndsWithAdvancedFilter(AdvancedFilter):
 class StringNotEndsWithFilter(Filter):
     """StringNotEndsWith Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -7968,7 +8314,7 @@ class StringNotEndsWithFilter(Filter):
 class StringNotInAdvancedFilter(AdvancedFilter):
     """StringNotIn Advanced Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -8008,7 +8354,7 @@ class StringNotInAdvancedFilter(AdvancedFilter):
 class StringNotInFilter(Filter):
     """StringNotIn Filter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
      BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
@@ -8070,6 +8416,8 @@ class Subscription(Resource):
     :vartype event_delivery_schema: str or ~azure.mgmt.eventgrid.models.DeliverySchema
     :ivar filters_configuration: Information about the filter for the event subscription.
     :vartype filters_configuration: ~azure.mgmt.eventgrid.models.FiltersConfiguration
+    :ivar expiration_time_utc: Expiration time of the event subscription.
+    :vartype expiration_time_utc: ~datetime.datetime
     """
 
     _validation = {
@@ -8089,6 +8437,7 @@ class Subscription(Resource):
         "delivery_configuration": {"key": "properties.deliveryConfiguration", "type": "DeliveryConfiguration"},
         "event_delivery_schema": {"key": "properties.eventDeliverySchema", "type": "str"},
         "filters_configuration": {"key": "properties.filtersConfiguration", "type": "FiltersConfiguration"},
+        "expiration_time_utc": {"key": "properties.expirationTimeUtc", "type": "iso-8601"},
     }
 
     def __init__(
@@ -8097,6 +8446,7 @@ class Subscription(Resource):
         delivery_configuration: Optional["_models.DeliveryConfiguration"] = None,
         event_delivery_schema: Optional[Union[str, "_models.DeliverySchema"]] = None,
         filters_configuration: Optional["_models.FiltersConfiguration"] = None,
+        expiration_time_utc: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8108,6 +8458,8 @@ class Subscription(Resource):
         :paramtype event_delivery_schema: str or ~azure.mgmt.eventgrid.models.DeliverySchema
         :keyword filters_configuration: Information about the filter for the event subscription.
         :paramtype filters_configuration: ~azure.mgmt.eventgrid.models.FiltersConfiguration
+        :keyword expiration_time_utc: Expiration time of the event subscription.
+        :paramtype expiration_time_utc: ~datetime.datetime
         """
         super().__init__(**kwargs)
         self.system_data = None
@@ -8115,6 +8467,29 @@ class Subscription(Resource):
         self.delivery_configuration = delivery_configuration
         self.event_delivery_schema = event_delivery_schema
         self.filters_configuration = filters_configuration
+        self.expiration_time_utc = expiration_time_utc
+
+
+class SubscriptionFullUrl(_serialization.Model):
+    """Full endpoint URL of an event subscription.
+
+    :ivar endpoint_url: The URL that represents the endpoint of the destination of an event
+     subscription.
+    :vartype endpoint_url: str
+    """
+
+    _attribute_map = {
+        "endpoint_url": {"key": "endpointUrl", "type": "str"},
+    }
+
+    def __init__(self, *, endpoint_url: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword endpoint_url: The URL that represents the endpoint of the destination of an event
+         subscription.
+        :paramtype endpoint_url: str
+        """
+        super().__init__(**kwargs)
+        self.endpoint_url = endpoint_url
 
 
 class SubscriptionsListResult(_serialization.Model):
@@ -8156,12 +8531,15 @@ class SubscriptionUpdateParameters(_serialization.Model):
     :vartype event_delivery_schema: str or ~azure.mgmt.eventgrid.models.DeliverySchema
     :ivar filters_configuration: Information about the filter for the event subscription.
     :vartype filters_configuration: ~azure.mgmt.eventgrid.models.FiltersConfiguration
+    :ivar expiration_time_utc: Expiration time of the event subscription.
+    :vartype expiration_time_utc: ~datetime.datetime
     """
 
     _attribute_map = {
         "delivery_configuration": {"key": "properties.deliveryConfiguration", "type": "DeliveryConfiguration"},
         "event_delivery_schema": {"key": "properties.eventDeliverySchema", "type": "str"},
         "filters_configuration": {"key": "properties.filtersConfiguration", "type": "FiltersConfiguration"},
+        "expiration_time_utc": {"key": "properties.expirationTimeUtc", "type": "iso-8601"},
     }
 
     def __init__(
@@ -8170,6 +8548,7 @@ class SubscriptionUpdateParameters(_serialization.Model):
         delivery_configuration: Optional["_models.DeliveryConfiguration"] = None,
         event_delivery_schema: Optional[Union[str, "_models.DeliverySchema"]] = None,
         filters_configuration: Optional["_models.FiltersConfiguration"] = None,
+        expiration_time_utc: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8181,11 +8560,14 @@ class SubscriptionUpdateParameters(_serialization.Model):
         :paramtype event_delivery_schema: str or ~azure.mgmt.eventgrid.models.DeliverySchema
         :keyword filters_configuration: Information about the filter for the event subscription.
         :paramtype filters_configuration: ~azure.mgmt.eventgrid.models.FiltersConfiguration
+        :keyword expiration_time_utc: Expiration time of the event subscription.
+        :paramtype expiration_time_utc: ~datetime.datetime
         """
         super().__init__(**kwargs)
         self.delivery_configuration = delivery_configuration
         self.event_delivery_schema = event_delivery_schema
         self.filters_configuration = filters_configuration
+        self.expiration_time_utc = expiration_time_utc
 
 
 class SystemData(_serialization.Model):
@@ -8257,7 +8639,7 @@ class SystemTopic(TrackedResource):  # pylint: disable=too-many-instance-attribu
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified identifier of the resource.
     :vartype id: str
@@ -8400,7 +8782,7 @@ class Topic(TrackedResource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified identifier of the resource.
     :vartype id: str
@@ -8422,7 +8804,7 @@ class Topic(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype extended_location: ~azure.mgmt.eventgrid.models.ExtendedLocation
     :ivar system_data: The system metadata relating to Topic resource.
     :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
-    :ivar private_endpoint_connections:
+    :ivar private_endpoint_connections: List of private endpoint connections.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]
     :ivar provisioning_state: Provisioning state of the topic. Known values are: "Creating",
@@ -8592,7 +8974,7 @@ class Topic(TrackedResource):  # pylint: disable=too-many-instance-attributes
 class TopicRegenerateKeyRequest(_serialization.Model):
     """Topic regenerate share access key request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_name: Key name to regenerate key1 or key2. Required.
     :vartype key_name: str
@@ -8622,6 +9004,8 @@ class TopicsConfiguration(_serialization.Model):
 
     :ivar hostname: The hostname for the topics configuration. This is a read-only property.
     :vartype hostname: str
+    :ivar custom_domains: List of custom domain configurations for the namespace.
+    :vartype custom_domains: list[~azure.mgmt.eventgrid.models.CustomDomainConfiguration]
     """
 
     _validation = {
@@ -8630,12 +9014,19 @@ class TopicsConfiguration(_serialization.Model):
 
     _attribute_map = {
         "hostname": {"key": "hostname", "type": "str"},
+        "custom_domains": {"key": "customDomains", "type": "[CustomDomainConfiguration]"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(
+        self, *, custom_domains: Optional[List["_models.CustomDomainConfiguration"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword custom_domains: List of custom domain configurations for the namespace.
+        :paramtype custom_domains: list[~azure.mgmt.eventgrid.models.CustomDomainConfiguration]
+        """
         super().__init__(**kwargs)
         self.hostname = None
+        self.custom_domains = custom_domains
 
 
 class TopicSharedAccessKeys(_serialization.Model):
@@ -8786,6 +9177,8 @@ class TopicSpacesConfiguration(_serialization.Model):
     :vartype maximum_client_sessions_per_authentication_name: int
     :ivar routing_identity_info: Routing identity info for topic spaces configuration.
     :vartype routing_identity_info: ~azure.mgmt.eventgrid.models.RoutingIdentityInfo
+    :ivar custom_domains: List of custom domain configurations for the namespace.
+    :vartype custom_domains: list[~azure.mgmt.eventgrid.models.CustomDomainConfiguration]
     """
 
     _validation = {
@@ -8804,6 +9197,7 @@ class TopicSpacesConfiguration(_serialization.Model):
             "type": "int",
         },
         "routing_identity_info": {"key": "routingIdentityInfo", "type": "RoutingIdentityInfo"},
+        "custom_domains": {"key": "customDomains", "type": "[CustomDomainConfiguration]"},
     }
 
     def __init__(
@@ -8816,6 +9210,7 @@ class TopicSpacesConfiguration(_serialization.Model):
         maximum_session_expiry_in_hours: Optional[int] = None,
         maximum_client_sessions_per_authentication_name: Optional[int] = None,
         routing_identity_info: Optional["_models.RoutingIdentityInfo"] = None,
+        custom_domains: Optional[List["_models.CustomDomainConfiguration"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8842,6 +9237,8 @@ class TopicSpacesConfiguration(_serialization.Model):
         :paramtype maximum_client_sessions_per_authentication_name: int
         :keyword routing_identity_info: Routing identity info for topic spaces configuration.
         :paramtype routing_identity_info: ~azure.mgmt.eventgrid.models.RoutingIdentityInfo
+        :keyword custom_domains: List of custom domain configurations for the namespace.
+        :paramtype custom_domains: list[~azure.mgmt.eventgrid.models.CustomDomainConfiguration]
         """
         super().__init__(**kwargs)
         self.state = state
@@ -8852,6 +9249,7 @@ class TopicSpacesConfiguration(_serialization.Model):
         self.maximum_session_expiry_in_hours = maximum_session_expiry_in_hours
         self.maximum_client_sessions_per_authentication_name = maximum_client_sessions_per_authentication_name
         self.routing_identity_info = routing_identity_info
+        self.custom_domains = custom_domains
 
 
 class TopicSpacesListResult(_serialization.Model):
@@ -9152,6 +9550,28 @@ class TopicUpdateParameters(_serialization.Model):
         self.event_type_info = event_type_info
 
 
+class UpdateTopicsConfigurationInfo(_serialization.Model):
+    """Properties of the topics configuration info of a namespace.
+
+    :ivar custom_domains: Custom domain info for topics configuration.
+    :vartype custom_domains: list[~azure.mgmt.eventgrid.models.CustomDomainConfiguration]
+    """
+
+    _attribute_map = {
+        "custom_domains": {"key": "customDomains", "type": "[CustomDomainConfiguration]"},
+    }
+
+    def __init__(
+        self, *, custom_domains: Optional[List["_models.CustomDomainConfiguration"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword custom_domains: Custom domain info for topics configuration.
+        :paramtype custom_domains: list[~azure.mgmt.eventgrid.models.CustomDomainConfiguration]
+        """
+        super().__init__(**kwargs)
+        self.custom_domains = custom_domains
+
+
 class UpdateTopicSpacesConfigurationInfo(_serialization.Model):
     """Properties of the topic spaces configuration info of a namespace.
 
@@ -9175,6 +9595,8 @@ class UpdateTopicSpacesConfigurationInfo(_serialization.Model):
     :vartype maximum_client_sessions_per_authentication_name: int
     :ivar routing_identity_info: Routing identity info for topic spaces configuration.
     :vartype routing_identity_info: ~azure.mgmt.eventgrid.models.RoutingIdentityInfo
+    :ivar custom_domains: Custom domain info for topic spaces configuration.
+    :vartype custom_domains: list[~azure.mgmt.eventgrid.models.CustomDomainConfiguration]
     """
 
     _attribute_map = {
@@ -9188,6 +9610,7 @@ class UpdateTopicSpacesConfigurationInfo(_serialization.Model):
             "type": "int",
         },
         "routing_identity_info": {"key": "routingIdentityInfo", "type": "RoutingIdentityInfo"},
+        "custom_domains": {"key": "customDomains", "type": "[CustomDomainConfiguration]"},
     }
 
     def __init__(
@@ -9200,6 +9623,7 @@ class UpdateTopicSpacesConfigurationInfo(_serialization.Model):
         maximum_session_expiry_in_hours: Optional[int] = None,
         maximum_client_sessions_per_authentication_name: Optional[int] = None,
         routing_identity_info: Optional["_models.RoutingIdentityInfo"] = None,
+        custom_domains: Optional[List["_models.CustomDomainConfiguration"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9223,6 +9647,8 @@ class UpdateTopicSpacesConfigurationInfo(_serialization.Model):
         :paramtype maximum_client_sessions_per_authentication_name: int
         :keyword routing_identity_info: Routing identity info for topic spaces configuration.
         :paramtype routing_identity_info: ~azure.mgmt.eventgrid.models.RoutingIdentityInfo
+        :keyword custom_domains: Custom domain info for topic spaces configuration.
+        :paramtype custom_domains: list[~azure.mgmt.eventgrid.models.CustomDomainConfiguration]
         """
         super().__init__(**kwargs)
         self.state = state
@@ -9232,6 +9658,7 @@ class UpdateTopicSpacesConfigurationInfo(_serialization.Model):
         self.maximum_session_expiry_in_hours = maximum_session_expiry_in_hours
         self.maximum_client_sessions_per_authentication_name = maximum_client_sessions_per_authentication_name
         self.routing_identity_info = routing_identity_info
+        self.custom_domains = custom_domains
 
 
 class UserIdentityProperties(_serialization.Model):
@@ -9380,7 +9807,7 @@ class WebHookEventSubscriptionDestination(EventSubscriptionDestination):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: Type of the endpoint for the event subscription destination. Required.
      Known values are: "WebHook", "EventHub", "StorageQueue", "HybridConnection", "ServiceBusQueue",
@@ -9482,7 +9909,7 @@ class WebHookEventSubscriptionDestination(EventSubscriptionDestination):
 class WebhookPartnerDestinationInfo(PartnerDestinationInfo):
     """Information about the WebHook of the partner destination.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar azure_subscription_id: Azure subscription ID of the subscriber. The partner destination
      associated with the channel will be
@@ -9579,7 +10006,7 @@ class WebhookPartnerDestinationInfo(PartnerDestinationInfo):
 class WebhookUpdatePartnerDestinationInfo(PartnerUpdateDestinationInfo):
     """Information about the update of the WebHook of the partner destination.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_type: Type of the endpoint for the partner destination. Required. "WebHook"
     :vartype endpoint_type: str or ~azure.mgmt.eventgrid.models.PartnerEndpointType

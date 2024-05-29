@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -71,7 +71,6 @@ class MaintenanceWindowOptionsOperations:
         :type database_name: str
         :param maintenance_window_options_name: Maintenance window options name. Required.
         :type maintenance_window_options_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MaintenanceWindowOptions or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.MaintenanceWindowOptions
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -90,23 +89,22 @@ class MaintenanceWindowOptionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
         cls: ClsType[_models.MaintenanceWindowOptions] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
             subscription_id=self._config.subscription_id,
             maintenance_window_options_name=maintenance_window_options_name,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -118,10 +116,6 @@ class MaintenanceWindowOptionsOperations:
         deserialized = self._deserialize("MaintenanceWindowOptions", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/maintenanceWindowOptions/current"
-    }
+        return deserialized  # type: ignore

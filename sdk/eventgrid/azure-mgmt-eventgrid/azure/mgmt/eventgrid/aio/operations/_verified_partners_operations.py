@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -61,7 +61,6 @@ class VerifiedPartnersOperations:
 
         :param verified_partner_name: Name of the verified partner. Required.
         :type verified_partner_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VerifiedPartner or the result of cls(response)
         :rtype: ~azure.mgmt.eventgrid.models.VerifiedPartner
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -80,19 +79,18 @@ class VerifiedPartnersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.VerifiedPartner] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             verified_partner_name=verified_partner_name,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -104,11 +102,9 @@ class VerifiedPartnersOperations:
         deserialized = self._deserialize("VerifiedPartner", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {"url": "/providers/Microsoft.EventGrid/verifiedPartners/{verifiedPartnerName}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list(
@@ -130,7 +126,6 @@ class VerifiedPartnersOperations:
          top parameter is 1 to 100. If not specified, the default number of results to be returned is 20
          items per page. Default value is None.
         :type top: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VerifiedPartner or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.VerifiedPartner]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -152,16 +147,15 @@ class VerifiedPartnersOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     filter=filter,
                     top=top,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -173,13 +167,13 @@ class VerifiedPartnersOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("VerifiedPartnersListResult", pipeline_response)
@@ -189,11 +183,11 @@ class VerifiedPartnersOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -204,5 +198,3 @@ class VerifiedPartnersOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/providers/Microsoft.EventGrid/verifiedPartners"}

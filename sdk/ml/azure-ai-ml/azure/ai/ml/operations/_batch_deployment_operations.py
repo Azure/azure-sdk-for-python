@@ -96,6 +96,8 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
         :param deployment: The deployment entity.
         :type deployment: ~azure.ai.ml.entities.BatchDeployment
+        :keyword skip_script_validation: If set to True, the script validation will be skipped. Defaults to False.
+        :paramtype skip_script_validation: bool
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if BatchDeployment cannot be
             successfully validated. Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if BatchDeployment assets
@@ -339,7 +341,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                     name=deployment.component.name, version=deployment.component.version
                 )
                 deployment.component = registered_component.id
-            except Exception as err:  # pylint: disable=broad-except
+            except Exception as err:  # pylint: disable=W0718
                 if isinstance(err, (ResourceNotFoundError, HttpResponseError)):
                     deployment.component = self._all_operations.all_operations[
                         AzureMLResourceType.COMPONENT

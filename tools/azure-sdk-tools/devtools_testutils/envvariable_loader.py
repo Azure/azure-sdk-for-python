@@ -62,15 +62,19 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
 
             # If environment variables are not all set, check if user-based authentication is requested
             if not all(x is not None for x in [tenant, client, secret]):
-                use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH", "false")
-                use_cli = os.environ.get("AZURE_TEST_USE_CLI_AUTH", "false")
-                user_auth = use_pwsh.lower() == "true" or use_cli.lower() == "true"
+                use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH", "false").lower()
+                use_cli = os.environ.get("AZURE_TEST_USE_CLI_AUTH", "false").lower()
+                use_vscode = os.environ.get("AZURE_TEST_USE_VSCODE_AUTH", "false").lower()
+                use_azd = os.environ.get("AZURE_TEST_USE_AZD_AUTH", "false").lower()
+                user_auth = use_pwsh == "true" or use_cli == "true" or use_vscode == "true" or use_azd == "true"
                 if not user_auth:
                     # All variables are required for service principal authentication
-                    raise AzureTestError(
-                        f"Environment variables for service principal credentials are not all set. "
+                    _logger.warn(
+                        "Environment variables for service principal credentials are not all set. "
                         "Please either set the variables or request user-based authentication by setting "
-                        "'AZURE_TEST_USE_PWSH_AUTH' or 'AZURE_TEST_USE_CLI_AUTH' to 'true'."
+                        "an 'AZURE_TEST_USE_X_AUTH' environment variable to 'true'. See "
+                        "https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#configure-test-variables "
+                        "for more information."
                     )
 
                 _logger.debug(

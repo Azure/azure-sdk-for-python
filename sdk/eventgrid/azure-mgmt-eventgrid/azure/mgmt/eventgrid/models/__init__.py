@@ -23,6 +23,11 @@ from ._models_py3 import ClientGroup
 from ._models_py3 import ClientGroupsListResult
 from ._models_py3 import ClientsListResult
 from ._models_py3 import ConnectionState
+from ._models_py3 import CustomDomainConfiguration
+from ._models_py3 import CustomDomainIdentity
+from ._models_py3 import CustomDomainOwnershipValidationResult
+from ._models_py3 import CustomJwtAuthenticationManagedIdentity
+from ._models_py3 import CustomJwtAuthenticationSettings
 from ._models_py3 import DeadLetterDestination
 from ._models_py3 import DeadLetterWithResourceIdentity
 from ._models_py3 import DeliveryAttributeListResult
@@ -65,6 +70,7 @@ from ._models_py3 import IsNotNullAdvancedFilter
 from ._models_py3 import IsNotNullFilter
 from ._models_py3 import IsNullOrUndefinedAdvancedFilter
 from ._models_py3 import IsNullOrUndefinedFilter
+from ._models_py3 import IssuerCertificateInfo
 from ._models_py3 import JsonField
 from ._models_py3 import JsonFieldWithDefault
 from ._models_py3 import JsonInputSchemaMapping
@@ -85,6 +91,7 @@ from ._models_py3 import NetworkSecurityPerimeterConfigurationList
 from ._models_py3 import NetworkSecurityPerimeterConfigurationProfile
 from ._models_py3 import NetworkSecurityPerimeterInfo
 from ._models_py3 import NetworkSecurityPerimeterProfileAccessRule
+from ._models_py3 import NetworkSecurityPerimeterSubscription
 from ._models_py3 import NumberGreaterThanAdvancedFilter
 from ._models_py3 import NumberGreaterThanFilter
 from ._models_py3 import NumberGreaterThanOrEqualsAdvancedFilter
@@ -170,6 +177,7 @@ from ._models_py3 import StringNotEndsWithFilter
 from ._models_py3 import StringNotInAdvancedFilter
 from ._models_py3 import StringNotInFilter
 from ._models_py3 import Subscription
+from ._models_py3 import SubscriptionFullUrl
 from ._models_py3 import SubscriptionUpdateParameters
 from ._models_py3 import SubscriptionsListResult
 from ._models_py3 import SystemData
@@ -190,6 +198,7 @@ from ._models_py3 import TopicsConfiguration
 from ._models_py3 import TopicsListResult
 from ._models_py3 import TrackedResource
 from ._models_py3 import UpdateTopicSpacesConfigurationInfo
+from ._models_py3 import UpdateTopicsConfigurationInfo
 from ._models_py3 import UserIdentityProperties
 from ._models_py3 import VerifiedPartner
 from ._models_py3 import VerifiedPartnersListResult
@@ -207,6 +216,9 @@ from ._event_grid_management_client_enums import ClientGroupProvisioningState
 from ._event_grid_management_client_enums import ClientProvisioningState
 from ._event_grid_management_client_enums import ClientState
 from ._event_grid_management_client_enums import CreatedByType
+from ._event_grid_management_client_enums import CustomDomainIdentityType
+from ._event_grid_management_client_enums import CustomDomainValidationState
+from ._event_grid_management_client_enums import CustomJwtAuthenticationManagedIdentityType
 from ._event_grid_management_client_enums import DataResidencyBoundary
 from ._event_grid_management_client_enums import DeadLetterEndPointType
 from ._event_grid_management_client_enums import DeliveryAttributeMappingType
@@ -288,6 +300,11 @@ __all__ = [
     "ClientGroupsListResult",
     "ClientsListResult",
     "ConnectionState",
+    "CustomDomainConfiguration",
+    "CustomDomainIdentity",
+    "CustomDomainOwnershipValidationResult",
+    "CustomJwtAuthenticationManagedIdentity",
+    "CustomJwtAuthenticationSettings",
     "DeadLetterDestination",
     "DeadLetterWithResourceIdentity",
     "DeliveryAttributeListResult",
@@ -330,6 +347,7 @@ __all__ = [
     "IsNotNullFilter",
     "IsNullOrUndefinedAdvancedFilter",
     "IsNullOrUndefinedFilter",
+    "IssuerCertificateInfo",
     "JsonField",
     "JsonFieldWithDefault",
     "JsonInputSchemaMapping",
@@ -350,6 +368,7 @@ __all__ = [
     "NetworkSecurityPerimeterConfigurationProfile",
     "NetworkSecurityPerimeterInfo",
     "NetworkSecurityPerimeterProfileAccessRule",
+    "NetworkSecurityPerimeterSubscription",
     "NumberGreaterThanAdvancedFilter",
     "NumberGreaterThanFilter",
     "NumberGreaterThanOrEqualsAdvancedFilter",
@@ -435,6 +454,7 @@ __all__ = [
     "StringNotInAdvancedFilter",
     "StringNotInFilter",
     "Subscription",
+    "SubscriptionFullUrl",
     "SubscriptionUpdateParameters",
     "SubscriptionsListResult",
     "SystemData",
@@ -455,6 +475,7 @@ __all__ = [
     "TopicsListResult",
     "TrackedResource",
     "UpdateTopicSpacesConfigurationInfo",
+    "UpdateTopicsConfigurationInfo",
     "UserIdentityProperties",
     "VerifiedPartner",
     "VerifiedPartnersListResult",
@@ -471,6 +492,9 @@ __all__ = [
     "ClientProvisioningState",
     "ClientState",
     "CreatedByType",
+    "CustomDomainIdentityType",
+    "CustomDomainValidationState",
+    "CustomJwtAuthenticationManagedIdentityType",
     "DataResidencyBoundary",
     "DeadLetterEndPointType",
     "DeliveryAttributeMappingType",

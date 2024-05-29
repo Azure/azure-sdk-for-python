@@ -500,13 +500,14 @@ class TestWorkspaceOperation:
             return_value=("random_id", True),
         )
         template, param, _ = mock_workspace_operation_base._populate_feature_store_role_assignment_parameters(
-            workspace=FeatureStore(name="name", location="eastus2euap"),
+            workspace=FeatureStore(name="name"),
             materialization_identity_id="/subscriptions/sub/resourcegroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identity",
             offline_store_target="/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/test_storage/blobServices/default/containers/offlinestore",
             online_store_target="/subscriptions/sub1/resourceGroups/mdctest/providers/Microsoft.Cache/Redis/onlinestore",
             update_workspace_role_assignment=True,
             update_offline_store_role_assignment=True,
             update_online_store_role_assignment=True,
+            location="eastus2euap",
         )
 
         assert template is not None

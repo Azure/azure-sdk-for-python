@@ -7,14 +7,8 @@
 
 from enum import Enum
 from typing import Any, Dict, List, Union
-try:
-    import jsondiff
-except ModuleNotFoundError:
-    pass
-try:
-    from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
-except ModuleNotFoundError:
-    from .breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
+import jsondiff
+from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
 
 
 class BreakingChangeType(str, Enum):

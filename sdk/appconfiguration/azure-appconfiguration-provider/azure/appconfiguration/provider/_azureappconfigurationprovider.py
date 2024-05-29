@@ -8,6 +8,7 @@ import json
 import random
 import time
 import datetime
+from importlib.metadata import version, PackageNotFoundError
 from threading import Lock
 import logging
 from typing import (
@@ -48,6 +49,13 @@ from ._constants import (
     ContainerAppEnvironmentVariable,
     KubernetesEnvironmentVariable,
     EMPTY_LABEL,
+    PERCENTAGE_FILTER_NAMES,
+    TIME_WINDOW_FILTER_NAMES,
+    TARGETING_FILTER_NAMES,
+    CUSTOM_FILTER_KEY,
+    PERCENTAGE_FILTER_KEY,
+    TIME_WINDOW_FILTER_KEY,
+    TARGETING_FILTER_KEY,
 )
 from ._user_agent import USER_AGENT
 
@@ -62,7 +70,7 @@ min_uptime = 5
 
 
 @overload
-def load(
+def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     endpoint: str,
     credential: "TokenCredential",
     *,
@@ -102,25 +110,25 @@ def load(
     :paramtype refresh_on: List[Tuple[str, str]]
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
-    :paramtype on_refresh_success: Optional[Callable]
     :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has
     happened.
-    :paramtype on_refresh_error: Optional[Callable[[Exception], None]]
+    :paramtype on_refresh_success: Optional[Callable]
     :keyword on_refresh_error: Optional callback to be invoked when an error occurs while refreshing settings. If not
     specified, errors will be raised.
-    :paramtype feature_flag_enabled: bool
+    :paramtype on_refresh_error: Optional[Callable[[Exception], None]]
     :keyword feature_flag_enabled: Optional flag to enable or disable the loading of feature flags. Default is False.
-    :paramtype feature_flag_selectors: List[SettingSelector]
+    :paramtype feature_flag_enabled: bool
     :keyword feature_flag_selectors: Optional list of selectors to filter feature flags. By default will load all
      feature flags without a label.
-    :paramtype feature_flag_refresh_enabled: bool
+    :paramtype feature_flag_selectors: List[SettingSelector]
     :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is
      False.
+    :paramtype feature_flag_refresh_enabled: bool
     """
 
 
 @overload
-def load(
+def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     *,
     connection_string: str,
     selects: Optional[List[SettingSelector]] = None,
@@ -157,20 +165,20 @@ def load(
     :paramtype refresh_on: List[Tuple[str, str]]
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
-    :paramtype on_refresh_success: Optional[Callable]
     :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has
      happened.
-    :paramtype on_refresh_error: Optional[Callable[[Exception], None]]
+    :paramtype on_refresh_success: Optional[Callable]
     :keyword on_refresh_error: Optional callback to be invoked when an error occurs while refreshing settings. If not
     specified, errors will be raised.
-    :paramtype feature_flag_enabled: bool
+    :paramtype on_refresh_error: Optional[Callable[[Exception], None]]
     :keyword feature_flag_enabled: Optional flag to enable or disable the loading of feature flags. Default is False.
-    :paramtype feature_flag_selectors: List[SettingSelector]
+    :paramtype feature_flag_enabled: bool
     :keyword feature_flag_selectors: Optional list of selectors to filter feature flags. By default will load all
      feature flags without a label.
-    :paramtype feature_flag_refresh_enabled: bool
+    :paramtype feature_flag_selectors: List[SettingSelector]
     :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is
      False.
+    :paramtype feature_flag_refresh_enabled: bool
     """
 
 
@@ -260,30 +268,61 @@ def _delay_failure(start_time: datetime.datetime) -> None:
 
 def _get_headers(request_type, **kwargs) -> str:
     headers = kwargs.pop("headers", {})
-    if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, default="").lower() != "true":
-        correlation_context = "RequestType=" + request_type
-        if (
-            "keyvault_credential" in kwargs
-            or "keyvault_client_configs" in kwargs
-            or "secret_resolver" in kwargs
-            or kwargs.pop("uses_key_vault", False)
-        ):
-            correlation_context += ",UsesKeyVault"
-        host_type = ""
-        if AzureFunctionEnvironmentVariable in os.environ:
-            host_type = "AzureFunction"
-        elif AzureWebAppEnvironmentVariable in os.environ:
-            host_type = "AzureWebApp"
-        elif ContainerAppEnvironmentVariable in os.environ:
-            host_type = "ContainerApp"
-        elif KubernetesEnvironmentVariable in os.environ:
-            host_type = "Kubernetes"
-        elif ServiceFabricEnvironmentVariable in os.environ:
-            host_type = "ServiceFabric"
-        if host_type:
-            correlation_context += ",Host=" + host_type
-        headers["Correlation-Context"] = correlation_context
+    if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, default="").lower() == "true":
+        return headers
+    correlation_context = "RequestType=" + request_type
+
+    if "feature_filters_used" in kwargs:
+        filters_used = ""
+        feature_filters_used = kwargs.pop("feature_filters_used", {})
+        if CUSTOM_FILTER_KEY in feature_filters_used:
+            filters_used = CUSTOM_FILTER_KEY
+        if PERCENTAGE_FILTER_KEY in feature_filters_used:
+            filters_used += ("+" if filters_used else "") + PERCENTAGE_FILTER_KEY
+        if TIME_WINDOW_FILTER_KEY in feature_filters_used:
+            filters_used += ("+" if filters_used else "") + TIME_WINDOW_FILTER_KEY
+        if TARGETING_FILTER_KEY in feature_filters_used:
+            filters_used += ("+" if filters_used else "") + TARGETING_FILTER_KEY
+        correlation_context += ",Filters=" + filters_used
+
+    correlation_context += _uses_feature_flags(**kwargs)
+
+    if (
+        "keyvault_credential" in kwargs
+        or "keyvault_client_configs" in kwargs
+        or "secret_resolver" in kwargs
+        or kwargs.pop("uses_key_vault", False)
+    ):
+        correlation_context += ",UsesKeyVault"
+    host_type = ""
+    if AzureFunctionEnvironmentVariable in os.environ:
+        host_type = "AzureFunction"
+    elif AzureWebAppEnvironmentVariable in os.environ:
+        host_type = "AzureWebApp"
+    elif ContainerAppEnvironmentVariable in os.environ:
+        host_type = "ContainerApp"
+    elif KubernetesEnvironmentVariable in os.environ:
+        host_type = "Kubernetes"
+    elif ServiceFabricEnvironmentVariable in os.environ:
+        host_type = "ServiceFabric"
+    if host_type:
+        correlation_context += ",Host=" + host_type
+
+    headers["Correlation-Context"] = correlation_context
     return headers
+
+
+def _uses_feature_flags(**kwargs):
+    if not kwargs.pop("uses_feature_flags", False):
+        return ""
+    package_name = "featuremanagement"
+    try:
+        feature_management_version = version(package_name)
+        if feature_management_version:
+            return ",FMPyVer=" + feature_management_version
+    except PackageNotFoundError:
+        pass
+    return ""
 
 
 def _buildprovider(
@@ -469,7 +508,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         self._keyvault_client_configs = kwargs.pop("keyvault_client_configs", {})
         self._uses_key_vault = (
             self._keyvault_credential is not None
-            or self._keyvault_client_configs is not None
+            or (self._keyvault_client_configs is not None and len(self._keyvault_client_configs) > 0)
             or self._secret_resolver is not None
         )
         self._feature_flag_enabled = kwargs.pop("feature_flag_enabled", False)
@@ -477,6 +516,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         self._refresh_on_feature_flags: Mapping[Tuple[str, str], Optional[str]] = {}
         self._feature_flag_refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_refresh_enabled = kwargs.pop("feature_flag_refresh_enabled", False)
+        self._feature_filter_usage: Mapping[str, bool] = {}
         self._update_lock = Lock()
         self._refresh_lock = Lock()
 
@@ -516,7 +556,13 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     def _refresh_configuration_settings(self, **kwargs) -> bool:
         need_refresh = False
         updated_sentinel_keys = dict(self._refresh_on)
-        headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
+        headers = _get_headers(
+            "Watch",
+            uses_key_vault=self._uses_key_vault,
+            feature_filters_used=self._feature_filter_usage,
+            uses_feature_flags=self._feature_flag_enabled,
+            **kwargs
+        )
         for (key, label), etag in updated_sentinel_keys.items():
             changed, updated_sentinel = self._check_configuration_setting(
                 key=key, label=label, etag=etag, headers=headers, **kwargs
@@ -537,7 +583,13 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
     def _refresh_feature_flags(self, **kwargs) -> bool:
         feature_flag_sentinel_keys = dict(self._refresh_on_feature_flags)
-        headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
+        headers = _get_headers(
+            "Watch",
+            uses_key_vault=self._uses_key_vault,
+            feature_filters_used=self._feature_filter_usage,
+            uses_feature_flags=self._feature_flag_enabled,
+            **kwargs
+        )
         for (key, label), etag in feature_flag_sentinel_keys.items():
             changed = self._check_configuration_setting(key=key, label=label, etag=etag, headers=headers, **kwargs)
             if changed:
@@ -557,14 +609,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         """
         Checks if the configuration setting have been updated since the last refresh.
 
-        :keyword key: key to check for chances
-        :paramtype key: str
-        :keyword label: label to check for changes
-        :paramtype label: str
-        :keyword etag: etag to check for changes
-        :paramtype etag: str
-        :keyword headers: headers to use for the request
-        :paramtype headers: Mapping[str, str]
+        :param str key: key to check for chances
+        :param str label: label to check for changes
+        :param str etag: etag to check for changes
+        :param Mapping[str, str] headers: headers to use for the request
         :return: A tuple with the first item being true/false if a change is detected. The second item is the updated
         value if a change was detected.
         :rtype: Tuple[bool, Union[ConfigurationSetting, None]]
@@ -629,6 +677,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         loaded_feature_flags = []
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
+        filters_used = {}
         for select in self._feature_flag_selectors:
             feature_flags = self._client.list_configuration_settings(
                 key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, **kwargs
@@ -638,6 +687,18 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
                 if self._feature_flag_refresh_enabled:
                     feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
+                if feature_flag.filters:
+                    for filter in feature_flag.filters:
+                        if filter.get("name") in PERCENTAGE_FILTER_NAMES:
+                            filters_used[PERCENTAGE_FILTER_KEY] = True
+                        elif filter.get("name") in TIME_WINDOW_FILTER_NAMES:
+                            filters_used[TIME_WINDOW_FILTER_KEY] = True
+                        elif filter.get("name") in TARGETING_FILTER_NAMES:
+                            filters_used[TARGETING_FILTER_KEY] = True
+                        else:
+                            filters_used[CUSTOM_FILTER_KEY] = True
+        self._feature_filter_usage = filters_used
+
         return loaded_feature_flags, feature_flag_sentinel_keys
 
     def _process_key_name(self, config):

@@ -145,7 +145,7 @@ class UserProxy:
 
         result = self.client_connection.QueryPermissions(
             user_link=self.user_link,
-            query=query if parameters is None else dict(query=query, parameters=parameters),
+            query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,
             **kwargs
         )
