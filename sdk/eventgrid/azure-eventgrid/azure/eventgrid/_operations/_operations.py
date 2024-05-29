@@ -37,6 +37,7 @@ else:
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+_Unset: Any = object()
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -585,11 +586,11 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    def _acknowledge(  # pylint: disable=protected-access
+    def _acknowledge(
         self,
         topic_name: str,
         event_subscription_name: str,
-        acknowledge_options: _models._models.AcknowledgeOptions,
+        body: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -599,8 +600,8 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
-        acknowledge_options: JSON,
         *,
+        lock_tokens: List[str],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AcknowledgeResult: ...
@@ -609,7 +610,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
-        acknowledge_options: IO[bytes],
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -620,7 +621,9 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
-        acknowledge_options: Union[_models._models.AcknowledgeOptions, JSON, IO[bytes]],
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        lock_tokens: List[str] = _Unset,
         **kwargs: Any
     ) -> _models.AcknowledgeResult:
         """Acknowledge a batch of Cloud Events. The response will include the set of successfully
@@ -632,10 +635,10 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         :type topic_name: str
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
-        :param acknowledge_options: AcknowledgeOptions. Is one of the following types:
-         AcknowledgeOptions, JSON, IO[bytes] Required.
-        :type acknowledge_options: ~azure.eventgrid.models._models.AcknowledgeOptions or JSON or
-         IO[bytes]
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword lock_tokens: Array of lock tokens. Required.
+        :paramtype lock_tokens: list[str]
         :return: AcknowledgeResult. The AcknowledgeResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.AcknowledgeResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -644,7 +647,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                acknowledge_options = {
+                body = {
                     "lockTokens": [
                         "str"  # Array of lock tokens. Required.
                     ]
@@ -693,12 +696,17 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AcknowledgeResult] = kwargs.pop("cls", None)
 
+        if body is _Unset:
+            if lock_tokens is _Unset:
+                raise TypeError("missing required argument: lock_tokens")
+            body = {"locktokens": lock_tokens}
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(acknowledge_options, (IOBase, bytes)):
-            _content = acknowledge_options
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(acknowledge_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_event_grid_consumer_acknowledge_request(
             topic_name=topic_name,
@@ -740,12 +748,12 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
     @overload
     @api_version_validation(
         params_added_on={"2023-10-01-preview": ["release_delay_in_seconds"]},
-    )  # pylint: disable=protected-access
-    def _release(  # pylint: disable=protected-access
+    )
+    def _release(
         self,
         topic_name: str,
         event_subscription_name: str,
-        release_options: _models._models.ReleaseOptions,
+        body: JSON,
         *,
         release_delay_in_seconds: Optional[Union[str, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
@@ -759,8 +767,8 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
-        release_options: JSON,
         *,
+        lock_tokens: List[str],
         release_delay_in_seconds: Optional[Union[str, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -773,7 +781,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
-        release_options: IO[bytes],
+        body: IO[bytes],
         *,
         release_delay_in_seconds: Optional[Union[str, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
@@ -788,8 +796,9 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
-        release_options: Union[_models._models.ReleaseOptions, JSON, IO[bytes]],
+        body: Union[JSON, IO[bytes]] = _Unset,
         *,
+        lock_tokens: List[str] = _Unset,
         release_delay_in_seconds: Optional[Union[str, _models.ReleaseDelay]] = None,
         **kwargs: Any
     ) -> _models.ReleaseResult:
@@ -801,9 +810,10 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         :type topic_name: str
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
-        :param release_options: ReleaseOptions. Is one of the following types: ReleaseOptions, JSON,
-         IO[bytes] Required.
-        :type release_options: ~azure.eventgrid.models._models.ReleaseOptions or JSON or IO[bytes]
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword lock_tokens: Array of lock tokens. Required.
+        :paramtype lock_tokens: list[str]
         :keyword release_delay_in_seconds: Release cloud events with the specified delay in seconds.
          Known values are: "0", "10", "60", "600", and "3600". Default value is None.
         :paramtype release_delay_in_seconds: str or ~azure.eventgrid.models.ReleaseDelay
@@ -815,7 +825,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                release_options = {
+                body = {
                     "lockTokens": [
                         "str"  # Array of lock tokens. Required.
                     ]
@@ -864,12 +874,17 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ReleaseResult] = kwargs.pop("cls", None)
 
+        if body is _Unset:
+            if lock_tokens is _Unset:
+                raise TypeError("missing required argument: lock_tokens")
+            body = {"locktokens": lock_tokens}
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(release_options, (IOBase, bytes)):
-            _content = release_options
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(release_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_event_grid_consumer_release_request(
             topic_name=topic_name,
@@ -910,11 +925,11 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    def _reject(  # pylint: disable=protected-access
+    def _reject(
         self,
         topic_name: str,
         event_subscription_name: str,
-        reject_options: _models._models.RejectOptions,
+        body: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -924,8 +939,8 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
-        reject_options: JSON,
         *,
+        lock_tokens: List[str],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RejectResult: ...
@@ -934,7 +949,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
-        reject_options: IO[bytes],
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -945,7 +960,9 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
-        reject_options: Union[_models._models.RejectOptions, JSON, IO[bytes]],
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        lock_tokens: List[str] = _Unset,
         **kwargs: Any
     ) -> _models.RejectResult:
         """Reject a batch of Cloud Events. The response will include the set of successfully rejected lock
@@ -956,9 +973,10 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         :type topic_name: str
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
-        :param reject_options: RejectOptions. Is one of the following types: RejectOptions, JSON,
-         IO[bytes] Required.
-        :type reject_options: ~azure.eventgrid.models._models.RejectOptions or JSON or IO[bytes]
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword lock_tokens: Array of lock tokens. Required.
+        :paramtype lock_tokens: list[str]
         :return: RejectResult. The RejectResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.RejectResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -967,7 +985,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                reject_options = {
+                body = {
                     "lockTokens": [
                         "str"  # Array of lock tokens. Required.
                     ]
@@ -1016,12 +1034,17 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RejectResult] = kwargs.pop("cls", None)
 
+        if body is _Unset:
+            if lock_tokens is _Unset:
+                raise TypeError("missing required argument: lock_tokens")
+            body = {"locktokens": lock_tokens}
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(reject_options, (IOBase, bytes)):
-            _content = reject_options
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(reject_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_event_grid_consumer_reject_request(
             topic_name=topic_name,
@@ -1066,12 +1089,12 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         params_added_on={
             "2023-10-01-preview": ["api_version", "topic_name", "event_subscription_name", "content_type", "accept"]
         },
-    )  # pylint: disable=protected-access
-    def _renew_lock(  # pylint: disable=protected-access
+    )
+    def _renew_lock(
         self,
         topic_name: str,
         event_subscription_name: str,
-        renew_lock_options: _models._models.RenewLockOptions,
+        body: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1087,8 +1110,8 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
-        renew_lock_options: JSON,
         *,
+        lock_tokens: List[str],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RenewLocksResult: ...
@@ -1103,7 +1126,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
-        renew_lock_options: IO[bytes],
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1120,7 +1143,9 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
-        renew_lock_options: Union[_models._models.RenewLockOptions, JSON, IO[bytes]],
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        lock_tokens: List[str] = _Unset,
         **kwargs: Any
     ) -> _models.RenewLocksResult:
         """Renew locks for a batch of Cloud Events. The response will include the set of successfully
@@ -1132,9 +1157,10 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         :type topic_name: str
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
-        :param renew_lock_options: RenewLockOptions. Is one of the following types: RenewLockOptions,
-         JSON, IO[bytes] Required.
-        :type renew_lock_options: ~azure.eventgrid.models._models.RenewLockOptions or JSON or IO[bytes]
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword lock_tokens: Array of lock tokens. Required.
+        :paramtype lock_tokens: list[str]
         :return: RenewLocksResult. The RenewLocksResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.RenewLocksResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1143,7 +1169,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                renew_lock_options = {
+                body = {
                     "lockTokens": [
                         "str"  # Array of lock tokens. Required.
                     ]
@@ -1192,12 +1218,17 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RenewLocksResult] = kwargs.pop("cls", None)
 
+        if body is _Unset:
+            if lock_tokens is _Unset:
+                raise TypeError("missing required argument: lock_tokens")
+            body = {"locktokens": lock_tokens}
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(renew_lock_options, (IOBase, bytes)):
-            _content = renew_lock_options
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(renew_lock_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_event_grid_consumer_renew_lock_request(
             topic_name=topic_name,

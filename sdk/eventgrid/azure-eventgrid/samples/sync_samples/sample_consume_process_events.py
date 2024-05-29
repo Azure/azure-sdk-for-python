@@ -31,7 +31,12 @@ EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
 
 # Create a client
 publisher = EventGridPublisherClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY), namespace_topic=TOPIC_NAME)
-client = EventGridConsumerClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY), namespace_topic=TOPIC_NAME, subscription=EVENT_SUBSCRIPTION_NAME)
+client = EventGridConsumerClient(
+    EVENTGRID_ENDPOINT,
+    AzureKeyCredential(EVENTGRID_KEY),
+    namespace_topic=TOPIC_NAME,
+    subscription=EVENT_SUBSCRIPTION_NAME,
+)
 
 
 cloud_event_reject = CloudEvent(data="reject", source="https://example.com", type="example")
@@ -40,12 +45,14 @@ cloud_event_ack = CloudEvent(data="acknowledge", source="https://example.com", t
 cloud_event_renew = CloudEvent(data="renew", source="https://example.com", type="example")
 
 # Send Cloud Events
-publisher.send([
-    cloud_event_reject,
-    cloud_event_release,
-    cloud_event_ack,
-    cloud_event_renew,
-])
+publisher.send(
+    [
+        cloud_event_reject,
+        cloud_event_release,
+        cloud_event_ack,
+        cloud_event_renew,
+    ]
+)
 
 
 # Receive Published Cloud Events

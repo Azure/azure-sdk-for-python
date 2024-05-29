@@ -21,6 +21,7 @@ from azure.core.messaging import CloudEvent
 from azure.eventgrid.aio import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
 
+
 async def publish():
     # To Event Grid Basic
     topic_key = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_KEY"]
@@ -31,18 +32,18 @@ async def publish():
 
     # [START publish_cloud_event_dict_async]
     async with client:
-        await client.send([
-            {
-                "type": "Contoso.Items.ItemReceived",
-                "source": "/contoso/items",	
-                "data": {	
-                    "itemSku": "Contoso Item SKU #1"	
-                },	
-                "subject": "Door1",	
-                "specversion": "1.0",	
-                "id": "randomclouduuid11"
-            }
-        ])
+        await client.send(
+            [
+                {
+                    "type": "Contoso.Items.ItemReceived",
+                    "source": "/contoso/items",
+                    "data": {"itemSku": "Contoso Item SKU #1"},
+                    "subject": "Door1",
+                    "specversion": "1.0",
+                    "id": "randomclouduuid11",
+                }
+            ]
+        )
     # [END publish_cloud_event_dict_async]
 
     # To Event Grid Namespaces
@@ -55,18 +56,19 @@ async def publish():
     client = EventGridPublisherClient(topic_endpoint, credential, namespace_topic=topic_name)
 
     async with client:
-        await client.send([
-        {
-            "type": "Contoso.Items.ItemReceived",
-            "source": "/contoso/items",	
-            "data": {	
-                "itemSku": "Contoso Item SKU #1"	
-            },	
-            "subject": "Door1",	
-            "specversion": "1.0",	
-            "id": "randomclouduuid11"
-        }
-    ])
+        await client.send(
+            [
+                {
+                    "type": "Contoso.Items.ItemReceived",
+                    "source": "/contoso/items",
+                    "data": {"itemSku": "Contoso Item SKU #1"},
+                    "subject": "Door1",
+                    "specversion": "1.0",
+                    "id": "randomclouduuid11",
+                }
+            ]
+        )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(publish())

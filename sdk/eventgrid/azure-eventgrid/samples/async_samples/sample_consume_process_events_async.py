@@ -32,9 +32,15 @@ EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
 
 async def run():
     # Create a client
-    publisher = EventGridPublisherClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY), namespace_topic=TOPIC_NAME)
-    client = EventGridConsumerClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY), namespace_topic=TOPIC_NAME, subscription=EVENT_SUBSCRIPTION_NAME)
-
+    publisher = EventGridPublisherClient(
+        EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY), namespace_topic=TOPIC_NAME
+    )
+    client = EventGridConsumerClient(
+        EVENTGRID_ENDPOINT,
+        AzureKeyCredential(EVENTGRID_KEY),
+        namespace_topic=TOPIC_NAME,
+        subscription=EVENT_SUBSCRIPTION_NAME,
+    )
 
     cloud_event_reject = CloudEvent(data="reject", source="https://example.com", type="example")
     cloud_event_release = CloudEvent(data="release", source="https://example.com", type="example")
@@ -42,13 +48,14 @@ async def run():
     cloud_event_renew = CloudEvent(data="renew", source="https://example.com", type="example")
 
     # Send Cloud Events
-    await publisher.send([
-        cloud_event_reject,
-        cloud_event_release,
-        cloud_event_ack,
-        cloud_event_renew,
-    ])
-
+    await publisher.send(
+        [
+            cloud_event_reject,
+            cloud_event_release,
+            cloud_event_ack,
+            cloud_event_renew,
+        ]
+    )
 
     # Receive Published Cloud Events
     try:
@@ -124,5 +131,6 @@ async def run():
         for succeeded_lock_token in renew_result.succeeded_lock_tokens:
             print(f"Succeeded Lock Token:{succeeded_lock_token}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(run())

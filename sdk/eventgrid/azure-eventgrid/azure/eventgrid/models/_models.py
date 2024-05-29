@@ -8,27 +8,21 @@
 # --------------------------------------------------------------------------
 
 import datetime
+import sys
 from typing import Any, List, Mapping, Optional, TYPE_CHECKING, overload
 
 from .. import _model_base
 from .._model_base import rest_field
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-
-
-class AcknowledgeOptions(_model_base.Model):
-    """Array of lock tokens for the corresponding received Cloud Events to be acknowledged.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar lock_tokens: Array of lock tokens. Required.
-    :vartype lock_tokens: list[str]
-    """
-
-    lock_tokens: List[str] = rest_field(name="lockTokens")
-    """Array of lock tokens. Required."""
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class AcknowledgeResult(_model_base.Model):
@@ -260,19 +254,6 @@ class ReceiveResult(_model_base.Model):
     """Array of receive responses, one per cloud event. Required."""
 
 
-class RejectOptions(_model_base.Model):
-    """Array of lock tokens for the corresponding received Cloud Events to be rejected.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar lock_tokens: Array of lock tokens. Required.
-    :vartype lock_tokens: list[str]
-    """
-
-    lock_tokens: List[str] = rest_field(name="lockTokens")
-    """Array of lock tokens. Required."""
-
-
 class RejectResult(_model_base.Model):
     """The result of the Reject operation.
 
@@ -312,19 +293,6 @@ class RejectResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ReleaseOptions(_model_base.Model):
-    """Array of lock tokens for the corresponding received Cloud Events to be released.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar lock_tokens: Array of lock tokens. Required.
-    :vartype lock_tokens: list[str]
-    """
-
-    lock_tokens: List[str] = rest_field(name="lockTokens")
-    """Array of lock tokens. Required."""
-
-
 class ReleaseResult(_model_base.Model):
     """The result of the Release operation.
 
@@ -362,19 +330,6 @@ class ReleaseResult(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-
-
-class RenewLockOptions(_model_base.Model):
-    """Array of lock tokens for the corresponding received Cloud Events to be renewed.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar lock_tokens: Array of lock tokens. Required.
-    :vartype lock_tokens: list[str]
-    """
-
-    lock_tokens: List[str] = rest_field(name="lockTokens")
-    """Array of lock tokens. Required."""
 
 
 class RenewLocksResult(_model_base.Model):

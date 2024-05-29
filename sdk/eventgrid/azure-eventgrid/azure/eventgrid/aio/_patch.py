@@ -33,8 +33,8 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
      specified during the client initialization.
 
     A single instance or a list of dictionaries, CloudEvents or EventGridEvents are accepted.
-    If a list is provided, the list must contain only one type of event. 
-    If dictionaries are provided and sending to a namespace topic, 
+    If a list is provided, the list must contain only one type of event.
+    If dictionaries are provided and sending to a namespace topic,
     the dictionary must follow the CloudEvent schema.
 
     :param endpoint: The host name of the namespace, e.g.
@@ -93,7 +93,7 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
 class EventGridConsumerClient(InternalEventGridConsumerClient):
     """EventGridConsumerClient.
 
-    Consumes and manages events from a namespace topic 
+    Consumes and manages events from a namespace topic
      and event subscription specified during the client initialization.
 
     :param endpoint: The host name of the namespace, e.g.
@@ -125,7 +125,9 @@ class EventGridConsumerClient(InternalEventGridConsumerClient):
         self._namespace = namespace_topic
         self._subscription = subscription
         self._credential = credential
-        super().__init__(endpoint=endpoint, credential=credential, api_version=api_version or DEFAULT_STANDARD_API_VERSION, **kwargs)
+        super().__init__(
+            endpoint=endpoint, credential=credential, api_version=api_version or DEFAULT_STANDARD_API_VERSION, **kwargs
+        )
 
     def __repr__(self) -> str:
         return f"<EventGridConsumerClient: namespace_topic={self._namespace}, subscription={self._subscription}, credential type={type(self._credential)}>"
