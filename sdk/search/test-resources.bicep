@@ -9,6 +9,7 @@ param storageAccountName string = 'storage${uniqueString(resourceGroup().id)}'
 param storageContainerName string = 'storage-container-${resourceGroup().name}'
 param storageApiVersion string = '2021-06-01'
 
+
 resource searchService 'Microsoft.Search/searchServices@2021-04-01-Preview' = {
   name: searchServiceName
   location: location // semantic search is available here
