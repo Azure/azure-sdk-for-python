@@ -48,18 +48,18 @@ stages:
       #     ArtifactPath: $(Artifacts)
 
       - task: EsrpRelease@7
-            displayName: 'Publish via ESRP'
-            inputs:
-              ConnectedServiceName: 'Azure SDK Engineering System'
-              ClientId: '5f81938c-2544-4f1f-9251-dd9de5b8a81b'
-              KeyVaultName: 'AzureSDKEngKeyVault'
-              AuthCertName: 'azure-sdk-esrp-release-auth-certificate'
-              SignCertName: 'azure-sdk-esrp-release-sign-certificate'
-              Intent: 'PackageDistribution'
-              ContentType: 'PyPI'
-              FolderLocation: $(Artifacts)
-              Owners: $(Build.RequestedForEmail)
-              Approvers: $(Build.RequestedForEmail)
-              ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
-              MainPublisher: 'ESRPRELPACMANTEST'
-              DomainTenantId: '72f988bf-86f1-41af-91ab-2d7cd011db47'
+        displayName: 'Publish via ESRP'
+        inputs:
+          ConnectedServiceName: 'Azure SDK Engineering System'
+          ClientId: '5f81938c-2544-4f1f-9251-dd9de5b8a81b'
+          KeyVaultName: 'AzureSDKEngKeyVault'
+          AuthCertName: 'azure-sdk-esrp-release-auth-certificate'
+          SignCertName: 'azure-sdk-esrp-release-sign-certificate'
+          Intent: 'PackageDistribution'
+          ContentType: 'PyPI'
+          FolderLocation: $(Artifacts)
+          Owners: $(Build.RequestedForEmail)
+          Approvers: $(Build.RequestedForEmail)
+          ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
+          MainPublisher: 'ESRPRELPACMANTEST'
+          DomainTenantId: '72f988bf-86f1-41af-91ab-2d7cd011db47'
