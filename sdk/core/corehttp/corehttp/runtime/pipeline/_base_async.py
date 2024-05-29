@@ -26,8 +26,8 @@
 from __future__ import annotations
 import inspect
 from types import TracebackType
-from typing import Any, Union, Generic, TypeVar, List, Optional, Iterable, Type
-from typing_extensions import AsyncContextManager, TypeGuard
+from typing import Any, Union, Generic, TypeVar, List, Optional, Iterable, Type, AsyncContextManager
+from typing_extensions import TypeGuard
 
 from . import PipelineRequest, PipelineResponse, PipelineContext
 from ..policies import AsyncHTTPPolicy, SansIOHTTPPolicy
@@ -119,8 +119,8 @@ class AsyncPipeline(AsyncContextManager["AsyncPipeline"], Generic[HTTPRequestTyp
     :param list policies: List of configured policies.
     """
 
-    def __init__( # pylint: disable = super-init-not-called
-        self, # disabled as pylint was complaining about super() not being called on _GenericAlias which is an ABC
+    def __init__(
+        self,
         transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
         policies: Optional[
             Iterable[
