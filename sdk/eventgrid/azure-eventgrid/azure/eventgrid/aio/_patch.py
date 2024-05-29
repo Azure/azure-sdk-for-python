@@ -89,7 +89,7 @@ class EventGridConsumerClient(InternalEventGridConsumerClient):
      namespaceName1.westus-1.eventgrid.azure.net. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+     AzureKeyCredential type or a AsyncTokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword namespace_topic: The name of the topic to consume events from. Required.
