@@ -14,7 +14,6 @@ from logging.handlers import RotatingFileHandler
 
 from azure.identity import DefaultAzureCredential
 from azure.identity.aio import DefaultAzureCredential as DefaultAzureCredentialAsync
-from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.eventhub import EventHubManagementClient
 from azure.eventhub import EventHubProducerClient
 from azure.eventhub._pyamqp import ReceiveClient
@@ -58,21 +57,23 @@ def uamqp_transport(request):
     return request.param
 
 @pytest.fixture(scope="session")    
-def storage_connection_str():
+def storage_url():
     try:
-        return os.environ['AZURE_STORAGE_CONN_STR']
+        account_name = os.environ['AZURE_STORAGE_ACCOUNT']
+        return f"https://{account_name}.blob.core.windows.net"
     except KeyError:
-        pytest.skip('AZURE_STORAGE_CONN_STR undefined')
+        warnings.warn(UserWarning('AZURE_STORAGE_ACCOUNT undefined'))
+        pytest.skip('AZURE_STORAGE_ACCOUNT undefined')
         return
 
 @pytest.fixture()    
-def checkpoint_store(storage_connection_str):
-    checkpoint_store = BlobCheckpointStore(storage_connection_str, "blobcontainer" + str(uuid.uuid4()))
+def checkpoint_store(storage_url, get_credential):
+    checkpoint_store = BlobCheckpointStore(storage_url, "blobcontainer" + str(uuid.uuid4()), credential=get_credential())
     return checkpoint_store
 
 @pytest.fixture()    
-def checkpoint_store_aio(storage_connection_str):
-    checkpoint_store = BlobCheckpointStoreAsync(storage_connection_str, "blobcontainer" + str(uuid.uuid4()))
+def checkpoint_store_aio(storage_url, get_credential_async):
+    checkpoint_store = BlobCheckpointStoreAsync(storage_url, "blobcontainer" + str(uuid.uuid4()), credential=get_credential_async())
     return checkpoint_store
 
 def get_logger(filename, level=logging.INFO):
