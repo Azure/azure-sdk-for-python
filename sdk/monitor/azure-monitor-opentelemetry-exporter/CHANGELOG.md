@@ -6,6 +6,8 @@
 
 - Handle invalid status codes in std metric payload
     ([#35762](https://github.com/Azure/azure-sdk-for-python/pull/35762))
+- Disable distributed tracing for live metrics client calls
+    ([#35753](https://github.com/Azure/azure-sdk-for-python/pull/35753))
 
 ### Other Changes
 
