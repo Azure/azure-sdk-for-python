@@ -84,7 +84,7 @@ def compare(lhs: str, rhs: str) -> int:  # pylint:disable=too-many-return-statem
             if w1 > w2:
                 return 1
             return 0
-    return 1
+    return 0
 
 
 # wraps a given exception with the desired exception type
