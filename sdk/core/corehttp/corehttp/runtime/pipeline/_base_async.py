@@ -119,8 +119,8 @@ class AsyncPipeline(AsyncContextManager["AsyncPipeline"], Generic[HTTPRequestTyp
     :param list policies: List of configured policies.
     """
 
-    def __init__(
-        self,
+    def __init__( # pylint: disable = super-init-not-called
+        self, # disabled as pylint was complaining about super() not being called on _GenericAlias which is an ABC
         transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
         policies: Optional[
             Iterable[
