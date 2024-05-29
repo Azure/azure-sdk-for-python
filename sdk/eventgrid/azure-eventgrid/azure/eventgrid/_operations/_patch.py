@@ -39,10 +39,6 @@ from ..models._patch import (
 )
 from .. import models as _models
 from ..models._models import (
-    AcknowledgeOptions,
-    ReleaseOptions,
-    RejectOptions,
-    RenewLockOptions,
     CloudEvent as InternalCloudEvent,
 )
 from .._validation import api_version_validation
