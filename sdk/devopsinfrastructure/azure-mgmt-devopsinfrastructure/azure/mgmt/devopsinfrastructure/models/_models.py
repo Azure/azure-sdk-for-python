@@ -664,8 +664,8 @@ class ManagedServiceIdentity(_model_base.Model):
      "None", "SystemAssigned", "UserAssigned", and "SystemAssigned, UserAssigned".
     :vartype type: str or ~azure.mgmt.devopsinfrastructure.models.ManagedServiceIdentityType
     :ivar user_assigned_identities: The identities assigned to this resource by the user.
-    :vartype user_assigned_identities:
-     ~azure.mgmt.devopsinfrastructure.models.UserAssignedIdentities
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.devopsinfrastructure.models.UserAssignedIdentity]
     """
 
     tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
@@ -675,7 +675,9 @@ class ManagedServiceIdentity(_model_base.Model):
     type: Union[str, "_models.ManagedServiceIdentityType"] = rest_field()
     """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
      \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned, UserAssigned\"."""
-    user_assigned_identities: Optional["_models.UserAssignedIdentities"] = rest_field(name="userAssignedIdentities")
+    user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+        name="userAssignedIdentities"
+    )
     """The identities assigned to this resource by the user."""
 
     @overload
@@ -683,7 +685,7 @@ class ManagedServiceIdentity(_model_base.Model):
         self,
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
-        user_assigned_identities: Optional["_models.UserAssignedIdentities"] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
     ): ...
 
     @overload
@@ -1950,15 +1952,6 @@ class SystemData(_model_base.Model):
      \"Application\", \"ManagedIdentity\", and \"Key\"."""
     last_modified_at: Optional[datetime.date] = rest_field(name="lastModifiedAt", visibility=["read"])
     """The timestamp of resource last modification (UTC)."""
-
-
-class UserAssignedIdentities(_model_base.Model):
-    """The set of user assigned identities associated with the resource. The userAssignedIdentities
-    dictionary keys will be ARM resource ids in the form:
-    '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
-    The dictionary values can be empty objects ({}) in requests.",.
-
-    """
 
 
 class UserAssignedIdentity(_model_base.Model):

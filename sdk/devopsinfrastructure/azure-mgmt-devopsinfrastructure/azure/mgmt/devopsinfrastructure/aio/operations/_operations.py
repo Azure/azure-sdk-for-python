@@ -300,7 +300,14 @@ class PoolsOperations:
                           this principal.
                         "tenantId": "str",  # Optional. The Active Directory tenant id of the
                           principal.
-                        "userAssignedIdentities": {}
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
                     },
                     "name": "str",  # Optional. The name of the resource.
                     "properties": {
@@ -565,7 +572,14 @@ class PoolsOperations:
                           this principal.
                         "tenantId": "str",  # Optional. The Active Directory tenant id of the
                           principal.
-                        "userAssignedIdentities": {}
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
                     },
                     "name": "str",  # Optional. The name of the resource.
                     "properties": {
@@ -760,7 +774,14 @@ class PoolsOperations:
                           this principal.
                         "tenantId": "str",  # Optional. The Active Directory tenant id of the
                           principal.
-                        "userAssignedIdentities": {}
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
                     },
                     "name": "str",  # Optional. The name of the resource.
                     "properties": {
@@ -987,7 +1008,14 @@ class PoolsOperations:
                           this principal.
                         "tenantId": "str",  # Optional. The Active Directory tenant id of the
                           principal.
-                        "userAssignedIdentities": {}
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
                     },
                     "name": "str",  # Optional. The name of the resource.
                     "properties": {
@@ -1214,7 +1242,14 @@ class PoolsOperations:
                           this principal.
                         "tenantId": "str",  # Optional. The Active Directory tenant id of the
                           principal.
-                        "userAssignedIdentities": {}
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
                     },
                     "name": "str",  # Optional. The name of the resource.
                     "properties": {
@@ -1361,7 +1396,14 @@ class PoolsOperations:
                           this principal.
                         "tenantId": "str",  # Optional. The Active Directory tenant id of the
                           principal.
-                        "userAssignedIdentities": {}
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
                     },
                     "name": "str",  # Optional. The name of the resource.
                     "properties": {
@@ -1556,7 +1598,14 @@ class PoolsOperations:
                           this principal.
                         "tenantId": "str",  # Optional. The Active Directory tenant id of the
                           principal.
-                        "userAssignedIdentities": {}
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
                     },
                     "name": "str",  # Optional. The name of the resource.
                     "properties": {
@@ -1820,7 +1869,14 @@ class PoolsOperations:
                           this principal.
                         "tenantId": "str",  # Optional. The Active Directory tenant id of the
                           principal.
-                        "userAssignedIdentities": {}
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
                     },
                     "properties": {
                         "agentProfile": agent_profile,
@@ -1996,7 +2052,14 @@ class PoolsOperations:
                           this principal.
                         "tenantId": "str",  # Optional. The Active Directory tenant id of the
                           principal.
-                        "userAssignedIdentities": {}
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
                     },
                     "name": "str",  # Optional. The name of the resource.
                     "properties": {
@@ -2223,7 +2286,14 @@ class PoolsOperations:
                           this principal.
                         "tenantId": "str",  # Optional. The Active Directory tenant id of the
                           principal.
-                        "userAssignedIdentities": {}
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
                     },
                     "name": "str",  # Optional. The name of the resource.
                     "properties": {
@@ -2450,7 +2520,14 @@ class PoolsOperations:
                           this principal.
                         "tenantId": "str",  # Optional. The Active Directory tenant id of the
                           principal.
-                        "userAssignedIdentities": {}
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
                     },
                     "name": "str",  # Optional. The name of the resource.
                     "properties": {
@@ -2598,7 +2675,14 @@ class PoolsOperations:
                           this principal.
                         "tenantId": "str",  # Optional. The Active Directory tenant id of the
                           principal.
-                        "userAssignedIdentities": {}
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
                     },
                     "properties": {
                         "agentProfile": agent_profile,
@@ -2774,7 +2858,14 @@ class PoolsOperations:
                           this principal.
                         "tenantId": "str",  # Optional. The Active Directory tenant id of the
                           principal.
-                        "userAssignedIdentities": {}
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
                     },
                     "name": "str",  # Optional. The name of the resource.
                     "properties": {
@@ -3055,7 +3146,14 @@ class PoolsOperations:
                           this principal.
                         "tenantId": "str",  # Optional. The Active Directory tenant id of the
                           principal.
-                        "userAssignedIdentities": {}
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
                     },
                     "name": "str",  # Optional. The name of the resource.
                     "properties": {
@@ -3259,7 +3357,14 @@ class PoolsOperations:
                           this principal.
                         "tenantId": "str",  # Optional. The Active Directory tenant id of the
                           principal.
-                        "userAssignedIdentities": {}
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
                     },
                     "name": "str",  # Optional. The name of the resource.
                     "properties": {
