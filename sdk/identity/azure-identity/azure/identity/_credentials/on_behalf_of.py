@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import Any, Optional
+from typing import Any, Optional, Callable, Union, Dict
 
 import msal
 
@@ -30,10 +30,14 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
     :param str tenant_id: ID of the service principal's tenant. Also called its "directory" ID.
     :param str client_id: The service principal's client ID
     :keyword str client_secret: Optional. A client secret to authenticate the service principal.
-        Either **client_secret** or **client_certificate** must be provided.
+        One of **client_secret**, **client_certificate**, or **client_assertion_func** must be provided.
     :keyword bytes client_certificate: Optional. The bytes of a certificate in PEM or PKCS12 format including
-        the private key to authenticate the service principal. Either **client_secret** or **client_certificate** must
-        be provided.
+        the private key to authenticate the service principal. One of **client_secret**, **client_certificate**,
+        or **client_assertion_func** must be provided.
+    :keyword client_assertion_func: Optional. Function that returns client assertions that authenticate the
+        application to Microsoft Entra ID. This function is called each time the credential requests a token. It must
+        return a valid assertion for the target resource.
+    :paramtype client_assertion_func: Callable[[], str]
     :keyword str user_assertion: Required. The access token the credential will use as the user assertion when
         requesting on-behalf-of tokens
 
@@ -65,14 +69,30 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
             :caption: Create an OnBehalfOfCredential.
     """
 
-    def __init__(self, tenant_id: str, client_id: str, **kwargs: Any) -> None:
-        self._assertion = kwargs.pop("user_assertion", None)
+    def __init__(
+        self,
+        tenant_id: str,
+        client_id: str,
+        *,
+        client_certificate: Optional[bytes] = None,
+        client_secret: Optional[str] = None,
+        client_assertion_func: Optional[Callable[[], str]] = None,
+        user_assertion: str,
+        **kwargs: Any
+    ) -> None:
+        self._assertion = user_assertion
         if not self._assertion:
-            raise TypeError('"user_assertion" is required.')
-        client_certificate = kwargs.pop("client_certificate", None)
-        client_secret = kwargs.pop("client_secret", None)
+            raise TypeError('"user_assertion" must not be empty.')
 
-        if client_certificate:
+        if client_assertion_func:
+            if client_certificate or client_secret:
+                raise ValueError(
+                    'Specifying both "client_assertion_func" and "client_certificate" or "client_secret" is not valid.'
+                )
+            credential: Union[str, Dict[str, Any]] = {
+                "client_assertion": client_assertion_func,
+            }
+        elif client_certificate:
             if client_secret:
                 raise ValueError('Specifying both "client_certificate" and "client_secret" is not valid.')
             try:
@@ -86,7 +106,7 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         elif client_secret:
             credential = client_secret
         else:
-            raise TypeError('Either "client_certificate" or "client_secret" must be provided')
+            raise TypeError('Either "client_certificate", "client_secret", or "client_assertion_func" must be provided')
 
         super(OnBehalfOfCredential, self).__init__(
             client_id=client_id, client_credential=credential, tenant_id=tenant_id, **kwargs
