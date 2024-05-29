@@ -7,6 +7,7 @@
     "@typespec/http": "~0.56.0",
     "@typespec/openapi": "~0.56.0",
     "@azure-tools/typespec-azure-resource-manager": "~0.42.1",
+    "@azure-tools/typespec-azure-rulesets": "~0.42.1",
     "@typespec/versioning": "~0.56.0",
     "@azure-tools/typespec-azure-core": "~0.42.0",
     "@azure-tools/typespec-autorest": "~0.42.0",
