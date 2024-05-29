@@ -191,8 +191,7 @@ class EventGridConsumerClientOperationsMixin(ConsumerOperationsMixin):
         :rtype: ~azure.eventgrid.models.AcknowledgeResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        options = AcknowledgeOptions(lock_tokens=lock_tokens)
-        return await super()._acknowledge(self._namespace, self._subscription, options, **kwargs)
+        return await super()._acknowledge(self._namespace, self._subscription, lock_tokens=lock_tokens, **kwargs)
 
     @distributed_trace_async
     @api_version_validation(
@@ -218,11 +217,10 @@ class EventGridConsumerClientOperationsMixin(ConsumerOperationsMixin):
         :rtype: ~azure.eventgrid.models.ReleaseResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        options = ReleaseOptions(lock_tokens=lock_tokens)
         return await super()._release(
             self._namespace,
             self._subscription,
-            options,
+            lock_tokens=lock_tokens,
             release_delay_in_seconds=release_delay,
             **kwargs,
         )
@@ -244,8 +242,7 @@ class EventGridConsumerClientOperationsMixin(ConsumerOperationsMixin):
         :rtype: ~azure.eventgrid.models.RejectResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        options = RejectOptions(lock_tokens=lock_tokens)
-        return await super()._reject(self._namespace, self._subscription, options, **kwargs)
+        return await super()._reject(self._namespace, self._subscription, lock_tokens=lock_tokens, **kwargs)
 
     @distributed_trace_async
     @api_version_validation(
@@ -270,8 +267,7 @@ class EventGridConsumerClientOperationsMixin(ConsumerOperationsMixin):
         :rtype: ~azure.eventgrid.models.RenewLocksResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        options = RenewLockOptions(lock_tokens=lock_tokens)
-        return await super()._renew_lock(self._namespace, self._subscription, options, **kwargs)
+        return await super()._renew_lock(self._namespace, self._subscription, lock_tokens=lock_tokens, **kwargs)
 
 
 __all__: List[str] = [

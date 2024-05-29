@@ -233,11 +233,10 @@ class EventGridConsumerClientOperationsMixin(ConsumerOperationsMixin):
         :rtype: ~azure.eventgrid.models.AcknowledgeResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        options = AcknowledgeOptions(lock_tokens=lock_tokens)
         return super()._acknowledge(
             topic_name=self._namespace,
             event_subscription_name=self._subscription,
-            acknowledge_options=options,
+            lock_tokens=lock_tokens,
             **kwargs,
         )
 
@@ -264,11 +263,10 @@ class EventGridConsumerClientOperationsMixin(ConsumerOperationsMixin):
         :rtype: ~azure.eventgrid.models.ReleaseResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        options = ReleaseOptions(lock_tokens=lock_tokens)
         return super()._release(
             topic_name=self._namespace,
             event_subscription_name=self._subscription,
-            release_options=options,
+            lock_tokens=lock_tokens,
             release_delay_in_seconds=release_delay,
             **kwargs,
         )
@@ -290,11 +288,10 @@ class EventGridConsumerClientOperationsMixin(ConsumerOperationsMixin):
         :rtype: ~azure.eventgrid.models.RejectResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        options = RejectOptions(lock_tokens=lock_tokens)
         return super()._reject(
             topic_name=self._namespace,
             event_subscription_name=self._subscription,
-            reject_options=options,
+            lock_tokens=lock_tokens,
             **kwargs,
         )
 
@@ -321,11 +318,10 @@ class EventGridConsumerClientOperationsMixin(ConsumerOperationsMixin):
         :rtype: ~azure.eventgrid.models.RenewLocksResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        options = RenewLockOptions(lock_tokens=lock_tokens)
         return super()._renew_lock(
             topic_name=self._namespace,
             event_subscription_name=self._subscription,
-            renew_lock_options=options,
+            lock_tokens=lock_tokens,
             **kwargs,
         )
 
