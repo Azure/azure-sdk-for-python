@@ -30,7 +30,7 @@ from ..._operations._patch import (
 )
 
 from ..._legacy import EventGridEvent
-from ..._legacy._helpers import _is_eventgrid_event, _from_cncf_events
+from ..._legacy._helpers import _is_eventgrid_event_format, _from_cncf_events
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -99,7 +99,7 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
             if not isinstance(events, list):
                 events = [events]
 
-            if isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
+            if isinstance(events[0], EventGridEvent) or _is_eventgrid_event_format(events[0]):
                 raise TypeError("EventGridEvent is not supported for Event Grid Namespaces.")
             try:
                 # Try to send via namespace
@@ -212,7 +212,7 @@ class EventGridConsumerClientOperationsMixin(ConsumerOperationsMixin):
         :keyword lock_tokens: Array of lock tokens of Cloud Events. Required.
         :paramtype lock_tokens: List[str]
         :keyword release_delay: Release cloud events with the specified delay in seconds.
-         Known values are: 0, 10, 60, 600, and 3600. Default value is None.
+         Known values are: 0, 10, 60, 600, and 3600. Default value is None, indicating no delay.
         :paramtype release_delay: int or ~azure.eventgrid.models.ReleaseDelay
         :return: ReleaseResult. The ReleaseResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.ReleaseResult

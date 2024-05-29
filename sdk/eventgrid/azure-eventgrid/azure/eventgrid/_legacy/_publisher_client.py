@@ -34,7 +34,7 @@ from ._models import EventGridEvent
 from ._helpers import (
     _get_authentication_policy,
     _is_cloud_event,
-    _is_eventgrid_event,
+    _is_eventgrid_event_format,
     _eventgrid_data_typecheck,
     _build_request,
     _cloud_event_to_generated,
@@ -217,7 +217,7 @@ class EventGridPublisherClient(object):  # pylint: disable=client-accepts-api-ve
                 ## this is either a dictionary or a CNCF cloud event
                 events = [_from_cncf_events(e) for e in events]
             content_type = "application/cloudevents-batch+json; charset=utf-8"
-        elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
+        elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event_format(events[0]):
             for event in events:
                 _eventgrid_data_typecheck(event)
         response = self._client.send_request(  # pylint: disable=protected-access

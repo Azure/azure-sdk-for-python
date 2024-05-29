@@ -29,6 +29,14 @@ if TYPE_CHECKING:
 class EventGridPublisherClient(InternalEventGridPublisherClient):
     """EventGridPublisherClient.
 
+    Sends events to a basic topic, basic domain, or a namespace topic
+     specified during the client initialization.
+
+    A single instance or a list of dictionaries, CloudEvents or EventGridEvents are accepted.
+    If a list is provided, the list must contain only one type of event. 
+    If dictionaries are provided and sending to a namespace topic, 
+    the dictionary must follow the CloudEvent schema.
+
     :param endpoint: The host name of the namespace, e.g.
      namespaceName1.westus-1.eventgrid.azure.net. Required.
     :type endpoint: str
@@ -84,6 +92,9 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
 
 class EventGridConsumerClient(InternalEventGridConsumerClient):
     """EventGridConsumerClient.
+
+    Consumes and manages events from a namespace topic 
+     and event subscription specified during the client initialization.
 
     :param endpoint: The host name of the namespace, e.g.
      namespaceName1.westus-1.eventgrid.azure.net. Required.
