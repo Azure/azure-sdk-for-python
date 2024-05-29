@@ -17,6 +17,7 @@ stages:
     variables:
       - name: Artifacts
         value: $(Pipeline.Workspace)/artifacts
+      - template: /eng/pipelines/templates/variables/image.yml
 
     jobs:
     - job:
