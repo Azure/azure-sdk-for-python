@@ -807,9 +807,8 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         ]
 
         completion = await client_async.chat.completions.create(messages=messages, seed=42, **kwargs)
-        assert completion.system_fingerprint
-        completion = await client_async.chat.completions.create(messages=messages, seed=42, **kwargs)
-        assert completion.system_fingerprint
+        if api_type != GPT_4_OPENAI:  # bug in openai where system_fingerprint is not always returned
+            assert completion.system_fingerprint
 
     @configure_async
     @pytest.mark.asyncio
@@ -823,7 +822,6 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         completion = await client_async.chat.completions.create(messages=messages, response_format={ "type": "json_object" }, **kwargs)
         assert completion.id
         assert completion.object == "chat.completion"
-        assert completion.system_fingerprint
         assert completion.model
         assert completion.created
         assert completion.usage.completion_tokens is not None

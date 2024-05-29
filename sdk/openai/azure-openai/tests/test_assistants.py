@@ -699,7 +699,7 @@ class TestAssistants(AzureRecordedTestCase):
                 retrieved_step = client.beta.threads.runs.steps.retrieve(
                     thread_id=run.thread_id,
                     run_id=r.id,
-                    step_id=run_steps[0].id
+                    step_id=run_steps.data[0].id
                 )
                 assert retrieved_step.id
                 assert retrieved_step.created_at
