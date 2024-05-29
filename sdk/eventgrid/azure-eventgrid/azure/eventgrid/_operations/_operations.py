@@ -699,7 +699,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         if body is _Unset:
             if lock_tokens is _Unset:
                 raise TypeError("missing required argument: lock_tokens")
-            body = {"locktokens": lock_tokens}
+            body = {"lockTokens": lock_tokens}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -877,7 +877,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         if body is _Unset:
             if lock_tokens is _Unset:
                 raise TypeError("missing required argument: lock_tokens")
-            body = {"locktokens": lock_tokens}
+            body = {"lockTokens": lock_tokens}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -885,7 +885,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
             _content = body
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
+        print(_content)
         _request = build_event_grid_consumer_release_request(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
@@ -1037,7 +1037,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         if body is _Unset:
             if lock_tokens is _Unset:
                 raise TypeError("missing required argument: lock_tokens")
-            body = {"locktokens": lock_tokens}
+            body = {"lockTokens": lock_tokens}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -1221,7 +1221,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         if body is _Unset:
             if lock_tokens is _Unset:
                 raise TypeError("missing required argument: lock_tokens")
-            body = {"locktokens": lock_tokens}
+            body = {"lockTokens": lock_tokens}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None

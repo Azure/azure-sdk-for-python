@@ -486,7 +486,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         if body is _Unset:
             if lock_tokens is _Unset:
                 raise TypeError("missing required argument: lock_tokens")
-            body = {"locktokens": lock_tokens}
+            body = {"lockTokens": lock_tokens}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -664,7 +664,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         if body is _Unset:
             if lock_tokens is _Unset:
                 raise TypeError("missing required argument: lock_tokens")
-            body = {"locktokens": lock_tokens}
+            body = {"lockTokens": lock_tokens}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -824,7 +824,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         if body is _Unset:
             if lock_tokens is _Unset:
                 raise TypeError("missing required argument: lock_tokens")
-            body = {"locktokens": lock_tokens}
+            body = {"lockTokens": lock_tokens}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -1008,7 +1008,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         if body is _Unset:
             if lock_tokens is _Unset:
                 raise TypeError("missing required argument: lock_tokens")
-            body = {"locktokens": lock_tokens}
+            body = {"lockTokens": lock_tokens}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
