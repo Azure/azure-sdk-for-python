@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -43,7 +43,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -87,7 +87,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -128,7 +128,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -172,7 +172,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -218,7 +218,7 @@ def build_list_by_target_server_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -300,7 +300,6 @@ class MigrationsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MigrationResource or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -313,7 +312,7 @@ class MigrationsOperations:
         resource_group_name: str,
         target_db_server_name: str,
         migration_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -329,11 +328,10 @@ class MigrationsOperations:
         :param migration_name: The name of the migration. Required.
         :type migration_name: str
         :param parameters: The required parameters for creating a migration. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MigrationResource or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -346,7 +344,7 @@ class MigrationsOperations:
         resource_group_name: str,
         target_db_server_name: str,
         migration_name: str,
-        parameters: Union[_models.MigrationResource, IO],
+        parameters: Union[_models.MigrationResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.MigrationResource:
         """Creates a new migration.
@@ -360,12 +358,9 @@ class MigrationsOperations:
         :param migration_name: The name of the migration. Required.
         :type migration_name: str
         :param parameters: The required parameters for creating a migration. Is either a
-         MigrationResource type or a IO type. Required.
-        :type parameters: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         MigrationResource type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationResource or
+         IO[bytes]
         :return: MigrationResource or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -393,7 +388,7 @@ class MigrationsOperations:
         else:
             _json = self._serialize.body(parameters, "MigrationResource")
 
-        request = build_create_request(
+        _request = build_create_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             target_db_server_name=target_db_server_name,
@@ -402,16 +397,15 @@ class MigrationsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -432,10 +426,6 @@ class MigrationsOperations:
 
         return deserialized  # type: ignore
 
-    create.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{targetDbServerName}/migrations/{migrationName}"
-    }
-
     @distributed_trace
     def get(
         self,
@@ -455,7 +445,6 @@ class MigrationsOperations:
         :type target_db_server_name: str
         :param migration_name: The name of the migration. Required.
         :type migration_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MigrationResource or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -474,22 +463,21 @@ class MigrationsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.MigrationResource] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             target_db_server_name=target_db_server_name,
             migration_name=migration_name,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -502,13 +490,9 @@ class MigrationsOperations:
         deserialized = self._deserialize("MigrationResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{targetDbServerName}/migrations/{migrationName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def update(
@@ -539,7 +523,6 @@ class MigrationsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MigrationResource or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -552,7 +535,7 @@ class MigrationsOperations:
         resource_group_name: str,
         target_db_server_name: str,
         migration_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -570,11 +553,10 @@ class MigrationsOperations:
         :param migration_name: The name of the migration. Required.
         :type migration_name: str
         :param parameters: The required parameters for updating a migration. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MigrationResource or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -587,7 +569,7 @@ class MigrationsOperations:
         resource_group_name: str,
         target_db_server_name: str,
         migration_name: str,
-        parameters: Union[_models.MigrationResourceForPatch, IO],
+        parameters: Union[_models.MigrationResourceForPatch, IO[bytes]],
         **kwargs: Any
     ) -> _models.MigrationResource:
         """Updates an existing migration. The request body can contain one to many of the mutable
@@ -603,13 +585,9 @@ class MigrationsOperations:
         :param migration_name: The name of the migration. Required.
         :type migration_name: str
         :param parameters: The required parameters for updating a migration. Is either a
-         MigrationResourceForPatch type or a IO type. Required.
+         MigrationResourceForPatch type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationResourceForPatch
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         or IO[bytes]
         :return: MigrationResource or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -637,7 +615,7 @@ class MigrationsOperations:
         else:
             _json = self._serialize.body(parameters, "MigrationResourceForPatch")
 
-        request = build_update_request(
+        _request = build_update_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             target_db_server_name=target_db_server_name,
@@ -646,16 +624,15 @@ class MigrationsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -668,13 +645,9 @@ class MigrationsOperations:
         deserialized = self._deserialize("MigrationResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{targetDbServerName}/migrations/{migrationName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -695,7 +668,6 @@ class MigrationsOperations:
         :type target_db_server_name: str
         :param migration_name: The name of the migration. Required.
         :type migration_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -714,22 +686,21 @@ class MigrationsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             target_db_server_name=target_db_server_name,
             migration_name=migration_name,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -740,11 +711,7 @@ class MigrationsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{targetDbServerName}/migrations/{migrationName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def list_by_target_server(
@@ -767,7 +734,6 @@ class MigrationsOperations:
          migrations. Known values are: "Active" and "All". Default value is None.
         :type migration_list_filter: str or
          ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationListFilter
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either MigrationResource or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationResource]
@@ -790,18 +756,17 @@ class MigrationsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_target_server_request(
+                _request = build_list_by_target_server_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
                     target_db_server_name=target_db_server_name,
                     migration_list_filter=migration_list_filter,
                     api_version=api_version,
-                    template_url=self.list_by_target_server.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -813,13 +778,13 @@ class MigrationsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("MigrationResourceListResult", pipeline_response)
@@ -829,11 +794,11 @@ class MigrationsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -845,7 +810,3 @@ class MigrationsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_target_server.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{targetDbServerName}/migrations"
-    }

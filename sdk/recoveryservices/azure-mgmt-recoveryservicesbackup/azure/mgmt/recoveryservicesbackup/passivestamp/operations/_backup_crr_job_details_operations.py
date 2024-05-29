@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -105,7 +105,6 @@ class BackupCrrJobDetailsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: JobResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.JobResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -113,7 +112,7 @@ class BackupCrrJobDetailsOperations:
 
     @overload
     def get(
-        self, azure_region: str, parameters: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, azure_region: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.JobResource:
         """Get CRR job details from target region.
 
@@ -122,11 +121,10 @@ class BackupCrrJobDetailsOperations:
         :param azure_region: Azure region to hit Api. Required.
         :type azure_region: str
         :param parameters: CRR Job request. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: JobResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.JobResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -134,7 +132,7 @@ class BackupCrrJobDetailsOperations:
 
     @distributed_trace
     def get(
-        self, azure_region: str, parameters: Union[_models.CrrJobRequest, IO], **kwargs: Any
+        self, azure_region: str, parameters: Union[_models.CrrJobRequest, IO[bytes]], **kwargs: Any
     ) -> _models.JobResource:
         """Get CRR job details from target region.
 
@@ -142,12 +140,10 @@ class BackupCrrJobDetailsOperations:
 
         :param azure_region: Azure region to hit Api. Required.
         :type azure_region: str
-        :param parameters: CRR Job request. Is either a CrrJobRequest type or a IO type. Required.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CrrJobRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param parameters: CRR Job request. Is either a CrrJobRequest type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CrrJobRequest or
+         IO[bytes]
         :return: JobResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.JobResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -175,23 +171,22 @@ class BackupCrrJobDetailsOperations:
         else:
             _json = self._serialize.body(parameters, "CrrJobRequest")
 
-        request = build_get_request(
+        _request = build_get_request(
             azure_region=azure_region,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -204,10 +199,6 @@ class BackupCrrJobDetailsOperations:
         deserialized = self._deserialize("JobResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.RecoveryServices/locations/{azureRegion}/backupCrrJob"
-    }
+        return deserialized  # type: ignore

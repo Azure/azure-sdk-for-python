@@ -60,6 +60,7 @@ You can use `configure_azure_monitor` to set up instrumentation for your app to 
 | Parameter | Description | Environment Variable |
 |-------------------|----------------------------------------------------|----------------------|
 | `connection_string` | The [connection string][connection_string_doc] for your Application Insights resource. The connection string will be automatically populated from the `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable if not explicitly passed in. | `APPLICATIONINSIGHTS_CONNECTION_STRING` |
+| `enable_live_metrics` | Enable [live metrics][application_insights_live_metrics] feature. Defaults to `False`. | `N/A` |
 | `logger_name` | The name of the [Python logger][python_logger] under which telemetry is collected. | `N/A` |
 | `instrumentation_options` | A nested dictionary that determines which instrumentations to enable or disable. Instrumentations are referred to by their [Library Names](#officially-supported-instrumentations). For example, `{"azure_sdk": {"enabled": False}, "flask": {"enabled": False}, "django": {"enabled": True}}` will disable Azure Core Tracing and the Flask instrumentation but leave Django and the other default instrumentations enabled. The `OTEL_PYTHON_DISABLED_INSTRUMENTATIONS` environment variable explained below can also be used to disable instrumentations. | `N/A` |
 | `resource` | Specifies the OpenTelemetry [Resource][ot_spec_resource] associated with your application. Passed in [Resource Attributes][ot_spec_resource_attributes] take priority over default attributes and those from [Resource Detectors][ot_python_resource_detectors]. | [OTEL_SERVICE_NAME][ot_spec_service_name], [OTEL_RESOURCE_ATTRIBUTES][ot_spec_resource_attributes], [OTEL_EXPERIMENTAL_RESOURCE_DETECTORS][ot_python_resource_detectors] |
@@ -210,6 +211,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [azure_monitor_opentelemetry_exporters]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter#microsoft-opentelemetry-exporter-for-azure-monitor
 [azure_portal]: https://portal.azure.com
 [azure_sub]: https://azure.microsoft.com/free/
+[application_insights_live_metrics]: https://learn.microsoft.com/azure/azure-monitor/app/live-stream
 [application_insights_namespace]: https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview
 [application_insights_sampling]: https://learn.microsoft.com/azure/azure-monitor/app/sampling
 [connection_string_doc]: https://learn.microsoft.com/azure/azure-monitor/app/sdk-connection-string

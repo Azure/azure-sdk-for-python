@@ -8,16 +8,19 @@ import pytz
 from datetime import datetime
 import functools
 from asynctestcase import AsyncDocumentTranslationTest
-from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
+from preparer import (
+    DocumentTranslationPreparer,
+    DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer,
+)
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.translation.document.aio import DocumentTranslationClient
+
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 TOTAL_DOC_COUNT_IN_translation = 1
 
 
 class TestSubmittedTranslations(AsyncDocumentTranslationTest):
-
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
@@ -27,7 +30,9 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         # create some translations
         operations_count = 5
         docs_per_operation = 5
-        await self._begin_multiple_translations_async(client, operations_count, docs_per_operation=docs_per_operation, wait=False, variables=variables)
+        await self._begin_multiple_translations_async(
+            client, operations_count, docs_per_operation=docs_per_operation, wait=False, variables=variables
+        )
 
         # list translations
         submitted_translations = client.list_translation_statuses()
@@ -38,6 +43,9 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
             self._validate_translations(translation)
         return variables
 
+    @pytest.mark.skip(
+        reason="The max number of batch requests returned is limited to 50 and hence this test is no longer valid"
+    )
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
@@ -50,7 +58,9 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         skip = 5
 
         # create some translations
-        await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation, variables=variables)
+        await self._begin_multiple_translations_async(
+            client, operations_count, wait=False, docs_per_operation=docs_per_operation, variables=variables
+        )
 
         # list translations - unable to assert skip!!
         all_translations = client.list_translation_statuses()
@@ -76,13 +86,22 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         docs_per_operation = 1
 
         # create some translations with the status 'Succeeded'
-        completed_translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=True, docs_per_operation=docs_per_operation, variables=variables)
+        completed_translation_ids = await self._begin_multiple_translations_async(
+            client, operations_count, wait=True, docs_per_operation=docs_per_operation, variables=variables
+        )
 
         # create some translations with the status 'Canceled'
-        translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation, variables=variables, container_suffix="cancel")
+        translation_ids = await self._begin_multiple_translations_async(
+            client,
+            operations_count,
+            wait=False,
+            docs_per_operation=docs_per_operation,
+            variables=variables,
+            container_suffix="cancel",
+        )
         for id in translation_ids:
             await client.cancel_translation(id)
-        self.wait(10) # wait for 'canceled' to propagate
+        self.wait(10)  # wait for 'canceled' to propagate
 
         # list translations with status filter
         statuses = ["Canceled"]
@@ -104,7 +123,9 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         docs_per_operation = 2
 
         # create some translations
-        translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation, variables=variables)
+        translation_ids = await self._begin_multiple_translations_async(
+            client, operations_count, wait=False, docs_per_operation=docs_per_operation, variables=variables
+        )
 
         # list translations
         submitted_translations = client.list_translation_statuses(translation_ids=translation_ids)
@@ -126,7 +147,9 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
 
         # create some translations
         start = datetime.utcnow()
-        translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
+        translation_ids = await self._begin_multiple_translations_async(
+            client, operations_count, wait=False, docs_per_operation=docs_per_operation
+        )
 
         # list translations
         submitted_translations = client.list_translation_statuses(created_after=start)
@@ -135,24 +158,28 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         # check statuses
         async for translation in submitted_translations:
             assert translation.id in translation_ids
-            assert(translation.created_on.replace(tzinfo=None) >= start.replace(tzinfo=None))
+            assert translation.created_on.replace(tzinfo=None) >= start.replace(tzinfo=None)
 
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_translations_filter_by_created_before(self, **kwargs):
-        '''
-            NOTE: test is dependent on 'end' to be specific/same as time zone of the service! 
-                'end' must be timezone-aware!
-        '''
+        """
+        NOTE: test is dependent on 'end' to be specific/same as time zone of the service!
+            'end' must be timezone-aware!
+        """
         client = kwargs.pop("client")
         operations_count = 5
         docs_per_operation = 1
 
         # create some translations
-        await self._begin_multiple_translations_async(client, operations_count, wait=True, docs_per_operation=docs_per_operation)
+        await self._begin_multiple_translations_async(
+            client, operations_count, wait=True, docs_per_operation=docs_per_operation
+        )
         end = datetime.utcnow().replace(tzinfo=pytz.utc)
-        translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=True, docs_per_operation=docs_per_operation)
+        translation_ids = await self._begin_multiple_translations_async(
+            client, operations_count, wait=True, docs_per_operation=docs_per_operation
+        )
 
         # list translations
         submitted_translations = client.list_translation_statuses(created_before=end)
@@ -160,8 +187,8 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
 
         # check statuses
         async for translation in submitted_translations:
-            assert translation.created_on.replace(tzinfo=None) <=  end.replace(tzinfo=None)
-            assert translation.id not in  translation_ids
+            assert translation.created_on.replace(tzinfo=None) <= end.replace(tzinfo=None)
+            assert translation.id not in translation_ids
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -173,7 +200,9 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         docs_per_operation = 2
 
         # create some translations
-        await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation, variables=variables)
+        await self._begin_multiple_translations_async(
+            client, operations_count, wait=False, docs_per_operation=docs_per_operation, variables=variables
+        )
 
         # list translations
         submitted_translations = client.list_translation_statuses(order_by=["created_on asc"])
@@ -182,7 +211,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         # check statuses
         current = datetime.min
         async for translation in submitted_translations:
-            assert(translation.created_on.replace(tzinfo=None) >= current.replace(tzinfo=None))
+            assert translation.created_on.replace(tzinfo=None) >= current.replace(tzinfo=None)
             current = translation.created_on
         return variables
 
@@ -196,7 +225,9 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         docs_per_operation = 2
 
         # create some translations
-        await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation, variables=variables)
+        await self._begin_multiple_translations_async(
+            client, operations_count, wait=False, docs_per_operation=docs_per_operation, variables=variables
+        )
 
         # list translations
         submitted_translations = client.list_translation_statuses(order_by=["created_on desc"])
@@ -205,7 +236,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         # check statuses
         current = datetime.max
         async for translation in submitted_translations:
-            assert(translation.created_on.replace(tzinfo=None) <= current.replace(tzinfo=None))
+            assert translation.created_on.replace(tzinfo=None) <= current.replace(tzinfo=None)
             current = translation.created_on
         return variables
 
@@ -222,7 +253,9 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
 
         # create some translations
         start = datetime.utcnow().replace(tzinfo=pytz.utc)
-        successful_translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=True, docs_per_operation=docs_per_operation)
+        successful_translation_ids = await self._begin_multiple_translations_async(
+            client, operations_count, wait=True, docs_per_operation=docs_per_operation
+        )
         end = datetime.utcnow().replace(tzinfo=pytz.utc)
 
         # list translations
@@ -246,9 +279,9 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
                 # assert id
                 assert translation.id in successful_translation_ids
                 # assert ordering
-                assert(translation.created_on.replace(tzinfo=None) >= current_time.replace(tzinfo=None))
+                assert translation.created_on.replace(tzinfo=None) >= current_time.replace(tzinfo=None)
                 current_time = translation.created_on
                 # assert filters
-                assert(translation.created_on.replace(tzinfo=None) <= end.replace(tzinfo=None))
-                assert(translation.created_on.replace(tzinfo=None) >= start.replace(tzinfo=None))
+                assert translation.created_on.replace(tzinfo=None) <= end.replace(tzinfo=None)
+                assert translation.created_on.replace(tzinfo=None) >= start.replace(tzinfo=None)
                 assert translation.status in statuses

@@ -183,9 +183,11 @@ class AmlCompute(Compute):
             location=rest_obj.location,
             tags=rest_obj.tags if rest_obj.tags else None,
             provisioning_state=prop.provisioning_state,
-            provisioning_errors=prop.provisioning_errors[0].error.code
-            if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
-            else None,
+            provisioning_errors=(
+                prop.provisioning_errors[0].error.code
+                if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
+                else None
+            ),
             size=prop.properties.vm_size,
             tier=camel_to_snake(prop.properties.vm_priority),
             min_instances=prop.properties.scale_settings.min_node_count if prop.properties.scale_settings else None,
@@ -193,14 +195,16 @@ class AmlCompute(Compute):
             network_settings=network_settings or None,
             ssh_settings=ssh_settings,
             ssh_public_access_enabled=(prop.properties.remote_login_port_public_access == "Enabled"),
-            idle_time_before_scale_down=prop.properties.scale_settings.node_idle_time_before_scale_down.total_seconds()
-            if prop.properties.scale_settings and prop.properties.scale_settings.node_idle_time_before_scale_down
-            else None,
+            idle_time_before_scale_down=(
+                prop.properties.scale_settings.node_idle_time_before_scale_down.total_seconds()
+                if prop.properties.scale_settings and prop.properties.scale_settings.node_idle_time_before_scale_down
+                else None
+            ),
             identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
             created_on=prop.additional_properties.get("createdOn", None),
-            enable_node_public_ip=prop.properties.enable_node_public_ip
-            if prop.properties.enable_node_public_ip is not None
-            else True,
+            enable_node_public_ip=(
+                prop.properties.enable_node_public_ip if prop.properties.enable_node_public_ip is not None else True
+            ),
         )
         return response
 
@@ -233,9 +237,11 @@ class AmlCompute(Compute):
         scale_settings = ScaleSettings(
             max_node_count=self.max_instances,
             min_node_count=self.min_instances,
-            node_idle_time_before_scale_down=to_iso_duration_format(int(self.idle_time_before_scale_down))
-            if self.idle_time_before_scale_down
-            else None,
+            node_idle_time_before_scale_down=(
+                to_iso_duration_format(int(self.idle_time_before_scale_down))
+                if self.idle_time_before_scale_down
+                else None
+            ),
         )
         remote_login_public_access = "Enabled"
         if self.ssh_public_access_enabled is not None:

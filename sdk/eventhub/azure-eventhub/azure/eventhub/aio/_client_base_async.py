@@ -254,11 +254,14 @@ class ClientBaseAsync(ClientBase):
 
     @staticmethod
     def _from_connection_string(conn_str: str, **kwargs) -> Dict[str, Any]:
-        host, policy, key, entity, token, token_expiry = _parse_conn_str(
+        host, policy, key, entity, token, token_expiry, emulator = _parse_conn_str(
             conn_str, **kwargs
         )
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
+        # Check if emulator is in use, unset tls if it is
+        if emulator:
+            kwargs["use_tls"] = False
         if token and token_expiry:
             kwargs["credential"] = EventHubSASTokenCredential(token, token_expiry)
         elif policy and key:
@@ -339,7 +342,7 @@ class ClientBaseAsync(ClientBase):
             )
             try:
                 conn = await self._conn_manager_async.get_connection(
-                    host=self._address.hostname, auth=mgmt_auth
+                    endpoint=self._address.hostname, auth=mgmt_auth
                 )
                 await mgmt_client.open_async(connection=conn)
                 while not await mgmt_client.client_ready_async():
@@ -475,7 +478,7 @@ class ConsumerProducerMixin(_MIXIN_BASE):
             auth = await self._client._create_auth_async()
             self._create_handler(auth)
             conn = await self._client._conn_manager_async.get_connection(
-                host=self._client._address.hostname, auth=auth
+                endpoint=self._client._address.hostname, auth=auth
             )
             await self._handler.open_async(connection=conn)
             while not await self._handler.client_ready_async():

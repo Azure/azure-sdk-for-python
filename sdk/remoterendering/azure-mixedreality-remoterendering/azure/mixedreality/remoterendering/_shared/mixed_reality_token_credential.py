@@ -3,19 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+
+from azure.core.credentials import AccessToken, TokenCredential
 
 from azure.mixedreality.authentication import MixedRealityStsClient
 from .static_access_token_credential import StaticAccessTokenCredential
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Union
-    from azure.core.credentials import AccessToken, TokenCredential
-
-
-def get_mixedreality_credential(account_id, account_domain, endpoint_url, credential, **kwargs):
-    # type: (str, str, str, TokenCredential, Any) -> TokenCredential
+def get_mixedreality_credential(account_id: str,
+                                account_domain: str,
+                                endpoint_url: str,
+                                credential: TokenCredential,
+                                **kwargs) -> TokenCredential:
     if isinstance(credential, StaticAccessTokenCredential):
         return credential
 
@@ -36,8 +34,11 @@ class MixedRealityTokenCredential(object):
     :param TokenCredential credential: The credential used to access the Mixed Reality service.
     """
 
-    def __init__(self, account_id, account_domain, endpoint_url, credential, **kwargs):
-        # type: (str, str, str, TokenCredential, Any) -> None
+    def __init__(self, account_id: str,
+                 account_domain: str,
+                 endpoint_url: str,
+                 credential: TokenCredential,
+                 **kwargs) -> None:
         self.stsClient = MixedRealityStsClient(
             account_id=account_id,
             account_domain=account_domain,
@@ -45,6 +46,5 @@ class MixedRealityTokenCredential(object):
             credential=credential,
             **kwargs)
 
-    def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
-        # type: (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs) -> AccessToken:  # pylint: disable=unused-argument
         return self.stsClient.get_token(**kwargs)

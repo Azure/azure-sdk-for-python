@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b25 (Unreleased)
+## 1.0.0b26 (Unreleased)
 
 ### Features Added
 
@@ -8,7 +8,22 @@
 
 ### Bugs Fixed
 
+- Handle invalid status codes in std metric payload
+    ([#35762](https://github.com/Azure/azure-sdk-for-python/pull/35762))
+
 ### Other Changes
+
+- Update live metrics to use typespec generated swagger
+    ([#34840](https://github.com/Azure/azure-sdk-for-python/pull/34840))
+- Send old and new process level live metrics
+    ([#35753](https://github.com/Azure/azure-sdk-for-python/pull/35753))
+
+## 1.0.0b25 (2024-04-19)
+
+### Features Added
+
+- Enable sampling for attach
+    ([#35218](https://github.com/Azure/azure-sdk-for-python/pull/35218))
 
 ## 1.0.0b24 (2024-04-05)
 

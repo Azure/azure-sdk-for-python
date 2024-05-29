@@ -392,9 +392,11 @@ class Spark(BaseNode, SparkJobEntryMixin):
             code=rest_spark_job.code_id,
             compute=rest_spark_job.compute_id,
             environment=rest_spark_job.environment_id,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(rest_spark_job.identity)
-            if rest_spark_job.identity
-            else None,
+            identity=(
+                _BaseJobIdentityConfiguration._from_rest_object(rest_spark_job.identity)
+                if rest_spark_job.identity
+                else None
+            ),
             args=rest_spark_job.args,
             conf=rest_spark_conf,
             driver_cores=rest_spark_conf.get(

@@ -1,0 +1,7 @@
+name: test_ws_conn_cr_user_pass
+type: container_registry
+target: https://test-feed.com2
+credentials:
+  type: username_password
+  username: springer
+  password: spaniel

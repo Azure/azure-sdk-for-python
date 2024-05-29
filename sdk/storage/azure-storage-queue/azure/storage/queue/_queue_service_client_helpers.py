@@ -31,7 +31,10 @@ def _parse_url(
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
     :type credential:
-        Optional[Union[str, dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential, TokenCredential]] # pylint: disable=line-too-long
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.TokenCredential or
+        str or dict[str, str] or None
     :returns: The parsed URL and SAS token.
     :rtype: Tuple[ParseResult, Any]
     """
