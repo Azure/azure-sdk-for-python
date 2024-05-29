@@ -575,6 +575,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             downloader=iter_downloader,
             chunk_size=self._config.max_chunk_get_size)
 
+    # pylint: disable-next=too-many-statements,too-many-branches
     def read(self, size: int = -1, *, chars: Optional[int] = None) -> T:
         """
         Read the specified bytes or chars from the stream. If `encoding`
@@ -585,7 +586,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         :param int size:
             The number of bytes to download from the stream. Leave unspecified
             or set negative to download all bytes.
-        :param Optional[int] chars:
+        :keyword Optional[int] chars:
             The number of chars to download from the stream. Leave unspecified
             or set negative to download all chars. Note, this can only be used
             when encoding is specified on `download_blob`.
