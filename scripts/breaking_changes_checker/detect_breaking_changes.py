@@ -215,7 +215,11 @@ def create_class_report(cls: Type) -> Dict:
     methods = [method for method in dir(cls) if not method.startswith("_") or method.startswith("__init__")]
     for method in methods:
         async_func = False
-        m = getattr(cls, method)
+        try:
+            m = getattr(cls, method)
+        except AttributeError:
+            _LOGGER.info(f"Skipping method check for {method} on {cls}.")
+    
         if inspect.isfunction(m) or inspect.ismethod(m):
             if inspect.iscoroutinefunction(m):
                 async_func = True
