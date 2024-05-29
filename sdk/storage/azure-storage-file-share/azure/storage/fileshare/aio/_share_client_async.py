@@ -21,13 +21,16 @@ from .._deserialize import deserialize_permission, deserialize_share_properties
 from .._generated.aio import AzureFileStorage
 from .._generated.models import (
     DeleteSnapshotsOptionType,
-    SignedIdentifier)
+    SignedIdentifier
+)
 from .._models import ShareProtocols
+from .._parser import _parse_snapshot
 from .._share_client_helpers import (
     _create_permission_for_share_options,
     _format_url,
     _from_share_url,
-    _parse_url)
+    _parse_url
+)
 from .._shared.policies_async import ExponentialRetry
 from .._shared.base_client import StorageAccountHostsMixin, parse_query
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
@@ -35,7 +38,8 @@ from .._shared.request_handlers import add_metadata_headers, serialize_iso
 from .._shared.response_handlers import (
     process_storage_error,
     return_headers_and_deserialized,
-    return_response_headers)
+    return_response_headers
+)
 from .._serialize import get_access_conditions, get_api_version
 from ..aio._lease_async import ShareLeaseClient
 from ._directory_client_async import ShareDirectoryClient
@@ -47,7 +51,7 @@ if TYPE_CHECKING:
     from .._models import ShareProperties, AccessPolicy
 
 
-class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
+class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
     """A client to interact with a specific share, although that share may not yet exist.
 
     For operations relating to a specific directory or file in this share, the clients for
@@ -117,13 +121,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         if not sas_token and not credential:
             raise ValueError(
                 'You need to provide either an account shared key or SAS token when creating a storage service.')
-        try:
-            self.snapshot = snapshot.snapshot  # type: ignore
-        except AttributeError:
-            try:
-                self.snapshot = snapshot['snapshot']  # type: ignore
-            except TypeError:
-                self.snapshot = snapshot or path_snapshot
+        self.snapshot = _parse_snapshot(snapshot, path_snapshot)
         self.share_name = share_name
         self._query_str, credential = self._format_query_string(
             sas_token=sas_token, credential=credential, share_snapshot=self.snapshot)
@@ -136,7 +134,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
                                         file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access
 
     @classmethod
     def from_share_url(
@@ -308,7 +306,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         """
         kwargs['lease_duration'] = kwargs.pop('lease_duration', -1)
         lease_id = kwargs.pop('lease_id', None)
-        lease = ShareLeaseClient(self, lease_id=lease_id)  # type: ignore
+        lease = ShareLeaseClient(self, lease_id=lease_id)
         await lease.acquire(**kwargs)
         return lease
 
@@ -365,10 +363,10 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         if root_squash and protocols not in ['NFS', ShareProtocols.NFS]:
             raise ValueError("The 'root_squash' keyword can only be used on NFS enabled shares.")
         headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))  # type: ignore
+        headers.update(add_metadata_headers(metadata))
 
         try:
-            return await self._client.share.create(  # type: ignore
+            return await self._client.share.create(
                 timeout=timeout,
                 metadata=metadata,
                 quota=quota,
@@ -417,9 +415,9 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         metadata = kwargs.pop('metadata', None)
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))  # type: ignore
+        headers.update(add_metadata_headers(metadata))
         try:
-            return await self._client.share.create_snapshot(  # type: ignore
+            return await self._client.share.create_snapshot(
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
@@ -527,7 +525,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
             process_storage_error(error)
         props.name = self.share_name
         props.snapshot = self.snapshot
-        return props # type: ignore
+        return props
 
     @distributed_trace_async
     async def set_share_quota(self, quota: int, **kwargs: Any) -> Dict[str, Any]:
@@ -564,7 +562,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         try:
-            return await self._client.share.set_properties(  # type: ignore
+            return await self._client.share.set_properties(
                 timeout=timeout,
                 quota=quota,
                 access_tier=None,
@@ -620,7 +618,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         if all(parameter is None for parameter in [access_tier, quota, root_squash]):
             raise ValueError("set_share_properties should be called with at least one parameter.")
         try:
-            return await self._client.share.set_properties(  # type: ignore
+            return await self._client.share.set_properties(
                 timeout=timeout,
                 quota=quota,
                 access_tier=access_tier,
@@ -672,7 +670,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         try:
-            return await self._client.share.set_metadata(  # type: ignore
+            return await self._client.share.set_metadata(
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
@@ -759,10 +757,10 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
                 value.start = serialize_iso(value.start)
                 value.expiry = serialize_iso(value.expiry)
             identifiers.append(SignedIdentifier(id=key, access_policy=value))
-        signed_identifiers = identifiers  # type: ignore
+        signed_identifiers = identifiers
 
         try:
-            return await self._client.share.set_access_policy(  # type: ignore
+            return await self._client.share.set_access_policy(
                 share_acl=signed_identifiers or None,
                 timeout=timeout,
                 cls=return_response_headers,
@@ -801,7 +799,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
                 **kwargs)
-            return stats.share_usage_bytes  # type: ignore
+            return stats.share_usage_bytes
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -904,7 +902,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return await self._client.share.get_permission(  # type: ignore
+            return await self._client.share.get_permission(
                 file_permission_key=permission_key,
                 cls=deserialize_permission,
                 timeout=timeout,
@@ -934,7 +932,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         directory = self.get_directory_client(directory_name)
         kwargs.setdefault('merge_span', True)
         await directory.create_directory(**kwargs)
-        return directory  # type: ignore
+        return directory
 
     @distributed_trace_async
     async def delete_directory(self, directory_name: str, **kwargs: Any) -> None:
