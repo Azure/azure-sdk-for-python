@@ -7,7 +7,6 @@
 
 import ast
 import os
-import enum
 import argparse
 import importlib
 import inspect
@@ -91,7 +90,10 @@ def get_parameter_default(param: inspect.Parameter) -> None:
         if inspect.isclass(default_value):
             default_value = default_value.__name__
         if hasattr(default_value, "value"):
-            default_value = default_value.value
+            if not isinstance(default_value.value, object):
+                default_value = default_value.value
+        if hasattr(default_value, "name"):
+            default_value = default_value.name
 
     return default_value
 
