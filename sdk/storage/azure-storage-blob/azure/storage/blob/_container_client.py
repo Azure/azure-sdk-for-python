@@ -12,8 +12,8 @@ from typing import (
     Any, AnyStr, cast, Dict, List, IO, Iterable, Iterator, Optional, overload, Union,
     TYPE_CHECKING
 )
-from typing_extensions import Self
 from urllib.parse import unquote, urlparse
+from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged

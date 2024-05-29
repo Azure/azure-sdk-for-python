@@ -278,12 +278,12 @@ class FilteredBlobPaged(PageIterator):
     """The current page of listed results."""
     command: Callable
     """Function to retrieve the next page of items."""
-    container: str
+    container: Optional[str]
     """The name of the container."""
 
     def __init__(
         self, command: Callable,
-        container: str,
+        container: Optional[str] = None,
         results_per_page: Optional[int] = None,
         continuation_token: Optional[str] = None,
         location_mode: Optional[str] = None
