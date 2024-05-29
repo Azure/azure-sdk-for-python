@@ -103,7 +103,7 @@ class BlobPropertiesPaged(AsyncPageIterator):
             return item
         if isinstance(item, BlobItemInternal):
             blob = get_blob_properties_from_generated_code(item)  # pylint: disable=protected-access
-            blob.container = self.container
+            blob.container = self.container  # type: ignore [assignment]
             return blob
         return item
 
