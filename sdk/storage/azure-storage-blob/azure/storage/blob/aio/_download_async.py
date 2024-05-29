@@ -168,7 +168,7 @@ class _AsyncChunkIterator(object):
 
         try:
             chunk = next(self._iter_chunks)
-            self._current_content += await self._iter_downloader.yield_chunk(chunk)[0]
+            self._current_content += (await self._iter_downloader.yield_chunk(chunk))[0]
         except StopIteration as exc:
             self._complete = True
             # it's likely that there some data left in self._current_content
@@ -229,6 +229,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._encryption_options = encryption_options or {}
         self._progress_hook = kwargs.pop('progress_hook', None)
         self._request_options = kwargs
+        self._response = None
         self._location_mode = None
         self._current_content = b''
         self._file_size = 0
@@ -296,9 +297,9 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             self._encryption_data
         )
 
-        response = await self._initial_request()
+        self._response = await self._initial_request()
 
-        self.properties = response.properties
+        self.properties = self._response.properties
         self.properties.name = self.name
         self.properties.container = self.container
 
@@ -661,7 +662,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             await self._progress_hook(self._read_offset, self.size)
 
         # If all the data was already downloaded/buffered
-        if self.size - self._download_offset == 0:
+        if self._download_complete:
             return remaining_size
 
         data_start = self._download_start + self._read_offset

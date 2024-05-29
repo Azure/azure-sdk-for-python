@@ -329,6 +329,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._encryption_options = encryption_options or {}
         self._progress_hook = kwargs.pop('progress_hook', None)
         self._request_options = kwargs
+        self._response = None
         self._location_mode = None
         self._current_content = b''
         self._file_size = 0
@@ -377,8 +378,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             self._encryption_data
         )
 
-        initial_response = self._initial_request()
-        self.properties = initial_response.properties
+        self._response = self._initial_request()
+        self.properties = self._response.properties
         self.properties.name = self.name
         self.properties.container = self.container
 
