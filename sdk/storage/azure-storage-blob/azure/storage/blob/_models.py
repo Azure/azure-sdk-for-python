@@ -583,7 +583,7 @@ class FilteredBlob(DictMixin):
 
     name: str
     """Blob name"""
-    container_name: str
+    container_name: Optional[str]
     """Container name."""
     tags: Optional[Dict[str, str]]
     """Key value pairs of blob tags."""
