@@ -11,43 +11,43 @@ parameters:
 # extends:
 #   template: /eng/pipelines/templates/stages/1es-redirect.yml
 #   parameters:
-    stages:
-      - stage:
-        displayName: 'Partner Release'
-        variables:
-          - name: Artifacts
-            value: $(Pipeline.Workspace)/artifacts
+stages:
+  - stage:
+    displayName: 'Partner Release'
+    variables:
+      - name: Artifacts
+        value: $(Pipeline.Workspace)/artifacts
 
-        jobs:
-        - job:
-          displayName: 'Download and publish artifacts'
-          pool:
-            name: $(WINDOWSPOOL)
-            image: $(WINDOWSVMIMAGE)
-            os: windows
+    jobs:
+    - job:
+      displayName: 'Download and publish artifacts'
+      pool:
+        name: $(WINDOWSPOOL)
+        image: $(WINDOWSVMIMAGE)
+        os: windows
 
-          steps:
-          - task: AzurePowerShell@5
-            displayName: 'Copy from azuresdkpartnerdrops'
-            condition: and(succeeded(), ne(variables['SkipCopyFromPartnerDrops'], 'true'))
-            inputs:
-              azureSubscription: 'azuresdkpartnerdrops - Storage Partner Drops'
-              ScriptType: 'InlineScript'
-              azurePowerShellVersion: LatestVersion 
-              pwsh: true
-              Inline: |
-                azcopy copy 'https://azuresdkpartnerdrops.blob.core.windows.net/drops/${{ parameters.BlobPath }}/*' '$(Artifacts)' --recursive=true
-                echo "Copied files:"
-                dir '$(Artifacts)' -r | % { $_.FullName }
-            env: 
-              AZCOPY_AUTO_LOGIN_TYPE: 'PSCRED'
+      steps:
+      - task: AzurePowerShell@5
+        displayName: 'Copy from azuresdkpartnerdrops'
+        condition: and(succeeded(), ne(variables['SkipCopyFromPartnerDrops'], 'true'))
+        inputs:
+          azureSubscription: 'azuresdkpartnerdrops - Storage Partner Drops'
+          ScriptType: 'InlineScript'
+          azurePowerShellVersion: LatestVersion 
+          pwsh: true
+          Inline: |
+            azcopy copy 'https://azuresdkpartnerdrops.blob.core.windows.net/drops/${{ parameters.BlobPath }}/*' '$(Artifacts)' --recursive=true
+            echo "Copied files:"
+            dir '$(Artifacts)' -r | % { $_.FullName }
+        env: 
+          AZCOPY_AUTO_LOGIN_TYPE: 'PSCRED'
 
-          # - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
-          #   parameters:
-          #     ArtifactName: 'artifacts-for-release'
-          #     ArtifactPath: $(Artifacts)
+      # - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+      #   parameters:
+      #     ArtifactName: 'artifacts-for-release'
+      #     ArtifactPath: $(Artifacts)
 
-          - task: EsrpRelease@7
+      - task: EsrpRelease@7
             displayName: 'Publish via ESRP'
             inputs:
               ConnectedServiceName: 'Azure SDK Engineering System'
