@@ -584,7 +584,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
 class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
 
     @overload
-    def _embedding(
+    def _embed(
         self,
         body: JSON,
         *,
@@ -594,7 +594,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         **kwargs: Any
     ) -> _models.EmbeddingsResult: ...
     @overload
-    def _embedding(
+    def _embed(
         self,
         *,
         input: List[str],
@@ -607,7 +607,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         **kwargs: Any
     ) -> _models.EmbeddingsResult: ...
     @overload
-    def _embedding(
+    def _embed(
         self,
         body: IO[bytes],
         *,
@@ -618,7 +618,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
     ) -> _models.EmbeddingsResult: ...
 
     @distributed_trace
-    def _embedding(
+    def _embed(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -866,7 +866,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
 class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
 
     @overload
-    def _embedding(
+    def _embed(
         self,
         body: JSON,
         *,
@@ -876,7 +876,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         **kwargs: Any
     ) -> _models.EmbeddingsResult: ...
     @overload
-    def _embedding(
+    def _embed(
         self,
         *,
         input: List[_models.EmbeddingInput],
@@ -889,7 +889,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         **kwargs: Any
     ) -> _models.EmbeddingsResult: ...
     @overload
-    def _embedding(
+    def _embed(
         self,
         body: IO[bytes],
         *,
@@ -900,7 +900,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
     ) -> _models.EmbeddingsResult: ...
 
     @distributed_trace
-    def _embedding(
+    def _embed(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,

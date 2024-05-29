@@ -37,7 +37,7 @@ async def sample_embeddings_async():
     client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Do a single embeddings operation. Start the operation and get a Future object.
-    response = await client.embedding(input=["first phrase", "second phrase", "third phrase"])
+    response = await client.embed(input=["first phrase", "second phrase", "third phrase"])
 
     print("Embeddings response:")
     for item in response.data:

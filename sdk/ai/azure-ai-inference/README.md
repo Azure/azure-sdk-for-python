@@ -287,16 +287,26 @@ response = client.complete(
     ],
     unknown_params=UnknownParams.ALLOW,  # Optional. Supported values: "ALLOW", "IGNORE", "ERROR" (service default)
     model_extras={  # Optional. Additional parameters to pass to the model.
-        "key1": 1,
-        "key2": True,
-        "key3": "Some value",
-        "key4": [1, 2, 3],
-        "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
+        "key1": "value1",
+        "key2": "value2"
     },
 )
 ```
 
 <!-- END SNIPPET -->
+In the above example, this will be the JSON payload in the HTTP request:
+
+```json
+{
+    "messages":
+    [
+        {"role":"system","content":"You are a helpful assistant."},
+        {"role":"user","content":"How many feet are in a mile?"}
+    ],
+    "key1": "value1",
+    "key2": "value2"
+}
+```
 
 ### Text Embeddings example
 

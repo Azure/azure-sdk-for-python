@@ -82,7 +82,7 @@ class AssistantMessage(ChatRequestMessage, discriminator="assistant"):
     role: Literal[ChatRole.ASSISTANT] = rest_discriminator(name="role")  # type: ignore
     """The chat role associated with this message, which is always 'assistant' for assistant messages.
      Required. The role that provides responses to system-instructed, user-prompted input."""
-    content: str = rest_field()
+    content: Optional[str] = rest_field()
     """The content of the message. Required."""
     tool_calls: Optional[List["_models.ChatCompletionsToolCall"]] = rest_field()
     """The tool calls that must be resolved and have their outputs appended to subsequent input
@@ -93,7 +93,7 @@ class AssistantMessage(ChatRequestMessage, discriminator="assistant"):
     def __init__(
         self,
         *,
-        content: str,
+        content: Optional[str] = None,
         tool_calls: Optional[List["_models.ChatCompletionsToolCall"]] = None,
     ): ...
 
