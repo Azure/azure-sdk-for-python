@@ -125,7 +125,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
 
     def process_chunk(self, chunk_start):
         chunk_start, chunk_end = self._calculate_range(chunk_start)
-        chunk_data = self._download_chunk(chunk_start, chunk_end - 1)
+        chunk_data, _ = self._download_chunk(chunk_start, chunk_end - 1)
         length = chunk_end - chunk_start
         if length > 0:
             self._write_to_stream(chunk_data, chunk_start)
@@ -186,8 +186,8 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         # No need to download the empty chunk from server if there's no data in the chunk to be downloaded.
         # Do optimize and create empty chunk locally if condition is met.
         if self._do_optimize(download_range[0], download_range[1]):
-            data_size = download_range[1] - download_range[0] + 1
-            chunk_data = b"\x00" * data_size
+            content_length = download_range[1] - download_range[0] + 1
+            chunk_data = b"\x00" * content_length
         else:
             range_header, range_validation = validate_and_format_range_headers(
                 download_range[0],
@@ -218,13 +218,14 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                     if retry_total <= 0:
                         raise HttpResponseError(error, error=error) from error
                     time.sleep(1)
+            content_length = response.content_length
 
             # This makes sure that if_match is set so that we can validate
             # that subsequent downloads are to an unmodified blob
             if self.request_options.get("modified_access_conditions"):
                 self.request_options["modified_access_conditions"].if_match = response.properties.etag
 
-        return chunk_data
+        return chunk_data, content_length
 
 
 class _ChunkIterator(object):
@@ -264,7 +265,7 @@ class _ChunkIterator(object):
 
         try:
             chunk = next(self._iter_chunks)
-            self._current_content += self._iter_downloader.yield_chunk(chunk)
+            self._current_content += self._iter_downloader.yield_chunk(chunk)[0]
         except StopIteration as e:
             self._complete = True
             if self._current_content:
@@ -334,14 +335,20 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._non_empty_ranges = None
         self._encryption_data = None
 
-        self._download_start = self._start_range or 0
-        self._offset = 0
+        # The content download offset, after any processing (decryption), in bytes
         self._download_offset = 0
+        # The raw download offset, before processing (decryption), in bytes
+        self._raw_download_offset = 0
+        # The offset the stream has been read to in bytes or chars depending on mode
+        self._read_offset = 0
+        # The offset into current_content that has been consumed in bytes of chars depending on mode
         self._current_content_offset = 0
+
         self._text_mode = False
         self._decoder = None
         # Whether the current content is the first chunk of download content or not
         self._first_chunk = True
+        self._download_start = self._start_range or 0
 
         # The cls is passed in via download_cls to avoid conflicting arg name with Generic.__new__
         # but needs to be changed to cls in the request options.
@@ -406,7 +413,9 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
     @property
     def _download_complete(self):
-        return self._download_offset >= self.size
+        if is_encryption_v2(self._encryption_data):
+            return self._download_offset >= self.size
+        return self._raw_download_offset >= self.size
 
     def _initial_request(self):
         range_header, range_validation = validate_and_format_range_headers(
@@ -481,13 +490,14 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                         self._initial_offset[1],
                         self._encryption_options
                     )
-                self._download_offset += len(self._current_content)
                 retry_active = False
             except (IncompleteReadError, HttpResponseError, DecodeError) as error:
                 retry_total -= 1
                 if retry_total <= 0:
                     raise HttpResponseError(error, error=error) from error
                 time.sleep(1)
+        self._download_offset += len(self._current_content)
+        self._raw_download_offset += response.content_length
 
         # get page ranges to optimize downloading sparse page blob
         if response.properties.blob_type == 'PageBlob':
@@ -584,7 +594,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         :rtype: T
         """
         # Empty blob or already read to the end
-        if size == 0 or self._offset >= self.size:
+        if size == 0 or self._read_offset >= self.size:
             return b'' if not self._encoding else ''
 
         if size > -1 and self._encoding:
@@ -621,9 +631,9 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         count += read
         self._current_content_offset += read
-        self._offset += read
+        self._read_offset += read
         if self._progress_hook:
-            self._progress_hook(self._offset, self.size)
+            self._progress_hook(self._read_offset, self.size)
 
         remaining = size - count
         if remaining > 0 and not self._download_complete:
@@ -637,7 +647,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 non_empty_ranges=self._non_empty_ranges,
                 total_size=self.size,
                 chunk_size=self._config.max_chunk_get_size,
-                current_progress=self._offset,
+                current_progress=self._read_offset,
                 start_range=start,
                 end_range=end,
                 stream=output_stream,
@@ -669,12 +679,13 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                         downloader.process_chunk(chunk)
 
                 self._download_offset = self.size
-                self._offset = self.size
+                self._read_offset = self.size
 
             else:
                 while (chunk := next(chunks_iter, None)) is not None and remaining > 0:
-                    chunk_data = downloader.yield_chunk(chunk)
+                    chunk_data, content_length = downloader.yield_chunk(chunk)
                     self._download_offset += len(chunk_data)
+                    self._raw_download_offset += content_length
                     final = self._download_offset >= self.size
                     self._current_content = self._decoder.decode(chunk_data, final) if self._text_mode else chunk_data
                     if remaining < len(self._current_content):
@@ -682,10 +693,10 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                     else:
                         read = output_stream.write(self._current_content)
                     self._current_content_offset = read
-                    self._offset += read
+                    self._read_offset += read
                     remaining -= read
                     if self._progress_hook:
-                        self._progress_hook(self._offset, self.size)
+                        self._progress_hook(self._read_offset, self.size)
 
         data = output_stream.getvalue()
         if not self._text_mode and self._encoding:
@@ -733,7 +744,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 raise ValueError(error_message) from exc
 
         # If some data has been streamed using `read`, only stream the remaining data
-        remaining_size = self.size - self._offset
+        remaining_size = self.size - self._read_offset
         # Already read to the end
         if remaining_size <= 0:
             return 0
@@ -744,15 +755,15 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         count = stream.write(self._current_content[start:start + current_remaining])
 
         self._current_content_offset += count
-        self._offset += count
+        self._read_offset += count
         if self._progress_hook:
-            self._progress_hook(self._offset, self.size)
+            self._progress_hook(self._read_offset, self.size)
 
         # If all the data was already downloaded/buffered
         if self._download_complete:
             return remaining_size
 
-        data_start = self._download_start + self._offset
+        data_start = self._download_start + self._read_offset
         data_end = self._download_start + self.size
 
         downloader = _ChunkDownloader(
@@ -760,7 +771,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             non_empty_ranges=self._non_empty_ranges,
             total_size=self.size,
             chunk_size=self._config.max_chunk_get_size,
-            current_progress=self._offset,
+            current_progress=self._read_offset,
             start_range=data_start,
             end_range=data_end,
             stream=stream,
@@ -784,7 +795,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 downloader.process_chunk(chunk)
 
         self._download_offset = self.size
-        self._offset = self.size
+        self._read_offset = self.size
 
         return remaining_size
 
