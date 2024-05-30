@@ -1239,6 +1239,8 @@ class SharePropertiesInternal(_serialization.Model):  # pylint: disable=too-many
     :vartype enabled_protocols: str
     :ivar root_squash: Known values are: "NoRootSquash", "RootSquash", and "AllSquash".
     :vartype root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
+    :ivar enable_snapshot_virtual_directory_access:
+    :vartype enable_snapshot_virtual_directory_access: bool
     """
 
     _validation = {
@@ -1266,6 +1268,7 @@ class SharePropertiesInternal(_serialization.Model):  # pylint: disable=too-many
         "lease_duration": {"key": "LeaseDuration", "type": "str"},
         "enabled_protocols": {"key": "EnabledProtocols", "type": "str"},
         "root_squash": {"key": "RootSquash", "type": "str"},
+        "enable_snapshot_virtual_directory_access": {"key": "EnableSnapshotVirtualDirectoryAccess", "type": "bool"},
     }
 
     def __init__(
@@ -1289,6 +1292,7 @@ class SharePropertiesInternal(_serialization.Model):  # pylint: disable=too-many
         lease_duration: Optional[Union[str, "_models.LeaseDurationType"]] = None,
         enabled_protocols: Optional[str] = None,
         root_squash: Optional[Union[str, "_models.ShareRootSquash"]] = None,
+        enable_snapshot_virtual_directory_access: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1331,6 +1335,8 @@ class SharePropertiesInternal(_serialization.Model):  # pylint: disable=too-many
         :paramtype enabled_protocols: str
         :keyword root_squash: Known values are: "NoRootSquash", "RootSquash", and "AllSquash".
         :paramtype root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
+        :keyword enable_snapshot_virtual_directory_access:
+        :paramtype enable_snapshot_virtual_directory_access: bool
         """
         super().__init__(**kwargs)
         self.last_modified = last_modified
@@ -1351,6 +1357,7 @@ class SharePropertiesInternal(_serialization.Model):  # pylint: disable=too-many
         self.lease_duration = lease_duration
         self.enabled_protocols = enabled_protocols
         self.root_squash = root_squash
+        self.enable_snapshot_virtual_directory_access = enable_snapshot_virtual_directory_access
 
 
 class ShareProtocolSettings(_serialization.Model):
