@@ -4,8 +4,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
 from typing import List, Optional, Union, TYPE_CHECKING
 from enum import Enum
+from datetime import datetime
 from typing_extensions import Literal
 from ._generated.models import (
     CallLocator,
@@ -1062,3 +1064,68 @@ class TranscriptionData:
         self.words = words
         self.participant = participant
         self.result_state = result_state
+
+class AudioMetadata:
+    """
+    Metadata for Audio Streaming.
+    :keyword  subscription_id: Audio subscription id.
+    :paramtype  subscription_id: str
+    :keyword encoding: Audio encoding.
+    :paramtype encoding: str
+    :keyword sample_rate: Audio sample rate.
+    :paramtype sample_rate: int
+    :keyword channels: Audio channels.
+    :paramtype channels: int
+    :keyword length: Audio length.
+    :paramtype length: int
+    """
+    subscription_id: str
+    """ Audio subscription id. """
+    encoding: str
+    """ Audio encoding. """
+    sample_rate: int
+    """ Audio sample rate. """
+    channels: int
+    """ Audio channels. """
+    length: int
+    """ Audio length. """
+
+    def __init__(
+            self,
+            *,
+            subscription_id: str,
+            encoding: str,
+            sample_rate: int,
+            channels: int,
+            length: int):
+        self.subscription_id = subscription_id
+        self.encoding = encoding
+        self.sample_rate = sample_rate
+        self.channels = channels
+        self.length = length
+
+class AudioData:
+    """
+    Data for Audio Streaming.
+    :keyword  data: Audio streaming data.
+    :paramtype  data: str
+    :keyword time_stamp: time stamp.
+    :paramtype time_stamp: datetime
+    :keyword is_silent: Is silent.
+    :paramtype is_silent: bool
+    """
+    data: str
+    """ Audio streaming data. """
+    time_stamp : datetime
+    """ Time stamp. """
+    is_silent : bool
+    """ Is silent. """
+    def __init__(
+           self,
+           *,
+           data: str,
+           time_stamp: str,
+           is_silent: bool):
+        self.data = data
+        self.time_stamp = time_stamp
+        self.is_silent = is_silent
