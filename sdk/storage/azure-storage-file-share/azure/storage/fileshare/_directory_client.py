@@ -340,7 +340,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         metadata = kwargs.pop('metadata', None)
         headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))  # type: ignore
+        headers.update(add_metadata_headers(metadata))
 
         file_attributes = kwargs.pop('file_attributes', 'none')
         file_creation_time = kwargs.pop('file_creation_time', 'now')
@@ -351,7 +351,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         file_permission = _get_file_permission(file_permission, file_permission_key, 'inherit')
 
         try:
-            return self._client.directory.create(  # type: ignore
+            return self._client.directory.create(
                 file_attributes=str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
@@ -592,7 +592,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         :rtype: dict[str, int]
         """
         try:
-            handle_id = handle.id  # type: ignore
+            handle_id = handle.id
         except AttributeError:
             handle_id = handle
         if handle_id == '*':
@@ -686,7 +686,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        return response  # type: ignore
+        return response
 
     @distributed_trace
     def set_directory_metadata(self, metadata: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
@@ -712,7 +712,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         try:
-            return self._client.directory.set_metadata(  # type: ignore
+            return self._client.directory.set_metadata(
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
@@ -796,7 +796,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
         file_change_time = kwargs.pop('file_change_time', None)
         try:
-            return self._client.directory.set_properties(  # type: ignore
+            return self._client.directory.set_properties(
                 file_attributes=_str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
@@ -841,7 +841,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         subdir = self.get_subdirectory_client(directory_name)
         subdir.create_directory(metadata=metadata, timeout=timeout, **kwargs)
-        return subdir  # type: ignore
+        return subdir
 
     @distributed_trace
     def delete_subdirectory(self, directory_name: str, **kwargs: Any) -> None:
