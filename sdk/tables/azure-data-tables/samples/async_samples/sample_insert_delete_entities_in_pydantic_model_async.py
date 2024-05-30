@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_insert_delete_entities.py
+FILE: sample_insert_delete_entities_in_pydantic_model_async.py
 
 DESCRIPTION:
-    These samples demonstrate the following: inserting entities into a table
+    These samples demonstrate the following: inserting entities in pydantic model into a table
     and deleting tables from a table.
 
 USAGE:
-    python sample_insert_delete_entities.py
+    python sample_insert_delete_entities_in_pydantic_model_async.py
 
     Set the environment variables with your own values before running the sample:
     1) TABLES_STORAGE_ENDPOINT_SUFFIX - the Table service account URL suffix
@@ -22,17 +22,18 @@ USAGE:
     3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
 import os
+import asyncio
 from datetime import datetime
 from uuid import uuid4, UUID
 from dotenv import find_dotenv, load_dotenv
-from dataclasses import dataclass, asdict
 from typing import Dict, Union
-from azure.data.tables import TableClient, TableEntityEncoderABC
+from pydantic import BaseModel
+from azure.data.tables import TableEntityEncoderABC
+from azure.data.tables.aio import TableClient
 from azure.core.exceptions import ResourceExistsError, HttpResponseError
 
 
-@dataclass
-class EntityType:
+class EntityType(BaseModel):
     PartitionKey: str
     RowKey: str
     text: str
@@ -46,7 +47,7 @@ class EntityType:
 
 class MyEncoder(TableEntityEncoderABC[EntityType]):
     def encode_entity(self, entity: EntityType) -> Dict[str, Union[str, int, float, bool]]:
-        return asdict(entity)
+        return entity.model_dump()
 
 
 class InsertDeleteEntity(object):
@@ -57,7 +58,7 @@ class InsertDeleteEntity(object):
         self.account_name = os.environ["TABLES_STORAGE_ACCOUNT_NAME"]
         self.endpoint = f"{self.account_name}.table.{self.endpoint_suffix}"
         self.connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
-        self.table_name = "SampleInsertDelete"
+        self.table_name = "SampleInsertDeletePydanticAsync"
 
         self.entity = EntityType(
             PartitionKey="color",
@@ -71,31 +72,38 @@ class InsertDeleteEntity(object):
             barcode=b"135aefg8oj0ld58",  # cspell:disable-line
         )
 
-    def create_delete_entity(self):
-        with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
+    async def create_delete_entity(self):
+        table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
+        async with table_client:
             # Create a table in case it does not already exist
             try:
-                table_client.create_table()
+                await table_client.create_table()
             except HttpResponseError:
                 print("Table already exists")
 
             # [START create_entity]
             try:
-                resp = table_client.create_entity(entity=self.entity, encoder=MyEncoder())
+                resp = await table_client.create_entity(entity=self.entity, encoder=MyEncoder())
                 print(resp)
             except ResourceExistsError:
                 print("Entity already exists")
             # [END create_entity]
 
             # [START delete_entity]
-            table_client.delete_entity(partition_key=self.entity.PartitionKey, row_key=self.entity.RowKey)
+            await table_client.delete_entity(
+                partition_key=self.entity.PartitionKey, row_key=self.entity.RowKey, encoder=MyEncoder()
+            )
             # [END delete_entity]
             print("Successfully deleted!")
 
-            table_client.delete_table()
+            await table_client.delete_table()
             print("Cleaned up")
 
 
-if __name__ == "__main__":
+async def main():
     ide = InsertDeleteEntity()
-    ide.create_delete_entity()
+    await ide.create_delete_entity()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

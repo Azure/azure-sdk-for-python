@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_insert_delete_entities.py
+FILE: sample_insert_delete_entities_in_pydantic_model.py.
 
 DESCRIPTION:
-    These samples demonstrate the following: inserting entities into a table
+    These samples demonstrate the following: inserting entities in pydantic model into a table
     and deleting tables from a table.
 
 USAGE:
-    python sample_insert_delete_entities.py
+    python sample_insert_delete_entities_in_pydantic_model.py.
 
     Set the environment variables with your own values before running the sample:
     1) TABLES_STORAGE_ENDPOINT_SUFFIX - the Table service account URL suffix
@@ -25,14 +25,13 @@ import os
 from datetime import datetime
 from uuid import uuid4, UUID
 from dotenv import find_dotenv, load_dotenv
-from dataclasses import dataclass, asdict
 from typing import Dict, Union
+from pydantic import BaseModel
 from azure.data.tables import TableClient, TableEntityEncoderABC
 from azure.core.exceptions import ResourceExistsError, HttpResponseError
 
 
-@dataclass
-class EntityType:
+class EntityType(BaseModel):
     PartitionKey: str
     RowKey: str
     text: str
@@ -46,7 +45,7 @@ class EntityType:
 
 class MyEncoder(TableEntityEncoderABC[EntityType]):
     def encode_entity(self, entity: EntityType) -> Dict[str, Union[str, int, float, bool]]:
-        return asdict(entity)
+        return entity.model_dump()
 
 
 class InsertDeleteEntity(object):
@@ -55,10 +54,8 @@ class InsertDeleteEntity(object):
         self.access_key = os.environ["TABLES_PRIMARY_STORAGE_ACCOUNT_KEY"]
         self.endpoint_suffix = os.environ["TABLES_STORAGE_ENDPOINT_SUFFIX"]
         self.account_name = os.environ["TABLES_STORAGE_ACCOUNT_NAME"]
-        self.endpoint = f"{self.account_name}.table.{self.endpoint_suffix}"
         self.connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
-        self.table_name = "SampleInsertDelete"
-
+        self.table_name = "SampleInsertDeletePydantic"
         self.entity = EntityType(
             PartitionKey="color",
             RowKey="brand",
@@ -97,5 +94,5 @@ class InsertDeleteEntity(object):
 
 
 if __name__ == "__main__":
-    ide = InsertDeleteEntity()
-    ide.create_delete_entity()
+    sample = InsertDeleteEntity()
+    sample.create_delete_entity()

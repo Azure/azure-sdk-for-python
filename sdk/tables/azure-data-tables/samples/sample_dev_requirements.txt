@@ -1,1 +1,3 @@
 azure-storage-blob
+pydantic
+marshmallow

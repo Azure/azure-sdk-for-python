@@ -609,7 +609,8 @@
         "mytableasync",
         "mytable",
         "edmtypes",
-        "specifed"
+        "specifed",
+        "pydantic"
       ]
     },
     {
