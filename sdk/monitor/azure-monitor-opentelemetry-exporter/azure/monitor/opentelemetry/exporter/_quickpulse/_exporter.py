@@ -97,7 +97,11 @@ class _QuickpulseExporter(MetricExporter):
             # Explicitly disabling to avoid tracing live metrics calls
             # DistributedTracingPolicy(),
         ]
-        self._client = QuickpulseClient(credential=None, endpoint=self._live_endpoint, policies=policies)  # type: ignore
+        self._client = QuickpulseClient(
+            credential=None,
+            endpoint=self._live_endpoint,
+            policies=policies
+        )  # type: ignore
 
         MetricExporter.__init__(
             self,
