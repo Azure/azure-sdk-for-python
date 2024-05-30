@@ -11,7 +11,6 @@ from azure.core.credentials import TokenCredential, AzureKeyCredential
 
 from ._client import TextTranslationClient as ServiceClientGenerated
 
-DEFAULT_TOKEN_SCOPE = "https://api.microsofttranslator.com/"
 DEFAULT_ENTRA_ID_SCOPE = "https://cognitiveservices.azure.com"
 DEFAULT_SCOPE = "/.default"
 
@@ -79,6 +78,15 @@ def get_translation_endpoint(endpoint, api_version):
 
     return translator_endpoint
 
+def is_cognitive_services_scope(audience: str):
+    if not audience:
+        return False
+
+    if "microsofttranslator" in audience:
+        return True
+
+    return False
+
 
 def set_authentication_policy(credential, kwargs):
     if isinstance(credential, AzureKeyCredential):
@@ -105,8 +113,12 @@ def set_authentication_policy(credential, kwargs):
                         """Both 'resource_id' and 'region' must be provided with a TokenCredential for
                          regional resource authentication."""
                     )
+                scope: str = kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE)
+                if not is_cognitive_services_scope(scope):
+                    scope = scope.rstrip("/") + DEFAULT_SCOPE
+
                 kwargs["authentication_policy"] = BearerTokenCredentialPolicy(
-                    credential, *[kwargs.pop("audience", DEFAULT_TOKEN_SCOPE)], kwargs
+                    credential, scope
                 )
 
 
