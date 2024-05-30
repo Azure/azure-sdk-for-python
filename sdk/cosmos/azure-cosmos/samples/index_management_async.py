@@ -706,7 +706,7 @@ async def use_vector_embedding_policy(db):
         properties = await created_container.read()
         print(created_container)
 
-        print("\n" + "-" * 25 + "\n9. Container created with vector embedding policy and vector indexes")
+        print("\n" + "-" * 25 + "\n10. Container created with vector embedding policy and vector indexes")
         print_dictionary_items(properties["indexingPolicy"])
         print_dictionary_items(properties["vectorEmbeddingPolicy"])
 
@@ -771,7 +771,10 @@ async def run_sample():
             # 8. Perform Multi Orderby queries using composite indexes
             await perform_multi_orderby_query(created_db)
 
-            # 9. Create and use a vector embedding policy
+            # 9. Create and use a geospatial indexing policy
+            await use_geospatial_indexing_policy(created_db)
+
+            # 10. Create and use a vector embedding policy
             await use_vector_embedding_policy(created_db)
 
     except exceptions.AzureError as e:
