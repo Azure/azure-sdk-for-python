@@ -92,8 +92,6 @@ def get_parameter_default(param: inspect.Parameter) -> None:
             default_value = default_value.__name__
         elif inspect.isclass(default_value):
             default_value = default_value.__name__
-        # elif hasattr(default_value, "name"):
-        #     default_value = default_value.name
         elif hasattr(default_value, "__class__") and default_value.__class__ == object:
             default_value = default_value.__class__.__name__
 
