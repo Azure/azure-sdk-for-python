@@ -11,7 +11,6 @@ from datetime import datetime
 from math import isnan
 
 from ._entity import EdmType, TableEntity
-from ._deserialize import _convert_to_entity
 from ._common_conversion import _encode_base64, _to_utc_datetime
 
 _ODATA_SUFFIX = "@odata.type"
@@ -133,9 +132,6 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
         :rtype: dict
         """
 
-    @abc.abstractmethod
-    def decode_entity(self, entity: Dict[str, Union[str, int, float, bool]]) -> T: ...
-
 
 class TableEntityEncoder(TableEntityEncoderABC[Union[TableEntity, Mapping[str, Any]]]):
     def encode_entity(self, entity: Union[TableEntity, Mapping[str, Any]]) -> Dict[str, Union[str, int, float, bool]]:
@@ -180,6 +176,3 @@ class TableEntityEncoder(TableEntityEncoderABC[Union[TableEntity, Mapping[str, A
                 pass
             encoded[key] = value
         return encoded
-
-    def decode_entity(self, entity: Dict[str, Union[str, int, float, bool]]) -> TableEntity:
-        return _convert_to_entity(entity)
