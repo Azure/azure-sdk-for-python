@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 from azure.search.documents import SearchClient
-from azure.identity import DefaultAzureCredential
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
@@ -16,7 +15,7 @@ class TestSearchClient(AzureRecordedTestCase):
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
     def test_search_client(self, endpoint, api_key, index_name):
-        client = SearchClient(endpoint, index_name, DefaultAzureCredential(exclude_managed_identity_credential=True), retry_backoff_factor=60)
+        client = SearchClient(endpoint, index_name, self.get_credential(SearchClient), retry_backoff_factor=60)
         self._test_get_search_simple(client)
         self._test_get_search_simple_with_top(client)
         self._test_get_search_filter(client)

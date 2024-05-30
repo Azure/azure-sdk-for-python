@@ -7,7 +7,6 @@ import time
 
 import pytest
 from azure.core import MatchConditions
-from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
 from azure.search.documents.indexes.models import (
@@ -28,8 +27,8 @@ class TestSearchIndexerClientTest(AzureRecordedTestCase):
     def test_search_indexers(self, endpoint, api_key, **kwargs):
         storage_cs = kwargs.get("search_storage_connection_string")
         container_name = kwargs.get("search_storage_container_name")
-        client = SearchIndexerClient(endpoint, DefaultAzureCredential(exclude_managed_identity_credential=True), retry_backoff_factor=60)
-        index_client = SearchIndexClient(endpoint, DefaultAzureCredential(exclude_managed_identity_credential=True), retry_backoff_factor=60)
+        client = SearchIndexerClient(endpoint, self.get_credential(SearchIndexerClient), retry_backoff_factor=60)
+        index_client = SearchIndexClient(endpoint, self.get_credential(SearchIndexClient), retry_backoff_factor=60)
         self._test_create_indexer(client, index_client, storage_cs, container_name)
         self._test_delete_indexer(client, index_client, storage_cs, container_name)
         self._test_get_indexer(client, index_client, storage_cs, container_name)
