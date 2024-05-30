@@ -141,7 +141,7 @@ class AzureRecordedTestCase(object):
                         "For user-based auth, set AZURE_TEST_USE_PWSH_AUTH or AZURE_TEST_USE_CLI_AUTH to 'true'."
                     )
                     from azure.identity import ClientSecretCredential
-            
+
                     if is_async:
                         from azure.identity.aio import ClientSecretCredential
                     return ClientSecretCredential(tenant_id=tenant_id, client_id=client_id, client_secret=secret)
@@ -150,7 +150,7 @@ class AzureRecordedTestCase(object):
                     from msrestazure.azure_active_directory import (
                         ServicePrincipalCredentials,
                     )
-            
+
                     return ServicePrincipalCredentials(tenant=tenant_id, client_id=client_id, secret=secret)
 
             # Use DefaultAzureCredential for live tests
