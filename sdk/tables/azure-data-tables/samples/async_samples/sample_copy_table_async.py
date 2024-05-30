@@ -22,6 +22,7 @@ USAGE:
     4) STORAGE_ACCOUNT_NAME - the blob storage account name
     5) STORAGE_ACCOUNT_KEY - the blob storage account key
 """
+import sys
 import asyncio
 import json
 import os
@@ -30,13 +31,12 @@ from azure.data.tables.aio import TableServiceClient
 from datetime import datetime
 from dotenv import find_dotenv, load_dotenv
 from uuid import uuid4, UUID
-from dataclasses import dataclass, asdict
-from typing import Optional
+from typing_extensions import TypedDict
 
 
-@dataclass
-class EntityType:
+class EntityType(TypedDict, total=False):
     PartitionKey: str
+    RowKey: str
     text: str
     color: str
     price: float
@@ -44,12 +44,11 @@ class EntityType:
     product_id: UUID
     inventory_count: int
     barcode: bytes
-    RowKey: Optional[str] = None
 
 
-@dataclass
-class EntityTypeJSONSerializable:
+class EntityTypeJSONSerializable(TypedDict, total=False):
     PartitionKey: str
+    RowKey: str
     text: str
     color: str
     price: float
@@ -57,7 +56,6 @@ class EntityTypeJSONSerializable:
     product_id: str
     inventory_count: int
     barcode: str
-    RowKey: Optional[str] = None
 
 
 class CopyTableSamples(object):
@@ -73,6 +71,16 @@ class CopyTableSamples(object):
         self.blob_account_key = os.getenv("STORAGE_ACCOUNT_KEY")
         self.blob_connection_string = f"DefDefaultEndpointsProtocol=https;AccountName={self.blob_account_name};AccountKey={self.blob_account_key};EndpointSuffix=core.windows.net"
         self.blob_service_client = BlobServiceClient.from_connection_string(self.blob_connection_string)
+        self.entity: EntityType = {
+            "PartitionKey": "color",
+            "text": "Marker",
+            "color": "Purple",
+            "price": 4.99,
+            "last_updated": datetime.today(),
+            "product_id": uuid4(),
+            "inventory_count": 42,
+            "barcode": b"135aefg8oj0ld58",  # cspell:disable-line
+        }
 
     async def copy_table_from_table_to_blob(self):
         print("Start to copy table from Tables table to Storage blob.")
@@ -82,14 +90,13 @@ class CopyTableSamples(object):
             self.container_client = await self.blob_service_client.create_container(self.copy_to_blob_table_name)
             # Upload in-memory table data to a blob that stays in a container
             async for entity in self.table_client.list_entities():
-                entity_serializable = EntityTypeJSONSerializable(**entity)
                 # Convert type datetime, bytes, UUID values to string as they're not JSON serializable
-                entity_serializable.last_updated = entity["last_updated"].isoformat()
-                entity_serializable.product_id = entity["product_id"].hex
-                entity_serializable.barcode = entity["barcode"].decode("utf-8")
-                blob_name = f"{entity_serializable.PartitionKey}{entity_serializable.RowKey}"
+                entity["last_updated"] = entity["last_updated"].isoformat()
+                entity["product_id"] = entity["product_id"].hex
+                entity["barcode"] = entity["barcode"].decode("utf-8")
+                blob_name = f"{entity['PartitionKey']}{entity['RowKey']}"
                 blob_client = self.blob_service_client.get_blob_client(self.copy_to_blob_table_name, blob_name)
-                await blob_client.upload_blob(json.dumps(asdict(entity_serializable)))
+                await blob_client.upload_blob(json.dumps(entity))
             print("Done!")
         finally:
             await self._tear_down()
@@ -127,32 +134,28 @@ class CopyTableSamples(object):
         )
         self.table_client = table_service_client.get_table_client(self.copy_to_blob_table_name)
         await self.table_client.create_table()
-        self.entity = EntityType(
-            PartitionKey = "color",
-            text = "Marker",
-            color = "Purple",
-            price = 4.99,
-            last_updated = datetime.today(),
-            product_id = uuid4(),
-            inventory_count = 42,
-            barcode = b"135aefg8oj0ld58",  # cspell:disable-line
-        )
         for i in range(10):
-            self.entity.RowKey = str(i)
-            await self.table_client.create_entity(asdict(self.entity))
+            self.entity["RowKey"] = str(i)
+            await self.table_client.create_entity(self.entity)
 
     async def _setup_blob(self):
         self.container_client = await self.blob_service_client.create_container(self.copy_to_table_table_name)
-        entity_serializable = EntityTypeJSONSerializable(**asdict(self.entity))
         # Convert type datetime, bytes, UUID values to string as they're not JSON serializable
-        entity_serializable.last_updated = self.entity.last_updated.isoformat()
-        entity_serializable.product_id = self.entity.product_id.hex
-        entity_serializable.barcode = self.entity.barcode.decode("utf-8")
+        entity_serializable: EntityTypeJSONSerializable = {
+            "PartitionKey": self.entity["PartitionKey"],
+            "text": self.entity["text"],
+            "color": self.entity["color"],
+            "price": self.entity["price"],
+            "last_updated": self.entity["last_updated"].isoformat(),
+            "product_id": self.entity["product_id"].hex,
+            "inventory_count": 42,
+            "barcode": self.entity["barcode"].decode("utf-8"),
+        }
         for i in range(10):
-            entity_serializable.RowKey = str(i)
-            blob_name = f"{entity_serializable.PartitionKey}{entity_serializable.RowKey}"
+            entity_serializable["RowKey"] = str(i)
+            blob_name = f"{entity_serializable['PartitionKey']}{entity_serializable['RowKey']}"
             blob_client = self.blob_service_client.get_blob_client(self.copy_to_table_table_name, blob_name)
-            await blob_client.upload_blob(json.dumps(asdict(entity_serializable)))
+            await blob_client.upload_blob(json.dumps(entity_serializable))
 
     async def _tear_down(self):
         await self.table_client.delete_table()
