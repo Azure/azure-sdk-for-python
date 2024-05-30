@@ -216,6 +216,7 @@ def create_class_report(cls: Type) -> Dict:
     for method in methods:
         async_func = False
         try:
+            # Some class level properties get picked up as methods. Try to get the method and skip if it fails.
             m = getattr(cls, method)
         except AttributeError:
             _LOGGER.info(f"Skipping method check for {method} on {cls}.")
