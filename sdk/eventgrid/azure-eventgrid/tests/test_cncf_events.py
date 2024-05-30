@@ -9,7 +9,7 @@ from eventgrid_preparer import (
 )
 
 
-class TestEventGridPublisherClientcloud_event(AzureRecordedTestCase):
+class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
     def create_eg_publisher_client(self, endpoint):
         credential = self.get_credential(EventGridPublisherClient)
         client = self.create_client_from_credential(EventGridPublisherClient, credential=credential, endpoint=endpoint)
