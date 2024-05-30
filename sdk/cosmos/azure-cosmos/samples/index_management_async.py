@@ -628,6 +628,54 @@ async def perform_multi_orderby_query(db):
         print("Entity doesn't exist")
 
 
+async def use_geospatial_indexing_policy(db):
+    try:
+        await delete_container_if_exists(db, CONTAINER_ID)
+
+        # Create a container with vector embedding policy and vector indexes
+        indexing_policy = {
+            'includedPaths': [
+                {'path': '/"Location"/?',
+                    'indexes': [
+                        {
+                            'kind': 'Spatial',
+                            'dataType': 'Point'
+                        }]
+                 },
+                {
+                    'path': '/'
+                }
+            ]
+        }
+
+        created_container = await db.create_container(
+            id=CONTAINER_ID,
+            partition_key=PARTITION_KEY,
+            indexing_policy=indexing_policy
+        )
+        properties = await created_container.read()
+        print(created_container)
+
+        print("\n" + "-" * 25 + "\n9. Container created with geospatial indexes")
+        print_dictionary_items(properties["indexingPolicy"])
+
+        # Create some items
+        doc9 = await created_container.create_item(body={"id": "loc1", 'Location': {'type': 'Point', 'coordinates': [20.0, 20.0]}})
+        doc9 = await created_container.create_item(body={"id": "loc2", 'Location': {'type': 'Point', 'coordinates': [100.0, 100.0]}})
+
+        # Run ST_DISTANCE queries using the geospatial index
+        query = "SELECT * FROM root WHERE (ST_DISTANCE(root.Location, {type: 'Point', coordinates: [20.1, 20]}) < 20000)"
+        await query_documents_with_custom_query(created_container, query)
+
+        # Cleanup
+        await db.delete_container(created_container)
+        print("\n")
+    except exceptions.CosmosResourceExistsError:
+        print("Entity already exists")
+    except exceptions.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
+
+
 async def use_vector_embedding_policy(db):
     try:
         await delete_container_if_exists(db, CONTAINER_ID)
