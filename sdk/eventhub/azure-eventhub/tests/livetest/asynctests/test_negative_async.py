@@ -30,14 +30,13 @@ from azure.eventhub.aio._client_base_async import EventHubSASTokenCredential
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_with_invalid_hostname_async(
-    invalid_hostname, auth_credential_receivers_async, uamqp_transport
+    invalid_hostname, uamqp_transport
 ):
     if sys.platform.startswith("darwin"):
         pytest.skip(
             "Skipping on OSX - it keeps reporting 'Unable to set external certificates' "
             "and blocking other tests"
         )
-    _, receivers = auth_credential_receivers_async
     client = EventHubProducerClient.from_connection_string(
         invalid_hostname, uamqp_transport=uamqp_transport
     )
@@ -145,10 +144,9 @@ async def test_send_with_invalid_policy_async(invalid_policy, uamqp_transport):
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_non_existing_entity_sender_async(auth_credentials_async, uamqp_transport):
-    fully_qualified_namespace, eventhub_name, credential = auth_credentials_async
+    fully_qualified_namespace, _, credential = auth_credentials_async
     client = EventHubProducerClient(
         fully_qualified_namespace=fully_qualified_namespace,
-        eventhub_name=eventhub_name,
         credential=credential(),
         eventhub_name="nemo",
         uamqp_transport=uamqp_transport,
@@ -232,7 +230,7 @@ async def test_create_batch_with_invalid_hostname_async(
             "Skipping on OSX - it keeps reporting 'Unable to set external certificates' "
             "and blocking other tests"
         )
-    client = EventHubProducerClient(
+    client = EventHubProducerClient.from_connection_string(
         invalid_hostname, uamqp_transport=uamqp_transport
     )
     async with client:
@@ -323,7 +321,7 @@ async def test_client_send_timeout(auth_credential_receivers_async, uamqp_transp
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_client_invalid_credential_async(live_eventhub, get_credential, uamqp_transport):
+async def test_client_invalid_credential_async(live_eventhub, get_credential_async, uamqp_transport):
 
     async def on_event(partition_context, event):
         pass
@@ -331,7 +329,7 @@ async def test_client_invalid_credential_async(live_eventhub, get_credential, ua
     async def on_error(partition_context, error):
         on_error.err = error
 
-    azure_credential = get_credential()
+    azure_credential = get_credential_async()
     # Skipping on OSX - it's raising a ConnectionLostError and blocking other tests
     if not sys.platform.startswith("darwin"):
         producer_client = EventHubProducerClient(
