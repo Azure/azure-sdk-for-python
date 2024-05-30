@@ -23,13 +23,7 @@ from opentelemetry.sdk.metrics.export import (
 )
 
 from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline.policies import (
-    ContentDecodePolicy,
-    DistributedTracingPolicy,
-    HttpLoggingPolicy,
-    RedirectPolicy,
-    RequestIdPolicy,
-)
+from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _LONG_PING_INTERVAL_SECONDS,
     _POST_CANCEL_INTERVAL_SECONDS,
@@ -90,7 +84,7 @@ class _QuickpulseExporter(MetricExporter):
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         # TODO: Support AADaudience (scope)/credentials
         # Pass `None` for now until swagger definition is fixed
-        config = QuickpulseClientConfiguration(credential=None)
+        config = QuickpulseClientConfiguration(credential=None)  # type: ignore
         policies = [
             # TODO: Support redirect
             config.redirect_policy,
