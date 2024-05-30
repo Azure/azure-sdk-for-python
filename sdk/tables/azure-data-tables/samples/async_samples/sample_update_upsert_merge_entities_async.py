@@ -82,7 +82,7 @@ class TableEntitySamples(object):
                 # [START get_entity]
                 # Get Entity by partition and row key
                 got_entity = await table.get_entity(
-                    partition_key=my_entity["PartitionKey"], row_key=my_entity["RowKey"]
+                    partition_key=str(my_entity["PartitionKey"]), row_key=str(my_entity["RowKey"])
                 )
                 print(f"Received entity: {got_entity}")
                 # [END get_entity]
