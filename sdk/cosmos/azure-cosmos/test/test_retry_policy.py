@@ -241,12 +241,6 @@ class TestRetryPolicy(unittest.TestCase):
 
             self.assertDictEqual(created_document, {})
 
-            # 3 retries for readCollection. No retry for createDocument.
-            # Counter ends up in three additional calls while doing create_item,
-            # which are reads to the database and container before creating the item.
-            # As such, even though the retry_utility does not retry for the create, the counter is affected by these.
-            # TODO: Figure out a way to make the counter only take in the POST call it is looking for.
-            mf.counter = mf.counter - 3
             self.assertEqual(mf.counter, 1)
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function

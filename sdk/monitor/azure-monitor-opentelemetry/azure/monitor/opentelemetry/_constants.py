@@ -11,6 +11,7 @@ from azure.monitor.opentelemetry.exporter._constants import (  # pylint: disable
 # --------------------Configuration------------------------------------------
 
 CONNECTION_STRING_ARG = "connection_string"
+ENABLE_LIVE_METRICS_ARG = "enable_live_metrics"
 DISABLE_AZURE_CORE_TRACING_ARG = "disable_azure_core_tracing"
 DISABLE_LOGGING_ARG = "disable_logging"
 DISABLE_METRICS_ARG = "disable_metrics"

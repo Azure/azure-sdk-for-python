@@ -78,10 +78,11 @@ from azure.ai.ml.operations import (
     BatchEndpointOperations,
     ComponentOperations,
     ComputeOperations,
-    ConnectionsOperations,
+    WorkspaceConnectionsOperations,
     DataOperations,
     DatastoreOperations,
     EnvironmentOperations,
+    EvaluatorOperations,
     IndexOperations,
     JobOperations,
     MarketplaceSubscriptionOperations,
@@ -492,7 +493,7 @@ class MLClient:
         )
         self._operation_container.add(AzureMLResourceType.REGISTRY, self._registries)  # type: ignore[arg-type]
 
-        self._connections = ConnectionsOperations(
+        self._connections = WorkspaceConnectionsOperations(
             self._operation_scope,
             self._operation_config,
             self._service_client_04_2024_preview,
@@ -537,6 +538,25 @@ class MLClient:
             registry_reference=registry_reference,
             **app_insights_handler_kwargs,  # type: ignore[arg-type]
         )
+        # Evaluators
+        self._evaluators = EvaluatorOperations(
+            self._operation_scope,
+            self._operation_config,
+            (
+                self._service_client_10_2021_dataplanepreview
+                if registry_name or registry_reference
+                else self._service_client_08_2023_preview
+            ),
+            self._datastores,
+            self._operation_container,
+            requests_pipeline=self._requests_pipeline,
+            control_plane_client=self._service_client_08_2023_preview,
+            workspace_rg=self._ws_rg,
+            workspace_sub=self._ws_sub,
+            registry_reference=registry_reference,
+            **app_insights_handler_kwargs,  # type: ignore[arg-type]
+        )
+
         self._operation_container.add(AzureMLResourceType.MODEL, self._models)
         self._code = CodeOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
@@ -913,11 +933,12 @@ class MLClient:
         return self._featurestoreentities
 
     @property
-    def connections(self) -> ConnectionsOperations:
+    @experimental
+    def connections(self) -> WorkspaceConnectionsOperations:
         """A collection of connection related operations.
 
         :return: Connections operations
-        :rtype: ~azure.ai.ml.operations.ConnectionsOperations
+        :rtype: ~azure.ai.ml.operations.WorkspaceConnectionsOperations
         """
         return self._connections
 
@@ -947,6 +968,16 @@ class MLClient:
         :rtype: ~azure.ai.ml.operations.ModelOperations
         """
         return self._models
+
+    @property
+    @experimental
+    def evaluators(self) -> EvaluatorOperations:
+        """A collection of model related operations.
+
+        :return: Model operations
+        :rtype: ~azure.ai.ml.operations.ModelOperations
+        """
+        return self._evaluators
 
     @property
     def online_endpoints(self) -> OnlineEndpointOperations:
@@ -1050,6 +1081,7 @@ class MLClient:
         return self._marketplace_subscriptions
 
     @property
+    @experimental
     def indexes(self) -> IndexOperations:
         """A collection of index related operations.
 
@@ -1279,7 +1311,7 @@ def _(entity: Datastore, operations):
 @_create_or_update.register(Index)
 def _(entity: Index, operations, *args, **kwargs):
     module_logger.debug("Creating or updating indexes")
-    return operations[AzureMLResourceType.INDEX].begin_create_or_update(entity, **kwargs)
+    return operations[AzureMLResourceType.INDEX].create_or_update(entity, **kwargs)
 
 
 @singledispatch

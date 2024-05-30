@@ -25,9 +25,6 @@ try:
         @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
         @pytest.mark.asyncio
         async def test_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
-            pytest.skip(
-                "This test is failing in ci pipeline, fixing in https://github.com/Azure/azure-sdk-for-python/pull/35126"
-            )
             mock_callback = AsyncMock()
             async with await self.create_aad_client(
                 appconfiguration_endpoint_string,

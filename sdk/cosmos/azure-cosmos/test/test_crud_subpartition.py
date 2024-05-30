@@ -75,7 +75,7 @@ class TestSubpartitionCrud(unittest.TestCase):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
 
-    def test_collection_crud(self):
+    def test_collection_crud_subpartition(self):
         created_db = self.databaseForTest
         collections = list(created_db.list_containers())
         # create a collection
@@ -118,12 +118,13 @@ class TestSubpartitionCrud(unittest.TestCase):
                                                                                  ["/id1", "/id2", "/id3"],
                                                                                  kind='MultiHash'))
         self.assertEqual(created_collection.id, container_proxy.id)
+        container_properties = container_proxy._get_properties()
         self.assertDictEqual(PartitionKey(path=["/id1", "/id2", "/id3"], kind='MultiHash'),
-                             container_proxy._properties['partitionKey'])
+                             container_properties['partitionKey'])
 
         created_db.delete_container(created_collection.id)
 
-    def test_partitioned_collection(self):
+    def test_partitioned_collection_subpartition(self):
         created_db = self.databaseForTest
 
         collection_definition = {'id': 'test_partitioned_collection_MH ' + str(uuid.uuid4()),
@@ -189,7 +190,7 @@ class TestSubpartitionCrud(unittest.TestCase):
             self.assertTrue("Too many partition key paths" in error.message)
         created_db.delete_container(created_collection.id)
 
-    def test_partitioned_collection_partition_key_extraction(self):
+    def test_partitioned_collection_partition_key_extraction_subpartition(self):
         created_db = self.databaseForTest
 
         collection_id = 'test_partitioned_collection_partition_key_extraction_MH ' + str(uuid.uuid4())
@@ -211,7 +212,7 @@ class TestSubpartitionCrud(unittest.TestCase):
         # create document without partition key being specified
         created_document = created_collection.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEqual(self.last_headers[1], '["WA","Redmond"]')
+        self.assertEqual(self.last_headers[0], '["WA","Redmond"]')
         del self.last_headers[:]
 
         self.assertEqual(created_document.get('id'), document_definition.get('id'))
@@ -241,7 +242,7 @@ class TestSubpartitionCrud(unittest.TestCase):
         created_db.delete_container(created_collection.id)
         created_db.delete_container(created_collection2.id)
 
-    def test_partitioned_collection_partition_key_extraction_special_chars(self):
+    def test_partitioned_collection_partition_key_extraction_special_chars_subpartition(self):
         created_db = self.databaseForTest
 
         collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars_MH_1 ' + str(uuid.uuid4())
@@ -295,7 +296,7 @@ class TestSubpartitionCrud(unittest.TestCase):
         created_db.delete_container(created_collection1.id)
         created_db.delete_container(created_collection2.id)
 
-    def test_partitioned_collection_document_crud_and_query(self):
+    def test_partitioned_collection_document_crud_and_query_subpartition(self):
         created_db = self.databaseForTest
 
         collection_id = 'test_partitioned_collection_partition_document_crud_and_query_MH ' + str(uuid.uuid4())
@@ -432,7 +433,7 @@ class TestSubpartitionCrud(unittest.TestCase):
 
         created_db.delete_container(collection_id)
 
-    def test_partitioned_collection_prefix_partition_query(self):
+    def test_partitioned_collection_prefix_partition_query_subpartition(self):
         created_db = self.databaseForTest
 
         collection_id = 'test_partitioned_collection_partition_key_prefix_query_MH ' + str(uuid.uuid4())
@@ -554,7 +555,7 @@ class TestSubpartitionCrud(unittest.TestCase):
             self.assertTrue("Cross partition query is required but disabled"
                             in error.message)
 
-    def test_partition_key_range_overlap(self):
+    def test_partition_key_range_overlap_subpartition(self):
         Id = 'id'
         MinInclusive = 'minInclusive'
         MaxExclusive = 'maxExclusive'
@@ -652,7 +653,7 @@ class TestSubpartitionCrud(unittest.TestCase):
         self.assertLess(EPK_range_4.max, olr_4_c.max)
 
     # Commenting out delete items by pk until test pipelines support it
-    # def test_delete_all_items_by_partition_key(self):
+    # def test_delete_all_items_by_partition_key_subpartition(self):
     #     # create database
     #     created_db = self.databaseForTest
     #

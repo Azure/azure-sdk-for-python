@@ -33,7 +33,7 @@
 
 # PRLabel: %Azure.Core
 /sdk/core/                                                           @lmazuel @annatisch @johanste
-/sdk/core/azure-core/                                                @lmazuel @annatisch @johanste @xiangyan99 @iscai-msft @kashifkhan
+/sdk/core/azure-core/                                                @lmazuel @annatisch @johanste @xiangyan99 @iscai-msft @kashifkhan @pvaneck
 /sdk/core/azure-mgmt-core/                                           @msyyc
 /sdk/core/azure-core-tracing-opencensus/                             @pvaneck
 /sdk/core/azure-core-tracing-opentelemetry/                          @pvaneck
@@ -116,9 +116,6 @@
 
 # PRLabel: %Communication - Identity
 /sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @AikoBB @maximrytych-ms @mjafferi-msft
-
-# PRLabel: %Communication - NetworkTraversal
-/sdk/communication/azure-communication-networktraversal/             @ajpeacock0 @nathpete-msft
 
 # PRLabel: %Communication - Common
 /sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk @AikoBB @maximrytych-ms @mjafferi-msft
@@ -356,6 +353,8 @@
 
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Service Bus
+# ServiceOwners:  @EldertGrootenboer
+
 # PRLabel: %Service Bus
 /sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence
 
@@ -665,9 +664,6 @@
 # ServiceLabel: %Digital Twins %Service Attention
 #/<NotInRepo>/          @sourabhguha @inesk-vt
 
-# ServiceLabel: %Event Grid %Service Attention
-#/<NotInRepo>/          @jfggdl
-
 # ServiceLabel: %Event Hubs %Service Attention
 #/<NotInRepo>/          @kasun04
 
@@ -821,9 +817,6 @@
 # ServiceLabel: %Redis Cache %Service Attention
 #/<NotInRepo>/          @yegu-ms
 
-# ServiceLabel: %Relay %Service Attention
-#/<NotInRepo>/          @jfggdl
-
 # ServiceLabel: %Reservations %Service Attention
 #/<NotInRepo>/          @Rkapso
 
@@ -841,9 +834,6 @@
 
 # ServiceLabel: %Security %Service Attention
 #/<NotInRepo>/          @chlahav
-
-# ServiceLabel: %Service Attention %Service Bus
-#/<NotInRepo>/          @EldertGrootenboer
 
 # ServiceLabel: %Service Attention %Service Fabric
 #/<NotInRepo>/          @QingChenmsft @vaishnavk @juhacket
@@ -1015,11 +1005,13 @@
 # Eng Sys
 ###########
 /eng/                                                                @scbedd @weshaggard @benbp
+/eng/common/                                                         @Azure/azure-sdk-eng
 
 /tools/                                                              @scbedd @mccoyp
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
 /eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312
+/eng/common/pipelines/codeowners-linter.yml                          @lmazuel @mccoyp
 
 /pylintrc                                                            @l0lawrence

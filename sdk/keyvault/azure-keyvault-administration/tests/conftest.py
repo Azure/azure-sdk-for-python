@@ -13,6 +13,7 @@ from devtools_testutils import (
     add_oauth_response_sanitizer,
     add_uri_regex_sanitizer,
     is_live,
+    remove_batch_sanitizers,
 )
 
 os.environ['PYTHONHASHSEED'] = '0'
@@ -47,6 +48,11 @@ def add_sanitizers(test_proxy):
     )
     add_uri_regex_sanitizer(regex="keys/([^/]*)\\?api-version=(\\S*)", value="keys/$1?api-version=sanitized")
     add_oauth_response_sanitizer()
+
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3430: $..id
+    #  - AZSDK3493: $..name
+    remove_batch_sanitizers(["AZSDK3430", "AZSDK3493"])
 
 
 @pytest.fixture(scope="session", autouse=True)

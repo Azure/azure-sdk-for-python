@@ -351,6 +351,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             link_properties=link_properties,
             properties=properties,
             client_name=client_name,
+            use_tls=config.use_tls,
             **kwargs,
         )
 
@@ -507,6 +508,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             keep_alive_interval=keep_alive_interval,
             streaming_receive=streaming_receive,
             timeout=timeout,
+            use_tls=config.use_tls,
             **kwargs,
         )
 
@@ -604,6 +606,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             http_proxy=config.http_proxy,
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
+            use_tls=config.use_tls,
         )
 
     @staticmethod

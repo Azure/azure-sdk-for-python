@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -351,7 +351,6 @@ class DistributedAvailabilityGroupsOperations:
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance. Required.
         :type managed_instance_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DistributedAvailabilityGroup or the result of
          cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
@@ -374,24 +373,23 @@ class DistributedAvailabilityGroupsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_instance_request(
+                _request = build_list_by_instance_request(
                     resource_group_name=resource_group_name,
                     managed_instance_name=managed_instance_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_instance.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("DistributedAvailabilityGroupsListResult", pipeline_response)
@@ -401,11 +399,11 @@ class DistributedAvailabilityGroupsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -417,10 +415,6 @@ class DistributedAvailabilityGroupsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_instance.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups"
-    }
 
     @distributed_trace
     def get(
@@ -439,7 +433,6 @@ class DistributedAvailabilityGroupsOperations:
         :type managed_instance_name: str
         :param distributed_availability_group_name: The distributed availability group name. Required.
         :type distributed_availability_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DistributedAvailabilityGroup or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.DistributedAvailabilityGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -458,22 +451,21 @@ class DistributedAvailabilityGroupsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-08-01-preview"))
         cls: ClsType[_models.DistributedAvailabilityGroup] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
             distributed_availability_group_name=distributed_availability_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -486,20 +478,16 @@ class DistributedAvailabilityGroupsOperations:
         deserialized = self._deserialize("DistributedAvailabilityGroup", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: Union[_models.DistributedAvailabilityGroup, IO],
+        parameters: Union[_models.DistributedAvailabilityGroup, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.DistributedAvailabilityGroup]:
         error_map = {
@@ -525,7 +513,7 @@ class DistributedAvailabilityGroupsOperations:
         else:
             _json = self._serialize.body(parameters, "DistributedAvailabilityGroup")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
             distributed_availability_group_name=distributed_availability_group_name,
@@ -534,16 +522,15 @@ class DistributedAvailabilityGroupsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -561,13 +548,9 @@ class DistributedAvailabilityGroupsOperations:
             deserialized = self._deserialize("DistributedAvailabilityGroup", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_create_or_update(
@@ -594,14 +577,6 @@ class DistributedAvailabilityGroupsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either DistributedAvailabilityGroup or the
          result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
@@ -614,7 +589,7 @@ class DistributedAvailabilityGroupsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -629,18 +604,10 @@ class DistributedAvailabilityGroupsOperations:
         :param distributed_availability_group_name: The distributed availability group name. Required.
         :type distributed_availability_group_name: str
         :param parameters: The distributed availability group info. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either DistributedAvailabilityGroup or the
          result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
@@ -653,7 +620,7 @@ class DistributedAvailabilityGroupsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: Union[_models.DistributedAvailabilityGroup, IO],
+        parameters: Union[_models.DistributedAvailabilityGroup, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.DistributedAvailabilityGroup]:
         """Creates a distributed availability group between Sql On-Prem and Sql Managed Instance.
@@ -666,19 +633,8 @@ class DistributedAvailabilityGroupsOperations:
         :param distributed_availability_group_name: The distributed availability group name. Required.
         :type distributed_availability_group_name: str
         :param parameters: The distributed availability group info. Is either a
-         DistributedAvailabilityGroup type or a IO type. Required.
-        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroup or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         DistributedAvailabilityGroup type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroup or IO[bytes]
         :return: An instance of LROPoller that returns either DistributedAvailabilityGroup or the
          result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
@@ -711,7 +667,7 @@ class DistributedAvailabilityGroupsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("DistributedAvailabilityGroup", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -721,17 +677,15 @@ class DistributedAvailabilityGroupsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.DistributedAvailabilityGroup].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}"
-    }
+        return LROPoller[_models.DistributedAvailabilityGroup](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -754,22 +708,21 @@ class DistributedAvailabilityGroupsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-08-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
             distributed_availability_group_name=distributed_availability_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -780,11 +733,7 @@ class DistributedAvailabilityGroupsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete(
@@ -803,14 +752,6 @@ class DistributedAvailabilityGroupsOperations:
         :type managed_instance_name: str
         :param distributed_availability_group_name: The distributed availability group name. Required.
         :type distributed_availability_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -838,7 +779,7 @@ class DistributedAvailabilityGroupsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -847,24 +788,20 @@ class DistributedAvailabilityGroupsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _update_initial(
         self,
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: Union[_models.DistributedAvailabilityGroup, IO],
+        parameters: Union[_models.DistributedAvailabilityGroup, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.DistributedAvailabilityGroup]:
         error_map = {
@@ -890,7 +827,7 @@ class DistributedAvailabilityGroupsOperations:
         else:
             _json = self._serialize.body(parameters, "DistributedAvailabilityGroup")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
             distributed_availability_group_name=distributed_availability_group_name,
@@ -899,16 +836,15 @@ class DistributedAvailabilityGroupsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -923,13 +859,9 @@ class DistributedAvailabilityGroupsOperations:
             deserialized = self._deserialize("DistributedAvailabilityGroup", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_update(
@@ -956,14 +888,6 @@ class DistributedAvailabilityGroupsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either DistributedAvailabilityGroup or the
          result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
@@ -976,7 +900,7 @@ class DistributedAvailabilityGroupsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -991,18 +915,10 @@ class DistributedAvailabilityGroupsOperations:
         :param distributed_availability_group_name: The distributed availability group name. Required.
         :type distributed_availability_group_name: str
         :param parameters: The distributed availability group info. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either DistributedAvailabilityGroup or the
          result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
@@ -1015,7 +931,7 @@ class DistributedAvailabilityGroupsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: Union[_models.DistributedAvailabilityGroup, IO],
+        parameters: Union[_models.DistributedAvailabilityGroup, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.DistributedAvailabilityGroup]:
         """Updates a distributed availability group replication mode.
@@ -1028,19 +944,8 @@ class DistributedAvailabilityGroupsOperations:
         :param distributed_availability_group_name: The distributed availability group name. Required.
         :type distributed_availability_group_name: str
         :param parameters: The distributed availability group info. Is either a
-         DistributedAvailabilityGroup type or a IO type. Required.
-        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroup or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         DistributedAvailabilityGroup type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroup or IO[bytes]
         :return: An instance of LROPoller that returns either DistributedAvailabilityGroup or the
          result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
@@ -1073,7 +978,7 @@ class DistributedAvailabilityGroupsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("DistributedAvailabilityGroup", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1083,24 +988,22 @@ class DistributedAvailabilityGroupsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.DistributedAvailabilityGroup].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}"
-    }
+        return LROPoller[_models.DistributedAvailabilityGroup](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _failover_initial(
         self,
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: Union[_models.DistributedAvailabilityGroupsFailoverRequest, IO],
+        parameters: Union[_models.DistributedAvailabilityGroupsFailoverRequest, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.DistributedAvailabilityGroup]:
         error_map = {
@@ -1126,7 +1029,7 @@ class DistributedAvailabilityGroupsOperations:
         else:
             _json = self._serialize.body(parameters, "DistributedAvailabilityGroupsFailoverRequest")
 
-        request = build_failover_request(
+        _request = build_failover_request(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
             distributed_availability_group_name=distributed_availability_group_name,
@@ -1135,16 +1038,15 @@ class DistributedAvailabilityGroupsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._failover_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1163,13 +1065,9 @@ class DistributedAvailabilityGroupsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _failover_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}/failover"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_failover(
@@ -1196,14 +1094,6 @@ class DistributedAvailabilityGroupsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either DistributedAvailabilityGroup or the
          result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
@@ -1216,7 +1106,7 @@ class DistributedAvailabilityGroupsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1231,18 +1121,10 @@ class DistributedAvailabilityGroupsOperations:
         :param distributed_availability_group_name: The distributed availability group name. Required.
         :type distributed_availability_group_name: str
         :param parameters: The distributed availability group failover request parameters. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either DistributedAvailabilityGroup or the
          result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
@@ -1255,7 +1137,7 @@ class DistributedAvailabilityGroupsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: Union[_models.DistributedAvailabilityGroupsFailoverRequest, IO],
+        parameters: Union[_models.DistributedAvailabilityGroupsFailoverRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.DistributedAvailabilityGroup]:
         """Performs requested failover type in this distributed availability group.
@@ -1268,19 +1150,9 @@ class DistributedAvailabilityGroupsOperations:
         :param distributed_availability_group_name: The distributed availability group name. Required.
         :type distributed_availability_group_name: str
         :param parameters: The distributed availability group failover request parameters. Is either a
-         DistributedAvailabilityGroupsFailoverRequest type or a IO type. Required.
-        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroupsFailoverRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         DistributedAvailabilityGroupsFailoverRequest type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroupsFailoverRequest or
+         IO[bytes]
         :return: An instance of LROPoller that returns either DistributedAvailabilityGroup or the
          result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
@@ -1313,7 +1185,7 @@ class DistributedAvailabilityGroupsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("DistributedAvailabilityGroup", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1325,24 +1197,22 @@ class DistributedAvailabilityGroupsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.DistributedAvailabilityGroup].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_failover.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}/failover"
-    }
+        return LROPoller[_models.DistributedAvailabilityGroup](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _set_role_initial(
         self,
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: Union[_models.DistributedAvailabilityGroupSetRole, IO],
+        parameters: Union[_models.DistributedAvailabilityGroupSetRole, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.DistributedAvailabilityGroup]:
         error_map = {
@@ -1368,7 +1238,7 @@ class DistributedAvailabilityGroupsOperations:
         else:
             _json = self._serialize.body(parameters, "DistributedAvailabilityGroupSetRole")
 
-        request = build_set_role_request(
+        _request = build_set_role_request(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
             distributed_availability_group_name=distributed_availability_group_name,
@@ -1377,16 +1247,15 @@ class DistributedAvailabilityGroupsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._set_role_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1401,13 +1270,9 @@ class DistributedAvailabilityGroupsOperations:
             deserialized = self._deserialize("DistributedAvailabilityGroup", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _set_role_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}/setRole"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_set_role(
@@ -1434,14 +1299,6 @@ class DistributedAvailabilityGroupsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either DistributedAvailabilityGroup or the
          result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
@@ -1454,7 +1311,7 @@ class DistributedAvailabilityGroupsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1469,18 +1326,10 @@ class DistributedAvailabilityGroupsOperations:
         :param distributed_availability_group_name: The distributed availability group name. Required.
         :type distributed_availability_group_name: str
         :param parameters: The distributed availability group set role request parameters. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either DistributedAvailabilityGroup or the
          result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
@@ -1493,7 +1342,7 @@ class DistributedAvailabilityGroupsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: Union[_models.DistributedAvailabilityGroupSetRole, IO],
+        parameters: Union[_models.DistributedAvailabilityGroupSetRole, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.DistributedAvailabilityGroup]:
         """Sets the role for managed instance in a distributed availability group.
@@ -1506,19 +1355,8 @@ class DistributedAvailabilityGroupsOperations:
         :param distributed_availability_group_name: The distributed availability group name. Required.
         :type distributed_availability_group_name: str
         :param parameters: The distributed availability group set role request parameters. Is either a
-         DistributedAvailabilityGroupSetRole type or a IO type. Required.
-        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroupSetRole or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         DistributedAvailabilityGroupSetRole type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroupSetRole or IO[bytes]
         :return: An instance of LROPoller that returns either DistributedAvailabilityGroup or the
          result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
@@ -1551,7 +1389,7 @@ class DistributedAvailabilityGroupsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("DistributedAvailabilityGroup", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1563,14 +1401,12 @@ class DistributedAvailabilityGroupsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.DistributedAvailabilityGroup].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_set_role.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}/setRole"
-    }
+        return LROPoller[_models.DistributedAvailabilityGroup](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
