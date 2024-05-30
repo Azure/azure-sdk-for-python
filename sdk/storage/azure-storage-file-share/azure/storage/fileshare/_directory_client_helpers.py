@@ -40,21 +40,10 @@ def _format_url(scheme: str, hostname: str, share_name: str, dir_path: str, quer
     return f"{scheme}://{hostname}/{quote(share_name)}{directory_path}{query_str}"
 
 
-def _parse_snapshot(
-    snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-    path_snapshot: Optional[str] = None
-) -> Optional[str]:
-    if hasattr(snapshot, 'snapshot'):
-        return snapshot.snapshot
-    if isinstance(snapshot, Dict):
-        return snapshot['snapshot']
-    return snapshot or path_snapshot
-
-
 def _from_directory_url(
     directory_url: str,
     snapshot: Optional[Union[str, Dict[str, Any]]] = None
-) -> Tuple[str, str, str, str]:
+) -> Tuple[str, str, str, Optional[Union[str, Dict[str, Any]]]]:
     try:
         if not directory_url.lower().startswith('http'):
             directory_url = "https://" + directory_url

@@ -351,7 +351,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         file_permission = _get_file_permission(file_permission, file_permission_key, 'inherit')
 
         try:
-            return self._client.directory.create(
+            return cast(Dict[str, Any], self._client.directory.create(
                 file_attributes=str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
@@ -361,7 +361,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -488,7 +488,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 headers=headers,
                 **kwargs)
 
-            return new_directory_client
+            return cast(Self, new_directory_client)
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -591,9 +591,9 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             and the number of handles failed to close in a dict.
         :rtype: dict[str, int]
         """
-        try:
+        if hasattr(handle, 'id'):
             handle_id = handle.id
-        except AttributeError:
+        else:
             handle_id = handle
         if handle_id == '*':
             raise ValueError("Handle ID '*' is not supported. Use 'close_all_handles' instead.")
@@ -680,10 +680,10 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            response = self._client.directory.get_properties(
+            response = cast("DirectoryProperties", self._client.directory.get_properties(
                 timeout=timeout,
                 cls=deserialize_directory_properties,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
         return response
@@ -712,11 +712,11 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         try:
-            return self._client.directory.set_metadata(
+            return cast(Dict[str, Any], self._client.directory.set_metadata(
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -796,7 +796,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
         file_change_time = kwargs.pop('file_change_time', None)
         try:
-            return self._client.directory.set_properties(
+            return cast(Dict[str, Any], self._client.directory.set_properties(
                 file_attributes=_str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
@@ -805,7 +805,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 file_permission_key=permission_key,
                 timeout=timeout,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 

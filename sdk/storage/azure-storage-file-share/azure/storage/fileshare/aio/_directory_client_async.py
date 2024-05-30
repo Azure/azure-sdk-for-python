@@ -11,7 +11,7 @@ import time
 import warnings
 from datetime import datetime
 from typing import (
-    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, Optional, Union,
+    Any, AnyStr, AsyncIterable, cast, Dict, IO, Iterable, Optional, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -47,7 +47,7 @@ else:
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from .._models import FileProperties, DirectoryProperties, Handle, NTFSAttributes
+    from .._models import DirectoryProperties, FileProperties, Handle, NTFSAttributes
 
 
 class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
@@ -247,7 +247,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore # pylint: disable=protected-access
         )
         return ShareFileClient(
             self.url, file_path=file_name, share_name=self.share_name, snapshot=self.snapshot,
@@ -281,14 +281,14 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore # pylint: disable=protected-access
         )
-        return ShareDirectoryClient(
+        return cast(Self, ShareDirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot,
             credential=self.credential, api_version=self.api_version, _hosts=self._hosts, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot,
             allow_source_trailing_dot=self.allow_source_trailing_dot, token_intent=self.file_request_intent,
-            **kwargs)
+            **kwargs))
 
     @distributed_trace_async
     async def create_directory(self, **kwargs: Any) -> Dict[str, Any]:
@@ -357,7 +357,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         file_permission = _get_file_permission(file_permission, file_permission_key, 'inherit')
 
         try:
-            return await self._client.directory.create(
+            return cast(Dict[str, Any], await self._client.directory.create(
                 file_attributes=str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
@@ -367,7 +367,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -494,7 +494,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                 headers=headers,
                 **kwargs)
 
-            return new_directory_client
+            return cast(Self, new_directory_client)
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -619,9 +619,9 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             and the number of handles failed to close in a dict.
         :rtype: dict[str, int]
         """
-        try:
+        if hasattr(handle, 'id'):
             handle_id = handle.id
-        except AttributeError:
+        else:
             handle_id = handle
         if handle_id == '*':
             raise ValueError("Handle ID '*' is not supported. Use 'close_all_handles' instead.")
@@ -708,10 +708,10 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            response = await self._client.directory.get_properties(
+            response = cast("DirectoryProperties", await self._client.directory.get_properties(
                 timeout=timeout,
                 cls=deserialize_directory_properties,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
         return response
@@ -740,11 +740,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         try:
-            return await self._client.directory.set_metadata(
+            return cast(Dict[str, Any], await self._client.directory.set_metadata(
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -801,7 +801,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
         file_change_time = kwargs.pop('file_change_time', None)
         try:
-            return await self._client.directory.set_properties(
+            return cast(Dict[str, Any], await self._client.directory.set_properties(
                 file_attributes=_str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
@@ -810,7 +810,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                 file_permission_key=permission_key,
                 timeout=timeout,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
