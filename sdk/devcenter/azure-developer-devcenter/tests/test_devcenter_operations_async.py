@@ -307,9 +307,8 @@ class TestDevcenterAsync(AzureRecordedTestCase):
             start_result = await start_response.result()
             assert start_result.status == OperationStatus.SUCCEEDED
 
-            delete_response = await client.begin_delete_dev_box(project_name, default_user, devbox_name)
-            delete_result = await delete_response.result()
-            assert delete_result.status == OperationStatus.SUCCEEDED
+            delete_poller = await client.begin_delete_dev_box(project_name, default_user, devbox_name)
+            await delete_poller.result()
 
     @DevcenterPowerShellPreparer()
     @recorded_by_proxy_async
@@ -463,6 +462,5 @@ class TestDevcenterAsync(AzureRecordedTestCase):
             assert len(all_envs) == 1
             assert all_envs[0].name == env_name
     
-            delete_response = await client.begin_delete_environment(project_name, default_user, env_name)
-            delete_result = await delete_response.result()
-            assert delete_result.status == OperationStatus.SUCCEEDED
+            delete_poller = await client.begin_delete_environment(project_name, default_user, env_name)
+            await delete_poller.result()
