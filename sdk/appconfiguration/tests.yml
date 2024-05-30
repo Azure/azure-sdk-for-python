@@ -10,6 +10,8 @@ parameters:
 extends:
     template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
+      # Specify this value to use workload identity auth
+      UseFederatedAuth: true
       ServiceDirectory: appconfiguration
       Packages: ${{ parameters.Services }}
       SupportedClouds: 'Public,UsGov,China'
@@ -17,6 +19,8 @@ extends:
       CloudConfig:
         Public:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+          # Specify this if overriding CloudConfig
+          ServiceConnection: azure-sdk-tests
         UsGov:
           SubscriptionConfiguration: $(sub-config-gov-test-resources)
         China:

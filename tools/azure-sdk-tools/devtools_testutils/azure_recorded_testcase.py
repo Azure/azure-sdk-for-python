@@ -132,6 +132,11 @@ class AzureRecordedTestCase(object):
                     from azure.identity.aio import AzureDeveloperCliCredential
                 return AzureDeveloperCliCredential()
 
+            from azure.identity import DefaultAzureCredential
+            if is_async:
+                from azure.identity.aio import DefaultAzureCredential
+            return DefaultAzureCredential()
+
             # Service principal authentication
             if tenant_id and client_id and secret:
                 # Check for track 2 client

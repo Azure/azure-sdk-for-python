@@ -3,6 +3,7 @@ trigger: none
 extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
+      UseFederatedAuth: true
       BuildTargetingString: "azure-communication-phonenumbers"
       JobName: phonenumbers
       ServiceDirectory: communication
@@ -14,18 +15,7 @@ extends:
             - $(sub-config-communication-services-cloud-test-resources-python)
           MatrixReplace:
             - TestSamples=.*/true
-        PPE:
-          SubscriptionConfigurations:
-            - $(sub-config-communication-ppe-test-resources-common)
-            - $(sub-config-communication-ppe-test-resources-python)
-          MatrixReplace:
-            - COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST=false/true
-        Int:
-          SubscriptionConfigurations:
-            - $(sub-config-communication-int-test-resources-common)
-            - $(sub-config-communication-int-test-resources-python)
-          MatrixReplace:
-            - COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST=false/true
+          ServiceConnection: azure-sdk-tests
       Clouds: Public, PPE, Int
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'
