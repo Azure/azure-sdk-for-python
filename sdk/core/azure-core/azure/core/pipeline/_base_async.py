@@ -126,7 +126,7 @@ class AsyncPipeline(AsyncContextManager["AsyncPipeline"], Generic[HTTPRequestTyp
             :caption: Builds the async pipeline for asynchronous transport.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=super-init-not-called
         self,
         transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
         policies: Optional[
