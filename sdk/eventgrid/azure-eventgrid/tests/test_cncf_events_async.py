@@ -1,7 +1,7 @@
 import json
 import pytest
 from devtools_testutils import AzureRecordedTestCase
-from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.aio import recorded_by_proxy
 
 from azure.eventgrid.aio import EventGridPublisherClient
 from cloudevents.http import CloudEvent
@@ -13,14 +13,14 @@ from eventgrid_preparer import (
 
 class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
     def create_eg_publisher_client(self, endpoint):
-        credential = self.get_credential(EventGridPublisherClient, is_async=True)
+        credential = self.get_credential(EventGridPublisherClient, is=True)
         client = self.create_client_from_credential(EventGridPublisherClient, credential=credential, endpoint=endpoint)
         return client
 
     @EventGridPreparer()
-    @recorded_by_proxy_async
+    @recorded_by_proxy
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_dict_async(self, eventgrid_cloud_event_topic_endpoint):
+    async def test_send_cloud_event_data_dict(self, eventgrid_cloud_event_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
@@ -39,9 +39,9 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
         await client.send(cloud_event, raw_request_hook=callback)
 
     @EventGridPreparer()
-    @recorded_by_proxy_async
+    @recorded_by_proxy
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_base64_using_data_async(self, eventgrid_cloud_event_topic_endpoint):
+    async def test_send_cloud_event_data_base64_using_data(self, eventgrid_cloud_event_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
@@ -58,9 +58,9 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
         await client.send(cloud_event, raw_request_hook=callback)
 
     @EventGridPreparer()
-    @recorded_by_proxy_async
+    @recorded_by_proxy
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_none_async(self, eventgrid_cloud_event_topic_endpoint):
+    async def test_send_cloud_event_data_none(self, eventgrid_cloud_event_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
@@ -71,9 +71,9 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
         await client.send(cloud_event)
 
     @EventGridPreparer()
-    @recorded_by_proxy_async
+    @recorded_by_proxy
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_str_async(self, eventgrid_cloud_event_topic_endpoint):
+    async def test_send_cloud_event_data_str(self, eventgrid_cloud_event_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
@@ -90,9 +90,9 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
         await client.send(cloud_event, raw_request_hook=callback)
 
     @EventGridPreparer()
-    @recorded_by_proxy_async
+    @recorded_by_proxy
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_as_list_async(self, eventgrid_cloud_event_topic_endpoint):
+    async def test_send_cloud_event_data_as_list(self, eventgrid_cloud_event_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
@@ -103,9 +103,9 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
         await client.send([cloud_event])
 
     @EventGridPreparer()
-    @recorded_by_proxy_async
+    @recorded_by_proxy
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_with_extensions_async(self, eventgrid_cloud_event_topic_endpoint):
+    async def test_send_cloud_event_data_with_extensions(self, eventgrid_cloud_event_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
