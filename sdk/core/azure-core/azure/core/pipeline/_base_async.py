@@ -25,8 +25,7 @@
 # --------------------------------------------------------------------------
 from __future__ import annotations
 from types import TracebackType
-from typing import Any, Union, Generic, TypeVar, List, Dict, Optional, Iterable, Type
-from typing_extensions import AsyncContextManager
+from typing import Any, Union, Generic, TypeVar, List, Dict, Optional, Iterable, Type, AsyncContextManager
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy

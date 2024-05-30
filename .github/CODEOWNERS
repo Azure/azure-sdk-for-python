@@ -1009,6 +1009,7 @@
 # Eng Sys
 ###########
 /eng/                                                                @scbedd @weshaggard @benbp
+/eng/common/                                                         @Azure/azure-sdk-eng
 
 /tools/                                                              @scbedd @mccoyp
 
