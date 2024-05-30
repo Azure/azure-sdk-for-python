@@ -420,12 +420,11 @@ class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse, HttpResponseBackcom
                 yield self.content[i : i + chunk_size]
         else:
             self._stream_download_check()
-            for part in self._stream_download_generator(
+            yield from self._stream_download_generator(
                 response=self,
                 pipeline=None,
                 decompress=True,
-            ):
-                yield part
+            )
         self.close()
 
     def iter_raw(self, **kwargs) -> Iterator[bytes]:
@@ -435,8 +434,7 @@ class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse, HttpResponseBackcom
         :rtype: Iterator[str]
         """
         self._stream_download_check()
-        for part in self._stream_download_generator(response=self, pipeline=None, decompress=False):
-            yield part
+        yield from self._stream_download_generator(response=self, pipeline=None, decompress=False)
         self.close()
 
 

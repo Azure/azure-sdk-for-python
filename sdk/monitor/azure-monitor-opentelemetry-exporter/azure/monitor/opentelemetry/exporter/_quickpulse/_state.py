@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+from datetime import datetime
 from enum import Enum
 from typing import List
 
@@ -23,8 +24,11 @@ class _QuickpulseState(Enum):
 
 _GLOBAL_QUICKPULSE_STATE = _QuickpulseState.OFFLINE
 _QUICKPULSE_DOCUMENTS: List[DocumentIngress] = []
+_QUICKPULSE_LAST_PROCESS_TIME = 0.0
+_QUICKPULSE_PROCESS_ELAPSED_TIME = datetime.now()
+_QUICKPULSE_LAST_PROCESS_CPU = 0.0
 
-def _set_global_quickpulse_state(state: _QuickpulseState):
+def _set_global_quickpulse_state(state: _QuickpulseState) -> None:
     # pylint: disable=global-statement
     global _GLOBAL_QUICKPULSE_STATE
     _GLOBAL_QUICKPULSE_STATE = state
@@ -32,6 +36,36 @@ def _set_global_quickpulse_state(state: _QuickpulseState):
 
 def _get_global_quickpulse_state() -> _QuickpulseState:
     return _GLOBAL_QUICKPULSE_STATE
+
+
+def _set_quickpulse_last_process_time(time: float) -> None:
+    # pylint: disable=global-statement
+    global _QUICKPULSE_LAST_PROCESS_TIME
+    _QUICKPULSE_LAST_PROCESS_TIME = time
+
+
+def _get_quickpulse_last_process_time() -> float:
+    return _QUICKPULSE_LAST_PROCESS_TIME
+
+
+def _set_quickpulse_process_elapsed_time(time: datetime) -> None:
+    # pylint: disable=global-statement
+    global _QUICKPULSE_PROCESS_ELAPSED_TIME
+    _QUICKPULSE_PROCESS_ELAPSED_TIME = time
+
+
+def _get_quickpulse_process_elapsed_time() -> datetime:
+    return _QUICKPULSE_PROCESS_ELAPSED_TIME
+
+
+def _set_quickpulse_last_process_cpu(time: float) -> None:
+    # pylint: disable=global-statement
+    global _QUICKPULSE_LAST_PROCESS_CPU
+    _QUICKPULSE_LAST_PROCESS_CPU = time
+
+
+def _get_quickpulse_last_process_cpu() -> float:
+    return _QUICKPULSE_LAST_PROCESS_CPU
 
 
 def is_quickpulse_enabled() -> bool:

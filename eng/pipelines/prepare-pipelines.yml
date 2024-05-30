@@ -6,5 +6,5 @@ extends:
     Repository: $(Build.Repository.Name)
     Prefix: python
     CIConventionOptions: ''
-    UPConventionOptions: '--variablegroups 58 76 56 93'
+    UPConventionOptions: '--variablegroups 58 76 93'
     TestsConventionOptions: '--variablegroups 58 64'
