@@ -37,27 +37,27 @@ from typing import Optional
 @dataclass
 class EntityType:
     PartitionKey: str
+    text: str
+    color: str
+    price: float
+    last_updated: datetime
+    product_id: UUID
+    inventory_count: int
+    barcode: bytes
     RowKey: Optional[str] = None
-    text: Optional[str] = None
-    color: Optional[str] = None
-    price: Optional[float] = None
-    last_updated: Optional[datetime] = None
-    product_id: Optional[UUID] = None
-    inventory_count: Optional[int] = None
-    barcode: Optional[bytes] = None
 
 
 @dataclass
 class EntityTypeJSONSerializable:
     PartitionKey: str
+    text: str
+    color: str
+    price: float
+    last_updated: str
+    product_id: str
+    inventory_count: int
+    barcode: str
     RowKey: Optional[str] = None
-    text: Optional[str] = None
-    color: Optional[str] = None
-    price: Optional[float] = None
-    last_updated: Optional[str] = None
-    product_id: Optional[str] = None
-    inventory_count: Optional[int] = None
-    barcode: Optional[str] = None
 
 
 class CopyTableSamples(object):
