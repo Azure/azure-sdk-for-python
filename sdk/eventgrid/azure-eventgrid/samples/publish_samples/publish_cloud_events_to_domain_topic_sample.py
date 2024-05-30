@@ -22,7 +22,7 @@ import time
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.messaging import CloudEvent
-from azure.eventgrid import EventGridClient
+from azure.eventgrid import EventGridPublisherClient
 
 domain_key = os.environ["EVENTGRID_CLOUD_EVENT_DOMAIN_KEY"]
 domain_endpoint = os.environ["EVENTGRID_CLOUD_EVENT_DOMAIN_ENDPOINT"]
@@ -30,28 +30,20 @@ domain_endpoint = os.environ["EVENTGRID_CLOUD_EVENT_DOMAIN_ENDPOINT"]
 
 # authenticate client
 credential = AzureKeyCredential(domain_key)
-client = EventGridClient(domain_endpoint, credential, level="Basic")
+client = EventGridPublisherClient(domain_endpoint, credential)
 
 
 def publish_event():
     # publish events
     for _ in range(3):
+
         event_list = []  # list of events to publish
-        services = [
-            "EventGrid",
-            "ServiceBus",
-            "EventHubs",
-            "Storage",
-        ]  # possible values for data field
+        services = ["EventGrid", "ServiceBus", "EventHubs", "Storage"]  # possible values for data field
 
         # create events and append to list
         for j in range(randint(1, 3)):
             sample_members = sample(services, k=randint(1, 4))  # select random subset of team members
-            event = CloudEvent(
-                type="Azure.Sdk.Demo",
-                source="domainname",
-                data={"team": sample_members},
-            )
+            event = CloudEvent(type="Azure.Sdk.Demo", source="domainname", data={"team": sample_members})
             event_list.append(event)
 
         # publish list of events

@@ -97,7 +97,7 @@ def _is_cloud_event(event):
         return False
 
 
-def _is_eventgrid_event(event):
+def _is_eventgrid_event_format(event):
     # type: (Any) -> bool
     required = ("subject", "eventType", "data", "dataVersion", "id", "eventTime")
     try:

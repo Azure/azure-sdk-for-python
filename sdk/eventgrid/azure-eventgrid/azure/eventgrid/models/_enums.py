@@ -10,16 +10,16 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ReleaseDelay(int, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ReleaseDelay(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported delays for release operation."""
 
-    BY0_SECONDS = 0
+    NO_DELAY = "0"
     """Release the event after 0 seconds."""
-    BY10_SECONDS = 10
+    TEN_SECONDS = "10"
     """Release the event after 10 seconds."""
-    BY60_SECONDS = 60
+    ONE_MINUTE = "60"
     """Release the event after 60 seconds."""
-    BY600_SECONDS = 600
+    TEN_MINUTES = "600"
     """Release the event after 600 seconds."""
-    BY3600_SECONDS = 3600
+    ONE_HOUR = "3600"
     """Release the event after 3600 seconds."""

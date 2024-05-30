@@ -6,7 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._patch import EventGridClient
+from ._patch import EventGridPublisherClient
+from ._patch import EventGridConsumerClient
 from ._version import VERSION
 
 __version__ = VERSION
@@ -19,7 +20,8 @@ except ImportError:
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "EventGridClient",
+    "EventGridPublisherClient",
+    "EventGridConsumerClient",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 

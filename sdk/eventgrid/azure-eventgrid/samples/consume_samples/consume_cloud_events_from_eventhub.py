@@ -39,7 +39,5 @@ consumer_client = EventHubConsumerClient.from_connection_string(
 
 with consumer_client:
     event_list = consumer_client.receive(
-        on_event=on_event,
-        starting_position="-1",  # "-1" is from the beginning of the partition.
-        prefetch=5,
+        on_event=on_event, starting_position="-1", prefetch=5  # "-1" is from the beginning of the partition.
     )
