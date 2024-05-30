@@ -98,10 +98,10 @@ class _QuickpulseExporter(MetricExporter):
             # DistributedTracingPolicy(),
         ]
         self._client = QuickpulseClient(
-            credential=None,
+            credential=None, # type: ignore
             endpoint=self._live_endpoint,
             policies=policies
-        )  # type: ignore
+        )
 
         MetricExporter.__init__(
             self,
