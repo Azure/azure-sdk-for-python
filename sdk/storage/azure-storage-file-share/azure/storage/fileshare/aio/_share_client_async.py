@@ -34,7 +34,7 @@ from .._share_client_helpers import (
     _parse_url
 )
 from .._shared.policies_async import ExponentialRetry
-from .._shared.base_client import StorageAccountHostsMixin, parse_query
+from .._shared.base_client import parse_query, StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.request_handlers import add_metadata_headers, serialize_iso
 from .._shared.response_handlers import (

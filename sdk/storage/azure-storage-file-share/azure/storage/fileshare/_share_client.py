@@ -27,19 +27,19 @@ from ._generated.models import (
 from ._lease import ShareLeaseClient
 from ._models import ShareProtocols
 from ._parser import _parse_snapshot
-from ._serialize import get_api_version, get_access_conditions
+from ._serialize import get_access_conditions, get_api_version
 from ._share_client_helpers import (
     _create_permission_for_share_options,
     _format_url,
     _from_share_url,
     _parse_url
 )
-from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
+from ._shared.base_client import parse_connection_str, parse_query, StorageAccountHostsMixin, TransportWrapper
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
-    return_response_headers,
     process_storage_error,
-    return_headers_and_deserialized
+    return_headers_and_deserialized,
+    return_response_headers
 )
 
 
