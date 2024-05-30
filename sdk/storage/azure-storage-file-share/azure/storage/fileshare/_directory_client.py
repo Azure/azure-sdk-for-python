@@ -10,7 +10,7 @@ import sys
 import time
 from datetime import datetime
 from typing import (
-    Any, AnyStr, Dict, IO, Iterable, Optional, Union,
+    Any, AnyStr, cast, Dict, IO, Iterable, Optional, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -23,14 +23,14 @@ from ._deserialize import deserialize_directory_properties
 from ._directory_client_helpers import (
     _format_url,
     _from_directory_url,
-    _parse_snapshot,
-    _parse_url)
+    _parse_url
+)
 from ._generated import AzureFileStorage
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._shared.parser import _str
-from ._parser import _get_file_permission, _datetime_to_str
+from ._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
 from ._serialize import get_api_version, get_dest_access_conditions, get_rename_smb_properties
 from ._file_client import ShareFileClient
 from ._models import DirectoryPropertiesPaged, HandlesPaged
@@ -136,7 +136,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
                                         file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access
 
     @classmethod
     def from_directory_url(
@@ -277,12 +277,12 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             transport=TransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
             policies=self._pipeline._impl_policies  # pylint: disable=protected-access
         )
-        return ShareDirectoryClient(
+        return cast(Self, ShareDirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot,
             credential=self.credential, token_intent=self.file_request_intent, api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
             _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot,
-            allow_source_trailing_dot=self.allow_source_trailing_dot, **kwargs)
+            allow_source_trailing_dot=self.allow_source_trailing_dot, **kwargs))
 
     @distributed_trace
     def create_directory(self, **kwargs: Any) -> Dict[str, Any]:

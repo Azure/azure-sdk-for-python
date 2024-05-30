@@ -24,9 +24,9 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._directory_client_helpers import (
     _format_url,
     _from_directory_url,
-    _parse_snapshot,
-    _parse_url)
-from .._parser import _get_file_permission, _datetime_to_str
+    _parse_url
+)
+from .._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
 from .._shared.parser import _str
 from .._generated.aio import AzureFileStorage
 from .._shared.base_client import StorageAccountHostsMixin, parse_query
@@ -50,7 +50,7 @@ if TYPE_CHECKING:
     from .._models import FileProperties, DirectoryProperties, Handle, NTFSAttributes
 
 
-class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
+class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
     """A client to interact with a specific directory, although it may not yet exist.
 
     For operations relating to a specific subdirectory or file in this share, the clients for those
@@ -142,7 +142,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
                                         file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access
 
     @classmethod
     def from_directory_url(
