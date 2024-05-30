@@ -26,6 +26,9 @@ from uuid import uuid4, UUID
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 from dataclasses import dataclass, asdict
+from typing import Dict, Union
+from azure.data.tables import TableEntityEncoderABC, UpdateMode
+from azure.data.tables.aio import TableClient
 
 
 @dataclass
@@ -35,10 +38,13 @@ class EntityType:
     text: str
     color: str
     price: float
-    last_updated: datetime
     product_id: UUID
     inventory_count: int
-    barcode: bytes
+
+
+class MyEncoder(TableEntityEncoderABC[EntityType]):
+    def encode_entity(self, entity: EntityType) -> Dict[str, Union[str, int, float, bool]]:
+        return asdict(entity)
 
 
 class TableEntitySamples(object):
@@ -51,34 +57,32 @@ class TableEntitySamples(object):
         self.table_base = "UpdateUpsertMergeAsync"
 
     async def create_and_get_entities(self):
-        # Instantiate a table service client
-        from azure.data.tables.aio import TableClient
-
+        # Instantiate a table client
         table = TableClient.from_connection_string(self.connection_string, table_name=self.table_base + "create")
 
         async with table:
             await table.create_table()
 
-            my_entity = EntityType(
-                PartitionKey = "color",
-                RowKey = "brand",
-                text = "Marker",
-                color = "Purple",
-                price = 4.99,
-                last_updated = datetime.today(),
-                product_id = uuid4(),
-                inventory_count = 42,
-                barcode = b"135aefg8oj0ld58",  # cspell:disable-line
-            )
+            my_entity = {
+                "PartitionKey": "color",
+                "RowKey": "brand",
+                "text": "Marker",
+                "color": "Purple",
+                "price": 4.99,
+                "last_updated": datetime.today(),
+                "product_id": uuid4(),
+                "inventory_count": 42,
+                "barcode": b"135aefg8oj0ld58",  # cspell:disable-line
+            }
 
             try:
-                created_entity = await table.create_entity(asdict(my_entity))
+                created_entity = await table.create_entity(entity=my_entity)
                 print(f"Created entity: {created_entity}")
 
                 # [START get_entity]
                 # Get Entity by partition and row key
                 got_entity = await table.get_entity(
-                    partition_key=my_entity.PartitionKey, row_key=my_entity.RowKey
+                    partition_key=my_entity["PartitionKey"], row_key=my_entity["RowKey"]
                 )
                 print(f"Received entity: {got_entity}")
                 # [END get_entity]
@@ -87,12 +91,9 @@ class TableEntitySamples(object):
                 await table.delete_table()
 
     async def list_all_entities(self):
-        # Instantiate a table service client
-        from azure.data.tables.aio import TableClient
-
+        # Instantiate a table client
         table = TableClient.from_connection_string(self.connection_string, table_name=self.table_base + "list")
 
-        # Create the table
         async with table:
             await table.create_table()
 
@@ -131,49 +132,40 @@ class TableEntitySamples(object):
                 await table.delete_table()
 
     async def update_entities(self):
-        # Instantiate a table service client
-        from azure.data.tables.aio import TableClient
-        from azure.data.tables import UpdateMode
-
+        # Instantiate a table client
         table = TableClient.from_connection_string(self.connection_string, table_name=self.table_base + "update")
 
-        # Create the table and Table Client
         async with table:
             await table.create_table()
 
-            entity = {
-                "PartitionKey": "color2",
-                "RowKey": "sharpie",
-                "text": "Marker",
-                "color": "Purple",
-                "price": 5.99,
-                "inventory": 42,
-                "product_id": uuid4(),
-            }
-            entity1 = {
-                "PartitionKey": "color2",
-                "RowKey": "crayola",
-                "text": "Marker",
-                "color": "Red",
-                "price": 3.99,
-                "inventory": 42,
-                "product_id": uuid4(),
-            }
+            entity = EntityType(
+                PartitionKey="color2",
+                RowKey="sharpie",
+                text="Marker",
+                color="Purple",
+                price=5.99,
+                inventory_count=42,
+                product_id=uuid4(),
+            )
+            entity1 = EntityType(
+                PartitionKey="color2",
+                RowKey="crayola",
+                text="Marker",
+                color="Red",
+                price=3.99,
+                inventory_count=42,
+                product_id=uuid4(),
+            )
 
             try:
-                # Create entities
-                await table.create_entity(entity=entity)
-                created = await table.get_entity(
-                    partition_key=str(entity["PartitionKey"]), row_key=str(entity["RowKey"])
-                )
+                await table.create_entity(entity=entity, encoder=MyEncoder())
+                created = await table.get_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
 
                 # [START upsert_entity]
-                # Try Replace and insert on fail
-                insert_entity = await table.upsert_entity(mode=UpdateMode.REPLACE, entity=entity1)
+                insert_entity = await table.upsert_entity(mode=UpdateMode.REPLACE, entity=entity1, encoder=MyEncoder())
                 print(f"Inserted entity: {insert_entity}")
 
-                created["text"] = "NewMarker"
-                merged_entity = await table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
+                merged_entity = await table.upsert_entity(mode=UpdateMode.MERGE, entity=entity, encoder=MyEncoder())
                 print(f"Merged entity: {merged_entity}")
                 # [END upsert_entity]
 

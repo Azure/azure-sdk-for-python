@@ -26,6 +26,9 @@ import os
 from uuid import uuid4, UUID
 from dotenv import find_dotenv, load_dotenv
 from dataclasses import dataclass, asdict
+from typing import Dict, Union
+from azure.data.tables import TableClient, TableEntityEncoderABC
+from azure.core.exceptions import ResourceExistsError, HttpResponseError
 
 
 @dataclass
@@ -41,6 +44,11 @@ class EntityType:
     barcode: bytes
 
 
+class MyEncoder(TableEntityEncoderABC[EntityType]):
+    def encode_entity(self, entity: EntityType) -> Dict[str, Union[str, int, float, bool]]:
+        return asdict(entity)
+
+
 class InsertDeleteEntity(object):
     def __init__(self):
         load_dotenv(find_dotenv())
@@ -52,23 +60,19 @@ class InsertDeleteEntity(object):
         self.table_name = "SampleInsertDelete"
 
         self.entity = EntityType(
-            PartitionKey = "color",
-            RowKey = "brand",
-            text = "Marker",
-            color = "Purple",
-            price = 4.99,
-            last_updated = datetime.today(),
-            product_id = uuid4(),
-            inventory_count = 42,
-            barcode = b"135aefg8oj0ld58",  # cspell:disable-line
+            PartitionKey="color",
+            RowKey="brand",
+            text="Marker",
+            color="Purple",
+            price=4.99,
+            last_updated=datetime.today(),
+            product_id=uuid4(),
+            inventory_count=42,
+            barcode=b"135aefg8oj0ld58",  # cspell:disable-line
         )
 
-    def create_entity(self):
-        from azure.data.tables import TableClient
-        from azure.core.exceptions import ResourceExistsError, HttpResponseError
-
+    def create_delete_entity(self):
         with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
-
             # Create a table in case it does not already exist
             try:
                 table_client.create_table()
@@ -77,33 +81,21 @@ class InsertDeleteEntity(object):
 
             # [START create_entity]
             try:
-                resp = table_client.create_entity(asdict(self.entity))
+                resp = table_client.create_entity(entity=self.entity, encoder=MyEncoder())
                 print(resp)
             except ResourceExistsError:
                 print("Entity already exists")
             # [END create_entity]
 
-    def delete_entity(self):
-        from azure.data.tables import TableClient
-        from azure.core.exceptions import ResourceExistsError
-        from azure.core.credentials import AzureNamedKeyCredential
-
-        credential = AzureNamedKeyCredential(self.account_name, self.access_key)
-        with TableClient(endpoint=self.endpoint, table_name=self.table_name, credential=credential) as table_client:
-
-            # Create an entity to delete (to showcase etag)
-            try:
-                table_client.create_entity(asdict(self.entity))
-            except ResourceExistsError:
-                print("Entity already exists!")
-
             # [START delete_entity]
             table_client.delete_entity(partition_key=self.entity.PartitionKey, row_key=self.entity.RowKey)
-            print("Successfully deleted!")
             # [END delete_entity]
+            print("Successfully deleted!")
+
+            table_client.delete_table()
+            print("Cleaned up")
 
 
 if __name__ == "__main__":
     ide = InsertDeleteEntity()
-    ide.create_entity()
-    ide.delete_entity()
+    ide.create_delete_entity()
