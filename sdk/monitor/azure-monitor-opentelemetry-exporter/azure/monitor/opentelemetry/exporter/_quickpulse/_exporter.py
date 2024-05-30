@@ -23,11 +23,13 @@ from opentelemetry.sdk.metrics.export import (
 )
 
 from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _LONG_PING_INTERVAL_SECONDS,
     _POST_CANCEL_INTERVAL_SECONDS,
     _POST_INTERVAL_SECONDS,
 )
+from azure.monitor.opentelemetry.exporter._quickpulse._generated._configuration import QuickpulseClientConfiguration
 from azure.monitor.opentelemetry.exporter._quickpulse._generated._client import QuickpulseClient
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import MonitoringDataPoint
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
@@ -82,8 +84,24 @@ class _QuickpulseExporter(MetricExporter):
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         # TODO: Support AADaudience (scope)/credentials
         # Pass `None` for now until swagger definition is fixed
-        self._client = QuickpulseClient(credential=None, endpoint=self._live_endpoint)  # type: ignore
-        # TODO: Support redirect
+        config = QuickpulseClientConfiguration(credential=None)  # type: ignore
+        policies = [
+            # TODO: Support redirect
+            config.redirect_policy,
+            # Needed for serialization
+            ContentDecodePolicy(),
+            # Logging for client calls
+            config.http_logging_policy,
+            # TODO: Support AADaudience (scope)/credentials
+            config.authentication_policy,
+            # Explicitly disabling to avoid tracing live metrics calls
+            # DistributedTracingPolicy(),
+        ]
+        self._client = QuickpulseClient(
+            credential=None, # type: ignore
+            endpoint=self._live_endpoint,
+            policies=policies
+        )
 
         MetricExporter.__init__(
             self,
