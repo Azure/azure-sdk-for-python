@@ -41,7 +41,7 @@ async def sample_load_client_async():
     print(f"Created client of type `{type(client).__name__}`.")
 
     if isinstance(client, EmbeddingsClient):
-        response = await client.embedding(input=["first phrase", "second phrase", "third phrase"])
+        response = await client.embed(input=["first phrase", "second phrase", "third phrase"])
 
         print("Embeddings response:")
         for item in response.data:

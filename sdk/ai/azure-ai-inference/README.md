@@ -10,7 +10,7 @@ Use the model inference client library to:
 * Get text embeddings
 <!-- * Get image embeddings -->
 
-Note that for inference using OpenAI models hosted on Azure you should be using the [OpenAI Python client library](https://github.com/openai/openai-python) instead of this client.
+Note that for inference using OpenAI models hosted on Azure, you should be using the official [OpenAI Python client library](https://github.com/openai/openai-python) in product code instead of this client. However, for development and evaluation purposes (comparing OpenAI models to other models in the Azure AI Studio catalog), you can use the azure-ai-inference Python client library with Azure OpenAI endpoints, as shown [in this sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_azure_openai.py).
 
 [Product documentation](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api)
 | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples)
@@ -81,7 +81,7 @@ client = ChatCompletionsClient(
 
 ### Create and authenticate a client directly, using Entra ID
 
-To use an Entra ID token credential, firs install the [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity) package:
+To use an Entra ID token credential, first install the [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity) package:
 
 ```python
 pip install azure.identity
@@ -98,6 +98,7 @@ client = ChatCompletionsClient(
     credential=DefaultAzureCredential()
 )
 ```
+During application development, you would typically set up the environment for authentication using Entra ID by first [Installing the Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), running `az login` in your console window, then entering your credentials in the browser window that was opened. The call to `DefaultAzureCredential()` will then succeed.
 
 ### Create and authentice clients using `load_client`
 
@@ -273,9 +274,9 @@ To generate completions for additional messages, simply call `client.complete` m
 
 In this example, extra JSON elements are inserted at the root of the request body by setting `model_extras` when calling the `complete` method. These are indended for AI models that require extra parameters beyond what is defined in the REST API.
 
-Note that by default, the service will reject any request payload that includes unknown parameters (ones that are not defined in the REST API [Request Body table](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-chat-completions#request-body)). In order to change that behaviour, the request must include an additional HTTP header that described the intended behaviour with regards to unknown parameters. This is done by setting `unknown_params` to allow passing the unknown parameers to the AI model, or by ingnoring them (dropping them), and only passing the known parameters to the model.
+Note that by default, the service will reject any request payload that includes unknown parameters (ones that are not defined in the REST API [Request Body table](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-chat-completions#request-body)). In order to change the default service behaviour, when the `complete` method includes `model_extras`, the client library will automatically add the HTTP request header `"unknown_params": "pass_through"`.
 
-The settings `model_extras` and `unknown_params` are suppored for all other clients as well.
+The input argument `model_extras` is not restricted to chat completions. It is suppored on other client methods as well.
 
 <!-- SNIPPET:sample_chat_completions_with_model_extras.model_extras -->
 
@@ -285,7 +286,6 @@ response = client.complete(
         SystemMessage(content="You are a helpful assistant."),
         UserMessage(content="How many feet are in a mile?"),
     ],
-    unknown_params=UnknownParams.ALLOW,  # Optional. Supported values: "ALLOW", "IGNORE", "ERROR" (service default)
     model_extras={  # Optional. Additional parameters to pass to the model.
         "key1": "value1",
         "key2": "value2"
@@ -320,7 +320,7 @@ from azure.core.credentials import AzureKeyCredential
 
 client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-response = client.embedding(input=["first phrase", "second phrase", "third phrase"])
+response = client.embed(input=["first phrase", "second phrase", "third phrase"])
 
 for item in response.data:
     length = len(item.embedding)
@@ -361,7 +361,7 @@ with open("sample2.png", "rb") as f:
 
 client = ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-response = client.embedding(input=[EmbeddingInput(image=image1), EmbeddingInput(image=image2)])
+response = client.embed(input=[EmbeddingInput(image=image1), EmbeddingInput(image=image2)])
 
 for item in response.data:
     length = len(item.embedding)

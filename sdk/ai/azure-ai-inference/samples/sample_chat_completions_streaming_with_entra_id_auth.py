@@ -9,7 +9,7 @@ DESCRIPTION:
     It also shows how to set the optional HTTP request header `azureml-model-deployment`,
     which is supported by Selfhosted Endpoints (aka "model as a platform" (MaaP)
     or "real-time endpoints"). It can be used to target test deployment 
-    during stating, instead of the default production deployment.
+    during staging, instead of the default production deployment.
 
 USAGE:
     python sample_chat_completions_streaming_with_entra_id_auth.py

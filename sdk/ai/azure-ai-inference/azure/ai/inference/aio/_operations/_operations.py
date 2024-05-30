@@ -53,7 +53,6 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         self,
         body: JSON,
         *,
-        model_deployment: Optional[str] = None,
         unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -63,7 +62,6 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         self,
         *,
         messages: List[_models.ChatRequestMessage],
-        model_deployment: Optional[str] = None,
         unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         frequency_penalty: Optional[float] = None,
@@ -86,7 +84,6 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         self,
         body: IO[bytes],
         *,
-        model_deployment: Optional[str] = None,
         unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -98,7 +95,6 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         messages: List[_models.ChatRequestMessage] = _Unset,
-        model_deployment: Optional[str] = None,
         unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         frequency_penalty: Optional[float] = None,
         stream_parameter: Optional[bool] = None,
@@ -130,11 +126,6 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
          the behavior of the assistant, followed by alternating messages between the User and
          Assistant roles. Required.
         :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage]
-        :keyword model_deployment: Name of the deployment to which you would like to route the request.
-         Relevant only to Model-as-a-Platform (MaaP) deployments.
-         Typically used when you want to target a test environment instead of production environment.
-         Default value is None.
-        :paramtype model_deployment: str
         :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
          request payload. Known values are: "error", "ignore", and "allow". Default value is None.
          The service defaults to "error" in this case.
@@ -330,7 +321,6 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_chat_completions_complete_request(
-            model_deployment=model_deployment,
             unknown_params=unknown_params,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -443,7 +433,6 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         self,
         body: JSON,
         *,
-        model_deployment: Optional[str] = None,
         unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -453,7 +442,6 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         self,
         *,
         input: List[str],
-        model_deployment: Optional[str] = None,
         unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         dimensions: Optional[int] = None,
@@ -466,7 +454,6 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         self,
         body: IO[bytes],
         *,
-        model_deployment: Optional[str] = None,
         unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -478,7 +465,6 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         input: List[str] = _Unset,
-        model_deployment: Optional[str] = None,
         unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
@@ -494,11 +480,6 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
          To embed multiple inputs in a single request, pass an array
          of strings or array of token arrays. Required.
         :paramtype input: list[str]
-        :keyword model_deployment: Name of the deployment to which you would like to route the request.
-         Relevant only to Model-as-a-Platform (MaaP) deployments.
-         Typically used when you want to target a test environment instead of production environment.
-         Default value is None.
-        :paramtype model_deployment: str
         :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
          request payload. Known values are: "error", "ignore", and "allow". Default value is None.
         :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
@@ -612,7 +593,6 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_embeddings_embedding_request(
-            model_deployment=model_deployment,
             unknown_params=unknown_params,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -725,7 +705,6 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         self,
         body: JSON,
         *,
-        model_deployment: Optional[str] = None,
         unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -735,7 +714,6 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         self,
         *,
         input: List[_models.EmbeddingInput],
-        model_deployment: Optional[str] = None,
         unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         dimensions: Optional[int] = None,
@@ -748,7 +726,6 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         self,
         body: IO[bytes],
         *,
-        model_deployment: Optional[str] = None,
         unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -760,7 +737,6 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         input: List[_models.EmbeddingInput] = _Unset,
-        model_deployment: Optional[str] = None,
         unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
@@ -776,11 +752,6 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
          array.
          The input must not exceed the max input tokens for the model. Required.
         :paramtype input: list[~azure.ai.inference.models.EmbeddingInput]
-        :keyword model_deployment: Name of the deployment to which you would like to route the request.
-         Relevant only to Model-as-a-Platform (MaaP) deployments.
-         Typically used when you want to target a test environment instead of production environment.
-         Default value is None.
-        :paramtype model_deployment: str
         :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
          request payload. Known values are: "error", "ignore", and "allow". Default value is None.
         :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
@@ -897,7 +868,6 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_image_embeddings_embedding_request(
-            model_deployment=model_deployment,
             unknown_params=unknown_params,
             content_type=content_type,
             api_version=self._config.api_version,

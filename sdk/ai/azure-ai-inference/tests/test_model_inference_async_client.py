@@ -52,7 +52,7 @@ class TestModelAsyncClient(ModelClientTestBase):
     @recorded_by_proxy_async
     async def test_async_embeddings(self, **kwargs):
         client = self._create_async_embeddings_client(**kwargs)
-        response = await client.embedding(input=["first phrase", "second phrase", "third phrase"])
+        response = await client.embed(input=["first phrase", "second phrase", "third phrase"])
         self._print_embeddings_result(response)
         self._validate_embeddings_result(response)
         await client.close()
@@ -114,7 +114,6 @@ class TestModelAsyncClient(ModelClientTestBase):
         client = self._create_async_chat_client(**kwargs)
         response = await client.complete(
             messages=[sdk.models.UserMessage(content="How many feet are in a mile?")],
-            unknown_params=sdk.models.UnknownParams.IGNORE,
             model_extras={
                 "key1": 1,
                 "key2": True,
@@ -190,7 +189,7 @@ class TestModelAsyncClient(ModelClientTestBase):
         client = self._create_async_embeddings_client(bad_key=True, **kwargs)
         exception_caught = False
         try:
-            response = await client.embedding(input=["first phrase", "second phrase", "third phrase"])
+            response = await client.embed(input=["first phrase", "second phrase", "third phrase"])
         except AzureError as e:
             exception_caught = True
             print(e)

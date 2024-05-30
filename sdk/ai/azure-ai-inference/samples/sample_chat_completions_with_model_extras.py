@@ -26,12 +26,6 @@ USAGE:
 def sample_chat_completions_with_model_extras():
     import os
 
-    import sys
-    import logging
-    logger = logging.getLogger("azure")
-    logger.setLevel(logging.DEBUG)
-    logger.addHandler(logging.StreamHandler(stream=sys.stdout))
-
     try:
         endpoint = os.environ["CHAT_COMPLETIONS_ENDPOINT"]
         key = os.environ["CHAT_COMPLETIONS_KEY"]
@@ -44,7 +38,7 @@ def sample_chat_completions_with_model_extras():
     from azure.ai.inference.models import SystemMessage, UserMessage, UnknownParams
     from azure.core.credentials import AzureKeyCredential
 
-    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key), logging_enable = True)
+    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # [START model_extras]
     response = client.complete(
@@ -52,7 +46,6 @@ def sample_chat_completions_with_model_extras():
             SystemMessage(content="You are a helpful assistant."),
             UserMessage(content="How many feet are in a mile?"),
         ],
-        unknown_params=UnknownParams.ALLOW,  # Optional. Supported values: "ALLOW", "IGNORE", "ERROR" (service default)
         model_extras={  # Optional. Additional parameters to pass to the model.
             "key1": "value1",
             "key2": "value2"

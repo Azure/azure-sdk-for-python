@@ -51,7 +51,7 @@ class TestModelClient(ModelClientTestBase):
     @recorded_by_proxy
     def test_embeddings(self, **kwargs):
         client = self._create_embeddings_client(**kwargs)
-        response = client.embedding(input=["first phrase", "second phrase", "third phrase"])
+        response = client.embed(input=["first phrase", "second phrase", "third phrase"])
         self._print_embeddings_result(response)
         self._validate_embeddings_result(response)
         client.close()
@@ -114,7 +114,6 @@ class TestModelClient(ModelClientTestBase):
         client = self._create_chat_client(**kwargs)
         response = client.complete(
             messages=[sdk.models.UserMessage(content="How many feet are in a mile?")],
-            unknown_params=sdk.models.UnknownParams.IGNORE,
             model_extras={
                 "key1": 1,
                 "key2": True,
@@ -254,7 +253,7 @@ class TestModelClient(ModelClientTestBase):
         client = self._create_embeddings_client_with_chat_completions_credentials(**kwargs)
         exception_caught = False
         try:
-            response = client.embedding(input=["first phrase", "second phrase", "third phrase"])
+            response = client.embed(input=["first phrase", "second phrase", "third phrase"])
         except AzureError as e:
             exception_caught = True
             print(e)

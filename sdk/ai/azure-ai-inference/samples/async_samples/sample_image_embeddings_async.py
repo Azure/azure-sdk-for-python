@@ -44,7 +44,7 @@ async def sample_image_embeddings_async():
     client = ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Do a single image embeddings operation. Start the operation and get a Future object.
-    response = await client.embedding(input=[EmbeddingInput(image=image1), EmbeddingInput(image=image2)])
+    response = await client.embed(input=[EmbeddingInput(image=image1), EmbeddingInput(image=image2)])
 
     print("Embeddings response:")
     for item in response.data:

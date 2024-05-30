@@ -5,57 +5,74 @@
 """
 DESCRIPTION:
     This sample demonstrates how to get a chat completions response from
-    the service using a synchronous client, using an Azure OpenAI endpoint.
+    the service using a synchronous client, with an Azure OpenAI (AOAI) endpoint.
+    Two types of authentications are shown: key authentication and Entra ID
+    authentication.
+
+    Note that all production code should use the official OpenAI Python client
+    library when using Azure OpenAI (AOAI) endpoints. This library can be found
+    here: https://github.com/openai/openai-python
+
+    For development and evaluation purposes (comparing OpenAI models to other
+    models in the Azure AI Studio catalog), you can use the azure-ai-inference
+    Python client library with AOAI endpoints, as shown in this sample.
 
 USAGE:
-    python sample_chat_completions_azure_openai.py
-
-    Set these two environment variables before running the sample:
-    1) AOAI_CHAT_COMPLETIONS_ENDPOINT - Your endpoint URL, in the form 
-        https://<your-unique-label>.openai.azure.com/openai/deployments/<your-deployment-name>
-        where `your-deployment-name` is your unique AI Model deployment name.
-        For example: https://my-unique-label.openai.azure.com/openai/deployments/gpt-4-turbo
-    2) AOAI_CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
+    1. Update 'key_auth` below to 'True' for key authentication, or 'False' for
+       Entra ID authentication.
+    2. Update `api_version` (the AOAI REST API version) as needed.
+    3. Set one or two environment variables, depending on your authentication method:
+        * AOAI_CHAT_COMPLETIONS_ENDPOINT - Your AOAI endpoint URL, with partial path, in the form 
+            https://<your-unique-resouce-name>.openai.azure.com/openai/deployments/<your-deployment-name>
+            where `your-unique-resource-name` is your globally unique AOAI resource name,
+            where `your-deployment-name` is your AI Model deployment name.
+            For example: https://your-unique-host.openai.azure.com/openai/deployments/gpt-4-turbo
+        * AOAI_CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret. This
+            is only required for key authentication.
+    4. Run the sample:
+       python sample_chat_completions_azure_openai.py
 """
 
+key_auth:bool = True  # Set to True for key authentication, or False for Entra ID authentication.
 
 def sample_chat_completions_azure_openai():
     import os
-
-    import sys
-    import logging
-    logger = logging.getLogger("azure")
-    logger.setLevel(logging.DEBUG)
-    logger.addHandler(logging.StreamHandler(stream=sys.stdout))
-    #logger.addHandler(logging.FileHandler(filename = "c:\\temp\\sample.log"))
-
-    try:
-        endpoint = os.environ["AOAI_CHAT_COMPLETIONS_ENDPOINT"]
-        key = os.environ["AOAI_CHAT_COMPLETIONS_KEY"]
-    except KeyError:
-        print("Missing environment variable 'AOAI_CHAT_COMPLETIONS_ENDPOINT' or 'AOAI_CHAT_COMPLETIONS_KEY'")
-        print("Set them before running this sample.")
-        exit()
-
     from azure.ai.inference import ChatCompletionsClient
     from azure.ai.inference.models import SystemMessage, UserMessage
 
-    # Using key auth
-    # from azure.core.credentials import AzureKeyCredential
-    # client = ChatCompletionsClient(
-    #     endpoint=endpoint, 
-    #     credential=AzureKeyCredential(""), # Pass in a dummy or empty value, as `credential` is a mandatory parameter
-    #     headers={"api-key": key}, # AOAI uses this header for key auth. MaaS/MaaP uses "Authorization" header.
-    #     api_version="2024-02-15-preview", logging_enable = True) # MaaS/MaaP uses "2024-05-01-preview"
+    try:
+        endpoint = os.environ["AOAI_CHAT_COMPLETIONS_ENDPOINT"]
+    except KeyError:
+        print("Missing environment variable 'AOAI_CHAT_COMPLETIONS_ENDPOINT'")
+        print("Set it before running this sample.")
+        exit()
 
-    # Using Entra ID auth
-    from azure.identity import DefaultAzureCredential
-    client = ChatCompletionsClient(
-        endpoint=endpoint, 
-        credential=DefaultAzureCredential(),
-        credential_scopes=["https://cognitiveservices.azure.com/.default"], # MaaS/MaaP uses https://ml.azure.com/.default
-        api_version="2024-02-15-preview", # MaaS/MaaP uses "2024-05-01-preview"
-        logging_enable = True)
+    if key_auth:
+        from azure.core.credentials import AzureKeyCredential
+
+        try:
+            key = os.environ["AOAI_CHAT_COMPLETIONS_KEY"]
+        except KeyError:
+            print("Missing environment variable 'AOAI_CHAT_COMPLETIONS_KEY'")
+            print("Set it before running this sample.")
+            exit()
+
+        client = ChatCompletionsClient(
+            endpoint=endpoint, 
+            credential=AzureKeyCredential(""), # Pass in an empty value.
+            headers={"api-key": key}, 
+            api_version="2024-02-15-preview" # AOAI api-version. Update as needed.
+        ) 
+
+    else: # Entra ID authentication
+        from azure.identity import DefaultAzureCredential
+
+        client = ChatCompletionsClient(
+            endpoint=endpoint, 
+            credential=DefaultAzureCredential(),
+            credential_scopes=["https://cognitiveservices.azure.com/.default"],
+            api_version="2024-02-15-preview" # AOAI api-version. Update as needed.
+        )
 
     response = client.complete(
         messages=[
