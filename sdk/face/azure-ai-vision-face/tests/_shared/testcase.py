@@ -6,21 +6,10 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.ai.vision.face import (
-    FaceAdministrationClient,
     FaceClient,
     FaceSessionClient,
 )
 from azure.core.credentials import AzureKeyCredential
-
-
-class FaceAdminClientTestCase:
-    def _set_up(self, endpoint, account_key) -> None:
-        self._client = FaceAdministrationClient(
-            endpoint=endpoint, credential=AzureKeyCredential(account_key)
-        )
-
-    def _tear_down(self) -> None:
-        self._client.close()
 
 
 class FaceClientTestCase:
