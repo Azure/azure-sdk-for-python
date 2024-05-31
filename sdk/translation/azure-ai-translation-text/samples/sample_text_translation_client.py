@@ -79,20 +79,6 @@ def create_text_translation_client_with_cognitive_services_token():
     client = TextTranslationClient(credential=credential, audience="https://api.microsofttranslator.com/")
     # [END create_text_translation_client_with_cognitive_services_token]
 
-def create_text_translation_client_custom_with_cognitive_services_token():
-    from azure.ai.translation.text import TextTranslationClient
-    from azure.core.credentials import TokenCredential
-
-    endpoint = os.environ["AZURE_TEXT_TRANSLATION_ENDPOINT"]
-    apikey = os.environ["AZURE_TEXT_TRANSLATION_APIKEY"]
-    region = os.environ["AZURE_TEXT_TRANSLATION_REGION"]
-
-    credential: TokenCredential = StaticAccessTokenCredential(apikey, region)
-
-    # [START create_text_translation_client_custom_with_cognitive_services_token]
-    client = TextTranslationClient(credential=credential, endpoint=endpoint, audience="https://api.microsofttranslator.com/")
-    # [END create_text_translation_client_custom_with_cognitive_services_token]
-
 def create_text_translation_client_with_entra_id_token():
     from azure.ai.translation.text import TextTranslationClient
     from azure.identity import DefaultAzureCredential

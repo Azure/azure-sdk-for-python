@@ -92,16 +92,7 @@ text_translator = TextTranslationClient(credential=credential, endpoint=endpoint
 
 ### Using the Cognitive Services Token
 
-For the Cognitive Services Token authentication, there is currently no implementation provided in the SDK. You can implement the solution
-according to the [Token Authentication documentation](TranslatorReference). When the token is created, you can create the `TextTranslationClient`:
-
-<!-- SNIPPET: sample_text_translation_client.create_text_translation_client_custom_with_cognitive_services_token -->
-
-```python
-client = TextTranslationClient(credential=credential, endpoint=endpoint, audience="https://api.microsofttranslator.com/")
-```
-
-<!-- END SNIPPET -->
+The Cognitive Services Token is not supported when using the Custom Endpoint.
 
 ### Using the Entra Id Authentication
 

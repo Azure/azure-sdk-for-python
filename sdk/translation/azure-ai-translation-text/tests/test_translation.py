@@ -302,25 +302,6 @@ class TestTranslation(TextTranslationTest):
         assert response[0].detected_language.score == 1
 
     @pytest.mark.skip
-    @pytest.mark.live_test_only
-    @TextTranslationPreparer()
-    @recorded_by_proxy
-    def test_token_custom(self, **kwargs):
-        endpoint = kwargs.get("translation_text_custom_endpoint")
-        apikey = kwargs.get("translation_text_custom_apikey")
-        region = kwargs.get("translation_text_region")
-        client = self.create_client_token(endpoint, apikey, region, "https://api.microsofttranslator.com/")
-
-        to_language = ["cs"]
-        input_text_elements = ["This is a test."]
-        response = client.translate(body=input_text_elements, to_language=to_language)
-
-        assert len(response) == 1
-        assert len(response[0].translations) == 1
-        assert response[0].detected_language.language == "en"
-        assert response[0].detected_language.score == 1
-
-    @pytest.mark.skip
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_translate_aad(self, **kwargs):
