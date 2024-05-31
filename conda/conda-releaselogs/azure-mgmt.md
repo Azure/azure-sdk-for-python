@@ -38,8 +38,8 @@
 - azure-mgmt-containerinstance-10.1.0
 - azure-mgmt-containerregistry-10.3.0
 - azure-mgmt-containerservice-30.0.0
-- azure-mgmt-containerservicefleet-1.1.0
-- azure-mgmt-cosmosdb-9.4.0
+- azure-mgmt-containerservicefleet-2.0.0
+- azure-mgmt-cosmosdb-9.5.0
 - azure-mgmt-costmanagement-4.0.1
 - azure-mgmt-customproviders-1.0.0
 - azure-mgmt-dashboard-1.1.0
@@ -133,7 +133,7 @@
 - azure-mgmt-resourceconnector-1.0.0
 - azure-mgmt-resourcemover-1.1.0
 - azure-mgmt-search-9.1.0
-- azure-mgmt-security-6.0.0
+- azure-mgmt-security-7.0.0
 - azure-mgmt-securityinsight-1.0.0
 - azure-mgmt-selfhelp-1.0.0
 - azure-mgmt-serialconsole-1.0.0

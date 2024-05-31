@@ -59,6 +59,10 @@ parameters:
     displayName: 'azure-ai-translation-document'
     type: boolean
     default: true
+  - name: release_azure_ai_translation_text
+    displayName: 'azure-ai-translation-text'
+    type: boolean
+    default: true
   - name: release_azure_appconfiguration
     displayName: 'azure-appconfiguration'
     type: boolean
@@ -251,7 +255,7 @@ extends:
                         - conda-forge
                       checkout:
                         - package: azure-ai-ml
-                          version: 1.16.0
+                          version: 1.16.1
                     - name: azure-ai-contentsafety
                       common_root: azure
                       service: contentsafety
@@ -296,6 +300,12 @@ extends:
                       in_batch: ${{ parameters.release_azure_ai_translation_document }}
                       checkout:
                         - package: azure-ai-translation-document
+                          version: 1.0.0
+                    - name: azure-ai-translation-text
+                      service: translation
+                      in_batch: ${{ parameters.release_azure_ai_translation_text }}
+                      checkout:
+                        - package: azure-ai-translation-text
                           version: 1.0.0
                     - name: azure-appconfiguration
                       service: appconfiguration
@@ -343,7 +353,7 @@ extends:
                       in_batch: ${{ parameters.release_azure_cosmos }}
                       checkout:
                         - package: azure-cosmos
-                          version: 4.6.0
+                          version: 4.7.0
                     - name: azure-data-tables
                       service: tables
                       in_batch: ${{ parameters.release_azure_data_tables }}
@@ -378,7 +388,7 @@ extends:
                         - package: azure-eventhub-checkpointstoreblob-aio
                           version: 1.1.4
                         - package: azure-eventhub
-                          version: 5.11.7
+                          version: 5.12.0
                     - name: azure-iot-deviceupdate
                       service: deviceupdate
                       in_batch: ${{ parameters.release_azure_iot_deviceupdate }}
@@ -517,9 +527,9 @@ extends:
                         - package: azure-mgmt-containerservice
                           version: 30.0.0
                         - package: azure-mgmt-containerservicefleet
-                          version: 1.1.0
+                          version: 2.0.0
                         - package: azure-mgmt-cosmosdb
-                          version: 9.4.0
+                          version: 9.5.0
                         - package: azure-mgmt-costmanagement
                           version: 4.0.1
                         - package: azure-mgmt-customproviders
@@ -705,7 +715,7 @@ extends:
                         - package: azure-mgmt-search
                           version: 9.1.0
                         - package: azure-mgmt-security
-                          version: 6.0.0
+                          version: 7.0.0
                         - package: azure-mgmt-securityinsight
                           version: 1.0.0
                         - package: azure-mgmt-selfhelp
