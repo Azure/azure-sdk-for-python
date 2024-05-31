@@ -22,13 +22,4 @@ extends:
         - TestSamples=.*/true
       MatrixFilters:
         - PythonVersion=^(?!pypy3).*
-      EnvVars:
-        AZURE_STORAGE_DATA_LAKE_ENABLED_CONN_STR: $(python-eh-livetest-event-hub-storage-data-lake-enabled-conn-str)
-        IOTHUB_CONNECTION_STR: $(python-eh-livetest-event-hub-iothub-connection-str)
-        IOTHUB_DEVICE: $(python-eh-livetest-event-hub-iothub-device)
-        AZURE_CLIENT_ID: $(EVENTHUB_CLIENT_ID)
-        AZURE_TENANT_ID: $(EVENTHUB_TENANT_ID)
-        AZURE_CLIENT_SECRET: $(EVENTHUB_CLIENT_SECRET)
-        AZURE_SUBSCRIPTION_ID: $(EVENTHUB_SUBSCRIPTION_ID)
-        AZURE_COSMOS_CONN_STR: $(python-eventhub-livetest-cosmos-conn-str)
       Clouds: 'Public,Canary'
