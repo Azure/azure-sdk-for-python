@@ -6,6 +6,7 @@
 import functools
 from os import environ
 from os.path import dirname, realpath, join
+import logging
 
 import inspect
 import json
@@ -142,6 +143,9 @@ def search_decorator(*, schema, index_batch):
             endpoint = kwargs.get("search_service_endpoint")
             service_name = kwargs.get("search_service_name")
             if test.is_live:
+                logging.basicConfig(level=logging.DEBUG)
+                logger = logging.getLogger()
+                logger.debug("This is a debug message")
                 cred = DefaultAzureCredential(exclude_managed_identity_credential=True)
                 _clean_up_indexes(endpoint, cred)
                 _set_up_index(service_name, endpoint, cred, schema, index_batch)
