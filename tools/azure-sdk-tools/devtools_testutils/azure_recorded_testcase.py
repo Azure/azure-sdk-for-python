@@ -157,7 +157,7 @@ class AzureRecordedTestCase(object):
             from azure.identity import DefaultAzureCredential
             if is_async:
                 from azure.identity.aio import DefaultAzureCredential
-            return DefaultAzureCredential()
+            return DefaultAzureCredential(exclude_managed_identity_credential=True)
 
         # For playback tests, return credentials that will accept playback `get_token` calls
         else:
