@@ -21,21 +21,21 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from .._deserialize import deserialize_directory_properties
 from .._directory_client_helpers import (
     _format_url,
     _from_directory_url,
     _parse_url
 )
-from .._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
-from .._shared.parser import _str
 from .._generated.aio import AzureFileStorage
-from .._shared.base_client import StorageAccountHostsMixin, parse_query
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
+from .._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
+from .._serialize import get_api_version, get_dest_access_conditions, get_rename_smb_properties
+from .._shared.base_client import parse_query, StorageAccountHostsMixin
+from .._shared.base_client_async import parse_connection_str, AsyncStorageAccountHostsMixin, AsyncTransportWrapper
+from .._shared.parser import _str
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers
-from .._shared.response_handlers import return_response_headers, process_storage_error
-from .._deserialize import deserialize_directory_properties
-from .._serialize import get_api_version, get_dest_access_conditions, get_rename_smb_properties
+from .._shared.response_handlers import process_storage_error, return_response_headers
 from ._file_client_async import ShareFileClient
 from ._models import DirectoryPropertiesPaged, HandlesPaged
 
@@ -247,7 +247,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies  # type: ignore # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
         )
         return ShareFileClient(
             self.url, file_path=file_name, share_name=self.share_name, snapshot=self.snapshot,
@@ -281,7 +281,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies  # type: ignore # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
         )
         return cast(Self, ShareDirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot,

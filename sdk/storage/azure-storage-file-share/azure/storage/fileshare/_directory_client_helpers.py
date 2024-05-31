@@ -31,7 +31,7 @@ def _parse_url(account_url: str, share_name: str) -> "ParseResult":
     return parsed_url
 
 
-def _format_url(scheme: str, hostname: str, share_name: str, dir_path: str, query_str: str) -> str:
+def _format_url(scheme: str, hostname: str, share_name: Union[str, bytes], dir_path: str, query_str: str) -> str:
     if isinstance(share_name, str):
         share_name = share_name.encode('UTF-8')
     directory_path = ""
