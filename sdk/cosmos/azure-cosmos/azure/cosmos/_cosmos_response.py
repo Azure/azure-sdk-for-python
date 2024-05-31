@@ -1,7 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) 2024 Microsoft Corporation
 
-from requests.structures import CaseInsensitiveDict
+from azure.core.utils import CaseInsensitiveDict
 
 
 class CosmosResponse(dict):
