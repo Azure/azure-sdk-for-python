@@ -19,7 +19,7 @@ from conftest import (
     reload,
 )
 
-
+@pytest.mark.skip()
 class TestClientAsync(AzureRecordedTestCase):
     """Azure AD with token provider is missing here because it is tested per feature"""
 

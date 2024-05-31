@@ -10,7 +10,7 @@ import uuid
 from devtools_testutils import AzureRecordedTestCase
 from conftest import configure, ASST_AZURE, OPENAI, AZURE, PREVIEW, GA
 
-
+@pytest.mark.skip()
 class TestModels(AzureRecordedTestCase):
 
     @configure

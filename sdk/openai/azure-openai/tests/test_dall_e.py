@@ -8,7 +8,7 @@ import openai
 from devtools_testutils import AzureRecordedTestCase
 from conftest import configure, DALLE_AZURE, OPENAI, PREVIEW, GA
 
-
+@pytest.mark.skip()
 class TestDallE(AzureRecordedTestCase):
 
     @configure

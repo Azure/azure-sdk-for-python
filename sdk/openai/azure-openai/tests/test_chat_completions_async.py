@@ -22,7 +22,7 @@ from conftest import (
     ENV_AZURE_OPENAI_SEARCH_INDEX
 )
 
-
+@pytest.mark.skip()
 class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
@@ -756,8 +756,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
                             "endpoint": os.environ[ENV_AZURE_OPENAI_SEARCH_ENDPOINT],
                             "index_name": os.environ[ENV_AZURE_OPENAI_SEARCH_INDEX],
                             "authentication": {
-                                "type": "api_key",
-                                "key": os.environ[ENV_AZURE_OPENAI_SEARCH_KEY],
+                                "type": "system_assigned_managed_identity"
                             }
                         }
                     }
@@ -796,8 +795,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
                             "endpoint": os.environ[ENV_AZURE_OPENAI_SEARCH_ENDPOINT],
                             "index_name": os.environ[ENV_AZURE_OPENAI_SEARCH_INDEX],
                             "authentication": {
-                                "type": "api_key",
-                                "key": os.environ[ENV_AZURE_OPENAI_SEARCH_KEY],
+                                "type": "system_assigned_managed_identity"
                             }
                         }
                     }

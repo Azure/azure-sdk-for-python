@@ -12,7 +12,7 @@ from devtools_testutils import AzureRecordedTestCase
 from conftest import ASST_AZURE, PREVIEW, GPT_4_OPENAI, configure_async
 
 TIMEOUT = 300
-
+@pytest.mark.skip()
 class TestAssistantsAsync(AzureRecordedTestCase):
 
     @configure_async

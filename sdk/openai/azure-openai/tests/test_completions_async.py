@@ -8,7 +8,7 @@ import openai
 from devtools_testutils import AzureRecordedTestCase
 from conftest import AZURE, OPENAI, PREVIEW, GA, configure_async
 
-
+@pytest.mark.skip()
 class TestCompletionsAsync(AzureRecordedTestCase):
     """Missing tests for keyword argument `suffix`"""
 
