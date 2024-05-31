@@ -243,6 +243,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         **kwargs: Any
     ) -> _models.ChatCompletions:
         # pylint: disable=line-too-long
+        # pylint: disable=too-many-locals
         """Gets chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
         "completes"
@@ -828,7 +829,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
 class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
 
     @overload
-    def embed(
+    def _embed(
         self,
         body: JSON,
         *,
@@ -912,7 +913,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         """
 
     @overload
-    def embed(
+    def _embed(
         self,
         *,
         input: List[_models.EmbeddingInput],
@@ -993,7 +994,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         """
 
     @overload
-    def embed(
+    def _embed(
         self,
         body: IO[bytes],
         *,
@@ -1053,7 +1054,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         """
 
     @distributed_trace
-    def embed(
+    def _embed(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,

@@ -19,6 +19,8 @@ USAGE:
         `your-azure-region` is the Azure region where your model is deployed.
     2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
+# mypy: disable-error-code="union-attr"
+# pyright: reportAttributeAccessIssue=false
 
 
 def sample_chat_completions_with_tools():
@@ -36,6 +38,7 @@ def sample_chat_completions_with_tools():
     from azure.ai.inference import ChatCompletionsClient
     from azure.ai.inference.models import (
         AssistantMessage,
+        ChatCompletionsFunctionToolCall,
         ChatCompletionsFunctionToolDefinition,
         CompletionsFinishReason,
         FunctionDefinition,
@@ -105,24 +108,27 @@ def sample_chat_completions_with_tools():
         # Append the previous model response to the chat history
         messages.append(AssistantMessage(tool_calls=response.choices[0].message.tool_calls))
 
-        # The tools call should be a function call
-        tool_call = response.choices[0].message.tool_calls[0]
-        if hasattr(tool_call, "function"):
+        # The tool should be of type function call. He we assume only one function call is required.
+        if response.choices[0].message.tool_calls is not None and len(response.choices[0].message.tool_calls) == 1:
 
-            function_args = json.loads(tool_call.function.arguments.replace("'", '"'))
-            print(f"Calling function `{tool_call.function.name}` with arguments {function_args}")
-            callable_func = locals()[tool_call.function.name]
+            tool_call = response.choices[0].message.tool_calls[0]
 
-            function_response = callable_func(**function_args)
-            print(f"Function response = {function_response}")
+            if isinstance(tool_call, ChatCompletionsFunctionToolCall):
 
-            # Provide the tool response to the model, by appending it to the chat history
-            messages.append(ToolMessage(tool_call_id=tool_call.id, content=function_response))
+                function_args = json.loads(tool_call.function.arguments.replace("'", '"'))
+                print(f"Calling function `{tool_call.function.name}` with arguments {function_args}")
+                callable_func = locals()[tool_call.function.name]
 
-            # With the additional tools information on hand, get another response from the model
-            response = client.complete(messages=messages, tools=[flight_info])
+                function_response = callable_func(**function_args)
+                print(f"Function response = {function_response}")
 
-            print(f"Model response = {response.choices[0].message.content}")
+                # Provide the tool response to the model, by appending it to the chat history
+                messages.append(ToolMessage(tool_call_id=tool_call.id, content=function_response))
+
+                # With the additional tools information on hand, get another response from the model
+                response = client.complete(messages=messages, tools=[flight_info])
+
+                print(f"Model response = {response.choices[0].message.content}")
 
 
 if __name__ == "__main__":

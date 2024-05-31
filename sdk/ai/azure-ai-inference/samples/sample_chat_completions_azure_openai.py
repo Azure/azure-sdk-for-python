@@ -32,8 +32,8 @@ USAGE:
     4. Run the sample:
        python sample_chat_completions_azure_openai.py
 """
-
-key_auth: bool = True  # Set to True for key authentication, or False for Entra ID authentication.
+# mypy: disable-error-code="union-attr"
+# pyright: reportAttributeAccessIssue=false
 
 
 def sample_chat_completions_azure_openai():
@@ -47,6 +47,8 @@ def sample_chat_completions_azure_openai():
         print("Missing environment variable 'AOAI_CHAT_COMPLETIONS_ENDPOINT'")
         print("Set it before running this sample.")
         exit()
+
+    key_auth = True  # Set to True for key authentication, or False for Entra ID authentication.
 
     if key_auth:
         from azure.core.credentials import AzureKeyCredential

@@ -18,8 +18,11 @@ USAGE:
         `your-azure-region` is the Azure region where your model is deployed.
     2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
-import io
+# mypy: disable-error-code="union-attr"
+# pyright: reportAttributeAccessIssue=false
 
+
+import io
 
 def sample_chat_completions_from_input_bytes():
     import os

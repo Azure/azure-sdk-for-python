@@ -228,6 +228,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         **kwargs: Any,
     ) -> Union[_models.StreamingChatCompletions, _models.ChatCompletions]:
         # pylint: disable=line-too-long
+        # pylint: disable=too-many-locals
         """Gets chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
         "completes" provided prompt data. When using this method with `stream=True`, the response is streamed
@@ -379,7 +380,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
-                _unknown_params = _models._enums.UnknownParams.PASS_THROUGH
+                _unknown_params = _models._enums.UnknownParams.PASS_THROUGH # pylint: disable=protected-access
             body = {k: v for k, v in body.items() if v is not None}
         elif isinstance(body, dict) and "stream" in body and isinstance(body["stream"], bool):
             stream = body["stream"]
@@ -609,7 +610,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
-                _unknown_params = _models._enums.UnknownParams.PASS_THROUGH
+                _unknown_params = _models._enums.UnknownParams.PASS_THROUGH # pylint: disable=protected-access
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -839,7 +840,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
-                _unknown_params = _models._enums.UnknownParams.PASS_THROUGH
+                _unknown_params = _models._enums.UnknownParams.PASS_THROUGH # pylint: disable=protected-access
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
