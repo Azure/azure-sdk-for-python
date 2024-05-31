@@ -65,8 +65,9 @@ client = KeyVaultAccessControlClient(vault_url=MANAGED_HSM_URL, credential=crede
 > **NOTE:** For an asynchronous client, import `azure.keyvault.administration.aio`'s `KeyVaultAccessControlClient` instead.
 
 #### Create a KeyVaultBackupClient
-After creating a user-assigned [managed identity][managed_identity] and granting it access to your Managed HSM, you can
-do the following to create a backup client (setting the value of `CLIENT_ID` to your managed identity's client ID):
+After creating a user-assigned [managed identity][managed_identity] and
+[granting it access to your Managed HSM][managed_identity_backup_setup], you can do the following to create a backup
+client (setting the value of `CLIENT_ID` to your managed identity's client ID):
 
 <!-- SNIPPET:backup_restore_operations.create_a_backup_restore_client -->
 
@@ -276,6 +277,9 @@ The `KeyVaultBackupClient` can be used to back up your entire collection of keys
 backups is a blob storage container using either Managed Identity (which is preferred) or Shared Access Signature (SAS)
 authentication.
 
+If using Managed Identity, first make sure your user-assigned managed identity has the correct access to your Storage
+account and Managed HSM per [the service's guidance][managed_identity_backup_setup].
+
 For more details on creating a SAS token using a `BlobServiceClient` from [`azure-storage-blob`][storage_blob], refer
 to the library's [credential documentation][sas_docs]. Alternatively, it is possible to
 [generate a SAS token in Storage Explorer][storage_explorer].
@@ -300,6 +304,9 @@ The `KeyVaultBackupClient` can be used to restore your entire collection of keys
 full key restore is a storage blob accessed using either Managed Identity (which is preferred) or Shared Access
 Signature authentication. You will also need the URL of the backup (`KeyVaultBackupResult.folder_url`) from the
 [above snippet](#perform-a-full-key-backup).
+
+If using Managed Identity, first make sure your user-assigned managed identity has the correct access to your Storage
+account and Managed HSM per [the service's guidance][managed_identity_backup_setup].
 
 For more details on creating a SAS token using a `BlobServiceClient` from [`azure-storage-blob`][storage_blob], refer
 to the library's [credential documentation][sas_docs]. Alternatively, it is possible to
@@ -406,6 +413,7 @@ contact opencode@microsoft.com with any additional questions or comments.
 [managed_hsm]: https://docs.microsoft.com/azure/key-vault/managed-hsm/overview
 [managed_hsm_cli]: https://docs.microsoft.com/azure/key-vault/managed-hsm/quick-create-cli
 [managed_identity]: https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview
+[managed_identity_backup_setup]: https://learn.microsoft.com/azure/key-vault/managed-hsm/backup-restore#prerequisites-if-backing-up-and-restoring-using-user-assigned-managed-identity
 [managed_identity_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.ManagedIdentityCredential
 
 [pip]: https://pypi.org/project/pip/
