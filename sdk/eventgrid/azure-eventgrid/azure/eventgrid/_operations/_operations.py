@@ -885,7 +885,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
             _content = body
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-        print(_content)
+
         _request = build_event_grid_consumer_release_request(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
