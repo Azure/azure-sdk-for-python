@@ -6,7 +6,7 @@
 from logging import getLogger
 from typing import Dict, cast
 
-from opentelemetry._logs import get_logger_provider, set_logger_provider
+from opentelemetry._logs import set_logger_provider
 from opentelemetry.instrumentation.dependencies import (
     get_dist_dependency_conflicts,
 )
@@ -21,7 +21,7 @@ from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
-from opentelemetry.trace import get_tracer_provider, set_tracer_provider
+from opentelemetry.trace import set_tracer_provider
 from pkg_resources import iter_entry_points  # type: ignore
 
 from azure.core.settings import settings
@@ -32,12 +32,18 @@ from azure.monitor.opentelemetry._constants import (
     DISABLE_LOGGING_ARG,
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
+    ENABLE_LIVE_METRICS_ARG,
     LOGGER_NAME_ARG,
     RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
     SPAN_PROCESSORS_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
+from azure.monitor.opentelemetry.exporter._quickpulse import enable_live_metrics  # pylint: disable=import-error,no-name-in-module
+from azure.monitor.opentelemetry.exporter._quickpulse._processor import (  # pylint: disable=import-error,no-name-in-module
+    _QuickpulseLogRecordProcessor,
+    _QuickpulseSpanProcessor,
+)
 from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
     ApplicationInsightsSampler,
     AzureMonitorLogExporter,
@@ -78,6 +84,8 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
      Attributes take priority over default attributes and those from Resource Detectors.
     :keyword list[~opentelemetry.sdk.trace.SpanProcessor] span_processors: List of `SpanProcessor` objects
      to process every span prior to exporting. Will be run sequentially.
+    :keyword bool enable_live_metrics: Boolean value to determine whether to enable live metrics feature.
+     Defaults to `False`.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
      `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
     :rtype: None
@@ -90,6 +98,7 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     disable_tracing = configurations[DISABLE_TRACING_ARG]
     disable_logging = configurations[DISABLE_LOGGING_ARG]
     disable_metrics = configurations[DISABLE_METRICS_ARG]
+    enable_live_metrics_config = configurations[ENABLE_LIVE_METRICS_ARG]
 
     # Setup tracing pipeline
     if not disable_tracing:
@@ -102,6 +111,10 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     # Setup metrics pipeline
     if not disable_metrics:
         _setup_metrics(configurations)
+
+    # Setup live metrics
+    if enable_live_metrics_config:
+        _setup_live_metrics(configurations)
 
     # Setup instrumentations
     # Instrumentations need to be setup last so to use the global providers
@@ -116,14 +129,17 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
         sampler=ApplicationInsightsSampler(sampling_ratio=cast(float, sampling_ratio)),
         resource=resource
     )
-    set_tracer_provider(tracer_provider)
     for span_processor in configurations[SPAN_PROCESSORS_ARG]: # type: ignore
-        get_tracer_provider().add_span_processor(span_processor) # type: ignore
+        tracer_provider.add_span_processor(span_processor) # type: ignore
+    if configurations.get(ENABLE_LIVE_METRICS_ARG):
+        qsp = _QuickpulseSpanProcessor()
+        tracer_provider.add_span_processor(qsp)
     trace_exporter = AzureMonitorTraceExporter(**configurations)
     bsp = BatchSpanProcessor(
         trace_exporter,
     )
-    get_tracer_provider().add_span_processor(bsp) # type: ignore
+    tracer_provider.add_span_processor(bsp)
+    set_tracer_provider(tracer_provider)
     if _is_instrumentation_enabled(configurations, _AZURE_SDK_INSTRUMENTATION_NAME):
         settings.tracing_implementation = OpenTelemetrySpan
 
@@ -131,13 +147,16 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
 def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG] # type: ignore
     logger_provider = LoggerProvider(resource=resource)
-    set_logger_provider(logger_provider)
+    if configurations.get(ENABLE_LIVE_METRICS_ARG):
+        qlp = _QuickpulseLogRecordProcessor()
+        logger_provider.add_log_record_processor(qlp)
     log_exporter = AzureMonitorLogExporter(**configurations)
     log_record_processor = BatchLogRecordProcessor(
         log_exporter,
     )
-    get_logger_provider().add_log_record_processor(log_record_processor) # type: ignore
-    handler = LoggingHandler(logger_provider=get_logger_provider())
+    logger_provider.add_log_record_processor(log_record_processor)
+    set_logger_provider(logger_provider)
+    handler = LoggingHandler(logger_provider=logger_provider)
     logger_name: str = configurations[LOGGER_NAME_ARG] # type: ignore
     getLogger(logger_name).addHandler(handler)
 
@@ -151,6 +170,10 @@ def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
         resource=resource
     )
     set_meter_provider(meter_provider)
+
+
+def _setup_live_metrics(configurations):
+    enable_live_metrics(**configurations)
 
 
 def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):

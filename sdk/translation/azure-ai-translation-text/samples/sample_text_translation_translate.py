@@ -42,10 +42,12 @@ def get_text_translation():
     # [START get_text_translation]
     try:
         from_language = "en"
-        to = ["cs"]
+        to_language = ["cs"]
         input_text_elements = ["This is a test"]
 
-        response = text_translator.translate(body=input_text_elements, to=to, from_language=from_language)
+        response = text_translator.translate(
+            body=input_text_elements, to_language=to_language, from_language=from_language
+        )
         translation = response[0] if response else None
 
         if translation:
@@ -63,10 +65,10 @@ def get_text_translation():
 def get_text_translation_auto():
     # [START get_text_translation_auto]
     try:
-        to = ["cs"]
+        to_language = ["cs"]
         input_text_elements = ["This is a test"]
 
-        response = text_translator.translate(body=input_text_elements, to=to)
+        response = text_translator.translate(body=input_text_elements, to_language=to_language)
         translation = response[0] if response else None
 
         if translation:
@@ -92,12 +94,12 @@ def get_text_translation_with_transliteration():
         from_script = "Latn"
         from_language = "ar"
         to_script = "Latn"
-        to = ["zh-Hans"]
+        to_language = ["zh-Hans"]
         input_text_elements = ["hudha akhtabar."]
 
         response = text_translator.translate(
             body=input_text_elements,
-            to=to,
+            to_language=to_language,
             from_script=from_script,
             from_language=from_language,
             to_script=to_script,
@@ -125,14 +127,14 @@ def get_text_translation_with_transliteration():
 def get_text_translation_multiple_inputs():
     # [START get_text_translation_multiple_inputs]
     try:
-        to = ["cs"]
+        to_language = ["cs"]
         input_text_elements = [
             "This is a test.",
             "Esto es una prueba.",
             "Dies ist ein Test.",
         ]
 
-        translations = text_translator.translate(body=input_text_elements, to=to)
+        translations = text_translator.translate(body=input_text_elements, to_language=to_language)
 
         for translation in translations:
             print(
@@ -152,10 +154,10 @@ def get_text_translation_multiple_inputs():
 def get_text_translation_multiple_languages():
     # [START get_text_translation_multiple_languages]
     try:
-        to = ["cs", "es", "de"]
+        to_language = ["cs", "es", "de"]
         input_text_elements = ["This is a test"]
 
-        response = text_translator.translate(body=input_text_elements, to=to)
+        response = text_translator.translate(body=input_text_elements, to_language=to_language)
         translation = response[0] if response else None
 
         if translation:
@@ -178,10 +180,10 @@ def get_text_translation_type():
     # [START get_text_translation_type]
     try:
         text_type = TextType.HTML
-        to = ["cs"]
+        to_language = ["cs"]
         input_text_elements = ["<html><body>This <b>is</b> a test.</body></html>"]
 
-        response = text_translator.translate(body=input_text_elements, to=to, text_type=text_type)
+        response = text_translator.translate(body=input_text_elements, to_language=to_language, text_type=text_type)
         translation = response[0] if response else None
 
         if translation:
@@ -205,14 +207,14 @@ def get_text_translation_exclude():
     try:
         text_type = TextType.HTML
         from_language = "en"
-        to = ["cs"]
+        to_language = ["cs"]
         input_text_elements = [
             '<div class="notranslate">This will not be translated.</div><div>This will be translated. </div>'
         ]
 
         response = text_translator.translate(
             body=input_text_elements,
-            to=to,
+            to_language=to_language,
             from_language=from_language,
             text_type=text_type,
         )
@@ -233,12 +235,14 @@ def get_text_translation_entity():
     # [START get_text_translation_entity]
     try:
         from_language = "en"
-        to = ["cs"]
+        to_language = ["cs"]
         input_text_elements = [
             'The word <mstrans:dictionary translation="wordomatic">wordomatic</mstrans:dictionary> is a dictionary entry.'
         ]
 
-        response = text_translator.translate(body=input_text_elements, to=to, from_language=from_language)
+        response = text_translator.translate(
+            body=input_text_elements, to_language=to_language, from_language=from_language
+        )
         translation = response[0] if response else None
 
         if translation:
@@ -257,12 +261,12 @@ def get_text_translation_profanity():
     try:
         profanity_action = ProfanityAction.MARKED
         profanity_maker = ProfanityMarker.ASTERISK
-        to = ["cs"]
+        to_language = ["cs"]
         input_text_elements = ["This is ***."]
 
         response = text_translator.translate(
             body=input_text_elements,
-            to=to,
+            to_language=to_language,
             profanity_action=profanity_action,
             profanity_marker=profanity_maker,
         )
@@ -288,10 +292,12 @@ def get_text_translation_alignment():
     # [START get_text_translation_alignment]
     try:
         include_alignment = True
-        to = ["cs"]
+        to_language = ["cs"]
         input_text_elements = ["The answer lies in machine translation."]
 
-        response = text_translator.translate(body=input_text_elements, to=to, include_alignment=include_alignment)
+        response = text_translator.translate(
+            body=input_text_elements, to_language=to_language, include_alignment=include_alignment
+        )
         translation = response[0] if response else None
 
         if translation:
@@ -316,11 +322,11 @@ def get_text_translation_sentence_length():
     # [START get_text_translation_sentence_length]
     try:
         include_sentence_length = True
-        to = ["cs"]
+        to_language = ["cs"]
         input_text_elements = ["The answer lies in machine translation. This is a test."]
 
         response = text_translator.translate(
-            body=input_text_elements, to=to, include_sentence_length=include_sentence_length
+            body=input_text_elements, to_language=to_language, include_sentence_length=include_sentence_length
         )
         translation = response[0] if response else None
 
@@ -347,10 +353,10 @@ def get_text_translation_custom():
     # [START get_text_translation_custom]
     try:
         category = "<<Category ID>>"
-        to = ["cs"]
+        to_language = ["cs"]
         input_text_elements = ["This is a test"]
 
-        response = text_translator.translate(body=input_text_elements, to=to, category=category)
+        response = text_translator.translate(body=input_text_elements, to_language=to_language, category=category)
         translation = response[0] if response else None
 
         if translation:
