@@ -81,7 +81,10 @@ steps:
           --service="${{ parameters.ServiceDirectory }}"
           --toxenv="${{ parameters.ToxTestEnv }}"
           --injected-packages="${{ parameters.InjectedPackages }}"
-          ${{ parameters.ToxEnvParallel }}
+          ${{ parameters.ToxEnvParallel }};
+          Write-Host "Last exit code: $LASTEXITCODE";
+          exit $LASTEXITCODE;
+
   - ${{ else }}:
     - task: PythonScript@0
       displayName: 'Run Tests'
@@ -131,7 +134,9 @@ steps:
           scripts/devops_tasks/dispatch_tox.py
           "$(TargetingString)"
           --service="${{ parameters.ServiceDirectory }}"
-          --toxenv="samples"
+          --toxenv="samples";
+          Write-Host "Last exit code: $LASTEXITCODE";
+          exit $LASTEXITCODE;
 
   - ${{ else }}: 
     - task: PythonScript@0
