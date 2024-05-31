@@ -7,17 +7,17 @@
 from typing import Union
 import json
 from azure.communication.callautomation._shared.models import identifier_from_raw_id
-from azure.communication.callautomation.streaming.models import (TranscriptionMetadata,TranscriptionData,WordData)
+from azure.communication.callautomation._models import (TranscriptionMetadata,TranscriptionData,WordData)
 
 class StreamingDataParser:
     @staticmethod
     def parse(packet_data: Union[str, bytes]) -> Union[TranscriptionMetadata, TranscriptionData]:
         """
         Parse the incoming packets.
-        :keyword packet_data: Transcription packet data.
-        :paramtype packet_data: Union[str, bytes]
+        :param packet_data: Transcription packet data.
+        :type packet_data: Union[str, bytes]
         :return: Union[TranscriptionMetadata, TranscriptionData]
-        :rType: TranscriptionMetadata, TranscriptionData
+        :rtype: TranscriptionMetadata, TranscriptionData
         :raises: ValueError
         """
         if isinstance(packet_data, str):
@@ -25,13 +25,17 @@ class StreamingDataParser:
         elif isinstance(packet_data,bytes):
             string_json = packet_data.decode('utf-8')
         else:
-            ValueError(packet_data)
+            raise ValueError(packet_data)
 
         json_object = json.loads(string_json)
         kind = json_object['kind']
 
         if kind == 'TranscriptionMetadata':
-            transcription_metadata = TranscriptionMetadata(**json_object['transcriptionMetadata'])
+            transcription_metadata = TranscriptionMetadata(
+                subscription_id=json_object['transcriptionMetadata']['subscriptionId'],
+                locale=json_object['transcriptionMetadata']['locale'],
+                call_connection_id=json_object['transcriptionMetadata']['callConnectionId'],
+                correlation_id=json_object['transcriptionMetadata']['correlationId'])
             return transcription_metadata
         if kind == 'TranscriptionData':
             participant = identifier_from_raw_id(json_object['transcriptionData']['participantRawID'])
@@ -45,7 +49,7 @@ class StreamingDataParser:
                 duration=json_object['transcriptionData']['duration'],
                 words=words,
                 participant=participant,
-                resultStatus=json_object['transcriptionData']['resultStatus']
+                result_state=json_object['transcriptionData']['resultStatus']
             )
             return transcription_data
         raise ValueError(string_json)
