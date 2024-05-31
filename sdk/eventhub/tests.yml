@@ -22,4 +22,6 @@ extends:
         - TestSamples=.*/true
       MatrixFilters:
         - PythonVersion=^(?!pypy3).*
+      EnvVars:
+        AZURE_SUBSCRIPTION_ID: $(EVENTHUB_SUBSCRIPTION_ID)
       Clouds: 'Public,Canary'
