@@ -9,7 +9,7 @@ import threading
 import time
 import warnings
 from io import BytesIO, StringIO
-from typing import Generic, IO, Iterator, Optional, TypeVar, Union
+from typing import Generic, IO, Iterator, Optional, overload, TypeVar, Union
 
 from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError
 from azure.core.tracing.common import with_current_context
@@ -345,7 +345,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         # The offset into current_content that has been consumed in bytes of chars depending on mode
         self._current_content_offset = 0
 
-        self._text_mode = False
+        self._text_mode: Optional[bool] = None
         self._decoder = None
         # Whether the current content is the first chunk of download content or not
         self._first_chunk = True
@@ -575,6 +575,14 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             downloader=iter_downloader,
             chunk_size=self._config.max_chunk_get_size)
 
+    @overload
+    def read(self, size: int = -1) -> T:
+        ...
+
+    @overload
+    def read(self, *, chars: Optional[int] = None) -> T:
+        ...
+
     # pylint: disable-next=too-many-statements,too-many-branches
     def read(self, size: int = -1, *, chars: Optional[int] = None) -> T:
         """
@@ -595,10 +603,6 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             the return value is empty, there is no more data to read.
         :rtype: T
         """
-        # Empty blob or already read to the end
-        if size == 0 or self._read_offset >= self.size:
-            return b'' if not self._encoding else ''
-
         if size > -1 and self._encoding:
             warnings.warn(
                 "Size parameter specified with text encoding enabled. It is recommended to use chars "
@@ -610,11 +614,20 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             raise ValueError("Must specify encoding to read chars.")
         if self._text_mode and size > -1:
             raise ValueError("Stream has been partially read in text mode. Please use chars.")
+        if self._text_mode is False and chars is not None:
+            raise ValueError("Stream has been partially read in bytes mode. Please use size.")
+
+        # Empty blob or already read to the end
+        if (size == 0 or chars == 0 or
+                (self._download_complete and self._current_content_offset >= len(self._current_content))):
+            return b'' if not self._encoding else ''
 
         if not self._text_mode and chars is not None:
             self._text_mode = True
             self._decoder = codecs.getincrementaldecoder(self._encoding)('strict')
             self._current_content = self._decoder.decode(self._current_content, final=self._download_complete)
+        elif self._text_mode is None:
+            self._text_mode = False
 
         output_stream: Union[BytesIO, StringIO]
         if self._text_mode:

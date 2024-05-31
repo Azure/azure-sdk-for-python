@@ -1732,15 +1732,11 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         self.bsc._config.max_single_get_size = 1024
         self.bsc._config.max_chunk_get_size = 1024
 
-        initial_data = 'abcde' * 2
-        data = initial_data + ('你好世界' * 2)
+        data = '你好世界' * 2
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         await blob.upload_blob(data, encoding='utf-8', overwrite=True)
 
         stream = await blob.download_blob(encoding='utf-8')
-
-        # Read the initial data as bytes
-        assert await stream.read(len(initial_data.encode('utf-8'))) == initial_data
 
         # Read some data as chars, this should prevent any reading as bytes
         assert await stream.read(chars=4) == '你好世界'

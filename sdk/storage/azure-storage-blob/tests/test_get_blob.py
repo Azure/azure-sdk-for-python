@@ -1586,15 +1586,11 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key, upload_blob=False)
-        initial_data = 'abcde' * 2
-        data = initial_data + ('你好世界' * 2)
+        data = '你好世界' * 2
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, encoding='utf-8', overwrite=True)
 
         stream = blob.download_blob(encoding='utf-8')
-
-        # Read the initial data as bytes
-        assert stream.read(len(initial_data.encode('utf-8'))) == initial_data
 
         # Read some data as chars, this should prevent any reading as bytes
         assert stream.read(chars=4) == '你好世界'
