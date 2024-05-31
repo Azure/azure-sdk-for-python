@@ -24,7 +24,6 @@ class TextFormat(Enum):
 class WordData:
     """
     Text in the phrase.
-
     :keyword text: Text in the phrase.
     :paramtype text: str
     :keyword offset: The word's position within the phrase.
@@ -46,7 +45,6 @@ class WordData:
 class TranscriptionMetadata:
     """
     Metadata for Transcription Streaming.
-
     :keyword subscriptionId: Transcription Subscription Id.
     :paramtype subscriptionId: str
     :keyword locale: The target locale in which the translated text needs to be.

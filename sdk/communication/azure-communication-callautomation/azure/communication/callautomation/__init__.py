@@ -20,12 +20,17 @@ from ._models import (
     AddParticipantResult,
     RemoveParticipantResult,
     TransferCallResult,
-    MediaStreamingConfiguration,
-    TranscriptionConfiguration,
+    MediaStreamingOptions,
+    TranscriptionOptions,
     ChannelAffinity,
     MuteParticipantResult,
     SendDtmfTonesResult,
     CancelAddParticipantOperationResult,
+    CallInvite,
+    ServerCallLocator,
+    GroupCallLocator,
+    AzureBlobContainerRecordingStorage,
+    AzureCommunicationsRecordingStorage
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -42,7 +47,8 @@ from ._generated.models._enums import (
     RecordingContent,
     RecordingChannel,
     RecordingFormat,
-    RecordingStorage,
+    RecordingStorageKind,
+    RecordingKind,
     RecognizeInputType,
     MediaStreamingAudioChannelType,
     MediaStreamingContentType,
@@ -53,6 +59,7 @@ from ._generated.models._enums import (
     RecordingState,
     VoiceKind
 )
+
 from .streaming.models import (
     TranscriptionMetadata,
     TranscriptionData
@@ -72,8 +79,10 @@ __all__ = [
     "SsmlSource",
     "RecognitionChoice",
     "ChannelAffinity",
-    "MediaStreamingConfiguration",
-    "TranscriptionConfiguration",
+    "MediaStreamingOptions",
+    "TranscriptionOptions",
+    'AzureBlobContainerRecordingStorage',
+    'AzureCommunicationsRecordingStorage',
 
     # models for output
     "CallConnectionProperties",
@@ -105,7 +114,8 @@ __all__ = [
     "RecordingContent",
     "RecordingChannel",
     "RecordingFormat",
-    "RecordingStorage",
+    "RecordingStorageKind",
+    "RecordingKind",
     "RecognizeInputType",
     "MediaStreamingAudioChannelType",
     "MediaStreamingContentType",
@@ -114,33 +124,17 @@ __all__ = [
     "DtmfTone",
     "CallConnectionState",
     "RecordingState",
-    "VoiceKind"
+    "VoiceKind",
+
+    # deprecated models
+    "CallInvite",
+    "ServerCallLocator",
+    "GroupCallLocator",
 ]
 __version__ = VERSION
 
 
 def __getattr__(name):
-    if name == 'CallInvite':
-        warnings.warn(
-            "CallInvite is deprecated and should not be used. Please pass in keyword arguments directly.",
-            DeprecationWarning
-        )
-        from ._models import CallInvite
-        return CallInvite
-    if name == 'GroupCallLocator':
-        warnings.warn(
-            "GroupCallLocator is deprecated and should not be used. Please pass in 'group_call_id' directly.",
-            DeprecationWarning
-        )
-        from ._models import GroupCallLocator
-        return GroupCallLocator
-    if name == 'ServerCallLocator':
-        warnings.warn(
-            "ServerCallLocator is deprecated and should not be used. Please pass in 'server_call_id' directly.",
-            DeprecationWarning
-        )
-        from ._models import ServerCallLocator
-        return ServerCallLocator
     if name == 'MicrosoftBotIdentifier':
         warnings.warn(f"{name} is deprecated and should not be used. Please use 'MicrosoftTeamsAppIdentifier' instead.",
                        DeprecationWarning)

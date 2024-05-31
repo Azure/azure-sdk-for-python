@@ -3,11 +3,13 @@
 > see https://aka.ms/autorest
 
 ### Setup
+
 ```ps
 npm install -g autorest
 ```
 
 ### Generation
+
 ```ps
 cd <swagger-folder>
 autorest SWAGGER.md
@@ -16,8 +18,8 @@ autorest SWAGGER.md
 ### Settings
 
 ```yaml
-tag: package-2023-10-03-preview
-require: https://github.com/Azure/azure-rest-api-specs/blob/77d25dd8426c4ba1619d15582a8c9d9b2f6890e8/specification/communication/data-plane/CallAutomation/readme.md
+tag: package-2024-06-15-preview
+require: https://github.com/Azure/azure-rest-api-specs/blob/9392d9934e57963708313dca6dd3339e287d674f/specification/communication/data-plane/CallAutomation/readme.md
 output-folder: ../azure/communication/callautomation/_generated
 models-mode: msrest
 namespace: azure.communication.callautomation
@@ -34,6 +36,7 @@ title: Azure Communication Call Automation Service
 ```
 
 ### Rename response to result
+
 ```yaml
 directive:
 - from: swagger-document
@@ -51,7 +54,7 @@ directive:
 - from: swagger-document
   where: $.definitions.RecordingStorageType.x-ms-enum
   transform: >
-    $["name"] = "RecordingStorage";
+    $["name"] = "RecordingStorageKind";
 - from: swagger-document
   where: $.definitions.Tone.x-ms-enum
   transform: >
@@ -61,3 +64,4 @@ directive:
   transform: >
     $["name"] = "CallConnectionState";
 ```
+

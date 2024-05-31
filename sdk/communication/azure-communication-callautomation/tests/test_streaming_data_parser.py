@@ -60,5 +60,3 @@ class TestStreamDataParser(unittest.TestCase):
         self.assertEqual(transcriptionData.words[2].offset, 876064674)
         self.assertEqual(transcriptionData.words[2].duration, 4000000)
         self.assertEqual(transcriptionData.participant.raw_id, "4:+910000000000")
-
-
