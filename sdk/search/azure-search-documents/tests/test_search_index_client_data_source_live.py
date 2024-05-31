@@ -29,7 +29,7 @@ class TestSearchClientDataSources(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
-    def test_data_source(self, endpoint, api_key, **kwargs):
+    def test_data_source(self, endpoint, **kwargs):
         storage_cs = kwargs.get("search_storage_connection_string")
         client = SearchIndexerClient(endpoint, self.get_credential(SearchIndexerClient), retry_backoff_factor=60)
         self._test_create_datasource(client, storage_cs)

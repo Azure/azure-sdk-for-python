@@ -17,8 +17,8 @@ class TestClientTestAsync(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy_async
-    async def test_search_client(self, endpoint, api_key, index_name):
-        client = SearchClient(endpoint, index_name, api_key, retry_backoff_factor=60)
+    async def test_search_client(self, endpoint, index_name):
+        client = SearchClient(endpoint, index_name, self.get_credential(SearchClient, is_async=True), retry_backoff_factor=60)
         async with client:
             await self._test_get_search_simple(client)
             await self._test_get_search_simple_with_top(client)
@@ -144,8 +144,8 @@ class TestClientTestAsync(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_large.json")
     @recorded_by_proxy_async
-    async def test_search_client_large(self, endpoint, api_key, index_name):
-        client = SearchClient(endpoint, index_name, api_key)
+    async def test_search_client_large(self, endpoint, index_name):
+        client = SearchClient(endpoint, index_name, self.get_credential(SearchClient, is_async=True))
         async with client:
             await self._test_get_search_simple_large(client)
 

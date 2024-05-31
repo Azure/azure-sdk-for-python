@@ -26,8 +26,8 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema=None, index_batch=None)
     @recorded_by_proxy_async
-    async def test_search_index_client(self, api_key, endpoint, index_name):
-        client = SearchIndexClient(endpoint, api_key, retry_backoff_factor=60)
+    async def test_search_index_client(self, endpoint, index_name):
+        client = SearchIndexClient(endpoint, self.get_credential(SearchIndexClient, is_async=True), retry_backoff_factor=60)
         index_name = "hotels"
         async with client:
             await self._test_get_service_statistics(client)

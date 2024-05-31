@@ -18,7 +18,7 @@ class TestSearchClientIndexDocument(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
-    def test_search_client_index_document(self, endpoint, api_key, index_name):
+    def test_search_client_index_document(self, endpoint, index_name):
         client = SearchClient(endpoint, index_name, self.get_credential(SearchClient), retry_backoff_factor=60)
         doc_count = 10
         doc_count = self._test_upload_documents_new(client, doc_count)

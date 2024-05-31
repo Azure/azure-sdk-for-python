@@ -14,7 +14,7 @@ class TestSearchClient(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
-    def test_search_client(self, endpoint, api_key, index_name):
+    def test_search_client(self, endpoint, index_name):
         client = SearchClient(endpoint, index_name, self.get_credential(SearchClient), retry_backoff_factor=60)
         self._test_get_search_simple(client)
         self._test_get_search_simple_with_top(client)

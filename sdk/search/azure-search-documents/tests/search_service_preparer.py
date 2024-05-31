@@ -24,9 +24,9 @@ SearchEnvVarPreparer = functools.partial(
     EnvironmentVariableLoader,
     "search",
     search_service_endpoint="https://fakesearchendpoint.search.windows.net",
-    search_service_api_key="fakesearchapikey",
+    # search_service_api_key="fakesearchapikey",
     search_service_name="fakesearchendpoint",
-    search_query_api_key="fakequeryapikey",
+    # search_query_api_key="fakequeryapikey",
     search_storage_connection_string="DefaultEndpointsProtocol=https;AccountName=fakestoragecs;AccountKey=FAKE;EndpointSuffix=core.windows.net",
     search_storage_container_name="fakestoragecontainer",
 )
@@ -49,7 +49,7 @@ def _load_batch(filename):
         return json.load(open(join(cwd, filename), encoding="utf-8"))
 
 
-def _clean_up_indexes(endpoint, api_key):
+def _clean_up_indexes(endpoint):
     from azure.identity import DefaultAzureCredential
     from azure.search.documents.indexes import SearchIndexClient
 
@@ -68,7 +68,7 @@ def _clean_up_indexes(endpoint, api_key):
         client.delete_index(index)
 
 
-def _clean_up_indexers(endpoint, api_key):
+def _clean_up_indexers(endpoint):
     from azure.search.documents.indexes import SearchIndexerClient
     from azure.identity import DefaultAzureCredential
 
@@ -87,7 +87,7 @@ def _clean_up_indexers(endpoint, api_key):
             raise
 
 
-def _set_up_index(service_name, endpoint, api_key, schema, index_batch):
+def _set_up_index(service_name, endpoint, schema, index_batch):
     from azure.core.credentials import AzureKeyCredential
     from azure.identity import DefaultAzureCredential
     from azure.search.documents import SearchClient
@@ -99,7 +99,7 @@ def _set_up_index(service_name, endpoint, api_key, schema, index_batch):
         index_name = json.loads(schema)["name"]
         response = requests.post(
             SERVICE_URL_FMT.format(service_name, SEARCH_ENDPOINT_SUFFIX),
-            headers={"Content-Type": "application/json", "api-key": api_key},
+            headers={"Content-Type": "application/json", "api-key": ""},
             data=schema,
         )
         if response.status_code != 201:
@@ -141,13 +141,13 @@ def search_decorator(*, schema, index_batch):
         def wrapper(*args, **kwargs):
             # set up hotels search index
             test = args[0]
-            api_key = kwargs.get("search_service_api_key")
+            # api_key = kwargs.get("search_service_api_key")
             endpoint = kwargs.get("search_service_endpoint")
             service_name = kwargs.get("search_service_name")
             if test.is_live:
-                _clean_up_indexes(endpoint, api_key)
-                _set_up_index(service_name, endpoint, api_key, schema, index_batch)
-                _clean_up_indexers(endpoint, api_key)
+                _clean_up_indexes(endpoint)
+                _set_up_index(service_name, endpoint, schema, index_batch)
+                _clean_up_indexers(endpoint)
             index_name = json.loads(_load_schema(schema))["name"] if schema else None
             index_batch_data = _load_batch(index_batch) if index_batch else None
 

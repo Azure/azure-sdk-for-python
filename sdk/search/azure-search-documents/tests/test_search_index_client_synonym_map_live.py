@@ -19,7 +19,7 @@ class TestSearchClientSynonymMaps(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
-    def test_synonym_map(self, endpoint, api_key):
+    def test_synonym_map(self, endpoint):
         client = SearchIndexClient(endpoint, self.get_credential(SearchIndexClient), retry_backoff_factor=60)
         self._test_create_synonym_map(client)
         self._test_delete_synonym_map(client)

@@ -19,7 +19,7 @@ class TestSearchIndexingBufferedSender(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
-    def test_search_client_index_buffered_sender(self, endpoint, api_key, index_name):
+    def test_search_client_index_buffered_sender(self, endpoint, index_name):
         client = SearchClient(endpoint, index_name, self.get_credential(SearchClient), retry_backoff_factor=60)
         batch_client = SearchIndexingBufferedSender(endpoint, index_name, self.get_credential(SearchIndexingBufferedSender), retry_backoff_factor=60)
         try:
