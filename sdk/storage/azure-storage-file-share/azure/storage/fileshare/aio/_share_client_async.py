@@ -241,7 +241,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         """
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies  # type: ignore # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
         )
 
         return ShareDirectoryClient(
@@ -261,7 +261,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         """
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies  # type: ignore # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
         )
 
         return ShareFileClient(
