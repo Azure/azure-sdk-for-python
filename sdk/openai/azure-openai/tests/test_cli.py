@@ -7,6 +7,7 @@ import os
 import sys
 import pathlib
 import subprocess
+import pytest
 from devtools_testutils import AzureRecordedTestCase
 from azure.identity import DefaultAzureCredential
 from conftest import (
