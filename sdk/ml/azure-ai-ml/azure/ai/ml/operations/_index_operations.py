@@ -4,7 +4,9 @@
 
 # pylint: disable=protected-access
 import json
-from typing import Any, Dict, Iterable, Optional, Union, Callable, List
+import re
+from pathlib import Path
+from typing import Any, Callable, Dict, Iterable, List, Optional, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 
@@ -23,25 +25,32 @@ from azure.ai.ml._scope_dependent_operations import (
     _ScopeDependentOperations,
 )
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._asset_utils import _resolve_label_to_asset
+from azure.ai.ml._utils._asset_utils import (
+    _resolve_label_to_asset,
+    _validate_auto_delete_setting_in_data_output,
+    _validate_workspace_managed_datastore,
+)
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _get_base_urls_from_discovery_service
-from azure.ai.ml.constants._common import AzureMLResourceType, WorkspaceDiscoveryUrlKey, AssetTypes
+from azure.ai.ml.constants._common import (
+    LONG_URI_REGEX_FORMAT,
+    AssetTypes,
+    AzureMLResourceType,
+    WorkspaceDiscoveryUrlKey,
+)
+from azure.ai.ml.dsl import pipeline
+from azure.ai.ml.entities import Job, PipelineJob, PipelineJobSettings
 from azure.ai.ml.entities._assets import Index
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.ai.ml.operations._datastore_operations import DatastoreOperations
-from azure.core.credentials import TokenCredential
-
-from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
-from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration, UserIdentityConfiguration
 from azure.ai.ml.entities._indexes import (
     AzureAISearchConfig,
+    GitSource,
     IndexDataSource,
     LocalSource,
-    GitSource,
     ModelConfiguration,
 )
+from azure.ai.ml.entities._indexes.data_index_func import index_data as index_data_func
 from azure.ai.ml.entities._indexes.entities.data_index import (
     CitationRegex,
     Data,
@@ -50,14 +59,11 @@ from azure.ai.ml.entities._indexes.entities.data_index import (
     IndexSource,
     IndexStore,
 )
-from azure.ai.ml.entities._indexes.utils._open_ai_utils import build_open_ai_protocol, build_connection_id
-from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration, UserIdentityConfiguration
-from azure.ai.ml.dsl import pipeline
-from azure.ai.ml.entities._indexes.data_index_func import index_data as index_data_func
-from azure.ai.ml._utils._asset_utils import (
-    _validate_auto_delete_setting_in_data_output,
-    _validate_workspace_managed_datastore,
-)
+from azure.ai.ml.entities._indexes.utils._open_ai_utils import build_connection_id, build_open_ai_protocol
+from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.operations._datastore_operations import DatastoreOperations
+from azure.core.credentials import TokenCredential
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -178,6 +184,8 @@ class IndexOperations(_ScopeDependentOperations):
             show_progress=self._show_progress,
         )
 
+        index = self.__try_add_mlindex_resolution_properties(index)
+
         return Index._from_rest_object(
             self._azure_ai_assets.indexes.create_or_update(
                 name=index.name, version=index.version, body=index._to_rest_object(), **kwargs
@@ -270,7 +278,7 @@ class IndexOperations(_ScopeDependentOperations):
         ######## data source info ########
         input_source: Union[IndexDataSource, str],
         input_source_credential: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
-    ) -> Union["MLIndex", "Job"]:  # type: ignore[name-defined]
+    ) -> Job:
         """Builds an index on the cloud using the Azure AI Resources service.
 
         :keyword name: The name of the index to be created.
@@ -295,7 +303,7 @@ class IndexOperations(_ScopeDependentOperations):
         :paramtype input_source_credential: Optional[Union[~azure.ai.ml.entities.ManagedIdentityConfiguration,
             ~azure.ai.ml.entities.UserIdentityConfiguration]]
         :return: If the `source_input` is a GitSource, returns a created DataIndex Job object.
-        :rtype: Union[~azure.ai.ml.entities._indexes.MLIndex, ~azure.ai.ml.entities.Job]
+        :rtype: ~azure.ai.ml.entities.Index
         :raises ValueError: If the `source_input` is not type ~typing.Str or
             ~azure.ai.ml.entities._indexes.LocalSource.
         """
@@ -483,3 +491,48 @@ class IndexOperations(_ScopeDependentOperations):
                 job=index_pipeline, skip_validation=True, **kwargs
             )
         return index_pipeline
+
+    def __try_add_mlindex_resolution_properties(self, index: Index) -> Index:
+        """Inject properties into an index object to allow the Data service to correctly resolve the index location.
+
+        .. note::
+
+            At time of writing, the data service expects the path to the index to be a uri_folder. The service
+            manually appends `/MLIndex` when it tries to resolve the index.
+
+            This is problematic if Index.path is set to a path already pointing to an MLIndex file, since the service
+            will try to resolve the path `/MLIndex/MLIndex`.
+
+            This function injects properties that allows the service to correctly resolve the index's location,
+            while circumventing the doubled `/MLIndex` issue.
+
+        :param Index index: The index to add the properties to. This parameter is modified in place.
+        :return: The modified index.
+        :rtype: Index
+        """
+
+        def is_datastore_uri(s: str) -> bool:
+            """Check whether the string is a datastore uri.
+
+            Should match the format azureml://subscriptions/{}/resourcegroups/{}/workspaces/{}/datastores/{}/paths/{}
+
+            :param str s: The string to check
+            :return: True is s is a datastore uri, False otherwise
+            :rtype: bool
+            """
+            return bool(re.match(LONG_URI_REGEX_FORMAT, s))
+
+        MLINDEX_FOLDER_URI_PROP = "azureml.mlIndexFolderUri"
+        MLINDEX_TEMPLATE_PATH_PROP = "azureml.mlIndexTemplatePath"
+        MLINDEX_FILE_NAME = "MLIndex"
+
+        datastore_uri = str(index.path)
+
+        if index.path is None or not is_datastore_uri(datastore_uri):
+            return index
+
+        if Path(datastore_uri).name == MLINDEX_FILE_NAME:
+            index.properties.setdefault(MLINDEX_FOLDER_URI_PROP, datastore_uri[: -len(MLINDEX_FILE_NAME)])
+            index.properties.setdefault(MLINDEX_TEMPLATE_PATH_PROP, MLINDEX_FILE_NAME)
+
+        return index
