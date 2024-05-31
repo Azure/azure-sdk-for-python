@@ -184,10 +184,10 @@
 
 # ServiceLabel: %Cosmos
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @kushagraThapar @simorenoh @xinlian12 @annatisch @bambriz
+/sdk/cosmos/                                                         @kushagraThapar @simorenoh @xinlian12 @annatisch @bambriz @pilchie
 
 # ServiceLabel: %Cosmos %Service Attention
-#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @AbhinavTrips @bambriz
+#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @AbhinavTrips @bambriz @pilchie
 
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
