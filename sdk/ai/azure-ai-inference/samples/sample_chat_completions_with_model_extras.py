@@ -46,10 +46,7 @@ def sample_chat_completions_with_model_extras():
             SystemMessage(content="You are a helpful assistant."),
             UserMessage(content="How many feet are in a mile?"),
         ],
-        model_extras={  # Optional. Additional parameters to pass to the model.
-            "key1": "value1",
-            "key2": "value2"
-        },
+        model_extras={"key1": "value1", "key2": "value2"},  # Optional. Additional parameters to pass to the model.
     )
     # [END chat_completions]
 

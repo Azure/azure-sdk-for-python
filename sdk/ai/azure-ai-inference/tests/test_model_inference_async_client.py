@@ -19,7 +19,7 @@ class TestModelAsyncClient(ModelClientTestBase):
     #                      HAPPY PATH TESTS - TEXT EMBEDDINGS
     #
     # **********************************************************************************
-    """ live test with recording fails for this... why?
+    """live test with recording fails for this... why?
     @ServicePreparerEmbeddings()
     @recorded_by_proxy_async
     async def test_async_load_embeddings_client(self, **kwargs):
@@ -38,7 +38,9 @@ class TestModelAsyncClient(ModelClientTestBase):
         client = self._create_async_embeddings_client(**kwargs)
         response1 = await client.get_model_info()
         self._print_model_info_result(response1)
-        self._validate_model_info_result(response1, "embedding") # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
+        self._validate_model_info_result(
+            response1, "embedding"
+        )  # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
 
         # Get the model info again. No network calls should be made here,
         # as the response is cached in the client.
@@ -71,7 +73,9 @@ class TestModelAsyncClient(ModelClientTestBase):
         assert isinstance(client, async_sdk.ChatCompletionsClient)
         response1 = await client.get_model_info()
         self._print_model_info_result(response1)
-        self._validate_model_info_result(response1, "completion") # TODO: This should be ModelType.CHAT once the model is fixed
+        self._validate_model_info_result(
+            response1, "completion"
+        )  # TODO: This should be ModelType.CHAT once the model is fixed
         await client.close()
 
     @ServicePreparerChatCompletions()
@@ -80,7 +84,9 @@ class TestModelAsyncClient(ModelClientTestBase):
         client = self._create_async_chat_client(**kwargs)
         response1 = await client.get_model_info()
         self._print_model_info_result(response1)
-        self._validate_model_info_result(response1, "completion") # TODO: This should be ModelType.CHAT once the model is fixed
+        self._validate_model_info_result(
+            response1, "completion"
+        )  # TODO: This should be ModelType.CHAT once the model is fixed
 
         # Get the model info again. No network calls should be made here,
         # as the response is cached in the client.
@@ -171,7 +177,7 @@ class TestModelAsyncClient(ModelClientTestBase):
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": "Give me 3 good reasons why I should exercise every day."},
             ],
-            "stream": True
+            "stream": True,
         }
         response = await client.complete(request_body)
         await self._validate_async_chat_completions_streaming_result(response)

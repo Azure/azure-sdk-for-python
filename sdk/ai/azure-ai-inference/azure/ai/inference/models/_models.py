@@ -71,7 +71,7 @@ class AssistantMessage(ChatRequestMessage, discriminator="assistant"):
      assistant messages. Required. The role that provides responses to system-instructed,
      user-prompted input.
     :vartype role: str or ~azure.ai.inference.models.ASSISTANT
-    :ivar content: The content of the message. Required.
+    :ivar content: The content of the message.
     :vartype content: str
     :ivar tool_calls: The tool calls that must be resolved and have their outputs appended to
      subsequent input messages for the chat
@@ -83,7 +83,7 @@ class AssistantMessage(ChatRequestMessage, discriminator="assistant"):
     """The chat role associated with this message, which is always 'assistant' for assistant messages.
      Required. The role that provides responses to system-instructed, user-prompted input."""
     content: Optional[str] = rest_field()
-    """The content of the message. Required."""
+    """The content of the message."""
     tool_calls: Optional[List["_models.ChatCompletionsToolCall"]] = rest_field()
     """The tool calls that must be resolved and have their outputs appended to subsequent input
      messages for the chat
@@ -140,51 +140,6 @@ class ChatChoice(_model_base.Model):
         index: int,
         finish_reason: Union[str, "_models._enums.CompletionsFinishReason"],
         message: "_models.ChatResponseMessage",
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class StreamingChatChoiceUpdate(_model_base.Model):
-    """Represents an update to a single prompt completion when the service is streaming updates
-    using Server Sent Events (SSE).
-    Generally, ``n`` choices are generated per provided prompt with a default value of 1.
-    Token limits and other settings may limit the number of choices generated.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar index: The ordered index associated with this chat completions choice. Required.
-    :vartype index: int
-    :ivar finish_reason: The reason that this chat completions choice completed its generated.
-     Required. Known values are: "stop", "length", "content_filter", and "tool_calls".
-    :vartype finish_reason: str or ~azure.ai.inference.models.CompletionsFinishReason
-    :ivar delta: An update to the chat message for a given chat completions prompt. Required.
-    :vartype delta: ~azure.ai.inference.models.ChatResponseMessage
-    """
-
-    index: int = rest_field()
-    """The ordered index associated with this chat completions choice. Required."""
-    finish_reason: Union[str, "_models._enums.CompletionsFinishReason"] = rest_field()
-    """The reason that this chat completions choice completed its generated. Required. Known values
-     are: \"stop\", \"length\", \"content_filter\", and \"tool_calls\"."""
-    delta: "_models.ChatResponseMessage" = rest_field()
-    """An update to the chat message for a given chat completions prompt. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        index: int,
-        finish_reason: Union[str, "_models._enums.CompletionsFinishReason"],
-        delta: "_models.ChatResponseMessage",
     ): ...
 
     @overload
@@ -423,71 +378,6 @@ class ChatCompletionsNamedToolSelection(_model_base.Model):
 
     type: str = rest_discriminator(name="type")
     """The object type. Required."""
-
-
-class StreamingChatCompletionsUpdate(_model_base.Model):
-    """Represents a response update to a chat completions request, when the service is streaming
-    updates
-    using Server Sent Events (SSE).
-    Completions support a wide variety of tasks and generate text that continues from or
-    "completes"
-    provided prompt data.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: A unique identifier associated with this chat completions response. Required.
-    :vartype id: str
-    :ivar created: The first timestamp associated with generation activity for this completions
-     response,
-     represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required.
-    :vartype created: ~datetime.datetime
-    :ivar model: The model used for the chat completion. Required.
-    :vartype model: str
-    :ivar usage: Usage information for tokens processed and generated as part of this completions
-     operation. Required.
-    :vartype usage: ~azure.ai.inference.models.CompletionsUsage
-    :ivar choices: An update to the collection of completion choices associated with this
-     completions response.
-     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
-     Token limits and other settings may limit the number of choices generated. Required.
-    :vartype choices: list[~azure.ai.inference.models.StreamingChatChoiceUpdate]
-    """
-
-    id: str = rest_field()
-    """A unique identifier associated with this chat completions response. Required."""
-    created: datetime.datetime = rest_field(format="unix-timestamp")
-    """The first timestamp associated with generation activity for this completions response,
-     represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required."""
-    model: str = rest_field()
-    """The model used for the chat completion. Required."""
-    usage: "_models.CompletionsUsage" = rest_field()
-    """Usage information for tokens processed and generated as part of this completions operation.
-     Required."""
-    choices: List["_models.StreamingChatChoiceUpdate"] = rest_field()
-    """An update to the collection of completion choices associated with this completions response.
-     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
-     Token limits and other settings may limit the number of choices generated. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        created: datetime.datetime,
-        model: str,
-        usage: "_models.CompletionsUsage",
-        choices: List["_models.StreamingChatChoiceUpdate"],
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class ChatResponseMessage(_model_base.Model):
@@ -883,6 +773,116 @@ class ModelInfo(_model_base.Model):
         model_name: str,
         model_type: Union[str, "_models._enums.ModelType"],
         model_provider_name: str,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class StreamingChatChoiceUpdate(_model_base.Model):
+    """Represents an update to a single prompt completion when the service is streaming updates
+    using Server Sent Events (SSE).
+    Generally, ``n`` choices are generated per provided prompt with a default value of 1.
+    Token limits and other settings may limit the number of choices generated.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar index: The ordered index associated with this chat completions choice. Required.
+    :vartype index: int
+    :ivar finish_reason: The reason that this chat completions choice completed its generated.
+     Required. Known values are: "stop", "length", "content_filter", and "tool_calls".
+    :vartype finish_reason: str or ~azure.ai.inference.models.CompletionsFinishReason
+    :ivar delta: An update to the chat message for a given chat completions prompt. Required.
+    :vartype delta: ~azure.ai.inference.models.ChatResponseMessage
+    """
+
+    index: int = rest_field()
+    """The ordered index associated with this chat completions choice. Required."""
+    finish_reason: Union[str, "_models._enums.CompletionsFinishReason"] = rest_field()
+    """The reason that this chat completions choice completed its generated. Required. Known values
+     are: \"stop\", \"length\", \"content_filter\", and \"tool_calls\"."""
+    delta: "_models.ChatResponseMessage" = rest_field()
+    """An update to the chat message for a given chat completions prompt. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        finish_reason: Union[str, "_models._enums.CompletionsFinishReason"],
+        delta: "_models.ChatResponseMessage",
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class StreamingChatCompletionsUpdate(_model_base.Model):
+    """Represents a response update to a chat completions request, when the service is streaming
+    updates
+    using Server Sent Events (SSE).
+    Completions support a wide variety of tasks and generate text that continues from or
+    "completes"
+    provided prompt data.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: A unique identifier associated with this chat completions response. Required.
+    :vartype id: str
+    :ivar created: The first timestamp associated with generation activity for this completions
+     response,
+     represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required.
+    :vartype created: ~datetime.datetime
+    :ivar model: The model used for the chat completion. Required.
+    :vartype model: str
+    :ivar usage: Usage information for tokens processed and generated as part of this completions
+     operation. Required.
+    :vartype usage: ~azure.ai.inference.models.CompletionsUsage
+    :ivar choices: An update to the collection of completion choices associated with this
+     completions response.
+     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
+     Token limits and other settings may limit the number of choices generated. Required.
+    :vartype choices: list[~azure.ai.inference.models.StreamingChatChoiceUpdate]
+    """
+
+    id: str = rest_field()
+    """A unique identifier associated with this chat completions response. Required."""
+    created: datetime.datetime = rest_field(format="unix-timestamp")
+    """The first timestamp associated with generation activity for this completions response,
+     represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required."""
+    model: str = rest_field()
+    """The model used for the chat completion. Required."""
+    usage: "_models.CompletionsUsage" = rest_field()
+    """Usage information for tokens processed and generated as part of this completions operation.
+     Required."""
+    choices: List["_models.StreamingChatChoiceUpdate"] = rest_field()
+    """An update to the collection of completion choices associated with this completions response.
+     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
+     Token limits and other settings may limit the number of choices generated. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        created: datetime.datetime,
+        model: str,
+        usage: "_models.CompletionsUsage",
+        choices: List["_models.StreamingChatChoiceUpdate"],
     ): ...
 
     @overload

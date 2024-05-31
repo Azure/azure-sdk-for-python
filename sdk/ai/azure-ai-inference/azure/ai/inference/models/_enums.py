@@ -128,9 +128,7 @@ class UnknownParams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The service will error if it detected unknown parameters in the request payload. This is the
     service default."""
     DROP = "drop"
-    """
-    The service will ignore (drop) unknown parameters in the request payload.
-    It will only pass the known parameters to the back-end AI model.
-    """
+    """The service will ignore (drop) unknown parameters in the request payload. It will only pass the
+    known parameters to the back-end AI model."""
     PASS_THROUGH = "pass_through"
     """The service will pass unknown parameters to the back-end AI model."""

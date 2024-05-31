@@ -121,7 +121,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         """
         with Path(__file__).with_name(file_name).open("r") as f:
             return io.BytesIO(f.read().encode("utf-8"))
-    
+
     @staticmethod
     def _print_model_info_result(model_info: sdk.models.ModelInfo):
         if ModelClientTestBase.PRINT_RESULT:
@@ -131,7 +131,9 @@ class ModelClientTestBase(AzureRecordedTestCase):
             print("\tmodel_provider_name: {}".format(model_info.model_provider_name))
 
     @staticmethod
-    def _validate_model_info_result(model_info: sdk.models.ModelInfo, expected_model_type: Union[str, sdk.models.ModelType]):
+    def _validate_model_info_result(
+        model_info: sdk.models.ModelInfo, expected_model_type: Union[str, sdk.models.ModelType]
+    ):
         assert model_info.model_name is not None
         assert len(model_info.model_name) > 0
         assert model_info.model_provider_name is not None

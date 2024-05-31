@@ -27,7 +27,9 @@ class TestModelClient(ModelClientTestBase):
         assert isinstance(client, sdk.EmbeddingsClient)
         response1 = client.get_model_info()
         self._print_model_info_result(response1)
-        self._validate_model_info_result(response1, "embedding") # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
+        self._validate_model_info_result(
+            response1, "embedding"
+        )  # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
         client.close()
 
     @ServicePreparerEmbeddings()
@@ -37,7 +39,9 @@ class TestModelClient(ModelClientTestBase):
         client = self._create_embeddings_client(**kwargs)
         response1 = client.get_model_info()
         self._print_model_info_result(response1)
-        self._validate_model_info_result(response1, "embedding") # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
+        self._validate_model_info_result(
+            response1, "embedding"
+        )  # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
 
         # Get the model info again. No network calls should be made here,
         # as the response is cached in the client.
@@ -70,7 +74,9 @@ class TestModelClient(ModelClientTestBase):
         assert isinstance(client, sdk.ChatCompletionsClient)
         response1 = client.get_model_info()
         self._print_model_info_result(response1)
-        self._validate_model_info_result(response1, "completion") # TODO: This should be ModelType.CHAT once the model is fixed
+        self._validate_model_info_result(
+            response1, "completion"
+        )  # TODO: This should be ModelType.CHAT once the model is fixed
         client.close()
 
     @ServicePreparerChatCompletions()
@@ -80,7 +86,9 @@ class TestModelClient(ModelClientTestBase):
         client = self._create_chat_client(**kwargs)
         response1 = client.get_model_info()
         self._print_model_info_result(response1)
-        self._validate_model_info_result(response1, "completion") # TODO: This should be ModelType.CHAT once the model is fixed
+        self._validate_model_info_result(
+            response1, "completion"
+        )  # TODO: This should be ModelType.CHAT once the model is fixed
 
         # Get the model info again. No network calls should be made here,
         # as the response is cached in the client.
@@ -171,7 +179,7 @@ class TestModelClient(ModelClientTestBase):
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": "Give me 3 good reasons why I should exercise every day."},
             ],
-            "stream": True
+            "stream": True,
         }
         response = client.complete(request_body)
         self._validate_chat_completions_streaming_result(response)

@@ -33,7 +33,8 @@ USAGE:
        python sample_chat_completions_azure_openai.py
 """
 
-key_auth:bool = True  # Set to True for key authentication, or False for Entra ID authentication.
+key_auth: bool = True  # Set to True for key authentication, or False for Entra ID authentication.
+
 
 def sample_chat_completions_azure_openai():
     import os
@@ -58,20 +59,20 @@ def sample_chat_completions_azure_openai():
             exit()
 
         client = ChatCompletionsClient(
-            endpoint=endpoint, 
-            credential=AzureKeyCredential(""), # Pass in an empty value.
-            headers={"api-key": key}, 
-            api_version="2024-02-15-preview" # AOAI api-version. Update as needed.
-        ) 
+            endpoint=endpoint,
+            credential=AzureKeyCredential(""),  # Pass in an empty value.
+            headers={"api-key": key},
+            api_version="2024-02-15-preview",  # AOAI api-version. Update as needed.
+        )
 
-    else: # Entra ID authentication
+    else:  # Entra ID authentication
         from azure.identity import DefaultAzureCredential
 
         client = ChatCompletionsClient(
-            endpoint=endpoint, 
+            endpoint=endpoint,
             credential=DefaultAzureCredential(),
             credential_scopes=["https://cognitiveservices.azure.com/.default"],
-            api_version="2024-02-15-preview" # AOAI api-version. Update as needed.
+            api_version="2024-02-15-preview",  # AOAI api-version. Update as needed.
         )
 
     response = client.complete(

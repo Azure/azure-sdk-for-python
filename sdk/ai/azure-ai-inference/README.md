@@ -1,6 +1,7 @@
 # Azure AI Inference client library for Python
 
-The client Library (in preview) allows you to do inference using AI models you deployed to Azure. It supports both type of AI model deployments in Azure AI Studio: _Serverless API with Azure AI Content Safety_ and _Managed Compute without Azure AI Content Safety_. The client library makes services calls using REST AP version `2024-05-01-preview`, as documented in [Azure AI Model Inference API](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api). For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
+The client Library (in preview) allows you to generate predictions from foundational models deployed to Azure AI Studio and Azure Machine Learning. It supports
+Serverless API endpoints and Managed Compute Endpoints (formerly known as Managed Online Endpoints). The client library makes services calls using REST AP version `2024-05-01-preview`, as documented in [Azure AI Model Inference API](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api). For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
 
 Use the model inference client library to:
 

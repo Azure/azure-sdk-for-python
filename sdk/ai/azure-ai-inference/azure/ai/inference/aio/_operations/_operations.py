@@ -29,9 +29,9 @@ from ..._model_base import SdkJSONEncoder, _deserialize
 from ..._operations._operations import (
     build_chat_completions_complete_request,
     build_chat_completions_get_model_info_request,
-    build_embeddings_embedding_request,
+    build_embeddings_embed_request,
     build_embeddings_get_model_info_request,
-    build_image_embeddings_embedding_request,
+    build_image_embeddings_embed_request,
     build_image_embeddings_get_model_info_request,
 )
 from .._vendor import ChatCompletionsClientMixinABC, EmbeddingsClientMixinABC, ImageEmbeddingsClientMixinABC
@@ -53,7 +53,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         self,
         body: JSON,
         *,
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        unknown_params: Optional[Union[str, _models.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ChatCompletions: ...
@@ -62,7 +62,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         self,
         *,
         messages: List[_models.ChatRequestMessage],
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        unknown_params: Optional[Union[str, _models.UnknownParams]] = None,
         content_type: str = "application/json",
         frequency_penalty: Optional[float] = None,
         stream_parameter: Optional[bool] = None,
@@ -84,7 +84,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         self,
         body: IO[bytes],
         *,
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        unknown_params: Optional[Union[str, _models.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ChatCompletions: ...
@@ -95,7 +95,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         messages: List[_models.ChatRequestMessage] = _Unset,
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        unknown_params: Optional[Union[str, _models.UnknownParams]] = None,
         frequency_penalty: Optional[float] = None,
         stream_parameter: Optional[bool] = None,
         presence_penalty: Optional[float] = None,
@@ -112,7 +112,6 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         **kwargs: Any
     ) -> _models.ChatCompletions:
         # pylint: disable=line-too-long
-        # pylint: disable=too-many-locals
         """Gets chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
         "completes"
@@ -127,8 +126,9 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
          Assistant roles. Required.
         :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage]
         :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
-         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
-         The service defaults to "error" in this case.
+         request payload.
+         This sets the HTTP request header ``unknown-parameters``. Known values are: "error", "drop",
+         and "pass_through". Default value is None.
         :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword frequency_penalty: A value that influences the probability of generated tokens
          appearing based on their cumulative
@@ -266,8 +266,6 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
                     "id": "str",  # A unique identifier associated with this chat completions
                       response. Required.
                     "model": "str",  # The model used for the chat completion. Required.
-                    "object": "str",  # The response object type, which is always
-                      ``chat.completion``. Required.
                     "usage": {
                         "capacity_type": "str",  # Indicates whether your capacity has been
                           affected by the usage amount (token count) reported here. Required. Known
@@ -433,7 +431,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         self,
         body: JSON,
         *,
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        unknown_params: Optional[Union[str, _models.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EmbeddingsResult: ...
@@ -442,7 +440,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         self,
         *,
         input: List[str],
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        unknown_params: Optional[Union[str, _models.UnknownParams]] = None,
         content_type: str = "application/json",
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
@@ -454,7 +452,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         self,
         body: IO[bytes],
         *,
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        unknown_params: Optional[Union[str, _models.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EmbeddingsResult: ...
@@ -465,7 +463,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         input: List[str] = _Unset,
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        unknown_params: Optional[Union[str, _models.UnknownParams]] = None,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
@@ -481,7 +479,9 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
          of strings or array of token arrays. Required.
         :paramtype input: list[str]
         :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
-         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         request payload.
+         This sets the HTTP request header ``unknown-parameters``. Known values are: "error", "drop",
+         and "pass_through". Default value is None.
         :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
          have.
@@ -536,16 +536,12 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
                                   These represent a measurement of the vector-based relatedness of the
                                   provided input. Required.
                             ],
-                            "index": 0,  # Index of the prompt to which the EmbeddingItem
+                            "index": 0  # Index of the prompt to which the EmbeddingItem
                               corresponds. Required.
-                            "object": "str"  # The object type of this embeddings item.
-                              Will always be ``embedding``. Required.
                         }
                     ],
                     "id": "str",  # Unique identifier for the embeddings result. Required.
                     "model": "str",  # The model ID used to generate this result. Required.
-                    "object": "str",  # The object type of the embeddings result. Will always be
-                      ``list``. Required.
                     "usage": {
                         "capacity_type": "str",  # Indicates whether your capacity has been
                           affected by the usage amount (token count) reported here. Required. Known
@@ -592,7 +588,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_embeddings_embedding_request(
+        _request = build_embeddings_embed_request(
             unknown_params=unknown_params,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -701,43 +697,237 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
 class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
 
     @overload
-    async def _embed(
+    async def embed(
         self,
         body: JSON,
         *,
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        unknown_params: Optional[Union[str, _models.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.EmbeddingsResult: ...
+    ) -> _models.EmbeddingsResult:
+        # pylint: disable=line-too-long
+        """Return the embeddings for given images.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload.
+         This sets the HTTP request header ``unknown-parameters``. Known values are: "error", "drop",
+         and "pass_through". Default value is None.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.EmbeddingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "input": [
+                        {
+                            "image": "str",  # The input image, in PNG format. Required.
+                            "text": "str"  # Optional. Optional. The text input to feed
+                              into the model (like DINO, CLIP). Returns a 422 error if the model
+                              doesn't support the value or parameter.
+                        }
+                    ],
+                    "dimensions": 0,  # Optional. Optional. The number of dimensions the
+                      resulting output embeddings should have. Passing null causes the model to use its
+                      default value. Returns a 422 error if the model doesn't support the value or
+                      parameter.
+                    "encoding_format": "str",  # Optional. Optional. The number of dimensions the
+                      resulting output embeddings should have. Passing null causes the model to use its
+                      default value. Returns a 422 error if the model doesn't support the value or
+                      parameter. Known values are: "base64", "binary", "float", "int8", "ubinary", and
+                      "uint8".
+                    "input_type": "str"  # Optional. Optional. The type of the input. Returns a
+                      422 error if the model doesn't support the value or parameter. Known values are:
+                      "text", "query", and "document".
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "data": [
+                        {
+                            "embedding": [
+                                0.0  # List of embeddings value for the input prompt.
+                                  These represent a measurement of the vector-based relatedness of the
+                                  provided input. Required.
+                            ],
+                            "index": 0  # Index of the prompt to which the EmbeddingItem
+                              corresponds. Required.
+                        }
+                    ],
+                    "id": "str",  # Unique identifier for the embeddings result. Required.
+                    "model": "str",  # The model ID used to generate this result. Required.
+                    "usage": {
+                        "capacity_type": "str",  # Indicates whether your capacity has been
+                          affected by the usage amount (token count) reported here. Required. Known
+                          values are: "usage" and "fixed".
+                        "input_tokens": 0,  # Number of tokens in the request prompt.
+                          Required.
+                        "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
+                          the AI model. Typically identical to ``input_tokens``. However, certain AI
+                          models may add extra tokens to the input hence the number can be higher. (for
+                          example when input_type="query"). Required.
+                        "total_tokens": 0  # Total number of tokens transacted in this
+                          request/response. Required.
+                    }
+                }
+        """
+
     @overload
-    async def _embed(
+    async def embed(
         self,
         *,
         input: List[_models.EmbeddingInput],
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        unknown_params: Optional[Union[str, _models.UnknownParams]] = None,
         content_type: str = "application/json",
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
         **kwargs: Any
-    ) -> _models.EmbeddingsResult: ...
+    ) -> _models.EmbeddingsResult:
+        # pylint: disable=line-too-long
+        """Return the embeddings for given images.
+
+        :keyword input: Input image to embed. To embed multiple inputs in a single request, pass an
+         array.
+         The input must not exceed the max input tokens for the model. Required.
+        :paramtype input: list[~azure.ai.inference.models.EmbeddingInput]
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload.
+         This sets the HTTP request header ``unknown-parameters``. Known values are: "error", "drop",
+         and "pass_through". Default value is None.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
+         have.
+         Passing null causes the model to use its default value.
+         Returns a 422 error if the model doesn't support the value or parameter. Default value is
+         None.
+        :paramtype dimensions: int
+        :keyword encoding_format: Optional. The number of dimensions the resulting output embeddings
+         should have.
+         Passing null causes the model to use its default value.
+         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+         "base64", "binary", "float", "int8", "ubinary", and "uint8". Default value is None.
+        :paramtype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
+        :keyword input_type: Optional. The type of the input.
+         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+         "text", "query", and "document". Default value is None.
+        :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
+        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.EmbeddingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "data": [
+                        {
+                            "embedding": [
+                                0.0  # List of embeddings value for the input prompt.
+                                  These represent a measurement of the vector-based relatedness of the
+                                  provided input. Required.
+                            ],
+                            "index": 0  # Index of the prompt to which the EmbeddingItem
+                              corresponds. Required.
+                        }
+                    ],
+                    "id": "str",  # Unique identifier for the embeddings result. Required.
+                    "model": "str",  # The model ID used to generate this result. Required.
+                    "usage": {
+                        "capacity_type": "str",  # Indicates whether your capacity has been
+                          affected by the usage amount (token count) reported here. Required. Known
+                          values are: "usage" and "fixed".
+                        "input_tokens": 0,  # Number of tokens in the request prompt.
+                          Required.
+                        "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
+                          the AI model. Typically identical to ``input_tokens``. However, certain AI
+                          models may add extra tokens to the input hence the number can be higher. (for
+                          example when input_type="query"). Required.
+                        "total_tokens": 0  # Total number of tokens transacted in this
+                          request/response. Required.
+                    }
+                }
+        """
+
     @overload
-    async def _embed(
+    async def embed(
         self,
         body: IO[bytes],
         *,
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        unknown_params: Optional[Union[str, _models.UnknownParams]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.EmbeddingsResult: ...
+    ) -> _models.EmbeddingsResult:
+        # pylint: disable=line-too-long
+        """Return the embeddings for given images.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
+         request payload.
+         This sets the HTTP request header ``unknown-parameters``. Known values are: "error", "drop",
+         and "pass_through". Default value is None.
+        :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.EmbeddingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "data": [
+                        {
+                            "embedding": [
+                                0.0  # List of embeddings value for the input prompt.
+                                  These represent a measurement of the vector-based relatedness of the
+                                  provided input. Required.
+                            ],
+                            "index": 0  # Index of the prompt to which the EmbeddingItem
+                              corresponds. Required.
+                        }
+                    ],
+                    "id": "str",  # Unique identifier for the embeddings result. Required.
+                    "model": "str",  # The model ID used to generate this result. Required.
+                    "usage": {
+                        "capacity_type": "str",  # Indicates whether your capacity has been
+                          affected by the usage amount (token count) reported here. Required. Known
+                          values are: "usage" and "fixed".
+                        "input_tokens": 0,  # Number of tokens in the request prompt.
+                          Required.
+                        "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
+                          the AI model. Typically identical to ``input_tokens``. However, certain AI
+                          models may add extra tokens to the input hence the number can be higher. (for
+                          example when input_type="query"). Required.
+                        "total_tokens": 0  # Total number of tokens transacted in this
+                          request/response. Required.
+                    }
+                }
+        """
 
     @distributed_trace_async
-    async def _embed(
+    async def embed(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         input: List[_models.EmbeddingInput] = _Unset,
-        unknown_params: Optional[Union[str, _models._enums.UnknownParams]] = None,
+        unknown_params: Optional[Union[str, _models.UnknownParams]] = None,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
@@ -753,7 +943,9 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
          The input must not exceed the max input tokens for the model. Required.
         :paramtype input: list[~azure.ai.inference.models.EmbeddingInput]
         :keyword unknown_params: Controls what happens if unknown parameters are passed in the JSON
-         request payload. Known values are: "error", "ignore", and "allow". Default value is None.
+         request payload.
+         This sets the HTTP request header ``unknown-parameters``. Known values are: "error", "drop",
+         and "pass_through". Default value is None.
         :paramtype unknown_params: str or ~azure.ai.inference.models.UnknownParams
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
          have.
@@ -811,16 +1003,12 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
                                   These represent a measurement of the vector-based relatedness of the
                                   provided input. Required.
                             ],
-                            "index": 0,  # Index of the prompt to which the EmbeddingItem
+                            "index": 0  # Index of the prompt to which the EmbeddingItem
                               corresponds. Required.
-                            "object": "str"  # The object type of this embeddings item.
-                              Will always be ``embedding``. Required.
                         }
                     ],
                     "id": "str",  # Unique identifier for the embeddings result. Required.
                     "model": "str",  # The model ID used to generate this result. Required.
-                    "object": "str",  # The object type of the embeddings result. Will always be
-                      ``list``. Required.
                     "usage": {
                         "capacity_type": "str",  # Indicates whether your capacity has been
                           affected by the usage amount (token count) reported here. Required. Known
@@ -867,7 +1055,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_image_embeddings_embedding_request(
+        _request = build_image_embeddings_embed_request(
             unknown_params=unknown_params,
             content_type=content_type,
             api_version=self._config.api_version,

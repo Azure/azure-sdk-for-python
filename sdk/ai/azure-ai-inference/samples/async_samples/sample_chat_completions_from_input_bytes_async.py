@@ -21,6 +21,7 @@ USAGE:
 import asyncio
 import io
 
+
 async def sample_chat_completions_from_input_bytes_async():
     import os
 
@@ -34,7 +35,7 @@ async def sample_chat_completions_from_input_bytes_async():
 
     from azure.ai.inference.aio import ChatCompletionsClient
     from azure.core.credentials import AzureKeyCredential
-    
+
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Make a chat completion call, by directly providing the
@@ -52,6 +53,7 @@ def read_text_file(file_name: str) -> io.BytesIO:
     The file is expected to be in the same directory as this Python script.
     """
     from pathlib import Path
+
     with Path(__file__).with_name(file_name).open("r") as f:
         return io.BytesIO(f.read().encode("utf-8"))
 

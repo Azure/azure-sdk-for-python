@@ -20,6 +20,7 @@ USAGE:
 """
 import asyncio
 
+
 async def sample_chat_completions_from_input_json_async():
     import os
     from azure.ai.inference.aio import ChatCompletionsClient
@@ -53,8 +54,9 @@ async def sample_chat_completions_from_input_json_async():
     response = await client.complete(request_body)
 
     print(response.choices[0].message.content)
-    
+
     await client.close()
+
 
 async def main():
     await sample_chat_completions_from_input_json_async()

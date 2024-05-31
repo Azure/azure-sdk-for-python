@@ -8,14 +8,12 @@
 
 from ._models import AssistantMessage
 from ._models import ChatChoice
-from ._models import StreamingChatChoiceUpdate
 from ._models import ChatCompletions
 from ._models import ChatCompletionsFunctionToolCall
 from ._models import ChatCompletionsFunctionToolDefinition
 from ._models import ChatCompletionsNamedToolSelection
 from ._models import ChatCompletionsToolCall
 from ._models import ChatCompletionsToolDefinition
-from ._models import StreamingChatCompletionsUpdate
 from ._models import ChatRequestMessage
 from ._models import ChatResponseMessage
 from ._models import CompletionsUsage
@@ -26,6 +24,8 @@ from ._models import EmbeddingsUsage
 from ._models import FunctionCall
 from ._models import FunctionDefinition
 from ._models import ModelInfo
+from ._models import StreamingChatChoiceUpdate
+from ._models import StreamingChatCompletionsUpdate
 from ._models import SystemMessage
 from ._models import ToolMessage
 from ._models import UserMessage
@@ -33,49 +33,52 @@ from ._models import UserMessage
 from ._enums import CapacityType
 from ._enums import ChatCompletionsResponseFormat
 from ._enums import ChatCompletionsToolSelectionPreset
-from ._enums import CompletionsFinishReason
 from ._enums import ChatRole
 from ._enums import EmbeddingEncodingFormat
 from ._enums import EmbeddingInputType
-from ._enums import ModelType
 from ._enums import UnknownParams
-from ._patch import __all__ as _patch_all
-from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._enums import CompletionsFinishReason
+from ._enums import ModelType
+
+from ._patch import StreamingChatCompletions
+from ._patch import AsyncStreamingChatCompletions
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "StreamingChatCompletions",
+    "AsyncStreamingChatCompletions",
     "AssistantMessage",
-    "CapacityType",
     "ChatChoice",
-    "StreamingChatChoiceUpdate",
     "ChatCompletions",
     "ChatCompletionsFunctionToolCall",
     "ChatCompletionsFunctionToolDefinition",
     "ChatCompletionsNamedToolSelection",
-    "ChatCompletionsResponseFormat",
     "ChatCompletionsToolCall",
     "ChatCompletionsToolDefinition",
-    "ChatCompletionsToolSelectionPreset",
-    "StreamingChatCompletionsUpdate",
     "ChatRequestMessage",
     "ChatResponseMessage",
-    "ChatRole",
-    "CompletionsFinishReason",
     "CompletionsUsage",
-    "EmbeddingEncodingFormat",
     "EmbeddingInput",
-    "EmbeddingInputType",
     "EmbeddingItem",
     "EmbeddingsResult",
     "EmbeddingsUsage",
     "FunctionCall",
     "FunctionDefinition",
     "ModelInfo",
-    "ModelType",
+    "StreamingChatChoiceUpdate",
+    "StreamingChatCompletionsUpdate",
     "SystemMessage",
     "ToolMessage",
-    "UnknownParams",
     "UserMessage",
+    "CapacityType",
+    "ChatCompletionsResponseFormat",
+    "ChatCompletionsToolSelectionPreset",
+    "ChatRole",
+    "EmbeddingEncodingFormat",
+    "EmbeddingInputType",
+    "UnknownParams",
+    "CompletionsFinishReason",
+    "ModelType"
 ]
-__all__.extend([p for p in _patch_all if p not in __all__])
+
 _patch_sdk()
