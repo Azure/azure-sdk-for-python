@@ -24,9 +24,5 @@ extends:
           ServiceConnection: usgov_azure-sdk-tests
       ServiceDirectory: search
       EnvVars:
-        AZURE_CLIENT_ID: $(SEARCH_CLIENT_ID)
-        AZURE_CLIENT_SECRET: $(SEARCH_CLIENT_SECRET)
-        AZURE_TENANT_ID: $(SEARCH_TENANT_ID)
-        AZURE_CLIENT_OID: $(SEARCH_CLIENT_OID)
         AZURE_TEST_RUN_LIVE: 'True'
         AZURE_SKIP_LIVE_RECORDING: 'True'
