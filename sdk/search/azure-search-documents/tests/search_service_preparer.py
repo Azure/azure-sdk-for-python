@@ -25,9 +25,9 @@ SearchEnvVarPreparer = functools.partial(
     EnvironmentVariableLoader,
     "search",
     search_service_endpoint="https://fakesearchendpoint.search.windows.net",
-    search_service_api_key="fakesearchapikey",
+    # search_service_api_key="fakesearchapikey",
     search_service_name="fakesearchendpoint",
-    search_query_api_key="fakequeryapikey",
+    # search_query_api_key="fakequeryapikey",
     search_storage_connection_string="DefaultEndpointsProtocol=https;AccountName=fakestoragecs;AccountKey=FAKE;EndpointSuffix=core.windows.net",
     search_storage_container_name="fakestoragecontainer",
 )
