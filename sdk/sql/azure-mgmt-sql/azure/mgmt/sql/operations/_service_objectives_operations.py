@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -130,7 +130,6 @@ class ServiceObjectivesOperations:
         :type server_name: str
         :param service_objective_name: The name of the service objective to retrieve. Required.
         :type service_objective_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceObjective or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.ServiceObjective
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -149,22 +148,21 @@ class ServiceObjectivesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))
         cls: ClsType[_models.ServiceObjective] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             service_objective_name=service_objective_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -176,13 +174,9 @@ class ServiceObjectivesOperations:
         deserialized = self._deserialize("ServiceObjective", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/serviceObjectives/{serviceObjectiveName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_by_server(
@@ -195,7 +189,6 @@ class ServiceObjectivesOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ServiceObjective or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.ServiceObjective]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -217,24 +210,23 @@ class ServiceObjectivesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_server_request(
+                _request = build_list_by_server_request(
                     resource_group_name=resource_group_name,
                     server_name=server_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_server.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ServiceObjectiveListResult", pipeline_response)
@@ -244,11 +236,11 @@ class ServiceObjectivesOperations:
             return None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -259,7 +251,3 @@ class ServiceObjectivesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_server.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/serviceObjectives"
-    }

@@ -23,10 +23,10 @@ USAGE:
 
 def sample_list_translations():
     import os
+
     # [START list_translations]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document import DocumentTranslationClient
-
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
@@ -50,5 +50,5 @@ def sample_list_translations():
     # [END list_translations]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_list_translations()

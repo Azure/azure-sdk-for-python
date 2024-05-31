@@ -1,12 +1,12 @@
 {
-  "commit": "3940cd77b8d74b58d4a8b3a80388ff890052be67",
+  "commit": "0f21c214f0f5b4180ec71655b36b8fbd40fd1ceb",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.9.7",
+  "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.13.7",
+    "@autorest/python@6.13.16",
     "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/resources/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.13.7 --use=@autorest/modelerfour@4.27.0 --version=3.9.7 --version-tolerant=False",
+  "autorest_command": "autorest specification/resources/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.13.16 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/resources/resource-manager/readme.md",
   "package-privatelinks-2020-05": "2022-03-18 16:14:07 -0700 2c68b6f0c9566d97d9d590a31b0d46997622eef7 Microsoft.Authorization/stable/2020-05-01/privateLinks.json",
   "package-features-2021-07": "2022-03-06 17:36:42 -0800 6a57e9cedc87cafd2dc9e4f3e8af62b5725e3d22 Microsoft.Features/stable/2021-07-01/features.json",
@@ -15,7 +15,6 @@
   "package-locks-2016-09": "2021-03-16 20:01:32 -0700 be1d938d548060ffe4dea422b32a6932b168ec18 Microsoft.Authorization/stable/2016-09-01/locks.json",
   "package-locks-2015-01": "2018-06-04 10:10:25 -0700 a9675b1e5a9b0e694bea4e417365f74657b8903a Microsoft.Authorization/stable/2015-01-01/locks.json",
   "package-managedapplications-2019-07": "2022-02-17 23:42:24 -0800 67223eb5be65114df664bb5ae28e6e14ff62e84f Microsoft.Solutions/stable/2019-07-01/managedapplications.json",
-  "package-policy-2023-04-only": "2023-09-12 11:41:29 -0700 b1f57e54d560d162ff7c715103158aa020dad2c9 Microsoft.Authorization/stable/2023-04-01/policySetDefinitions.json",
   "package-policy-2022-08-preview-only": "2022-11-15 18:35:20 -0800 fa7609844bc20b126037dfb180ef7155c2174f7b Microsoft.Authorization/preview/2022-08-01-preview/policyVariables.json",
   "package-policy-2022-07-preview-only": "2022-10-10 18:10:12 -0700 1cb05f075f2d061686fa8a9e45c72d1fafff9e3f Microsoft.Authorization/preview/2022-07-01-preview/policyExemptions.json",
   "package-policy-2022-06-only": "2022-10-10 18:10:12 -0700 1cb05f075f2d061686fa8a9e45c72d1fafff9e3f Microsoft.Authorization/stable/2022-06-01/policyAssignments.json",

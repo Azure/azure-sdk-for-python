@@ -2,6 +2,7 @@ parameters:
   ServiceDirectory: ''
   ValidateFormatting: false
   EnvVars: {}
+  AdditionalTestArgs: ''
 
 steps:
   - task: UsePythonVersion@0

@@ -944,7 +944,9 @@
       "filename": "sdk/keyvault/**",
       "words": [
         "eddsa",
-        "Thawte"
+        "Thawte",
+        "myalias",
+        "mydomain"
       ]
     },
     {
@@ -1676,7 +1678,14 @@
         "ctxt",
         "unflattened",
         "deseralize",
-        "wday"
+        "wday",
+        "mros"
+      ]
+    },
+    {
+      "filename": "sdk/devcenter/azure-developer-devcenter/azure/developer/devcenter/models/*.py",
+      "words": [
+        "vcpus"
       ]
     },
     {
@@ -1764,6 +1773,15 @@
       ]
     },
     {
+      "filename": "sdk/translation/azure-ai-translation-document/azure/ai/translation/document/*.py",
+      "words": [
+        "mros",
+        "Nify",
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
       "filename": "sdk/healthinsights/azure-healthinsights-radiologyinsights/**",
       "words": [
         "ctxt",
@@ -1772,6 +1790,29 @@
         "loinc",
         "wday",
         "SNOMED"
+      ]
+    },
+    {
+      "filename": "sdk/face/azure-ai-vision-face/**",
+      "words": [
+        "mros",
+        "Nify",
+        "ctxt",
+        "wday",
+        "faceid",
+        "facelistid",
+        "largefacelistid",
+        "persongroupid",
+        "largepersongroupid",
+        "dynamicpersongroupid",
+        "personid",
+        "maxnumofcandidatesreturned"
+      ]
+    },
+    {
+      "filename": "sdk/face/azure-ai-vision-face/tests/**",
+      "words": [
+        "dcid"
       ]
     }
   ],

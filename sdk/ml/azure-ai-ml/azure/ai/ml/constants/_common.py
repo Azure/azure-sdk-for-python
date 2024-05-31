@@ -950,6 +950,24 @@ class AzureDevopsArtifactsType:
     ARTIFACT = "artifact"
 
 
+class DataIndexTypes:
+    """DataIndexTypes is an enumeration of values for the types out indexes which can be written to by DataIndex."""
+
+    ACS = "acs"
+    """Azure Cognitive Search index type."""
+    PINECONE = "pinecone"
+    """Pinecone index type."""
+    FAISS = "faiss"
+    """Faiss index type."""
+
+
+class IndexInputType:
+    """An enumeration of values for the types of input data for an index."""
+
+    GIT = "git"
+    LOCAL = "local"
+
+
 class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     JOB = "job"
     MONITOR = "monitor"
