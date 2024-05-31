@@ -5,12 +5,8 @@ extends:
     parameters:
       ServiceDirectory: openai
       TestTimeoutInMinutes: 200
-      UseFederatedAuth: true
       MatrixFilters:
         - PythonVersion=3.11.*
-      CloudConfig:
-        Public:
-          SubscriptionConfigurationFilePath: eng/common/TestResources/sub-config/AzureOpenAITestingSub.json
       EnvVars:
         AZ_OPENAI_ENDPOINT: $(AOAI-ENDPOINT)
         AZURE_OPENAI_KEY: $(AOAI-API-KEY)
