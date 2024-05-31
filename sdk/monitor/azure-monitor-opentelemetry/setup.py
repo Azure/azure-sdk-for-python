@@ -20,6 +20,7 @@ PACKAGE_PPRINT_NAME = "Azure Monitor Opentelemetry Distro"
 package_folder_path = PACKAGE_NAME.replace("-", "/")
 
 
+
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
 try:
