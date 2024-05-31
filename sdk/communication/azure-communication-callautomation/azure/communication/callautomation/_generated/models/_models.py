@@ -2825,6 +2825,215 @@ class MediaStreamingConfiguration(_serialization.Model):
         self.audio_channel_type = audio_channel_type
 
 
+class MediaStreamingFailed(_serialization.Model):
+    """MediaStreamingFailed.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar media_streaming_update: Defines the result for audio streaming update with the current
+     status and the details about the status.
+    :vartype media_streaming_update:
+     ~azure.communication.callautomation.models.MediaStreamingUpdate
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    """
+
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "media_streaming_update": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "media_streaming_update": {"key": "mediaStreamingUpdate", "type": "MediaStreamingUpdate"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.operation_context = None
+        self.result_information = None
+        self.media_streaming_update = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
+
+
+class MediaStreamingStarted(_serialization.Model):
+    """MediaStreamingStarted.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar media_streaming_update: Defines the result for audio streaming update with the current
+     status and the details about the status.
+    :vartype media_streaming_update:
+     ~azure.communication.callautomation.models.MediaStreamingUpdate
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    """
+
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "media_streaming_update": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "media_streaming_update": {"key": "mediaStreamingUpdate", "type": "MediaStreamingUpdate"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.operation_context = None
+        self.result_information = None
+        self.media_streaming_update = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
+
+
+class MediaStreamingStopped(_serialization.Model):
+    """MediaStreamingStopped.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar media_streaming_update: Defines the result for audio streaming update with the current
+     status and the details about the status.
+    :vartype media_streaming_update:
+     ~azure.communication.callautomation.models.MediaStreamingUpdate
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    """
+
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "media_streaming_update": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "media_streaming_update": {"key": "mediaStreamingUpdate", "type": "MediaStreamingUpdate"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.operation_context = None
+        self.result_information = None
+        self.media_streaming_update = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
+
+
+class MediaStreamingUpdate(_serialization.Model):
+    """MediaStreamingUpdate.
+
+    :ivar content_type:
+    :vartype content_type: str
+    :ivar media_streaming_status: Known values are: "mediaStreamingStarted",
+     "mediaStreamingFailed", "mediaStreamingStopped", and "unspecifiedError".
+    :vartype media_streaming_status: str or
+     ~azure.communication.callautomation.models.MediaStreamingStatus
+    :ivar media_streaming_status_details: Known values are: "subscriptionStarted",
+     "streamConnectionReestablished", "streamConnectionUnsuccessful", "streamUrlMissing",
+     "serviceShutdown", "streamConnectionInterrupted", "speechServicesConnectionError",
+     "subscriptionStopped", "unspecifiedError", "authenticationFailure", "badRequest",
+     "tooManyRequests", "forbidden", "serviceTimeout", and "initialWebSocketConnectionFailed".
+    :vartype media_streaming_status_details: str or
+     ~azure.communication.callautomation.models.MediaStreamingStatusDetails
+    """
+
+    _attribute_map = {
+        "content_type": {"key": "contentType", "type": "str"},
+        "media_streaming_status": {"key": "mediaStreamingStatus", "type": "str"},
+        "media_streaming_status_details": {"key": "mediaStreamingStatusDetails", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        content_type: Optional[str] = None,
+        media_streaming_status: Optional[Union[str, "_models.MediaStreamingStatus"]] = None,
+        media_streaming_status_details: Optional[Union[str, "_models.MediaStreamingStatusDetails"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword content_type:
+        :paramtype content_type: str
+        :keyword media_streaming_status: Known values are: "mediaStreamingStarted",
+         "mediaStreamingFailed", "mediaStreamingStopped", and "unspecifiedError".
+        :paramtype media_streaming_status: str or
+         ~azure.communication.callautomation.models.MediaStreamingStatus
+        :keyword media_streaming_status_details: Known values are: "subscriptionStarted",
+         "streamConnectionReestablished", "streamConnectionUnsuccessful", "streamUrlMissing",
+         "serviceShutdown", "streamConnectionInterrupted", "speechServicesConnectionError",
+         "subscriptionStopped", "unspecifiedError", "authenticationFailure", "badRequest",
+         "tooManyRequests", "forbidden", "serviceTimeout", and "initialWebSocketConnectionFailed".
+        :paramtype media_streaming_status_details: str or
+         ~azure.communication.callautomation.models.MediaStreamingStatusDetails
+        """
+        super().__init__(**kwargs)
+        self.content_type = content_type
+        self.media_streaming_status = media_streaming_status
+        self.media_streaming_status_details = media_streaming_status_details
+
+
 class MicrosoftTeamsAppIdentifierModel(_serialization.Model):
     """A Microsoft Teams application.
 
@@ -5310,50 +5519,6 @@ class TransferToParticipantRequest(_serialization.Model):
         self.transferee = transferee
         self.operation_callback_uri = operation_callback_uri
         self.source_caller_id_number = source_caller_id_number
-
-
-class UnholdRequest(_serialization.Model):
-    """The request payload for holding participant from the call.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar target_participant: Participants to be hold from the call.
-     Only ACS Users are supported. Required.
-    :vartype target_participant:
-     ~azure.communication.callautomation.models.CommunicationIdentifierModel
-    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
-     request to the response event.
-    :vartype operation_context: str
-    """
-
-    _validation = {
-        "target_participant": {"required": True},
-    }
-
-    _attribute_map = {
-        "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
-        "operation_context": {"key": "operationContext", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        target_participant: "_models.CommunicationIdentifierModel",
-        operation_context: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword target_participant: Participants to be hold from the call.
-         Only ACS Users are supported. Required.
-        :paramtype target_participant:
-         ~azure.communication.callautomation.models.CommunicationIdentifierModel
-        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
-        :paramtype operation_context: str
-        """
-        super().__init__(**kwargs)
-        self.target_participant = target_participant
-        self.operation_context = operation_context
 
 
 class UnholdRequest(_serialization.Model):
