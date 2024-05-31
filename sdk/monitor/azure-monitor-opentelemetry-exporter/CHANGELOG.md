@@ -1,11 +1,23 @@
 # Release History
 
+## 1.0.0b27 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0b26 (2024-05-29)
 
 ### Bugs Fixed
 
 - Handle invalid status codes in std metric payload
     ([#35762](https://github.com/Azure/azure-sdk-for-python/pull/35762))
+- Disable distributed tracing for live metrics client calls
+    ([#35822](https://github.com/Azure/azure-sdk-for-python/pull/35822))
 
 ### Other Changes
 
