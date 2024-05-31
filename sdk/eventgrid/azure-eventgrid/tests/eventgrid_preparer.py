@@ -1,5 +1,5 @@
 import functools
-from devtools_testutils import PowerShellPreparer, EnvironmentVariableLoader
+from devtools_testutils import EnvironmentVariableLoader
 
 from azure.mgmt.eventgrid.models import (
     Topic,
@@ -9,8 +9,8 @@ from azure.mgmt.eventgrid.models import (
     JsonFieldWithDefault,
 )
 
-EVENTGRID_TOPIC_PARAM = "eventgrid_topic"
-EVENTGRID_TOPIC_LOCATION = "eastus"
+EVENTGRID_TOPIC_PARAM = 'eventgrid_topic'
+EVENTGRID_TOPIC_LOCATION = 'westus'
 CLOUD_EVENT_SCHEMA = InputSchema.cloud_event_schema_v1_0
 CUSTOM_EVENT_SCHEMA = InputSchema.custom_event_schema
 ID_JSON_FIELD = JsonField(source_field="customId")
@@ -29,8 +29,7 @@ CUSTOM_JSON_INPUT_SCHEMA_MAPPING = JsonInputSchemaMapping(
 )
 
 EventGridPreparer = functools.partial(
-    PowerShellPreparer,
-    "eventgrid",
+    EnvironmentVariableLoader, "eventgrid",
     eventgrid_topic_endpoint="https://fakeresource.eastus-1.eventgrid.azure.net/api/events",
     eventgrid_topic_key="fakekeyfakekeyfakekeyfakekeyfakekeyfakekeyA=",
     eventgrid_domain_endpoint="https://fakeresource.eastus-1.eventgrid.azure.net/api/events",

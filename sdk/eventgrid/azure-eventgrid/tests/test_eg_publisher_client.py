@@ -21,7 +21,7 @@ except ImportError:
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
-from azure.core.credentials import AzureKeyCredential, AzureSasCredential
+from azure.core.credentials import AzureSasCredential
 from azure.core.messaging import CloudEvent
 from azure.core.serialization import NULL
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent, generate_sas
@@ -54,10 +54,10 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_event_grid_event_fails_without_full_url(self, eventgrid_topic_key, eventgrid_topic_endpoint):
-        akc_credential = AzureKeyCredential(eventgrid_topic_key)
+    def test_send_event_grid_event_fails_without_full_url(self,eventgrid_topic_endpoint):
+        credential = self.get_credential(EventGridPublisherClient)
         parsed_url = urlparse(eventgrid_topic_endpoint)
-        client = EventGridPublisherClient(parsed_url.netloc, akc_credential)
+        client = EventGridPublisherClient(parsed_url.netloc, credential)
         eg_event = EventGridEvent(
             subject="sample",
             data={"sample": "eventgridevent"},
@@ -273,9 +273,11 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
         }
         client.send(cloud_event1)
 
+    @pytest.mark.live_test_only
     @EventGridPreparer()
-    @recorded_by_proxy
-    def test_send_signature_credential(self, eventgrid_topic_key, eventgrid_topic_endpoint):
+    def test_send_signature_credential(self, **kwargs):
+        eventgrid_topic_endpoint = kwargs.pop("eventgrid_topic_endpoint")
+        eventgrid_topic_key = kwargs.pop("eventgrid_topic_key")
         expiration_date_utc = dt.datetime.now(UTC()) + timedelta(hours=1)
         signature = generate_sas(eventgrid_topic_endpoint, eventgrid_topic_key, expiration_date_utc)
         credential = AzureSasCredential(signature)
@@ -355,14 +357,8 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @pytest.mark.live_test_only
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_partner_namespace(
-        self,
-        eventgrid_partner_namespace_topic_endpoint,
-        eventgrid_partner_namespace_topic_key,
-        eventgrid_partner_channel_name,
-    ):
-        credential = AzureKeyCredential(eventgrid_partner_namespace_topic_key)
-        client = EventGridPublisherClient(eventgrid_partner_namespace_topic_endpoint, credential)
+    def test_send_partner_namespace(self, eventgrid_partner_namespace_topic_endpoint, eventgrid_partner_channel_name):
+        client = self.create_eg_publisher_client(eventgrid_partner_namespace_topic_endpoint)
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
             data="cloudevent",
