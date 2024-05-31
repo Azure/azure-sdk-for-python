@@ -12,7 +12,7 @@ import logging
 import sys
 
 from io import IOBase
-from typing import Any, Dict, Union, IO, List, Optional, overload, Type
+from typing import Any, Dict, Union, IO, List, Optional, overload, Type, TYPE_CHECKING
 from azure.core.pipeline import PipelineResponse
 from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -20,10 +20,10 @@ from azure.core.utils import case_insensitive_dict
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
+    map_error,
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
-    map_error,
 )
 from .. import models as _models
 from .._model_base import SdkJSONEncoder, _deserialize
@@ -36,6 +36,10 @@ from .._operations._operations import (
     build_image_embeddings_embed_request,
 )
 
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
+
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
@@ -46,8 +50,25 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def load_client(
-    endpoint: str, credential: AzureKeyCredential, **kwargs: Any
+    endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any
 ) -> Union[ChatCompletionsClientGenerated, EmbeddingsClientGenerated, ImageEmbeddingsClientGenerated]:
+    """
+    Load a client from a given endpoint URL.
+
+    :param endpoint: Service host. Required.
+    :type endpoint: str
+    :param credential: Credential used to authenticate requests to the service. Is either a
+     AzureKeyCredential type or a TokenCredential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials.TokenCredential
+    :keyword api_version: The API version to use for this operation. Default value is
+     "2024-05-01-preview". Note that overriding this default value may result in unsupported
+     behavior.
+    :paramtype api_version: str
+    :return: ChatCompletionsClient or EmbeddingsClient or ImageEmbeddingsClient
+    :rtype: ~azure.ai.inference.ChatCompletionsClient or ~azure.ai.inference.EmbeddingsClient or ~azure.ai.inference.ImageEmbeddingsClient
+    :raises ~azure.core.exceptions.HttpResponseError
+    """
 
     client = ChatCompletionsClient(endpoint, credential, **kwargs)  # Pick any of the clients, it does not matter...
     model_info = await client.get_model_info()
@@ -188,7 +209,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :paramtype seed: int
         :return: ChatCompletions for non-streaming, or AsyncStreamingChatCompletions for streaming.
         :rtype: ~azure.ai.inference.models.ChatCompletions or ~azure.ai.inference.models.AsyncStreamingChatCompletions
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError
         """
 
     @overload
@@ -213,7 +234,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :paramtype content_type: str
         :return: ChatCompletions for non-streaming, or AsyncStreamingChatCompletions for streaming.
         :rtype: ~azure.ai.inference.models.ChatCompletions or ~azure.ai.inference.models.AsyncStreamingChatCompletions
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError
         """
 
     @overload
@@ -238,7 +259,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :paramtype content_type: str
         :return: ChatCompletions for non-streaming, or AsyncStreamingChatCompletions for streaming.
         :rtype: ~azure.ai.inference.models.ChatCompletions or ~azure.ai.inference.models.AsyncStreamingChatCompletions
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError
         """
 
     @distributed_trace_async
@@ -349,7 +370,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :paramtype seed: int
         :return: ChatCompletions for non-streaming, or AsyncStreamingChatCompletions for streaming.
         :rtype: ~azure.ai.inference.models.ChatCompletions or ~azure.ai.inference.models.AsyncStreamingChatCompletions
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -437,7 +458,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
         :return: ModelInfo. The ModelInfo is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ModelInfo
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError
         """
         if self._model_info is None:
             self._model_info = await self._get_model_info(**kwargs)
@@ -501,7 +522,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError
         """
 
     @overload
@@ -521,7 +542,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :paramtype content_type: str
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError
         """
 
     @overload
@@ -541,7 +562,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :paramtype content_type: str
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError
         """
 
     @distributed_trace_async
@@ -588,7 +609,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -667,7 +688,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
 
         :return: ModelInfo. The ModelInfo is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ModelInfo
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError
         """
         if self._model_info is None:
             self._model_info = await self._get_model_info(**kwargs)
@@ -731,7 +752,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError
         """
 
     @overload
@@ -751,7 +772,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :paramtype content_type: str
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError
         """
 
     @overload
@@ -771,7 +792,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :paramtype content_type: str
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError
         """
 
     @distributed_trace_async
@@ -818,7 +839,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -897,7 +918,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
 
         :return: ModelInfo. The ModelInfo is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ModelInfo
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError
         """
         if self._model_info is None:
             self._model_info = await self._get_model_info(**kwargs)
