@@ -1,17 +1,11 @@
 # Release History
 
-## 1.4.3 (Unreleased)
+## 1.5.0 (2024-05-31)
 
 ### Features Added
 
 - Enable live metrics feature
     ([#35566](https://github.com/Azure/azure-sdk-for-python/pull/35566))
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.4.2 (2024-05-20)
 
