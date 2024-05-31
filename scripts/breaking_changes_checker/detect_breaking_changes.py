@@ -86,7 +86,11 @@ def get_parameter_default(param: inspect.Parameter) -> None:
         if default_value is None:  # the default is actually None
             default_value = "none"
         elif hasattr(default_value, "value"):
-            if not isinstance(default_value.value, object):
+            # Get the enum value
+            if isinstance(default_value.value, object):
+                # Accounting for enum values like: default = DefaultProfile()
+                default_value = default_value.value.__class__.__name__
+            else:
                 default_value = default_value.value
         elif inspect.isfunction(default_value):
             default_value = default_value.__name__
