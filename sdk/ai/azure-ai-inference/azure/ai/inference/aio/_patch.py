@@ -49,9 +49,9 @@ async def load_client(
     endpoint: str, credential: AzureKeyCredential, **kwargs: Any
 ) -> Union[ChatCompletionsClientGenerated, EmbeddingsClientGenerated, ImageEmbeddingsClientGenerated]:
 
-    client1 = ChatCompletionsClient(endpoint, credential, **kwargs)  # Pick any of the clients, it does not matter...
-    model_info = await client1.get_model_info()
-    await client1.close()
+    client = ChatCompletionsClient(endpoint, credential, **kwargs)  # Pick any of the clients, it does not matter...
+    model_info = await client.get_model_info()
+    await client.close()
 
     _LOGGER.info("model_info=%s", model_info)
     if model_info.model_type in (None, ""):
@@ -61,16 +61,21 @@ async def load_client(
 
     # TODO: Remove "completions" and "embedding" once Mistral Large and Cohere fixes their model type
     if model_info.model_type in (_models.ModelType.CHAT, "completion"):
-        client2 = ChatCompletionsClient(endpoint, credential, **kwargs)
-    elif model_info.model_type in (_models.ModelType.EMBEDDINGS, "embedding"):
-        client2 = EmbeddingsClient(endpoint, credential, **kwargs)
-    elif model_info.model_type == _models.ModelType.IMAGE_EMBEDDINGS:
-        client2 = ImageEmbeddingsClient(endpoint, credential, **kwargs)
-    else:
-        raise ValueError(f"No client available to support AI model type `{model_info.model_type}`")
+        chat_completion_client = ChatCompletionsClient(endpoint, credential, **kwargs)
+        chat_completion_client._model_info = model_info  # pylint: disable=protected-access
+        return chat_completion_client
 
-    client2._model_info = model_info  # pylint: disable=protected-access
-    return  client2
+    if model_info.model_type in (_models.ModelType.EMBEDDINGS, "embedding"):
+        embedding_client = EmbeddingsClient(endpoint, credential, **kwargs)
+        embedding_client._model_info = model_info  # pylint: disable=protected-access
+        return  embedding_client
+    
+    if model_info.model_type == _models.ModelType.IMAGE_EMBEDDINGS:
+        image_embedding_client = ImageEmbeddingsClient(endpoint, credential, **kwargs)
+        image_embedding_client._model_info = model_info  # pylint: disable=protected-access
+        return image_embedding_client
+
+    raise ValueError(f"No client available to support AI model type `{model_info.model_type}`")
 
 
 class ChatCompletionsClient(ChatCompletionsClientGenerated):
@@ -356,7 +361,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
-        _unknown_params:_models._enums.UnknownParams = None
+        _unknown_params:Union[_models._enums.UnknownParams, None] = None
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
 
@@ -595,7 +600,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
-        _unknown_params:_models._enums.UnknownParams = None
+        _unknown_params:Union[_models._enums.UnknownParams, None] = None
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
 
@@ -825,7 +830,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
-        _unknown_params:_models._enums.UnknownParams = None
+        _unknown_params:Union[_models._enums.UnknownParams, None] = None
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
 

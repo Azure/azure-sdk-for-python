@@ -7,9 +7,9 @@ DESCRIPTION:
     This sample demonstrates how to do chat completions with streaming,
     using a synchronous client, with an Entra ID authentication.
     It also shows how to set the optional HTTP request header `azureml-model-deployment`,
-    which is supported by Selfhosted Endpoints (aka "model as a platform" (MaaP)
-    or "real-time endpoints"). It can be used to target test deployment 
-    during staging, instead of the default production deployment.
+    which is supported when you deploy a model using "Managed Compute without Azure 
+    AI Content Safety". It can be used to target test deployment during staging,
+    instead of the default production deployment.
 
 USAGE:
     python sample_chat_completions_streaming_with_entra_id_auth.py

@@ -28,7 +28,7 @@ These are runnable console Python scripts that show how to do chat completion, t
 |[sample_load_client.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_load_client.py) | Shows how do use the function `load_client` to create the appropriate synchronous client based on the provided endpoint URL. In this example, it creates a synchronous `ChatCompletionsClient`. |
 |[sample_get_model_info.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_get_model_info.py) | Get AI model information using the chat completions client. Similarly can be done with all other clients. |
 |[sample_chat_completions_with_model_extras.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_model_extras.py) | Chat completions with additional model-specific parameters. |
-
+|[sample_chat_completions_azure_openai.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_azure_openai.py) | Chat completions against Azure OpenAI endpoint. |
 
 ### Text embeddings
 
@@ -89,7 +89,7 @@ See [Prerequisites](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/
 
 ## Set environment variables
 
-To construct any of the clients, you will need to pass in the endpoint URL and key associated with your deployed AI model.
+To construct any of the clients, you will need to pass in the endpoint URL. If you are using key authentication, you also need to pass in the key associated with your deployed AI model.
 
 * The endpoint URL has the form `https://your-deployment-name.your-azure-region.inference.ai.azure.com`, where `your-deployment-name` is your unique model deployment name and `your-azure-region` is the Azure region where the model is deployed (e.g. `eastus2`).
 
@@ -108,13 +108,13 @@ Note that the client library does not directly read these environment variable a
 ## Running the samples
 
 To run the first sample, type:
+
 ```bash
 python sample_chat_completions.py
 ```
+
 similarly for the other samples.
 
 ## Troubleshooting
 
 See [Troubleshooting](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/README.md#troubleshooting) here.
-
-
