@@ -8,7 +8,9 @@ extends:
       UseFederatedAuth: true
       MatrixFilters:
         - PythonVersion=3.11.*
-      SubscriptionConfigurationFilePath: eng/common/TestResources/sub-config/AzureOpenAITestingSub.json
+      CloudConfig:
+        Public:
+          SubscriptionConfigurationFilePath: eng/common/TestResources/sub-config/AzureOpenAITestingSub.json
       EnvVars:
         AZ_OPENAI_ENDPOINT: $(AOAI-ENDPOINT)
         AZURE_OPENAI_KEY: $(AOAI-API-KEY)
