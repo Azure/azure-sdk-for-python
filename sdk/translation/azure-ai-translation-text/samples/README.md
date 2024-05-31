@@ -49,7 +49,7 @@ text_translator = TextTranslationClient(credential=credential, region=region)
 ### Using the Cognitive Services Token
 
 For the Cognitive Services Token authentication, there is currently no implementation provided in the SDK. You can implement the solution
-according to the [Token Authentication documentation](CogsvcToken). When the token is created, you can create the `TextTranslationClient`:
+according to the [Token Authentication documentation](CognitiveServicesToken). When the token is created, you can create the `TextTranslationClient`:
 
 <!-- SNIPPET: sample_text_translation_client.create_text_translation_client_with_cognitive_services_token -->
 
@@ -93,7 +93,7 @@ text_translator = TextTranslationClient(credential=credential, endpoint=endpoint
 ### Using the Cognitive Services Token
 
 For the Cognitive Services Token authentication, there is currently no implementation provided in the SDK. You can implement the solution
-according to the [Token Authentication documentation](CogsvcToken). When the token is created, you can create the `TextTranslationClient`:
+according to the [Token Authentication documentation](CognitiveServicesToken). When the token is created, you can create the `TextTranslationClient`:
 
 <!-- SNIPPET: sample_text_translation_client.create_text_translation_client_custom_with_cognitive_services_token -->
 
@@ -883,5 +883,5 @@ raise
 [Container]: https://learn.microsoft.com/azure/ai-services/translator/containers/overview
 [TranslatorReference]: https://learn.microsoft.com/azure/ai-services/translator/reference/v3-0-reference
 [SovereignClouds]: https://learn.microsoft.com/azure/ai-services/translator/sovereign-clouds?tabs=us
-[CogsvcToken]: https://learn.microsoft.com/azure/ai-services/translator/reference/v3-0-reference#authenticating-with-an-access-token
+[CognitiveServicesToken]: https://learn.microsoft.com/azure/ai-services/translator/reference/v3-0-reference#authenticating-with-an-access-token
 [EntraId]: https://learn.microsoft.com/azure/ai-services/translator/reference/v3-0-reference#authentication-with-microsoft-entra-id
