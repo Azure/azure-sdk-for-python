@@ -153,6 +153,12 @@ class AzureRecordedTestCase(object):
 
                     return ServicePrincipalCredentials(tenant=tenant_id, client_id=client_id, secret=secret)
 
+            # Use DefaultAzureCredential for live tests
+            from azure.identity import DefaultAzureCredential
+            if is_async:
+                from azure.identity.aio import DefaultAzureCredential
+            return DefaultAzureCredential()
+
         # For playback tests, return credentials that will accept playback `get_token` calls
         else:
             if _is_autorest_v3(client_class):
