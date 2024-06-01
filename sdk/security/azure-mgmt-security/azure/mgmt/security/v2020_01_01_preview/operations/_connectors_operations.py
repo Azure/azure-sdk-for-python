@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -30,6 +31,10 @@ from .. import models as _models
 from ..._serialization import Serializer
 from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -177,7 +182,6 @@ class ConnectorsOperations:
     def list(self, **kwargs: Any) -> Iterable["_models.ConnectorSetting"]:
         """Cloud accounts connectors of a subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ConnectorSetting or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.security.v2020_01_01_preview.models.ConnectorSetting]
@@ -191,7 +195,7 @@ class ConnectorsOperations:
         )
         cls: ClsType[_models.ConnectorSettingList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -202,15 +206,14 @@ class ConnectorsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -221,14 +224,14 @@ class ConnectorsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ConnectorSettingList", pipeline_response)
@@ -238,11 +241,11 @@ class ConnectorsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -254,20 +257,17 @@ class ConnectorsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/connectors"}
-
     @distributed_trace
     def get(self, connector_name: str, **kwargs: Any) -> _models.ConnectorSetting:
         """Details of a specific cloud account connector.
 
         :param connector_name: Name of the cloud account connector. Required.
         :type connector_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ConnectorSetting or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2020_01_01_preview.models.ConnectorSetting
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -283,20 +283,19 @@ class ConnectorsOperations:
         )
         cls: ClsType[_models.ConnectorSetting] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             connector_name=connector_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -308,11 +307,9 @@ class ConnectorsOperations:
         deserialized = self._deserialize("ConnectorSetting", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/connectors/{connectorName}"}
+        return deserialized  # type: ignore
 
     @overload
     def create_or_update(
@@ -334,7 +331,6 @@ class ConnectorsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ConnectorSetting or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2020_01_01_preview.models.ConnectorSetting
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -342,7 +338,12 @@ class ConnectorsOperations:
 
     @overload
     def create_or_update(
-        self, connector_name: str, connector_setting: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        connector_name: str,
+        connector_setting: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.ConnectorSetting:
         """Create a cloud account connector or update an existing one. Connect to your cloud account. For
         AWS, use either account credentials or role-based authentication. For GCP, use account
@@ -351,11 +352,10 @@ class ConnectorsOperations:
         :param connector_name: Name of the cloud account connector. Required.
         :type connector_name: str
         :param connector_setting: Settings for the cloud account connector. Required.
-        :type connector_setting: IO
+        :type connector_setting: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ConnectorSetting or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2020_01_01_preview.models.ConnectorSetting
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -363,7 +363,7 @@ class ConnectorsOperations:
 
     @distributed_trace
     def create_or_update(
-        self, connector_name: str, connector_setting: Union[_models.ConnectorSetting, IO], **kwargs: Any
+        self, connector_name: str, connector_setting: Union[_models.ConnectorSetting, IO[bytes]], **kwargs: Any
     ) -> _models.ConnectorSetting:
         """Create a cloud account connector or update an existing one. Connect to your cloud account. For
         AWS, use either account credentials or role-based authentication. For GCP, use account
@@ -372,17 +372,14 @@ class ConnectorsOperations:
         :param connector_name: Name of the cloud account connector. Required.
         :type connector_name: str
         :param connector_setting: Settings for the cloud account connector. Is either a
-         ConnectorSetting type or a IO type. Required.
-        :type connector_setting: ~azure.mgmt.security.v2020_01_01_preview.models.ConnectorSetting or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ConnectorSetting type or a IO[bytes] type. Required.
+        :type connector_setting: ~azure.mgmt.security.v2020_01_01_preview.models.ConnectorSetting or
+         IO[bytes]
         :return: ConnectorSetting or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2020_01_01_preview.models.ConnectorSetting
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -407,23 +404,22 @@ class ConnectorsOperations:
         else:
             _json = self._serialize.body(connector_setting, "ConnectorSetting")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             connector_name=connector_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -435,13 +431,9 @@ class ConnectorsOperations:
         deserialized = self._deserialize("ConnectorSetting", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/connectors/{connectorName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def delete(self, connector_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
@@ -449,12 +441,11 @@ class ConnectorsOperations:
 
         :param connector_name: Name of the cloud account connector. Required.
         :type connector_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -470,20 +461,19 @@ class ConnectorsOperations:
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             connector_name=connector_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -493,6 +483,4 @@ class ConnectorsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/connectors/{connectorName}"}
+            return cls(pipeline_response, None, {})  # type: ignore

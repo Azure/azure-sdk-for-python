@@ -184,10 +184,10 @@
 
 # ServiceLabel: %Cosmos
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @kushagraThapar @simorenoh @xinlian12 @annatisch @bambriz
+/sdk/cosmos/                                                         @kushagraThapar @simorenoh @xinlian12 @annatisch @bambriz @pilchie
 
 # ServiceLabel: %Cosmos %Service Attention
-#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @AbhinavTrips @bambriz
+#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @AbhinavTrips @bambriz @pilchie
 
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
@@ -353,6 +353,8 @@
 
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Service Bus
+# ServiceOwners:  @EldertGrootenboer
+
 # PRLabel: %Service Bus
 /sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence
 
@@ -833,9 +835,6 @@
 # ServiceLabel: %Security %Service Attention
 #/<NotInRepo>/          @chlahav
 
-# ServiceLabel: %Service Attention %Service Bus
-#/<NotInRepo>/          @EldertGrootenboer
-
 # ServiceLabel: %Service Attention %Service Fabric
 #/<NotInRepo>/          @QingChenmsft @vaishnavk @juhacket
 
@@ -1006,6 +1005,7 @@
 # Eng Sys
 ###########
 /eng/                                                                @scbedd @weshaggard @benbp
+/eng/common/                                                         @Azure/azure-sdk-eng
 
 /tools/                                                              @scbedd @mccoyp
 

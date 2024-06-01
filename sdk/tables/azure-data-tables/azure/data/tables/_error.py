@@ -230,7 +230,7 @@ def _reprocess_error(decoded_error, identifiers=None):
         ):
             args_list = list(decoded_error.args)
             args_list[0] += (
-                "\nA possible cause of this error could be that the account URL used to"
+                "\nA possible cause of this error could be that the account URL used to "
                 "create the Client includes an invalid path, for example the table name. Please check your account URL."
             )
             decoded_error.args = tuple(args_list)

@@ -1,14 +1,11 @@
 # Release History
 
-## 1.4.3 (Unreleased)
+## 1.5.0 (2024-05-31)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Enable live metrics feature
+    ([#35566](https://github.com/Azure/azure-sdk-for-python/pull/35566))
 
 ## 1.4.2 (2024-05-20)
 
@@ -16,6 +13,12 @@
 
 - Add diagnostics for sdk detection and backoff
     ([#35610](https://github.com/Azure/azure-sdk-for-python/pull/35610))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
 
 ## 1.4.1 (2024-04-25)
 
