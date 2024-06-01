@@ -29,8 +29,8 @@ from types import TracebackType
 
 import logging
 import asyncio
-import aiohttp  # pylint: disable=all
-import aiohttp.client_exceptions  # pylint: disable=all
+import aiohttp  # pylint: disable=networking-import-outside-azure-core-transport
+import aiohttp.client_exceptions  # pylint: disable=networking-import-outside-azure-core-transport
 
 from ...exceptions import (
     ServiceRequestError,
