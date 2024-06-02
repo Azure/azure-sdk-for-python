@@ -596,20 +596,21 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                     except HttpResponseError as error:
                         process_storage_error(error)
 
-                self._download_offset = self.size
-                self._read_offset = self.size
+                self._complete_read()
 
             else:
                 while (chunk := next(chunks_iter, None)) is not None and remaining > 0:
                     chunk_data, content_length = await downloader.yield_chunk(chunk)
                     self._download_offset += len(chunk_data)
                     self._raw_download_offset += content_length
-                    final = self._download_offset >= self.size
-                    self._current_content = self._decoder.decode(chunk_data, final) if self._text_mode else chunk_data
+                    self._current_content = self._decoder.decode(
+                        chunk_data, final=self._download_complete) if self._text_mode else chunk_data
+
                     if remaining < len(self._current_content):
                         read = output_stream.write(self._current_content[:remaining])
                     else:
                         read = output_stream.write(self._current_content)
+
                     self._current_content_offset = read
                     self._read_offset += read
                     remaining -= read
@@ -618,9 +619,16 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         data = output_stream.getvalue()
         if not self._text_mode and self._encoding:
-            # This is technically incorrect to do, but we have it for backwards compatibility.
-            # If you get an error on this line, try using chars argument to read in text mode.
-            data = data.decode(self._encoding)
+            try:
+                # This is technically incorrect to do, but we have it for backwards compatibility.
+                data = data.decode(self._encoding)
+            except UnicodeDecodeError:
+                warnings.warn(
+                    "Encountered a decoding error while decoding blob data from a partial read. "
+                    "Try using the `chars` keyword instead to read in text mode."
+                )
+                raise
+
         return data
 
     async def readall(self) -> T:
@@ -731,10 +739,15 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             except HttpResponseError as error:
                 process_storage_error(error)
 
-        self._download_offset = self.size
-        self._read_offset = self.size
-
+        self._complete_read()
         return remaining_size
+
+    def _complete_read(self):
+        """Adjusts all offsets to the end of the download."""
+        self._download_offset = self.size
+        self._raw_download_offset = self.size
+        self._read_offset = self.size
+        self._current_content_offset = len(self._current_content)
 
     async def content_as_bytes(self, max_concurrency=1):
         """DEPRECATED: Download the contents of this file.
