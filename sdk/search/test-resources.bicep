@@ -24,7 +24,7 @@ resource searchService 'Microsoft.Search/searchServices@2021-04-01-Preview' = {
   } : {}
 }
 
-resource searchServiceRoleAssignment 'Microsoft.Authorization/roleAssignments@2021-04-01' = {
+resource searchServiceRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(resourceGroup().id, testApplicationOid, 'Owner') // Replace 'Owner' with the desired role
   scope: resourceGroup()
   properties: {
