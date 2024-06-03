@@ -30,11 +30,11 @@ resource searchService 'Microsoft.Search/searchServices@2024-03-01-preview' = {
   } : {}
 }
 
-resource searchServiceRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {  
+resource searchServiceRoleAssignment 'Microsoft.Authorization/roleAssignments@2018-09-01-preview' = {  
   name: guid(resourceGroup().id, testApplicationOid)
   scope: resourceGroup()
   properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
     principalId: testApplicationOid
     principalType: 'ServicePrincipal'
   }
