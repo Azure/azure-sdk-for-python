@@ -98,7 +98,7 @@ def _set_up_index(service_name, endpoint, cred, schema, index_batch):
     if schema:
         index_json = json.loads(schema)
         index_name = index_json["name"]
-        index = SearchIndex(index_json)
+        index = SearchIndex.from_dict(index_json)
         client = SearchIndexClient(endpoint, cred, retry_backoff_factor=60)
         index_create = client.create_index(**index)
         # response = requests.post(
