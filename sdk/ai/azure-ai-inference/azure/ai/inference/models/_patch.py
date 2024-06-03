@@ -117,8 +117,7 @@ class StreamingChatCompletions(BaseStreamingChatCompletions):
         if self._ENABLE_CLASS_LOGS:
             logger.debug("[Reading next block]")
         try:
-            # Use 'cast' to make 'pyright' error go away
-            element = cast(Iterator[bytes], self._bytes_iterator).__next__()
+            element = self._bytes_iterator.__next__()
         except StopIteration:
             self.close()
             return True
@@ -160,8 +159,7 @@ class AsyncStreamingChatCompletions(BaseStreamingChatCompletions):
         if self._ENABLE_CLASS_LOGS:
             logger.debug("[Reading next block]")
         try:
-            # Use 'cast' to make 'pyright' error go away
-            element = await cast(AsyncIterator[bytes], self._bytes_iterator).__anext__()
+            element = await self._bytes_iterator.__anext__()
         except StopAsyncIteration:
             await self.aclose()
             return True
