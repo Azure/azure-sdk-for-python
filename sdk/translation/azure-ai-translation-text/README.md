@@ -55,7 +55,7 @@ az cognitiveservices account keys list --resource-group <your-resource-group-nam
 
 #### Create a `TextTranslationClient` using an API key and Region credential
 
-Once you have the value for the API key and Region, create an `TranslatorCredential`. This will allow you to
+Once you have the value for the API key and Region, create an `AzureKeyCredential`. This will allow you to
 update the API key without creating a new client.
 
 With the value of the `endpoint`, `credential` and a `region`, you can create the [TextTranslationClient][client_sample]:
@@ -63,8 +63,8 @@ With the value of the `endpoint`, `credential` and a `region`, you can create th
 <!-- SNIPPET: sample_text_translation_client.create_text_translation_client_with_credential -->
 
 ```python
-credential = TranslatorCredential(apikey, region)
-text_translator = TextTranslationClient(credential=credential, endpoint=endpoint)
+credential = AzureKeyCredential(apikey)
+text_translator = TextTranslationClient(credential=credential, endpoint=endpoint, region=region)
 ```
 
 <!-- END SNIPPET -->
@@ -92,7 +92,7 @@ Gets the set of languages currently supported by other operations of the Transla
 
 ```python
 try:
-    response = text_translator.get_languages()
+    response = text_translator.get_supported_languages()
 
     print(
         f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}"
@@ -140,10 +140,10 @@ Renders single source-language text to multiple target-language texts with a sin
 
 ```python
 try:
-    target_languages = ["cs", "es", "de"]
+    to_language = ["cs", "es", "de"]
     input_text_elements = ["This is a test"]
 
-    response = text_translator.translate(request_body=input_text_elements, to=target_languages)
+    response = text_translator.translate(body=input_text_elements, to_language=to_language)
     translation = response[0] if response else None
 
     if translation:
@@ -182,7 +182,10 @@ try:
     input_text_elements = ["这是个测试。"]
 
     response = text_translator.transliterate(
-        request_body=input_text_elements, language=language, from_script=from_script, to_script=to_script
+        body=input_text_elements,
+        language=language,
+        from_script=from_script,
+        to_script=to_script,
     )
     transliteration = response[0] if response else None
 
@@ -212,11 +215,11 @@ Identifies the positioning of sentence boundaries in a piece of text.
 ```python
 try:
     include_sentence_length = True
-    target_languages = ["cs"]
+    to_language = ["cs"]
     input_text_elements = ["The answer lies in machine translation. This is a test."]
 
     response = text_translator.translate(
-        request_body=input_text_elements, to=target_languages, include_sentence_length=include_sentence_length
+        body=input_text_elements, to_language=to_language, include_sentence_length=include_sentence_length
     )
     translation = response[0] if response else None
 
@@ -252,12 +255,12 @@ Returns equivalent words for the source term in the target language.
 
 ```python
 try:
-    source_language = "en"
-    target_language = "es"
+    from_language = "en"
+    to_language = "es"
     input_text_elements = ["fly"]
 
     response = text_translator.lookup_dictionary_entries(
-        request_body=input_text_elements, from_parameter=source_language, to=target_language
+        body=input_text_elements, from_language=from_language, to_language=to_language
     )
     dictionary_entry = response[0] if response else None
 
@@ -288,12 +291,12 @@ Returns grammatical structure and context examples for the source term and targe
 
 ```python
 try:
-    source_language = "en"
-    target_language = "es"
+    from_language = "en"
+    to_language = "es"
     input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
 
     response = text_translator.lookup_dictionary_examples(
-        content=input_text_elements, from_parameter=source_language, to=target_language
+        body=input_text_elements, from_language=from_language, to_language=to_language
     )
     dictionary_entry = response[0] if response else None
 

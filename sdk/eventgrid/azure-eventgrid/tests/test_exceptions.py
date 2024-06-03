@@ -4,33 +4,18 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import logging
-import sys
 import os
 import json
 import pytest
-import uuid
-from datetime import datetime, timedelta
 from azure.core.exceptions import (
     HttpResponseError,
     ClientAuthenticationError,
-    ServiceRequestError
 )
-from msrest.serialization import UTC
-import datetime as dt
-
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
 
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 
-from azure.core.credentials import AzureKeyCredential, AzureSasCredential
-from azure.core.messaging import CloudEvent
-from azure.core.serialization import NULL
-from azure.eventgrid import EventGridPublisherClient, EventGridEvent, generate_sas
-from azure.eventgrid._helpers import _cloud_event_to_generated
+from azure.core.credentials import AzureKeyCredential
+from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 
 from eventgrid_preparer import (
     EventGridPreparer,
@@ -42,9 +27,10 @@ class TestEventGridPublisherClientExceptions(AzureMgmtRecordedTestCase):
         client = self.create_client_from_credential(EventGridPublisherClient, credential=credential, endpoint=endpoint)
         return client
 
+    @pytest.mark.live_test_only
     @EventGridPreparer()
-    @recorded_by_proxy
-    def test_raise_on_auth_error(self, eventgrid_topic_endpoint):
+    def test_raise_on_auth_error(self, **kwargs):
+        eventgrid_topic_endpoint = kwargs.pop("eventgrid_topic_endpoint")
         akc_credential = AzureKeyCredential("bad credential")
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         eg_event = EventGridEvent(
@@ -59,7 +45,8 @@ class TestEventGridPublisherClientExceptions(AzureMgmtRecordedTestCase):
     @pytest.mark.skip("Fix during MQ - skip to unblock pipeline")
     @pytest.mark.live_test_only
     @EventGridPreparer()
-    def test_raise_on_bad_resource(self, eventgrid_topic_key):
+    def test_raise_on_bad_resource(self, **kwargs):
+        eventgrid_topic_key = kwargs.pop("eventgrid_topic_key")
         akc_credential = AzureKeyCredential(eventgrid_topic_key)
         client = EventGridPublisherClient("https://bad-resource.westus-1.eventgrid.azure.net/api/events", akc_credential)
         eg_event = EventGridEvent(

@@ -43,8 +43,6 @@ class TestChallengeAuth(KeyVaultTestCase, KeysTestCase):
 
         client_id = os.environ.get("KEYVAULT_CLIENT_ID")
         client_secret = os.environ.get("KEYVAULT_CLIENT_SECRET")
-        if not (client_id and client_secret):
-            pytest.skip("Values for KEYVAULT_CLIENT_ID and KEYVAULT_CLIENT_SECRET are required")
 
         # we set up a client for this method to align with the async test, but we actually want to create a new client
         # this new client should use a credential with an initially fake tenant ID and still succeed with a real request

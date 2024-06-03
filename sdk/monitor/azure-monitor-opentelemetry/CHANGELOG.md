@@ -1,17 +1,41 @@
 # Release History
 
-## 1.4.1 (Unreleased)
+## 1.5.1 (Unreleased)
 
 ### Features Added
-
-- Enable sampling for attach
-    ([#35218](https://github.com/Azure/azure-sdk-for-python/pull/35218))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.5.0 (2024-05-31)
+
+### Features Added
+
+- Enable live metrics feature
+    ([#35566](https://github.com/Azure/azure-sdk-for-python/pull/35566))
+
+## 1.4.2 (2024-05-20)
+
+### Features Added
+
+- Add diagnostics for sdk detection and backoff
+    ([#35610](https://github.com/Azure/azure-sdk-for-python/pull/35610))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.4.1 (2024-04-25)
+
+### Features Added
+
+- Enable sampling for attach
+    ([#35218](https://github.com/Azure/azure-sdk-for-python/pull/35218))
 
 ## 1.4.0 (2024-04-09)
 

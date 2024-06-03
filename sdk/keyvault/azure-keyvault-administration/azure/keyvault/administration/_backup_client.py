@@ -62,8 +62,11 @@ class KeyVaultBackupClient(KeyVaultClientBase):
     ) -> LROPoller[KeyVaultBackupResult]:
         ...
 
+    # Disabling pylint checks because they don't correctly handle overloads
     @distributed_trace
-    def begin_backup(self, blob_storage_url: str, *args: str, **kwargs: Any) -> LROPoller[KeyVaultBackupResult]:
+    def begin_backup(  # pylint: disable=docstring-missing-param,docstring-keyword-should-match-keyword-only
+        self, blob_storage_url: str, *args: str, **kwargs: Any
+    ) -> LROPoller[KeyVaultBackupResult]:
         """Begin a full backup of the Key Vault.
 
         :param str blob_storage_url: URL of the blob storage container in which the backup will be stored, for example
@@ -154,8 +157,11 @@ class KeyVaultBackupClient(KeyVaultClientBase):
     ) -> LROPoller[None]:
         ...
 
+    # Disabling pylint checks because they don't correctly handle overloads
     @distributed_trace
-    def begin_restore(self, folder_url: str, *args: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_restore(  # pylint: disable=docstring-missing-param,docstring-keyword-should-match-keyword-only
+        self, folder_url: str, *args: str, **kwargs: Any
+    ) -> LROPoller[None]:
         """Restore a Key Vault backup.
 
         This method restores either a complete Key Vault backup or when ``key_name`` has a value, a single key.

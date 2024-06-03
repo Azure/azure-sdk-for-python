@@ -142,6 +142,34 @@ properties = database.read()
 print(json.dumps(properties, indent=True))
 # [END get_database_properties]
 
+# Retrieve the properties of a container
+# [START get_container_properties]
+# Get properties will return a cache of two container properties: RID and the Partition Key Definition (This will not consume RUs)
+properties = container._get_properties()
+
+# Print _rid and partitionKey
+print("Resource ID: ", properties.get('_rid'))
+print("Partition Key: ", properties.get('partitionKey'))
+
+# Read the container to get the latests of all the Container Properties. (This will make a backend requests and will consume RUs)
+container_properties = container.read()
+
+# Print each property one by one if they are currently in the container properties
+print("indexingPolicy: ", container_properties.get("indexingPolicy"))
+print("etag: ", container_properties.get('_etag'))
+print("lastModified: ", container_properties.get('lastModified'))
+print("defaultTtl: ", container_properties.get('defaultTtl'))
+print("uniqueKeyPolicy: ", container_properties.get('uniqueKeyPolicy'))
+print("conflictResolutionPolicy: ", container_properties.get('conflictResolutionPolicy'))
+print("changeFeedPolicy: ", container_properties.get('changeFeedPolicy'))
+print("geospatialConfig: ", container_properties.get('geospatialConfig'))
+
+# Print remaining properties if they are in the current container properties
+for key, value in container_properties.items():
+    if key not in ['_rid', 'partitionKey', 'indexingPolicy', '_etag', 'lastModified', 'defaultTtl', 'uniqueKeyPolicy', 'conflictResolutionPolicy', 'changeFeedPolicy', 'geospatialConfig']:
+        print(f"{key}: {value}")
+# [END get_container_properties]
+
 # Modify the properties of an existing container
 # This example sets the default time to live (TTL) for items in the
 # container to 3600 seconds (1 hour). An item in container is deleted

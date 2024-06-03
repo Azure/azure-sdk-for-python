@@ -15,6 +15,8 @@ parameters:
   InjectedPackages: ''
   DevFeedName: 'public/azure-sdk-for-python'
   TestProxy: false
+  UseFederatedAuth: false
+  ServiceConnection: ''
 
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
@@ -61,20 +63,43 @@ steps:
 
   - template: /eng/pipelines/templates/steps/seed-virtualenv-wheels.yml
 
-  - task: PythonScript@0
-    displayName: 'Run Tests'
-    inputs:
-      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-      arguments: >-
-        "$(TargetingString)"
-        ${{ parameters.AdditionalTestArgs }}
-        ${{ parameters.CoverageArg }}
-        --mark_arg="${{ parameters.TestMarkArgument }}"
-        --service="${{ parameters.ServiceDirectory }}"
-        --toxenv="${{ parameters.ToxTestEnv }}"
-        --injected-packages="${{ parameters.InjectedPackages }}"
-        ${{ parameters.ToxEnvParallel }}
-    env: ${{ parameters.EnvVars }}
+  - ${{ if eq('true', parameters.UseFederatedAuth) }}:
+    - task: AzurePowerShell@5
+      displayName: Run Tests (AzurePowerShell@5)
+      env: ${{ parameters.EnvVars }}
+      inputs:
+        azureSubscription: ${{ parameters.ServiceConnection }}
+        azurePowerShellVersion: LatestVersion
+        pwsh: true
+        ScriptType: InlineScript
+        Inline: >-
+          python scripts/devops_tasks/dispatch_tox.py
+          "$(TargetingString)"
+          ${{ parameters.AdditionalTestArgs }}
+          ${{ parameters.CoverageArg }}
+          --mark_arg="${{ parameters.TestMarkArgument }}"
+          --service="${{ parameters.ServiceDirectory }}"
+          --toxenv="${{ parameters.ToxTestEnv }}"
+          --injected-packages="${{ parameters.InjectedPackages }}"
+          ${{ parameters.ToxEnvParallel }};
+          Write-Host "Last exit code: $LASTEXITCODE";
+          exit $LASTEXITCODE;
+
+  - ${{ else }}:
+    - task: PythonScript@0
+      displayName: 'Run Tests'
+      inputs:
+        scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+        arguments: >-
+          "$(TargetingString)"
+          ${{ parameters.AdditionalTestArgs }}
+          ${{ parameters.CoverageArg }}
+          --mark_arg="${{ parameters.TestMarkArgument }}"
+          --service="${{ parameters.ServiceDirectory }}"
+          --toxenv="${{ parameters.ToxTestEnv }}"
+          --injected-packages="${{ parameters.InjectedPackages }}"
+          ${{ parameters.ToxEnvParallel }}
+      env: ${{ parameters.EnvVars }}
 
   - ${{if eq(parameters.TestProxy, true) }}:
     - pwsh: |
@@ -95,16 +120,35 @@ steps:
     displayName: Create Coverage Report
     condition: and(succeeded(), ${{ parameters.RunCoverage }})
 
-  - task: PythonScript@0
-    displayName: 'Test Samples'
-    condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
-    inputs:
-      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-      arguments: >-
-        "$(TargetingString)"
-        --service="${{ parameters.ServiceDirectory }}"
-        --toxenv="samples"
-    env: ${{ parameters.EnvVars }}
+  - ${{ if eq('true', parameters.UseFederatedAuth) }}:
+    - task: AzurePowerShell@5
+      displayName: Test Samples (AzurePowerShell@5)
+      condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
+      env: ${{ parameters.EnvVars }}
+      inputs:
+        azureSubscription: ${{ parameters.ServiceConnection }}
+        azurePowerShellVersion: LatestVersion
+        pwsh: true
+        ScriptType: InlineScript
+        Inline: >-
+          scripts/devops_tasks/dispatch_tox.py
+          "$(TargetingString)"
+          --service="${{ parameters.ServiceDirectory }}"
+          --toxenv="samples";
+          Write-Host "Last exit code: $LASTEXITCODE";
+          exit $LASTEXITCODE;
+
+  - ${{ else }}: 
+    - task: PythonScript@0
+      displayName: 'Test Samples'
+      condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
+      inputs:
+        scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+        arguments: >-
+          "$(TargetingString)"
+          --service="${{ parameters.ServiceDirectory }}"
+          --toxenv="samples"
+      env: ${{ parameters.EnvVars }}
 
   - task: PublishTestResults@2
     condition: always()

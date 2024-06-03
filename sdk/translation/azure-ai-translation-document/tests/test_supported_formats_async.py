@@ -5,14 +5,17 @@
 
 import functools
 from asynctestcase import AsyncDocumentTranslationTest
-from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
+from preparer import (
+    DocumentTranslationPreparer,
+    DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer,
+)
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.translation.document.aio import DocumentTranslationClient
+
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 
 class TestSupportedFormats(AsyncDocumentTranslationTest):
-
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async

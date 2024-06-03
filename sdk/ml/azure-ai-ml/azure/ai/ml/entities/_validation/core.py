@@ -380,6 +380,8 @@ class ValidationResultBuilder:
 
         :param error: ValidationError raised by marshmallow.Schema.load.
         :type error: ValidationError
+        :keyword source_path: The path to the source file.
+        :paramtype source_path: Optional[Union[str, PathLike, IO[AnyStr]]]
         :keyword error_on_unknown_field: whether to raise error if there are unknown field diagnostics.
         :paramtype error_on_unknown_field: bool
         :return: The validation result
@@ -499,7 +501,7 @@ class _YamlLocationResolver:
         with open(source_path, encoding="utf-8") as f:
             try:
                 loaded_yaml = strictyaml.load(f.read())
-            except Exception as e:  # pylint: disable=broad-except
+            except Exception as e:  # pylint: disable=W0718
                 msg = "Can't load source file %s as a strict yaml:\n%s" % (source_path, str(e))
                 module_logger.debug(msg)
                 return None, None
