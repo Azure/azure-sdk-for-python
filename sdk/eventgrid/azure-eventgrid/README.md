@@ -12,7 +12,7 @@ Azure Event Grid is a fully-managed intelligent event routing service that allow
 
 ## _Disclaimer_
 
-This is a GA release of Azure EventGrid's `EventGridConsumerClient`. `EventGridConsumerClient` supports `receive`, `acknowledge` , `release`, `reject`, and `renew_locks` operations. Please refer to the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventgrid/azure-eventgrid/samples) for further information.
+This is a GA release of Azure Event Grid's `EventGridPublisherClient` and `EventGridConsumerClient`. `EventGridPublisherClient` supports `send` for Event Grid Basic and Event Grid Namespaces. `EventGridConsumerClient` supports `receive`, `acknowledge` , `release`, `reject`, and `renew_locks` operations for Event Grid Namespaces. Please refer to the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventgrid/azure-eventgrid/samples) for further information.
 
 ## Getting started
 
@@ -55,10 +55,19 @@ az eventgrid namespace create topic --location <location> --resource-group <reso
 ### Authenticate the client
 In order to interact with the Event Grid service, you will need to create an instance of a client.
 An **endpoint** and **credential** are necessary to instantiate the client object.
-The default client created is a Basic Event Grid Resource Client, which is compatible with EventGrid Basic. To create an EventGrid Namespace Client, specify `namespace_topic="MY_TOPIC_NAME"` when instantiating the client.
+
+
+The default EventGridPublisherClient created is compatible with an Event Grid Basic Resource. To create an Event Grid Namespace compatible Client, specify `namespace_topic="YOUR_TOPIC_NAME"` when instantiating the client.
 
 ```python
-client = EventGridPublisherClient(endpoint, credential, namespace_topic=MY_TOPIC_NAME)
+# Event Grid Namespace client
+client = EventGridPublisherClient(endpoint, credential, namespace_topic=YOUR_TOPIC_NAME)
+```
+
+EventGridConsumerClient only supports EventGrid Namespaces.
+```python
+# Event Grid Namespace Client
+client = EventGridConsumerClient(endpoint, credential, namespace_topic=YOUR_TOPIC_NAME, subscription=YOUR_SUBSCRIPTION_NAME)
 ```
 
 #### Using Azure Active Directory (AAD)
@@ -66,6 +75,8 @@ client = EventGridPublisherClient(endpoint, credential, namespace_topic=MY_TOPIC
 Azure Event Grid provides integration with Azure Active Directory (Azure AD) for identity-based authentication of requests. With Azure AD, you can use role-based access control (RBAC) to grant access to your Azure Event Grid resources to users, groups, or applications.
 
 To send events to a topic or domain with a `TokenCredential`, the authenticated identity should have the "EventGrid Data Sender" role assigned.
+To receive events to a topic with a `TokenCredential`, the authenticated identity should have the "EventGrid Data Receiver" role assigned.
+To send and receive events to/from a topic with a `TokenCredential`, the authenticated identity should have the "EventGrid Data Contributor" role assigned.
 
 With the `azure-identity` package, you can seamlessly authorize requests in both development and production environments. To learn more about Azure Active Directory, see the [`azure-identity` README](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md).
 
@@ -135,9 +146,6 @@ A **[namespace topic](https://learn.microsoft.com/azure/event-grid/concepts-even
 
 An **[event subscription](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#event-subscriptions)** is a configuration resource associated with a single topic.
 
-#### Binary Content Mode
-
-A namespace topic can receive CloudEvents published in **[binary mode](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#binary-content-mode)**.
 
 ### *Event Grid Basic*
 
