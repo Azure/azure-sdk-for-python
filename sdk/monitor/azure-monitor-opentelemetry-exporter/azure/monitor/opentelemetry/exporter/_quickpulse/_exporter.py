@@ -28,6 +28,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _LONG_PING_INTERVAL_SECONDS,
     _POST_CANCEL_INTERVAL_SECONDS,
     _POST_INTERVAL_SECONDS,
+    _QUICKPULSE_SUBSCRIBED_HEADER_NAME,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._generated._configuration import QuickpulseClientConfiguration
 from azure.monitor.opentelemetry.exporter._quickpulse._generated._client import QuickpulseClient
@@ -146,7 +147,7 @@ class _QuickpulseExporter(MetricExporter):
                 # If no response, assume unsuccessful
                 result = MetricExportResult.FAILURE
             else:
-                header = post_response._response_headers.get("x-ms-qps-subscribed")  # pylint: disable=protected-access
+                header = post_response._response_headers.get(_QUICKPULSE_SUBSCRIBED_HEADER_NAME)  # pylint: disable=protected-access
                 if header != "true":
                     # User leaving the live metrics page will be treated as an unsuccessful
                     result = MetricExportResult.FAILURE
@@ -240,7 +241,7 @@ class _QuickpulseMetricReader(MetricReader):
                     self._base_monitoring_data_point,
                 )
                 if ping_response:
-                    header = ping_response._response_headers.get("x-ms-qps-subscribed")  # pylint: disable=protected-access
+                    header = ping_response._response_headers.get(_QUICKPULSE_SUBSCRIBED_HEADER_NAME)  # pylint: disable=protected-access
                     if header and header == "true":
                         # Switch state to post if subscribed
                         _set_global_quickpulse_state(_QuickpulseState.POST_SHORT)
