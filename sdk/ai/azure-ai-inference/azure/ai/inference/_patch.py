@@ -65,7 +65,8 @@ def load_client(
     endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any
 ) -> Union[ChatCompletionsClientGenerated, EmbeddingsClientGenerated, ImageEmbeddingsClientGenerated]:
     """
-    Load a client from a given endpoint URL.
+    Load a client from a given endpoint URL. The method makes a REST API call to the `/info` route
+    on the given endpoint, to determine the model type and therefore which client to instantiate.
 
     :param endpoint: Service host. Required.
     :type endpoint: str
@@ -77,7 +78,7 @@ def load_client(
      "2024-05-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
-    :return: ChatCompletionsClient or EmbeddingsClient or ImageEmbeddingsClient
+    :return: The appropriate client associated with the given endpoint
     :rtype: ~azure.ai.inference.ChatCompletionsClient or ~azure.ai.inference.EmbeddingsClient
      or ~azure.ai.inference.ImageEmbeddingsClient
     :raises ~azure.core.exceptions.HttpResponseError
@@ -139,9 +140,12 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         # pylint: disable=line-too-long
         """Gets chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
-        "completes" provided prompt data. When using this method with `stream=True`, the response is streamed
-        back to the client. Iterate over the resulting ~azure.ai.inference.models.StreamingChatCompletions
-        object to get content updates as they arrive.
+        "completes" provided prompt data. The method makes a REST API call to the `/chat/completions` route
+        on the given endpoint.
+        When using this method with `stream=True`, the response is streamed
+        back to the client. Iterate over the resulting StreamingChatCompletions
+        object to get content updates as they arrive. By default, the response is a ChatCompletions object
+        (non-streaming).
 
         :keyword messages: The collection of context messages associated with this chat completions
          request.
@@ -154,29 +158,32 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :paramtype content_type: str
         :keyword model_extras: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
-         How the service handles these hyper parameters depends on the value of the
+         How the service handles these extra parameters depends on the value of the
          ``unknown-parameters`` request header. Default value is None.
         :paramtype model_extras: dict[str, Any]
         :keyword frequency_penalty: A value that influences the probability of generated tokens
-         appearing based on their cumulative
-         frequency in generated text.
+         appearing based on their cumulative frequency in generated text.
          Positive values will make tokens less likely to appear as their frequency increases and
-         decrease the likelihood of the model repeating the same statements verbatim. Default value is
-         None.
+         decrease the likelihood of the model repeating the same statements verbatim.
+         Supported range is [-2, 2].
+         Default value is None.
         :paramtype frequency_penalty: float
         :keyword presence_penalty: A value that influences the probability of generated tokens
          appearing based on their existing
          presence in generated text.
          Positive values will make tokens less likely to appear when they already exist and increase
-         the
-         model's likelihood to output new topics. Default value is None.
+         the model's likelihood to output new topics.
+         Supported range is [-2, 2].
+         Default value is None.
         :paramtype presence_penalty: float
         :keyword temperature: The sampling temperature to use that controls the apparent creativity of
          generated completions.
          Higher values will make output more random while lower values will make results more focused
          and deterministic.
          It is not recommended to modify temperature and top_p for the same completions request as the
-         interaction of these two settings is difficult to predict. Default value is None.
+         interaction of these two settings is difficult to predict. 
+         Supported range is [0, 1].
+         Default value is None.
         :paramtype temperature: float
         :keyword top_p: An alternative to sampling with temperature called nucleus sampling. This value
          causes the
@@ -228,11 +235,10 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         # pylint: disable=line-too-long
         """Gets chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
-        "completes" provided prompt data. When using this method with `stream=True`, the response is streamed
-        back to the client. Iterate over the resulting ~azure.ai.inference.models.StreamingChatCompletions
-        object to get content updates as they arrive.
+        "completes" provided prompt data.
 
-        :param body: Required.
+        :param body: An object of type MutableMapping[str, Any], such as a dictionary, that 
+         specifies the full request payload. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -254,11 +260,9 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         # pylint: disable=too-many-locals
         """Gets chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
-        "completes" provided prompt data. When using this method with `stream=True`, the response is streamed
-        back to the client. Iterate over the resulting ~azure.ai.inference.models.StreamingChatCompletions
-        object to get content updates as they arrive.
+        "completes" provided prompt data.
 
-        :param body: Required.
+        :param body: Specifies the full request payload. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -298,7 +302,8 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         back to the client. Iterate over the resulting ~azure.ai.inference.models.StreamingChatCompletions
         object to get content updates as they arrive.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :param body: Is either a MutableMapping[str, Any] type (like a dictionary) or a IO[bytes] type
+         that specifies the full request payload. Required.
         :type body: JSON or IO[bytes]
         :keyword messages: The collection of context messages associated with this chat completions
          request.
@@ -308,7 +313,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage]
         :keyword model_extras: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
-         How the service handles these hyper parameters depends on the value of the
+         How the service handles these extra parameters depends on the value of the
          ``unknown-parameters`` request header. Default value is None.
         :paramtype model_extras: dict[str, Any]
         :keyword frequency_penalty: A value that influences the probability of generated tokens
@@ -338,7 +343,9 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
          value of 0.15 will cause only the tokens comprising the top 15% of probability mass to be
          considered.
          It is not recommended to modify temperature and top_p for the same completions request as the
-         interaction of these two settings is difficult to predict. Default value is None.
+         interaction of these two settings is difficult to predict. 
+         Supported range is [0, 1].
+         Default value is None.
         :paramtype top_p: float
         :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
         :paramtype max_tokens: int
@@ -480,11 +487,12 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
         **kwargs: Any,
     ) -> _models.EmbeddingsResult:
-        """Return the embeddings for a given text prompt.
+        """Return the embedding vectors for given text prompts.
+        The method makes a REST API call to the `/embeddings` route on the given endpoint.
 
         :keyword model_extras: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
-         How the service handles these hyper parameters depends on the value of the
+         How the service handles these extra parameters depends on the value of the
          ``unknown-parameters`` request header. Default value is None.
         :paramtype model_extras: dict[str, Any]
         :keyword input: Input text to embed, encoded as a string or array of tokens.
@@ -507,10 +515,8 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
          Returns a 422 error if the model doesn't support the value or parameter. Default value is
          None.
         :paramtype dimensions: int
-        :keyword encoding_format: Optional. The number of dimensions the resulting output embeddings
-         should have.
-         Passing null causes the model to use its default value.
-         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+        :keyword encoding_format: Optional. The desired format for the returned embeddings.
+         Known values are:
          "base64", "binary", "float", "int8", "ubinary", and "uint8". Default value is None.
         :paramtype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
         :keyword input_type: Optional. The type of the input.
@@ -530,9 +536,11 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> _models.EmbeddingsResult:
-        """Return the embeddings for a given text prompt.
+        """Return the embedding vectors for given text prompts.
+        The method makes a REST API call to the `/embeddings` route on the given endpoint.
 
-        :param body: Required.
+        :param body: An object of type MutableMapping[str, Any], such as a dictionary, that 
+         specifies the full request payload. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -550,9 +558,10 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> _models.EmbeddingsResult:
-        """Return the embeddings for a given text prompt.
+        """Return the embedding vectors for given text prompts.
+        The method makes a REST API call to the `/embeddings` route on the given endpoint.
 
-        :param body: Required.
+        :param body: Specifies the full request payload. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -575,13 +584,15 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         **kwargs: Any,
     ) -> _models.EmbeddingsResult:
         # pylint: disable=line-too-long
-        """Return the embeddings for a given text prompt.
+        """Return the embedding vectors for given text prompts.
+        The method makes a REST API call to the `/embeddings` route on the given endpoint.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :param body: Is either a MutableMapping[str, Any] type (like a dictionary) or a IO[bytes] type
+         that specifies the full request payload. Required.
         :type body: JSON or IO[bytes]
         :keyword model_extras: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
-         How the service handles these hyper parameters depends on the value of the
+         How the service handles these extra parameters depends on the value of the
          ``unknown-parameters`` request header. Default value is None.
         :paramtype model_extras: dict[str, Any]
         :keyword input: Input text to embed, encoded as a string or array of tokens.
@@ -594,10 +605,8 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
          Returns a 422 error if the model doesn't support the value or parameter. Default value is
          None.
         :paramtype dimensions: int
-        :keyword encoding_format: Optional. The number of dimensions the resulting output embeddings
-         should have.
-         Passing null causes the model to use its default value.
-         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+        :keyword encoding_format: Optional. The desired format for the returned embeddings.
+         Known values are:
          "base64", "binary", "float", "int8", "ubinary", and "uint8". Default value is None.
         :paramtype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
         :keyword input_type: Optional. The type of the input.
@@ -710,11 +719,12 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
         **kwargs: Any,
     ) -> _models.EmbeddingsResult:
-        """Return the embeddings for given images.
+        """Return the embedding vectors for given images.
+        The method makes a REST API call to the `/images/embeddings` route on the given endpoint.
 
         :keyword model_extras: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
-         How the service handles these hyper parameters depends on the value of the
+         How the service handles these extra parameters depends on the value of the
          ``unknown-parameters`` request header. Default value is None.
         :paramtype model_extras: dict[str, Any]
         :keyword input: Input image to embed. To embed multiple inputs in a single request, pass an
@@ -737,10 +747,8 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
          Returns a 422 error if the model doesn't support the value or parameter. Default value is
          None.
         :paramtype dimensions: int
-        :keyword encoding_format: Optional. The number of dimensions the resulting output embeddings
-         should have.
-         Passing null causes the model to use its default value.
-         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+        :keyword encoding_format: Optional. The desired format for the returned embeddings.
+         Known values are:
          "base64", "binary", "float", "int8", "ubinary", and "uint8". Default value is None.
         :paramtype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
         :keyword input_type: Optional. The type of the input.
@@ -760,9 +768,11 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> _models.EmbeddingsResult:
-        """Return the embeddings for given images.
+        """Return the embedding vectors for given images.
+        The method makes a REST API call to the `/images/embeddings` route on the given endpoint.
 
-        :param body: Required.
+        :param body: An object of type MutableMapping[str, Any], such as a dictionary, that 
+         specifies the full request payload. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -780,9 +790,10 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> _models.EmbeddingsResult:
-        """Return the embeddings for given images.
+        """Return the embedding vectors for given images.
+        The method makes a REST API call to the `/images/embeddings` route on the given endpoint.
 
-        :param body: Required.
+        :param body: Specifies the full request payload. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -805,13 +816,15 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         **kwargs: Any,
     ) -> _models.EmbeddingsResult:
         # pylint: disable=line-too-long
-        """Return the embeddings for given images.
+        """Return the embedding vectors for given images.
+        The method makes a REST API call to the `/images/embeddings` route on the given endpoint.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :param body: Is either a MutableMapping[str, Any] type (like a dictionary) or a IO[bytes] type
+         that specifies the full request payload. Required.
         :type body: JSON or IO[bytes]
         :keyword model_extras: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
-         How the service handles these hyper parameters depends on the value of the
+         How the service handles these extra parameters depends on the value of the
          ``unknown-parameters`` request header. Default value is None.
         :paramtype model_extras: dict[str, Any]
         :keyword input: Input image to embed. To embed multiple inputs in a single request, pass an
@@ -824,10 +837,8 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
          Returns a 422 error if the model doesn't support the value or parameter. Default value is
          None.
         :paramtype dimensions: int
-        :keyword encoding_format: Optional. The number of dimensions the resulting output embeddings
-         should have.
-         Passing null causes the model to use its default value.
-         Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+        :keyword encoding_format: Optional. The desired format for the returned embeddings.
+         Known values are:
          "base64", "binary", "float", "int8", "ubinary", and "uint8". Default value is None.
         :paramtype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
         :keyword input_type: Optional. The type of the input.

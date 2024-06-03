@@ -27,7 +27,7 @@ Note that for inference using OpenAI models hosted on Azure, you should be using
 * An [Azure subscription](https://azure.microsoft.com/free).
 * An [AI Model from the catalog](https://ai.azure.com/explore/models) deployed through Azure AI Studio.
 * To construct the client library, you will need to pass in the endpoint URL. The endpoint URL has the form `https://your-deployment-name.your-azure-region.inference.ai.azure.com`, where `your-deployment-name` is your unique model deployment name and `your-azure-region` is the Azure region where the model is deployed (e.g. `eastus2`).
-* Depending on your model deployment, you either need a key to authenticate against the service, or Entra ID credentials. The key is a 32-character string.
+* Depending on your model deployment and authentication preference, you either need a key to authenticate against the service, or Entra ID credentials. The key is a 32-character string.
 
 ### Install the package
 
@@ -67,7 +67,7 @@ To create an asynchronous client, Install the additional package [aiohttp](https
     pip install aiohttp
 ```
 
-and update the code above to import `ChatCompletionsClient` from the `aio` namespace:
+and update the code above to import `asyncio`, and import `ChatCompletionsClient` from the `azure.ai.inference.aio` namespace instead of `azure.ai.inference`:
 
 ```python
 import asyncio
@@ -181,7 +181,7 @@ See the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai
 
 ### Chat completions example
 
-This example demonstrates how to generate a single chat completions.
+This example demonstrates how to generate a single chat completions, with key authentication, assuming `endpoint` and `key` are already defined.
 
 <!-- SNIPPET:sample_chat_completions.chat_completions -->
 
@@ -238,7 +238,7 @@ To generate completions for additional messages, simply call `client.create` mul
 
 ### Streaming chat completions example
 
-This example demonstrates how to generate a single chat completions with streaming response. You need to add `stream=True` to the `complete` call to enable streaming.
+This example demonstrates how to generate a single chat completions with streaming response, with key authentication, assuming `endpoint` and `key` are already defined. You need to add `stream=True` to the `complete` call to enable streaming.
 
 <!-- SNIPPET:sample_chat_completions_streaming.chat_completions_streaming -->
 
@@ -271,7 +271,7 @@ To generate completions for additional messages, simply call `client.complete` m
 
 ### Chat completions with additional model-specific parameters
 
-In this example, extra JSON elements are inserted at the root of the request body by setting `model_extras` when calling the `complete` method. These are indended for AI models that require extra parameters beyond what is defined in the REST API.
+In this example, extra JSON elements are inserted at the root of the request body by setting `model_extras` when calling the `complete` method. These are intended for AI models that require extra parameters beyond what is defined in the REST API.
 
 Note that by default, the service will reject any request payload that includes unknown parameters (ones that are not defined in the REST API [Request Body table](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-chat-completions#request-body)). In order to change the default service behaviour, when the `complete` method includes `model_extras`, the client library will automatically add the HTTP request header `"unknown_params": "pass_through"`.
 
@@ -306,7 +306,7 @@ In the above example, this will be the JSON payload in the HTTP request:
 
 ### Text Embeddings example
 
-This example demonstrates how to get text embeddings.
+This example demonstrates how to get text embeddings, with key authentication, assuming `endpoint` and `key` are already defined.
 
 <!-- SNIPPET:sample_embeddings.embeddings -->
 
@@ -382,7 +382,7 @@ To generate embeddings for additional phrases, simply call `client.create` multi
 
 ### Exceptions
 
-The `create` and `get_model_info` methods on the clients raise an [HttpResponseError](https://learn.microsoft.com/python/api/azure-core/azure.core.exceptions.httpresponseerror) exception for a non-success HTTP status code response from the service. The exception's `status_code` will be the HTTP response status code. The exception's `error.message` contains a detailed message that will allow you to diagnose the issue:
+The `create`, `embed` and `get_model_info` methods on the clients raise an [HttpResponseError](https://learn.microsoft.com/python/api/azure-core/azure.core.exceptions.httpresponseerror) exception for a non-success HTTP status code response from the service. The exception's `status_code` will be the HTTP response status code. The exception's `error.message` contains a detailed message that will allow you to diagnose the issue:
 
 ```python
 from azure.core.exceptions import HttpResponseError
@@ -393,7 +393,6 @@ try:
     result = client.create( ... )
 except HttpResponseError as e:
     print(f"Status code: {e.status_code} ({e.reason})")
-    print(f"{e}")
 ```
 
 For example, when you provide a wrong authentication key:
@@ -401,16 +400,14 @@ For example, when you provide a wrong authentication key:
 ```text
 Status code: 401 (Unauthorized)
 Operation returned an invalid status 'Unauthorized'
-Content: {"status": "Invalid auth token"}
-```v
+```
 
-Or for example when you created an `EmbeddingsClient` and called `create` on the client, but the endpoint does not
+Or for example when you created an `EmbeddingsClient` and called `embed` on the client, but the endpoint does not
 support the `/embeddings` route:
 
 ```text
-Status code: 424 (Failed Dependency)
-Operation returned an invalid status 'Failed Dependency'
-Content: {"detail":"Not Found"}
+Status code: 405 (Method Not Allowed)
+Operation returned an invalid status 'Method Not Allowed'
 ```
 
 ### Logging
@@ -439,7 +436,7 @@ formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
 handler.setFormatter(formatter)
 ```
 
-By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Authorization` which holds the key), and the request and response payloads. To create logs without redaction, set the method argument `logging_enable = True` when you construct the client library, or when you call any of the client's `create` methods.
+By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Authorization` which holds the key or token), and the request and response payloads. To create logs without redaction, set the method argument `logging_enable = True` when you construct the client library, or when you call any of the client's `create` methods.
 
 ```python
 # Create a Model Client with none redacted log
