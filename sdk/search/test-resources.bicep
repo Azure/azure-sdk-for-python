@@ -30,6 +30,16 @@ resource searchService 'Microsoft.Search/searchServices@2024-03-01-preview' = {
   } : {}
 }
 
+resource searchServiceRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {  
+  name: guid(resourceGroup().id, testApplicationOid)
+  scope: resourceGroup()
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b')
+    principalId: testApplicationOid
+    principalType: 'ServicePrincipal'
+  }
+}
+
 resource storageService 'Microsoft.Storage/storageAccounts@2021-06-01' = {
   name: storageAccountName
   location: location
