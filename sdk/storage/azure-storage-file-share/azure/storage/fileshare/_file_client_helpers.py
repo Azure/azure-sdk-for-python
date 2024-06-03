@@ -6,7 +6,7 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 from typing import (
-    Any, Dict, Optional, Tuple, Union,
+    Any, Dict, List, Optional, Tuple, Union,
     TYPE_CHECKING
 )
 from urllib.parse import quote, unquote, urlparse
@@ -57,7 +57,13 @@ def _from_file_url(
     return account_url, share_name, file_path, snapshot
 
 
-def _format_url(scheme: str, hostname: str, share_name: str, file_path: str, query_str: str) -> str:
+def _format_url(
+    scheme: str,
+    hostname: str,
+    share_name: Union[str, bytes],
+    file_path: List[str],
+    query_str: str
+) -> str:
     if isinstance(share_name, str):
         share_name = share_name.encode('UTF-8')
     return (f"{scheme}://{hostname}/{quote(share_name)}"
