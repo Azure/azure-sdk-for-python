@@ -38,7 +38,7 @@ from .._operations._operations import (
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -50,7 +50,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def load_client(
-    endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any
+    endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
 ) -> Union[ChatCompletionsClientGenerated, EmbeddingsClientGenerated, ImageEmbeddingsClientGenerated]:
     """
     Load a client from a given endpoint URL.
@@ -66,7 +66,8 @@ async def load_client(
      behavior.
     :paramtype api_version: str
     :return: ChatCompletionsClient or EmbeddingsClient or ImageEmbeddingsClient
-    :rtype: ~azure.ai.inference.ChatCompletionsClient or ~azure.ai.inference.EmbeddingsClient or ~azure.ai.inference.ImageEmbeddingsClient
+    :rtype: ~azure.ai.inference.ChatCompletionsClient or ~azure.ai.inference.EmbeddingsClient
+     or ~azure.ai.inference.ImageEmbeddingsClient
     :raises ~azure.core.exceptions.HttpResponseError
     """
 

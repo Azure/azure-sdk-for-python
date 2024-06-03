@@ -78,7 +78,8 @@ def load_client(
      behavior.
     :paramtype api_version: str
     :return: ChatCompletionsClient or EmbeddingsClient or ImageEmbeddingsClient
-    :rtype: ~azure.ai.inference.ChatCompletionsClient or ~azure.ai.inference.EmbeddingsClient or ~azure.ai.inference.ImageEmbeddingsClient
+    :rtype: ~azure.ai.inference.ChatCompletionsClient or ~azure.ai.inference.EmbeddingsClient
+     or ~azure.ai.inference.ImageEmbeddingsClient
     :raises ~azure.core.exceptions.HttpResponseError
     """
 
