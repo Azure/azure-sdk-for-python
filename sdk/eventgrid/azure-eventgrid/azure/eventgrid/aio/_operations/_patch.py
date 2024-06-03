@@ -263,7 +263,7 @@ class EventGridConsumerClientOperationsMixin(ConsumerOperationsMixin):
         :rtype: ~azure.eventgrid.models.RenewLocksResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return await super()._renew_lock(self._namespace, self._subscription, lock_tokens=lock_tokens, **kwargs)
+        return await super()._renew_locks(self._namespace, self._subscription, lock_tokens=lock_tokens, **kwargs)
 
 
 __all__: List[str] = [

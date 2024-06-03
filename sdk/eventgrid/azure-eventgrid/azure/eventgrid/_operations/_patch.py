@@ -310,7 +310,7 @@ class EventGridConsumerClientOperationsMixin(ConsumerOperationsMixin):
         :rtype: ~azure.eventgrid.models.RenewLocksResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return super()._renew_lock(
+        return super()._renew_locks(
             topic_name=self._namespace,
             event_subscription_name=self._subscription,
             lock_tokens=lock_tokens,
