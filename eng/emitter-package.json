@@ -6,6 +6,7 @@
   "devDependencies": {
     "@azure-tools/typespec-autorest": "~0.42.0",
     "@azure-tools/typespec-azure-core": "~0.42.0",
+    "@azure-tools/typespec-azure-rulesets": "~0.42.1",
     "@azure-tools/typespec-azure-resource-manager": "~0.42.0",
     "@azure-tools/typespec-client-generator-core": "~0.42.3",
     "@typespec/compiler": "~0.56.0",
