@@ -12,7 +12,7 @@ import logging
 import queue
 import re
 
-from typing import List, AsyncIterator, Iterator, cast
+from typing import List, AsyncIterator, Iterator
 from azure.core.rest import HttpResponse, AsyncHttpResponse
 from .. import models as _models
 
