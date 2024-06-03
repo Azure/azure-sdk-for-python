@@ -69,7 +69,7 @@ class ManagedIdentityClientBase(abc.ABC):
         expires_on = int(content.get("expires_on") or int(content["expires_in"]) + request_time)
         content["expires_on"] = expires_on
 
-        token = AccessToken(content["access_token"], content["expires_on"])
+        token = AccessToken(content["access_token"], content["expires_on"], content.get("refresh_on"))
 
         # caching is the final step because TokenCache.add mutates its "event"
         self._cache.add(
