@@ -12,7 +12,7 @@ Azure Event Grid is a fully-managed intelligent event routing service that allow
 
 ## _Disclaimer_
 
-This is a beta release of Azure EventGrid's `EventGridClient`. `EventGridClient` supports `send`, `receive_cloud_events`, `acknowledge_cloud_events` , `release_cloud_events`, `reject_cloud_events`, and `renew_cloud_event_locks` operations. Please refer to the [samples](https://github.com/Azure/azure-sdk-for-python/tree/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples) for further information.
+This is a GA release of Azure EventGrid's `EventGridConsumerClient`. `EventGridConsumerClient` supports `receive`, `acknowledge` , `release`, `reject`, and `renew_locks` operations. Please refer to the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventgrid/azure-eventgrid/samples) for further information.
 
 ## Getting started
 
@@ -55,10 +55,10 @@ az eventgrid namespace create topic --location <location> --resource-group <reso
 ### Authenticate the client
 In order to interact with the Event Grid service, you will need to create an instance of a client.
 An **endpoint** and **credential** are necessary to instantiate the client object.
-The default client created is a Standard Client, which is compatible with EventGrid Namespace. To create an EventGrid Basic Client, specify `level="Basic"` or `level=ClientLevel.BASIC` when instantiating the client.
+The default client created is a Basic Event Grid Resource Client, which is compatible with EventGrid Basic. To create an EventGrid Namespace Client, specify `namespace_topic="MY_TOPIC_NAME"` when instantiating the client.
 
 ```python
-client = EventGridClient(endpoint, credential, level=ClientLevel.BASIC)
+client = EventGridPublisherClient(endpoint, credential, namespace_topic=MY_TOPIC_NAME)
 ```
 
 #### Using Azure Active Directory (AAD)
@@ -160,11 +160,11 @@ For complete list of recognizable system topics, visit [System Topics](https://d
 
  For more information about the key concepts on Event Grid, see [Concepts in Azure Event Grid][publisher-service-doc].
 
-## EventGridClient
+## EventGridPublisherClient
 
-`EventGridClient` provides operations to send to, receive from, acknowledge, reject, release event data for a resource specified during client initialization.
+`EventGridPublisherClient` provides operations to send event data to a resource specified during client initialization.
 
-If you are using Event Grid Basic, regardless of the schema that your topic or domain is configured to use, `EventGridClient` will be used to publish events to it. Use the `send` method to publish events.
+If you are using Event Grid Basic, regardless of the schema that your topic or domain is configured to use, `EventGridPublisherClient` will be used to publish events to it. Use the `send` method to publish events.
 
 The following formats of events are allowed to be sent to an EventGrid Basic resource:
 - A list or a single instance of strongly typed EventGridEvents.
@@ -174,12 +174,12 @@ The following formats of events are allowed to be sent to an EventGrid Basic res
 
 - A dict representation of any Custom Schema.
 
-The following formats of events are allowed to be sent to an EventGrid Namespace resource:
+The following formats of events are allowed to be sent to an EventGrid Namespace resource, when a namespace topic is specified:
 
 * A list of single instance of strongly typed CloudEvents.
 * A dict representation of a serialized CloudEvent object.
 
-Please have a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples) for detailed examples.
+Please have a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventgrid/azure-eventgrid/samples) for detailed examples.
 
 ## Event Grid on Kubernetes with Azure Arc
 
@@ -201,7 +201,7 @@ This example publishes a Cloud event.
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.core.messaging import CloudEvent
-from azure.eventgrid import EventGridClient, ClientLevel
+from azure.eventgrid import EventGridClient
 
 key = os.environ["EVENTGRID_NAMESPACE_KEY"]
 endpoint = os.environ["EVENTGRID_NAMESPACE_ENDPOINT"]
@@ -215,9 +215,9 @@ event = CloudEvent(
 )
 
 credential = AzureKeyCredential(key)
-client = EventGridClient(endpoint, credential, level=ClientLevel.STANDARD)
+client = EventGridClient(endpoint, credential, namespace_topic=topic_name)
 
-client.send(topic_name, event)
+client.send(event)
 ```
 
 ### Send Multiple events
@@ -230,7 +230,7 @@ It is possible to send events as a batch when sending multiple events to a topic
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.core.messaging import CloudEvent
-from azure.eventgrid import EventGridClient, ClientLevel
+from azure.eventgrid import EventGridClient
 
 key = os.environ["EVENTGRID_NAMESPACE_KEY"]
 endpoint = os.environ["EVENTGRID_NAMESPACE_ENDPOINT"]
@@ -250,9 +250,9 @@ event1 = CloudEvent(
 events = [event0, event1]
 
 credential = AzureKeyCredential(key)
-client = EventGridClient(endpoint, credential, level=ClientLevel.STANDARD)
+client = EventGridClient(endpoint, credential, namespace_topic=topic_name)
 
-client.send(topic_name, events)
+client.send(events)
 ```
 
 ### Receive and Process Events from Namespace
@@ -264,7 +264,7 @@ import os
 import uuid
 import datetime as dt
 from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import EventGridClient, ClientLevel
+from azure.eventgrid import EventGridConsumerClient
 
 key = os.environ["EVENTGRID_KEY"]
 endpoint = os.environ["EVENTGRID_ENDPOINT"]
@@ -272,9 +272,9 @@ topic_name = os.environ["EVENTGRID_TOPIC_NAME"]
 sub_name = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
 
 credential = AzureKeyCredential(key)
-client = EventGridClient(endpoint, credential, level=ClientLevel.STANDARD)
+client = EventGridConsumerClient(endpoint, credential, namespace_topic=topic_name, subscription=sub_name)
 
-events = client.receive_cloud_events(topic_name, sub_name, max_events=4)
+events = client.receive(max_events=4)
 
 for detail in events.value:
     data = detail.event.data
@@ -288,28 +288,20 @@ for detail in events.value:
 
     # Renew all Locks
     renew_tokens = e.broker_properties.lock_token
-    renew_result = client.renew_cloud_events_lock(
-        topic_name=TOPIC_NAME,
-        subscription_name=EVENT_SUBSCRIPTION_NAME,
+    renew_result = client.renew_locks(
         lock_tokens=renew_tokens,
     )
 
 
-release_result = client.release_cloud_events(
-    topic_name=TOPIC_NAME,
-    subscription_name=EVENT_SUBSCRIPTION_NAME,
+release_result = client.release(
     lock_tokens=release_events,
 )
 
-ack_result = client.acknowledge_cloud_events(
-    topic_name=TOPIC_NAME,
-    subscription_name=EVENT_SUBSCRIPTION_NAME,
+ack_result = client.acknowledge(
     lock_tokens=acknowledge_events,
 )
 
-reject_result = client.reject_cloud_events(
-    topic_name=TOPIC_NAME,
-    subscription_name=EVENT_SUBSCRIPTION_NAME,
+reject_result = client.reject(
     lock_tokens=reject_events,
 )
 
@@ -324,7 +316,7 @@ This example publishes an Event Grid event.
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import EventGridClient, EventGridEvent, ClientLevel
+from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 
 key = os.environ["EG_ACCESS_KEY"]
 endpoint = os.environ["EG_TOPIC_HOSTNAME"]
@@ -337,7 +329,7 @@ event = EventGridEvent(
 )
 
 credential = AzureKeyCredential(key)
-client = EventGridClient(endpoint, credential, level=ClientLevel.BASIC)
+client = EventGridPublisherClient(endpoint, credential)
 
 client.send(event)
 ```
@@ -380,7 +372,7 @@ Once the `tracer` and `exporter` are set, please follow the example below to sta
 
 ```python
 import os
-from azure.eventgrid import EventGridClient, ClientLevel
+from azure.eventgrid import EventGridPublisherClient
 from azure.core.messaging import CloudEvent
 from azure.core.credentials import AzureKeyCredential
 
@@ -392,7 +384,7 @@ cloud_event = CloudEvent(
     data = {'test': 'hello'},
 )
 with tracer.start_as_current_span(name="MyApplication"):
-    client = EventGridClient(hostname, key, level=ClientLevel.BASIC)
+    client = EventGridPublisherClient(hostname, key)
     client.send(cloud_event)
 ```
 
@@ -467,49 +459,44 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 <!-- LINKS -->
 
 [azure_cli_link]: https://pypi.org/project/azure-cli/
-[python-eg-src]: https://github.com/Azure/azure-sdk-for-python/tree/feature/eventgrid/sdk/eventgrid/azure-eventgrid
+[python-eg-src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventgrid/azure-eventgrid
 [python-eg-pypi]: https://pypi.org/project/azure-eventgrid
 [python-eg-product-docs]: https://docs.microsoft.com/azure/event-grid/overview
 [python-eg-ref-docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventgrid/latest/index.html
 [publisher-service-doc]: https://docs.microsoft.com/azure/event-grid/concepts
-[python-eg-samples]: https://github.com/Azure/azure-sdk-for-python/tree/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples
-[python-eg-changelog]: https://github.com/Azure/azure-sdk-for-python/tree/feature/eventgrid/sdk/eventgrid/azure-eventgrid/CHANGELOG.md
+[python-eg-samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventgrid/azure-eventgrid/samples
+[python-eg-changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventgrid/azure-eventgrid/CHANGELOG.md
 [pip]: https://pypi.org/project/pip/
 
 [azure_portal_create_EG_resource]: https://ms.portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.EventGrid%2Ftopics
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
 [azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
 [python_logging]: https://docs.python.org/3/library/logging.html
-[azure_core_ref_docs]: https://github.com/Azure/azure-sdk-for-python/tree/feature/eventgrid/sdk/core/azure-core#configurations
+[azure_core_ref_docs]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core#configurations
 [azure_subscription]: https://azure.microsoft.com/free/
 
-[python-eg-auth]: https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_authentication.py
-[python-eg-generate-sas]: https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_generate_sas.py
-[python-eg-sample-send-using-sas]: https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_events_to_a_topic_using_sas_credential.py
-[python-eg-sample-eg-event]: https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_eg_events_to_a_topic.py
-[python-eg-sample-eg-event-to-domain]: https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_eg_events_to_a_domain.py
-[python-eg-sample-send-cloudevent]: https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_events_using_cloud_events_1.0_schema.py
-[python-eg-publish-custom-schema]: https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_custom_schema_to_a_topic.py
-[python-eg-sample-send-eg-as-dict]: https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_eg_event_using_dict.py
-[python-eg-sample-send-cloudevent-as-dict]: https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_cloud_event_using_dict.py
+[python-eg-auth]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_authentication.py
+[python-eg-generate-sas]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_generate_sas.py
+[python-eg-sample-send-using-sas]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_events_to_a_topic_using_sas_credential.py
+[python-eg-sample-eg-event]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_eg_events_to_a_topic.py
+[python-eg-sample-eg-event-to-domain]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_eg_events_to_a_domain.py
+[python-eg-sample-send-cloudevent]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_events_using_cloud_events_1.0_schema.py
+[python-eg-publish-custom-schema]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_custom_schema_to_a_topic.py
+[python-eg-sample-send-eg-as-dict]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_eg_event_using_dict.py
+[python-eg-sample-send-cloudevent-as-dict]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_cloud_event_using_dict.py
 
-[python-eg-auth-async]: https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_authentication_async.py
-[python-eg-sample-send-using-sas-async]: https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_events_to_a_topic_using_sas_credential_async.py
-[python-eg-sample-eg-event-async]: https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_eg_events_to_a_topic_async.py
-[python-eg-sample-eg-event-to-domain-async]: https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_eg_events_to_a_domain_async.py
-[python-eg-sample-send-cloudevent-async]: https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_events_using_cloud_events_1.0_schema_async.py
-[python-eg-publish-custom-schema-async]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_custom_schema_to_a_topic_async.py
-[python-eg-sample-send-eg-as-dict-async]: https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_eg_event_using_dict_async.py
-[python-eg-sample-send-cloudevent-as-dict-async]: https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_cloud_event_using_dict_async.py
+[python-eg-auth-async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_authentication_async.py
+[python-eg-sample-send-using-sas-async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_events_to_a_topic_using_sas_credential_async.py
+[python-eg-sample-eg-event-async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_eg_events_to_a_topic_async.py
+[python-eg-sample-eg-event-to-domain-async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_eg_events_to_a_domain_async.py
+[python-eg-sample-send-cloudevent-async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_events_using_cloud_events_1.0_schema_async.py
+[python-eg-publish-custom-schema-async]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_custom_schema_to_a_topic_async.py
+[python-eg-sample-send-eg-as-dict-async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_eg_event_using_dict_async.py
+[python-eg-sample-send-cloudevent-as-dict-async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_cloud_event_using_dict_async.py
 
-[python-eg-publish-samples]: https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/publish_samples
-[python-eg-consume-samples]: https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/consume_samples
-[python-eg-sample-consume-custom-payload]: https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_consume_custom_payload.py
-
-
-[python-eg-client-all-ops-sample]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_all_operations.py
-
-[python-eg-client-binary-mode-sample]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_binary_mode.py
+[python-eg-publish-samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/publish_samples
+[python-eg-consume-samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/consume_samples
+[python-eg-sample-consume-custom-payload]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_consume_custom_payload.py
 
 
 [cla]: https://cla.microsoft.com
