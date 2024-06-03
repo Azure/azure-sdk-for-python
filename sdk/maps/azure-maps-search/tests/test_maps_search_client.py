@@ -7,8 +7,9 @@ import os
 
 from azure.core.credentials import AzureKeyCredential
 from azure.maps.search import MapsSearchClient
-from azure.maps.search._generated.models import GeocodingBatchRequestItem, GeocodingBatchRequestBody, \
-    ReverseGeocodingBatchRequestItem, ReverseGeocodingBatchRequestBody
+from azure.maps.search._generated.models import BoundaryResultTypeEnum, ResolutionEnum
+from azure.maps.search.models import GeocodingBatchRequestItem, GeocodingBatchRequestBody, \
+    ReverseGeocodingBatchRequestItem, ReverseGeocodingBatchRequestBody, LatLon
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, is_live
 
 from search_preparer import MapsSearchPreparer
@@ -38,7 +39,7 @@ class TestMapsSearchClient(AzureRecordedTestCase):
     @MapsSearchPreparer()
     @recorded_by_proxy
     def test_geocode_batch(self):
-        request_item1 = GeocodingBatchRequestItem(query="15127 NE 24th Street, Redmond, WA 98052", top=5)
+        request_item1 = GeocodingBatchRequestItem(query="400 Broad St, Seattle, WA 98109", top=5)
         request_item2 = GeocodingBatchRequestItem(query="15127 NE 24th Street, Redmond, WA 98052", top=5)
 
         batch_request_body = GeocodingBatchRequestBody(batch_items=[request_item1, request_item2])
@@ -55,8 +56,8 @@ class TestMapsSearchClient(AzureRecordedTestCase):
         longitude1 = coordinates1[0]
         latitude1 = coordinates1[1]
 
-        assert longitude1 == -122.138669
-        assert latitude1 == 47.630359
+        assert longitude1 == -122.349309
+        assert latitude1 == 47.620498
 
         assert len(result2.features) == 1
         coordinates2 = result2.features[0].geometry.coordinates
@@ -69,16 +70,16 @@ class TestMapsSearchClient(AzureRecordedTestCase):
     @MapsSearchPreparer()
     @recorded_by_proxy
     def test_reverse_geocode(self):
-        result = self.client.get_reverse_geocoding(coordinates=[-122.138679, 47.630356])
+        result = self.client.get_reverse_geocoding(coordinates=LatLon(47.630356, -122.138679))
         assert len(result.features) == 1
         address = result.features[0].properties.address
-        assert address.formatted_address == "2265 152nd Ave NE, Redmond, WA 98052, United States"
+        assert address.formatted_address == "2265 152nd Ave NE, Redmond, Washington 98052, United States"
 
     @MapsSearchPreparer()
     @recorded_by_proxy
     def test_reverse_geocode_batch(self):
-        coordinates1 = ReverseGeocodingBatchRequestItem(coordinates=[-122.138679, 47.630356])
-        coordinates2 = ReverseGeocodingBatchRequestItem(coordinates=[-122.138679, 47.630356])
+        coordinates1 = ReverseGeocodingBatchRequestItem(coordinates=LatLon(47.620498, -122.349309))
+        coordinates2 = ReverseGeocodingBatchRequestItem(coordinates=LatLon(47.630356, -122.138679))
         reverse_geocode_batch_request = ReverseGeocodingBatchRequestBody(batch_items=[coordinates1, coordinates2])
 
         result = self.client.get_reverse_geocoding_batch(reverse_geocode_batch_request)
@@ -88,19 +89,19 @@ class TestMapsSearchClient(AzureRecordedTestCase):
 
         assert len(result1.features) == 1
         address1 = result1.features[0].properties.address
-        assert address1.formatted_address == "2265 152nd Ave NE, Redmond, WA 98052, United States"
+        assert address1.formatted_address == "400 Broad St, Seattle, Washington 98109, United States"
 
         assert len(result2.features) == 1
         address2 = result2.features[0].properties.address
-        assert address2.formatted_address == "2265 152nd Ave NE, Redmond, WA 98052, United States"
+        assert address2.formatted_address == "2265 152nd Ave NE, Redmond, Washington 98052, United States"
 
     @MapsSearchPreparer()
     @recorded_by_proxy
     def test_get_polygon(self):
         result = self.client.get_polygon(
-            coordinates=[-122.204141, 47.61256],
-            result_type="locality",
-            resolution="small")
+            coordinates=LatLon(47.630356, -122.138679),
+            result_type=BoundaryResultTypeEnum.LOCALITY,
+            resolution=ResolutionEnum.SMALL)
 
         assert result.geometry is not None
         assert len(result.geometry.geometries) > 0

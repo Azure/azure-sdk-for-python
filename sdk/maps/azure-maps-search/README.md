@@ -92,10 +92,7 @@ Once you initialized a `MapsSearchClient` class, you can explore the methods on 
 This library includes a complete async API supported on Python 3.5+. To use it, you must first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport) for more information.
 
-Async clients and credentials should be closed when they're no longer needed. These
-objects are async context managers and define async `close` methods.
-
-Certainly! Here is the section with the updated examples, ready to be copied and replaced in your README:
+Async clients and credentials should be closed when they're no longer needed. These objects are async context managers and define async `close` methods.
 
 ## Examples
 
@@ -113,12 +110,13 @@ You can use an authenticated client to convert an address into latitude and long
 
 ```python
 import os
-from azure.core.credentials import AzureKeyCredential
-from azure.maps.search import MapsSearchClient
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def geocode():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.search import MapsSearchClient
+
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
     result = maps_search_client.get_geocoding(query="15127 NE 24th Street, Redmond, WA 98052")
@@ -141,16 +139,18 @@ This sample demonstrates how to perform batch search address.
 
 ```python
 import os
-from azure.core.credentials import AzureKeyCredential
-from azure.maps.search import MapsSearchClient
-from azure.maps.search.models import GeocodingBatchItem, GeocodingBatch
+
+from azure.maps.search.models import GeocodingBatchRequestItem, GeocodingBatchRequestBody
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def geocode_batch():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.search import MapsSearchClient
+
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
-    request_item1 = GeocodingBatchRequestItem(query="15127 NE 24th Street, Redmond, WA 98052", top=5)
+    request_item1 = GeocodingBatchRequestItem(query="400 Broad St, Seattle, WA 98109", top=5)
     request_item2 = GeocodingBatchRequestItem(query="15127 NE 24th Street, Redmond, WA 98052", top=5)
 
     batch_request_body = GeocodingBatchRequestBody(batch_items=[request_item1, request_item2])
@@ -163,7 +163,7 @@ def geocode_batch():
 
     result1 = result.batch_items[0]
 
-    if result1.features
+    if result1.features:
         coordinates1 = result1.features[0].geometry.coordinates
         longitude1 = coordinates1[0]
         latitude1 = coordinates1[1]
@@ -193,15 +193,20 @@ This sample demonstrates how to search polygons.
 
 ```python
 import os
-from azure.core.credentials import AzureKeyCredential
-from azure.maps.search import MapsSearchClient
+
+from azure.maps.search.models import ResolutionEnum
+from azure.maps.search.models import BoundaryResultTypeEnum
+from azure.maps.search.models import LatLon
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_polygon():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.search import MapsSearchClient
+
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
-    result = maps_search_client.get_polygon(coordinates=[-122.204141, 47.61256], result_type="locality", resolution="small")
+    result = maps_search_client.get_polygon(coordinates=LatLon(47.61256, -122.204141), result_type=BoundaryResultTypeEnum.LOCALITY, resolution=ResolutionEnum.SMALL)
 
     print(result.geometry)
 
@@ -211,19 +216,22 @@ if __name__ == '__main__':
 
 ### Make a Reverse Address Search to translate coordinate location to street address
 
-You can translate coordinates into human readable street addresses. This process is also called reverse geocoding. This is often used for applications that consume GPS feeds and want to discover addresses at specific coordinate points.
+You can translate coordinates into human-readable street addresses. This process is also called reverse geocoding. This is often used for applications that consume GPS feeds and want to discover addresses at specific coordinate points.
 
 ```python
 import os
-from azure.core.credentials import AzureKeyCredential
-from azure.maps.search import MapsSearchClient
+
+from azure.maps.search.models import LatLon
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def reverse_geocode():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.search import MapsSearchClient
+
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
-    result = maps_search_client.get_reverse_geocoding(coordinates=[-122.138679, 47.630356])
+    result = maps_search_client.get_reverse_geocoding(coordinates=LatLon(47.630356, -122.138679))
     if result.features:
         props = result.features[0].properties
         if props and props.address:
@@ -245,22 +253,22 @@ This sample demonstrates how to perform reverse search by given coordinates in b
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.maps.search import MapsSearchClient
-from azure.maps.search.models import ReverseGeocodingBatchItem, ReverseGeocodingBatch
+from azure.maps.search.models import ReverseGeocodingBatchRequestItem, ReverseGeocodingBatchRequestBody, LatLon
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def reverse_geocode_batch():
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
-    coordinates1 = ReverseGeocodingBatchRequestItem(coordinates=[-122.138679, 47.630356])
-    coordinates2 = ReverseGeocodingBatchRequestItem(coordinates=[-122.138679, 47.630356])
+    coordinates1 = ReverseGeocodingBatchRequestItem(coordinates=LatLon(47.620498, -122.349309))
+    coordinates2 = ReverseGeocodingBatchRequestItem(coordinates=LatLon(47.630356, -122.138679))
     reverse_geocode_batch_request = ReverseGeocodingBatchRequestBody(batch_items=[coordinates1, coordinates2])
 
     result = maps_search_client.get_reverse_geocoding_batch(reverse_geocode_batch_request)
 
-    if result.batch_items and len(result.batch_items) > 0:
+    if result.batch_items:
         features = result.batch_items[0].features
-        if features and len(features) > 0:
+        if features:
             props = features[0].properties
             if props and props.address:
                 print(props.address.formatted_address)
@@ -270,7 +278,7 @@ def reverse_geocode_batch():
             print("No features available for item 1")
 
         features = result.batch_items[1].features
-        if features and len(features) > 0:
+        if features:
             props = features[0].properties
             if props and props.address:
                 print(props.address.formatted_address)

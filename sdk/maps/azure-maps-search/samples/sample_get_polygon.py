@@ -7,16 +7,20 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: get_polygon.py
+FILE: sample_get_polygon.py
 DESCRIPTION:
     This sample demonstrates how to search polygons.
 USAGE:
-    python get_polygon.py
+    python sample_get_polygon.py
 
     Set the environment variables with your own values before running the sample:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
 """
 import os
+
+from azure.maps.search.models import ResolutionEnum
+from azure.maps.search.models import BoundaryResultTypeEnum
+from azure.maps.search.models import LatLon
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
@@ -26,7 +30,7 @@ def get_polygon():
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
-    result = maps_search_client.get_polygon(coordinates=[-122.204141, 47.61256], result_type="locality", resolution="small")
+    result = maps_search_client.get_polygon(coordinates=LatLon(47.61256, -122.204141), result_type=BoundaryResultTypeEnum.LOCALITY, resolution=ResolutionEnum.SMALL)
 
     print(result.geometry)
 

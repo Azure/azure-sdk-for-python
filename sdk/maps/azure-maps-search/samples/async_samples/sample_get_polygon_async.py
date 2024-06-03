@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: get_polygon_async.py
+FILE: sample_get_polygon_async.py
 DESCRIPTION:
     This sample demonstrates how to search polygons.
 USAGE:
-    python get_polygon_async.py
+    python sample_get_polygon_async.py
 
     Set the environment variables with your own values before running the sample:
     - AZURE_SUBSCRIPTION_KEY - your subscription key

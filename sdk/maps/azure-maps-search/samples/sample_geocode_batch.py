@@ -18,7 +18,7 @@ USAGE:
 """
 import os
 
-from azure.maps.search._generated.models import GeocodingBatchRequestItem, GeocodingBatchRequestBody
+from azure.maps.search.models import GeocodingBatchRequestItem, GeocodingBatchRequestBody
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
@@ -28,20 +28,20 @@ def geocode_batch():
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
-    request_item1 = GeocodingBatchRequestItem(query="15127 NE 24th Street, Redmond, WA 98052", top=5)
+    request_item1 = GeocodingBatchRequestItem(query="400 Broad St, Seattle, WA 98109", top=5)
     request_item2 = GeocodingBatchRequestItem(query="15127 NE 24th Street, Redmond, WA 98052", top=5)
 
     batch_request_body = GeocodingBatchRequestBody(batch_items=[request_item1, request_item2])
 
     result = maps_search_client.get_geocoding_batch(batch_request_body)
 
-    if not (result.batch_items and len(result.batch_items) > 0):
+    if not result.batch_items:
         print("No geocoding")
         return
 
     result1 = result.batch_items[0]
 
-    if (result1.features and len(result1.features) > 0):
+    if result1.features:
         coordinates1 = result1.features[0].geometry.coordinates
         longitude1 = coordinates1[0]
         latitude1 = coordinates1[1]
@@ -52,7 +52,7 @@ def geocode_batch():
 
     result2 = result.batch_items[1]
 
-    if (result2.features and len(result2.features) > 0):
+    if result2.features:
         coordinates2 = result2.features[0].geometry.coordinates
         longitude2 = coordinates2[0]
         latitude2 = coordinates2[1]

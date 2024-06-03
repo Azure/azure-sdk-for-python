@@ -19,6 +19,8 @@ USAGE:
 import asyncio
 import os
 
+from azure.maps.search.models import LatLon
+
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 
@@ -29,9 +31,9 @@ async def reverse_geocode_async():
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
     async with maps_search_client:
-        result = await maps_search_client.get_reverse_geocoding(coordinates=[-122.138679, 47.630356])
+        result = await maps_search_client.get_reverse_geocoding(coordinates=LatLon(47.630356, -122.138679))
 
-    if result.features and len(result.features) > 0:
+    if result.features:
         props = result.features[0].properties
         if props and props.address:
             print(props.address.formatted_address)

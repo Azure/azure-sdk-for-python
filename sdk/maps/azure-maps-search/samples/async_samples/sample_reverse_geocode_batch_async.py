@@ -19,7 +19,7 @@ USAGE:
 import asyncio
 import os
 
-from azure.maps.search._generated.models import ReverseGeocodingBatchRequestItem, ReverseGeocodingBatchRequestBody
+from azure.maps.search.models import ReverseGeocodingBatchRequestItem, ReverseGeocodingBatchRequestBody, LatLon
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
@@ -31,15 +31,15 @@ async def reverse_geocode_async():
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
     async with maps_search_client:
-        coordinates1 = ReverseGeocodingBatchRequestItem(coordinates=[-122.138679, 47.630356])
-        coordinates2 = ReverseGeocodingBatchRequestItem(coordinates=[-122.138679, 47.630356])
+        coordinates1 = ReverseGeocodingBatchRequestItem(coordinates=LatLon(47.620498, -122.349309))
+        coordinates2 = ReverseGeocodingBatchRequestItem(coordinates=LatLon(47.630356, -122.138679))
         reverse_geocode_batch_request = ReverseGeocodingBatchRequestBody(batch_items=[coordinates1, coordinates2])
 
         result = await maps_search_client.get_reverse_geocoding_batch(reverse_geocode_batch_request)
 
-    if result.batch_items and len(result.batch_items) > 0:
+    if result.batch_items:
         features = result.batch_items[0].features
-        if features and len(features) > 0:
+        if features:
             props = features[0].properties
             if props and props.address:
                 print(props.address.formatted_address)
@@ -49,7 +49,7 @@ async def reverse_geocode_async():
             print("No features available for item 1")
 
         features = result.batch_items[1].features
-        if features and len(features) > 0:
+        if features:
             props = features[0].properties
             if props and props.address:
                 print(props.address.formatted_address)

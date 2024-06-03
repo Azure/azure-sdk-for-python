@@ -6,45 +6,15 @@
 # pylint: disable=unused-import,ungrouped-imports, R0904, C0302
 from typing import Union, Any, IO, List, Optional
 
-import azure.maps.search._generated.models as _models
+from azure.maps.search.models import *
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.tracing.decorator import distributed_trace
 
 from ._base_client import MapsSearchClientBase
 
+import azure.maps.search._generated.models as _models
 
-# By default, use the latest supported API version
 class MapsSearchClient(MapsSearchClientBase):
-    """Azure Maps Search REST APIs.
-
-    :param credential:
-        Credential needed for the client to connect to Azure.
-    :type credential:
-        ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureKeyCredential
-    :keyword str base_url:
-        Supported Maps Services or Language resource base_url
-        (protocol and hostname, for example: 'https://us.atlas.microsoft.com').
-    :keyword str client_id:
-        Specifies which account is intended for usage with the Azure AD security model.
-        It represents a unique ID for the Azure Maps account.
-    :keyword api_version:
-        The API version of the service to use for requests.
-        It defaults to the latest service version.
-        Setting to an older version may result in reduced feature compatibility.
-    :paramtype api_version:
-        str
-    """
-
-    def __init__(
-        self,
-        credential: Union[AzureKeyCredential, TokenCredential],
-        **kwargs: Any
-    )-> None:
-
-        super().__init__(
-            credential=credential, **kwargs
-        )
-
 
     @distributed_trace
     def get_geocoding(
@@ -54,16 +24,16 @@ class MapsSearchClient(MapsSearchClientBase):
             query: Optional[str] = None,
             address_line: Optional[str] = None,
             country_region: Optional[str] = None,
-            bbox: Optional[List[float]] = None,
-            view: Optional[str] = None,
-            coordinates: Optional[List[float]] = None,
+            bounding_box: Optional[BoundingBox] = None,
+            localized_map_view: Optional[str] = None,
+            coordinates: Optional[LatLon] = None,
             admin_district: Optional[str] = None,
             admin_district2: Optional[str] = None,
             admin_district3: Optional[str] = None,
             locality: Optional[str] = None,
             postal_code: Optional[str] = None,
             **kwargs: Any
-    ) -> _models.GeocodingResponse:
+    ) -> GeocodingResponse:
         """Use to get latitude and longitude coordinates of a street address or name of a place.
 
         The ``Get Geocoding`` API is an HTTP ``GET`` request that returns the latitude and longitude
@@ -97,24 +67,24 @@ class MapsSearchClient(MapsSearchClientBase):
 
          **If query is given, should not use this parameter.**. Default value is None.
         :paramtype country_region: str
-        :keyword bbox: A rectangular area on the earth defined as a bounding box object. The sides of
+        :keyword bounding_box: A rectangular area on the earth defined as a bounding box object. The sides of
          the rectangles are defined by longitude and latitude values. When you specify this parameter,
          the geographical area is taken into account when computing the results of a location query.
 
-         Example: lon1,lat1,lon2,lat2. Default value is None.
-        :paramtype bbox: list[float]
-        :keyword view: A string that represents an `ISO 3166-1 Alpha-2 region/country code
+         Example: BoundingBox(west=37.553, south=-122.453, east=33.2, north=57). Default value is None.
+        :paramtype bounding_box: BoundingBox
+        :keyword localized_map_view: A string that represents an `ISO 3166-1 Alpha-2 region/country code
          <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_. This will alter Geopolitical disputed
          borders and labels to align with the specified user region. By default, the View parameter is
          set to “Auto” even if you haven’t defined it in the request.
 
          Please refer to `Supported Views <https://aka.ms/AzureMapsLocalizationViews>`_ for details and
          to see the available Views. Default value is None.
-        :paramtype view: str
+        :paramtype localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
         :keyword coordinates: A point on the earth specified as a longitude and latitude. When you
          specify this parameter, the user’s location is taken into account and the results returned may
-         be more relevant to the user. Example: &coordinates=lon,lat. Default value is None.
-        :paramtype coordinates: list[float]
+         be more relevant to the user. Example: LatLon(lat, lon). Default value is None.
+        :paramtype coordinates: LatLon
         :keyword admin_district: The country subdivision portion of an address, such as WA.
 
          **If query is given, should not use this parameter.**. Default value is None.
@@ -145,9 +115,9 @@ class MapsSearchClient(MapsSearchClientBase):
             query=query,
             address_line=address_line,
             country_region=country_region,
-            bbox=bbox,
-            view=view,
-            coordinates=coordinates,
+            bbox=bounding_box and [bounding_box.west, bounding_box.south, bounding_box.east, bounding_box.north] or None,
+            view=localized_map_view,
+            coordinates=coordinates and [coordinates.lon, coordinates.lat] or None,
             admin_district=admin_district,
             admin_district2=admin_district2,
             admin_district3=admin_district3,
@@ -160,9 +130,9 @@ class MapsSearchClient(MapsSearchClientBase):
     @distributed_trace
     def get_geocoding_batch(
         self,
-        geocoding_batch_request_body: Union[_models.GeocodingBatchRequestBody, IO[bytes]],
+        geocoding_batch_request_body: Union[GeocodingBatchRequestBody, IO[bytes]],
         **kwargs: Any
-    ) -> _models.GeocodingBatchResponse:
+    ) -> GeocodingBatchResponse:
         """Use to send a batch of queries to the `Geocoding </rest/api/maps/search/get-geocoding>`_ API in
         a single request.
 
@@ -213,8 +183,29 @@ class MapsSearchClient(MapsSearchClientBase):
         :rtype: ~azure.maps.search.models.GeocodingBatchResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        generated_batch_items = []
+        for batch_item in geocoding_batch_request_body.batch_items:
+            bounding_box = batch_item.bounding_box
+            coordinates = batch_item.coordinates
+            generated_batch_items.append(_models.GeocodingBatchRequestItem(
+                optional_id=batch_item.optional_id,
+                top=batch_item.top,
+                query=batch_item.query,
+                address_line=batch_item.address_line,
+                country_region=batch_item.country_region,
+                bbox=bounding_box and [bounding_box.west, bounding_box.south, bounding_box.east, bounding_box.north] or None,
+                view=batch_item.localized_map_view,
+                coordinates=coordinates and [coordinates.lon, coordinates.lat] or None,
+                admin_district=batch_item.admin_district,
+                admin_district2=batch_item.admin_district2,
+                admin_district3=batch_item.admin_district3,
+                locality=batch_item.locality,
+                postal_code=batch_item.postal_code,
+            ))
         result = self._search_client.get_geocoding_batch(
-            geocoding_batch_request_body,
+            geocoding_batch_request_body=_models.GeocodingBatchRequestBody(
+                batch_items=generated_batch_items,
+            ),
             **kwargs
         )
         return result
@@ -223,11 +214,11 @@ class MapsSearchClient(MapsSearchClientBase):
     def get_reverse_geocoding(
             self,
             *,
-            coordinates: List[float],
-            result_types: Optional[List[Union[str, _models.ReverseGeocodingResultTypeEnum]]] = None,
-            view: Optional[str] = None,
+            coordinates: LatLon,
+            result_types: Optional[List[Union[str, ReverseGeocodingResultTypeEnum]]] = None,
+            localized_map_view: Optional[str] = None,
             **kwargs: Any
-    ) -> _models.GeocodingResponse:
+    ) -> GeocodingResponse:
         """Use to get a street address and location info from latitude and longitude coordinates.
 
         The ``Get Reverse Geocoding`` API is an HTTP ``GET`` request used to translate a coordinate
@@ -237,8 +228,8 @@ class MapsSearchClient(MapsSearchClientBase):
         coordinate.
 
         :keyword coordinates: The coordinates of the location that you want to reverse geocode.
-         Example: &coordinates=lon,lat. Required.
-        :paramtype coordinates: list[float]
+         Example: LatLon(lat, lon). Required.
+        :paramtype coordinates: LatLon
         :keyword result_types: Specify entity types that you want in the response. Only the types you
          specify will be returned. If the point cannot be mapped to the entity types you specify, no
          location information is returned in the response.
@@ -260,22 +251,22 @@ class MapsSearchClient(MapsSearchClientBase):
          were found for both types, only the Address entity information is returned in the response.
          Default value is None.
         :paramtype result_types: list[str or ~azure.maps.search.models.ReverseGeocodingResultTypeEnum]
-        :keyword view: A string that represents an `ISO 3166-1 Alpha-2 region/country code
+        :keyword localized_map_view: A string that represents an `ISO 3166-1 Alpha-2 region/country code
          <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_. This will alter Geopolitical disputed
          borders and labels to align with the specified user region. By default, the View parameter is
          set to “Auto” even if you haven’t defined it in the request.
 
          Please refer to `Supported Views <https://aka.ms/AzureMapsLocalizationViews>`_ for details and
          to see the available Views. Default value is None.
-        :paramtype view: str
+        :paramtype localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
         :return: GeocodingResponse
         :rtype: ~azure.maps.search.models.GeocodingResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         result = self._search_client.get_reverse_geocoding(
-            coordinates=coordinates,
+            coordinates=coordinates and [coordinates.lon, coordinates.lat] or None,
             result_types=result_types,
-            view=view,
+            view=localized_map_view,
             **kwargs
         )
         return result
@@ -283,9 +274,9 @@ class MapsSearchClient(MapsSearchClientBase):
     @distributed_trace
     def get_reverse_geocoding_batch(
             self,
-            reverse_geocoding_batch_request_body: Union[_models.ReverseGeocodingBatchRequestBody, IO[bytes]],
+            reverse_geocoding_batch_request_body: Union[ReverseGeocodingBatchRequestBody, IO[bytes]],
             **kwargs: Any
-    ) -> _models.GeocodingBatchResponse:
+    ) -> GeocodingBatchResponse:
         """Use to send a batch of queries to the `Reverse Geocoding
         </rest/api/maps/search/get-reverse-geocoding>`_ API in a single request.
 
@@ -339,8 +330,19 @@ class MapsSearchClient(MapsSearchClientBase):
         :rtype: ~azure.maps.search.models.GeocodingBatchResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        generated_batch_items = []
+        for batch_item in reverse_geocoding_batch_request_body.batch_items:
+            coordinates = batch_item.coordinates
+            generated_batch_items.append(_models.ReverseGeocodingBatchRequestItem(
+                optional_id=batch_item.optional_id,
+                coordinates=coordinates and [coordinates.lon, coordinates.lat] or None,
+                result_types=batch_item.result_types,
+                view=batch_item.localized_map_view
+            ))
         result = self._search_client.get_reverse_geocoding_batch(
-            reverse_geocoding_batch_request_body,
+            reverse_geocoding_batch_request_body=_models.ReverseGeocodingBatchRequestBody(
+                batch_items=generated_batch_items
+            ),
             **kwargs
         )
         return result
@@ -349,28 +351,28 @@ class MapsSearchClient(MapsSearchClientBase):
     def get_polygon(
             self,
             *,
-            coordinates: List[float],
-            view: Optional[str] = None,
-            result_type: Union[str, _models.BoundaryResultTypeEnum] = "countryRegion",
-            resolution: Union[str, _models.ResolutionEnum] = "medium",
+            coordinates: LatLon,
+            localized_map_view: Optional[str] = None,
+            result_type: Union[str, BoundaryResultTypeEnum] = "countryRegion",
+            resolution: Union[str, ResolutionEnum] = "medium",
             **kwargs: Any
-    ) -> _models.Boundary:
+    ) -> Boundary:
         """Use to get polygon data of a geographical area shape such as a city or a country region.
 
         The ``Get Polygon`` API is an HTTP ``GET`` request that supplies polygon data of a geographical
         area outline such as a city or a country region.
 
         :keyword coordinates: A point on the earth specified as a longitude and latitude. Example:
-         &coordinates=lon,lat. Required.
-        :paramtype coordinates: list[float]
-        :keyword view: A string that represents an `ISO 3166-1 Alpha-2 region/country code
+         LatLon(lat, lon). Required.
+        :paramtype coordinates: LatLon
+        :keyword localized_map_view: A string that represents an `ISO 3166-1 Alpha-2 region/country code
          <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_. This will alter Geopolitical disputed
          borders and labels to align with the specified user region. By default, the View parameter is
          set to “Auto” even if you haven’t defined it in the request.
 
          Please refer to `Supported Views <https://aka.ms/AzureMapsLocalizationViews>`_ for details and
          to see the available Views. Default value is None.
-        :paramtype view: str
+        :paramtype localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
         :keyword result_type: The geopolitical concept to return a boundary for. Known values are:
          "countryRegion", "adminDistrict", "adminDistrict2", "postalCode", "postalCode2", "postalCode3",
          "postalCode4", "neighborhood", and "locality". Default value is "countryRegion".
@@ -383,8 +385,8 @@ class MapsSearchClient(MapsSearchClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         result = self._search_client.get_polygon(
-            coordinates=coordinates,
-            view=view,
+            coordinates=coordinates and [coordinates.lon, coordinates.lat] or None,
+            view=localized_map_view,
             result_type=result_type,
             resolution=resolution,
             **kwargs
