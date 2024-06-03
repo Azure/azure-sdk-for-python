@@ -100,7 +100,7 @@ def _set_up_index(service_name, endpoint, cred, schema, index_batch):
         index_name = index_json["name"]
         index = SearchIndex.from_dict(index_json)
         client = SearchIndexClient(endpoint, cred, retry_backoff_factor=60)
-        index_create = client.create_index(**index)
+        index_create = client.create_index(index)
         # response = requests.post(
         #     SERVICE_URL_FMT.format(service_name, SEARCH_ENDPOINT_SUFFIX),
         #     headers={"Content-Type": "application/json", "Authorization": "Bearer {}".format(cred.get_token("https://search.azure.com/.default"))},
