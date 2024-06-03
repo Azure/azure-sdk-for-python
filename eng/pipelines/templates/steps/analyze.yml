@@ -70,12 +70,10 @@ steps:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       VerifyAutorest: ${{ parameters.VerifyAutorest }}
 
-  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-    # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR
-    # builds should be sufficient.
-    condition: and(succeededOrFailed(), ne(variables['Build.Reason'],'PullRequest'))
-    displayName: 'Component Detection'
-
+  - template: ../steps/set-dev-build.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      
   - task: PythonScript@0
     displayName: 'Verify sdist'
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifySdist'],'true'))
@@ -100,12 +98,12 @@ steps:
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
-      AdditionalTestArgs: ${{parameters.AdditionalTestArgs }}
+      AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
   - template: run_pylint.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      AdditionalTestArgs: ${{parameters.AdditionalTestArgs }}
+      AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
   - ${{ if parameters.ValidateFormatting }}:
     - template: run_black.yml
@@ -124,18 +122,18 @@ steps:
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
-      AdditionalTestArgs: ${{parameters.AdditionalTestArgs }}
+      AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
   - template: /eng/pipelines/templates/steps/update_snippet.yml
     parameters:
       ScanPath: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
-      AdditionalTestArgs: ${{parameters.AdditionalTestArgs }}
+      AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
   - template: ../steps/run_breaking_changes.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
-      AdditionalTestArgs: ${{parameters.AdditionalTestArgs }}
+      AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
   - template: /eng/common/pipelines/templates/steps/create-apireview.yml
     parameters:

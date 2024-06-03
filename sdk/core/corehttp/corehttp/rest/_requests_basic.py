@@ -27,8 +27,8 @@ from __future__ import annotations
 import logging
 import collections.abc as collections
 from typing import TYPE_CHECKING, Any
-import requests  # pylint: disable=all
-from requests.structures import CaseInsensitiveDict  # pylint: disable=all
+import requests  # pylint: disable=networking-import-outside-azure-core-transport
+from requests.structures import CaseInsensitiveDict  # pylint: disable=networking-import-outside-azure-core-transport
 from urllib3.exceptions import (
     DecodeError as CoreDecodeError,
     ReadTimeoutError,
@@ -172,8 +172,7 @@ def _read_raw_stream(response, chunk_size=1):
     # Special case for urllib3.
     if hasattr(response.raw, "stream"):
         try:
-            for chunk in response.raw.stream(chunk_size, decode_content=False):
-                yield chunk
+            yield from response.raw.stream(chunk_size, decode_content=False)
         except ProtocolError as e:
             raise ServiceResponseError(e, error=e) from e
         except CoreDecodeError as e:

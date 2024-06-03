@@ -187,7 +187,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
         created_properties = await created_collection.read()
         assert 'consistent' == created_properties['indexingPolicy']['indexingMode']
-        assert PartitionKey(path='/pk', kind='Hash') == created_collection._properties['partitionKey']
+        assert PartitionKey(path='/pk', kind='Hash') == created_properties['partitionKey']
 
         # read collections after creation
         collections = [collection async for collection in created_db.list_containers()]
@@ -275,7 +275,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # create document without partition key being specified
         created_document = await created_collection.create_item(body=document_definition)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        assert self.last_headers[1] == '["WA"]'
+        assert self.last_headers[0] == '["WA"]'
         del self.last_headers[:]
 
         assert created_document.get('id') == document_definition.get('id')
@@ -292,7 +292,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # Create document with partitionkey not present as a leaf level property but a dict
         await created_collection1.create_item(document_definition)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        assert self.last_headers[1] == [{}]
+        assert self.last_headers[0] == [{}]
         del self.last_headers[:]
 
         collection_id = 'test_partitioned_collection_partition_key_extraction2 ' + str(uuid.uuid4())
@@ -306,7 +306,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # Create document with partitionkey not present in the document
         await created_collection2.create_item(document_definition)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        assert self.last_headers[1] == [{}]
+        assert self.last_headers[0] == [{}]
         del self.last_headers[:]
 
         await created_db.delete_container(created_collection.id)
@@ -330,7 +330,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         _retry_utility_async.ExecuteFunctionAsync = self._mock_execute_function
         await created_collection1.create_item(body=document_definition)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        assert self.last_headers[1] == '["val1"]'
+        assert self.last_headers[0] == '["val1"]'
         del self.last_headers[:]
 
         collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars2 ' + str(uuid.uuid4())
@@ -349,7 +349,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # create document without partition key being specified
         await created_collection2.create_item(body=document_definition)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        assert self.last_headers[1] == '["val2"]'
+        assert self.last_headers[0] == '["val2"]'
         del self.last_headers[:]
 
         await created_db.delete_container(created_collection1.id)

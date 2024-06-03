@@ -176,6 +176,9 @@ class IssueProcess:
     @property
     def readme_local(self) -> str:
         return str(Path(self.spec_repo, self.readme_link.split('specification/')[1]))
+    
+    def local_file(self, name: str = "readme.md") -> Path:
+        return Path(self.readme_local, name)
 
     def get_local_file_content(self, name: str = "readme.md") -> str:
         with open(Path(self.readme_local, name), 'r', encoding='utf-8') as f:
