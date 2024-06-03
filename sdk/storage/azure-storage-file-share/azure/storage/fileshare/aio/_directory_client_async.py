@@ -37,7 +37,7 @@ from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers
 from .._shared.response_handlers import process_storage_error, return_response_headers
 from ._file_client_async import ShareFileClient
-from ._models import DirectoryPropertiesPaged, HandlesPaged
+from ._models import DirectoryPropertiesPaged, Handle, HandlesPaged
 
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
@@ -47,7 +47,7 @@ else:
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from .._models import DirectoryProperties, FileProperties, Handle, NTFSAttributes
+    from .._models import DirectoryProperties, FileProperties, NTFSAttributes
 
 
 class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
@@ -256,7 +256,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             allow_source_trailing_dot=self.allow_source_trailing_dot, token_intent=self.file_request_intent,
             **kwargs)
 
-    def get_subdirectory_client(self, directory_name: str, **kwargs) -> Self:
+    def get_subdirectory_client(self, directory_name: str, **kwargs) -> "ShareDirectoryClient":
         """Get a client to interact with a specific subdirectory.
 
         The subdirectory need not already exist.
@@ -283,12 +283,12 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
             policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
         )
-        return cast(Self, ShareDirectoryClient(
+        return ShareDirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot,
             credential=self.credential, api_version=self.api_version, _hosts=self._hosts, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot,
             allow_source_trailing_dot=self.allow_source_trailing_dot, token_intent=self.file_request_intent,
-            **kwargs))
+            **kwargs)
 
     @distributed_trace_async
     async def create_directory(self, **kwargs: Any) -> Dict[str, Any]:
@@ -400,7 +400,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             process_storage_error(error)
 
     @distributed_trace_async
-    async def rename_directory(self, new_name: str, **kwargs: Any) -> Self:
+    async def rename_directory(self, new_name: str, **kwargs: Any) -> "ShareDirectoryClient":
         """
         Rename the source directory.
 
@@ -494,7 +494,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                 headers=headers,
                 **kwargs)
 
-            return cast(Self, new_directory_client)
+            return new_directory_client
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -619,7 +619,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             and the number of handles failed to close in a dict.
         :rtype: dict[str, int]
         """
-        if hasattr(handle, 'id'):
+        if isinstance(handle, Handle):
             handle_id = handle.id
         else:
             handle_id = handle
@@ -815,7 +815,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             process_storage_error(error)
 
     @distributed_trace_async
-    async def create_subdirectory(self, directory_name: str, **kwargs: Any) -> Self:
+    async def create_subdirectory(self, directory_name: str, **kwargs: Any) -> "ShareDirectoryClient":
         """Creates a new subdirectory and returns a client to interact
         with the subdirectory.
 

@@ -27,7 +27,7 @@ from ._directory_client_helpers import (
 )
 from ._file_client import ShareFileClient
 from ._generated import AzureFileStorage
-from ._models import DirectoryPropertiesPaged, HandlesPaged
+from ._models import DirectoryPropertiesPaged, Handle, HandlesPaged
 from ._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
 from ._serialize import get_api_version, get_dest_access_conditions, get_rename_smb_properties
 from ._shared.base_client import parse_connection_str, parse_query, StorageAccountHostsMixin, TransportWrapper
@@ -42,7 +42,7 @@ else:
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from ._models import FileProperties, DirectoryProperties, Handle, NTFSAttributes
+    from ._models import FileProperties, DirectoryProperties, NTFSAttributes
 
 
 class ShareDirectoryClient(StorageAccountHostsMixin):
@@ -250,7 +250,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             allow_trailing_dot=self.allow_trailing_dot,
             allow_source_trailing_dot=self.allow_source_trailing_dot, **kwargs)
 
-    def get_subdirectory_client(self, directory_name: str, **kwargs: Any) -> Self:
+    def get_subdirectory_client(self, directory_name: str, **kwargs: Any) -> "ShareDirectoryClient":
         """Get a client to interact with a specific subdirectory.
 
         The subdirectory need not already exist.
@@ -277,12 +277,12 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             transport=TransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
             policies=self._pipeline._impl_policies  # pylint: disable=protected-access
         )
-        return cast(Self, ShareDirectoryClient(
+        return ShareDirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot,
             credential=self.credential, token_intent=self.file_request_intent, api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
             _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot,
-            allow_source_trailing_dot=self.allow_source_trailing_dot, **kwargs))
+            allow_source_trailing_dot=self.allow_source_trailing_dot, **kwargs)
 
     @distributed_trace
     def create_directory(self, **kwargs: Any) -> Dict[str, Any]:
@@ -394,7 +394,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def rename_directory(self, new_name: str, **kwargs: Any) -> Self:
+    def rename_directory(self, new_name: str, **kwargs: Any) -> "ShareDirectoryClient":
         """
         Rename the source directory.
 
@@ -488,7 +488,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 headers=headers,
                 **kwargs)
 
-            return cast(Self, new_directory_client)
+            return new_directory_client
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -546,7 +546,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             page_iterator_class=DirectoryPropertiesPaged)
 
     @distributed_trace
-    def list_handles(self, recursive: bool = False, **kwargs: Any) -> ItemPaged["Handle"]:
+    def list_handles(self, recursive: bool = False, **kwargs: Any) -> ItemPaged[Handle]:
         """Lists opened handles on a directory or a file under the directory.
 
         :param bool recursive:
@@ -574,7 +574,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             page_iterator_class=HandlesPaged)
 
     @distributed_trace
-    def close_handle(self, handle: Union[str, "Handle"], **kwargs: Any) -> Dict[str, int]:
+    def close_handle(self, handle: Union[str, Handle], **kwargs: Any) -> Dict[str, int]:
         """Close an open file handle.
 
         :param handle:
@@ -591,7 +591,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             and the number of handles failed to close in a dict.
         :rtype: dict[str, int]
         """
-        if hasattr(handle, 'id'):
+        if isinstance(handle, Handle):
             handle_id = handle.id
         else:
             handle_id = handle
@@ -810,7 +810,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def create_subdirectory(self, directory_name: str, **kwargs: Any) -> Self:
+    def create_subdirectory(self, directory_name: str, **kwargs: Any) -> "ShareDirectoryClient":
         """Creates a new subdirectory and returns a client to interact
         with the subdirectory.
 
