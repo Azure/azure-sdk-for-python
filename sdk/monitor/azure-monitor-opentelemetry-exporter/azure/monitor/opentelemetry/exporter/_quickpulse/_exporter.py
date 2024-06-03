@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 import logging
 from typing import Any, Optional
+import weakref
 
 from opentelemetry.context import (
     _SUPPRESS_INSTRUMENTATION_KEY,
@@ -33,6 +34,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
 from azure.monitor.opentelemetry.exporter._quickpulse._generated._configuration import QuickpulseClientConfiguration
 from azure.monitor.opentelemetry.exporter._quickpulse._generated._client import QuickpulseClient
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import MonitoringDataPoint
+from azure.monitor.opentelemetry.exporter._quickpulse._policy import _QuickpulseRedirectPolicy
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _get_global_quickpulse_state,
     _is_ping_state,
@@ -86,9 +88,9 @@ class _QuickpulseExporter(MetricExporter):
         # TODO: Support AADaudience (scope)/credentials
         # Pass `None` for now until swagger definition is fixed
         config = QuickpulseClientConfiguration(credential=None)  # type: ignore
+        qp_redirect_policy = _QuickpulseRedirectPolicy(permit_redirects=False)
         policies = [
-            # TODO: Support redirect
-            config.redirect_policy,
+            qp_redirect_policy,
             # Needed for serialization
             ContentDecodePolicy(),
             # Logging for client calls
@@ -103,6 +105,9 @@ class _QuickpulseExporter(MetricExporter):
             endpoint=self._live_endpoint,
             policies=policies
         )
+        # Create a weakref of the client to the redirect policy so the endpoint can be dynamically modified if redirect does occur
+        qp_redirect_policy._qp_client_ref = weakref.ref(self._client)
+        
 
         MetricExporter.__init__(
             self,
