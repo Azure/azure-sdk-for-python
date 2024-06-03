@@ -16,6 +16,7 @@ import zlib
 import pytest
 
 from devtools_testutils import AzureRecordedTestCase
+from azure.storage.blob import BlobServiceClient
 
 from .. import FakeTokenCredential
 
@@ -180,15 +181,8 @@ class StorageRecordedTestCase(AzureRecordedTestCase):
                 assert i[1] == size
 
     def generate_oauth_token(self):
-        if self.is_live:
-            from azure.identity import ClientSecretCredential
-
-            return ClientSecretCredential(
-                self.get_settings_value("TENANT_ID"),
-                self.get_settings_value("CLIENT_ID"),
-                self.get_settings_value("CLIENT_SECRET"),
-            )
-        return self.generate_fake_token()
+        cred = self.get_credential(BlobServiceClient)
+        return cred
 
     def generate_fake_token(self):
         return FakeTokenCredential()
