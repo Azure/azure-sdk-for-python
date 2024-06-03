@@ -16,7 +16,6 @@ from typing import (
     Optional,
     TypeVar,
     Union,
-    overload,
     TYPE_CHECKING,
 )
 
@@ -28,7 +27,6 @@ from azure.core.messaging import CloudEvent
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, HttpResponse
-from azure.core.utils import case_insensitive_dict
 
 from ._operations import (
     EventGridPublisherClientOperationsMixin as PublisherOperationsMixin,
@@ -105,8 +103,6 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
     ) -> None:  # pylint: disable=docstring-should-be-keyword, docstring-missing-param
         """Send events to the Event Grid Service.
 
-        :param topic_name: The name of the topic to send the event to.
-        :type topic_name: str
         :param events: The event to send.
         :type events: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
          or CNCFCloudEvent or List[CNCFCloudEvent] or EventGridEvent or List[EventGridEvent]
@@ -143,24 +139,24 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
                 # Try to send via namespace
                 self._publish(self._namespace, _serialize_events(events), **kwargs)
             except Exception as exception:  # pylint: disable=broad-except
-                self._http_response_error_handler(exception, "Namespaces")
+                self._http_response_error_handler(exception)
                 raise exception
         else:
             kwargs["content_type"] = content_type if content_type else "application/json; charset=utf-8"
             try:
                 self._publish(events, channel_name=channel_name, **kwargs)
             except Exception as exception:
-                self._http_response_error_handler(exception, "Basic")
+                self._http_response_error_handler(exception)
                 raise exception
 
-    def _http_response_error_handler(self, exception, level):
+    def _http_response_error_handler(self, exception):
         if isinstance(exception, HttpResponseError):
             if exception.status_code == 400:
                 raise HttpResponseError("Invalid event data. Please check the data and try again.") from exception
             if exception.status_code == 404:
                 raise ResourceNotFoundError(
                     "Resource not found. "
-                    f"Please check that the tier you are using, corresponds to the correct "
+                    "Please check that the tier you are using, corresponds to the correct "
                     "endpoint and/or topic name."
                 ) from exception
             raise exception
