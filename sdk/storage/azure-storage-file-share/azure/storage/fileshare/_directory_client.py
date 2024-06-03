@@ -10,7 +10,7 @@ import sys
 import time
 from datetime import datetime
 from typing import (
-    Any, AnyStr, Dict, IO, Iterable, Optional, Union,
+    Any, AnyStr, cast, Dict, IO, Iterable, Optional, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -23,17 +23,17 @@ from ._deserialize import deserialize_directory_properties
 from ._directory_client_helpers import (
     _format_url,
     _from_directory_url,
-    _parse_snapshot,
-    _parse_url)
-from ._generated import AzureFileStorage
-from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
-from ._shared.request_handlers import add_metadata_headers
-from ._shared.response_handlers import return_response_headers, process_storage_error
-from ._shared.parser import _str
-from ._parser import _get_file_permission, _datetime_to_str
-from ._serialize import get_api_version, get_dest_access_conditions, get_rename_smb_properties
+    _parse_url
+)
 from ._file_client import ShareFileClient
-from ._models import DirectoryPropertiesPaged, HandlesPaged
+from ._generated import AzureFileStorage
+from ._models import DirectoryPropertiesPaged, Handle, HandlesPaged
+from ._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
+from ._serialize import get_api_version, get_dest_access_conditions, get_rename_smb_properties
+from ._shared.base_client import parse_connection_str, parse_query, StorageAccountHostsMixin, TransportWrapper
+from ._shared.parser import _str
+from ._shared.request_handlers import add_metadata_headers
+from ._shared.response_handlers import process_storage_error, return_response_headers
 
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
@@ -42,7 +42,7 @@ else:
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from ._models import FileProperties, DirectoryProperties, Handle, NTFSAttributes
+    from ._models import FileProperties, DirectoryProperties, NTFSAttributes
 
 
 class ShareDirectoryClient(StorageAccountHostsMixin):
@@ -136,7 +136,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
                                         file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access
 
     @classmethod
     def from_directory_url(
@@ -250,7 +250,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             allow_trailing_dot=self.allow_trailing_dot,
             allow_source_trailing_dot=self.allow_source_trailing_dot, **kwargs)
 
-    def get_subdirectory_client(self, directory_name: str, **kwargs: Any) -> Self:
+    def get_subdirectory_client(self, directory_name: str, **kwargs: Any) -> "ShareDirectoryClient":
         """Get a client to interact with a specific subdirectory.
 
         The subdirectory need not already exist.
@@ -340,7 +340,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         metadata = kwargs.pop('metadata', None)
         headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))  # type: ignore
+        headers.update(add_metadata_headers(metadata))
 
         file_attributes = kwargs.pop('file_attributes', 'none')
         file_creation_time = kwargs.pop('file_creation_time', 'now')
@@ -351,7 +351,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         file_permission = _get_file_permission(file_permission, file_permission_key, 'inherit')
 
         try:
-            return self._client.directory.create(  # type: ignore
+            return cast(Dict[str, Any], self._client.directory.create(
                 file_attributes=str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
@@ -361,7 +361,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -394,7 +394,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def rename_directory(self, new_name: str, **kwargs: Any) -> Self:
+    def rename_directory(self, new_name: str, **kwargs: Any) -> "ShareDirectoryClient":
         """
         Rename the source directory.
 
@@ -546,7 +546,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             page_iterator_class=DirectoryPropertiesPaged)
 
     @distributed_trace
-    def list_handles(self, recursive: bool = False, **kwargs: Any) -> ItemPaged["Handle"]:
+    def list_handles(self, recursive: bool = False, **kwargs: Any) -> ItemPaged[Handle]:
         """Lists opened handles on a directory or a file under the directory.
 
         :param bool recursive:
@@ -574,7 +574,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             page_iterator_class=HandlesPaged)
 
     @distributed_trace
-    def close_handle(self, handle: Union[str, "Handle"], **kwargs: Any) -> Dict[str, int]:
+    def close_handle(self, handle: Union[str, Handle], **kwargs: Any) -> Dict[str, int]:
         """Close an open file handle.
 
         :param handle:
@@ -591,9 +591,9 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             and the number of handles failed to close in a dict.
         :rtype: dict[str, int]
         """
-        try:
-            handle_id = handle.id  # type: ignore
-        except AttributeError:
+        if isinstance(handle, Handle):
+            handle_id = handle.id
+        else:
             handle_id = handle
         if handle_id == '*':
             raise ValueError("Handle ID '*' is not supported. Use 'close_all_handles' instead.")
@@ -680,13 +680,13 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            response = self._client.directory.get_properties(
+            response = cast("DirectoryProperties", self._client.directory.get_properties(
                 timeout=timeout,
                 cls=deserialize_directory_properties,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
-        return response  # type: ignore
+        return response
 
     @distributed_trace
     def set_directory_metadata(self, metadata: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
@@ -712,11 +712,11 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         try:
-            return self._client.directory.set_metadata(  # type: ignore
+            return cast(Dict[str, Any], self._client.directory.set_metadata(
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -796,7 +796,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
         file_change_time = kwargs.pop('file_change_time', None)
         try:
-            return self._client.directory.set_properties(  # type: ignore
+            return cast(Dict[str, Any], self._client.directory.set_properties(
                 file_attributes=_str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
@@ -805,12 +805,12 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 file_permission_key=permission_key,
                 timeout=timeout,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
-    def create_subdirectory(self, directory_name: str, **kwargs: Any) -> Self:
+    def create_subdirectory(self, directory_name: str, **kwargs: Any) -> "ShareDirectoryClient":
         """Creates a new subdirectory and returns a client to interact
         with the subdirectory.
 
@@ -841,7 +841,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         subdir = self.get_subdirectory_client(directory_name)
         subdir.create_directory(metadata=metadata, timeout=timeout, **kwargs)
-        return subdir  # type: ignore
+        return subdir
 
     @distributed_trace
     def delete_subdirectory(self, directory_name: str, **kwargs: Any) -> None:

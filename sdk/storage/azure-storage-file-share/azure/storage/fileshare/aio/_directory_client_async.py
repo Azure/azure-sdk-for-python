@@ -11,7 +11,7 @@ import time
 import warnings
 from datetime import datetime
 from typing import (
-    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, Optional, Union,
+    Any, AnyStr, AsyncIterable, cast, Dict, IO, Iterable, Optional, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -21,23 +21,23 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from .._deserialize import deserialize_directory_properties
 from .._directory_client_helpers import (
     _format_url,
     _from_directory_url,
-    _parse_snapshot,
-    _parse_url)
-from .._parser import _get_file_permission, _datetime_to_str
-from .._shared.parser import _str
+    _parse_url
+)
 from .._generated.aio import AzureFileStorage
-from .._shared.base_client import StorageAccountHostsMixin, parse_query
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
+from .._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
+from .._serialize import get_api_version, get_dest_access_conditions, get_rename_smb_properties
+from .._shared.base_client import parse_query, StorageAccountHostsMixin
+from .._shared.base_client_async import parse_connection_str, AsyncStorageAccountHostsMixin, AsyncTransportWrapper
+from .._shared.parser import _str
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers
-from .._shared.response_handlers import return_response_headers, process_storage_error
-from .._deserialize import deserialize_directory_properties
-from .._serialize import get_api_version, get_dest_access_conditions, get_rename_smb_properties
+from .._shared.response_handlers import process_storage_error, return_response_headers
 from ._file_client_async import ShareFileClient
-from ._models import DirectoryPropertiesPaged, HandlesPaged
+from ._models import DirectoryPropertiesPaged, Handle, HandlesPaged
 
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
@@ -47,10 +47,10 @@ else:
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from .._models import FileProperties, DirectoryProperties, Handle, NTFSAttributes
+    from .._models import DirectoryProperties, FileProperties, NTFSAttributes
 
 
-class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
+class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
     """A client to interact with a specific directory, although it may not yet exist.
 
     For operations relating to a specific subdirectory or file in this share, the clients for those
@@ -142,7 +142,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
                                         file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access
 
     @classmethod
     def from_directory_url(
@@ -247,7 +247,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
         )
         return ShareFileClient(
             self.url, file_path=file_name, share_name=self.share_name, snapshot=self.snapshot,
@@ -256,7 +256,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             allow_source_trailing_dot=self.allow_source_trailing_dot, token_intent=self.file_request_intent,
             **kwargs)
 
-    def get_subdirectory_client(self, directory_name: str, **kwargs) -> Self:
+    def get_subdirectory_client(self, directory_name: str, **kwargs) -> "ShareDirectoryClient":
         """Get a client to interact with a specific subdirectory.
 
         The subdirectory need not already exist.
@@ -281,7 +281,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
         )
         return ShareDirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot,
@@ -346,7 +346,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         metadata = kwargs.pop('metadata', None)
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))  # type: ignore
+        headers.update(add_metadata_headers(metadata))
 
         file_attributes = kwargs.pop('file_attributes', 'none')
         file_creation_time = kwargs.pop('file_creation_time', 'now')
@@ -357,7 +357,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         file_permission = _get_file_permission(file_permission, file_permission_key, 'inherit')
 
         try:
-            return await self._client.directory.create(  # type: ignore
+            return cast(Dict[str, Any], await self._client.directory.create(
                 file_attributes=str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
@@ -367,7 +367,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -400,7 +400,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             process_storage_error(error)
 
     @distributed_trace_async
-    async def rename_directory(self, new_name: str, **kwargs: Any) -> Self:
+    async def rename_directory(self, new_name: str, **kwargs: Any) -> "ShareDirectoryClient":
         """
         Rename the source directory.
 
@@ -619,9 +619,9 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             and the number of handles failed to close in a dict.
         :rtype: dict[str, int]
         """
-        try:
-            handle_id = handle.id  # type: ignore
-        except AttributeError:
+        if isinstance(handle, Handle):
+            handle_id = handle.id
+        else:
             handle_id = handle
         if handle_id == '*':
             raise ValueError("Handle ID '*' is not supported. Use 'close_all_handles' instead.")
@@ -708,13 +708,13 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            response = await self._client.directory.get_properties(
+            response = cast("DirectoryProperties", await self._client.directory.get_properties(
                 timeout=timeout,
                 cls=deserialize_directory_properties,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
-        return response  # type: ignore
+        return response
 
     @distributed_trace_async
     async def set_directory_metadata(self, metadata: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
@@ -740,11 +740,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         try:
-            return await self._client.directory.set_metadata(  # type: ignore
+            return cast(Dict[str, Any], await self._client.directory.set_metadata(
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -801,7 +801,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
         file_change_time = kwargs.pop('file_change_time', None)
         try:
-            return await self._client.directory.set_properties(  # type: ignore
+            return cast(Dict[str, Any], await self._client.directory.set_properties(
                 file_attributes=_str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
@@ -810,12 +810,12 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                 file_permission_key=permission_key,
                 timeout=timeout,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def create_subdirectory(self, directory_name: str, **kwargs: Any) -> Self:
+    async def create_subdirectory(self, directory_name: str, **kwargs: Any) -> "ShareDirectoryClient":
         """Creates a new subdirectory and returns a client to interact
         with the subdirectory.
 
@@ -846,7 +846,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         timeout = kwargs.pop('timeout', None)
         subdir = self.get_subdirectory_client(directory_name)
         await subdir.create_directory(metadata=metadata, timeout=timeout, **kwargs)
-        return subdir  # type: ignore
+        return subdir
 
     @distributed_trace_async
     async def delete_subdirectory(self, directory_name: str, **kwargs: Any) -> None:

@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from datetime import datetime, timedelta
-from typing import Any, Dict, Optional, Union
+from typing import Any, cast, Dict, Optional, Union
 
 from ._generated._serialization import Serializer
 
@@ -54,7 +54,7 @@ def _parse_snapshot(
     path_snapshot: Optional[str] = None
 ) -> Optional[str]:
     if hasattr(snapshot, 'snapshot'):
-        return snapshot.snapshot
+        return snapshot.snapshot  # type: ignore
     if isinstance(snapshot, Dict):
-        return snapshot['snapshot']
+        return cast(str, snapshot['snapshot'])
     return snapshot or path_snapshot
