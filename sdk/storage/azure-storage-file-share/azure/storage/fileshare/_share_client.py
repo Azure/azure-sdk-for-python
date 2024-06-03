@@ -6,40 +6,46 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only, too-many-lines
 
 from typing import (
-    Any, Dict, Iterable, Literal, Optional, Union,
+    Any, cast, Dict, Literal, Optional, Union,
     TYPE_CHECKING
 )
-from typing_extensions import Self
+from typing_extensions import Never, Self
 
 from azure.core.exceptions import HttpResponseError
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
+from azure.core.tracing.decorator import distributed_trace
 from ._deserialize import deserialize_permission, deserialize_share_properties
 from ._directory_client import ShareDirectoryClient
 from ._file_client import ShareFileClient
 from ._generated import AzureFileStorage
 from ._generated.models import (
     DeleteSnapshotsOptionType,
-    SignedIdentifier)
+    ShareStats,
+    SignedIdentifier
+)
 from ._lease import ShareLeaseClient
 from ._models import ShareProtocols
-from ._serialize import get_api_version, get_access_conditions
+from ._parser import _parse_snapshot
+from ._serialize import get_access_conditions, get_api_version
 from ._share_client_helpers import (
     _create_permission_for_share_options,
     _format_url,
     _from_share_url,
-    _parse_url)
-from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
+    _parse_url
+)
+from ._shared.base_client import parse_connection_str, parse_query, StorageAccountHostsMixin, TransportWrapper
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
-    return_response_headers,
     process_storage_error,
-    return_headers_and_deserialized)
+    return_headers_and_deserialized,
+    return_response_headers
+)
 
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from ._models import AccessPolicy, ShareProperties
+    from ._models import AccessPolicy, DirectoryProperties, FileProperties, ShareProperties
 
 
 class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-methods
@@ -111,14 +117,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         if not sas_token and not credential:
             raise ValueError(
                 'You need to provide either an account shared key or SAS token when creating a storage service.')
-        try:
-            self.snapshot = snapshot.snapshot  # type: ignore
-        except AttributeError:
-            try:
-                self.snapshot = snapshot['snapshot']  # type: ignore
-            except TypeError:
-                self.snapshot = snapshot or path_snapshot
-
+        self.snapshot = _parse_snapshot(snapshot, path_snapshot)
         self.share_name = share_name
         self._query_str, credential = self._format_query_string(
             sas_token=sas_token, credential=credential, share_snapshot=self.snapshot)
@@ -131,7 +130,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
                                         file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access, line-too-long
 
     @classmethod
     def from_share_url(
@@ -305,7 +304,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         """
         kwargs['lease_duration'] = kwargs.pop('lease_duration', -1)
         lease_id = kwargs.pop('lease_id', None)
-        lease = ShareLeaseClient(self, lease_id=lease_id)  # type: ignore
+        lease = ShareLeaseClient(cast(Never, self), lease_id=lease_id)
         lease.acquire(**kwargs)
         return lease
 
@@ -362,10 +361,10 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         if root_squash and protocols not in ['NFS', ShareProtocols.NFS]:
             raise ValueError("The 'root_squash' keyword can only be used on NFS enabled shares.")
         headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))  # type: ignore
+        headers.update(add_metadata_headers(metadata))
 
         try:
-            return self._client.share.create(  # type: ignore
+            return cast(Dict[str, Any], self._client.share.create(
                 timeout=timeout,
                 metadata=metadata,
                 quota=quota,
@@ -374,7 +373,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
                 enabled_protocols=protocols,
                 cls=return_response_headers,
                 headers=headers,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -414,13 +413,13 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         metadata = kwargs.pop('metadata', None)
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))  # type: ignore
+        headers.update(add_metadata_headers(metadata))
         try:
-            return self._client.share.create_snapshot(  # type: ignore
+            return cast(Dict[str, Any], self._client.share.create_snapshot(
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -515,17 +514,17 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         try:
-            props = self._client.share.get_properties(
+            props = cast("ShareProperties", self._client.share.get_properties(
                 timeout=timeout,
                 sharesnapshot=self.snapshot,
                 cls=deserialize_share_properties,
                 lease_access_conditions=access_conditions,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
         props.name = self.share_name
         props.snapshot = self.snapshot
-        return props # type: ignore
+        return props
 
     @distributed_trace
     def set_share_quota(self, quota: int, **kwargs: Any) -> Dict[str, Any]:
@@ -562,13 +561,13 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.share.set_properties(  # type: ignore
+            return cast(Dict[str, Any], self._client.share.set_properties(
                 timeout=timeout,
                 quota=quota,
                 access_tier=None,
                 lease_access_conditions=access_conditions,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -618,14 +617,14 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         if all(parameter is None for parameter in [access_tier, quota, root_squash]):
             raise ValueError("set_share_properties should be called with at least one parameter.")
         try:
-            return self._client.share.set_properties(  # type: ignore
+            return cast(Dict[str, Any], self._client.share.set_properties(
                 timeout=timeout,
                 quota=quota,
                 access_tier=access_tier,
                 root_squash=root_squash,
                 lease_access_conditions=access_conditions,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -670,12 +669,12 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         try:
-            return self._client.share.set_metadata(  # type: ignore
+            return cast(Dict[str, Any], self._client.share.set_metadata(
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
                 lease_access_conditions=access_conditions,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -716,7 +715,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         }
 
     @distributed_trace
-    def set_share_access_policy(self, signed_identifiers: Dict[str, "AccessPolicy"], **kwargs: Any) -> Dict[str, str]:
+    def set_share_access_policy(self, signed_identifiers: Dict[str, "AccessPolicy"], **kwargs: Any) -> Dict[str, Any]:
         """Sets the permissions for the share, or stored access
         policies that may be used with Shared Access Signatures. The permissions
         indicate whether files in a share may be accessed publicly.
@@ -740,7 +739,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             This keyword argument was introduced in API version '2020-08-04'.
 
         :returns: Share-updated property dict (Etag and last modified).
-        :rtype: dict[str, str]
+        :rtype: dict[str, Any]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
@@ -754,14 +753,13 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
                 value.start = serialize_iso(value.start)
                 value.expiry = serialize_iso(value.expiry)
             identifiers.append(SignedIdentifier(id=key, access_policy=value))
-        signed_identifiers = identifiers  # type: ignore
         try:
-            return self._client.share.set_access_policy(  # type: ignore
-                share_acl=signed_identifiers or None,
+            return cast(Dict[str, Any], self._client.share.set_access_policy(
+                share_acl=identifiers or None,
                 timeout=timeout,
                 cls=return_response_headers,
                 lease_access_conditions=access_conditions,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -791,11 +789,11 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         try:
-            stats = self._client.share.get_statistics(
+            stats = cast(ShareStats, self._client.share.get_statistics(
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
-                **kwargs)
-            return stats.share_usage_bytes  # type: ignore
+                **kwargs))
+            return stats.share_usage_bytes
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -805,7 +803,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         name_starts_with: Optional[str] = None,
         marker: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable[Dict[str, str]]:
+    ) -> ItemPaged[Union["DirectoryProperties", "FileProperties"]]:
         """Lists the directories and files under the share.
 
         :param str directory_name:
@@ -837,7 +835,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
-        :rtype: Iterable[dict[str, str]]
+        :rtype: ~azure.core.paging.ItemPaged[DirectoryProperties and FileProperties]
 
         .. admonition:: Example:
 
@@ -855,7 +853,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             name_starts_with=name_starts_with, marker=marker, timeout=timeout, **kwargs)
 
     @distributed_trace
-    def create_permission_for_share(self, file_permission: str, **kwargs: Any) -> str:
+    def create_permission_for_share(self, file_permission: str, **kwargs: Any) -> Optional[str]:
         """Create a permission (a security descriptor) at the share level.
 
         This 'permission' can be used for the files/directories in the share.
@@ -871,12 +869,12 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
         :returns: A file permission key
-        :rtype: str
+        :rtype: str or None
         """
         timeout = kwargs.pop('timeout', None)
         options = _create_permission_for_share_options(file_permission, timeout=timeout, **kwargs)
         try:
-            return self._client.share.create_permission(**options)
+            return cast(Optional[str], self._client.share.create_permission(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -899,11 +897,11 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.share.get_permission(  # type: ignore
+            return cast(str, self._client.share.get_permission(
                 file_permission_key=permission_key,
                 cls=deserialize_permission,
                 timeout=timeout,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -929,7 +927,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         directory = self.get_directory_client(directory_name)
         kwargs.setdefault('merge_span', True)
         directory.create_directory(**kwargs)
-        return directory  # type: ignore
+        return directory
 
     @distributed_trace
     def delete_directory(self, directory_name: str, **kwargs: Any) -> None:

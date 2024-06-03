@@ -13,6 +13,7 @@ from urllib.parse import quote, unquote, urlparse
 
 from ._deserialize import deserialize_permission_key
 from ._generated.models import SharePermission
+from ._parser import _parse_snapshot
 from ._shared.base_client import parse_query
 
 if TYPE_CHECKING:
@@ -57,14 +58,7 @@ def _from_share_url(share_url: str, snapshot: Optional[Union[str, Dict[str, Any]
 
     share_name = unquote(share_path[-1])
     path_snapshot, _ = parse_query(parsed_url.query)
-    if snapshot:
-        try:
-            path_snapshot = snapshot.snapshot  # type: ignore
-        except AttributeError:
-            try:
-                path_snapshot = snapshot['snapshot']  # type: ignore
-            except TypeError:
-                path_snapshot = snapshot
+    path_snapshot = _parse_snapshot(snapshot, path_snapshot)
 
     if not share_name:
         raise ValueError("Invalid URL. Please provide a URL with a valid share name")
