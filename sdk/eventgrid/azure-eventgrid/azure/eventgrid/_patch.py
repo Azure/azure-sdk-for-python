@@ -132,7 +132,8 @@ class EventGridConsumerClient(InternalEventGridConsumerClient):
         )
 
     def __repr__(self) -> str:
-        return f"<EventGridConsumerClient: namespace_topic={self._namespace}, subscription={self._subscription}, credential type={type(self._credential)}>"
+        return f"<EventGridConsumerClient: namespace_topic={self._namespace}, \
+            subscription={self._subscription}, credential type={type(self._credential)}>"
 
 
 def patch_sdk():
