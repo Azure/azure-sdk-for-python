@@ -366,18 +366,107 @@ class ChatCompletionsFunctionToolDefinition(ChatCompletionsToolDefinition, discr
         super().__init__(*args, type="function", **kwargs)
 
 
+class ChatCompletionsFunctionToolSelection(_model_base.Model):
+    """A tool selection of a specific, named function tool that will limit chat completions to using
+    the named function.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The name of the function that should be called. Required.
+    :vartype name: str
+    """
+
+    name: str = rest_field()
+    """The name of the function that should be called. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class ChatCompletionsNamedToolSelection(_model_base.Model):
     """An abstract representation of an explicit, named tool selection to use for a chat completions
     request.
 
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ChatCompletionsNamedFunctionToolSelection
+
     All required parameters must be populated in order to send to server.
 
-    :ivar type: The object type. Required.
+    :ivar type: The object type. Required. Default value is None.
     :vartype type: str
     """
 
+    __mapping__: Dict[str, _model_base.Model] = {}
     type: str = rest_discriminator(name="type")
-    """The object type. Required."""
+    """The object type. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class ChatCompletionsNamedFunctionToolSelection(
+    ChatCompletionsNamedToolSelection, discriminator="function"
+):  # pylint: disable=name-too-long
+    """A tool selection of a specific, named function tool that will limit chat completions to using
+    the named function.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: The object type, which is always 'function'. Required. Default value is "function".
+    :vartype type: str
+    :ivar function: The function that should be called. Required.
+    :vartype function: ~azure.ai.inference.models.ChatCompletionsFunctionToolSelection
+    """
+
+    type: Literal["function"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'function'. Required. Default value is \"function\"."""
+    function: "_models.ChatCompletionsFunctionToolSelection" = rest_field()
+    """The function that should be called. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        function: "_models.ChatCompletionsFunctionToolSelection",
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="function", **kwargs)
 
 
 class ChatResponseMessage(_model_base.Model):

@@ -11,6 +11,8 @@ from ._models import ChatChoice
 from ._models import ChatCompletions
 from ._models import ChatCompletionsFunctionToolCall
 from ._models import ChatCompletionsFunctionToolDefinition
+from ._models import ChatCompletionsFunctionToolSelection
+from ._models import ChatCompletionsNamedFunctionToolSelection
 from ._models import ChatCompletionsNamedToolSelection
 from ._models import ChatCompletionsToolCall
 from ._models import ChatCompletionsToolDefinition
@@ -36,7 +38,6 @@ from ._enums import ChatCompletionsToolSelectionPreset
 from ._enums import ChatRole
 from ._enums import EmbeddingEncodingFormat
 from ._enums import EmbeddingInputType
-from ._enums import UnknownParams
 from ._enums import CompletionsFinishReason
 from ._enums import ModelType
 
@@ -52,6 +53,8 @@ __all__ = [
     "ChatCompletions",
     "ChatCompletionsFunctionToolCall",
     "ChatCompletionsFunctionToolDefinition",
+    "ChatCompletionsFunctionToolSelection",
+    "ChatCompletionsNamedFunctionToolSelection",
     "ChatCompletionsNamedToolSelection",
     "ChatCompletionsToolCall",
     "ChatCompletionsToolDefinition",
@@ -76,7 +79,6 @@ __all__ = [
     "ChatRole",
     "EmbeddingEncodingFormat",
     "EmbeddingInputType",
-    "UnknownParams",
     "CompletionsFinishReason",
     "ModelType"
 ]

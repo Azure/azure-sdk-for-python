@@ -24,6 +24,7 @@ USAGE:
 
 import io
 
+
 def sample_chat_completions_from_input_bytes():
     import os
 

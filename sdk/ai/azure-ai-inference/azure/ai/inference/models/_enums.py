@@ -45,6 +45,8 @@ class ChatCompletionsToolSelectionPreset(str, Enum, metaclass=CaseInsensitiveEnu
     standard chat
     completions response. Response content may still be influenced by the provided tool
     definitions."""
+    REQUIRED = "required"
+    """Specifies that the model should respond with a call to one or more tools."""
 
 
 class ChatRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):

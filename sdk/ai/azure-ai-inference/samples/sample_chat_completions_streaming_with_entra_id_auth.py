@@ -49,9 +49,7 @@ def sample_chat_completions_streaming_with_entra_id_auth():
     # https://learn.microsoft.com/python/api/overview/azure/identity-readme#defaultazurecredential
 
     client = ChatCompletionsClient(
-        endpoint=endpoint,
-        credential=DefaultAzureCredential(),
-        headers={"azureml-model-deployment": model_deployment}
+        endpoint=endpoint, credential=DefaultAzureCredential(), headers={"azureml-model-deployment": model_deployment}
     )
 
     response = client.complete(
@@ -59,7 +57,7 @@ def sample_chat_completions_streaming_with_entra_id_auth():
         messages=[
             SystemMessage(content="You are a helpful assistant."),
             UserMessage(content="Give me 5 good reasons why I should exercise every day."),
-        ]
+        ],
     )
 
     for update in response:

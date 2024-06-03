@@ -20,6 +20,7 @@ USAGE:
 # mypy: disable-error-code="union-attr"
 # pyright: reportAttributeAccessIssue=false
 
+
 def sample_chat_completions():
     import os
 

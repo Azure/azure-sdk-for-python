@@ -181,7 +181,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
          Higher values will make output more random while lower values will make results more focused
          and deterministic.
          It is not recommended to modify temperature and top_p for the same completions request as the
-         interaction of these two settings is difficult to predict. 
+         interaction of these two settings is difficult to predict.
          Supported range is [0, 1].
          Default value is None.
         :paramtype temperature: float
@@ -237,7 +237,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         Completions support a wide variety of tasks and generate text that continues from or
         "completes" provided prompt data.
 
-        :param body: An object of type MutableMapping[str, Any], such as a dictionary, that 
+        :param body: An object of type MutableMapping[str, Any], such as a dictionary, that
          specifies the full request payload. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -343,7 +343,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
          value of 0.15 will cause only the tokens comprising the top 15% of probability mass to be
          considered.
          It is not recommended to modify temperature and top_p for the same completions request as the
-         interaction of these two settings is difficult to predict. 
+         interaction of these two settings is difficult to predict.
          Supported range is [0, 1].
          Default value is None.
         :paramtype top_p: float
@@ -410,7 +410,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
-                _unknown_params = _models._enums.UnknownParams.PASS_THROUGH # pylint: disable=protected-access
+                _unknown_params = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
             body = {k: v for k, v in body.items() if v is not None}
         elif isinstance(body, dict) and "stream" in body and isinstance(body["stream"], bool):
             stream = body["stream"]
@@ -539,7 +539,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         """Return the embedding vectors for given text prompts.
         The method makes a REST API call to the `/embeddings` route on the given endpoint.
 
-        :param body: An object of type MutableMapping[str, Any], such as a dictionary, that 
+        :param body: An object of type MutableMapping[str, Any], such as a dictionary, that
          specifies the full request payload. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -642,7 +642,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
-                _unknown_params = _models._enums.UnknownParams.PASS_THROUGH # pylint: disable=protected-access
+                _unknown_params = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -771,7 +771,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         """Return the embedding vectors for given images.
         The method makes a REST API call to the `/images/embeddings` route on the given endpoint.
 
-        :param body: An object of type MutableMapping[str, Any], such as a dictionary, that 
+        :param body: An object of type MutableMapping[str, Any], such as a dictionary, that
          specifies the full request payload. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -874,7 +874,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
-                _unknown_params = _models._enums.UnknownParams.PASS_THROUGH # pylint: disable=protected-access
+                _unknown_params = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
