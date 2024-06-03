@@ -231,7 +231,7 @@ def build_event_grid_consumer_reject_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_event_grid_consumer_renew_lock_request(  # pylint: disable=name-too-long
+def build_event_grid_consumer_renew_locks_request(  # pylint: disable=name-too-long
     topic_name: str, event_subscription_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1090,7 +1090,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
             "2023-10-01-preview": ["api_version", "topic_name", "event_subscription_name", "content_type", "accept"]
         },
     )
-    def _renew_lock(
+    def _renew_locks(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -1106,7 +1106,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
             "2023-10-01-preview": ["api_version", "topic_name", "event_subscription_name", "content_type", "accept"]
         },
     )
-    def _renew_lock(
+    def _renew_locks(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -1122,7 +1122,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
             "2023-10-01-preview": ["api_version", "topic_name", "event_subscription_name", "content_type", "accept"]
         },
     )
-    def _renew_lock(
+    def _renew_locks(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -1139,7 +1139,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
             "2023-10-01-preview": ["api_version", "topic_name", "event_subscription_name", "content_type", "accept"]
         },
     )
-    def _renew_lock(
+    def _renew_locks(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -1230,7 +1230,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_event_grid_consumer_renew_lock_request(
+        _request = build_event_grid_consumer_renew_locks_request(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             content_type=content_type,

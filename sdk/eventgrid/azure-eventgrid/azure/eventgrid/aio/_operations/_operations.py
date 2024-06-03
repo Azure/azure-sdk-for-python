@@ -31,7 +31,7 @@ from ..._operations._operations import (
     build_event_grid_consumer_receive_request,
     build_event_grid_consumer_reject_request,
     build_event_grid_consumer_release_request,
-    build_event_grid_consumer_renew_lock_request,
+    build_event_grid_consumer_renew_locks_request,
     build_event_grid_publisher_send_events_request,
     build_event_grid_publisher_send_request,
 )
@@ -877,7 +877,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
             "2023-10-01-preview": ["api_version", "topic_name", "event_subscription_name", "content_type", "accept"]
         },
     )
-    async def _renew_lock(
+    async def _renew_locks(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -893,7 +893,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
             "2023-10-01-preview": ["api_version", "topic_name", "event_subscription_name", "content_type", "accept"]
         },
     )
-    async def _renew_lock(
+    async def _renew_locks(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -909,7 +909,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
             "2023-10-01-preview": ["api_version", "topic_name", "event_subscription_name", "content_type", "accept"]
         },
     )
-    async def _renew_lock(
+    async def _renew_locks(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -926,7 +926,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
             "2023-10-01-preview": ["api_version", "topic_name", "event_subscription_name", "content_type", "accept"]
         },
     )
-    async def _renew_lock(
+    async def _renew_locks(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -1017,7 +1017,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_event_grid_consumer_renew_lock_request(
+        _request = build_event_grid_consumer_renew_locks_request(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             content_type=content_type,

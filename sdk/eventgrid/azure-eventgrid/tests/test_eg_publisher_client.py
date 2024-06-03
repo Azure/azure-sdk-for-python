@@ -54,7 +54,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_event_grid_event_fails_without_full_url(self,eventgrid_topic_endpoint):
+    def test_send_event_grid_event_fails_without_full_url(self, eventgrid_topic_endpoint):
         credential = self.get_credential(EventGridPublisherClient)
         parsed_url = urlparse(eventgrid_topic_endpoint)
         client = EventGridPublisherClient(parsed_url.netloc, credential)

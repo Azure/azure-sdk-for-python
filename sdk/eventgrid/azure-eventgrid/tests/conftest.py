@@ -50,8 +50,7 @@ def add_sanitizers(test_proxy):
     )
     add_remove_header_sanitizer(headers="aeg-sas-key, aeg-sas-token, aeg-channel-name")
     add_general_regex_sanitizer(
-        value="fakeresource",
-        regex="(?<=\\/\\/)[a-z-]+(?=\\.eastus-1\\.eventgrid\\.azure\\.net/api/events)"
+        value="fakeresource", regex="(?<=\\/\\/)[a-z-]+(?=\\.eastus-1\\.eventgrid\\.azure\\.net/api/events)"
     )
 
     add_oauth_response_sanitizer()

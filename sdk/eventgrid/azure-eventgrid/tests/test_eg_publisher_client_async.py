@@ -327,7 +327,9 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_partner_namespace(self, eventgrid_partner_namespace_topic_endpoint, eventgrid_partner_channel_name):
+    async def test_send_partner_namespace(
+        self, eventgrid_partner_namespace_topic_endpoint, eventgrid_partner_channel_name
+    ):
         client = self.create_eg_publisher_client(eventgrid_partner_namespace_topic_endpoint)
         cloud_event = CloudEvent(
             source="http://samplesource.dev",

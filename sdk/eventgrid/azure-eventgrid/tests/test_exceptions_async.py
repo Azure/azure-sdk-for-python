@@ -56,7 +56,9 @@ class TestEventGridPublisherClientExceptionsAsync(AzureRecordedTestCase):
     async def test_raise_on_bad_resource(self, **kwargs):
         eventgrid_topic_key = kwargs.pop("eventgrid_topic_key")
         akc_credential = AzureKeyCredential(eventgrid_topic_key)
-        client = EventGridPublisherClient("https://bad-resource.westus-1.eventgrid.azure.net/api/events", akc_credential)
+        client = EventGridPublisherClient(
+            "https://bad-resource.westus-1.eventgrid.azure.net/api/events", akc_credential
+        )
         eg_event = EventGridEvent(
             subject="sample",
             data={"sample": "eventgridevent"},
