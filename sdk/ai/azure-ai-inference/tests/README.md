@@ -32,7 +32,7 @@ The live tests were written against the AI models mentioned below. You will need
 
 ## Set environment variables
 
-The tests read endpoints and keys from environemt variables. See the [Set environment variables](https://aka.ms/azsdk/azure-ai-inference/python/samples/README.md#set-environment-variables) section in the samples README.md file for the full list of environment variables that need to be set for all tests to pass.
+The tests read endpoints and keys from environemt variables. See the [Set environment variables](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/README.md#set-environment-variables) section in the samples README.md file for the full list of environment variables that need to be set for all tests to pass.
 
 In addition, the following environment values **must be** defined, although not used. Assign any value to them:
 
