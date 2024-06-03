@@ -37,7 +37,7 @@ def sample_chat_completions_with_model_extras():
         exit()
 
     from azure.ai.inference import ChatCompletionsClient
-    from azure.ai.inference.models import SystemMessage, UserMessage, UnknownParams
+    from azure.ai.inference.models import SystemMessage, UserMessage
     from azure.core.credentials import AzureKeyCredential
 
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
