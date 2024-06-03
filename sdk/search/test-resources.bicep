@@ -13,7 +13,7 @@ param storageContainerName string = 'storage-container-${resourceGroup().name}'
 param storageApiVersion string = '2021-06-01'
 
 
-resource searchService 'Microsoft.Search/searchServices@2021-04-01-Preview' = {
+resource searchService 'Microsoft.Search/searchServices@2024-03-01-preview' = {
   name: searchServiceName
   location: location // semantic search is available here
   sku: {
@@ -23,9 +23,9 @@ resource searchService 'Microsoft.Search/searchServices@2021-04-01-Preview' = {
     semanticSearch: 'standard'
     authOptions: {
       aadOrApiKey: {
-        aadAuthFailureMode: 'string'
+        aadAuthFailureMode: 'http403'
       }
-      apiKeyOnly: any()
+      apiKeyOnly: null
     }
   } : {}
 }
