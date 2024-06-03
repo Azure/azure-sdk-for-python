@@ -12,6 +12,7 @@ from math import isnan
 
 from ._entity import EdmType, TableEntity
 from ._common_conversion import _encode_base64, _to_utc_datetime
+from ._constants import MAX_INT32, MIN_INT32, MAX_INT64, MIN_INT64
 
 _ODATA_SUFFIX = "@odata.type"
 T = TypeVar("T")
@@ -49,6 +50,8 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
         if isinstance(value, str):
             return None, value
         if isinstance(value, int):
+            if self._is_int64(value):
+                return EdmType.INT64, str(value)
             return None, value  # TODO: Test what happens if the supplied value exceeds int32.
         if isinstance(value, float):
             if isnan(value):
@@ -76,6 +79,12 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
         if name:
             raise TypeError(f"Unsupported data type '{type(value)}' for entity property '{name}'.")
         raise TypeError(f"Unsupported data type '{type(value)}'.")
+
+    def _is_int32(self, value: int) -> bool:
+        return value >= MIN_INT32 and value <= MAX_INT32
+
+    def _is_int64(self, value: int) -> bool:
+        return not self._is_int32(value) and value >= MIN_INT64 and value <= MAX_INT64
 
     def _prepare_value_in_tuple(  # pylint: disable=too-many-return-statements
         self, value: Tuple[Any, Optional[Union[str, EdmType]]]
@@ -164,14 +173,14 @@ class TableEntityEncoder(TableEntityEncoderABC[Union[TableEntity, Mapping[str, A
         for key, value in entity.items():
             edm_type, value = self.prepare_value(key, value)
             try:
-                if _ODATA_SUFFIX in key or key + _ODATA_SUFFIX in entity:
+                if _ODATA_SUFFIX in key or f"{key}{_ODATA_SUFFIX}" in entity:
                     encoded[key] = value
                     continue
                 # The edm type is decided by value
                 # For example, when value=EntityProperty(str(uuid.uuid4), "Edm.Guid"),
                 # the type is string instead of Guid after encoded
                 if edm_type:
-                    encoded[key + _ODATA_SUFFIX] = edm_type.value if hasattr(edm_type, "value") else edm_type
+                    encoded[f"{key}{_ODATA_SUFFIX}"] = edm_type.value if hasattr(edm_type, "value") else edm_type
             except TypeError:
                 pass
             encoded[key] = value

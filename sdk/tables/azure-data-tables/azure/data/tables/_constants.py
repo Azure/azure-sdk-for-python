@@ -17,3 +17,8 @@ STORAGE_OAUTH_SCOPE = "https://storage.azure.com/.default"
 NEXT_TABLE_NAME = "x-ms-continuation-NextTableName"
 NEXT_PARTITION_KEY = "x-ms-continuation-NextPartitionKey"
 NEXT_ROW_KEY = "x-ms-continuation-NextRowKey"
+
+MAX_INT32 = (2**31) - 1
+MIN_INT32 = -(2**31)
+MAX_INT64 = (2**63) - 1
+MIN_INT64 = -(2**63)
