@@ -100,8 +100,8 @@ def _set_up_index(service_name, endpoint, cred, schema, index_batch):
         index_json = json.loads(schema)
         index_name = index_json["name"]
         index = SearchIndex.from_dict(index_json)
-        client = SearchIndexClient(endpoint, DefaultAzureCredential(exclude_managed_identity_credential=True), retry_backoff_factor=60)
-        index_create = client.create_index(index)
+        index_client = SearchIndexClient(endpoint, DefaultAzureCredential(exclude_managed_identity_credential=True), retry_backoff_factor=60, logging_enable=True)
+        index_create = index_client.create_index(index)
         # response = requests.post(
         #     SERVICE_URL_FMT.format(service_name, SEARCH_ENDPOINT_SUFFIX),
         #     headers={"Content-Type": "application/json", "Authorization": "Bearer {}".format(cred.get_token("https://search.azure.com/.default"))},
@@ -113,8 +113,8 @@ def _set_up_index(service_name, endpoint, cred, schema, index_batch):
     # optionally load data into the index
     if index_batch and schema:
         batch = IndexBatch.deserialize(index_batch)
-        index_client = SearchClient(endpoint, index_name, DefaultAzureCredential(exclude_managed_identity_credential=True))
-        results = index_client.index_documents(batch)
+        client = SearchClient(endpoint, index_name, DefaultAzureCredential(exclude_managed_identity_credential=True))
+        results = client.index_documents(batch)
         if not all(result.succeeded for result in results):
             raise AzureTestError("Document upload to search index failed")
 
