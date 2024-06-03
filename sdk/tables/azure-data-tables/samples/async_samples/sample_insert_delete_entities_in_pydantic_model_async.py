@@ -23,31 +23,60 @@ USAGE:
 """
 import os
 import asyncio
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import uuid4, UUID
 from dotenv import find_dotenv, load_dotenv
-from typing import Dict, Union
+from typing import Dict, Union, NamedTuple
 from pydantic import BaseModel
 from azure.data.tables import TableEntityEncoderABC
 from azure.data.tables.aio import TableClient
 from azure.core.exceptions import ResourceExistsError, HttpResponseError
 
 
-class EntityType(BaseModel):
+RGBColor = NamedTuple("RGBColor", [("Red", float), ("Green", float), ("Blue", float)])
+
+
+class Car(BaseModel):
+    color: RGBColor
+    maker: str
+    model: str
+    production_date: datetime
+    mileage: int
+
+
+class Product(BaseModel):
     PartitionKey: str
     RowKey: str
-    text: str
-    color: str
     price: float
     last_updated: datetime
     product_id: UUID
     inventory_count: int
     barcode: bytes
+    item_details: Car
 
 
-class MyEncoder(TableEntityEncoderABC[EntityType]):
-    def encode_entity(self, entity: EntityType) -> Dict[str, Union[str, int, float, bool]]:
-        return entity.model_dump()
+class MyEncoder(TableEntityEncoderABC[Product]):
+    def encode_entity(self, entity: Product) -> Dict[str, Union[str, int, float, bool]]:
+        encoded = {}
+        for key, value in entity.model_dump().items():
+            if isinstance(value, dict):
+                for k, v in value.items():
+                    if isinstance(v, tuple):
+                        edm_type, v = self._prepare_value_in_rgb(v)
+                    else:
+                        edm_type, v = self.prepare_value(k, v)
+                    if edm_type:
+                        encoded[f"{k}@odata.type"] = edm_type.value if hasattr(edm_type, "value") else edm_type
+                    encoded[k] = v
+                continue
+            edm_type, value = self.prepare_value(key, value)
+            if edm_type:
+                encoded[f"{key}@odata.type"] = edm_type.value if hasattr(edm_type, "value") else edm_type
+            encoded[key] = value
+        return encoded
+
+    def _prepare_value_in_rgb(self, color):
+        return None, f"{color[0]}, {color[1]}, {color[2]}"
 
 
 class InsertDeleteEntity(object):
@@ -60,16 +89,21 @@ class InsertDeleteEntity(object):
         self.connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
         self.table_name = "SampleInsertDeletePydanticAsync"
 
-        self.entity = EntityType(
-            PartitionKey="color",
-            RowKey="brand",
-            text="Marker",
-            color="Purple",
+        self.entity = Product(
+            PartitionKey="PK",
+            RowKey="RK",
             price=4.99,
             last_updated=datetime.today(),
             product_id=uuid4(),
             inventory_count=42,
             barcode=b"135aefg8oj0ld58",  # cspell:disable-line
+            item_details=Car(
+                color=RGBColor("30.1", "40.1", "50.1"),
+                maker="maker",
+                model="model",
+                production_date=datetime(year=2014, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc),
+                mileage=2**31,  # an int64 integer
+            ),
         )
 
     async def create_delete_entity(self):
