@@ -25,10 +25,10 @@ resource searchService 'Microsoft.Search/searchServices@2021-04-01-Preview' = {
 }
 
 resource searchServiceRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(resourceGroup().id, testApplicationOid, 'Owner') // Replace 'Owner' with the desired role
+  name: guid(resourceGroup().id, testApplicationOid)
   scope: resourceGroup()
   properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635') // Role definition ID for 'Owner'. Replace with the appropriate role ID
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b')
     principalId: testApplicationOid
     principalType: 'ServicePrincipal'
   }
