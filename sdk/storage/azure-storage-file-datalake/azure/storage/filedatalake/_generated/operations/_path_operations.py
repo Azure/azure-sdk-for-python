@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Callable, Dict, IO, Iterator, Literal, Optional, TypeVar, Union
+import sys
+from typing import Any, Callable, Dict, IO, Iterator, Literal, Optional, Type, TypeVar, Union
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -27,6 +28,10 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -77,7 +82,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -204,13 +209,15 @@ def build_update_request(
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
+    structured_body_type: Optional[str] = None,
+    structured_content_length: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -277,6 +284,12 @@ def build_update_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    if structured_body_type is not None:
+        _headers["x-ms-structured-body"] = _SERIALIZER.header("structured_body_type", structured_body_type, "str")
+    if structured_content_length is not None:
+        _headers["x-ms-structured-content-length"] = _SERIALIZER.header(
+            "structured_content_length", structured_content_length, "int"
+        )
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -303,7 +316,7 @@ def build_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -366,7 +379,7 @@ def build_read_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -431,7 +444,7 @@ def build_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -487,7 +500,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -547,7 +560,7 @@ def build_set_access_control_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["setAccessControl"] = kwargs.pop("action", _params.pop("action", "setAccessControl"))
-    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -608,7 +621,7 @@ def build_set_access_control_recursive_request(  # pylint: disable=name-too-long
     action: Literal["setAccessControlRecursive"] = kwargs.pop(
         "action", _params.pop("action", "setAccessControlRecursive")
     )
-    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -674,7 +687,7 @@ def build_flush_data_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["flush"] = kwargs.pop("action", _params.pop("action", "flush"))
-    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -761,6 +774,8 @@ def build_append_data_request(
     encryption_key_sha256: Optional[str] = None,
     encryption_algorithm: Literal["AES256"] = "AES256",
     flush: Optional[bool] = None,
+    structured_body_type: Optional[str] = None,
+    structured_content_length: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -768,7 +783,7 @@ def build_append_data_request(
 
     action: Literal["append"] = kwargs.pop("action", _params.pop("action", "append"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -818,6 +833,12 @@ def build_append_data_request(
         )
     if encryption_algorithm is not None:
         _headers["x-ms-encryption-algorithm"] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, "str")
+    if structured_body_type is not None:
+        _headers["x-ms-structured-body"] = _SERIALIZER.header("structured_body_type", structured_body_type, "str")
+    if structured_content_length is not None:
+        _headers["x-ms-structured-content-length"] = _SERIALIZER.header(
+            "structured_content_length", structured_content_length, "int"
+        )
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -838,7 +859,7 @@ def build_set_expiry_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["expiry"] = kwargs.pop("comp", _params.pop("comp", "expiry"))
-    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -878,7 +899,7 @@ def build_undelete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
-    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1055,7 +1076,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1202,6 +1223,8 @@ class PathOperations:
         group: Optional[str] = None,
         permissions: Optional[str] = None,
         acl: Optional[str] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
         path_http_headers: Optional[_models.PathHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
@@ -1312,6 +1335,13 @@ class PathOperations:
          scope, a type, a user or group identifier, and permissions in the format
          "[scope:][type]:[id]:[permissions]". Default value is None.
         :type acl: str
+        :param structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :type structured_body_type: str
+        :param structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :type structured_content_length: int
         :param path_http_headers: Parameter group. Default value is None.
         :type path_http_headers: ~azure.storage.filedatalake.models.PathHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -1322,7 +1352,7 @@ class PathOperations:
         :rtype: ~azure.storage.filedatalake.models.SetAccessControlRecursiveResponse or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1349,10 +1379,10 @@ class PathOperations:
         _if_unmodified_since = None
         if path_http_headers is not None:
             _cache_control = path_http_headers.cache_control
+            _content_md5 = path_http_headers.content_MD5
             _content_disposition = path_http_headers.content_disposition
             _content_encoding = path_http_headers.content_encoding
             _content_language = path_http_headers.content_language
-            _content_md5 = path_http_headers.content_md5
             _content_type_parameter = path_http_headers.content_type
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
@@ -1392,6 +1422,8 @@ class PathOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
+            structured_body_type=structured_body_type,
+            structured_content_length=structured_content_length,
             content_type=content_type,
             version=self._config.version,
             content=_content,
@@ -1442,6 +1474,9 @@ class PathOperations:
             response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
             response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
             response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+            response_headers["x-ms-structured-body"] = self._deserialize(
+                "str", response.headers.get("x-ms-structured-body")
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1503,7 +1538,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1636,7 +1671,7 @@ class PathOperations:
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1828,7 +1863,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1961,7 +1996,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2082,7 +2117,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2208,7 +2243,7 @@ class PathOperations:
         :rtype: ~azure.storage.filedatalake.models.SetAccessControlRecursiveResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2353,7 +2388,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2383,10 +2418,10 @@ class PathOperations:
         _encryption_algorithm = None
         if path_http_headers is not None:
             _cache_control = path_http_headers.cache_control
+            _content_md5 = path_http_headers.content_MD5
             _content_disposition = path_http_headers.content_disposition
             _content_encoding = path_http_headers.content_encoding
             _content_language = path_http_headers.content_language
-            _content_md5 = path_http_headers.content_md5
             _content_type_parameter = path_http_headers.content_type
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
@@ -2479,6 +2514,8 @@ class PathOperations:
         proposed_lease_id: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
         flush: Optional[bool] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
         path_http_headers: Optional[_models.PathHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
@@ -2528,6 +2565,13 @@ class PathOperations:
         :type request_id_parameter: str
         :param flush: If file should be flushed after the append. Default value is None.
         :type flush: bool
+        :param structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :type structured_body_type: str
+        :param structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :type structured_content_length: int
         :param path_http_headers: Parameter group. Default value is None.
         :type path_http_headers: ~azure.storage.filedatalake.models.PathHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -2538,7 +2582,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2584,6 +2628,8 @@ class PathOperations:
             encryption_key_sha256=_encryption_key_sha256,
             encryption_algorithm=_encryption_algorithm,  # type: ignore
             flush=flush,
+            structured_body_type=structured_body_type,
+            structured_content_length=structured_content_length,
             action=action,
             content_type=content_type,
             version=self._config.version,
@@ -2625,6 +2671,9 @@ class PathOperations:
             "str", response.headers.get("x-ms-encryption-key-sha256")
         )
         response_headers["x-ms-lease-renewed"] = self._deserialize("bool", response.headers.get("x-ms-lease-renewed"))
+        response_headers["x-ms-structured-body"] = self._deserialize(
+            "str", response.headers.get("x-ms-structured-body")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -2658,7 +2707,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2737,7 +2786,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
