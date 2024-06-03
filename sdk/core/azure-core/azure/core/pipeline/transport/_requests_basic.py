@@ -322,7 +322,7 @@ class RequestsTransport(HttpTransport):
         :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
-    def send(
+    def send(  # pylint: disable=too-many-statements
         self,
         request: Union[HttpRequest, "RestHttpRequest"],
         *,
@@ -368,6 +368,13 @@ class RequestsTransport(HttpTransport):
             )
             response.raw.enforce_content_length = True
 
+        except AttributeError as err:
+            if self.session is None:
+                raise ValueError(
+                    "No session available for request. "
+                    "Please report this issue to https://github.com/Azure/azure-sdk-for-python/issues."
+                ) from err
+            raise
         except (
             NewConnectionError,
             ConnectTimeoutError,

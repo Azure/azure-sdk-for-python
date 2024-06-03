@@ -333,6 +333,13 @@ class AioHttpTransport(AsyncHttpTransport):
                 )
                 if not stream_response:
                     await response.load_body()
+        except AttributeError as err:
+            if self.session is None:
+                raise ValueError(
+                    "No session available for request. "
+                    "Please report this issue to https://github.com/Azure/azure-sdk-for-python/issues."
+                ) from err
+            raise
         except aiohttp.client_exceptions.ClientResponseError as err:
             raise ServiceResponseError(err, error=err) from err
         except asyncio.TimeoutError as err:
@@ -360,7 +367,8 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         response: AioHttpTransportResponse,
         *,
         decompress: bool = True,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(
@@ -369,7 +377,8 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         response: RestAioHttpTransportResponse,
         *,
         decompress: bool = True,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     def __init__(
         self,
