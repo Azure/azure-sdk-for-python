@@ -90,18 +90,22 @@ def _clean_up_indexers(endpoint, cred):
 def _set_up_index(service_name, endpoint, cred, schema, index_batch):
     from azure.search.documents import SearchClient
     from azure.search.documents._generated.models import IndexBatch
+    from azure.search.documents.indexes import SearchIndexClient
 
     schema = _load_schema(schema)
     index_batch = _load_batch(index_batch)
     if schema:
-        index_name = json.loads(schema)["name"]
-        response = requests.post(
-            SERVICE_URL_FMT.format(service_name, SEARCH_ENDPOINT_SUFFIX),
-            headers={"Content-Type": "application/json", "Authorization": "Bearer {}".format(cred.get_token("https://search.azure.com/.default"))},
-            data=schema,
-        )
-        if response.status_code != 201:
-            raise AzureTestError("Could not create a search index {}".format(response.status_code))
+        index = json.loads(schema)
+        index_name = index["name"]
+        client = SearchIndexClient(endpoint, cred, retry_backoff_factor=60)
+        index_create = client.create_index(index)
+        # response = requests.post(
+        #     SERVICE_URL_FMT.format(service_name, SEARCH_ENDPOINT_SUFFIX),
+        #     headers={"Content-Type": "application/json", "Authorization": "Bearer {}".format(cred.get_token("https://search.azure.com/.default"))},
+        #     data=schema,
+        # )
+        # if response.status_code != 201:
+        #     raise AzureTestError("Could not create a search index {}".format(response.status_code))
 
     # optionally load data into the index
     if index_batch and schema:
