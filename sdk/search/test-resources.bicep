@@ -34,7 +34,7 @@ resource searchServiceRoleAssignment 'Microsoft.Authorization/roleAssignments@20
   name: guid(resourceGroup().id, testApplicationOid)
   scope: resourceGroup()
   properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b')
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')
     principalId: testApplicationOid
     principalType: 'ServicePrincipal'
   }
