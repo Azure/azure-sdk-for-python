@@ -393,6 +393,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         result = self.mgmt_client.virtual_machine_scale_sets.begin_delete(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
         result = result.result()
 
+    @unittest.skip("service return false, skip for now")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_compute_vmss_vm(self, resource_group):
@@ -549,6 +550,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         result = self.mgmt_client.virtual_machine_scale_sets.begin_delete(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
         result = result.result()
 
+    @unittest.skip("service return false, skip for now")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_compute_vmss_vm_2(self, resource_group):
