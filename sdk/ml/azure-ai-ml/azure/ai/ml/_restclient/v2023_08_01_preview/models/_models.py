@@ -32348,6 +32348,9 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
     :ivar v1_legacy_mode: Enabling v1_legacy_mode may prevent you from using features provided by
      the v2 API.
     :vartype v1_legacy_mode: bool
+    :ivar system_datastores_auth_mode: The auth mode used for accessing the system datastores of
+     the workspace.
+    :vartype system_datastores_auth_mode: str
     """
 
     _attribute_map = {
@@ -32369,6 +32372,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         'service_managed_resources_settings': {'key': 'properties.serviceManagedResourcesSettings', 'type': 'ServiceManagedResourcesSettings'},
         'soft_delete_retention_in_days': {'key': 'properties.softDeleteRetentionInDays', 'type': 'int'},
         'v1_legacy_mode': {'key': 'properties.v1LegacyMode', 'type': 'bool'},
+        'system_datastores_auth_mode': {'key': 'properties.systemDatastoresAuthMode', 'type': 'str'},
     }
 
     def __init__(
@@ -32422,6 +32426,9 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         :keyword v1_legacy_mode: Enabling v1_legacy_mode may prevent you from using features provided
          by the v2 API.
         :paramtype v1_legacy_mode: bool
+        :keyword system_datastores_auth_mode: The auth mode used for accessing the system datastores of
+         the workspace.
+        :paramtype system_datastores_auth_mode: str
         """
         super(WorkspaceUpdateParameters, self).__init__(**kwargs)
         self.identity = kwargs.get('identity', None)
@@ -32442,3 +32449,4 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         self.service_managed_resources_settings = kwargs.get('service_managed_resources_settings', None)
         self.soft_delete_retention_in_days = kwargs.get('soft_delete_retention_in_days', None)
         self.v1_legacy_mode = kwargs.get('v1_legacy_mode', None)
+        self.system_datastores_auth_mode = kwargs.get('system_datastores_auth_mode', None)
