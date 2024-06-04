@@ -29,9 +29,9 @@ from eventgrid_preparer import EventGridPreparer
 
 
 class TestEventGridPublisherClient(AzureRecordedTestCase):
-    def create_eg_publisher_client(self, endpoint):
+    def create_eg_publisher_client(self, endpoint, topic=None):
         credential = self.get_credential(EventGridPublisherClient, is_async=True)
-        client = self.create_client_from_credential(EventGridPublisherClient, credential=credential, endpoint=endpoint)
+        client = self.create_client_from_credential(EventGridPublisherClient, credential=credential, endpoint=endpoint, namespace_topic=topic)
         return client
 
     @EventGridPreparer()
@@ -125,6 +125,24 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
         with pytest.raises(TypeError, match="Data in EventGridEvent cannot be bytes*"):
             await client.send(eg_event)
 
+    @pytest.mark.live_test_only
+    @EventGridPreparer()
+    @pytest.mark.asyncio
+    async def test_send_event_grid_namespace(self, **kwargs):
+        eventgrid_endpoint = kwargs["eventgrid_endpoint"]
+        eventgrid_topic_name = kwargs["eventgrid_topic_name"]
+        client = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
+        eg_event = {
+            "subject": "sample",
+            "data": {"key1": "Sample.EventGrid.Event"},
+            "eventType": "Sample.EventGrid.Event",
+            "dataVersion": "2.0",
+            "id": "id-1234",
+            "eventTime": dt.datetime.now(),
+        }
+        with pytest.raises(TypeError):
+            client.send(eg_event)
+
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
@@ -148,6 +166,20 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @pytest.mark.asyncio
     async def test_send_cloud_event_data_str(self, eventgrid_cloud_event_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
+        cloud_event = CloudEvent(
+            source="http://samplesource.dev",
+            data="cloudevent",
+            type="Sample.Cloud.Event",
+        )
+        await client.send(cloud_event)
+
+    @pytest.mark.live_test_only
+    @EventGridPreparer()
+    @pytest.mark.asyncio
+    async def test_send_cloud_event_namespace(self, **kwargs):
+        eventgrid_endpoint = kwargs["eventgrid_endpoint"]
+        eventgrid_topic_name = kwargs["eventgrid_topic_name"]
+        client = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
             data="cloudevent",
@@ -209,6 +241,21 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
             "type": "Sample.Cloud.Event",
         }
         await client.send(cloud_event1)
+
+    @pytest.mark.live_test_only
+    @EventGridPreparer()
+    @pytest.mark.asyncio
+    async def test_send_cloud_event_channel_namenamespace(self, **kwargs):
+        eventgrid_endpoint = kwargs["eventgrid_endpoint"]
+        eventgrid_topic_name = kwargs["eventgrid_topic_name"]
+        client = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
+        cloud_event = CloudEvent(
+            source="http://samplesource.dev",
+            data="cloudevent",
+            type="Sample.Cloud.Event",
+        )
+        with pytest.raises(ValueError):
+            await client.send(cloud_event, channel_name="testchannel")
 
     @EventGridPreparer()
     @recorded_by_proxy_async

@@ -139,6 +139,24 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
         }
         client.send(eg_event)
 
+
+    @pytest.mark.live_test_only
+    @EventGridPreparer()
+    def test_send_event_grid_namespace(self, **kwargs):
+        eventgrid_endpoint = kwargs["eventgrid_endpoint"]
+        eventgrid_topic_name = kwargs["eventgrid_topic_name"]
+        client = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
+        eg_event = {
+            "subject": "sample",
+            "data": {"key1": "Sample.EventGrid.Event"},
+            "eventType": "Sample.EventGrid.Event",
+            "dataVersion": "2.0",
+            "id": uuid.uuid4(),
+            "eventTime": datetime.now(),
+        }
+        with pytest.raises(TypeError):
+            client.send(eg_event)
+
     ### CLOUD EVENT TESTS
 
     @EventGridPreparer()
@@ -164,6 +182,20 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
             type="Sample.Cloud.Event",
         )
         client.send(cloud_event)
+
+    @pytest.mark.live_test_only
+    @EventGridPreparer()
+    def test_send_cloud_event_data_channel_name_namespace(self, **kwargs):
+        eventgrid_endpoint = kwargs["eventgrid_endpoint"]
+        eventgrid_topic_name = kwargs["eventgrid_topic_name"]
+        client = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
+        cloud_event = CloudEvent(
+            source="http://samplesource.dev",
+            data={"sample": "cloudevent"},
+            type="Sample.Cloud.Event",
+        )
+        with pytest.raises(ValueError):
+            client.send(cloud_event, channel_name="testchannel")
 
     @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/16993")
     @EventGridPreparer()
