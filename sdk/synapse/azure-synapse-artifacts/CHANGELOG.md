@@ -51,10 +51,6 @@
   - Model Pipeline parameter ExecuteDataFlowActivity update new properties computeType
   - Model Pipeline parameter ScriptActivityScriptBlock update properties type
 
-### Bugs Fixed
-
-### Other Changes
-
 ## 0.18.0 (2023-10-30)
 
 ### Bugs Fixed
