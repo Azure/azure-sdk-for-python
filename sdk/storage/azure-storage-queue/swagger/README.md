@@ -19,7 +19,7 @@ autorest --use=C:/work/autorest.python --version=2.0.4280
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.QueueStorage/preview/2018-03-28/queue.json
+input-file: https://raw.githubusercontent.com/seanmcc-msft/azure-rest-api-specs/c13d86f8d53ee6d7a396f762f50fe02e3a5bfa07/specification/storage/data-plane/Microsoft.QueueStorage/stable/2018-03-28/queue.json
 output-folder: ../azure/storage/queue/_generated
 namespace: azure.storage.queue
 no-namespace-folders: true

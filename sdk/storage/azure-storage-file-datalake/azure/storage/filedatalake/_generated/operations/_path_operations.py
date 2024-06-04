@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Callable, Dict, IO, Iterator, Literal, Optional, TypeVar, Union
+import sys
+from typing import Any, Callable, Dict, IO, Iterator, Literal, Optional, Type, TypeVar, Union
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -27,6 +28,10 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -1055,7 +1060,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1322,7 +1327,7 @@ class PathOperations:
         :rtype: ~azure.storage.filedatalake.models.SetAccessControlRecursiveResponse or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1349,10 +1354,10 @@ class PathOperations:
         _if_unmodified_since = None
         if path_http_headers is not None:
             _cache_control = path_http_headers.cache_control
+            _content_md5 = path_http_headers.content_MD5
             _content_disposition = path_http_headers.content_disposition
             _content_encoding = path_http_headers.content_encoding
             _content_language = path_http_headers.content_language
-            _content_md5 = path_http_headers.content_md5
             _content_type_parameter = path_http_headers.content_type
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
@@ -1503,7 +1508,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1636,7 +1641,7 @@ class PathOperations:
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1828,7 +1833,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1961,7 +1966,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2082,7 +2087,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2208,7 +2213,7 @@ class PathOperations:
         :rtype: ~azure.storage.filedatalake.models.SetAccessControlRecursiveResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2353,7 +2358,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2383,10 +2388,10 @@ class PathOperations:
         _encryption_algorithm = None
         if path_http_headers is not None:
             _cache_control = path_http_headers.cache_control
+            _content_md5 = path_http_headers.content_MD5
             _content_disposition = path_http_headers.content_disposition
             _content_encoding = path_http_headers.content_encoding
             _content_language = path_http_headers.content_language
-            _content_md5 = path_http_headers.content_md5
             _content_type_parameter = path_http_headers.content_type
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
@@ -2538,7 +2543,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2658,7 +2663,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2737,7 +2742,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

@@ -48,7 +48,6 @@ def build_create_request(
     access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
     enabled_protocols: Optional[str] = None,
     root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
-    enable_snapshot_virtual_directory_access: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -83,10 +82,6 @@ def build_create_request(
         _headers["x-ms-enabled-protocols"] = _SERIALIZER.header("enabled_protocols", enabled_protocols, "str")
     if root_squash is not None:
         _headers["x-ms-root-squash"] = _SERIALIZER.header("root_squash", root_squash, "str")
-    if enable_snapshot_virtual_directory_access is not None:
-        _headers["x-ms-enable-snapshot-virtual-directory-access"] = _SERIALIZER.header(
-            "enable_snapshot_virtual_directory_access", enable_snapshot_virtual_directory_access, "bool"
-        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -532,7 +527,6 @@ def build_set_properties_request(
     access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
     lease_id: Optional[str] = None,
     root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
-    enable_snapshot_virtual_directory_access: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -567,10 +561,6 @@ def build_set_properties_request(
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
     if root_squash is not None:
         _headers["x-ms-root-squash"] = _SERIALIZER.header("root_squash", root_squash, "str")
-    if enable_snapshot_virtual_directory_access is not None:
-        _headers["x-ms-enable-snapshot-virtual-directory-access"] = _SERIALIZER.header(
-            "enable_snapshot_virtual_directory_access", enable_snapshot_virtual_directory_access, "bool"
-        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -796,7 +786,6 @@ class ShareOperations:
         access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
         enabled_protocols: Optional[str] = None,
         root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
-        enable_snapshot_virtual_directory_access: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """Creates a new share under the specified account. If the share with the same name already
@@ -820,8 +809,6 @@ class ShareOperations:
         :param root_squash: Root squash to set on the share.  Only valid for NFS shares. Known values
          are: "NoRootSquash", "RootSquash", and "AllSquash". Default value is None.
         :type root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
-        :param enable_snapshot_virtual_directory_access: Default value is None.
-        :type enable_snapshot_virtual_directory_access: bool
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -848,7 +835,6 @@ class ShareOperations:
             access_tier=access_tier,
             enabled_protocols=enabled_protocols,
             root_squash=root_squash,
-            enable_snapshot_virtual_directory_access=enable_snapshot_virtual_directory_access,
             restype=restype,
             version=self._config.version,
             headers=_headers,
@@ -984,9 +970,6 @@ class ShareOperations:
             "str", response.headers.get("x-ms-enabled-protocols")
         )
         response_headers["x-ms-root-squash"] = self._deserialize("str", response.headers.get("x-ms-root-squash"))
-        response_headers["x-ms-enable-snapshot-virtual-directory-access"] = self._deserialize(
-            "bool", response.headers.get("x-ms-enable-snapshot-virtual-directory-access")
-        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -1819,7 +1802,6 @@ class ShareOperations:
         quota: Optional[int] = None,
         access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
         root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
-        enable_snapshot_virtual_directory_access: Optional[bool] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
@@ -1838,8 +1820,6 @@ class ShareOperations:
         :param root_squash: Root squash to set on the share.  Only valid for NFS shares. Known values
          are: "NoRootSquash", "RootSquash", and "AllSquash". Default value is None.
         :type root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
-        :param enable_snapshot_virtual_directory_access: Default value is None.
-        :type enable_snapshot_virtual_directory_access: bool
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :return: None or the result of cls(response)
@@ -1872,7 +1852,6 @@ class ShareOperations:
             access_tier=access_tier,
             lease_id=_lease_id,
             root_squash=root_squash,
-            enable_snapshot_virtual_directory_access=enable_snapshot_virtual_directory_access,
             restype=restype,
             comp=comp,
             version=self._config.version,
