@@ -48,7 +48,7 @@ def analyze_layout():
         os.path.join(
             os.path.abspath(__file__),
             "..",
-            "./sample_forms/forms/form_selection_mark.png",
+            "./sample_forms/forms/tabular_and_general_data.docx",
         )
     )
 
@@ -84,8 +84,11 @@ def analyze_layout():
                     f"within bounding polygon '{line.polygon}'"
                 )
 
-                for word in words:
-                    print(f"......Word '{word.content}' has a confidence of {word.confidence}")
+        if page.words:
+            for word in page.words:
+                print(
+                    f"......Word '{word.content}' has a confidence of {word.confidence}"
+                )
 
         if page.selection_marks:
             for selection_mark in page.selection_marks:
@@ -93,7 +96,20 @@ def analyze_layout():
                     f"Selection mark is '{selection_mark.state}' within bounding polygon "
                     f"'{selection_mark.polygon}' and has a confidence of {selection_mark.confidence}"
                 )
+    
+    if result.paragraphs:
+        print(f"----Detected #{len(result.paragraphs)} paragraphs in the document----")
+        for paragraph in result.paragraphs:
+            print(f"Found paragraph with role: '{paragraph.role}' within {paragraph.bounding_regions} bounding region")
+            print(f"...with content: '{paragraph.content}'")
 
+        result.paragraphs.sort(key=lambda p: (p.spans.sort(key=lambda s: s.offset), p.spans[0].offset))
+        print("-----Print sorted paragraphs-----")
+        for idx, paragraph in enumerate(result.paragraphs):
+            print(
+                f"...paragraph:{idx} with offset: {paragraph.spans[0].offset} and length: {paragraph.spans[0].length}"
+            )
+    
     if result.tables:
         for table_idx, table in enumerate(result.tables):
             print(f"Table # {table_idx} has {table.row_count} rows and " f"{table.column_count} columns")

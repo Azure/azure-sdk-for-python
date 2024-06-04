@@ -91,8 +91,11 @@ def analyze_read():
                     f"...Line # {line_idx} has {len(words)} words and text '{line.content}' within bounding polygon '{line.polygon}'"
                 )
 
-                for word in words:
-                    print(f"......Word '{word.content}' has a confidence of {word.confidence}")
+        if page.words:
+            for word in page.words:
+                print(
+                    f"......Word '{word.content}' has a confidence of {word.confidence}"
+                )
 
         if page.selection_marks:
             for selection_mark in page.selection_marks:
