@@ -1,7 +1,7 @@
 # Azure AI Inference client library for Python
 
 The client Library (in preview) allows you to generate predictions from foundational models deployed to Azure AI Studio and Azure Machine Learning. It supports
-Serverless API endpoints and Managed Compute Endpoints (formerly known as Managed Online Endpoints). The client library makes services calls using REST AP version `2024-05-01-preview`, as documented in [Azure AI Model Inference API](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api). For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
+Serverless API endpoints and Managed Compute Endpoints (formerly known as Managed Online Endpoints). The client library makes services calls using REST API version `2024-05-01-preview`, as documented in [Azure AI Model Inference API](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api). For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
 
 Use the model inference client library to:
 
@@ -206,7 +206,7 @@ print(response.choices[0].message.content)
 
 The following types or messages are supported: `SystemMessage`,`UserMessage`, `AssistantMessage`, `ToolMessage` (See sample [sample_chat_completions_with_tools.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_tools.py) for usage of `ToolMessage`).
 
-Alternativley you can provide the messages as dictionary instead of using the strongly typed classes like `SystemMessage` and `UserMessage`:
+Alternatively, you can provide the messages as dictionary instead of using the strongly typed classes like `SystemMessage` and `UserMessage`:
 
 <!-- SNIPPET:sample_chat_completions_from_input_json.chat_completions -->
 
@@ -234,7 +234,7 @@ response = client.complete(
 
 <!-- END SNIPPET -->
 
-To generate completions for additional messages, simply call `client.create` multiple times using the same `client`.
+To generate completions for additional messages, simply call `client.complete` multiple times using the same `client`.
 
 ### Streaming chat completions example
 
@@ -336,7 +336,7 @@ data[1]: length=1024, [0.036590576, -0.0059547424, ..., 0.011405945, 0.004863739
 data[2]: length=1024, [0.04196167, 0.029083252, ..., -0.0027484894, 0.0073127747]
 ```
 
-To generate embeddings for additional phrases, simply call `client.create` multiple times using the same `client`.
+To generate embeddings for additional phrases, simply call `client.embed` multiple times using the same `client`.
 
 <!--
 ### Image Embeddings example
@@ -375,14 +375,14 @@ The printed result of course depends on the model, but you should see something 
 TBD
 ```
 
-To generate embeddings for additional phrases, simply call `client.create` multiple times using the same `client`.
+To generate embeddings for additional phrases, simply call `client.embed` multiple times using the same `client`.
 -->
 
 ## Troubleshooting
 
 ### Exceptions
 
-The `create`, `embed` and `get_model_info` methods on the clients raise an [HttpResponseError](https://learn.microsoft.com/python/api/azure-core/azure.core.exceptions.httpresponseerror) exception for a non-success HTTP status code response from the service. The exception's `status_code` will be the HTTP response status code. The exception's `error.message` contains a detailed message that will allow you to diagnose the issue:
+The `complete`, `embed` and `get_model_info` methods on the clients raise an [HttpResponseError](https://learn.microsoft.com/python/api/azure-core/azure.core.exceptions.httpresponseerror) exception for a non-success HTTP status code response from the service. The exception's `status_code` will be the HTTP response status code. The exception's `error.message` contains a detailed message that will allow you to diagnose the issue:
 
 ```python
 from azure.core.exceptions import HttpResponseError
@@ -390,7 +390,7 @@ from azure.core.exceptions import HttpResponseError
 ...
 
 try:
-    result = client.create( ... )
+    result = client.complete( ... )
 except HttpResponseError as e:
     print(f"Status code: {e.status_code} ({e.reason})")
 ```
