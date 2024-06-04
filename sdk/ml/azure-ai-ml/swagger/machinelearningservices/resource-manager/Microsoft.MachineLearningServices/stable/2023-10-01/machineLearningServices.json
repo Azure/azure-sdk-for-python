@@ -2580,6 +2580,10 @@
       "type": "object",
       "description": "The parameters for updating the properties of a machine learning workspace.",
       "properties": {
+        "systemDatastoresAuthMode": {
+          "description": "The auth mode used for accessing the system datastores of the workspace.",
+          "type": "string"
+        },
         "description": {
           "description": "The description of this workspace.",
           "type": "string"

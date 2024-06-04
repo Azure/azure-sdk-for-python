@@ -338,7 +338,9 @@ class WorkspaceOperationsBase(ABC):
             description=kwargs.get("description", workspace.description),
             friendly_name=kwargs.get("display_name", workspace.display_name),
             public_network_access=kwargs.get("public_network_access", workspace.public_network_access),
-            system_datastores_auth_mode=kwargs.get("system_datastores_auth_mode", workspace.system_datastores_auth_mode),
+            system_datastores_auth_mode=kwargs.get(
+                "system_datastores_auth_mode", workspace.system_datastores_auth_mode
+            ),
             image_build_compute=kwargs.get("image_build_compute", workspace.image_build_compute),
             identity=identity,
             primary_user_assigned_identity=kwargs.get(
