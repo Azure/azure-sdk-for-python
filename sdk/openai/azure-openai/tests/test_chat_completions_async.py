@@ -18,7 +18,6 @@ from conftest import (
     GA,
     PREVIEW,
     ENV_AZURE_OPENAI_SEARCH_ENDPOINT,
-    ENV_AZURE_OPENAI_SEARCH_KEY,
     ENV_AZURE_OPENAI_SEARCH_INDEX
 )
 
@@ -739,7 +738,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW)])
     async def test_chat_completion_byod(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -778,7 +777,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW)])
     async def test_streamed_chat_completions_byod(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},

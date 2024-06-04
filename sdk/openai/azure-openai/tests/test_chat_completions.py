@@ -18,7 +18,6 @@ from conftest import (
     GA,
     PREVIEW,
     ENV_AZURE_OPENAI_SEARCH_ENDPOINT,
-    ENV_AZURE_OPENAI_SEARCH_KEY,
     ENV_AZURE_OPENAI_SEARCH_INDEX
 )
 
@@ -722,7 +721,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert content_filter_result["violence"]["severity"] is not None
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW)])
     def test_chat_completion_byod(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -760,7 +759,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.context["intent"]
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW)])
     def test_streamed_chat_completions_byod(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
