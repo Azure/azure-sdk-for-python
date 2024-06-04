@@ -164,7 +164,11 @@ def get_properties(cls: Type) -> Dict:
             analyzer = ClassTreeAnalyzer(base_class.__name__)
             analyzer.visit(module)
             cls_node = analyzer.cls_node
-            get_property_names(cls_node, attribute_names)
+            if cls_node:
+                get_property_names(cls_node, attribute_names)
+            else:
+                # Abstract base classes fail here, e.g. "collections.abc.MuttableMapping"
+                _LOGGER.info(f"Unable to get class node for {base_class.__name__}. Skipping...")
     else:
         get_property_names(cls_node, attribute_names)
     return attribute_names
