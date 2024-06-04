@@ -128,7 +128,7 @@
     "managedNetwork": {
         "value": {}
     },
-    "system_datastores_auth_mode": {
+    "systemDatastoresAuthMode": {
         "value": "accesskey"
     },
     "spark_runtime_version" : {

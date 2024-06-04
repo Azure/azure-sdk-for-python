@@ -416,7 +416,7 @@
                 "description": "Managed network settings to be used for the workspace. If not specified, isolation mode Disabled is the default"
             }
         },
-        "system_datastores_auth_mode": {
+        "systemDatastoresAuthMode": {
             "type": "string",
             "defaultValue": "accesskey",
             "metadata": {

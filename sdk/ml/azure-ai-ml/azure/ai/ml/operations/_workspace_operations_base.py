@@ -636,7 +636,7 @@ class WorkspaceOperationsBase(ABC):
             _set_val(param["publicNetworkAccess"], workspace.public_network_access)
 
         if workspace.system_datastores_auth_mode:
-            _set_val(param["system_datastores_auth_mode"], workspace.system_datastores_auth_mode)
+            _set_val(param["systemDatastoresAuthMode"], workspace.system_datastores_auth_mode)
 
         if workspace.image_build_compute:
             _set_val(param["imageBuildCompute"], workspace.image_build_compute)
