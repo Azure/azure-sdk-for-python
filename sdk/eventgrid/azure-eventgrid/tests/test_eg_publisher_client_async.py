@@ -141,7 +141,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
             "eventTime": dt.datetime.now(),
         }
         with pytest.raises(TypeError):
-            client.send(eg_event)
+            await client.send(eg_event)
 
     @EventGridPreparer()
     @recorded_by_proxy_async
