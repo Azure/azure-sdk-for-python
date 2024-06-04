@@ -500,9 +500,10 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     if sent_drain != receiver._handler._link._drain_state:
                         break
 
-                    if time.time() - time_sent > max(timeout, receiver._further_pull_receive_timeout):
-                        expired = True
-                        break
+                    # TODO: need to have some timeout logic in case the drain never comes back
+                    # if time.time() - time_sent > max(timeout, receiver._further_pull_receive_timeout):
+                    #     expired = True
+                    #     break
                     
                 before = amqp_receive_client._received_messages.qsize()
                 receiving = await amqp_receive_client.do_work_async()
