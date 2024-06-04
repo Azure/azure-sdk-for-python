@@ -54,7 +54,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         "api_type, api_version",
         [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
     )
-    def test_chat_completiona(self, client, api_type, api_version, **kwargs):
+    def test_chat_completion(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}
