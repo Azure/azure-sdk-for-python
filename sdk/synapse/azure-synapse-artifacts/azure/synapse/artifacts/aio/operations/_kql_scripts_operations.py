@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -54,7 +54,6 @@ class KqlScriptsOperations:
     def get_all(self, **kwargs: Any) -> AsyncIterable["_models.KqlScriptResource"]:
         """Get all KQL scripts.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KqlScriptResource or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.synapse.artifacts.models.KqlScriptResource]
