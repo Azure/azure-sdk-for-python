@@ -61,26 +61,6 @@ if TYPE_CHECKING:
     from cloudevents.http.event import CloudEvent as CNCFCloudEvent
 
 
-def use_standard_only(func):
-    """Use the standard client only.
-
-    This decorator raises an AttributeError if the client is not a standard client.
-
-    :param func: The function to decorate.
-    :type func: Callable
-    :return: The decorated function.
-    :rtype: Callable
-    """
-
-    @wraps(func)
-    def wrapper(self, *args, **kwargs):
-        if self._level == "Basic":  # pylint: disable=protected-access
-            raise ValueError("The basic client is not supported for this operation.")
-        return func(self, *args, **kwargs)
-
-    return wrapper
-
-
 class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
 
     @distributed_trace
@@ -103,7 +83,8 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
     ) -> None:  # pylint: disable=docstring-should-be-keyword, docstring-missing-param
         """Send events to the Event Grid Service.
 
-        :param events: The event to send.
+        :param events: The event(s) to send. If sending to an Event Grid Namespace, the dict or list of dicts
+         should be in the format of a CloudEvent.
         :type events: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
          or CNCFCloudEvent or List[CNCFCloudEvent] or EventGridEvent or List[EventGridEvent]
         :keyword channel_name: The name of the channel to send the event to. Event Grid Basic Resource only.
@@ -331,7 +312,7 @@ def _serialize_events(events):
             return [_from_cncf_events(e) for e in events]
     else:
         # Does not conform to format, send as is
-        return json.dumps(events)
+        raise ValueError("Invalid event data. Please check the data is of Cloud Event format and try again.")
 
 
 def _serialize_cloud_event(cloud_event):

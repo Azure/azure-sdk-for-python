@@ -64,7 +64,8 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
     ) -> None:  # pylint: disable=docstring-should-be-keyword, docstring-missing-param
         """Send events to the Event Grid Service.
 
-        :param events: The event to send.
+        :param events: The event(s) to send. If sending to an Event Grid Namespace, the dict or list of dicts
+         should be in the format of a CloudEvent.
         :type events: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
          or CNCFCloudEvent or List[CNCFCloudEvent] or EventGridEvent or List[EventGridEvent]
         :keyword channel_name: The name of the channel to send the event to. Event Grid Basic Resource only.

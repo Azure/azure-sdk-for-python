@@ -4,11 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 """
-FILE: sample_all_operations.py
+FILE: sample_consume_process_events_async.py
 DESCRIPTION:
     These samples demonstrate sending, receiving, releasing, and acknowledging CloudEvents.
 USAGE:
-    python sample_all_operations.py
+    python sample_consume_process_events_async.py
     Set the environment variables with your own values before running the sample:
     1) EVENTGRID_KEY - The access key of your eventgrid account.
     2) EVENTGRID_ENDPOINT - The namespace endpoint. Typically it exists in the format
