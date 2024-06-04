@@ -367,8 +367,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         response: AioHttpTransportResponse,
         *,
         decompress: bool = True,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(
@@ -377,8 +376,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         response: RestAioHttpTransportResponse,
         *,
         decompress: bool = True,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     def __init__(
         self,
