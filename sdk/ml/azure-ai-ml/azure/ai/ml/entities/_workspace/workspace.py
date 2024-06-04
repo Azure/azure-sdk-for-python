@@ -81,6 +81,8 @@ class Workspace(Resource):
     :type primary_user_assigned_identity: str
     :param managed_network: workspace's Managed Network configuration
     :type managed_network: ~azure.ai.ml.entities.ManagedNetwork
+    :param system_datastores_auth_mode: The authentication mode for system datastores.
+    :type system_datastores_auth_mode: str
     :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
         The flag can only be set at the creation phase, it can't be updated.
     :type enable_data_isolation: bool
@@ -120,6 +122,7 @@ class Workspace(Resource):
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
+        system_datastores_auth_mode: Optional[str] = None,
         enable_data_isolation: bool = False,
         hub_id: Optional[str] = None,  # Hidden input, surfaced by Project
         workspace_hub: Optional[str] = None,  # Deprecated input maintained for backwards compat.
@@ -159,6 +162,7 @@ class Workspace(Resource):
         self.identity = identity
         self.primary_user_assigned_identity = primary_user_assigned_identity
         self.managed_network = managed_network
+        self.system_datastores_auth_mode = system_datastores_auth_mode
         self.enable_data_isolation = enable_data_isolation
         if workspace_hub and not hub_id:
             hub_id = workspace_hub
@@ -378,6 +382,7 @@ class Workspace(Resource):
             identity=identity,
             primary_user_assigned_identity=rest_obj.primary_user_assigned_identity,
             managed_network=managed_network,
+            system_datastores_auth_mode=rest_obj.system_datastores_auth_mode,
             feature_store_settings=feature_store_settings,
             enable_data_isolation=rest_obj.enable_data_isolation,
             hub_id=rest_obj.hub_resource_id,
@@ -423,6 +428,7 @@ class Workspace(Resource):
                 if self.managed_network
                 else None
             ),  # pylint: disable=protected-access
+            system_datastores_auth_mode=self.system_datastores_auth_mode,
             feature_store_settings=feature_store_settings,
             enable_data_isolation=self.enable_data_isolation,
             hub_resource_id=self._hub_id,

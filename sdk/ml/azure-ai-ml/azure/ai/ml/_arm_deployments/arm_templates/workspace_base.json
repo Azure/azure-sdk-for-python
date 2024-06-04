@@ -416,6 +416,13 @@
                 "description": "Managed network settings to be used for the workspace. If not specified, isolation mode Disabled is the default"
             }
         },
+        "system_datastores_auth_mode": {
+            "type": "string",
+            "defaultValue": "accesskey",
+            "metadata": {
+                "description": "The authentication mode for system datastores"
+            }
+        },
         "spark_runtime_version": {
             "type": "string",
             "defaultValue": "",
