@@ -43,7 +43,7 @@ class AzureMonitorConfigurator(_OTelSDKConfigurator):
                 kwargs.setdefault(TRACE_EXPORTER_NAMES_ARG, ["azure-monitor-opentelemetry-exporter"])
                 try:
                     sample_rate = float(environ.get("OTEL_TRACES_SAMPLER_ARG", 1.0))
-                except ValueError: 
+                except ValueError:
                     sample_rate = 1.0
                 kwargs.setdefault(SAMPLER_ARG, ApplicationInsightsSampler(sample_rate))
             if environ.get(OTEL_METRICS_EXPORTER, "").lower().strip() != "none":
