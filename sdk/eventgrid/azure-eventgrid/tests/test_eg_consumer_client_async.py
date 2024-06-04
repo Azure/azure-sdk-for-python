@@ -16,7 +16,6 @@ import datetime as dt
 
 from devtools_testutils import AzureRecordedTestCase
 from azure.core.messaging import CloudEvent
-from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid.aio import EventGridConsumerClient, EventGridPublisherClient
 from eventgrid_preparer import (
     EventGridPreparer,
@@ -25,14 +24,14 @@ from eventgrid_preparer import (
 
 class TestEventGridConsumerClientAsync(AzureRecordedTestCase):
     def create_eg_publisher_client(self, endpoint, topic=None):
-        credential = self.get_credential(EventGridPublisherClient)
+        credential = self.get_credential(EventGridPublisherClient, is_async=True)
         client = self.create_client_from_credential(
             EventGridPublisherClient, credential=credential, endpoint=endpoint, namespace_topic=topic
         )
         return client
 
     def create_eg_consumer_client(self, endpoint, topic, subscription):
-        credential = self.get_credential(EventGridConsumerClient)
+        credential = self.get_credential(EventGridConsumerClient, is_async=True)
         client = self.create_client_from_credential(
             EventGridConsumerClient,
             credential=credential,
@@ -46,19 +45,12 @@ class TestEventGridConsumerClientAsync(AzureRecordedTestCase):
     @EventGridPreparer()
     @pytest.mark.asyncio
     async def test_receive_data(self, **kwargs):
-        eventgrid_endpoint = kwargs["eventgrid_endpoint"]
-        eventgrid_key = kwargs["eventgrid_key"]
-        eventgrid_topic_name = kwargs["eventgrid_topic_name"]
-        eventgrid_event_subscription_name = kwargs["eventgrid_event_subscription_name"]
-        publisher = EventGridPublisherClient(
-            eventgrid_endpoint, AzureKeyCredential(eventgrid_key), namespace_topic=eventgrid_topic_name
-        )
-        consumer = EventGridConsumerClient(
-            eventgrid_endpoint,
-            AzureKeyCredential(eventgrid_key),
-            namespace_topic=eventgrid_topic_name,
-            subscription=eventgrid_event_subscription_name,
-        )
+        eventgrid_endpoint = kwargs.get("eventgrid_endpoint")
+        eventgrid_key = kwargs.get("eventgrid_key")
+        eventgrid_topic_name = kwargs.get("eventgrid_topic_name")
+        eventgrid_event_subscription_name = kwargs.get("eventgrid_event_subscription_name")
+        publisher = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
+        consumer = self.create_eg_consumer_client(eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name)
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
             data={"sample": "cloudevent"},
@@ -77,19 +69,12 @@ class TestEventGridConsumerClientAsync(AzureRecordedTestCase):
     @EventGridPreparer()
     @pytest.mark.asyncio
     async def test_receive_renew_data(self, **kwargs):
-        eventgrid_endpoint = kwargs["eventgrid_endpoint"]
-        eventgrid_key = kwargs["eventgrid_key"]
-        eventgrid_topic_name = kwargs["eventgrid_topic_name"]
-        eventgrid_event_subscription_name = kwargs["eventgrid_event_subscription_name"]
-        publisher = EventGridPublisherClient(
-            eventgrid_endpoint, AzureKeyCredential(eventgrid_key), namespace_topic=eventgrid_topic_name
-        )
-        consumer = EventGridConsumerClient(
-            eventgrid_endpoint,
-            AzureKeyCredential(eventgrid_key),
-            namespace_topic=eventgrid_topic_name,
-            subscription=eventgrid_event_subscription_name,
-        )
+        eventgrid_endpoint = kwargs.get("eventgrid_endpoint")
+        eventgrid_key = kwargs.get("eventgrid_key")
+        eventgrid_topic_name = kwargs.get("eventgrid_topic_name")
+        eventgrid_event_subscription_name = kwargs.get("eventgrid_event_subscription_name")
+        publisher = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
+        consumer = self.create_eg_consumer_client(eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name)
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
             data={"sample": "cloudevent"},
@@ -109,19 +94,12 @@ class TestEventGridConsumerClientAsync(AzureRecordedTestCase):
     @EventGridPreparer()
     @pytest.mark.asyncio
     async def test_receive_release_data(self, **kwargs):
-        eventgrid_endpoint = kwargs["eventgrid_endpoint"]
-        eventgrid_key = kwargs["eventgrid_key"]
-        eventgrid_topic_name = kwargs["eventgrid_topic_name"]
-        eventgrid_event_subscription_name = kwargs["eventgrid_event_subscription_name"]
-        publisher = EventGridPublisherClient(
-            eventgrid_endpoint, AzureKeyCredential(eventgrid_key), namespace_topic=eventgrid_topic_name
-        )
-        consumer = EventGridConsumerClient(
-            eventgrid_endpoint,
-            AzureKeyCredential(eventgrid_key),
-            namespace_topic=eventgrid_topic_name,
-            subscription=eventgrid_event_subscription_name,
-        )
+        eventgrid_endpoint = kwargs.get("eventgrid_endpoint")
+        eventgrid_key = kwargs.get("eventgrid_key")
+        eventgrid_topic_name = kwargs.get("eventgrid_topic_name")
+        eventgrid_event_subscription_name = kwargs.get("eventgrid_event_subscription_name")
+        publisher = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
+        consumer = self.create_eg_consumer_client(eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name)
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
             data={"sample": "cloudevent"},
@@ -140,19 +118,12 @@ class TestEventGridConsumerClientAsync(AzureRecordedTestCase):
     @EventGridPreparer()
     @pytest.mark.asyncio
     async def test_receive_reject_data(self, **kwargs):
-        eventgrid_endpoint = kwargs["eventgrid_endpoint"]
-        eventgrid_key = kwargs["eventgrid_key"]
-        eventgrid_topic_name = kwargs["eventgrid_topic_name"]
-        eventgrid_event_subscription_name = kwargs["eventgrid_event_subscription_name"]
-        publisher = EventGridPublisherClient(
-            eventgrid_endpoint, AzureKeyCredential(eventgrid_key), namespace_topic=eventgrid_topic_name
-        )
-        consumer = EventGridConsumerClient(
-            eventgrid_endpoint,
-            AzureKeyCredential(eventgrid_key),
-            namespace_topic=eventgrid_topic_name,
-            subscription=eventgrid_event_subscription_name,
-        )
+        eventgrid_endpoint = kwargs.get("eventgrid_endpoint")
+        eventgrid_key = kwargs.get("eventgrid_key")
+        eventgrid_topic_name = kwargs.get("eventgrid_topic_name")
+        eventgrid_event_subscription_name = kwargs.get("eventgrid_event_subscription_name")
+        publisher = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
+        consumer = self.create_eg_consumer_client(eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name)
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
             data={"sample": "cloudevent"},
