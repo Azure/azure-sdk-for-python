@@ -179,12 +179,6 @@ class StorageRecordedTestCase(AzureRecordedTestCase):
                 assert i[0] % max_chunk_size == 0 or i[0] % max_chunk_size == small_chunk_size
                 assert i[1] == size
 
-    def generate_oauth_token(self):
-        cred = self.get_credential(None)
-        return cred
-
-    def generate_fake_token(self):
-        return FakeTokenCredential()
 
     def get_datetime_variable(self, variables, name, dt):
         dt_string = variables.setdefault(name, dt.isoformat())
