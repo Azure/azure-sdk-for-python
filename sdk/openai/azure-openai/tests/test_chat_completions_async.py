@@ -761,7 +761,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
                     }
                 ],
             },
-            **kwargs
+            model="gpt-4"
         )
         assert completion.id
         assert completion.object == "extensions.chat.completion"
@@ -801,7 +801,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
                 ],
             },
             stream=True,
-            **kwargs
+            model="gpt-4"
         )
         async for chunk in response:
             assert chunk.id

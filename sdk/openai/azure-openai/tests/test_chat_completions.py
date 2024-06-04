@@ -21,7 +21,7 @@ from conftest import (
     ENV_AZURE_OPENAI_SEARCH_INDEX
 )
 
-@pytest.mark.skip()
+# @pytest.mark.skip()
 class TestChatCompletions(AzureRecordedTestCase):
 
     @configure
@@ -744,7 +744,7 @@ class TestChatCompletions(AzureRecordedTestCase):
                     }
                 ],
             },
-            **kwargs
+            model="gpt-4"
         )
         assert completion.id
         assert completion.object == "extensions.chat.completion"
@@ -783,7 +783,7 @@ class TestChatCompletions(AzureRecordedTestCase):
                 ],
             },
             stream=True,
-            **kwargs
+            model="gpt-4"
         )
         for chunk in response:
             assert chunk.id
