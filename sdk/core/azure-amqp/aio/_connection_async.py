@@ -177,6 +177,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         self._error: Optional[AMQPConnectionError] = None
         self._outgoing_endpoints: Dict[int, Session] = {}
         self._incoming_endpoints: Dict[int, Session] = {}
+        self._connection_lock = asyncio.Lock()
 
     async def __aenter__(self) -> "Connection":
         await self.open()
@@ -192,17 +193,19 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         :rtype: None
         """
         if new_state is None:
-            return
-        previous_state = self.state
-        self.state = new_state
-        _LOGGER.info(
-            "Connection state changed: %r -> %r",
-            previous_state,
-            new_state,
-            extra=self._network_trace_params
-        )
-        for session in self._outgoing_endpoints.values():
-            await session._on_connection_state_change()  # pylint:disable=protected-access
+                return
+        
+        async with self._connection_lock:
+            previous_state = self.state
+            self.state = new_state
+            _LOGGER.info(
+                "Connection state changed: %r -> %r",
+                previous_state,
+                new_state,
+                extra=self._network_trace_params
+            )
+            for session in self._outgoing_endpoints.values():
+                await session._on_connection_state_change()  # pylint:disable=protected-access
 
     async def _connect(self) -> None:
         """Initiate the connection.
@@ -873,18 +876,21 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         :raises ValueError: If `wait` is set to `False` and `allow_pipelined_open` is disabled.
         :rtype: None
         """
-        await self._connect()
-        await self._outgoing_open()
-        if self.state == ConnectionState.HDR_EXCH:
-            await self._set_state(ConnectionState.OPEN_SENT)
-        elif self.state == ConnectionState.HDR_SENT:
-            await self._set_state(ConnectionState.OPEN_PIPE)
-        if wait:
-            await self._wait_for_response(wait, ConnectionState.OPENED)
-        elif not self._allow_pipelined_open:
-            raise ValueError(
-                "Connection has been configured to not allow piplined-open. Please set 'wait' parameter."
-            )
+        async with self._connection_lock:
+            if self.state in [ConnectionState.OPENED]:
+                return
+            await self._connect()
+            await self._outgoing_open()
+            if self.state == ConnectionState.HDR_EXCH:
+                await self._set_state(ConnectionState.OPEN_SENT)
+            elif self.state == ConnectionState.HDR_SENT:
+                await self._set_state(ConnectionState.OPEN_PIPE)
+            if wait:
+                await self._wait_for_response(wait, ConnectionState.OPENED)
+            elif not self._allow_pipelined_open:
+                raise ValueError(
+                    "Connection has been configured to not allow piplined-open. Please set 'wait' parameter."
+                )
 
     async def close(self, error: Optional[AMQPError] = None, wait: bool = False) -> None:
         """Close the connection and disconnect the transport.
@@ -895,32 +901,33 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         :param bool wait: Whether to wait for a service Close response. Default is `False`.
         :rtype: None
         """
-        try:
-            if self.state in [
-                ConnectionState.END,
-                ConnectionState.CLOSE_SENT,
-                ConnectionState.DISCARDING,
-            ]:
-                return
-            await self._outgoing_close(error=error)
-            if error:
-                self._error = AMQPConnectionError(
-                    condition=error.condition,
-                    description=error.description,
-                    info=error.info,
-                )
-            if self.state == ConnectionState.OPEN_PIPE:
-                await self._set_state(ConnectionState.OC_PIPE)
-            elif self.state == ConnectionState.OPEN_SENT:
-                await self._set_state(ConnectionState.CLOSE_PIPE)
-            elif error:
-                await self._set_state(ConnectionState.DISCARDING)
-            else:
-                await self._set_state(ConnectionState.CLOSE_SENT)
-            await self._wait_for_response(wait, ConnectionState.END)
-        except Exception as exc:  # pylint:disable=broad-except
-            # If error happened during closing, ignore the error and set state to END
-            _LOGGER.info("An error occurred when closing the connection: %r", exc, extra=self._network_trace_params)
-            await self._set_state(ConnectionState.END)
-        finally:
-            await self._disconnect()
+        async with self._connection_lock:
+            try:
+                if self.state in [
+                    ConnectionState.END,
+                    ConnectionState.CLOSE_SENT,
+                    ConnectionState.DISCARDING,
+                ]:
+                    return
+                await self._outgoing_close(error=error)
+                if error:
+                    self._error = AMQPConnectionError(
+                        condition=error.condition,
+                        description=error.description,
+                        info=error.info,
+                    )
+                if self.state == ConnectionState.OPEN_PIPE:
+                    await self._set_state(ConnectionState.OC_PIPE)
+                elif self.state == ConnectionState.OPEN_SENT:
+                    await self._set_state(ConnectionState.CLOSE_PIPE)
+                elif error:
+                    await self._set_state(ConnectionState.DISCARDING)
+                else:
+                    await self._set_state(ConnectionState.CLOSE_SENT)
+                await self._wait_for_response(wait, ConnectionState.END)
+            except Exception as exc:  # pylint:disable=broad-except
+                # If error happened during closing, ignore the error and set state to END
+                _LOGGER.info("An error occurred when closing the connection: %r", exc, extra=self._network_trace_params)
+                await self._set_state(ConnectionState.END)
+            finally:
+                await self._disconnect()

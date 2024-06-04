@@ -35,6 +35,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
+from queue import Queue
 import errno
 import re
 import socket
@@ -45,6 +46,7 @@ from contextlib import contextmanager
 from io import BytesIO
 import logging
 from threading import Lock
+import threading
 
 import certifi
 
@@ -185,6 +187,8 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         self.socket_timeout = socket_timeout
         self.socket_settings = socket_settings
         self.socket_lock = Lock()
+        self._outgoing_queue = Queue()
+        self._incoming_queue = Queue()
 
     def connect(self):
         try:
@@ -200,6 +204,9 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             # EINTR, EAGAIN, EWOULDBLOCK would signal that the banner
             # has _not_ been sent
             self.connected = True
+            self._run_io_loop = True
+            self._io_loop = threading.Thread(target=self._io_loop, daemon=True)
+            self._io_loop.start()
         except (OSError, IOError, SSLError) as e:
             _LOGGER.info("Transport connection failed: %r", e, extra=self.network_trace_params)
             # if not fully connected, close socket, and reraise error
@@ -382,9 +389,75 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         :rtype: None
         """
         raise NotImplementedError("Must be overriden in subclass")
+    
+    def _io_loop(self):
+        # TODO: how to raise the errors from here. Perhaps a callback function or another variable.
+        while self._run_io_loop:
+            # write to the socket if there is anything in the outgoing queue
+            if not self.outgoing_queue.empty():
+                try:
+                    q_size = self.outgoing_queue.qsize()
+                    for _ in range(q_size):
+                        self._write(self.outgoing_queue.get())
+                except socket.timeout:
+                    raise
+                except (OSError, IOError, socket.error) as exc:
+                    _LOGGER.debug("Transport write failed: %r", exc, extra=self.network_trace_params)
+                    if get_errno(exc) not in _UNAVAIL:
+                        self.connected = False
+                    raise
+            # read from the socket if there is anything in the incoming queue
+            # max size of 10 frames for now
+            if not self._incoming_queue.qsize() < 10:
+                try:
+                    read_frame_buffer = BytesIO()
+                    frame_header = memoryview(bytearray(8))
+                    read_frame_buffer.write(self._read(8, buffer=frame_header, initial=True))
+                    channel = struct.unpack(">H", frame_header[6:])[0]
+                    size = frame_header[0:4]
+                    if size == AMQP_FRAME:  # Empty frame or AMQP header negotiation TODO
+                        self._incoming_queue.put((frame_header, channel, None))
+                        continue
+                    size = struct.unpack(">I", size)[0]
+                    offset = frame_header[4]
+                    frame_type = frame_header[5]
+                    # >I is an unsigned int, but the argument to sock.recv is signed,
+                    # so we know the size can be at most 2 * SIGNED_INT_MAX
+                    payload_size = size - len(frame_header)
+                    payload = memoryview(bytearray(payload_size))
+                    if size > SIGNED_INT_MAX:
+                        read_frame_buffer.write(self._read(SIGNED_INT_MAX, buffer=payload))
+                        read_frame_buffer.write(
+                            self._read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:])
+                        )
+                    else:
+                        read_frame_buffer.write(self._read(payload_size, buffer=payload))
+                except (socket.timeout, TimeoutError):
+                    read_frame_buffer.write(self._read_buffer.getvalue())
+                    self._read_buffer = read_frame_buffer
+                    self._read_buffer.seek(0)
+                    raise
+                except (OSError, IOError, SSLError, socket.error) as exc:
+                    # Don't disconnect for ssl read time outs
+                    # http://bugs.python.org/issue10272
+                    if isinstance(exc, SSLError) and "timed out" in str(exc):
+                        raise socket.timeout()
+                    if get_errno(exc) not in _UNAVAIL:
+                        self.connected = False
+                    _LOGGER.debug("Transport read failed: %r", exc, extra=self.network_trace_params)
+                    raise
+                offset -= 2
+                self._incoming_queue.put((frame_header, channel, payload[offset:]))
+
+
+
+                
 
     def close(self):
         with self.socket_lock:
+            # lets stop the background loop
+            self._run_io_loop = False
+            self._io_loop.join()
             if self.sock is not None:
                 self._shutdown_transport()
                 # Call shutdown first to make sure that pending messages
@@ -405,70 +478,28 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             self.connected = False
 
     def read(self, verify_frame_type=0):
-        with self.socket_lock:
-            read = self._read
-            read_frame_buffer = BytesIO()
-            try:
-                frame_header = memoryview(bytearray(8))
-                read_frame_buffer.write(read(8, buffer=frame_header, initial=True))
+        
+        frame_header, channel, payload = self._incoming_queue.get()
+        size = frame_header[0:4]
+        if size == AMQP_FRAME:  # Empty frame or AMQP header negotiation TODO
+            return frame_header, channel, None
 
-                channel = struct.unpack(">H", frame_header[6:])[0]
-                size = frame_header[0:4]
-                if size == AMQP_FRAME:  # Empty frame or AMQP header negotiation TODO
-                    return frame_header, channel, None
-                size = struct.unpack(">I", size)[0]
-                offset = frame_header[4]
-                frame_type = frame_header[5]
-                if verify_frame_type is not None and frame_type != verify_frame_type:
-                    _LOGGER.debug(
-                        "Received invalid frame type: %r, expected: %r",
-                        frame_type,
-                        verify_frame_type,
-                        extra=self.network_trace_params
-                    )
-                    raise ValueError(
-                            f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
-                    )
-
-                # >I is an unsigned int, but the argument to sock.recv is signed,
-                # so we know the size can be at most 2 * SIGNED_INT_MAX
-                payload_size = size - len(frame_header)
-                payload = memoryview(bytearray(payload_size))
-                if size > SIGNED_INT_MAX:
-                    read_frame_buffer.write(read(SIGNED_INT_MAX, buffer=payload))
-                    read_frame_buffer.write(
-                        read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:])
-                    )
-                else:
-                    read_frame_buffer.write(read(payload_size, buffer=payload))
-            except (socket.timeout, TimeoutError):
-                read_frame_buffer.write(self._read_buffer.getvalue())
-                self._read_buffer = read_frame_buffer
-                self._read_buffer.seek(0)
-                raise
-            except (OSError, IOError, SSLError, socket.error) as exc:
-                # Don't disconnect for ssl read time outs
-                # http://bugs.python.org/issue10272
-                if isinstance(exc, SSLError) and "timed out" in str(exc):
-                    raise socket.timeout()
-                if get_errno(exc) not in _UNAVAIL:
-                    self.connected = False
-                _LOGGER.debug("Transport read failed: %r", exc, extra=self.network_trace_params)
-                raise
-            offset -= 2
-        return frame_header, channel, payload[offset:]
+        frame_type = frame_header[5]
+        if verify_frame_type is not None and frame_type != verify_frame_type:
+            _LOGGER.debug(
+                "Received invalid frame type: %r, expected: %r",
+                frame_type,
+                verify_frame_type,
+                extra=self.network_trace_params
+            )
+            raise ValueError(
+                    f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
+            )
+        return frame_header, channel, payload
+        
 
     def write(self, s):
-        with self.socket_lock:
-            try:
-                self._write(s)
-            except socket.timeout:
-                raise
-            except (OSError, IOError, socket.error) as exc:
-                _LOGGER.debug("Transport write failed: %r", exc, extra=self.network_trace_params)
-                if get_errno(exc) not in _UNAVAIL:
-                    self.connected = False
-                raise
+        self._outgoing_queue.put(s)
 
     def receive_frame(self, **kwargs):
         try:
@@ -645,26 +676,27 @@ class SSLTransport(_AbstractTransport):
         return view
 
     def _write(self, s):
-        """Write a string out to the SSL socket fully.
-        :param str s: The string to write.
-        """
-        try:
-            write = self.sock.send
-        except AttributeError:
-            raise IOError("Socket has already been closed.") from None
+        self.outgoing_queue.put(s)
+        # """Write a string out to the SSL socket fully.
+        # :param str s: The string to write.
+        # """
+        # try:
+        #     write = self.sock.send
+        # except AttributeError:
+        #     raise IOError("Socket has already been closed.") from None
 
-        while s:
-            try:
-                n = write(s)
-            except ValueError:
-                # AG: sock._sslobj might become null in the meantime if the
-                # remote connection has hung up.
-                # In python 3.4, a ValueError is raised is self._sslobj is
-                # None.
-                n = 0
-            if not n:
-                raise IOError("Socket closed.")
-            s = s[n:]
+        # while s:
+        #     try:
+        #         n = write(s)
+        #     except ValueError:
+        #         # AG: sock._sslobj might become null in the meantime if the
+        #         # remote connection has hung up.
+        #         # In python 3.4, a ValueError is raised is self._sslobj is
+        #         # None.
+        #         n = 0
+        #     if not n:
+        #         raise IOError("Socket closed.")
+        #     s = s[n:]
 
     def negotiate(self):
         with self.block():
