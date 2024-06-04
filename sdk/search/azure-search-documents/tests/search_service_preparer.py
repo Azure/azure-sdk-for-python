@@ -6,7 +6,6 @@
 import functools
 from os import environ
 from os.path import dirname, realpath, join
-import logging
 
 import inspect
 import json
@@ -59,7 +58,6 @@ def _clean_up_indexes(endpoint, cred):
     # wipe the synonym maps which seem to survive the index
     for map in client.get_synonym_maps():
         client.delete_synonym_map(map.name)
-    print("Temp log: Deleted synonym maps")
     # wipe out any existing aliases
     for alias in client.list_aliases():
         client.delete_alias(alias)
@@ -67,7 +65,6 @@ def _clean_up_indexes(endpoint, cred):
     # wipe any existing indexes
     for index in client.list_indexes():
         client.delete_index(index)
-    print("Temp log: Deleted indexes")
 
 
 def _clean_up_indexers(endpoint, cred):
@@ -100,7 +97,7 @@ def _set_up_index(service_name, endpoint, cred, schema, index_batch):
         index_json = json.loads(schema)
         index_name = index_json["name"]
         index = SearchIndex.from_dict(index_json)
-        index_client = SearchIndexClient(endpoint, DefaultAzureCredential(exclude_managed_identity_credential=True), retry_backoff_factor=60, logging_enable=True)
+        index_client = SearchIndexClient(endpoint, cred, retry_backoff_factor=60)
         index_create = index_client.create_index(index)
         # response = requests.post(
         #     SERVICE_URL_FMT.format(service_name, SEARCH_ENDPOINT_SUFFIX),
@@ -113,7 +110,7 @@ def _set_up_index(service_name, endpoint, cred, schema, index_batch):
     # optionally load data into the index
     if index_batch and schema:
         batch = IndexBatch.deserialize(index_batch)
-        client = SearchClient(endpoint, index_name, DefaultAzureCredential(exclude_managed_identity_credential=True))
+        client = SearchClient(endpoint, index_name, cred)
         results = client.index_documents(batch)
         if not all(result.succeeded for result in results):
             raise AzureTestError("Document upload to search index failed")
@@ -150,9 +147,6 @@ def search_decorator(*, schema, index_batch):
             endpoint = kwargs.get("search_service_endpoint")
             service_name = kwargs.get("search_service_name")
             if test.is_live:
-                logging.basicConfig(level=logging.DEBUG)
-                logger = logging.getLogger()
-                logger.debug("This is a debug message")
                 cred = DefaultAzureCredential(exclude_managed_identity_credential=True)
                 _clean_up_indexes(endpoint, cred)
                 _set_up_index(service_name, endpoint, cred, schema, index_batch)

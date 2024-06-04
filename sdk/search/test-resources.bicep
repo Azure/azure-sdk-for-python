@@ -31,10 +31,20 @@ resource searchService 'Microsoft.Search/searchServices@2024-03-01-preview' = {
 }
 
 resource searchServiceRoleAssignment 'Microsoft.Authorization/roleAssignments@2018-09-01-preview' = {  
-  name: guid(resourceGroup().id, testApplicationOid)
+  name: guid(resourceGroup().id, testApplicationOid, 'SearchServiceContributor')
   scope: resourceGroup()
   properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7ca78c08-252a-4471-8644-bb5ff32d4ba0')
+    principalId: testApplicationOid
+    principalType: 'ServicePrincipal'
+  }
+}
+
+resource searchIndexDataRoleAssignment 'Microsoft.Authorization/roleAssignments@2018-09-01-preview' = {  
+  name: guid(resourceGroup().id, testApplicationOid, 'SearchIndexDataContributor')
+  scope: resourceGroup()
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8ebe5a00-799e-43f5-93ac-243d3dce84a7')
     principalId: testApplicationOid
     principalType: 'ServicePrincipal'
   }
