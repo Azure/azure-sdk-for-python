@@ -274,9 +274,15 @@ def test_compare_reports(pkg_dir: str, version: str) -> None:
     bc = BreakingChangesTracker(stable, current, diff, package_name)
     bc.run_checks()
 
-    # remove_json_files(pkg_dir)
+    remove_json_files(pkg_dir)
 
-    if bc.features_added or bc.breaking_changes:
+    # TODO: Add changelog argument to the script
+    changelog = True
+    if changelog:
+        print(bc.report_changelog())
+        exit(0)
+    elif bc.breaking_changes:
+        bc.report_breaking_changes()
         print(bc)
         exit(1)
 
