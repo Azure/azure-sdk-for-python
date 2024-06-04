@@ -21,64 +21,25 @@ USAGE:
     2) TABLES_STORAGE_ACCOUNT_NAME - the name of the storage account
     3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
+import sys
 import os
 import asyncio
-from datetime import datetime, timezone
+from datetime import datetime
 from uuid import uuid4, UUID
 from dotenv import find_dotenv, load_dotenv
-from dataclasses import dataclass, asdict
-from typing import Dict, Union, NamedTuple
-from azure.data.tables import TableEntityEncoderABC
-from azure.data.tables.aio import TableClient
-from azure.core.exceptions import ResourceExistsError, HttpResponseError
+from typing_extensions import TypedDict
 
 
-RGBColor = NamedTuple("RGBColor", [("Red", float), ("Green", float), ("Blue", float)])
-
-
-@dataclass
-class Car:
-    color: RGBColor
-    maker: str
-    model: str
-    production_date: datetime
-    mileage: int
-
-
-@dataclass
-class Product:
+class EntityType(TypedDict, total=False):
     PartitionKey: str
     RowKey: str
+    text: str
+    color: str
     price: float
     last_updated: datetime
     product_id: UUID
     inventory_count: int
     barcode: bytes
-    item_details: Car
-
-
-class MyEncoder(TableEntityEncoderABC[Product]):
-    def encode_entity(self, entity: Product) -> Dict[str, Union[str, int, float, bool]]:
-        encoded = {}
-        for key, value in asdict(entity).items():
-            if isinstance(value, dict):
-                for k, v in value.items():
-                    if isinstance(v, RGBColor):
-                        edm_type, v = self._prepare_value_in_rgb(v)
-                    else:
-                        edm_type, v = self.prepare_value(k, v)
-                    if edm_type:
-                        encoded[f"{k}@odata.type"] = edm_type.value if hasattr(edm_type, "value") else edm_type
-                    encoded[k] = v
-                continue
-            edm_type, value = self.prepare_value(key, value)
-            if edm_type:
-                encoded[f"{key}@odata.type"] = edm_type.value if hasattr(edm_type, "value") else edm_type
-            encoded[key] = value
-        return encoded
-
-    def _prepare_value_in_rgb(self, color):
-        return None, f"{color[0]}, {color[1]}, {color[2]}"
 
 
 class InsertDeleteEntity(object):
@@ -91,27 +52,25 @@ class InsertDeleteEntity(object):
         self.connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
         self.table_name = "InsertDeleteAsync"
 
-        self.entity = Product(
-            PartitionKey="PK",
-            RowKey="RK",
-            price=4.99,
-            last_updated=datetime.today(),
-            product_id=uuid4(),
-            inventory_count=42,
-            barcode=b"135aefg8oj0ld58",  # cspell:disable-line
-            item_details=Car(
-                color=RGBColor("30.1", "40.1", "50.1"),
-                maker="maker",
-                model="model",
-                production_date=datetime(year=2014, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc),
-                mileage=2**31,  # an int64 integer
-            ),
-        )
+        self.entity: EntityType = {
+            "PartitionKey": "color",
+            "RowKey": "brand",
+            "text": "Marker",
+            "color": "Purple",
+            "price": 4.99,
+            "last_updated": datetime.today(),
+            "product_id": uuid4(),
+            "inventory_count": 42,
+            "barcode": b"135aefg8oj0ld58",  # cspell:disable-line
+        }
 
-    async def create_delete_entity(self):
+    async def create_entity(self):
+        from azure.data.tables.aio import TableClient
+        from azure.core.exceptions import ResourceExistsError, HttpResponseError
+
         table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
+        # Create a table in case it does not already exist
         async with table_client:
-            # Create a table in case it does not already exist
             try:
                 await table_client.create_table()
             except HttpResponseError:
@@ -119,26 +78,46 @@ class InsertDeleteEntity(object):
 
             # [START create_entity]
             try:
-                resp = await table_client.create_entity(entity=self.entity, encoder=MyEncoder())
+                resp = await table_client.create_entity(entity=self.entity)
                 print(resp)
             except ResourceExistsError:
                 print("Entity already exists")
             # [END create_entity]
 
-            # [START delete_entity]
-            await table_client.delete_entity(
-                partition_key=self.entity.PartitionKey, row_key=self.entity.RowKey, encoder=MyEncoder()
-            )
-            # [END delete_entity]
-            print("Successfully deleted!")
+    async def delete_entity(self):
+        from azure.data.tables.aio import TableClient
+        from azure.core.exceptions import ResourceExistsError
+        from azure.core.credentials import AzureNamedKeyCredential
 
-            await table_client.delete_table()
+        credential = AzureNamedKeyCredential(self.account_name, self.access_key)
+        table_client = TableClient(endpoint=self.endpoint, table_name=self.table_name, credential=credential)
+
+        async with table_client:
+            try:
+                await table_client.create_entity(entity=self.entity)
+            except ResourceExistsError:
+                print("Entity already exists!")
+
+            # [START delete_entity]
+            await table_client.delete_entity(row_key=self.entity["RowKey"], partition_key=self.entity["PartitionKey"])
+            print("Successfully deleted!")
+            # [END delete_entity]
+
+    async def clean_up(self):
+        from azure.data.tables.aio import TableServiceClient
+
+        async with TableServiceClient.from_connection_string(self.connection_string) as tsc:
+            async for table in tsc.list_tables():
+                await tsc.delete_table(table.name)
+
             print("Cleaned up")
 
 
 async def main():
     ide = InsertDeleteEntity()
-    await ide.create_delete_entity()
+    await ide.create_entity()
+    await ide.delete_entity()
+    await ide.clean_up()
 
 
 if __name__ == "__main__":

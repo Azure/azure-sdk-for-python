@@ -20,63 +20,25 @@ USAGE:
     2) TABLES_STORAGE_ACCOUNT_NAME - the name of the storage account
     3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
+import sys
+from datetime import datetime
 import os
-import asyncio
-from datetime import datetime, timezone
 from uuid import uuid4, UUID
+import asyncio
 from dotenv import find_dotenv, load_dotenv
-from dataclasses import dataclass, asdict
-from typing import Dict, Union, NamedTuple
-from azure.data.tables import TableEntityEncoderABC, UpdateMode
-from azure.data.tables.aio import TableClient
+from typing_extensions import TypedDict
 
 
-RGBColor = NamedTuple("RGBColor", [("Red", float), ("Green", float), ("Blue", float)])
-
-
-@dataclass
-class Car:
-    color: RGBColor
-    maker: str
-    model: str
-    production_date: datetime
-    mileage: int
-
-
-@dataclass
-class Product:
+class EntityType(TypedDict, total=False):
     PartitionKey: str
     RowKey: str
+    text: str
+    color: str
     price: float
     last_updated: datetime
     product_id: UUID
     inventory_count: int
     barcode: bytes
-    item_details: Car
-
-
-class MyEncoder(TableEntityEncoderABC[Product]):
-    def encode_entity(self, entity: Product) -> Dict[str, Union[str, int, float, bool]]:
-        encoded = {}
-        for key, value in asdict(entity).items():
-            if isinstance(value, dict):
-                for k, v in value.items():
-                    if isinstance(v, RGBColor):
-                        edm_type, v = self._prepare_value_in_rgb(v)
-                    else:
-                        edm_type, v = self.prepare_value(k, v)
-                    if edm_type:
-                        encoded[f"{k}@odata.type"] = edm_type.value if hasattr(edm_type, "value") else edm_type
-                    encoded[k] = v
-                continue
-            edm_type, value = self.prepare_value(key, value)
-            if edm_type:
-                encoded[f"{key}@odata.type"] = edm_type.value if hasattr(edm_type, "value") else edm_type
-            encoded[key] = value
-        return encoded
-
-    def _prepare_value_in_rgb(self, color):
-        return None, f"{color[0]}, {color[1]}, {color[2]}"
 
 
 class TableEntitySamples(object):
@@ -89,13 +51,15 @@ class TableEntitySamples(object):
         self.table_base = "UpdateUpsertMergeAsync"
 
     async def create_and_get_entities(self):
-        # Instantiate a table client
+        # Instantiate a table service client
+        from azure.data.tables.aio import TableClient
+
         table = TableClient.from_connection_string(self.connection_string, table_name=self.table_base + "create")
 
         async with table:
             await table.create_table()
 
-            my_entity = {
+            my_entity: EntityType = {
                 "PartitionKey": "color",
                 "RowKey": "brand",
                 "text": "Marker",
@@ -109,12 +73,12 @@ class TableEntitySamples(object):
 
             try:
                 created_entity = await table.create_entity(entity=my_entity)
-                print(f"Created entity: {created_entity}")
+                print("Created entity: {}".format(created_entity))
 
                 # [START get_entity]
                 # Get Entity by partition and row key
                 got_entity = await table.get_entity(
-                    partition_key=str(my_entity["PartitionKey"]), row_key=str(my_entity["RowKey"])
+                    partition_key=my_entity["PartitionKey"], row_key=my_entity["RowKey"]
                 )
                 print(f"Received entity: {got_entity}")
                 # [END get_entity]
@@ -123,9 +87,12 @@ class TableEntitySamples(object):
                 await table.delete_table()
 
     async def list_all_entities(self):
-        # Instantiate a table client
+        # Instantiate a table service client
+        from azure.data.tables.aio import TableClient
+
         table = TableClient.from_connection_string(self.connection_string, table_name=self.table_base + "list")
 
+        # Create the table
         async with table:
             await table.create_table()
 
@@ -156,7 +123,7 @@ class TableEntitySamples(object):
                 # Query the entities in the table
                 i = 0
                 async for entity in table.list_entities():
-                    print(f"Entity #{i}: {entity}")
+                    print(f"Entity #{entity}: {i}")
                     i += 1
                 # [END list_entities]
 
@@ -164,64 +131,55 @@ class TableEntitySamples(object):
                 await table.delete_table()
 
     async def update_entities(self):
-        # Instantiate a table client
+        # Instantiate a table service client
+        from azure.data.tables.aio import TableClient
+        from azure.data.tables import UpdateMode
+
         table = TableClient.from_connection_string(self.connection_string, table_name=self.table_base + "update")
 
+        # Create the table and Table Client
         async with table:
             await table.create_table()
 
-            entity = Product(
-                PartitionKey="PK",
-                RowKey="RK",
-                price=4.99,
-                last_updated=datetime.today(),
-                product_id=uuid4(),
-                inventory_count=42,
-                barcode=b"135aefg8oj0ld58",  # cspell:disable-line
-                item_details=Car(
-                    color=RGBColor("30.1", "40.1", "50.1"),
-                    maker="maker",
-                    model="model",
-                    production_date=datetime(
-                        year=2014, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc
-                    ),
-                    mileage=2**31,  # an int64 integer
-                ),
-            )
-            entity1 = Product(
-                PartitionKey="PK2",
-                RowKey="RK2",
-                price=3.99,
-                last_updated=datetime.today(),
-                product_id=uuid4(),
-                inventory_count=42,
-                barcode=b"135aefg8oj0ld59",  # cspell:disable-line
-                item_details=Car(
-                    color=RGBColor("40.1", "50.1", "60.1"),
-                    maker="maker2",
-                    model="model2",
-                    production_date=datetime(
-                        year=2014, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc
-                    ),
-                    mileage=2**31,  # an int64 integer
-                ),
-            )
+            entity = {
+                "PartitionKey": "color2",
+                "RowKey": "sharpie",
+                "text": "Marker",
+                "color": "Purple",
+                "price": 5.99,
+                "inventory": 42,
+                "product_id": uuid4(),
+            }
+            entity1 = {
+                "PartitionKey": "color2",
+                "RowKey": "crayola",
+                "text": "Marker",
+                "color": "Red",
+                "price": 3.99,
+                "inventory": 42,
+                "product_id": uuid4(),
+            }
 
             try:
-                await table.create_entity(entity=entity, encoder=MyEncoder())
-                created = await table.get_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
+                # Create entities
+                await table.create_entity(entity=entity)
+                created = await table.get_entity(
+                    partition_key=str(entity["PartitionKey"]), row_key=str(entity["RowKey"])
+                )
 
                 # [START upsert_entity]
-                insert_entity = await table.upsert_entity(mode=UpdateMode.REPLACE, entity=entity1, encoder=MyEncoder())
+                # Try Replace and insert on fail
+                insert_entity = await table.upsert_entity(mode=UpdateMode.REPLACE, entity=entity1)
                 print(f"Inserted entity: {insert_entity}")
 
-                merged_entity = await table.upsert_entity(mode=UpdateMode.MERGE, entity=entity, encoder=MyEncoder())
+                created["text"] = "NewMarker"
+                merged_entity = await table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
                 print(f"Merged entity: {merged_entity}")
                 # [END upsert_entity]
 
                 # [START update_entity]
                 # Update the entity
-                created["maker"] = "NewMaker"
+                created["text"] = "NewMarker"
                 await table.update_entity(mode=UpdateMode.REPLACE, entity=created)
 
                 # Get the replaced entity
@@ -229,7 +187,7 @@ class TableEntitySamples(object):
                 print(f"Replaced entity: {replaced}")
 
                 # Merge the entity
-                replaced["color"] = "70.1, 80.1, 90.1"
+                replaced["color"] = "Blue"
                 await table.update_entity(mode=UpdateMode.MERGE, entity=replaced)
 
                 # Get the merged entity

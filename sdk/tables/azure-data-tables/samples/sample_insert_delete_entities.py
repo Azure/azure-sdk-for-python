@@ -21,62 +21,24 @@ USAGE:
     2) TABLES_STORAGE_ACCOUNT_NAME - the name of the storage account
     3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
+import sys
+from datetime import datetime
 import os
-from datetime import datetime, timezone
 from uuid import uuid4, UUID
 from dotenv import find_dotenv, load_dotenv
-from dataclasses import dataclass, asdict
-from typing import Dict, Union, NamedTuple
-from azure.data.tables import TableClient, TableEntityEncoderABC
-from azure.core.exceptions import ResourceExistsError, HttpResponseError
+from typing_extensions import TypedDict
 
 
-RGBColor = NamedTuple("RGBColor", [("Red", float), ("Green", float), ("Blue", float)])
-
-
-@dataclass
-class Car:
-    color: RGBColor
-    maker: str
-    model: str
-    production_date: datetime
-    mileage: int
-
-
-@dataclass
-class Product:
+class EntityType(TypedDict, total=False):
     PartitionKey: str
     RowKey: str
+    text: str
+    color: str
     price: float
     last_updated: datetime
     product_id: UUID
     inventory_count: int
     barcode: bytes
-    item_details: Car
-
-
-class MyEncoder(TableEntityEncoderABC[Product]):
-    def encode_entity(self, entity: Product) -> Dict[str, Union[str, int, float, bool]]:
-        encoded = {}
-        for key, value in asdict(entity).items():
-            if isinstance(value, dict):
-                for k, v in value.items():
-                    if isinstance(v, RGBColor):
-                        edm_type, v = self._prepare_value_in_rgb(v)
-                    else:
-                        edm_type, v = self.prepare_value(k, v)
-                    if edm_type:
-                        encoded[f"{k}@odata.type"] = edm_type.value if hasattr(edm_type, "value") else edm_type
-                    encoded[k] = v
-                continue
-            edm_type, value = self.prepare_value(key, value)
-            if edm_type:
-                encoded[f"{key}@odata.type"] = edm_type.value if hasattr(edm_type, "value") else edm_type
-            encoded[key] = value
-        return encoded
-
-    def _prepare_value_in_rgb(self, color):
-        return None, f"{color[0]}, {color[1]}, {color[2]}"
 
 
 class InsertDeleteEntity(object):
@@ -89,25 +51,24 @@ class InsertDeleteEntity(object):
         self.connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
         self.table_name = "SampleInsertDelete"
 
-        self.entity = Product(
-            PartitionKey="PK",
-            RowKey="RK",
-            price=4.99,
-            last_updated=datetime.today(),
-            product_id=uuid4(),
-            inventory_count=42,
-            barcode=b"135aefg8oj0ld58",  # cspell:disable-line
-            item_details=Car(
-                color=RGBColor("30.1", "40.1", "50.1"),
-                maker="maker",
-                model="model",
-                production_date=datetime(year=2014, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc),
-                mileage=2**31,  # an int64 integer
-            ),
-        )
+        self.entity: EntityType = {
+            "PartitionKey": "color",
+            "RowKey": "brand",
+            "text": "Marker",
+            "color": "Purple",
+            "price": 4.99,
+            "last_updated": datetime.today(),
+            "product_id": uuid4(),
+            "inventory_count": 42,
+            "barcode": b"135aefg8oj0ld58",  # cspell:disable-line
+        }
 
-    def create_delete_entity(self):
+    def create_entity(self):
+        from azure.data.tables import TableClient
+        from azure.core.exceptions import ResourceExistsError, HttpResponseError
+
         with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
+
             # Create a table in case it does not already exist
             try:
                 table_client.create_table()
@@ -116,21 +77,33 @@ class InsertDeleteEntity(object):
 
             # [START create_entity]
             try:
-                resp = table_client.create_entity(entity=self.entity, encoder=MyEncoder())
+                resp = table_client.create_entity(entity=self.entity)
                 print(resp)
             except ResourceExistsError:
                 print("Entity already exists")
             # [END create_entity]
 
-            # [START delete_entity]
-            table_client.delete_entity(partition_key=self.entity.PartitionKey, row_key=self.entity.RowKey)
-            # [END delete_entity]
-            print("Successfully deleted!")
+    def delete_entity(self):
+        from azure.data.tables import TableClient
+        from azure.core.exceptions import ResourceExistsError
+        from azure.core.credentials import AzureNamedKeyCredential
 
-            table_client.delete_table()
-            print("Cleaned up")
+        credential = AzureNamedKeyCredential(self.account_name, self.access_key)
+        with TableClient(endpoint=self.endpoint, table_name=self.table_name, credential=credential) as table_client:
+
+            # Create an entity to delete (to showcase etag)
+            try:
+                table_client.create_entity(entity=self.entity)
+            except ResourceExistsError:
+                print("Entity already exists!")
+
+            # [START delete_entity]
+            table_client.delete_entity(row_key=self.entity["RowKey"], partition_key=self.entity["PartitionKey"])
+            print("Successfully deleted!")
+            # [END delete_entity]
 
 
 if __name__ == "__main__":
     ide = InsertDeleteEntity()
-    ide.create_delete_entity()
+    ide.create_entity()
+    ide.delete_entity()
