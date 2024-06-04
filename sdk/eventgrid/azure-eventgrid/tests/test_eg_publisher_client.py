@@ -21,7 +21,7 @@ except ImportError:
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureKeyCredential
 from azure.core.messaging import CloudEvent
 from azure.core.serialization import NULL
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent, generate_sas
@@ -145,7 +145,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     def test_send_event_grid_namespace(self, **kwargs):
         eventgrid_endpoint = kwargs["eventgrid_endpoint"]
         eventgrid_topic_name = kwargs["eventgrid_topic_name"]
-        client = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
+        client = EventGridPublisherClient(eventgrid_endpoint, AzureKeyCredential(kwargs["eventgrid_key"]), namespace_topic=eventgrid_topic_name)
         eg_event = {
             "subject": "sample",
             "data": {"key1": "Sample.EventGrid.Event"},
