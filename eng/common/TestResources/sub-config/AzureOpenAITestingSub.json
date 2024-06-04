@@ -1,10 +1,10 @@
 {
     "SubscriptionId": "e72e5254-f265-4e95-9bd2-9ee8e7329051",
     "TenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-    "TestApplicationId": "",
-    "TestApplicationOid": "",
-    "ProvisionerApplicationId": "",
-    "ProvisionerApplicationOid": "",
+    "TestApplicationId": "f850650c-1fcf-4489-b46f-71af2e30d360",
+    "TestApplicationOid": "30511c9d-ba1a-4c7b-b422-5b543da11b3f",
+    "ProvisionerApplicationId": "f850650c-1fcf-4489-b46f-71af2e30d360",
+    "ProvisionerApplicationOid": "30511c9d-ba1a-4c7b-b422-5b543da11b3f",
     "Environment": "AzureCloud",
     "AzureSubscription": "Speech Services - DEV - SDK (rob)"
 }
