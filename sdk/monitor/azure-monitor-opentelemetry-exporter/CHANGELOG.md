@@ -5,7 +5,7 @@
 ### Features Added
 
 - Implement redirect for live metrics
-    ([#35762](https://github.com/Azure/azure-sdk-for-python/pull/35762))
+    ([#35910](https://github.com/Azure/azure-sdk-for-python/pull/35910))
 
 ### Breaking Changes
 

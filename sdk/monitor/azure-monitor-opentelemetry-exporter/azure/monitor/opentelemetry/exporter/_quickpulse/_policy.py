@@ -5,7 +5,6 @@ from urllib.parse import urlparse
 from typing import Any, Optional
 
 from azure.core.pipeline import PipelineResponse, policies
-from azure.core.pipeline.policies._redirect import AllHttpResponseType
 
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import _QUICKPULSE_REDIRECT_HEADER_NAME
 
@@ -20,7 +19,7 @@ class _QuickpulseRedirectPolicy(policies.RedirectPolicy):
         super().__init__(**kwargs)
 
     # Gets the redirect location from header
-    def get_redirect_location(self, response: PipelineResponse[Any, AllHttpResponseType]) -> Optional[str] :
+    def get_redirect_location(self, response: PipelineResponse) -> Optional[str] :
         redirect_location = response.http_response.headers.get(_QUICKPULSE_REDIRECT_HEADER_NAME)
         qp_client = None
         if redirect_location:
