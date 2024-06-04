@@ -90,6 +90,7 @@ class _QuickpulseExporter(MetricExporter):
         config = QuickpulseClientConfiguration(credential=None)  # type: ignore
         qp_redirect_policy = _QuickpulseRedirectPolicy(permit_redirects=False)
         policies = [
+            # Custom redirect policy for QP
             qp_redirect_policy,
             # Needed for serialization
             ContentDecodePolicy(),

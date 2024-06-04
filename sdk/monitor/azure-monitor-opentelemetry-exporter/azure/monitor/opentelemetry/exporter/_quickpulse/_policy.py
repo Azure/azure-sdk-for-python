@@ -15,7 +15,8 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import _QUICKPU
 class _QuickpulseRedirectPolicy(policies.RedirectPolicy):
 
     def __init__(self, **kwargs: Any) -> None:
-        self._qp_client_ref = None
+        # Weakref to QuickPulseClient instance
+        self._qp_client_ref  = None
         super().__init__(**kwargs)
 
     # Gets the redirect location from header
