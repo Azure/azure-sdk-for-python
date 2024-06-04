@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.sql import SqlManagementClient
 
 """
@@ -29,12 +30,13 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    client.managed_instances.begin_start(
+    response = client.managed_instances.begin_start(
         resource_group_name="startrg",
         managed_instance_name="mitostart",
     ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/StartManagedInstance.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2023-05-01-preview/examples/StartManagedInstance.json
 if __name__ == "__main__":
     main()

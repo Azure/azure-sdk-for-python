@@ -238,6 +238,9 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         # Act
         self.bsc.key_encryption_key = None
         blob.upload_blob(content, overwrite=True)
+
+        # Set kek to None to test only resolver for download
+        blob.key_encryption_key = None
         data = blob.download_blob().readall()
 
         # Assert
@@ -390,6 +393,35 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
             blob.download_blob()
 
         assert 'Decryption failed.' in str(e.value)
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    @mock.patch('os.urandom', mock_urandom)
+    def test_case_insensitive_metadata_key(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'Hello World Encrypted!'
+
+        # Upload blob with encryption V2
+        blob.upload_blob(content, overwrite=True)
+
+        # Change the case of the metadata key
+        metadata = blob.get_blob_properties().metadata
+        encryption_data = metadata['encryptiondata']
+        metadata = {'Encryptiondata': encryption_data}
+        blob.set_blob_metadata(metadata)
+
+        # Act
+        data = blob.download_blob().readall()
+
+        # Assert
+        assert data == content
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -547,6 +579,88 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
 
         # Assert
         assert content == data
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_put_blob_other_data_types(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+
+        content = b'Hello World Encrypted!'
+        length = len(content)
+        byte_io = BytesIO(content)
+
+        def generator():
+            yield b'Hello '
+            yield b'World '
+            yield b'Encrypted!'
+
+        def text_generator():
+            yield 'Hello '
+            yield 'World '
+            yield 'Encrypted!'
+
+        data_list = [byte_io, generator(), text_generator()]
+
+        # Act
+        for data in data_list:
+            blob.upload_blob(data, length=length, overwrite=True)
+            result = blob.download_blob().readall()
+
+            # Assert
+            assert content == result
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_put_blob_other_data_types_chunked(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_single_put_size=1024,
+            max_block_size=1024,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+
+        content = b'abcde' * 1030  # 5 KiB + 30
+        byte_io = BytesIO(content)
+
+        def generator():
+            for i in range(0, len(content), 500):
+                yield content[i: i + 500]
+
+        def text_generator():
+            s_content = str(content, encoding='utf-8')
+            for i in range(0, len(s_content), 500):
+                yield s_content[i: i + 500]
+
+        data_list = [byte_io, generator(), text_generator()]
+
+        # Act
+        for data in data_list:
+            blob.upload_blob(data, overwrite=True)
+            result = blob.download_blob().readall()
+
+            # Assert
+            assert content == result
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -1004,3 +1118,62 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
 
         # Assert
         assert content == data
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    @mock.patch('os.urandom', mock_urandom)
+    def test_encryption_user_agent(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        def assert_user_agent(request):
+            assert request.http_request.headers['User-Agent'].startswith('azstorage-clientsideencryption/2.0 ')
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'Hello World Encrypted!'
+
+        # Act
+        blob.upload_blob(content, overwrite=True, raw_request_hook=assert_user_agent)
+        blob.download_blob(raw_request_hook=assert_user_agent).readall()
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    @mock.patch('os.urandom', mock_urandom)
+    def test_encryption_user_agent_app_id(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        app_id = 'TestAppId'
+        content = b'Hello World Encrypted!'
+
+        def assert_user_agent(request):
+            start = f'{app_id} azstorage-clientsideencryption/2.0 '
+            assert request.http_request.headers['User-Agent'].startswith(start)
+
+        # Test method level keyword
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+
+        blob.upload_blob(content, overwrite=True, raw_request_hook=assert_user_agent, user_agent=app_id)
+        blob.download_blob(raw_request_hook=assert_user_agent, user_agent=app_id).readall()
+
+        # Test client constructor level keyword
+        bsc = BlobServiceClient(
+            self.bsc.url,
+            credential=storage_account_key,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek,
+            user_agent=app_id)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+
+        blob.upload_blob(content, overwrite=True, raw_request_hook=assert_user_agent)
+        blob.download_blob(raw_request_hook=assert_user_agent).readall()

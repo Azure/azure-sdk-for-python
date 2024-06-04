@@ -20,6 +20,7 @@ from .operations import (
     ClusterPrincipalAssignmentsOperations,
     ClustersOperations,
     DataConnectionsOperations,
+    DatabaseOperations,
     DatabasePrincipalAssignmentsOperations,
     DatabasesOperations,
     ManagedPrivateEndpointsOperations,
@@ -28,6 +29,7 @@ from .operations import (
     OperationsResultsOperations,
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
+    SandboxCustomImagesOperations,
     ScriptsOperations,
     SkusOperations,
 )
@@ -57,11 +59,15 @@ class KustoManagementClient:  # pylint: disable=client-accepts-api-version-keywo
     :ivar managed_private_endpoints: ManagedPrivateEndpointsOperations operations
     :vartype managed_private_endpoints:
      azure.mgmt.kusto.aio.operations.ManagedPrivateEndpointsOperations
+    :ivar database: DatabaseOperations operations
+    :vartype database: azure.mgmt.kusto.aio.operations.DatabaseOperations
     :ivar database_principal_assignments: DatabasePrincipalAssignmentsOperations operations
     :vartype database_principal_assignments:
      azure.mgmt.kusto.aio.operations.DatabasePrincipalAssignmentsOperations
     :ivar scripts: ScriptsOperations operations
     :vartype scripts: azure.mgmt.kusto.aio.operations.ScriptsOperations
+    :ivar sandbox_custom_images: SandboxCustomImagesOperations operations
+    :vartype sandbox_custom_images: azure.mgmt.kusto.aio.operations.SandboxCustomImagesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections:
      azure.mgmt.kusto.aio.operations.PrivateEndpointConnectionsOperations
@@ -78,12 +84,11 @@ class KustoManagementClient:  # pylint: disable=client-accepts-api-version-keywo
      azure.mgmt.kusto.aio.operations.OperationsResultsLocationOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: Gets subscription credentials which uniquely identify Microsoft Azure
-     subscription. The subscription ID forms part of the URI for every service call. Required.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-12-29". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-08-15". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -100,7 +105,7 @@ class KustoManagementClient:  # pylint: disable=client-accepts-api-version-keywo
         self._config = KustoManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -118,10 +123,14 @@ class KustoManagementClient:  # pylint: disable=client-accepts-api-version-keywo
         self.managed_private_endpoints = ManagedPrivateEndpointsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.database = DatabaseOperations(self._client, self._config, self._serialize, self._deserialize)
         self.database_principal_assignments = DatabasePrincipalAssignmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.scripts = ScriptsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.sandbox_custom_images = SandboxCustomImagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -168,5 +177,5 @@ class KustoManagementClient:  # pylint: disable=client-accepts-api-version-keywo
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.workload_networks.begin_delete_dns_service(
+    client.workload_networks.begin_delete_dns_service(
         resource_group_name="group1",
         dns_service_id="dnsService1",
         private_cloud_name="cloud1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/vmware/resource-manager/Microsoft.AVS/stable/2022-05-01/examples/WorkloadNetworks_DeleteDnsServices.json
+# x-ms-original-file: specification/vmware/resource-manager/Microsoft.AVS/stable/2023-03-01/examples/WorkloadNetworks_DeleteDnsServices.json
 if __name__ == "__main__":
     main()

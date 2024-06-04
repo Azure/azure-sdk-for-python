@@ -28,6 +28,7 @@ from ._private_end_point_connections_operations import PrivateEndPointConnection
 from ._private_endpoint_connection_operations import PrivateEndpointConnectionOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._global_parameters_operations import GlobalParametersOperations
+from ._change_data_capture_operations import ChangeDataCaptureOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -56,6 +57,7 @@ __all__ = [
     "PrivateEndpointConnectionOperations",
     "PrivateLinkResourcesOperations",
     "GlobalParametersOperations",
+    "ChangeDataCaptureOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

@@ -14,13 +14,12 @@ pool:
 
 steps:
 - task: UsePythonVersion@0
-  displayName: 'Use Python 3.7'
+  displayName: 'Use Python 3.8'
   inputs:
-    versionSpec: 3.7
+    versionSpec: 3.8
 
 - script: |
-    python3 -m pip install azure-devtools[ci_tools]>=1.1.0
-    python3 -m pip install -e "git+https://github.com/Azure/azure-sdk-for-python#subdirectory=tools/azure-sdk-tools&egg=azure-sdk-tools"
+    python3 -m pip install -e $(Build.SourcesDirectory)/tools/azure-sdk-tools[ghtools]
   displayName: 'Install Azure SDK tools'
 
 - script: python3 -m packaging_tools.update_pr -v --pr-number $(System.PullRequest.PullRequestNumber) --repo $(Build.Repository.Name)

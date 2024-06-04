@@ -35,14 +35,14 @@ class PurviewSharingClientConfiguration(Configuration):  # pylint: disable=too-m
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. Default value is "2023-02-15-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2023-05-30-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         super(PurviewSharingClientConfiguration, self).__init__(**kwargs)
-        api_version: Literal["2023-02-15-preview"] = kwargs.pop("api_version", "2023-02-15-preview")
+        api_version: Literal["2023-05-30-preview"] = kwargs.pop("api_version", "2023-05-30-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

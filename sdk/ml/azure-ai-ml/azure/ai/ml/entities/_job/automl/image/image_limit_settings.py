@@ -13,29 +13,21 @@ class ImageLimitSettings(RestTranslatableMixin):
     r"""Limit settings for AutoML Image Verticals.
 
     ImageLimitSettings is a class that contains the following parameters:  max_concurrent_trials, max_trials, and \
-    timeout_minutes. It is used to configure the limits for the AutoML job.
+    timeout_minutes.
 
-    .. remarks::
-
-        ImageLimitSettings is an optional configuration method to configure limits parameters such as timeouts etc.
-
-            .. note::
-
-                The number of concurrent runs is gated on the resources available in the specified compute target.
-                Ensure that the compute target has the available resources for the desired concurrency.
-
-    :keyword max_concurrent_trials: Maximum number of concurrent AutoML iterations, defaults to None.
+    This is an optional configuration method to configure limits parameters such as timeouts etc.
 
         .. note::
 
-            Do not set the value of max_trials as a negative integer.
+            The number of concurrent runs is gated on the resources available in the specified compute target.
+            Ensure that the compute target has the available resources for the desired concurrency.
 
+    :keyword max_concurrent_trials: Maximum number of concurrent AutoML iterations, defaults to None.
     :paramtype  max_concurrent_trials: typing.Optional[int]
-    :keyword max_trials: Represents the maximum number of trials (children jobs) that would be executed in parallel.
+    :keyword max_trials: Represents the maximum number of trials (children jobs).
     :paramtype  max_trials: typing.Optional[int]
-    :keyword timeout_minutes: AutoML job timeout, defaults to None
+    :keyword timeout_minutes: AutoML job timeout. Defaults to None
     :paramtype  timeout_minutes: typing.Optional[int]
-
     :raises ValueError: If max_concurrent_trials is not None and is not a positive integer.
     :raises ValueError: If max_trials is not None and is not a positive integer.
     :raises ValueError: If timeout_minutes is not None and is not a positive integer.
@@ -46,30 +38,14 @@ class ImageLimitSettings(RestTranslatableMixin):
         It's a good practice to match max_concurrent_trials count with the number of nodes in the cluster.
         For example, if you have a cluster with 4 nodes, set max_concurrent_trials to 4.
 
-    **Example usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
-        :caption: Configuration of ImageLimitSettings
-
-        from azure.ai.ml import automl
-
-        # Create the AutoML job with the related factory-function.
-        image_instance_segmentation_job = automl.image_instance_segmentation(
-            compute=compute_name,
-            experiment_name=exp_name,
-            training_data=my_training_data_input,
-            validation_data=my_validation_data_input,
-            target_column_name="label",
-            primary_metric="MeanAveragePrecision",
-            tags={"my_custom_tag": "custom value"},
-        )
-        # Set the limits for the AutoML job.
-        image_instance_segmentation_job.set_limits(
-            max_trials=10,
-            max_concurrent_trials=2,
-        )
-        # Submit the AutoML job.
-        image_instance_segmentation_job.submit()
+        .. literalinclude:: ../samples/ml_samples_automl_image.py
+                :start-after: [START automl.automl_image_job.image_limit_settings]
+                :end-before: [END automl.automl_image_job.image_limit_settings]
+                :language: python
+                :dedent: 8
+                :caption: Defining the limit settings for an automl image job.
     """
 
     def __init__(
@@ -78,22 +54,7 @@ class ImageLimitSettings(RestTranslatableMixin):
         max_concurrent_trials: Optional[int] = None,
         max_trials: Optional[int] = None,
         timeout_minutes: Optional[int] = None,
-    ):
-        """Initialize an ImageLimitSettings object.
-
-        Constructor for ImageLimitSettings for AutoML Image Verticals.
-
-        :keyword  max_concurrent_trials: Represents the maximum number of trials (children jobs) that would be \
-            executed in parallel.
-        :paramtype max_concurrent_trials: typing.Optional[int]
-        :keyword max_trials: Maximum number of AutoML iterations, defaults to None
-        :paramtype max_trials: typing.Optional[int]
-        :keyword timeout_minutes: AutoML job timeout, defaults to None
-        :paramtype timeout_minutes: typing.Optional[int]
-        :raises ValueError: If max_concurrent_trials is not None and is not a positive integer.
-        :raises ValueError: If max_trials is not None and is not a positive integer.
-        :raises ValueError: If timeout_minutes is not None and is not a positive integer.
-        """
+    ) -> None:
         self.max_concurrent_trials = max_concurrent_trials
         self.max_trials = max_trials
         self.timeout_minutes = timeout_minutes

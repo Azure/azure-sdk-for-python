@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputePowerAction
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeSchedules as RestComputeSchedules
@@ -18,13 +18,22 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
     """Schedules for compute start or stop scenario.
 
     :param trigger: The trigger of the schedule.
-    :type trigger: Trigger
+    :type trigger: Union[~azure.ai.ml.entities.CronTrigger, ~azure.ai.ml.entities.RecurrenceTrigger]
     :param action: The compute power action.
-    :type action: ComputePowerAction
+    :type action: ~azure.ai.ml.entities.ComputePowerAction
     :param state: The state of the schedule.
-    :type state: ScheduleState
+    :type state: ~azure.ai.ml.entities.ScheduleState
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_compute.py
+            :start-after: [START compute_start_stop_schedule]
+            :end-before: [END compute_start_stop_schedule]
+            :language: python
+            :dedent: 8
+            :caption: Creating a ComputeStartStopSchedule object.
     """
 
     def __init__(
@@ -33,28 +42,28 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
         trigger: Optional[Union[CronTrigger, RecurrenceTrigger]] = None,
         action: Optional[ComputePowerAction] = None,
         state: ScheduleState = ScheduleState.ENABLED,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         self.trigger = trigger
         self.action = action
         self.state = state
-        self._schedule_id = kwargs.pop("schedule_id", None)
-        self._provisioning_state = kwargs.pop("provisioning_state", None)
+        self._schedule_id: Optional[str] = kwargs.pop("schedule_id", None)
+        self._provisioning_state: Optional[str] = kwargs.pop("provisioning_state", None)
 
     @property
     def schedule_id(self) -> Optional[str]:
-        """Schedule id, readonly.
+        """The schedule ID.
 
-        :return: Schedule id.
+        :return: The schedule ID.
         :rtype: Optional[str]
         """
         return self._schedule_id
 
     @property
     def provisioning_state(self) -> Optional[str]:
-        """Schedule provisioning state, readonly.
+        """The schedule provisioning state.
 
-        :return: Schedule provisioning state.
+        :return: The schedule provisioning state.
         :rtype: Optional[str]
         """
         return self._provisioning_state
@@ -105,12 +114,21 @@ class ComputeSchedules(RestTranslatableMixin):
     """Compute schedules.
 
     :param compute_start_stop: Compute start or stop schedules.
-    :type compute_start_stop: List[ComputeStartStopSchedule]
+    :type compute_start_stop: List[~azure.ai.ml.entities.ComputeStartStopSchedule]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_compute.py
+            :start-after: [START compute_start_stop_schedule]
+            :end-before: [END compute_start_stop_schedule]
+            :language: python
+            :dedent: 8
+            :caption: Creating a ComputeSchedules object.
     """
 
-    def __init__(self, *, compute_start_stop: Optional[List[ComputeStartStopSchedule]] = None):
+    def __init__(self, *, compute_start_stop: Optional[List[ComputeStartStopSchedule]] = None) -> None:
         self.compute_start_stop = compute_start_stop
 
     def _to_rest_object(self) -> RestComputeSchedules:

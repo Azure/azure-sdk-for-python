@@ -72,7 +72,7 @@ class EventHubProducer(
      Default value is `True`.
     """
 
-    def __init__(self, client: EventHubProducerClient, target: str, **kwargs) -> None:
+    def __init__(self, client: EventHubProducerClient, target: str, **kwargs: Any) -> None:
         super().__init__()
         self._amqp_transport = kwargs.pop("amqp_transport")
         partition = kwargs.get("partition", None)
@@ -103,13 +103,13 @@ class EventHubProducer(
         )
         self._reconnect_backoff = 1
         self._name = "EHProducer-{}".format(uuid.uuid4())
-        self._unsent_events = []  # type: List[Any]
+        self._unsent_events: List[Any] = []
         self._error = None
         if partition:
             self._target += "/Partitions/" + partition
             self._name += "-partition{}".format(partition)
-        self._handler: Optional[Union[uamqp_SendClientAsync, SendClientAsync]] = None
-        self._outcome: Optional[uamqp_MessageSendResult] = None
+        self._handler: Optional[Union["uamqp_SendClientAsync", SendClientAsync]] = None
+        self._outcome: Optional["uamqp_MessageSendResult"] = None
         self._condition: Optional[Exception] = None
         self._lock = asyncio.Lock(**self._internal_kwargs)
         self._link_properties = self._amqp_transport.create_link_properties(
@@ -117,7 +117,7 @@ class EventHubProducer(
         )
 
     def _create_handler(
-        self, auth: Union[uamqp_JWTTokenAsync, JWTTokenAuthAsync]
+        self, auth: Union["uamqp_JWTTokenAsync", JWTTokenAuthAsync]
     ) -> None:
         self._handler = self._amqp_transport.create_send_client(
             config=self._client._config,  # pylint:disable=protected-access
@@ -157,7 +157,7 @@ class EventHubProducer(
         await self._do_retryable_operation(self._send_event_data, timeout=timeout)
 
     def _on_outcome(
-        self, outcome: uamqp_MessageSendResult, condition: Optional[Exception]
+        self, outcome: "uamqp_MessageSendResult", condition: Optional[Exception]
     ) -> None:
         """
         ONLY USED FOR uamqp_transport=True. Called when the outcome is received for a delivery.
@@ -165,6 +165,7 @@ class EventHubProducer(
         :param outcome: The outcome of the message delivery - success or failure.
         :type outcome: ~uamqp.constants.MessageSendResult
         :param condition: Detail information of the outcome.
+        :type condition: Exception
 
         """
         self._outcome = outcome
@@ -245,14 +246,14 @@ class EventHubProducer(
         received or operation times out.
 
         :param event_data: The event to be sent. It can be an EventData object, or iterable of EventData objects
-        :type event_data: ~azure.eventhub.common.EventData, Iterator, Generator, list
-        :param partition_key: With the given partition_key, event data will land to
+        :type event_data: ~azure.eventhub.EventData, iterator, generator, list
+        :keyword partition_key: With the given partition_key, event data will land to
          a particular partition of the Event Hub decided by the service. partition_key
          could be omitted if event_data is of type ~azure.eventhub.EventDataBatch.
-        :type partition_key: str
-        :param timeout: The maximum wait time to send the event data.
+        :paramtype partition_key: str or None
+        :keyword timeout: The maximum wait time to send the event data.
          If not specified, the default wait time specified when the producer was created will be used.
-        :type timeout: float
+        :paramtype timeout: float or None
 
         :raises: ~azure.eventhub.exceptions.AuthenticationError,
                  ~azure.eventhub.exceptions.ConnectError,

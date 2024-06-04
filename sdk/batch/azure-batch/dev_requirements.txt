@@ -1,6 +1,6 @@
 -e ../../../tools/azure-sdk-tools
 -e ../azure-mgmt-batch
+-e ../../core/azure-core
 -e ../../identity/azure-identity
--e ../../../tools/azure-devtools
 azure-mgmt-resource<=21.1.0
 azure-mgmt-storage<=20.0.0

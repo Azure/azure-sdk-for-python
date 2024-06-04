@@ -148,7 +148,6 @@ def expected_image_model_settings_classification() -> RestImageModelSettingsClas
 @pytest.fixture
 def expected_image_model_settings_object_detection() -> RestImageModelSettingsObjectDetection:
     return RestImageModelSettingsObjectDetection(
-        log_training_metrics="Disable",
         checkpoint_frequency=1,
         early_stopping=True,
         early_stopping_delay=2,

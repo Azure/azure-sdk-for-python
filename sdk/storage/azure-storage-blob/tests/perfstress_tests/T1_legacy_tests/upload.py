@@ -5,7 +5,7 @@
 
 import uuid
 
-from azure_devtools.perfstress_tests import RandomStream
+from devtools_testutils.perfstress_tests import RandomStream
 
 from ._test_base_legacy import _LegacyContainerTest
 

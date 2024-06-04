@@ -24,7 +24,7 @@ client = PurviewSharingClient(endpoint=endpoint,credential=credential)
 
 # Get all detached received shares
 # [START get_all_detached_received_shares]
-list_detached_response = client.received_shares.list_detached(orderby="properties/createdAt desc")
+list_detached_response = client.received_shares.list_detached(order_by="properties/createdAt desc")
 # [END get_all_detached_received_shares]
 
 # Attach a received share
@@ -63,7 +63,7 @@ get_share_response = client.received_shares.get(received_share_id=received_share
 # [START list_attached_received_shares]
 list_attached_response = client.received_shares.list_attached(
     reference_name=consumer_storage_account_resource_id,
-    orderby="properties/createdAt desc")
+    order_by="properties/createdAt desc")
 # [END list_attached_received_shares]
 
 # Delete a received share

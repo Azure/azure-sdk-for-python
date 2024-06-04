@@ -3,7 +3,7 @@
 This package is intended for usage in direct combination with the azure-sdk-for-python repo. It provides:
 
 - Common test classes and functionality
-  - `AzureTestCase` used for common record/playback functionality
+  - `AzureRecordedTestCase` used for common record/playback functionality
   - `EnvironmentVariablePreparer` to allow recorded tests access to `New-TestResources.ps1`-created resources.
   - Test-Proxy Shim/Startup capabilities
 - `Build` entrypoint

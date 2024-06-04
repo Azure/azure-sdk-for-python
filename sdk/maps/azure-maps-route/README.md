@@ -103,7 +103,7 @@ objects are async context managers and define async `close` methods.
 The following sections provide several code snippets covering some of the most common Azure Maps Route tasks, including:
 
 - [Request and Get Route Directions](#request-and-get-route-directions)
-- [Request and Get Route Range](#reqest-and-get-route-range)
+- [Request and Get Route Range](#request-and-get-route-range)
 - [Get Route Matrix](#get-route-matrix)
 - [Get Route Directions Batch](#get-route-directions-batch)
 

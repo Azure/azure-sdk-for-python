@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, overload, Type, Union
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, overload, Type, Union, cast
 from .._utils import (  # pylint: disable=import-error
     validate_schema,
     create_message_content,
@@ -61,42 +61,39 @@ class AvroEncoder(object):
 
     """
 
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
-        try:
-            self._schema_registry_client = kwargs.pop(
-                "client"
-            )  # type: "SchemaRegistryClient"
-        except KeyError as exc:
-            raise TypeError(f"'{exc.args[0]}' is a required keyword.")
+    def __init__(
+        self,
+        *,
+        client: "SchemaRegistryClient",
+        group_name: Optional[str] = None,
+        auto_register: bool = False,
+        **kwargs: Any
+    ) -> None:
+        self._schema_registry_client = client
         self._avro_encoder = AvroObjectEncoder(codec=kwargs.get("codec"))
-        self._schema_group = kwargs.pop("group_name", None)
-        self._auto_register = kwargs.get("auto_register", False)
+        self._schema_group = group_name
+        self._auto_register = auto_register
         self._auto_register_schema_func = (
             self._schema_registry_client.register_schema
             if self._auto_register
             else self._schema_registry_client.get_schema_properties
         )
 
-    async def __aenter__(self):
-        # type: () -> AvroEncoder
+    async def __aenter__(self) -> "AvroEncoder":
         await self._schema_registry_client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details):
-        # type: (Any) -> None
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._schema_registry_client.__aexit__(*exc_details)
 
-    async def close(self):
-        # type: () -> None
+    async def close(self) -> None:
         """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
         await self._schema_registry_client.close()
 
     @alru_cache(maxsize=128, cache_exceptions=False)
-    async def _get_schema_id(self, schema_name, schema_str, **kwargs):
-        # type: (str, str, Any) -> str
+    async def _get_schema_id(self, schema_name: str, schema_str: str, **kwargs: Any) -> str:
         """
         Get schema id from local cache with the given schema.
         If there is no item in the local cache, get schema id from the service and cache it.
@@ -108,19 +105,19 @@ class AvroEncoder(object):
         :rtype: str
         """
         schema_properties = await self._auto_register_schema_func(
-            self._schema_group, schema_name, schema_str, "Avro", **kwargs
+            cast(str, self._schema_group), schema_name, schema_str, "Avro", **kwargs
         )
         return schema_properties.id
 
     @alru_cache(maxsize=128, cache_exceptions=False)
-    async def _get_schema(self, schema_id, **kwargs):
-        # type: (str, Any) -> str
+    async def _get_schema(self, schema_id: str, **kwargs: Any) -> str:
         """
         Get schema definition from local cache with the given schema id.
         If there is no item in the local cache, get schema from the service and cache it.
 
         :param str schema_id: Schema id
         :return: Schema definition
+        :rtype: str
         """
         schema = await self._schema_registry_client.get_schema(schema_id, **kwargs)
         return schema.definition
@@ -179,6 +176,7 @@ class AvroEncoder(object):
         :paramtype message_type: Type[MessageType] or None
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: Dict[str, Any]
+        :return: The Message object or the TypedDict containing encoded content and content type.
         :rtype: MessageType or MessageContent
         :raises ~azure.schemaregistry.encoder.avroencoder.InvalidSchemaError:
             Indicates an issue with validating schema.
@@ -223,12 +221,13 @@ class AvroEncoder(object):
         message: Union[MessageContent, MessageType],
         *,
         readers_schema: Optional[str] = None,
-        request_options: Dict[str, Any] = None,
+        request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ) -> Dict[str, Any]:
         """Decode bytes content using schema ID in the content type field. `message` must be one of the following:
             1) A object of subtype of the MessageType protocol.
             2) A dict {"content": ..., "content_type": ...}, where "content" is bytes and "content_type" is string.
+
         Content must follow format of associated Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
 
@@ -238,8 +237,9 @@ class AvroEncoder(object):
         :keyword readers_schema: An optional reader's schema as defined by the Apache Avro specification.
         :paramtype readers_schema: str or None
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
-        :paramtype request_options: Dict[str, Any]
-        :rtype: Dict[str, Any]
+        :paramtype request_options: dict[str, Any] or None
+        :return: The decoded content.
+        :rtype: dict[str, Any]
         :raises ~azure.schemaregistry.encoder.avroencoder.InvalidSchemaError:
             Indicates an issue with validating schemas.
         :raises ~azure.schemaregistry.encoder.avroencoder.InvalidContentError:

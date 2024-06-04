@@ -22,9 +22,9 @@ USAGE:
 
 import os
 
-service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
-index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
-key = os.getenv("AZURE_SEARCH_API_KEY")
+service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
+index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
+key = os.environ["AZURE_SEARCH_API_KEY"]
 
 
 def get_document():
@@ -37,9 +37,9 @@ def get_document():
     result = search_client.get_document(key="23")
 
     print("Details for hotel '23' are:")
-    print("        Name: {}".format(result["HotelName"]))
-    print("      Rating: {}".format(result["Rating"]))
-    print("    Category: {}".format(result["Category"]))
+    print("        Name: {}".format(result["hotelName"]))
+    print("      Rating: {}".format(result["rating"]))
+    print("    Category: {}".format(result["category"]))
     # [END get_document]
 
 

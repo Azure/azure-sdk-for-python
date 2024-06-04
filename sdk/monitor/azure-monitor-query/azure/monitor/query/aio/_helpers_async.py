@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 

@@ -30,6 +30,7 @@ from consts import (
     KEY_UUID,
 )
 from async_preparers import app_config_aad_decorator_async
+from devtools_testutils import set_custom_default_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 import pytest
 import copy
@@ -45,31 +46,26 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_add_configuration_setting(self, appconfiguration_endpoint_string):
         async with self.create_aad_client(appconfiguration_endpoint_string) as client:
-            kv = ConfigurationSetting(
+            test_config_setting = ConfigurationSetting(
                 key=KEY + "_ADD",
                 label=LABEL,
                 value=TEST_VALUE,
                 content_type=TEST_CONTENT_TYPE,
                 tags={"tag1": "tag1", "tag2": "tag2"},
             )
-            created_kv = await client.add_configuration_setting(kv)
+            created_kv = await client.add_configuration_setting(test_config_setting)
             assert (
-                created_kv.label == kv.label
-                and kv.value == kv.value
-                and created_kv.content_type == kv.content_type
-                and created_kv.tags == kv.tags
+                created_kv.label == test_config_setting.label
+                and created_kv.value == test_config_setting.value
+                and created_kv.content_type == test_config_setting.content_type
+                and created_kv.tags == test_config_setting.tags
+                and created_kv.etag != None
+                and created_kv.etag != test_config_setting.etag
+                and created_kv.last_modified != None
+                and created_kv.read_only == False
             )
-            assert (
-                created_kv.etag is not None and created_kv.last_modified is not None and created_kv.read_only is False
-            )
-            await client.delete_configuration_setting(key=created_kv.key, label=created_kv.label)
 
-    @app_config_aad_decorator_async
-    @recorded_by_proxy_async
-    async def test_add_existing_configuration_setting(self, appconfiguration_endpoint_string):
-        async with self.create_aad_client(appconfiguration_endpoint_string) as client:
-            test_config_setting = self.create_config_setting()
-            await self.add_for_test(client, test_config_setting)
+            # test add existing configuration setting
             with pytest.raises(ResourceExistsError):
                 await client.add_configuration_setting(
                     ConfigurationSetting(
@@ -77,12 +73,12 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
                         label=test_config_setting.label,
                     )
                 )
-            await client.delete_configuration_setting(key=test_config_setting.key, label=test_config_setting.label)
+            await client.delete_configuration_setting(key=created_kv.key, label=created_kv.label)
 
     # method: set_configuration_setting
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
-    async def test_set_existing_configuration_setting_label_etag(self, appconfiguration_endpoint_string):
+    async def test_set_configuration_setting(self, appconfiguration_endpoint_string):
         async with self.create_aad_client(appconfiguration_endpoint_string) as client:
             to_set_kv = self.create_config_setting()
             to_set_kv.value = to_set_kv.value + "a"
@@ -100,7 +96,7 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
 
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
-    async def test_set_existing_configuration_setting_label_wrong_etag(self, appconfiguration_endpoint_string):
+    async def test_set_configuration1_setting_with_wrong_etag(self, appconfiguration_endpoint_string):
         async with self.create_aad_client(appconfiguration_endpoint_string) as client:
             to_set_kv = self.create_config_setting()
             to_set_kv.value = to_set_kv.value + "a"
@@ -108,43 +104,6 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
             to_set_kv.etag = "wrong etag"
             with pytest.raises(ResourceModifiedError):
                 await client.set_configuration_setting(to_set_kv, match_condition=MatchConditions.IfNotModified)
-
-    @app_config_aad_decorator_async
-    @recorded_by_proxy_async
-    async def test_set_configuration_setting_etag(self, appconfiguration_endpoint_string):
-        async with self.create_aad_client(appconfiguration_endpoint_string) as client:
-            kv = ConfigurationSetting(
-                key=KEY + "_SET",
-                label=LABEL,
-                value=TEST_VALUE,
-                content_type=TEST_CONTENT_TYPE,
-                tags={"tag1": "tag1", "tag2": "tag2"},
-            )
-            kv.etag = "random etag"
-            with pytest.raises(ResourceModifiedError):
-                await client.set_configuration_setting(kv, match_condition=MatchConditions.IfNotModified)
-
-    @app_config_aad_decorator_async
-    @recorded_by_proxy_async
-    async def test_set_configuration_setting_no_etag(self, appconfiguration_endpoint_string):
-        async with self.create_aad_client(appconfiguration_endpoint_string) as client:
-            to_set_kv = ConfigurationSetting(
-                key=KEY + "_SET",
-                label=LABEL,
-                value=TEST_VALUE,
-                content_type=TEST_CONTENT_TYPE,
-                tags={"tag1": "tag1", "tag2": "tag2"},
-            )
-            set_kv = await client.set_configuration_setting(to_set_kv)
-            assert (
-                to_set_kv.key == set_kv.key
-                and to_set_kv.label == set_kv.label
-                and to_set_kv.value == set_kv.value
-                and to_set_kv.content_type == set_kv.content_type
-                and to_set_kv.tags == set_kv.tags
-                and to_set_kv.etag != set_kv.etag
-            )
-            await client.delete_configuration_setting(key=to_set_kv.key, label=to_set_kv.label)
 
     # method: get_configuration_setting
     @app_config_aad_decorator_async
@@ -165,7 +124,7 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
 
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
-    async def test_get_configuration_setting_label(self, appconfiguration_endpoint_string):
+    async def test_get_configuration_setting(self, appconfiguration_endpoint_string):
         async with self.create_aad_client(appconfiguration_endpoint_string) as client:
             compare_kv = self.create_config_setting()
             await self.add_for_test(client, compare_kv)
@@ -175,6 +134,7 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
                 and fetched_kv.value == compare_kv.value
                 and fetched_kv.content_type == compare_kv.content_type
                 and fetched_kv.tags == compare_kv.tags
+                and fetched_kv.label == compare_kv.label
             )
             assert fetched_kv.label is not None
             await client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
@@ -187,10 +147,30 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
             with pytest.raises(ResourceNotFoundError):
                 await client.get_configuration_setting(compare_kv.key, compare_kv.label + "a")
 
+    @app_config_aad_decorator_async
+    @recorded_by_proxy_async
+    async def test_get_configuration_setting_with_etag(self, appconfiguration_endpoint_string):
+        async with self.create_aad_client(appconfiguration_endpoint_string) as client:
+            compare_kv = self.create_config_setting()
+            await self.add_for_test(client, compare_kv)
+            compare_kv = await client.get_configuration_setting(compare_kv.key, compare_kv.label)
+
+            # test get with wrong etag
+            with pytest.raises(ResourceModifiedError):
+                await client.get_configuration_setting(
+                    compare_kv.key, compare_kv.label, etag="wrong etag", match_condition=MatchConditions.IfNotModified
+                )
+            # test get with correct etag
+            with pytest.raises(ResourceNotFoundError):
+                await client.get_configuration_setting(compare_kv.key, etag=compare_kv.etag)
+            await client.get_configuration_setting(compare_kv.key, compare_kv.label, etag=compare_kv.etag)
+
+            await client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
+
     # method: delete_configuration_setting
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
-    async def test_delete_with_key_no_label(self, appconfiguration_endpoint_string):
+    async def test_delete_configuration_setting_with_key_no_label(self, appconfiguration_endpoint_string):
         async with self.create_aad_client(appconfiguration_endpoint_string) as client:
             to_delete_kv = self.create_config_setting_no_label()
             await self.add_for_test(client, to_delete_kv)
@@ -201,7 +181,7 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
 
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
-    async def test_delete_with_key_label(self, appconfiguration_endpoint_string):
+    async def test_delete_configuration_setting_with_key_label(self, appconfiguration_endpoint_string):
         async with self.create_aad_client(appconfiguration_endpoint_string) as client:
             to_delete_kv = self.create_config_setting()
             await self.add_for_test(client, to_delete_kv)
@@ -212,37 +192,36 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
 
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
-    async def test_delete_not_existing(self, appconfiguration_endpoint_string):
+    async def test_delete_not_existing_configuration_setting(self, appconfiguration_endpoint_string):
         async with self.create_aad_client(appconfiguration_endpoint_string) as client:
             deleted_kv = await client.delete_configuration_setting("not_exist_" + KEY)
             assert deleted_kv is None
 
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
-    async def test_delete_correct_etag(self, appconfiguration_endpoint_string):
+    async def test_delete_configuration_setting_with_etag(self, appconfiguration_endpoint_string):
         async with self.create_aad_client(appconfiguration_endpoint_string) as client:
             to_delete_kv = self.create_config_setting_no_label()
             await self.add_for_test(client, to_delete_kv)
+            to_delete_kv = await client.get_configuration_setting(to_delete_kv.key, to_delete_kv.label)
+
+            # test delete with wrong etag
+            with pytest.raises(ResourceModifiedError):
+                await client.delete_configuration_setting(
+                    to_delete_kv.key, etag="wrong etag", match_condition=MatchConditions.IfNotModified
+                )
+            # test delete with correct etag
             deleted_kv = await client.delete_configuration_setting(to_delete_kv.key, etag=to_delete_kv.etag)
             assert deleted_kv is not None
             with pytest.raises(ResourceNotFoundError):
                 await client.get_configuration_setting(to_delete_kv.key)
 
-    @app_config_aad_decorator_async
-    @recorded_by_proxy_async
-    async def test_delete_wrong_etag(self, appconfiguration_endpoint_string):
-        async with self.create_aad_client(appconfiguration_endpoint_string) as client:
-            to_delete_kv = self.create_config_setting_no_label()
-            with pytest.raises(ResourceModifiedError):
-                await client.delete_configuration_setting(
-                    to_delete_kv.key, etag="wrong etag", match_condition=MatchConditions.IfNotModified
-                )
-            await client.delete_configuration_setting(key=to_delete_kv.key, label=to_delete_kv.label)
-
     # method: list_configuration_settings
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_key_label(self, appconfiguration_endpoint_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(self.client.list_configuration_settings(label_filter=LABEL, key_filter=KEY))
         assert len(items) == 1
@@ -252,6 +231,8 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_only_label(self, appconfiguration_endpoint_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(self.client.list_configuration_settings(label_filter=LABEL))
         assert len(items) == 1
@@ -261,6 +242,8 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_only_key(self, appconfiguration_endpoint_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(self.client.list_configuration_settings(key_filter=KEY))
         assert len(items) == 2
@@ -270,6 +253,8 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_fields(self, appconfiguration_endpoint_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(
             self.client.list_configuration_settings(key_filter="*", label_filter=LABEL, fields=["key", "content_type"])
@@ -281,6 +266,8 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_reserved_chars(self, appconfiguration_endpoint_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         async with self.create_aad_client(appconfiguration_endpoint_string) as client:
             reserved_char_kv = ConfigurationSetting(key=KEY, label=LABEL_RESERVED_CHARS, value=TEST_VALUE)
             reserved_char_kv = await client.add_configuration_setting(reserved_char_kv)
@@ -294,6 +281,8 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_contains(self, appconfiguration_endpoint_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(self.client.list_configuration_settings(label_filter=LABEL + "*"))
         assert len(items) == 1
@@ -303,9 +292,12 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_correct_etag(self, appconfiguration_endpoint_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         async with self.create_aad_client(appconfiguration_endpoint_string) as client:
             to_list_kv = self.create_config_setting()
             await self.add_for_test(client, to_list_kv)
+            to_list_kv = await client.get_configuration_setting(to_list_kv.key, to_list_kv.label)
             custom_headers = {"If-Match": to_list_kv.etag or ""}
             items = await self.convert_to_list(
                 client.list_configuration_settings(
@@ -319,6 +311,8 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_multi_pages(self, appconfiguration_endpoint_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         async with self.create_aad_client(appconfiguration_endpoint_string) as client:
             # create PAGE_SIZE+1 configuration settings to have at least two pages
             try:
@@ -359,6 +353,8 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_only_accepttime(self, appconfiguration_endpoint_string, **kwargs):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         recorded_variables = kwargs.pop("variables", {})
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         exclude_today = await self.convert_to_list(
@@ -377,6 +373,8 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
     async def test_list_revisions_key_label(self, appconfiguration_endpoint_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         to_list = self.create_config_setting()
         items = await self.convert_to_list(
@@ -389,6 +387,8 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
     async def test_list_revisions_only_label(self, appconfiguration_endpoint_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(self.client.list_revisions(label_filter=LABEL))
         assert len(items) >= 1
@@ -398,6 +398,8 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
     async def test_list_revisions_key_no_label(self, appconfiguration_endpoint_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(self.client.list_revisions(key_filter=KEY))
         assert len(items) >= 1
@@ -407,6 +409,8 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
     async def test_list_revisions_fields(self, appconfiguration_endpoint_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(
             self.client.list_revisions(key_filter="*", label_filter=LABEL, fields=["key", "content_type"])
@@ -417,69 +421,53 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
     async def test_list_revisions_correct_etag(self, appconfiguration_endpoint_string):
-        await self.set_up(appconfiguration_endpoint_string, is_aad=True)
-        to_list_kv = self.create_config_setting()
-        custom_headers = {"If-Match": to_list_kv.etag or ""}
-        items = await self.convert_to_list(
-            self.client.list_revisions(key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers)
-        )
-        assert len(items) >= 1
-        assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
-        await self.tear_down()
-
-    @app_config_aad_decorator_async
-    @recorded_by_proxy_async
-    async def test_read_only(self, appconfiguration_endpoint_string):
         async with self.create_aad_client(appconfiguration_endpoint_string) as client:
-            kv = self.create_config_setting_no_label()
-            await self.add_for_test(client, kv)
-            read_only_kv = await client.set_read_only(kv)
-            assert read_only_kv.read_only
-            readable_kv = await client.set_read_only(read_only_kv, False)
-            assert not readable_kv.read_only
-            await client.delete_configuration_setting(kv.key)
+            to_list_kv = self.create_config_setting()
+            await self.add_for_test(client, to_list_kv)
+            to_list_kv = await client.get_configuration_setting(to_list_kv.key, to_list_kv.label)
+            custom_headers = {"If-Match": to_list_kv.etag or ""}
+            items = await self.convert_to_list(
+                client.list_revisions(key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers)
+            )
+            assert len(items) >= 1
+            assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
 
-    @app_config_aad_decorator_async
-    @recorded_by_proxy_async
-    async def test_delete_read_only(self, appconfiguration_endpoint_string):
-        async with self.create_aad_client(appconfiguration_endpoint_string) as client:
-            to_delete_kv = self.create_config_setting_no_label()
-            await self.add_for_test(client, to_delete_kv)
-            read_only_kv = await client.set_read_only(to_delete_kv)
-            with pytest.raises(ResourceReadOnlyError):
-                await client.delete_configuration_setting(to_delete_kv.key)
-            await client.set_read_only(read_only_kv, False)
-            await client.delete_configuration_setting(to_delete_kv.key)
-            with pytest.raises(ResourceNotFoundError):
-                await client.get_configuration_setting(to_delete_kv.key)
+            await client.delete_configuration_setting(to_list_kv.key)
 
+    # method: set_read_only
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
     async def test_set_read_only(self, appconfiguration_endpoint_string):
         async with self.create_aad_client(appconfiguration_endpoint_string) as client:
-            to_set_kv = self.create_config_setting_no_label()
+            to_set_kv = self.create_config_setting()
             await self.add_for_test(client, to_set_kv)
-            to_set_kv.value = to_set_kv.value + "a"
-            to_set_kv.tags = {"a": "b", "c": "d"}
+            to_set_kv = await client.get_configuration_setting(to_set_kv.key, to_set_kv.label)
+
             read_only_kv = await client.set_read_only(to_set_kv)
+            assert read_only_kv.read_only
             with pytest.raises(ResourceReadOnlyError):
                 await client.set_configuration_setting(read_only_kv)
-            readable_kv = await client.set_read_only(read_only_kv, False)
-            readable_kv.value = to_set_kv.value
-            readable_kv.tags = to_set_kv.tags
-            set_kv = await client.set_configuration_setting(readable_kv)
-            assert (
-                to_set_kv.key == set_kv.key
-                and to_set_kv.label == to_set_kv.label
-                and to_set_kv.value == set_kv.value
-                and to_set_kv.content_type == set_kv.content_type
-                and to_set_kv.tags == set_kv.tags
-                and to_set_kv.etag != set_kv.etag
-            )
-            set_kv.etag = "bad"
-            with pytest.raises(ResourceModifiedError):
-                await client.set_read_only(set_kv, True, match_condition=MatchConditions.IfNotModified)
+            with pytest.raises(ResourceReadOnlyError):
+                await client.delete_configuration_setting(read_only_kv.key, read_only_kv.label)
+
+            writable_kv = await client.set_read_only(read_only_kv, False)
+            assert not writable_kv.read_only
+            await client.set_configuration_setting(writable_kv)
             await client.delete_configuration_setting(to_set_kv.key)
+
+    @app_config_aad_decorator_async
+    @recorded_by_proxy_async
+    async def test_set_read_only_with_wrong_etag(self, appconfiguration_endpoint_string):
+        async with self.create_aad_client(appconfiguration_endpoint_string) as client:
+            to_set_kv = self.create_config_setting()
+            await self.add_for_test(client, to_set_kv)
+            to_set_kv = await client.get_configuration_setting(to_set_kv.key, to_set_kv.label)
+
+            to_set_kv.etag = "wrong etag"
+            with pytest.raises(ResourceModifiedError):
+                await client.set_read_only(to_set_kv, False, match_condition=MatchConditions.IfNotModified)
+
+            await client.delete_configuration_setting(to_set_kv)
 
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
@@ -587,29 +575,43 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     async def test_config_setting_feature_flag(self, appconfiguration_endpoint_string):
         async with self.create_aad_client(appconfiguration_endpoint_string) as client:
             feature_flag = FeatureFlagConfigurationSetting("test_feature", enabled=True)
-            set_flag = await client.set_configuration_setting(feature_flag)
 
+            set_flag = await client.set_configuration_setting(feature_flag)
             self._assert_same_keys(feature_flag, set_flag)
+            set_flag_value = json.loads(set_flag.value)
+            assert set_flag_value["id"] == "test_feature"
+            assert set_flag_value["enabled"] == True
+            assert set_flag_value["conditions"] != None
 
             set_flag.enabled = not set_flag.enabled
             changed_flag = await client.set_configuration_setting(set_flag)
-
-            changed_flag.enabled = False
+            assert changed_flag.enabled == False
             temp = json.loads(changed_flag.value)
+            assert temp["id"] == set_flag_value["id"]
             assert temp["enabled"] == False
+            assert temp["conditions"] == set_flag_value["conditions"]
 
-            c = json.loads(copy.deepcopy(changed_flag.value))
+            c = json.loads(changed_flag.value)
             c["enabled"] = True
             changed_flag.value = json.dumps(c)
             assert changed_flag.enabled == True
+            temp = json.loads(changed_flag.value)
+            assert temp["id"] == set_flag_value["id"]
+            assert temp["enabled"] == True
+            assert temp["conditions"] == set_flag_value["conditions"]
 
             changed_flag.value = json.dumps({})
-            assert changed_flag.enabled == None
-            assert changed_flag.value == json.dumps({"enabled": None, "conditions": {"client_filters": None}})
+            assert changed_flag.enabled == False
+            temp = json.loads(changed_flag.value)
+            assert temp["id"] == set_flag_value["id"]
+            assert temp["enabled"] == False
+            assert temp["conditions"] != None
+            assert temp["conditions"]["client_filters"] == None
 
             set_flag.value = "bad_value"
-            assert set_flag.enabled == None
+            assert set_flag.enabled == False
             assert set_flag.filters == None
+            assert set_flag.value == "bad_value"
 
             await client.delete_configuration_setting(changed_flag.key)
 

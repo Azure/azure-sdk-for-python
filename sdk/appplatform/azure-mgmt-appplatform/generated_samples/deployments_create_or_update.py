@@ -38,6 +38,11 @@ def main():
             "properties": {
                 "deploymentSettings": {
                     "addonConfigs": {"ApplicationConfigurationService": {"patterns": ["mypattern"]}},
+                    "apms": [
+                        {
+                            "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myResourceGroup/providers/Microsoft.AppPlatform/Spring/myservice/apms/myappinsights"
+                        }
+                    ],
                     "environmentVariables": {"env": "test"},
                     "livenessProbe": {
                         "disableProbe": False,
@@ -71,6 +76,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/stable/2022-12-01/examples/Deployments_CreateOrUpdate.json
+# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/stable/2023-12-01/examples/Deployments_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

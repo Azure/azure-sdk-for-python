@@ -40,6 +40,7 @@ class _PartitionedQueryExecutionInfo(object):
     AggregatesPath = [QueryInfoPath, "aggregates"]
     QueryRangesPath = "queryRanges"
     RewrittenQueryPath = [QueryInfoPath, "rewrittenQuery"]
+    HasNonStreamingOrderByPath = [QueryInfoPath, "hasNonStreamingOrderBy"]
 
     def __init__(self, query_execution_info):
         """
@@ -49,47 +50,70 @@ class _PartitionedQueryExecutionInfo(object):
 
     def get_top(self):
         """Returns the top count (if any) or None.
+        :returns: The top count.
+        :rtype: int
         """
         return self._extract(_PartitionedQueryExecutionInfo.TopPath)
 
     def get_limit(self):
         """Returns the limit count (if any) or None.
+        :returns: The limit count.
+        :rtype: int
         """
         return self._extract(_PartitionedQueryExecutionInfo.LimitPath)
 
     def get_offset(self):
         """Returns the offset count (if any) or None.
+        :returns: The offset count.
+        :rtype: int
         """
         return self._extract(_PartitionedQueryExecutionInfo.OffsetPath)
 
     def get_distinct_type(self):
-        """Returns the offset count (if any) or None.
+        """Returns the distinct type (if any) or None.
+        :returns: The distinct type.
+        :rtype: str
         """
         return self._extract(_PartitionedQueryExecutionInfo.DistinctTypePath)
 
     def get_order_by(self):
         """Returns order by items (if any) or None.
+        :returns: The order by items.
+        :rtype: list
         """
         return self._extract(_PartitionedQueryExecutionInfo.OrderByPath)
 
     def get_aggregates(self):
         """Returns aggregators (if any) or None.
+        :returns: The aggregate items.
+        :rtype: list
         """
         return self._extract(_PartitionedQueryExecutionInfo.AggregatesPath)
 
     def get_query_ranges(self):
         """Returns query partition ranges (if any) or None.
+        :returns: The query ranges.
+        :rtype: list
         """
         return self._extract(_PartitionedQueryExecutionInfo.QueryRangesPath)
 
     def get_rewritten_query(self):
         """Returns rewritten query or None (if any).
+        :returns: The rewritten query.
+        :rtype: str
         """
         rewrittenQuery = self._extract(_PartitionedQueryExecutionInfo.RewrittenQueryPath)
         if rewrittenQuery is not None:
             # Hardcode formattable filter to true for now
             rewrittenQuery = rewrittenQuery.replace("{documentdb-formattableorderbyquery-filter}", "true")
         return rewrittenQuery
+
+    def get_non_streaming_order_by(self):
+        """Returns if the query is a non-streaming order by query.
+        :returns: Query is a non-streaming order by query.
+        :rtype: bool
+        """
+        return self._extract(_PartitionedQueryExecutionInfo.HasNonStreamingOrderByPath)
 
     def has_select_value(self):
         return self._extract(self.HasSelectValue)
@@ -118,7 +142,6 @@ class _PartitionedQueryExecutionInfo(object):
         return self.get_rewritten_query() is not None
 
     def _extract(self, path):
-
         item = self._query_execution_info
         if isinstance(path, str):
             return item.get(path)

@@ -29,14 +29,13 @@ def main():
         subscription_id="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
     )
 
-    response = client.deleted_accounts.begin_purge(
+    client.deleted_accounts.begin_purge(
         location="westus",
         resource_group_name="myResourceGroup",
         account_name="PropTest01",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2022-12-01/examples/PurgeDeletedAccount.json
+# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2023-05-01/examples/PurgeDeletedAccount.json
 if __name__ == "__main__":
     main()

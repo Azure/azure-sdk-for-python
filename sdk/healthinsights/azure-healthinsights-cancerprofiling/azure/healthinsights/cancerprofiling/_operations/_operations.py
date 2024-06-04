@@ -48,7 +48,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_cancer_profiling_infer_cancer_profile_request(
+def build_cancer_profiling_infer_cancer_profile_request(  # pylint: disable=name-too-long
     *,
     repeatability_request_id: Optional[str] = None,
     repeatability_first_sent: Optional[datetime.datetime] = None,

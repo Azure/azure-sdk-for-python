@@ -5,7 +5,7 @@
 """This package includes the type classes which could be used in dsl.pipeline,
 command function, or any other place that requires job inputs/outputs.
 
-.. remarks::
+.. note::
 
     The following pseudo-code shows how to create a pipeline with such classes.
 
@@ -55,11 +55,11 @@ command function, or any other place that requires job inputs/outputs.
 """
 
 from .enum_input import EnumInput
+from .external_data import Database, FileSystem
 from .group_input import GroupInput
 from .input import Input
 from .output import Output
 from .utils import _get_param_with_standard_annotation, is_group
-from .external_data import Database, FileSystem
 
 __all__ = [
     "Input",

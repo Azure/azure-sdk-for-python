@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -22,12 +22,13 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._recovery_points_crr_operations import build_list_request
+from ...operations._recovery_points_crr_operations import build_get_request, build_list_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -78,7 +79,6 @@ class RecoveryPointsCrrOperations:
         :type protected_item_name: str
         :param filter: OData filter options. Default value is None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RecoveryPointResource or the result of
          cls(response)
         :rtype:
@@ -102,7 +102,7 @@ class RecoveryPointsCrrOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     vault_name=vault_name,
                     resource_group_name=resource_group_name,
                     fabric_name=fabric_name,
@@ -111,12 +111,11 @@ class RecoveryPointsCrrOperations:
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -128,13 +127,13 @@ class RecoveryPointsCrrOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("RecoveryPointResourceList", pipeline_response)
@@ -144,11 +143,11 @@ class RecoveryPointsCrrOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -161,6 +160,82 @@ class RecoveryPointsCrrOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/"
-    }
+    @distributed_trace_async
+    async def get(
+        self,
+        vault_name: str,
+        resource_group_name: str,
+        fabric_name: str,
+        container_name: str,
+        protected_item_name: str,
+        recovery_point_id: str,
+        **kwargs: Any
+    ) -> _models.RecoveryPointResource:
+        """Provides the information of the backed up data identified using RecoveryPointID.
+
+        :param vault_name: The name of the recovery services vault. Required.
+        :type vault_name: str
+        :param resource_group_name: The name of the resource group where the recovery services vault is
+         present. Required.
+        :type resource_group_name: str
+        :param fabric_name: Fabric name associated with backed up item. Required.
+        :type fabric_name: str
+        :param container_name: Container name associated with backed up item. Required.
+        :type container_name: str
+        :param protected_item_name: Backed up item name whose backup data needs to be fetched.
+         Required.
+        :type protected_item_name: str
+        :param recovery_point_id: RecoveryPointID represents the backed up data to be fetched.
+         Required.
+        :type recovery_point_id: str
+        :return: RecoveryPointResource or the result of cls(response)
+        :rtype: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryPointResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.RecoveryPointResource] = kwargs.pop("cls", None)
+
+        _request = build_get_request(
+            vault_name=vault_name,
+            resource_group_name=resource_group_name,
+            fabric_name=fabric_name,
+            container_name=container_name,
+            protected_item_name=protected_item_name,
+            recovery_point_id=recovery_point_id,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.NewErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("RecoveryPointResource", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore

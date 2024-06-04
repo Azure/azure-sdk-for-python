@@ -28,7 +28,7 @@ sys.path.append("..")
 
 class SmsTokenCredentialAuthSample(object):
 
-    connection_string = os.getenv("COMMUNICATION_SMS_LIVETEST_DYNAMIC_CONNECTION_STRING")
+    connection_string = os.getenv("COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING")
     phone_number = os.getenv("SMS_PHONE_NUMBER")
     
     def sms_token_credential_auth(self):

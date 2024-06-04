@@ -26,32 +26,37 @@ from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 def main():
     client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="1234ABCD-0A1B-1234-5678-123456ABCDEF",
     )
 
     response = client.l3_isolation_domains.begin_create(
-        resource_group_name="resourceGroupName",
+        resource_group_name="example-rg",
         l3_isolation_domain_name="example-l3domain",
         body={
             "location": "eastus",
             "properties": {
                 "aggregateRouteConfiguration": {
                     "ipv4Routes": [{"prefix": "10.0.0.0/24"}],
-                    "ipv6Routes": [{"prefix": "10.0.0.1"}],
+                    "ipv6Routes": [{"prefix": "3FFE:FFFF:0:CD30::a0/29"}],
                 },
+                "annotation": "annotation",
                 "connectedSubnetRoutePolicy": {
-                    "exportRoutePolicyId": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName2"
+                    "exportRoutePolicy": {
+                        "exportIpv4RoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/example-routePolicy",
+                        "exportIpv6RoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/example-routePolicy",
+                    },
+                    "exportRoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName",
                 },
-                "description": "creating L3 isolation domain",
-                "networkFabricId": "/subscriptions/xxxxxx/resourceGroups/resourcegroupname/providers/Microsoft.ManagedNetworkFabric/networkFabrics/FabricName",
+                "networkFabricId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/networkFabrics/example-fabric",
                 "redistributeConnectedSubnets": "True",
                 "redistributeStaticRoutes": "False",
             },
+            "tags": {"keyID": "KeyValue"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/L3IsolationDomains_Create_MaximumSet_Gen.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/stable/2023-06-15/examples/L3IsolationDomains_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

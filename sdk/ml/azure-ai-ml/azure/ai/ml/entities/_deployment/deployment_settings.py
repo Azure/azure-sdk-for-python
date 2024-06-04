@@ -25,9 +25,9 @@ class BatchRetrySettings(RestTranslatableMixin):
     """Retry settings for batch deployment.
 
     :param max_retries: Number of retries in failure, defaults to 3
-    :type max_retries: int, optional
+    :type max_retries: int
     :param timeout: Timeout in seconds, defaults to 30
-    :type timeout: int, optional
+    :type timeout: int
     """
 
     def __init__(self, *, max_retries: Optional[int] = None, timeout: Optional[int] = None):
@@ -41,7 +41,7 @@ class BatchRetrySettings(RestTranslatableMixin):
         )
 
     @classmethod
-    def _from_rest_object(cls, settings: RestBatchRetrySettings) -> "BatchRetrySettings":
+    def _from_rest_object(cls, settings: RestBatchRetrySettings) -> Optional["BatchRetrySettings"]:
         return (
             BatchRetrySettings(
                 max_retries=settings.max_retries,
@@ -61,11 +61,11 @@ class OnlineRequestSettings(RestTranslatableMixin):
     """Request Settings entity.
 
     :param request_timeout_ms: defaults to 5000
-    :type request_timeout_ms: int, optional
+    :type request_timeout_ms: int
     :param max_concurrent_requests_per_instance: defaults to 1
-    :type max_concurrent_requests_per_instance: int, optional
+    :type max_concurrent_requests_per_instance: int
     :param max_queue_wait_ms: defaults to 500
-    :type max_queue_wait_ms: int, optional
+    :type max_queue_wait_ms: int
     """
 
     def __init__(
@@ -85,7 +85,7 @@ class OnlineRequestSettings(RestTranslatableMixin):
             request_timeout=to_iso_duration_format_ms(self.request_timeout_ms),
         )
 
-    def _merge_with(self, other: "OnlineRequestSettings") -> None:
+    def _merge_with(self, other: Optional["OnlineRequestSettings"]) -> None:
         if other:
             self.max_concurrent_requests_per_instance = (
                 other.max_concurrent_requests_per_instance or self.max_concurrent_requests_per_instance
@@ -94,7 +94,7 @@ class OnlineRequestSettings(RestTranslatableMixin):
             self.max_queue_wait_ms = other.max_queue_wait_ms or self.max_queue_wait_ms
 
     @classmethod
-    def _from_rest_object(cls, settings: RestOnlineRequestSettings) -> "OnlineRequestSettings":
+    def _from_rest_object(cls, settings: RestOnlineRequestSettings) -> Optional["OnlineRequestSettings"]:
         return (
             OnlineRequestSettings(
                 request_timeout_ms=from_iso_duration_format_ms(settings.request_timeout),
@@ -134,15 +134,15 @@ class ProbeSettings(RestTranslatableMixin):
         """Settings on how to probe an endpoint.
 
         :param failure_threshold: Threshold for probe failures, defaults to 30
-        :type failure_threshold: int, optional
+        :type failure_threshold: int
         :param success_threshold: Threshold for probe success, defaults to 1
-        :type success_threshold: int, optional
+        :type success_threshold: int
         :param timeout: timeout in seconds, defaults to 2
-        :type timeout: int, optional
-        :param period: [description], defaults to 10
-        :type period: int, optional
-        :param initial_delay: How to to wait for the first probe, defaults to 10
-        :type initial_delay: int, optional
+        :type timeout: int
+        :param period: How often (in seconds) to perform the probe, defaults to 10
+        :type period: int
+        :param initial_delay: How long (in seconds) to wait for the first probe, defaults to 10
+        :type initial_delay: int
         """
 
         self.failure_threshold = failure_threshold
@@ -160,7 +160,7 @@ class ProbeSettings(RestTranslatableMixin):
             initial_delay=to_iso_duration_format(self.initial_delay),
         )
 
-    def _merge_with(self, other: "ProbeSettings") -> None:
+    def _merge_with(self, other: Optional["ProbeSettings"]) -> None:
         if other:
             self.failure_threshold = other.failure_threshold or self.failure_threshold
             self.success_threshold = other.success_threshold or self.success_threshold
@@ -169,7 +169,7 @@ class ProbeSettings(RestTranslatableMixin):
             self.initial_delay = other.initial_delay or self.initial_delay
 
     @classmethod
-    def _from_rest_object(cls, settings: RestProbeSettings) -> "ProbeSettings":
+    def _from_rest_object(cls, settings: RestProbeSettings) -> Optional["ProbeSettings"]:
         return (
             ProbeSettings(
                 failure_threshold=settings.failure_threshold,

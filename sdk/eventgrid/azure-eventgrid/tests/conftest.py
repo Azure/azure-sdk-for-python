@@ -44,5 +44,5 @@ def add_aeg_sanitizer(test_proxy):
     add_remove_header_sanitizer(headers="aeg-sas-key, aeg-sas-token")
     add_general_regex_sanitizer(
         value="fakeresource",
-        regex="(?<=\\/\\/)[a-z-]+(?=\\.westus2-1\\.eventgrid\\.azure\\.net/api/events)"
+        regex="(?<=\\/\\/)[a-z-]+(?=\\.eastus-1\\.eventgrid\\.azure\\.net/api/events)"
     )

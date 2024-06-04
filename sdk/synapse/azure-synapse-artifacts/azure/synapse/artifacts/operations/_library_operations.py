@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -27,7 +27,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -68,7 +68,7 @@ def build_flush_request(library_name: str, **kwargs: Any) -> HttpRequest:
         "libraryName": _SERIALIZER.url("library_name", library_name, "str", max_length=100),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -92,7 +92,7 @@ def build_get_operation_result_request(operation_id: str, **kwargs: Any) -> Http
         "operationId": _SERIALIZER.url("operation_id", operation_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -116,7 +116,7 @@ def build_delete_request(library_name: str, **kwargs: Any) -> HttpRequest:
         "libraryName": _SERIALIZER.url("library_name", library_name, "str", max_length=100),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -140,7 +140,7 @@ def build_get_request(library_name: str, **kwargs: Any) -> HttpRequest:
         "libraryName": _SERIALIZER.url("library_name", library_name, "str", max_length=100),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -164,7 +164,7 @@ def build_create_request(library_name: str, **kwargs: Any) -> HttpRequest:
         "libraryName": _SERIALIZER.url("library_name", library_name, "str", max_length=100),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -178,8 +178,8 @@ def build_create_request(library_name: str, **kwargs: Any) -> HttpRequest:
 def build_append_request(
     library_name: str,
     *,
-    comp: Union[str, _models.Enum9],
-    content: IO,
+    comp: Union[str, _models.Enum13],
+    content: IO[bytes],
     blob_condition_append_position: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -196,7 +196,7 @@ def build_append_request(
         "libraryName": _SERIALIZER.url("library_name", library_name, "str", max_length=100),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -237,7 +237,6 @@ class LibraryOperations:
     def list(self, **kwargs: Any) -> Iterable["_models.LibraryResource"]:
         """Lists Library.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LibraryResource or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.synapse.artifacts.models.LibraryResource]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -259,31 +258,30 @@ class LibraryOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("LibraryListResponse", pipeline_response)
@@ -293,11 +291,11 @@ class LibraryOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -308,8 +306,6 @@ class LibraryOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/libraries"}
 
     def _flush_initial(self, library_name: str, **kwargs: Any) -> Optional[_models.LibraryResourceInfo]:
         error_map = {
@@ -326,22 +322,21 @@ class LibraryOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[Optional[_models.LibraryResourceInfo]] = kwargs.pop("cls", None)
 
-        request = build_flush_request(
+        _request = build_flush_request(
             library_name=library_name,
             api_version=api_version,
-            template_url=self._flush_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -355,11 +350,9 @@ class LibraryOperations:
             deserialized = self._deserialize("LibraryResourceInfo", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _flush_initial.metadata = {"url": "/libraries/{libraryName}/flush"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_flush(self, library_name: str, **kwargs: Any) -> LROPoller[_models.LibraryResourceInfo]:
@@ -368,14 +361,6 @@ class LibraryOperations:
         :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
          the extension length. Required.
         :type library_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either LibraryResourceInfo or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.LibraryResourceInfo]
@@ -403,7 +388,7 @@ class LibraryOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("LibraryResourceInfo", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -419,15 +404,15 @@ class LibraryOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.LibraryResourceInfo].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_flush.metadata = {"url": "/libraries/{libraryName}/flush"}
+        return LROPoller[_models.LibraryResourceInfo](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def get_operation_result(
@@ -437,7 +422,6 @@ class LibraryOperations:
 
         :param operation_id: operation id for which status is requested. Required.
         :type operation_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LibraryResource or OperationResult or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LibraryResource or
          ~azure.synapse.artifacts.models.OperationResult
@@ -457,22 +441,21 @@ class LibraryOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[Union[_models.LibraryResource, _models.OperationResult]] = kwargs.pop("cls", None)
 
-        request = build_get_operation_result_request(
+        _request = build_get_operation_result_request(
             operation_id=operation_id,
             api_version=api_version,
-            template_url=self.get_operation_result.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -492,8 +475,6 @@ class LibraryOperations:
 
         return deserialized  # type: ignore
 
-    get_operation_result.metadata = {"url": "/libraryOperationResults/{operationId}"}
-
     def _delete_initial(self, library_name: str, **kwargs: Any) -> Optional[_models.LibraryResourceInfo]:
         error_map = {
             401: ClientAuthenticationError,
@@ -509,22 +490,21 @@ class LibraryOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[Optional[_models.LibraryResourceInfo]] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             library_name=library_name,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -538,11 +518,9 @@ class LibraryOperations:
             deserialized = self._deserialize("LibraryResourceInfo", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _delete_initial.metadata = {"url": "/libraries/{libraryName}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_delete(self, library_name: str, **kwargs: Any) -> LROPoller[_models.LibraryResourceInfo]:
@@ -551,14 +529,6 @@ class LibraryOperations:
         :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
          the extension length. Required.
         :type library_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either LibraryResourceInfo or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.LibraryResourceInfo]
@@ -586,7 +556,7 @@ class LibraryOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("LibraryResourceInfo", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -602,15 +572,15 @@ class LibraryOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.LibraryResourceInfo].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {"url": "/libraries/{libraryName}"}
+        return LROPoller[_models.LibraryResourceInfo](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def get(self, library_name: str, **kwargs: Any) -> Optional[_models.LibraryResource]:
@@ -619,7 +589,6 @@ class LibraryOperations:
         :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
          the extension length. Required.
         :type library_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LibraryResource or None or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LibraryResource or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -638,22 +607,21 @@ class LibraryOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[Optional[_models.LibraryResource]] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             library_name=library_name,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -667,11 +635,9 @@ class LibraryOperations:
             deserialized = self._deserialize("LibraryResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {"url": "/libraries/{libraryName}"}
+        return deserialized  # type: ignore
 
     def _create_initial(self, library_name: str, **kwargs: Any) -> Optional[_models.LibraryResourceInfo]:
         error_map = {
@@ -688,22 +654,21 @@ class LibraryOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[Optional[_models.LibraryResourceInfo]] = kwargs.pop("cls", None)
 
-        request = build_create_request(
+        _request = build_create_request(
             library_name=library_name,
             api_version=api_version,
-            template_url=self._create_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -717,11 +682,9 @@ class LibraryOperations:
             deserialized = self._deserialize("LibraryResourceInfo", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _create_initial.metadata = {"url": "/libraries/{libraryName}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_create(self, library_name: str, **kwargs: Any) -> LROPoller[_models.LibraryResourceInfo]:
@@ -730,14 +693,6 @@ class LibraryOperations:
         :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
          the extension length. Required.
         :type library_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either LibraryResourceInfo or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.LibraryResourceInfo]
@@ -765,7 +720,7 @@ class LibraryOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("LibraryResourceInfo", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -781,22 +736,22 @@ class LibraryOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.LibraryResourceInfo].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create.metadata = {"url": "/libraries/{libraryName}"}
+        return LROPoller[_models.LibraryResourceInfo](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def append(  # pylint: disable=inconsistent-return-statements
         self,
-        comp: Union[str, _models.Enum9],
+        comp: Union[str, _models.Enum13],
         library_name: str,
-        content: IO,
+        content: IO[bytes],
         blob_condition_append_position: Optional[int] = None,
         **kwargs: Any
     ) -> None:
@@ -804,18 +759,17 @@ class LibraryOperations:
         content size is 4MiB. Content larger than 4MiB must be appended in 4MiB chunks.
 
         :param comp: "appendblock" Required.
-        :type comp: str or ~azure.synapse.artifacts.models.Enum9
+        :type comp: str or ~azure.synapse.artifacts.models.Enum13
         :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
          the extension length. Required.
         :type library_name: str
         :param content: Library file chunk. Required.
-        :type content: IO
+        :type content: IO[bytes]
         :param blob_condition_append_position: Set this header to a byte offset at which the block is
          expected to be appended. The request succeeds only if the current offset matches this value.
          Otherwise, the request fails with the AppendPositionConditionNotMet error (HTTP status code 412
          – Precondition Failed). Default value is None.
         :type blob_condition_append_position: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -837,26 +791,25 @@ class LibraryOperations:
 
         _content = content
 
-        request = build_append_request(
+        _request = build_append_request(
             library_name=library_name,
             comp=comp,
             blob_condition_append_position=blob_condition_append_position,
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            template_url=self.append.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -866,6 +819,4 @@ class LibraryOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    append.metadata = {"url": "/libraries/{libraryName}"}
+            return cls(pipeline_response, None, {})  # type: ignore

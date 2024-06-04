@@ -4,6 +4,7 @@ import os
 from typing import Dict, List, Union
 from urllib.parse import urlparse
 
+from azure.core.pipeline import policies
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import (
     PemCertificate,
@@ -39,7 +40,6 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             ConfidentialLedgerClient,
             credential=credential,
             endpoint=endpoint,
-            # self.network_certificate_path is set via self.set_ledger_identity
             ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
 
@@ -49,7 +49,6 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         certificate_based_client = ConfidentialLedgerClient(
             credential=certificate_credential,
             endpoint=endpoint,
-            # self.network_certificate_path is set via self.set_ledger_identity
             ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
 
@@ -483,37 +482,69 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             assert quote["raw"]
             assert quote["quoteVersion"]
 
+    # Must use recorded_by_proxy (non-async) because the constructor makes a synchronous call that
+    # will be ignored by the proxy when running in recorded mode.
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
-    async def test_tls_cert_convenience_aad_user(self, **kwargs):
-        os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
+    def test_tls_cert_convenience_aad_user(self, **kwargs):
+        try:
+            os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
+        except FileNotFoundError:
+            pass
 
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
 
-        client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+        # Create the client directly instead of going through the create_confidentialledger_client
+        # as we don't need any additional setup.
+        credential = self.get_credential(ConfidentialLedgerClient, is_async=False)
+        self.create_client_from_credential(
+            ConfidentialLedgerClient,
+            credential=credential,
+            endpoint=confidentialledger_endpoint,
+            ledger_certificate_path=self.network_certificate_path,  # type: ignore
+            # Provide an authentication policy so that the default AsyncBearerTokenCredentialPolicy
+            # is not used. Using that instead can cause an error as there is no event loop running
+            # for this non-async test.
+            authentication_policy=policies.BearerTokenCredentialPolicy(
+                credential, 
+                *["https://confidential-ledger.azure.com/.default"], 
+                **kwargs,
+            ),
         )
 
-        self.tls_cert_convenience_actions(client)
+        self.tls_cert_convenience_actions(confidentialledger_id)
 
+    # Must use recorded_by_proxy (non-async) because the constructor makes a synchronous call that
+    # will be ignored by the proxy when running in recorded mode.
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
-    async def test_tls_cert_convenience_cert_user(self, **kwargs):
-        os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
+    def test_tls_cert_convenience_cert_user(self, **kwargs):
+        try:
+            os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
+        except FileNotFoundError:
+            pass
 
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
 
-        client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+        # Create the client directly instead of going through the create_confidentialledger_client
+        # as we don't need any additional setup.
+        certificate_credential = ConfidentialLedgerCertificateCredential(
+            certificate_path=self.user_certificate_path
+        )
+        ConfidentialLedgerClient(
+            credential=certificate_credential,
+            endpoint=confidentialledger_endpoint,
+            ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
 
-        self.tls_cert_convenience_actions(client)
+        self.tls_cert_convenience_actions(confidentialledger_id)
 
-    def tls_cert_convenience_actions(self, _):
-        # Simply check that the certificate file is present and populated.
+    def tls_cert_convenience_actions(self, confidentialledger_id: str):
         with open(self.network_certificate_path) as infile:
             certificate = infile.read()
 
-        assert certificate
+        expected_cert = self.set_ledger_identity(confidentialledger_id)
+
+        assert certificate == expected_cert

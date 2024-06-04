@@ -11,7 +11,7 @@ Example to show sending, receiving and parsing amqp annotated message(s) to a Se
 
 import os
 import asyncio
-from azure.servicebus.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType
+from azure.servicebus.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType, AmqpMessageProperties, AmqpMessageHeader
 from azure.servicebus.aio import ServiceBusClient
 
 CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']

@@ -1,0 +1,41 @@
+type: pipeline
+
+display_name: pipeline job with parameter group for node
+description: The hello world pipeline job
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: azureml:cpu-cluster
+
+inputs:
+  job_in_path:
+    path: ../data
+    mode: ro_mount
+
+jobs:
+# dict input is not supported in yaml for now
+#  dict_input_name:
+#    type: command
+#    component: ../components/helloworld_component_with_parameter_group.yml
+#    compute: azureml:cpu-cluster
+#    inputs:
+#      component_in_path: ${{parent.inputs.job_in_path}}
+#      component_in_group:
+#        number: 10.99
+#        sub1:
+#          number: 10.99
+#          integer: 10
+#        sub2:
+#          number: 10.99
+
+  dot_input_name:
+    type: command
+    component: ../components/helloworld_component_with_parameter_group.yml
+    compute: azureml:cpu-cluster
+    inputs:
+      component_in_path: ${{parent.inputs.job_in_path}}
+      component_in_group.number: 10.99
+      component_in_group.sub1.number: 10.99
+      component_in_group.sub1.integer: 10
+      component_in_group.sub2.number: 10.99

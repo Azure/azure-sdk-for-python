@@ -2,28 +2,25 @@ import sys
 import pytest
 import unittest
 from unittest.mock import Mock
-from devtools_testutils import AzureTestCase
 from azure.core.credentials import AzureKeyCredential
 from azure.maps.search.models import StructuredAddress
 from azure.maps.search import MapsSearchClient
 from azure.maps.search._shared import converter
 
 # cSpell:disable
-class AzureMapsSearchClientUnitTest(AzureTestCase):
+def test_fuzzy_search_invalid_top():
+    client = MapsSearchClient(
+        credential=Mock(AzureKeyCredential)
+    )
+    with pytest.raises(TypeError):
+        client.search_point_of_interest_category(StructuredAddress())
 
-    def test_fuzzy_search_invalid_top(self):
-        client = MapsSearchClient(
-            credential=Mock(AzureKeyCredential)
-        )
-        with pytest.raises(TypeError):
-            client.search_point_of_interest_category(StructuredAddress())
-
-    def test_search_structured_address(self):
-        client = MapsSearchClient(
-            credential=Mock(AzureKeyCredential)
-        )
-        with pytest.raises(TypeError):
-             client.search_structured_address(StructuredAddress())
+def test_search_structured_address():
+    client = MapsSearchClient(
+        credential=Mock(AzureKeyCredential)
+    )
+    with pytest.raises(TypeError):
+            client.search_structured_address(StructuredAddress())
 
 class TestConverter(unittest.TestCase):
 

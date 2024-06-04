@@ -15,7 +15,7 @@ from azure.data.tables import (
     TableAnalyticsLogging,
     TableMetrics,
     TableRetentionPolicy,
-    TableCorsRule
+    TableCorsRule,
 )
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
@@ -37,7 +37,8 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
             analytics_logging=TableAnalyticsLogging(),
             hour_metrics=TableMetrics(),
             minute_metrics=TableMetrics(),
-            cors=list())
+            cors=list(),
+        )
 
         # Assert
         assert resp is None
@@ -52,7 +53,9 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
         tsc = TableServiceClient(url, credential=tables_primary_storage_account_key)
-        logging = TableAnalyticsLogging(read=True, write=True, delete=True, retention_policy=TableRetentionPolicy(enabled=True, days=5))
+        logging = TableAnalyticsLogging(
+            read=True, write=True, delete=True, retention_policy=TableRetentionPolicy(enabled=True, days=5)
+        )
 
         # Act
         tsc.set_service_properties(analytics_logging=logging)
@@ -61,7 +64,7 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
         if self.is_live:
             time.sleep(45)
         received_props = tsc.get_service_properties()
-        self._assert_logging_equal(received_props['analytics_logging'], logging)
+        self._assert_logging_equal(received_props["analytics_logging"], logging)
 
     @tables_decorator
     @recorded_by_proxy
@@ -69,7 +72,9 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
         tsc = TableServiceClient(url, credential=tables_primary_storage_account_key)
-        hour_metrics = TableMetrics(enabled=True, include_apis=True, retention_policy=TableRetentionPolicy(enabled=True, days=5))
+        hour_metrics = TableMetrics(
+            enabled=True, include_apis=True, retention_policy=TableRetentionPolicy(enabled=True, days=5)
+        )
 
         # Act
         tsc.set_service_properties(hour_metrics=hour_metrics)
@@ -78,7 +83,7 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
         if self.is_live:
             time.sleep(45)
         received_props = tsc.get_service_properties()
-        self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
+        self._assert_metrics_equal(received_props["hour_metrics"], hour_metrics)
 
     @tables_decorator
     @recorded_by_proxy
@@ -86,8 +91,9 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
         tsc = TableServiceClient(url, credential=tables_primary_storage_account_key)
-        minute_metrics = TableMetrics(enabled=True, include_apis=True,
-                                 retention_policy=TableRetentionPolicy(enabled=True, days=5))
+        minute_metrics = TableMetrics(
+            enabled=True, include_apis=True, retention_policy=TableRetentionPolicy(enabled=True, days=5)
+        )
 
         # Act
         tsc.set_service_properties(minute_metrics=minute_metrics)
@@ -96,7 +102,7 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
         if self.is_live:
             time.sleep(45)
         received_props = tsc.get_service_properties()
-        self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
+        self._assert_metrics_equal(received_props["minute_metrics"], minute_metrics)
 
     @tables_decorator
     @recorded_by_proxy
@@ -104,10 +110,10 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
         tsc = TableServiceClient(url, credential=tables_primary_storage_account_key)
-        cors_rule1 = TableCorsRule(['www.xyz.com'], ['GET'])
+        cors_rule1 = TableCorsRule(["www.xyz.com"], ["GET"])
 
-        allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
-        allowed_methods = ['GET', 'PUT']
+        allowed_origins = ["www.xyz.com", "www.ab.com", "www.bc.com"]
+        allowed_methods = ["GET", "PUT"]
         max_age_in_seconds = 500
         exposed_headers = ["x-ms-meta-data*", "x-ms-meta-source*", "x-ms-meta-abc", "x-ms-meta-bcd"]
         allowed_headers = ["x-ms-meta-data*", "x-ms-meta-target*", "x-ms-meta-xyz", "x-ms-meta-foo"]
@@ -125,17 +131,19 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
         if self.is_live:
             time.sleep(45)
         received_props = tsc.get_service_properties()
-        self._assert_cors_equal(received_props['cors'], cors)
+        self._assert_cors_equal(received_props["cors"], cors)
 
     # --Test cases for errors ---------------------------------------
     @tables_decorator
     @recorded_by_proxy
     def test_too_many_cors_rules(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
+        tsc = TableServiceClient(
+            self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key
+        )
         cors = []
         for i in range(0, 6):
-            cors.append(TableCorsRule(['www.xyz.com'], ['GET']))
+            cors.append(TableCorsRule(["www.xyz.com"], ["GET"]))
 
         # Assert
         pytest.raises(HttpResponseError, tsc.set_service_properties, cors=cors)
@@ -144,16 +152,21 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_retention_too_long(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
-        minute_metrics = TableMetrics(enabled=True, include_apis=True,
-                                 retention_policy=TableRetentionPolicy(enabled=True, days=366))
+        tsc = TableServiceClient(
+            self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key
+        )
+        minute_metrics = TableMetrics(
+            enabled=True, include_apis=True, retention_policy=TableRetentionPolicy(enabled=True, days=366)
+        )
 
         # Assert
         pytest.raises(HttpResponseError, tsc.set_service_properties, minute_metrics=minute_metrics)
 
     @tables_decorator
     @recorded_by_proxy
-    def test_client_with_url_ends_with_table_name(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_client_with_url_ends_with_table_name(
+        self, tables_storage_account_name, tables_primary_storage_account_key
+    ):
         url = self.account_url(tables_storage_account_name, "table")
         table_name = self.get_resource_name("mytable")
         invalid_url = url + "/" + table_name

@@ -10,11 +10,12 @@ import logging
 import time
 from concurrent.futures import Future
 from pathlib import Path
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable, Dict, Optional, Union
 
+from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import DataVersion, UriFileJobOutput
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, DefaultOpenEncoding, LROConfigurations
 from azure.ai.ml.entities import BatchDeployment
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._deployment.deployment import Deployment
@@ -26,6 +27,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ServiceRequestTimeoutError,
     map_error,
 )
 from azure.core.polling import LROPoller
@@ -88,9 +90,10 @@ def polling_wait(
 def local_endpoint_polling_wrapper(func: Callable, message: str, **kwargs) -> Any:
     """Wrapper for polling local endpoint operations.
 
-    :param Callable func: Name of the endpoint.
-    :param str message: Message to print out before starting operation write-out.
-    :param dict kwargs: kwargs to be passed to the func
+    :param func: Name of the endpoint.
+    :type func: Callable
+    :param message: Message to print out before starting operation write-out.
+    :type message: str
     :return: The type returned by Func
     """
     pool = concurrent.futures.ThreadPoolExecutor()
@@ -117,12 +120,15 @@ def validate_response(response: HttpResponse) -> None:
                 r_json = response.json()
             except ValueError as e:
                 # exception is not in the json format
-                raise Exception(response.content.decode("utf-8")) from e
+                msg = response.content.decode("utf-8")
+                raise MlException(message=msg, no_personal_data_message=msg) from e
         failure_msg = r_json.get("error", {}).get("message", response)
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
+            408: ServiceRequestTimeoutError,
             409: ResourceExistsError,
+            424: HttpResponseError,
         }
         map_error(status_code=response.status_code, response=response, error_map=error_map)
         raise HttpResponseError(response=response, message=failure_msg, error_format=ARMErrorFormat)
@@ -177,7 +183,7 @@ def validate_scoring_script(deployment):
         deployment.code_configuration.code, deployment.scoring_script
     )
     try:
-        with open(score_script_path, "r") as script:
+        with open(score_script_path, "r", encoding=DefaultOpenEncoding.READ) as script:
             contents = script.read()
             try:
                 ast.parse(contents, score_script_path)
@@ -209,3 +215,10 @@ def validate_scoring_script(deployment):
             message=f"Failed to open scoring script {err.filename}.",
             no_personal_data_message="Failed to open scoring script.",
         ) from err
+
+
+def convert_v1_dataset_to_v2(output_data_set: DataVersion, file_name: str) -> Dict[str, Any]:
+    v2_dataset = UriFileJobOutput(
+        uri=f"azureml://datastores/{output_data_set.datastore_id}/paths/{output_data_set.path}/{file_name}"
+    ).serialize()
+    return {"output_name": v2_dataset}

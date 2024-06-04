@@ -355,7 +355,7 @@ class NetworkRacksOperations:
     }
 
     async def _update_initial(
-        self, resource_group_name: str, network_rack_name: str, body: Union[_models.NetworkRackPatch, IO], **kwargs: Any
+        self, resource_group_name: str, network_rack_name: str, body: Union[_models.TagsUpdate, IO], **kwargs: Any
     ) -> Optional[_models.NetworkRack]:
         error_map = {
             401: ClientAuthenticationError,
@@ -378,7 +378,7 @@ class NetworkRacksOperations:
         if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
-            _json = self._serialize.body(body, "NetworkRackPatch")
+            _json = self._serialize.body(body, "TagsUpdate")
 
         request = build_update_request(
             resource_group_name=resource_group_name,
@@ -413,9 +413,7 @@ class NetworkRacksOperations:
             deserialized = self._deserialize("NetworkRack", pipeline_response)
 
         if response.status_code == 202:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -431,7 +429,7 @@ class NetworkRacksOperations:
         self,
         resource_group_name: str,
         network_rack_name: str,
-        body: _models.NetworkRackPatch,
+        body: _models.TagsUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -446,7 +444,7 @@ class NetworkRacksOperations:
         :param network_rack_name: Name of the Network Rack. Required.
         :type network_rack_name: str
         :param body: Network Rack properties to update. Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkRackPatch
+        :type body: ~azure.mgmt.managednetworkfabric.models.TagsUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -504,7 +502,7 @@ class NetworkRacksOperations:
 
     @distributed_trace_async
     async def begin_update(
-        self, resource_group_name: str, network_rack_name: str, body: Union[_models.NetworkRackPatch, IO], **kwargs: Any
+        self, resource_group_name: str, network_rack_name: str, body: Union[_models.TagsUpdate, IO], **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkRack]:
         """Updates a Network Rack.
 
@@ -515,9 +513,9 @@ class NetworkRacksOperations:
         :type resource_group_name: str
         :param network_rack_name: Name of the Network Rack. Required.
         :type network_rack_name: str
-        :param body: Network Rack properties to update. Is either a NetworkRackPatch type or a IO type.
+        :param body: Network Rack properties to update. Is either a TagsUpdate type or a IO type.
          Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkRackPatch or IO
+        :type body: ~azure.mgmt.managednetworkfabric.models.TagsUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -704,7 +702,7 @@ class NetworkRacksOperations:
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.NetworkRack"]:
-        """List NetworkRacks by resource group.
+        """List Network Racks by resource group.
 
         List all Network Rack resources in the given resource group.
 
@@ -794,7 +792,7 @@ class NetworkRacksOperations:
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.NetworkRack"]:
-        """List NetworkRacks by subscription.
+        """List Network Racks by subscription.
 
         List all Network Rack resources in the given subscription.
 

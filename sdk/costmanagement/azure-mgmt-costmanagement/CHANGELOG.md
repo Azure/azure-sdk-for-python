@@ -1,5 +1,11 @@
 # Release History
 
+## 4.0.1 (2023-07-19)
+
+### Bugs Fixed
+
+  - Fix deserialization error for some operation when error happens
+
 ## 4.0.0 (2023-05-22)
 
 ### Features Added

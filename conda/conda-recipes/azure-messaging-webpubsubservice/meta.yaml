@@ -1,0 +1,64 @@
+{% set name = "azure-messaging-webpubsubservice" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('WEBPUBSUB_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - cryptography
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - pip
+    - pyjwt
+    - python
+    - six
+    - typing_extensions
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+  run:
+    - cryptography
+    - pyjwt
+    - python
+    - six
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - typing_extensions
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.messaging.webpubsubservice
+    - azure.messaging.webpubsubservice.aio
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/webpubsub/azure-messaging-webpubsubservice"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure WebPubSub Service Client Library for Python"
+  description: |
+    Azure Web PubSub Service is an Azure-managed service that helps developers easily build web applications 
+    with real-time features and publish-subscribe pattern. Any scenario that requires real-time publish-subscribe 
+    messaging between server and clients or among clients can use Azure Web PubSub service. Traditional real-time 
+    features that often require polling from server or submitting HTTP requests can also use Azure Web PubSub service.
+    Please see https://aka.ms/azsdk/conda/releases/webpubsubservice for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

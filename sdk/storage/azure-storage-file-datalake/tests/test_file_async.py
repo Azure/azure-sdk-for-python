@@ -936,6 +936,31 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy_async
+    async def test_delete_file_oauth(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+
+        file_name = self._get_file_reference()
+        token_credential = self.generate_oauth_token()
+
+        file_client = DataLakeFileClient(
+            self.dsc.url,
+            self.file_system_name,
+            file_name,
+            credential=token_credential)
+        await file_client.create_file()
+
+        # Act
+        response = await file_client.delete_file()
+
+        # Assert
+        assert response is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_delete_file_with_if_unmodified_since(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -1429,7 +1454,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy_async
-    async def test_dir_and_file_properties_owner_group_permissions(self, **kwargs):
+    async def test_dir_and_file_properties_owner_group_acl_permissions(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
@@ -1442,15 +1467,70 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         await file_client1.create_file()
 
         directory_properties = await directory_client.get_directory_properties()
-        file_properties = await file_client1.get_file_properties()
+        file_properties = await file_client1.get_file_properties(upn=True)
 
         # Assert
         assert directory_properties['owner'] is not None
         assert directory_properties['group'] is not None
         assert directory_properties['permissions'] is not None
+        assert directory_properties['acl'] is not None
         assert file_properties['owner'] is not None
         assert file_properties['group'] is not None
         assert file_properties['permissions'] is not None
+        assert file_properties['acl'] is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_storage_account_audience_file_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        file_client = await self._create_file_and_return_client()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        fc = DataLakeFileClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            file_client.file_system_name + '/',
+            '/' + file_client.path_name,
+            credential=token_credential,
+            audience=f'https://{datalake_storage_account_name}.blob.core.windows.net/'
+        )
+
+        # Assert
+        data = b'Hello world'
+        response1 = await fc.get_file_properties()
+        response2 = await fc.upload_data(data, overwrite=True)
+        assert response1 is not None
+        assert response2 is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_bad_audience_file_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        file_client = await self._create_file_and_return_client()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        fc = DataLakeFileClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            file_client.file_system_name + '/',
+            '/' + file_client.path_name,
+            credential=token_credential,
+            audience=f'https://badaudience.blob.core.windows.net/'
+        )
+
+        # Assert
+        data = b'Hello world'
+        with pytest.raises(ClientAuthenticationError):
+            await fc.get_file_properties()
+            await fc.upload_data(data, overwrite=True)
 
 
 # ------------------------------------------------------------------------------

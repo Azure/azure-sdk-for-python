@@ -26,4 +26,5 @@ create_monitor:
     instance_type: "standard_e8s_v3"
     runtime_version: "3.2"
   monitoring_target:
-    endpoint_deployment_id: fake_endpoint_deployment_id
+    ml_task: classification
+    endpoint_deployment_id: fake_endpoint_id

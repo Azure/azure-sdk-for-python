@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 from datetime import date
 
@@ -39,8 +40,6 @@ class QueryStringConstants(object):
     SIGNED_KEY_EXPIRY = 'ske'
     SIGNED_KEY_SERVICE = 'sks'
     SIGNED_KEY_VERSION = 'skv'
-
-    # for blob only
     SIGNED_ENCRYPTION_SCOPE = 'ses'
 
     # for ADLS
@@ -78,7 +77,6 @@ class QueryStringConstants(object):
             QueryStringConstants.SIGNED_KEY_EXPIRY,
             QueryStringConstants.SIGNED_KEY_SERVICE,
             QueryStringConstants.SIGNED_KEY_VERSION,
-            # for blob only
             QueryStringConstants.SIGNED_ENCRYPTION_SCOPE,
             # for ADLS
             QueryStringConstants.SIGNED_AUTHORIZED_OID,
@@ -116,6 +114,7 @@ class SharedAccessSignature(object):
         Use the returned signature with the sas_token parameter of the service
         or to create a new account object.
 
+        :param Any services: The specified services associated with the shared access signature.
         :param ResourceTypes resource_types:
             Specifies the resource types that are accessible with the account
             SAS. You can combine values to provide access to more than one
@@ -138,9 +137,8 @@ class SharedAccessSignature(object):
         :param start:
             The time at which the shared access signature becomes valid. If
             omitted, start time for this call is assumed to be the time when the
-            storage service receives the request. Azure will always convert values
-            to UTC. If a date is passed in without timezone info, it is assumed to
-            be UTC.
+            storage service receives the request. The provided datetime will always
+            be interpreted as UTC.
         :type start: datetime or str
         :param str ip:
             Specifies an IP address or a range of IP addresses from which to accept requests.
@@ -154,6 +152,8 @@ class SharedAccessSignature(object):
         :keyword str encryption_scope:
             Optional. If specified, this is the encryption scope to use when sending requests
             authorized with this SAS URI.
+        :returns: The generated SAS token for the account.
+        :rtype: str
         '''
         sas = _SharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)

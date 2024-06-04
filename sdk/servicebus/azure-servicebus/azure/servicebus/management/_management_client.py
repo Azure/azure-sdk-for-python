@@ -5,12 +5,14 @@
 # pylint:disable=protected-access
 # pylint:disable=specify-parameter-names-in-call
 # pylint:disable=too-many-lines
+# pylint:disable=client-method-missing-tracing-decorator
 import functools
 import datetime
 from copy import deepcopy
 from typing import Any, Union, cast, Mapping, Optional, List, TYPE_CHECKING
 from xml.etree.ElementTree import ElementTree
 
+from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline import Pipeline
@@ -21,7 +23,7 @@ from azure.core.pipeline.policies import (
     RequestIdPolicy,
     BearerTokenCredentialPolicy,
 )
-from azure.core.pipeline.transport import RequestsTransport
+from azure.core.pipeline.transport import RequestsTransport # pylint:disable=no-name-in-module,non-abstract-transport-import
 
 from ._generated.models import (
     QueueDescriptionFeed,
@@ -138,14 +140,14 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             **kwargs
         )
 
-    def __enter__(self):
+    def __enter__(self) -> "ServiceBusAdministrationClient":
         self._impl.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
+    def __exit__(self, *exc_details: Any) -> None:
         self._impl.__exit__(*exc_details)
 
-    def _build_pipeline(self, **kwargs):  # pylint: disable=no-self-use
+    def _build_pipeline(self, **kwargs):
         transport = kwargs.get("transport")
         policies = kwargs.get("policies")
         credential_policy = (
@@ -220,7 +222,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return element
 
     def _create_forward_to_header_tokens(self, entity, kwargs):
-        """forward_to requires providing a bearer token in headers for the referenced entity."""
+        """forward_to requires providing a bearer token in headers for the referenced entity.
+        :param any entity: The entity to be created.
+        :param any kwargs: The keyword arguments to be appended to the request.
+        """
         kwargs["headers"] = kwargs.get("headers", {})
 
         def _populate_header_within_kwargs(uri, header):
@@ -257,6 +262,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          recent service version that is compatible with the current SDK. Setting to an older version may result
          in reduced feature compatibility.
         :paramtype api_version: str or ApiVersion
+        :returns: Returns a ServiceBusAdministrationClient.
         :rtype: ~azure.servicebus.management.ServiceBusAdministrationClient
         """
         (
@@ -279,6 +285,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """Get the properties of a queue.
 
         :param str queue_name: The name of the queue.
+        :return: The properties of the queue.
         :rtype: ~azure.servicebus.management.QueueProperties
         """
         entry_ele = self._get_entity_element(queue_name, **kwargs)
@@ -296,6 +303,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """Get the runtime information of a queue.
 
         :param str queue_name: The name of the queue.
+        :return: The runtime information of the queue.
         :rtype: ~azure.servicebus.management.QueueRuntimeProperties
         """
         entry_ele = self._get_entity_element(queue_name, **kwargs)
@@ -337,11 +345,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :param queue_name: Name of the queue.
         :type queue_name: str
         :keyword authorization_rules: Authorization rules for resource.
-        :paramtype authorization_rules: list[~azure.servicebus.management.AuthorizationRule]
+        :paramtype authorization_rules: list[~azure.servicebus.management.AuthorizationRule] or None
         :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
          automatically deleted. The minimum duration is 5 minutes.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :paramtype auto_delete_on_idle: Union[~datetime.timedelta, str]
+        :paramtype auto_delete_on_idle: ~datetime.timedelta or str or one
         :keyword dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
          letter support when a message expires.
         :paramtype dead_lettering_on_message_expiration: bool
@@ -349,11 +357,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          the duration after which the message expires, starting from when the message is sent to Service
          Bus. This is the default value used when TimeToLive is not set on a message itself.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :paramtype default_message_time_to_live: Union[~datetime.timedelta, str]
+        :paramtype default_message_time_to_live: ~datetime.timedelta or str or None
         :keyword duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
          duration of the duplicate detection history. The default value is 10 minutes.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :paramtype duplicate_detection_history_time_window: Union[~datetime.timedelta, str]
+        :paramtype duplicate_detection_history_time_window: ~datetime.timedelta or str or None
         :keyword enable_batched_operations: Value that indicates whether server-side batched operations
          are enabled.
         :paramtype enable_batched_operations: bool
@@ -367,7 +375,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          that the message is locked for other receivers. The maximum value for LockDuration is 5
          minutes; the default value is 1 minute.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :paramtype lock_duration: Union[~datetime.timedelta, str]
+        :paramtype lock_duration: ~datetime.timedelta or str or None
         :keyword max_delivery_count: The maximum delivery count. A message is automatically deadlettered
          after this number of deliveries. Default value is 10.
         :paramtype max_delivery_count: int
@@ -394,7 +402,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          and Service Bus API version "2021-05" or higher.
          The minimum allowed value is 1024 while the maximum allowed value is 102400. Default value is 1024.
         :paramtype max_message_size_in_kilobytes: int
-
+        :returns: Returns properties of queue resource.
         :rtype: ~azure.servicebus.management.QueueProperties
         """
         forward_to = _normalize_entity_path_to_full_path_if_needed(
@@ -483,7 +491,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         self._create_forward_to_header_tokens(to_update, kwargs)
         with _handle_response_error():
             self._impl.entity.put(
-                queue.name, request_body, if_match="*", **kwargs  # type: ignore
+                queue.name, request_body, match_condition=MatchConditions.IfPresent, **kwargs  # type: ignore
             )
 
     def delete_queue(self, queue_name: str, **kwargs: Any) -> None:
@@ -552,6 +560,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """Get the properties of a topic.
 
         :param str topic_name: The name of the topic.
+        :return: The properties of the topic.
         :rtype: ~azure.servicebus.management.TopicProperties
         """
         entry_ele = self._get_entity_element(topic_name, **kwargs)
@@ -569,6 +578,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """Get a the runtime information of a topic.
 
         :param str topic_name: The name of the topic.
+        :return: The runtime info of the topic.
         :rtype: ~azure.servicebus.management.TopicRuntimeProperties
         """
         entry_ele = self._get_entity_element(topic_name, **kwargs)
@@ -650,7 +660,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          and Service Bus API version "2021-05" or higher.
          The minimum allowed value is 1024 while the maximum allowed value is 102400. Default value is 1024.
         :paramtype max_message_size_in_kilobytes: int
-
+        :return: Returns properties of a topic resource.
         :rtype: ~azure.servicebus.management.TopicProperties
         """
         topic = TopicProperties(
@@ -727,7 +737,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         request_body = create_entity_body.serialize(is_xml=True)
         with _handle_response_error():
             self._impl.entity.put(
-                topic.name, request_body, if_match="*", **kwargs  # type: ignore
+                topic.name, request_body, match_condition=MatchConditions.IfPresent, **kwargs  # type: ignore
             )
 
     def delete_topic(self, topic_name: str, **kwargs: Any) -> None:
@@ -795,6 +805,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         :param str topic_name: The topic that owns the subscription.
         :param str subscription_name: name of the subscription.
+        :return: An instance of SubscriptionProperties
         :rtype: ~azure.servicebus.management.SubscriptionProperties
         """
         entry_ele = self._get_subscription_element(
@@ -819,6 +830,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         :param str topic_name: The topic that owns the subscription.
         :param str subscription_name: name of the subscription.
+        :return: An instance of SubscriptionRuntimeProperties
         :rtype: ~azure.servicebus.management.SubscriptionRuntimeProperties
         """
         entry_ele = self._get_subscription_element(
@@ -898,6 +910,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          automatically deleted. The minimum duration is 5 minutes.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
         :paramtype auto_delete_on_idle: Union[~datetime.timedelta, str]
+        :return: Return properties of a topic subscription resource.
         :rtype:  ~azure.servicebus.management.SubscriptionProperties
         """
         _validate_entity_name_type(topic_name, display_name="topic_name")
@@ -994,7 +1007,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         self._create_forward_to_header_tokens(to_update, kwargs)
         with _handle_response_error():
             self._impl.subscription.put(
-                topic_name, subscription.name, request_body, if_match="*", **kwargs
+                topic_name, subscription.name, request_body, match_condition=MatchConditions.IfPresent, **kwargs
             )
 
     def delete_subscription(
@@ -1076,6 +1089,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :param str subscription_name: The subscription that
          owns the rule.
         :param str rule_name: Name of the rule.
+        :return: The properties of the specified rule.
         :rtype: ~azure.servicebus.management.RuleProperties
         """
         entry_ele = self._get_rule_element(
@@ -1121,6 +1135,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          ~azure.servicebus.management.SqlRuleFilter]
         :keyword action: The action of the rule.
         :paramtype action: Optional[~azure.servicebus.management.SqlRuleAction]
+        :return: Rule properties for a topic subscription.
         :rtype: ~azure.servicebus.management.RuleProperties
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
@@ -1202,7 +1217,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 subscription_name,
                 rule.name,
                 request_body,
-                if_match="*",
+                match_condition=MatchConditions.IfPresent,
                 **kwargs
             )
 
@@ -1231,7 +1246,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :param str topic_name: The topic that owns the subscription.
         :param str subscription_name: The subscription that
          owns the rules.
-        :returns: An iterable (auto-paging) response of RuleProperties.
+        :return: An iterable (auto-paging) response of RuleProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.servicebus.management.RuleProperties]
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
@@ -1239,6 +1254,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         def entry_to_rule(ele, entry):
             """
             `ele` will be removed after https://github.com/Azure/autorest/issues/3535 is released.
+
+            :param any ele: The xml element.
+            :param any entry: The xml entry.
+            :return: The entry.
+            :rtype: ~azure.core.paging.ItemPaged
             """
             rule = entry.content.rule_description
             rule_description = RuleProperties._from_internal_entity(entry.title, rule)
@@ -1260,6 +1280,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
     def get_namespace_properties(self, **kwargs: Any) -> NamespaceProperties:
         """Get the namespace properties
 
+        :return: The namespace properties.
         :rtype: ~azure.servicebus.management.NamespaceProperties
         """
         entry_el = self._impl.namespace.get(**kwargs)  # type: ignore

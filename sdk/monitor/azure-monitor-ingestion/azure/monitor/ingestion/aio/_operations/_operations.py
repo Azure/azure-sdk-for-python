@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -19,8 +19,7 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
@@ -45,7 +44,6 @@ class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
         body: List[JSON],
         *,
         content_encoding: Optional[str] = None,
-        x_ms_client_request_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
@@ -56,10 +54,9 @@ class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
         self,
         rule_id: str,
         stream: str,
-        body: IO,
+        body: IO[bytes],
         *,
         content_encoding: Optional[str] = None,
-        x_ms_client_request_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
@@ -70,10 +67,9 @@ class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
         self,
         rule_id: str,
         stream: str,
-        body: Union[List[JSON], IO],
+        body: Union[List[JSON], IO[bytes]],
         *,
         content_encoding: Optional[str] = None,
-        x_ms_client_request_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Ingestion API used to directly ingest data using Data Collection Rules.
@@ -85,20 +81,15 @@ class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
         :param stream: The streamDeclaration name as defined in the Data Collection Rule. Required.
         :type stream: str
         :param body: An array of objects matching the schema defined by the provided stream. Is either
-         a [JSON] type or a IO type. Required.
-        :type body: list[JSON] or IO
+         a [JSON] type or a IO[bytes] type. Required.
+        :type body: list[JSON] or IO[bytes]
         :keyword content_encoding: gzip. Default value is None.
         :paramtype content_encoding: str
-        :keyword x_ms_client_request_id: Client request Id. Default value is None.
-        :paramtype x_ms_client_request_id: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -120,11 +111,10 @@ class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
         else:
             _json = body
 
-        request = build_logs_ingestion_upload_request(
+        _request = build_logs_ingestion_upload_request(
             rule_id=rule_id,
             stream=stream,
             content_encoding=content_encoding,
-            x_ms_client_request_id=x_ms_client_request_id,
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -135,18 +125,20 @@ class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore

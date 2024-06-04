@@ -38,7 +38,7 @@ from ._models_py3 import SettingsList
 from ._security_center_enums import AssessmentStatusCode
 from ._security_center_enums import AssessmentType
 from ._security_center_enums import Categories
-from ._security_center_enums import Enum1
+from ._security_center_enums import Enum12
 from ._security_center_enums import ExpandEnum
 from ._security_center_enums import ImplementationEffort
 from ._security_center_enums import SettingKind
@@ -84,7 +84,7 @@ __all__ = [
     "AssessmentStatusCode",
     "AssessmentType",
     "Categories",
-    "Enum1",
+    "Enum12",
     "ExpandEnum",
     "ImplementationEffort",
     "SettingKind",

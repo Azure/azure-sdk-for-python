@@ -42,11 +42,12 @@ class ColumnTransformer(RestTranslatableMixin):
         return RestColumnTransformer(fields=self.fields, parameters=self.parameters)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestColumnTransformer) -> "ColumnTransformer":
+    def _from_rest_object(cls, obj: RestColumnTransformer) -> Optional["ColumnTransformer"]:
         if obj:
             fields = obj.fields
             parameters = obj.parameters
             return ColumnTransformer(fields=fields, parameters=parameters)
+        return None
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ColumnTransformer):
@@ -95,7 +96,7 @@ class TabularFeaturizationSettings(FeaturizationSettings):
         self.type = FeaturizationSettingsType.TABULAR
 
     @property
-    def transformer_params(self) -> Dict[str, List[ColumnTransformer]]:
+    def transformer_params(self) -> Optional[Dict[str, List[ColumnTransformer]]]:
         """A dictionary of transformers and their parameters."""
         return self._transformer_params
 
@@ -108,12 +109,12 @@ class TabularFeaturizationSettings(FeaturizationSettings):
         )
 
     @property
-    def blocked_transformers(self) -> List[Union[BlockedTransformers, str]]:
+    def blocked_transformers(self) -> Optional[List[Union[BlockedTransformers, str]]]:
         """A list of transformers to ignore when featurizing."""
         return self._blocked_transformers
 
     @blocked_transformers.setter
-    def blocked_transformers(self, blocked_transformers_list: List[Union[BlockedTransformers, str]]):
+    def blocked_transformers(self, blocked_transformers_list: List[Union[BlockedTransformers, str]]) -> None:
         self._blocked_transformers = (
             None
             if blocked_transformers_list is None
@@ -137,7 +138,7 @@ class TabularFeaturizationSettings(FeaturizationSettings):
     @classmethod
     def _from_rest_object(cls, obj: RestTabularFeaturizationSettings) -> "TabularFeaturizationSettings":
         rest_transformers_params = obj.transformer_params
-        transformer_dict = None
+        transformer_dict: Optional[Dict] = None
         if rest_transformers_params:
             transformer_dict = {}
             for key, settings in rest_transformers_params.items():

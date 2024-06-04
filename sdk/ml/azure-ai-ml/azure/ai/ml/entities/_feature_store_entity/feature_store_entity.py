@@ -6,9 +6,9 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_10_01.models import (
     FeaturestoreEntityContainer,
     FeaturestoreEntityContainerProperties,
     FeaturestoreEntityVersion,
@@ -16,7 +16,6 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 )
 from azure.ai.ml._schema._feature_store_entity.feature_store_entity_schema import FeatureStoreEntitySchema
 from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._util import load_from_dict
@@ -25,8 +24,36 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 from .data_column import DataColumn
 
 
-@experimental
 class FeatureStoreEntity(Asset):
+    """Feature Store Entity
+
+    :param name: The name of the feature store entity resource.
+    :type name: str
+    :param version: The version of the feature store entity resource.
+    :type version: str
+    :param index_columns: Specifies index columns of the feature-store entity resource.
+    :type index_columns: list[~azure.ai.ml.entities.DataColumn]
+    :param stage: The feature store entity stage. Allowed values: Development, Production, Archived.
+        Defaults to "Development".
+    :type stage: Optional[str]
+    :param description: The description of the feature store entity resource. Defaults to None.
+    :type description: Optional[str]
+    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :type tags: Optional[dict[str, str]]
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
+    :raises ValidationException: Raised if stage is specified and is not valid.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_featurestore.py
+            :start-after: [START configure_feature_store_entity]
+            :end-before: [END configure_feature_store_entity]
+            :language: Python
+            :dedent: 8
+            :caption: Configuring a Feature Store Entity
+    """
+
     def __init__(
         self,
         *,
@@ -36,25 +63,8 @@ class FeatureStoreEntity(Asset):
         stage: Optional[str] = "Development",
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs,
-    ):
-        """FeatureStoreEntity
-
-        :param name: Name of the resource.
-        :type name: str
-        :param version: Version of the resource.
-        :type version: str
-        :param index_columns: Specifies index columns.
-        :type index_columns: list[~azure.ai.ml.entities.DataColumn]
-        :param stage: Feature store entity stage. Allowed values: Development, Production, Archived
-        :type stage: str
-        :param description: Description of the resource.
-        :type description: str
-        :param tags: Tag dictionary. Tags can be added, removed, and updated.
-        :type tags: dict[str, str]
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
-        """
+        **kwargs: Any,
+    ) -> None:
         super().__init__(
             name=name,
             version=version,
@@ -120,7 +130,7 @@ class FeatureStoreEntity(Asset):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "FeatureStoreEntity":
         data = data or {}
         params_override = params_override or []
@@ -133,4 +143,5 @@ class FeatureStoreEntity(Asset):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return FeatureStoreEntitySchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = FeatureStoreEntitySchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res

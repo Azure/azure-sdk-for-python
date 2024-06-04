@@ -17,7 +17,7 @@ class ConditionNodeSchema(ControlFlowSchema):
     false_block = UnionField([NodeBindingStr(), fields.List(NodeBindingStr())])
 
     @post_dump
-    def simplify_blocks(self, data, **kwargs):  # pylint: disable=unused-argument, no-self-use
+    def simplify_blocks(self, data, **kwargs):  # pylint: disable=unused-argument
         # simplify true_block and false_block to single node if there is only one node in the list
         # this is to make sure the request to backend won't change after we support list true/false blocks
         block_keys = ["true_block", "false_block"]

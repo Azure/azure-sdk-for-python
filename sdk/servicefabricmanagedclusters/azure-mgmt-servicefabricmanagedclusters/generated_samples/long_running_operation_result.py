@@ -29,13 +29,12 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.operation_results.get(
+    client.operation_results.get(
         location="eastus",
         operation_id="00000000-0000-0000-0000-000000001234",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/servicefabricmanagedclusters/resource-manager/Microsoft.ServiceFabric/preview/2023-02-01-preview/examples/Long_running_operation_result.json
+# x-ms-original-file: specification/servicefabricmanagedclusters/resource-manager/Microsoft.ServiceFabric/preview/2023-12-01-preview/examples/Long_running_operation_result.json
 if __name__ == "__main__":
     main()

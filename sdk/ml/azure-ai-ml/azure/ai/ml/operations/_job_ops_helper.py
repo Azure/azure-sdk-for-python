@@ -11,14 +11,14 @@ import re
 import subprocess
 import sys
 import time
-from typing import Dict, Iterable, List, Optional, Union
+from typing import Any, Dict, Iterable, List, Optional, TextIO, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import get_datastore_info, list_logs_in_datastore
 from azure.ai.ml._restclient.runhistory.models import Run, RunDetails, TypedAssetReference
-from azure.ai.ml._restclient.v2022_10_01.models import JobBase
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DataType
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ModelType
+from azure.ai.ml._restclient.v2022_10_01.models import JobBase
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils.utils import create_requests_pipeline_with_retry, download_text_from_url
 from azure.ai.ml.constants._common import GitProperties
@@ -36,17 +36,22 @@ module_logger = logging.getLogger(__name__)
 
 
 def _get_sorted_filtered_logs(
-    logs_dict: dict, job_type: str, processed_logs: Optional[dict] = None, only_streamable=True
+    logs_iterable: Iterable[str],
+    job_type: str,
+    processed_logs: Optional[Dict[str, int]] = None,
+    only_streamable: bool = True,
 ) -> List[str]:
     """Filters log file names, sorts, and returns list starting with where we left off last iteration.
 
-    :param run_details:
-    :type run_details: dict
-    :param processed_logs: dictionary tracking the state of how many lines of each file have been written out
-    :type processed_logs: dict[str, int]
+    :param logs_iterable: An iterable of log paths.
+    :type logs_iterable: Iterable[str]
     :param job_type: the job type to filter log files
     :type job_type: str
-    :return:
+    :param processed_logs: dictionary tracking the state of how many lines of each file have been written out
+    :type processed_logs: dict[str, int]
+    :param only_streamable: Whether to only get streamable logs
+    :type only_streamable: bool
+    :return: List of logs to continue from
     :rtype: list[str]
     """
     processed_logs = processed_logs if processed_logs else {}
@@ -56,10 +61,11 @@ def _get_sorted_filtered_logs(
         if only_streamable
         else JobLogPattern.COMMON_RUNTIME_ALL_USER_LOG_PATTERN
     )
-    logs = [x for x in logs_dict if re.match(output_logs_pattern, x)]
+    logs = list(logs_iterable)
+    filtered_logs = [x for x in logs if re.match(output_logs_pattern, x)]
 
     # fall back to legacy log format
-    if logs is None or len(logs) == 0:
+    if filtered_logs is None or len(filtered_logs) == 0:
         job_type = job_type.lower()
         if job_type in JobType.COMMAND:
             output_logs_pattern = JobLogPattern.COMMAND_JOB_LOG_PATTERN
@@ -68,25 +74,25 @@ def _get_sorted_filtered_logs(
         elif job_type in JobType.SWEEP:
             output_logs_pattern = JobLogPattern.SWEEP_JOB_LOG_PATTERN
 
-    logs = [x for x in logs_dict if re.match(output_logs_pattern, x)]
-    logs.sort()
+    filtered_logs = [x for x in logs if re.match(output_logs_pattern, x)]
+    filtered_logs.sort()
     previously_printed_index = 0
-    for i, v in enumerate(logs):
+    for i, v in enumerate(filtered_logs):
         if processed_logs.get(v):
             previously_printed_index = i
         else:
             break
     # Slice inclusive from the last printed log (can be updated before printing new files)
-    return logs[previously_printed_index:]
+    return filtered_logs[previously_printed_index:]
 
 
-def _incremental_print(log, processed_logs, current_log_name, fileout) -> None:
+def _incremental_print(log: str, processed_logs: Dict[str, int], current_log_name: str, fileout: TextIO) -> None:
     """Incremental print.
 
     :param log:
     :type log: str
     :param processed_logs: The record of how many lines have been written for each log file
-    :type log: dict[str, int]
+    :type processed_logs: dict[str, int]
     :param current_log_name: the file name being read out, used in header writing and accessing processed_logs
     :type current_log_name: str
     :param fileout:
@@ -112,7 +118,7 @@ def _incremental_print(log, processed_logs, current_log_name, fileout) -> None:
     processed_logs[current_log_name] = doc_length
 
 
-def _get_last_log_primary_instance(logs):
+def _get_last_log_primary_instance(logs: List) -> Any:
     """Return last log for primary instance.
 
     :param logs:
@@ -143,7 +149,7 @@ def _get_last_log_primary_instance(logs):
     return matching_logs[0]
 
 
-def _wait_before_polling(current_seconds):
+def _wait_before_polling(current_seconds: float) -> int:
     if current_seconds < 0:
         msg = "current_seconds must be positive"
         raise JobException(
@@ -155,13 +161,13 @@ def _wait_before_polling(current_seconds):
     import math
 
     # Sigmoid that tapers off near the_get_logs max at ~ 3 min
-    duration = RunHistoryConstants._WAIT_COMPLETION_POLLING_INTERVAL_MAX / (
-        1.0 + 100 * math.exp(-current_seconds / 20.0)
+    duration = int(
+        int(RunHistoryConstants._WAIT_COMPLETION_POLLING_INTERVAL_MAX) / (1.0 + 100 * math.exp(-current_seconds / 20.0))
     )
-    return max(RunHistoryConstants._WAIT_COMPLETION_POLLING_INTERVAL_MIN, duration)
+    return max(int(RunHistoryConstants._WAIT_COMPLETION_POLLING_INTERVAL_MIN), duration)
 
 
-def list_logs(run_operations: RunOperations, job_resource: JobBase):
+def list_logs(run_operations: RunOperations, job_resource: JobBase) -> Dict:
     details: RunDetails = run_operations.get_run_details(job_resource.name)
     logs_dict = details.log_files
     keys = _get_sorted_filtered_logs(logs_dict, job_resource.properties.job_type)
@@ -173,7 +179,7 @@ def stream_logs_until_completion(
     run_operations: RunOperations,
     job_resource: JobBase,
     datastore_operations: Optional[DatastoreOperations] = None,
-    raise_exception_on_failed_job=True,
+    raise_exception_on_failed_job: bool = True,
     *,
     requests_pipeline: HttpPipeline
 ) -> None:
@@ -187,6 +193,8 @@ def stream_logs_until_completion(
     :type datastore_operations: Optional[DatastoreOperations]
     :param raise_exception_on_failed_job: Should this method fail if job fails
     :type raise_exception_on_failed_job: Boolean
+    :keyword requests_pipeline: The HTTP pipeline to use for requests.
+    :type requests_pipeline: ~azure.ai.ml._utils._http_utils.HttpPipeline
     :return:
     :rtype: None
     """
@@ -196,7 +204,21 @@ def stream_logs_until_completion(
     studio_endpoint = studio_endpoint.endpoint if studio_endpoint else None
     # Feature store jobs should be linked to the Feature Store Workspace UI.
     # Todo: Consolidate this logic to service side
-    if "FeatureStoreJobType" in job_resource.properties.properties:
+    if "azureml.FeatureStoreJobType" in job_resource.properties.properties:
+        url_format = (
+            "https://ml.azure.com/featureStore/{fs_name}/featureSets/{fset_name}/{fset_version}/matJobs/"
+            "jobs/{run_id}?wsid=/subscriptions/{fs_sub_id}/resourceGroups/{fs_rg_name}/providers/"
+            "Microsoft.MachineLearningServices/workspaces/{fs_name}"
+        )
+        studio_endpoint = url_format.format(
+            fs_name=job_resource.properties.properties["azureml.FeatureStoreName"],
+            fs_sub_id=run_operations._subscription_id,
+            fs_rg_name=run_operations._resource_group_name,
+            fset_name=job_resource.properties.properties["azureml.FeatureSetName"],
+            fset_version=job_resource.properties.properties["azureml.FeatureSetVersion"],
+            run_id=job_name,
+        )
+    elif "FeatureStoreJobType" in job_resource.properties.properties:
         url_format = (
             "https://ml.azure.com/featureStore/{fs_name}/featureSets/{fset_name}/{fset_version}/matJobs/"
             "jobs/{run_id}?wsid=/subscriptions/{fs_sub_id}/resourceGroups/{fs_rg_name}/providers/"
@@ -238,7 +260,7 @@ def stream_logs_until_completion(
 
         _current_details: RunDetails = run_operations.get_run_details(job_name)
 
-        processed_logs = {}
+        processed_logs: Dict = {}
 
         poll_start_time = time.time()
         pipeline_with_retries = create_requests_pipeline_with_retry(requests_pipeline=requests_pipeline)
@@ -248,7 +270,7 @@ def stream_logs_until_completion(
         ):
             file_handle.flush()
             time.sleep(_wait_before_polling(time.time() - poll_start_time))
-            _current_details: RunDetails = run_operations.get_run_details(job_name)  # TODO use FileWatcher
+            _current_details = run_operations.get_run_details(job_name)  # TODO use FileWatcher
             if job_type.lower() in JobType.PIPELINE:
                 legacy_folder_name = "/logs/azureml/"
             else:
@@ -256,7 +278,7 @@ def stream_logs_until_completion(
             _current_logs_dict = (
                 list_logs_in_datastore(
                     ds_properties,
-                    prefix=prefix,
+                    prefix=str(prefix),
                     legacy_log_folder_name=legacy_folder_name,
                 )
                 if ds_properties is not None
@@ -340,31 +362,37 @@ def get_git_properties() -> Dict[str, str]:
     :rtype: dict
     """
 
-    def _clean_git_property_bool(value) -> Optional[bool]:
+    def _clean_git_property_bool(value: Any) -> Optional[bool]:
         if value is None:
             return None
         return str(value).strip().lower() in ["true", "1"]
 
-    def _clean_git_property_str(value) -> Optional[str]:
+    def _clean_git_property_str(value: Any) -> Optional[str]:
         if value is None:
             return None
         return str(value).strip() or None
 
-    def _run_git_cmd(args) -> Optional[str]:
-        """Return the output of running git with arguments, or None if it fails."""
+    def _run_git_cmd(args: Iterable[str]) -> Optional[str]:
+        """Runs git with the provided arguments
+
+        :param args: A iterable of arguments for a git command. Should not include leading "git"
+        :type args: Iterable[str]
+        :return: The output of running git with arguments, or None if it fails.
+        :rtype: Optional[str]
+        """
         try:
             with open(os.devnull, "wb") as devnull:
                 return subprocess.check_output(["git"] + list(args), stderr=devnull).decode()
         except KeyboardInterrupt:
             raise
-        except BaseException:  # pylint: disable=broad-except
+        except BaseException:  # pylint: disable=W0718
             return None
 
     # Check for environment variable overrides.
     repository_uri = os.environ.get(GitProperties.ENV_REPOSITORY_URI, None)
     branch = os.environ.get(GitProperties.ENV_BRANCH, None)
     commit = os.environ.get(GitProperties.ENV_COMMIT, None)
-    dirty = os.environ.get(GitProperties.ENV_DIRTY, None)
+    dirty: Optional[Union[str, bool]] = os.environ.get(GitProperties.ENV_DIRTY, None)
     build_id = os.environ.get(GitProperties.ENV_BUILD_ID, None)
     build_uri = os.environ.get(GitProperties.ENV_BUILD_URI, None)
 
@@ -408,22 +436,34 @@ def get_git_properties() -> Dict[str, str]:
 
 
 def get_job_output_uris_from_dataplane(
-    job_name: str,
+    job_name: Optional[str],
     run_operations: RunOperations,
     dataset_dataplane_operations: DatasetDataplaneOperations,
-    model_dataplane_operations: ModelDataplaneOperations,
+    model_dataplane_operations: Optional[ModelDataplaneOperations],
     output_names: Optional[Union[Iterable[str], str]] = None,
 ) -> Dict[str, str]:
     """Returns the output path for the given output in cloud storage of the given job.
 
     If no output names are given, the output paths for all outputs will be returned.
     URIs obtained from the service will be in the long-form azureml:// format.
+
     For example:
     azureml://subscriptions/<sub>/resource[gG]roups/<rg_name>/workspaces/<ws_name>/datastores/<ds_name>/paths/<ds_path>
+
+    :param job_name: The job name
+    :type job_name: str
+    :param run_operations: The RunOperations used to fetch run data for the job
+    :type run_operations: RunOperations
+    :param dataset_dataplane_operations: The DatasetDataplaneOperations used to fetch dataset uris
+    :type dataset_dataplane_operations: DatasetDataplaneOperations
+    :param model_dataplane_operations:  The ModelDataplaneOperations used to fetch dataset uris
+    :type model_dataplane_operations: ModelDataplaneOperations
+    :param output_names: The output name(s) to fetch. If not specified, retrieves all.
+    :type output_names: Optional[Union[Iterable[str] str]]
     :return: Dictionary mapping user-defined output name to output uri
     :rtype: Dict[str, str]
     """
-    run_metadata: Run = run_operations.get_run_data(job_name).run_metadata
+    run_metadata: Run = run_operations.get_run_data(str(job_name)).run_metadata
     run_outputs: Dict[str, TypedAssetReference] = run_metadata.outputs or {}
 
     # Create a reverse mapping from internal asset id to user-defined output name
@@ -462,7 +502,11 @@ def get_job_output_uris_from_dataplane(
     # This is a repeat of the logic above for models.
     output_name_to_model_uri = {}
     if model_ids:
-        model_uris = model_dataplane_operations.get_batch_model_uris(model_ids)
+        model_uris = (
+            model_dataplane_operations.get_batch_model_uris(model_ids)
+            if model_dataplane_operations is not None
+            else None
+        )
         output_name_to_model_uri = {asset_id_to_output_name[k]: v.path for k, v in model_uris.values.items()}
 
     return {**output_name_to_dataset_uri, **output_name_to_model_uri}

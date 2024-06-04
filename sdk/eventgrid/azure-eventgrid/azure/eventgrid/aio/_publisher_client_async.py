@@ -42,14 +42,24 @@ from .._helpers import (
     _get_authentication_policy,
     _from_cncf_events,
 )
+from .._constants import DEFAULT_API_VERSION
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
 from .._version import VERSION
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
+    from cloudevents.http.event import CloudEvent as CNCFCloudEvent
+
 SendType = Union[
-    CloudEvent, EventGridEvent, Dict, List[CloudEvent], List[EventGridEvent], List[Dict]
+    CloudEvent,
+    EventGridEvent,
+    Dict,
+    "CNCFCloudEvent",
+    List[CloudEvent],
+    List[EventGridEvent],
+    List[Dict],
+    List["CNCFCloudEvent"],
 ]
 
 ListEventType = Union[List[CloudEvent], List[EventGridEvent], List[Dict]]
@@ -64,6 +74,9 @@ class EventGridPublisherClient: # pylint: disable=client-accepts-api-version-key
      SAS key authentication or SAS token authentication or an AsyncTokenCredential.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword api_version: Api Version.  Will default to the most recent Api Version. Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :rtype: None
 
     .. admonition:: Example:
@@ -89,12 +102,15 @@ class EventGridPublisherClient: # pylint: disable=client-accepts-api-version-key
         credential: Union[
             "AsyncTokenCredential", AzureKeyCredential, AzureSasCredential
         ],
+        *,
+        api_version: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         self._client = EventGridPublisherClientAsync(
             policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
         )
         self._endpoint = endpoint
+        self._api_version = api_version if api_version is not None else DEFAULT_API_VERSION
 
     @staticmethod
     def _policies(
@@ -212,7 +228,9 @@ class EventGridPublisherClient: # pylint: disable=client-accepts-api-version-key
             for event in events:
                 _eventgrid_data_typecheck(event)
         response = await self._client.send_request(  # pylint: disable=protected-access
-            _build_request(self._endpoint, content_type, events, channel_name=channel_name), **kwargs
+            _build_request(self._endpoint, content_type, events,
+                           channel_name=channel_name, api_version=self._api_version),
+            **kwargs
         )
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         if response.status_code != 200:

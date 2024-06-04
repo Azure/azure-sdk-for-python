@@ -97,17 +97,15 @@ class EvictionPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class FailureAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The compensating action to perform when a Monitored upgrade encounters monitoring policy or
-    health policy violations. Invalid indicates the failure action is invalid. Rollback specifies
-    that the upgrade will start rolling back automatically. Manual indicates that the upgrade will
-    switch to UnmonitoredManual upgrade mode.
+    health policy violations.
+    Rollback specifies that the upgrade will start rolling back automatically.
+    Manual indicates that the upgrade will switch to UnmonitoredManual upgrade mode.
     """
 
     ROLLBACK = "Rollback"
-    """Indicates that a rollback of the upgrade will be performed by Service Fabric if the upgrade
-    #: fails."""
+    """The upgrade will start rolling back automatically. The value is 0"""
     MANUAL = "Manual"
-    """Indicates that a manual repair will need to be performed by the administrator if the upgrade
-    #: fails. Service Fabric will not proceed to the next upgrade domain automatically."""
+    """The upgrade will switch to UnmonitoredManual upgrade mode. The value is 1"""
 
 
 class IPAddressType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -230,6 +228,13 @@ class PrivateEndpointNetworkPolicies(str, Enum, metaclass=CaseInsensitiveEnumMet
     DISABLED = "disabled"
 
 
+class PrivateIPAddressVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies whether the IP configuration's private IP is IPv4 or IPv6. Default is IPv4."""
+
+    I_PV4 = "IPv4"
+    I_PV6 = "IPv6"
+
+
 class PrivateLinkServiceNetworkPolicies(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enable or Disable apply network policies on private link service in the subnet."""
 
@@ -250,6 +255,13 @@ class Protocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TCP = "tcp"
     UDP = "udp"
+
+
+class PublicIPAddressVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies whether the IP configuration's public IP is IPv4 or IPv6. Default is IPv4."""
+
+    I_PV4 = "IPv4"
+    I_PV6 = "IPv6"
 
 
 class RollingUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -388,6 +400,21 @@ class UpdateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: continue."""
 
 
+class UpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The mode used to monitor health during a rolling upgrade. The values are UnmonitoredAuto,
+    UnmonitoredManual, Monitored, and UnmonitoredDeferred.
+    """
+
+    UNMONITORED_AUTO = "UnmonitoredAuto"
+    """The upgrade will proceed automatically without performing any health monitoring. The value is 0"""
+    UNMONITORED_MANUAL = "UnmonitoredManual"
+    """The upgrade will stop after completing each upgrade domain, giving the opportunity to manually
+    #: monitor health before proceeding. The value is 1"""
+    MONITORED = "Monitored"
+    """The upgrade will stop after completing each upgrade domain and automatically monitor health
+    #: before proceeding. The value is 2"""
+
+
 class VmSetupAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """action to be performed on the vms before bootstrapping the service fabric runtime."""
 
@@ -395,6 +422,13 @@ class VmSetupAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enable windows containers feature."""
     ENABLE_HYPER_V = "EnableHyperV"
     """Enables windows HyperV feature."""
+
+
+class VmssExtensionSetupOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Vm extension setup order."""
+
+    BEFORE_SF_RUNTIME = "BeforeSFRuntime"
+    """Indicates that the vm extension should run before the service fabric runtime starts."""
 
 
 class ZonalUpdateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

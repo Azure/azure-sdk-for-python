@@ -2,6 +2,6 @@
 auto_update = false
 package_name = "azure-communication-jobrouter"
 package_pprint_name = "Communication JobRouter"
-package_doc_id = ""
+package_doc_id = "communication-jobrouter"
 is_stable = false
 is_arm = false

@@ -5,6 +5,8 @@ It also walks through the setup necessary to run mypy and pyright, static type c
 
 For the TL;DR version, please see the [Static Type Checking Cheat Sheet](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md).
 
+> Note: If you are seeing typing errors in **generated code**, please first try to regenerate with the latest version of the generator. If typing errors persist, open an issue in the [generator repo](https://github.com/Azure/autorest.python).
+
 ## Table of contents
   - [Intro to typing in Python](#intro-to-typing-in-python)
   - [Typing a client library](#typing-a-client-library)
@@ -127,7 +129,7 @@ Almost anything can be used as a type in annotations.
    like [collections](https://docs.python.org/3/library/collections.html)
    or [collections.abc](https://docs.python.org/3/library/collections.abc.html), or external packages
 3) Types from the [typing](https://docs.python.org/3/library/typing.html)
-   or [typing_extensions](https://github.com/python/typing/tree/master/typing_extensions) modules
+   or [typing_extensions](https://github.com/python/typing_extensions) modules
 4) Built-in generic types, like `list` or `dict`*.
    > *Note: Supported in Python 3.9+. For <3.9, You must include `from __future__ import annotations` import to be able to pass in generic `list[str]` as a type hint rather than `typing.List[str]`.
 

@@ -51,7 +51,7 @@ class PathLeaseAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PathLeaseAction."""
 
     ACQUIRE = "acquire"
-    BREAK = "break"
+    BREAK_ENUM = "break"
     CHANGE = "change"
     RENEW = "renew"
     RELEASE = "release"

@@ -13,8 +13,8 @@ def convert_timedelta_to_mins(
     # type: (...) -> int
     """
     Returns the total number of minutes contained in the duration.
-    : param duration: Time duration
-    : type duration: ~datetime.timedelta
-    : rtype: int
+    :param duration: Time duration
+    :type duration: ~datetime.timedelta
+    :rtype: int
     """
     return None if duration is None else int(duration.total_seconds() / 60)

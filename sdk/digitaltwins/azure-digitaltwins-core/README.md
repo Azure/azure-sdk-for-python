@@ -44,6 +44,9 @@ It attempts to use multiple credential types in an order until it finds a workin
 ##### Sample code
 
 ```python Snippet:dt_create_digitaltwins_service_client.py
+from azure.identity import DefaultAzureCredential
+from azure.digitaltwins.core import DigitalTwinsClient
+
 # DefaultAzureCredential supports different authentication mechanisms and determines the appropriate credential type based of the environment it is executing in.
 # It attempts to use multiple credential types in an order until it finds a working credential.
 

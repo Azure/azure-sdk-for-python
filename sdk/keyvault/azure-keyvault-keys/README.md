@@ -22,7 +22,7 @@ create, manage, and deploy public and private SSL/TLS certificates
 
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_.
 
-_Python 3.7 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)._
+_Python 3.8 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)._
 
 ## Getting started
 ### Install the package
@@ -35,7 +35,7 @@ pip install azure-keyvault-keys azure-identity
 
 ### Prerequisites
 * An [Azure subscription][azure_sub]
-* Python 3.7 or later
+* Python 3.8 or later
 * An existing [Azure Key Vault][azure_keyvault]. If you need to create one, you can do so using the Azure CLI by following the steps in [this document][azure_keyvault_cli].
 * If using Managed HSM, an existing [Key Vault Managed HSM][managed_hsm]. If you need to create a Managed HSM, you can do so using the Azure CLI by following the steps in [this document][managed_hsm_cli].
 
@@ -378,14 +378,13 @@ client.get_key("my-key", logging_enable=True)
 ## Next steps
 Several samples are available in the Azure SDK for Python GitHub repository.
 These provide example code for additional Key Vault scenarios:
-| File | Description |
-|-------------|-------------|
-| [hello_world.py][hello_world_sample] ([async version][hello_world_async_sample]) | create/get/update/delete keys |
-| [list_operations.py][list_operations_sample] ([async version][list_operations_async_sample]) | basic list operations for keys |
-| [backup_restore_operations.py][backup_operations_sample] ([async version][backup_operations_async_sample]) | back up and recover keys |
-| [recover_purge_operations.py][recover_purge_sample] ([async version][recover_purge_async_sample]) | recover and purge keys |
-| [key_rotation.py][key_rotation_sample] ([async version][key_rotation_async_sample]) | create/update key rotation policies and rotate keys on-demand |
-| [send_request.py][send_request_sample] | use the `send_request` client method |
+
+- [Create/get/update/delete keys][hello_world_sample] ([async version][hello_world_async_sample])
+- [Basic list operations for keys][list_operations_sample] ([async version][list_operations_async_sample])
+- [Back up and recover keys][backup_operations_sample] ([async version][backup_operations_async_sample])
+- [Recover and purge keys][recover_purge_sample] ([async version][recover_purge_async_sample])
+- [Create/update key rotation policies and rotate keys on-demand][key_rotation_sample] ([async version][key_rotation_async_sample])
+- [Use the `send_request` client method][send_request_sample]
 
 ###  Additional documentation
 For more extensive documentation on Azure Key Vault, see the

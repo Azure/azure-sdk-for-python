@@ -5,7 +5,7 @@
 
 import json
 from pathlib import Path
-from typing import Optional
+from typing import Dict, List, Optional
 
 from azure.ai.ml._local_endpoints.utilities.wsl_utility import get_wsl_path, in_wsl
 from azure.ai.ml._local_endpoints.vscode_debug.devcontainer_properties import (
@@ -20,6 +20,7 @@ from azure.ai.ml._local_endpoints.vscode_debug.devcontainer_properties import (
     RunArgs,
     Settings,
 )
+from azure.ai.ml.constants._common import DefaultOpenEncoding
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
@@ -70,13 +71,13 @@ class DevContainerResolver:
         self._local_path: Optional[str] = None
         self._properties: Optional[dict] = {}
 
-        self._image: str = image
+        self._image: Optional[str] = image
         self._dockerfile_path: str = dockerfile_path
-        self._build_context: str = build_context
-        self._build_target: str = build_target
-        self._environment: dict = environment
-        self._mounts: list = _reformat_mounts(mounts) if mounts else mounts
-        self._labels: list = _reformat_labels(labels) if labels else labels
+        self._build_context: Optional[str] = build_context
+        self._build_target: Optional[str] = build_target
+        self._environment: Optional[dict] = environment
+        self._mounts: list = _reformat_mounts(mounts) if mounts else mounts  # type: ignore[assignment]
+        self._labels: list = _reformat_labels(labels) if labels else labels  # type: ignore[assignment]
         self._port = port
         self._construct()
 
@@ -99,19 +100,20 @@ class DevContainerResolver:
                 target=self._build_target,
             ).to_dict()
 
-        self._properties.update(OverrideCommand().to_dict())
-        self._properties.update(Extensions().to_dict())
-        self._properties.update(Settings().to_dict())
+        if self._properties is not None:
+            self._properties.update(OverrideCommand().to_dict())
+            self._properties.update(Extensions().to_dict())
+            self._properties.update(Settings().to_dict())
 
-        if self._environment:
-            self._properties.update(ContainerEnv(environment_variables=self._environment).to_dict())
-        if self._mounts:
-            self._properties.update(Mounts(mounts=self._mounts).to_dict())
-        if self._labels:
-            self._properties.update(RunArgs(labels=self._labels).to_dict())
-        if self._port:
-            self._properties.update(AppPort(port=self._port).to_dict())
-            self._properties.update(ForwardPorts(port=self._port).to_dict())
+            if self._environment:
+                self._properties.update(ContainerEnv(environment_variables=self._environment).to_dict())
+            if self._mounts:
+                self._properties.update(Mounts(mounts=self._mounts).to_dict())
+            if self._labels:
+                self._properties.update(RunArgs(labels=self._labels).to_dict())
+            if self._port:
+                self._properties.update(AppPort(port=self._port).to_dict())
+                self._properties.update(ForwardPorts(port=self._port).to_dict())
 
     def write_file(self, directory_path: str) -> None:
         """Writes this devcontainer.json to provided directory.
@@ -122,24 +124,28 @@ class DevContainerResolver:
         self._local_path = get_wsl_path(directory_path) if in_wsl() else directory_path
 
         file_path = _get_devcontainer_file_path(directory_path=directory_path)
-        with open(file_path, "w") as f:
+        with open(file_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
             f.write(f"{json.dumps(self._properties, indent=4)}\n")
 
 
-def _reformat_mounts(mounts: dict) -> list:
+def _reformat_mounts(mounts: Dict[str, Dict[str, Dict[str, str]]]) -> List[str]:
     """Reformat mounts from Docker format to DevContainer format.
 
-    :param mounts: Dictionary with mount information for Docker container. For example,
-        {
-            "<unique mount key>": {
-                "<local_source>": {
-                    "<mount type i.e. bind>": "<container_dest>"
+    :param mounts: Dictionary with mount information for Docker container. For example:
+        .. code-block:: python
+
+            {
+                "<unique mount key>": {
+                    "<local_source>": {
+                        "<mount type i.e. bind>": "<container_dest>"
+                    }
                 }
             }
-        }
+
     :type mounts: dict
-    :returns dict: "mounts": ["source=${localWorkspaceFolder}/app-scripts,
-        target=/usr/local/share/app-scripts,type=bind,consistency=cached"]
+    :return:
+       ["source=${localWorkspaceFolder}/app-scripts, target=/usr/local/share/app-scripts,type=bind,consistency=cached"]
+    :rtype: List[str]
     """
     devcontainer_mounts = []
     for mount_dict in mounts.values():
@@ -149,16 +155,20 @@ def _reformat_mounts(mounts: dict) -> list:
     return devcontainer_mounts
 
 
-def _reformat_labels(labels: dict) -> list:
+def _reformat_labels(labels: Dict[str, str]) -> List[str]:
     """Reformat labels from Docker format to DevContainer format.
 
-    :param labels: Dictionary with label information for Docker container. For example,
-        {
-            "key": "value",
-            "key1": "value1"
-        }
-    :type labels: dict
-    :returns dict: ["--label=key=value", "--label=key1=value1"]
+    :param labels: Dictionary with label information for Docker container. For example:
+        .. code-block:: python
+
+            {
+                "key": "value",
+                "key1": "value1"
+            }
+
+    :type labels: Dict[str, str]
+    :return: ["--label=key=value", "--label=key1=value1"]
+    :rtype: List[str]
     """
     devcontainer_labels = []
     for key, value in labels.items():
@@ -171,6 +181,8 @@ def _get_devcontainer_file_path(directory_path: str) -> str:
 
     :param directory_path: absolute path of local directory to write devcontainer.json.
     :type directory_path: str
+    :return: Absolute path to the devcontainer
+    :rtype: str
     """
     devcontainer_path = Path(directory_path, ".devcontainer")
     devcontainer_path.mkdir(parents=True, exist_ok=True)

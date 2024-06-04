@@ -4,6 +4,7 @@
 # ------------------------------------
 import asyncio
 import os
+
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.keys import KeyRotationLifetimeAction, KeyRotationPolicy, KeyRotationPolicyAction
 from azure.keyvault.keys.aio import KeyClient
@@ -72,6 +73,7 @@ async def run_sample():
     for i in range(len(current_policy.lifetime_actions)):
         if current_policy.lifetime_actions[i].action == KeyRotationPolicyAction.rotate:
             policy_action = current_policy.lifetime_actions[i]
+    assert policy_action
     print(f"\nCurrent rotation policy: {policy_action.action} after {policy_action.time_after_create}")
 
     # Update the key's automated rotation policy to notify 10 days before the key expires

@@ -29,15 +29,14 @@ def main():
         subscription_id="daefabc0-95b4-48b3-b645-8a753a63c4fa",
     )
 
-    response = client.user_sessions.disconnect(
+    client.user_sessions.disconnect(
         resource_group_name="resourceGroup1",
         host_pool_name="hostPool1",
         session_host_name="sessionHost1.microsoft.com",
         user_session_id="1",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/desktopvirtualization/resource-manager/Microsoft.DesktopVirtualization/stable/2022-09-09/examples/UserSession_Disconnect_Post.json
+# x-ms-original-file: specification/desktopvirtualization/resource-manager/Microsoft.DesktopVirtualization/stable/2023-09-05/examples/UserSession_Disconnect_Post.json
 if __name__ == "__main__":
     main()

@@ -26,7 +26,6 @@
 
 # pylint: skip-file
 # pyright: reportUnnecessaryTypeIgnoreComment=false
-# cspell:disable
 
 from base64 import b64decode, b64encode
 import calendar
@@ -894,7 +893,6 @@ class Serializer(object):
          in the iterable into a combined string. Default is 'None'.
         :rtype: list, str
         """
-
         if isinstance(data, str):
             raise SerializationError("Refuse str type as a valid iter type.")
 
@@ -1996,5 +1994,3 @@ class Deserializer(object):
             raise_with_traceback(DeserializationError, msg, err)
         else:
             return date_obj
-
-# cspell:enable

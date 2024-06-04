@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.traffic_controller_interface.begin_delete(
+    client.traffic_controller_interface.begin_delete(
         resource_group_name="rg1",
         traffic_controller_name="tc1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/servicenetworking/resource-manager/Microsoft.ServiceNetworking/cadl/examples/TrafficControllerDelete.json
+# x-ms-original-file: specification/servicenetworking/resource-manager/Microsoft.ServiceNetworking/stable/2023-11-01/examples/TrafficControllerDelete.json
 if __name__ == "__main__":
     main()

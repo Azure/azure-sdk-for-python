@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.rdbms.postgresql_flexibleservers import PostgreSQLManagementClient
 
 """
@@ -51,7 +54,7 @@ def main():
                     "delegatedSubnetResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testrg/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-vnet-subnet",
                     "privateDnsZoneArmResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourcegroups/testrg/providers/Microsoft.Network/privateDnsZones/test-private-dns-zone.postgres.database.azure.com",
                 },
-                "storage": {"autoGrow": "Disabled", "iopsTier": "P20", "storageSizeGB": 512},
+                "storage": {"autoGrow": "Disabled", "storageSizeGB": 512, "tier": "P20"},
                 "version": "12",
             },
             "sku": {"name": "Standard_D4s_v3", "tier": "GeneralPurpose"},
@@ -61,6 +64,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2023-03-01-preview/examples/ServerCreateWithAadAuthEnabled.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2023-12-01-preview/examples/ServerCreateWithAadAuthEnabled.json
 if __name__ == "__main__":
     main()

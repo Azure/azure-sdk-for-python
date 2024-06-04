@@ -3,7 +3,7 @@ package_name = "azure-mgmt-keyvault"
 package_nspkg = "azure-mgmt-nspkg"
 package_pprint_name = "Key Vault Management"
 package_doc_id = "?view=azure-python-preview"
-is_stable = false
+is_stable = true
 is_arm = true
 sample_link = ""
 title = "KeyVaultManagementClient"

@@ -8,12 +8,15 @@ import re
 import tempfile
 from collections import namedtuple
 from pathlib import Path
-from typing import Dict, List, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union, cast
 
 from azure.ai.ml._utils.utils import dump_yaml_to_file, get_all_data_binding_expressions, load_yaml
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, DefaultOpenEncoding
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
 from azure.ai.ml.exceptions import UserErrorException
+
+if TYPE_CHECKING:
+    from azure.ai.ml.entities._builders import BaseNode
 
 ExpressionInput = namedtuple("ExpressionInput", ["name", "type", "value"])
 NONE_PARAMETER_TYPE = "None"
@@ -48,8 +51,16 @@ _SUPPORTED_OPERATORS = {
 
 
 def _enumerate_operation_combination() -> Dict[str, Union[str, Exception]]:
-    """Enumerate, leverage `eval` to validate operation and get its result type."""
-    res = {}
+    """Enumerate the result type of binary operations on types
+
+    Leverages `eval` to validate operation and get its result type.
+
+    :return: A dictionary that maps an operation to either:
+      * A result type
+      * An Exception
+    :rtype: Dict[str, Union[str, Exception]]
+    """
+    res: Dict = {}
     primitive_types_values = {
         NONE_PARAMETER_TYPE: repr(None),
         ComponentParameterTypes.BOOLEAN: repr(True),
@@ -87,7 +98,7 @@ class PipelineExpressionMixin:
         ComponentParameterTypes.STRING,
     )
 
-    def _validate_binary_operation(self, other, operator: str):
+    def _validate_binary_operation(self, other: Any, operator: str) -> None:
         from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 
         if (
@@ -102,105 +113,110 @@ class PipelineExpressionMixin:
             )
             raise UserErrorException(message=error_message, no_personal_data_message=error_message)
 
-    def __add__(self, other) -> "PipelineExpression":
+    def __add__(self, other: Any) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.ADD)
         return PipelineExpression._from_operation(self, other, PipelineExpressionOperator.ADD)
 
-    def __radd__(self, other) -> "PipelineExpression":
+    def __radd__(self, other: Any) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.ADD)
         return PipelineExpression._from_operation(other, self, PipelineExpressionOperator.ADD)
 
-    def __sub__(self, other) -> "PipelineExpression":
+    def __sub__(self, other: Any) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.SUB)
         return PipelineExpression._from_operation(self, other, PipelineExpressionOperator.SUB)
 
-    def __rsub__(self, other) -> "PipelineExpression":
+    def __rsub__(self, other: Any) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.SUB)
         return PipelineExpression._from_operation(other, self, PipelineExpressionOperator.SUB)
 
-    def __mul__(self, other) -> "PipelineExpression":
+    def __mul__(self, other: Any) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.MUL)
         return PipelineExpression._from_operation(self, other, PipelineExpressionOperator.MUL)
 
-    def __rmul__(self, other) -> "PipelineExpression":
+    def __rmul__(self, other: Any) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.MUL)
         return PipelineExpression._from_operation(other, self, PipelineExpressionOperator.MUL)
 
-    def __truediv__(self, other) -> "PipelineExpression":
+    def __truediv__(self, other: Any) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.DIV)
         return PipelineExpression._from_operation(self, other, PipelineExpressionOperator.DIV)
 
-    def __rtruediv__(self, other) -> "PipelineExpression":
+    def __rtruediv__(self, other: Any) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.DIV)
         return PipelineExpression._from_operation(other, self, PipelineExpressionOperator.DIV)
 
-    def __mod__(self, other) -> "PipelineExpression":
+    def __mod__(self, other: Any) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.MOD)
         return PipelineExpression._from_operation(self, other, PipelineExpressionOperator.MOD)
 
-    def __rmod__(self, other) -> "PipelineExpression":
+    def __rmod__(self, other: Any) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.MOD)
         return PipelineExpression._from_operation(other, self, PipelineExpressionOperator.MOD)
 
-    def __pow__(self, other) -> "PipelineExpression":
+    def __pow__(self, other: Any) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.POW)
         return PipelineExpression._from_operation(self, other, PipelineExpressionOperator.POW)
 
-    def __rpow__(self, other) -> "PipelineExpression":
+    def __rpow__(self, other: Any) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.POW)
         return PipelineExpression._from_operation(other, self, PipelineExpressionOperator.POW)
 
-    def __floordiv__(self, other) -> "PipelineExpression":
+    def __floordiv__(self, other: Any) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.FLOORDIV)
         return PipelineExpression._from_operation(self, other, PipelineExpressionOperator.FLOORDIV)
 
-    def __rfloordiv__(self, other) -> "PipelineExpression":
+    def __rfloordiv__(self, other: Any) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.FLOORDIV)
         return PipelineExpression._from_operation(other, self, PipelineExpressionOperator.FLOORDIV)
 
-    def __lt__(self, other) -> "PipelineExpression":
+    def __lt__(self, other: Any) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.LT)
         return PipelineExpression._from_operation(self, other, PipelineExpressionOperator.LT)
 
-    def __gt__(self, other) -> "PipelineExpression":
+    def __gt__(self, other: Any) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.GT)
         return PipelineExpression._from_operation(self, other, PipelineExpressionOperator.GT)
 
-    def __le__(self, other) -> "PipelineExpression":
+    def __le__(self, other: Any) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.LTE)
         return PipelineExpression._from_operation(self, other, PipelineExpressionOperator.LTE)
 
-    def __ge__(self, other) -> "PipelineExpression":
+    def __ge__(self, other: Any) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.GTE)
         return PipelineExpression._from_operation(self, other, PipelineExpressionOperator.GTE)
 
-    def __eq__(self, other) -> "PipelineExpression":
+    # TODO: Bug Item number: 2883354
+    def __eq__(self, other: Any) -> "PipelineExpression":  # type: ignore
         self._validate_binary_operation(other, PipelineExpressionOperator.EQ)
         return PipelineExpression._from_operation(self, other, PipelineExpressionOperator.EQ)
 
-    def __ne__(self, other) -> "PipelineExpression":
+    # TODO: Bug Item number: 2883354
+    def __ne__(self, other: Any) -> "PipelineExpression":  # type: ignore
         self._validate_binary_operation(other, PipelineExpressionOperator.NE)
         return PipelineExpression._from_operation(self, other, PipelineExpressionOperator.NE)
 
-    def __and__(self, other) -> "PipelineExpression":
+    def __and__(self, other: Any) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.AND)
         return PipelineExpression._from_operation(self, other, PipelineExpressionOperator.AND)
 
-    def __or__(self, other) -> "PipelineExpression":
+    def __or__(self, other: Any) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.OR)
         return PipelineExpression._from_operation(self, other, PipelineExpressionOperator.OR)
 
-    def __xor__(self, other) -> "PipelineExpression":
+    def __xor__(self, other: Any) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.XOR)
         return PipelineExpression._from_operation(self, None, PipelineExpressionOperator.XOR)
 
-    def __bool__(self):  # pylint: disable=invalid-bool-returned
+    def __bool__(self) -> bool:  # pylint: disable=invalid-bool-returned
         """Python method that is used to implement truth value testing and the built-in operation bool().
 
         This method is not supported as PipelineExpressionMixin is designed to record operation history,
         while this method can only return False or True, leading to history breaks here.
         As overloadable boolean operators PEP (refer to: https://www.python.org/dev/peps/pep-0335/)
         was rejected, logical operations are also not supported.
+
+        :return: True if not inside dsl pipeline func, raises otherwise
+        :rtype: bool
         """
         from azure.ai.ml.dsl._pipeline_component_builder import _is_inside_dsl_pipeline_func
 
@@ -238,19 +254,23 @@ class PipelineExpression(PipelineExpressionMixin):
     _DECORATOR_LINE = "@command_component(@@decorator_parameters@@)"
     _COMPONENT_FUNC_NAME = "expression_func"
     _COMPONENT_FUNC_DECLARATION_LINE = (
-        f"def {_COMPONENT_FUNC_NAME}(@@component_parameters@@)" " -> Output(type=@@return_type@@, is_control=True):"
+        f"def {_COMPONENT_FUNC_NAME}(@@component_parameters@@)" " -> Output(type=@@return_type@@):"
     )
     _PYTHON_CACHE_FOLDER_NAME = "__pycache__"
 
     def __init__(self, postfix: List[str], inputs: Dict[str, ExpressionInput]):
         self._postfix = postfix
         self._inputs = inputs.copy()  # including PiplineInput and Output, extra stored name and type
-        self._result_type = None
+        self._result_type: Optional[str] = None
         self._created_component = None
 
     @property
     def expression(self) -> str:
-        """Infix expression string, wrapped with parentheses."""
+        """Infix expression string, wrapped with parentheses.
+
+        :return: The infix expression
+        :rtype: str
+        """
         return self._to_infix()
 
     def __str__(self) -> str:
@@ -272,12 +292,24 @@ class PipelineExpression(PipelineExpressionMixin):
     # pylint: disable=too-many-statements
     @staticmethod
     def _handle_operand(
-        operand,
+        operand: "PipelineExpression",
         postfix: List[str],
         expression_inputs: Dict[str, ExpressionInput],
         pipeline_inputs: dict,
     ) -> Tuple[List[str], Dict[str, ExpressionInput]]:
-        """Handle operand in expression, update postfix expression and expression inputs."""
+        """Handle operand in expression, update postfix expression and expression inputs.
+
+        :param operand: The operand
+        :type operand: "PipelineExpression"
+        :param postfix:
+        :type postfix: List[str]
+        :param expression_inputs: The expression inputs
+        :type expression_inputs: Dict[str, ExpressionInput]
+        :param pipeline_inputs: The pipeline inputs
+        :type pipeline_inputs: dict
+        :return: A 2-tuple of the updated postfix expression and expression inputs
+        :rtype: Tuple[List[str], Dict[str, ExpressionInput]]
+        """
         from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 
         def _update_postfix(_postfix: List[str], _old_name: str, _new_name: str) -> List[str]:
@@ -288,7 +320,17 @@ class PipelineExpression(PipelineExpressionMixin):
             _operand: Union[PipelineInput, NodeOutput],
             _expression_inputs: Dict[str, ExpressionInput],
         ) -> str:
-            """Get or create expression input name as current operand may have appeared in expression."""
+            """Get or create expression input name as current operand may have appeared in expression.
+
+            :param _original_name: The original name
+            :type _original_name: str
+            :param _operand: The expression operand
+            :type _operand: Union[PipelineInput, NodeOutput]
+            :param _expression_inputs: The expression inputs
+            :type _expression_inputs: Dict[str, ExpressionInput]
+            :return: The input name
+            :rtype: str
+            """
             _existing_id_to_name = {id(_v.value): _k for _k, _v in _expression_inputs.items()}
             if id(_operand) in _existing_id_to_name:
                 return _existing_id_to_name[id(_operand)]
@@ -330,17 +372,19 @@ class PipelineExpression(PipelineExpressionMixin):
             _postfix: List[str],
             _expression_inputs: Dict[str, ExpressionInput],
         ) -> Tuple[List[str], dict]:
-            if not _component_output._meta.is_control:
+            if _component_output._meta is not None and not _component_output._meta._is_primitive_type:
                 error_message = (
-                    f"Component output {_component_output._port_name} in expression must have "
-                    f'"is_control" field with value {True!r}, got {_component_output._meta.is_control!r}'
+                    f"Component output {_component_output._port_name} in expression must "
+                    f"be a primitive type with value {True!r}, "
+                    f"got {_component_output._meta._is_primitive_type!r}"
                 )
                 raise UserErrorException(message=error_message, no_personal_data_message=error_message)
             _name = _component_output._port_name
             _has_prefix = False
             # "output" is the default output name for command component, add component's name as prefix
             if _name == "output":
-                _name = f"{_component_output._owner.component.name}__output"
+                if _component_output._owner is not None and not isinstance(_component_output._owner.component, str):
+                    _name = f"{_component_output._owner.component.name}__output"
                 _has_prefix = True
             # following loop is expected to execute at most twice:
             #   1. add component's name to output(s)
@@ -349,7 +393,10 @@ class PipelineExpression(PipelineExpressionMixin):
                 _seen_input = _expression_inputs[_name]
                 if isinstance(_seen_input.value, PipelineInput):
                     if not _has_prefix:
-                        _name = f"{_component_output._owner.component.name}__{_component_output._port_name}"
+                        if _component_output._owner is not None and not isinstance(
+                            _component_output._owner.component, str
+                        ):
+                            _name = f"{_component_output._owner.component.name}__{_component_output._port_name}"
                         _has_prefix = True
                         continue
                     _name = _get_or_create_input_name(_name, _component_output, _expression_inputs)
@@ -359,7 +406,10 @@ class PipelineExpression(PipelineExpressionMixin):
                         _new_name = f"{_seen_input.value._owner.component.name}__{_seen_input.value._port_name}"
                         _postfix = _update_postfix(_postfix, _name, _new_name)
                         _expression_inputs[_new_name] = ExpressionInput(_new_name, _seen_input.type, _seen_input)
-                        _name = f"{_component_output._owner.component.name}__{_component_output._port_name}"
+                        if _component_output._owner is not None and not isinstance(
+                            _component_output._owner.component, str
+                        ):
+                            _name = f"{_component_output._owner.component.name}__{_component_output._port_name}"
                         _has_prefix = True
                     _name = _get_or_create_input_name(_name, _component_output, _expression_inputs)
             _postfix.append(_name)
@@ -378,7 +428,7 @@ class PipelineExpression(PipelineExpressionMixin):
         return postfix, expression_inputs
 
     @staticmethod
-    def _from_operation(operand1, operand2, operator: str) -> "PipelineExpression":
+    def _from_operation(operand1: Any, operand2: Any, operator: str) -> "PipelineExpression":
         if operator not in _SUPPORTED_OPERATORS:
             error_message = (
                 f"Operator '{operator}' is not supported operator, "
@@ -390,8 +440,10 @@ class PipelineExpression(PipelineExpressionMixin):
         # TODO: check if there is pipeline input we cannot know its type (missing in `PipelineComponentBuilder.inputs`)?
         from azure.ai.ml.dsl._pipeline_component_builder import _definition_builder_stack
 
-        pipeline_inputs = _definition_builder_stack.top().inputs
-        postfix, inputs = [], {}
+        res = _definition_builder_stack.top()
+        pipeline_inputs = res.inputs if res is not None else {}
+        postfix: List[str] = []
+        inputs: Dict[str, ExpressionInput] = {}
         postfix, inputs = PipelineExpression._handle_operand(operand1, postfix, inputs, pipeline_inputs)
         postfix, inputs = PipelineExpression._handle_operand(operand2, postfix, inputs, pipeline_inputs)
         postfix.append(operator)
@@ -399,7 +451,11 @@ class PipelineExpression(PipelineExpressionMixin):
 
     @property
     def _string_concatenation(self) -> bool:
-        """If all operands are string and operations are addition, it is a string concatenation expression."""
+        """If all operands are string and operations are addition, it is a string concatenation expression.
+
+        :return: Whether this represents string concatenation
+        :rtype: bool
+        """
         for token in self._postfix:
             # operator can only be "+" for string concatenation
             if token in _SUPPORTED_OPERATORS:
@@ -416,7 +472,11 @@ class PipelineExpression(PipelineExpressionMixin):
         return True
 
     def _to_data_binding(self) -> str:
-        """Convert operands to data binding and concatenate them in the order of postfix expression."""
+        """Convert operands to data binding and concatenate them in the order of postfix expression.
+
+        :return: The data binding
+        :rtype: str
+        """
         if not self._string_concatenation:
             error_message = (
                 "Only string concatenation expression is supported to convert to data binding, "
@@ -434,21 +494,27 @@ class PipelineExpression(PipelineExpressionMixin):
                 continue
             operand2, operand1 = stack.pop(), stack.pop()
             stack.append(operand1 + operand2)
-        return stack.pop()
+        res: str = stack.pop()
+        return res
 
-    def resolve(self):
-        """Resolve expression to data binding or component, depend on the operations."""
+    def resolve(self) -> Union[str, "BaseNode"]:
+        """Resolve expression to data binding or component, depend on the operations.
+
+        :return: The data binding string or the component
+        :rtype: Union[str, BaseNode]
+        """
         if self._string_concatenation:
             return self._to_data_binding()
-        return self._create_component()
+        return cast(Union[str, "BaseNode"], self._create_component())
 
     @staticmethod
-    def parse_pipeline_input_names_from_data_binding(data_binding: str) -> List[str]:
+    def parse_pipeline_inputs_from_data_binding(data_binding: str) -> List[str]:
         """Parse all PipelineInputs name from data binding expression.
 
         :param data_binding: Data binding expression
         :type data_binding: str
-        :returns List of PipelineInput's name from given data binding expression
+        :return: List of PipelineInput's name from given data binding expression
+        :rtype: List[str]
         """
         pipeline_input_names = []
         for single_data_binding in get_all_data_binding_expressions(
@@ -458,12 +524,13 @@ class PipelineExpression(PipelineExpressionMixin):
         ):
             m = PipelineExpression._PIPELINE_INPUT_PATTERN.match(single_data_binding)
             # `get_all_data_binding_expressions` should work as pre-filter, so no need to concern `m` is None
-            pipeline_input_names.append(m.group(PipelineExpression._PIPELINE_INPUT_NAME_GROUP))
+            if m is not None:
+                pipeline_input_names.append(m.group(PipelineExpression._PIPELINE_INPUT_NAME_GROUP))
         return pipeline_input_names
 
     @staticmethod
     def _get_operation_result_type(type1: str, operator: str, type2: str) -> str:
-        def _validate_operand_type(_type: str):
+        def _validate_operand_type(_type: str) -> None:
             if _type != NONE_PARAMETER_TYPE and _type not in PipelineExpression._SUPPORTED_PIPELINE_INPUT_TYPES:
                 error_message = (
                     f"Pipeline input type {_type!r} is not supported in expression; "
@@ -479,19 +546,27 @@ class PipelineExpression(PipelineExpressionMixin):
         lookup_value = _OPERATION_RESULT_TYPE_LOOKUP.get(operation)
         if isinstance(lookup_value, str):
             return lookup_value  # valid operation, return result type
-        raise lookup_value  # invalid operation, raise UserErrorException
+        _user_exception: UserErrorException = lookup_value
+        raise _user_exception  # invalid operation, raise UserErrorException
 
     def _get_operand_type(self, operand: str) -> str:
         if operand in self._inputs:
-            return self._inputs[operand].type
+            res: str = self._inputs[operand].type
+            return res
         primitive_type = type(eval(operand))  # pylint: disable=eval-used # nosec
-        return IOConstants.PRIMITIVE_TYPE_2_STR.get(primitive_type, NONE_PARAMETER_TYPE)
+        res_type: str = IOConstants.PRIMITIVE_TYPE_2_STR.get(primitive_type, NONE_PARAMETER_TYPE)
+        return res_type
 
     @property
     def _component_code(self) -> str:
         def _generate_function_code_lines() -> Tuple[List[str], str]:
-            """Return lines of code and return type."""
-            _inter_id, _code, _stack, _line_recorder = 0, [], [], {}
+            """Return lines of code and return type.
+
+            :return: A 2-tuple of (function body, return type name)
+            :rtype: Tuple[List[str], str]
+            """
+            _inter_id, _code, _stack = 0, [], []
+            _line_recorder: Dict = {}
             for _token in self._postfix:
                 if _token not in _SUPPORTED_OPERATORS:
                     _type = self._get_operand_type(_token)
@@ -522,7 +597,7 @@ class PipelineExpression(PipelineExpressionMixin):
             for _name in sorted(self._inputs):
                 _type = self._TO_PYTHON_TYPE[self._inputs[_name].type]
                 _component_parameters.append(f"{_name}: {_type}")
-            _component_parameters = (
+            _component_parameters_str = (
                 "\n"
                 + "\n".join(
                     [f"{self._INDENTATION}{_component_parameter}," for _component_parameter in _component_parameters]
@@ -533,7 +608,7 @@ class PipelineExpression(PipelineExpressionMixin):
                 self._IMPORT_MLDESIGNER_LINE + "\n\n",
                 self._DECORATOR_LINE.replace("@@decorator_parameters@@", _decorator_parameters),
                 self._COMPONENT_FUNC_DECLARATION_LINE.replace(
-                    "@@component_parameters@@", _component_parameters
+                    "@@component_parameters@@", _component_parameters_str
                 ).replace("@@return_type@@", f'"{_return_type}"'),
             ]
 
@@ -542,16 +617,16 @@ class PipelineExpression(PipelineExpressionMixin):
         code = _generate_function_decorator_and_declaration_lines(result_type) + lines
         return "\n".join(code) + "\n"
 
-    def _create_component(self):
+    def _create_component(self) -> Any:
         def _generate_python_file(_folder: Path) -> None:
             _folder.mkdir()
-            with open(_folder / "expression_component.py", "w") as _f:
+            with open(_folder / "expression_component.py", "w", encoding=DefaultOpenEncoding.WRITE) as _f:
                 _f.write(self._component_code)
 
         def _generate_yaml_file(_path: Path) -> None:
             _data_folder = Path(__file__).parent / "data"
             # update YAML content from template and dump
-            with open(_data_folder / "expression_component_template.yml", "r") as _f:
+            with open(_data_folder / "expression_component_template.yml", "r", encoding=DefaultOpenEncoding.READ) as _f:
                 _data = load_yaml(_f)
             _data["display_name"] = f"Expression: {self.expression}"
             _data["inputs"] = {}
@@ -582,5 +657,6 @@ class PipelineExpression(PipelineExpressionMixin):
             component_func = load_component(yaml_path)
             component_kwargs = {k: v.value for k, v in self._inputs.items()}
             self._created_component = component_func(**component_kwargs)
-            self._created_component.environment_variables = {AZUREML_PRIVATE_FEATURES_ENV_VAR: "true"}
+            if self._created_component is not None:
+                self._created_component.environment_variables = {AZUREML_PRIVATE_FEATURES_ENV_VAR: "true"}
         return self._created_component

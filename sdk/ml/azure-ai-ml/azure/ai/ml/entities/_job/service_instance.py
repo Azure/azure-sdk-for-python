@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from azure.ai.ml._restclient.runhistory.models import ServiceInstanceResult
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
@@ -12,24 +12,24 @@ module_logger = logging.getLogger(__name__)
 
 
 class ServiceInstance(RestTranslatableMixin, DictMixin):
-    """ServiceInstanceResult.
+    """Service Instance Result.
 
-    :param type: The type of service
-    :type type: str
-    :param port: The port used by the service.
-    :type port: int
-    :param status: The status.
-    :type status: str
-    :param error: The error message.
-    :type error: str
-    :param endpoint: The endpoint of the service.
-    :type endpoint: str
-    :param properties: The service instance properties.
-    :type properties: dict[str, str]
+    :keyword type: The type of service.
+    :paramtype type: Optional[str]
+    :keyword port: The port used by the service.
+    :paramtype port: Optional[int]
+    :keyword status: The status of the service.
+    :paramtype status: Optional[str]
+    :keyword error: The error message.
+    :paramtype error: Optional[str]
+    :keyword endpoint: The service endpoint.
+    :paramtype endpoint: Optional[str]
+    :keyword properties: The service instance's properties.
+    :paramtype properties: Optional[dict[str, str]]
     """
 
     def __init__(
-        self,
+        self,  # pylint: disable=unused-argument
         *,
         type: Optional[str] = None,  # pylint: disable=redefined-builtin
         port: Optional[int] = None,
@@ -37,8 +37,8 @@ class ServiceInstance(RestTranslatableMixin, DictMixin):
         error: Optional[str] = None,
         endpoint: Optional[str] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs  # pylint: disable=unused-argument
-    ):
+        **kwargs: Any
+    ) -> None:
         self.type = type
         self.port = port
         self.status = status
@@ -48,7 +48,7 @@ class ServiceInstance(RestTranslatableMixin, DictMixin):
 
     @classmethod
     # pylint: disable=arguments-differ
-    def _from_rest_object(cls, obj: ServiceInstanceResult, node_index: int) -> "ServiceInstance":
+    def _from_rest_object(cls, obj: ServiceInstanceResult, node_index: int) -> "ServiceInstance":  # type: ignore
         return cls(
             type=obj.type,
             port=obj.port,

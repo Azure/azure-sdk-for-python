@@ -3,11 +3,11 @@
 # ---------------------------------------------------------
 
 
-import os
 import abc
+import os
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Optional, Union
+from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Union, cast
 
 from msrest import Serializer
 
@@ -15,124 +15,109 @@ from azure.ai.ml._restclient.v2022_10_01 import models
 from azure.ai.ml._telemetry.logging_handler import in_jupyter_notebook
 from azure.ai.ml._utils.utils import dump_yaml
 
+from ..constants._common import BASE_PATH_CONTEXT_KEY
 from ._system_data import SystemData
 
 
 class Resource(abc.ABC):
-    """Base class for entity classes, can't be instantiated directly.
+    """Base class for entity classes.
 
-    Resource abstract object that serves as a base for creating resources.
-    Helper class that provides a standard way to create an abc.ABC using inheritance.
+    Resource is an abstract object that serves as a base for creating resources. It contains common properties and
+    methods for all resources.
 
-    :param name: Name of the resource.
+    This class should not be instantiated directly. Instead, use one of its subclasses.
+
+    :param name: The name of the resource.
     :type name: str
-    :param description: Description of the resource, defaults to None
-    :type description: typing.Optional[str]
-    :param tags: Tags can be added, removed, and updated., defaults to None
-    :type tags: typing.Optional[typing.Dict]
-    :param properties: The asset property dictionary, defaults to None
-    :type properties: typing.Optional[typing.Dict]
-    :keyword print_as_yaml: If set to true, then printing out this resource will produce a YAML-formatted object.
-        False will force a more-compact printing style. By default, the YAML output is only used in jupyter
+    :param description: The description of the resource.
+    :type description: Optional[str]
+    :param tags: Tags can be added, removed, and updated.
+    :type tags: Optional[dict]
+    :param properties: The resource's property dictionary.
+    :type properties: Optional[dict]
+    :keyword print_as_yaml: Specifies if the the resource should print out as a YAML-formatted object. If False,
+        the resource will print out in a more-compact style. By default, the YAML output is only used in Jupyter
         notebooks. Be aware that some bookkeeping values are shown only in the non-YAML output.
     :paramtype print_as_yaml: bool
     """
 
     def __init__(
         self,
-        name: str,
+        name: Optional[str],
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        **kwargs,
-    ):
-        """Class Resource constructor.
-
-        :param name: Name of the resource.
-        :type name: str
-        :param description: Description of the resource, defaults to None
-        :type description: typing.Optional[str]
-        :param tags: Tags can be added, removed, and updated., defaults to None
-        :type tags: typing.Optional[typing.Dict]
-        :param properties: The asset property dictionary, defaults to None
-        :type properties: typing.Optional[typing.Dict]
-        :keyword print_as_yaml: If set to true, then printing out this resource will produce a YAML-formatted object.
-            False will force a more-compact printing style. By default, the YAML output is only used in jupyter
-            notebooks. Be aware that some bookkeeping values are shown only in the non-YAML output.
-        :paramtype print_as_yaml: bool
-        """
+        **kwargs: Any,
+    ) -> None:
         self.name = name
         self.description = description
-        self.tags = dict(tags) if tags else {}
+        self.tags: Optional[Dict] = dict(tags) if tags else {}
         self.properties = dict(properties) if properties else {}
         # Conditional assignment to prevent entity bloat when unused.
-        print_as_yaml = kwargs.pop("print_as_yaml", in_jupyter_notebook())
-        if print_as_yaml:
-            self.print_as_yaml = True
+        self._print_as_yaml = kwargs.pop("print_as_yaml", False)
 
         # Hide read only properties in kwargs
         self._id = kwargs.pop("id", None)
-        self.__source_path: Optional[str] = kwargs.pop("source_path", None)
-        self._base_path = kwargs.pop("base_path", None) or os.getcwd()  # base path should never be None
-        self._creation_context = kwargs.pop("creation_context", None)
+        self.__source_path: Union[str, PathLike] = kwargs.pop("source_path", "")
+        self._base_path = kwargs.pop(BASE_PATH_CONTEXT_KEY, None) or os.getcwd()  # base path should never be None
+        self._creation_context: Optional[SystemData] = kwargs.pop("creation_context", None)
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._serialize.client_side_validation = False
         super().__init__(**kwargs)
 
     @property
-    def _source_path(self) -> Optional[str]:
+    def _source_path(self) -> Union[str, PathLike]:
         # source path is added to display file location for validation error messages
         # usually, base_path = Path(source_path).parent if source_path else os.getcwd()
         return self.__source_path
 
     @_source_path.setter
-    def _source_path(self, value: Union[str, PathLike]):
+    def _source_path(self, value: Union[str, PathLike]) -> None:
         self.__source_path = Path(value).as_posix()
 
     @property
     def id(self) -> Optional[str]:
-        """Resource ID.
+        """The resource ID.
 
-        :return: Global id of the resource, Azure Resource Manager ID
-        :rtype: typing.Optional[str]
+        :return: The global ID of the resource, an Azure Resource Manager (ARM) ID.
+        :rtype: Optional[str]
         """
-        return self._id
+        if self._id is None:
+            return None
+        return str(self._id)
 
     @property
     def creation_context(self) -> Optional[SystemData]:
-        """Creation context.
+        """The creation context of the resource.
 
-        :return: Creation metadata of the resource.
-        :rtype: typing.Optional[~azure.ai.ml.entities.SystemData]
+        :return: The creation metadata for the resource.
+        :rtype: Optional[~azure.ai.ml.entities.SystemData]
         """
-        return self._creation_context
+        return cast(Optional[SystemData], self._creation_context)
 
     @property
     def base_path(self) -> str:
-        """Base path of the resource.
+        """The base path of the resource.
 
-        :return: Base path of the resource
+        :return: The base path of the resource.
         :rtype: str
         """
         return self._base_path
 
     @abc.abstractmethod
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> Any:
         """Dump the object content into a file.
 
-        :param dest: The destination to receive this object's data.
-            Must be either a path to a local file, or an already-open file stream.
-            If dest is a file path, a new file will be created,
-            and an exception is raised if the file exists.
-            If dest is an open file, the file will be written to directly,
-            and an exception will be raised if the file is not writable.
-        :type dest: typing.Union[str, os.PathLike, typing.IO[typing.AnyStr]]
+        :param dest: The local path or file stream to write the YAML content to.
+            If dest is a file path, a new file will be created.
+            If dest is an open file, the file will be written to directly.
+        :type dest: Union[PathLike, str, IO[AnyStr]]
         """
 
     @classmethod
     # pylint: disable=unused-argument
-    def _resolve_cls_and_type(cls, data, params_override):
+    def _resolve_cls_and_type(cls, data: Dict, params_override: Optional[List[Dict]] = None) -> Tuple:
         """Resolve the class to use for deserializing the data. Return current class if no override is provided.
 
         :param data: Data to deserialize.
@@ -151,7 +136,7 @@ class Resource(abc.ABC):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "Resource":
         """Construct a resource object from a file. @classmethod.
 
@@ -163,8 +148,6 @@ class Resource(abc.ABC):
         :type yaml_path: typing.Optional[typing.Union[typing.PathLike, str]]
         :param params_override: Parameters to override, defaults to None
         :type params_override: typing.Optional[list]
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
         :return: Resource
         :rtype: Resource
         """
@@ -172,12 +155,10 @@ class Resource(abc.ABC):
     # pylint: disable:unused-argument
     def _get_arm_resource(
         self,
-        **kwargs,  # pylint: disable=unused-argument
-    ):
+        # pylint: disable=unused-argument
+        **kwargs: Any,
+    ) -> Dict:
         """Get arm resource.
-
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
 
         :return: Resource
         :rtype: dict
@@ -185,23 +166,20 @@ class Resource(abc.ABC):
         from azure.ai.ml._arm_deployments.arm_helper import get_template
 
         # pylint: disable=no-member
-        template = get_template(resource_type=self._arm_type)
+        template = get_template(resource_type=self._arm_type)  # type: ignore
         # pylint: disable=no-member
-        template["copy"]["name"] = f"{self._arm_type}Deployment"
-        return template
+        template["copy"]["name"] = f"{self._arm_type}Deployment"  # type: ignore
+        return dict(template)
 
-    def _get_arm_resource_and_params(self, **kwargs):
+    def _get_arm_resource_and_params(self, **kwargs: Any) -> List:
         """Get arm resource and parameters.
-
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
 
         :return: Resource and parameters
         :rtype: dict
         """
         resource = self._get_arm_resource(**kwargs)
         # pylint: disable=no-member
-        param = self._to_arm_resource_param(**kwargs)
+        param = self._to_arm_resource_param(**kwargs)  # type: ignore
         return [(resource, param)]
 
     def __repr__(self) -> str:
@@ -209,8 +187,8 @@ class Resource(abc.ABC):
         return f"{self.__class__.__name__}({var_dict})"
 
     def __str__(self) -> str:
-        if hasattr(self, "print_as_yaml") and self.print_as_yaml:
+        if self._print_as_yaml or in_jupyter_notebook():
             # pylint: disable=no-member
-            yaml_serialized = self._to_dict()
-            return dump_yaml(yaml_serialized, default_flow_style=False)
+            yaml_serialized = self._to_dict()  # type: ignore
+            return str(dump_yaml(yaml_serialized, default_flow_style=False))
         return self.__repr__()

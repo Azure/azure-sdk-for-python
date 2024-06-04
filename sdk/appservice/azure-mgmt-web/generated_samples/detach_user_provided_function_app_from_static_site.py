@@ -29,14 +29,13 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.static_sites.detach_user_provided_function_app_from_static_site(
+    client.static_sites.detach_user_provided_function_app_from_static_site(
         resource_group_name="rg",
         name="testStaticSite0",
         function_app_name="testFunctionApp",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2022-09-01/examples/DetachUserProvidedFunctionAppFromStaticSite.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-01-01/examples/DetachUserProvidedFunctionAppFromStaticSite.json
 if __name__ == "__main__":
     main()

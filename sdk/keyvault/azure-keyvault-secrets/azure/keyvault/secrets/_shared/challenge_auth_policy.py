@@ -14,21 +14,19 @@ requirements can change. For example, a vault may move to a new tenant. In such 
 protocol again.
 """
 
+from copy import deepcopy
 import time
-from typing import TYPE_CHECKING
+from typing import Any, Optional
 from urllib.parse import urlparse
 
+from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.exceptions import ServiceRequestError
-from azure.core.pipeline import PipelineRequest
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+from azure.core.rest import HttpRequest
 
 from .http_challenge import HttpChallenge
 from . import http_challenge_cache as ChallengeCache
-
-if TYPE_CHECKING:
-    from typing import Optional
-    from azure.core.credentials import AccessToken, TokenCredential
-    from azure.core.pipeline import PipelineResponse
 
 
 def _enforce_tls(request: PipelineRequest) -> None:
@@ -38,13 +36,13 @@ def _enforce_tls(request: PipelineRequest) -> None:
         )
 
 
-def _update_challenge(request: PipelineRequest, challenger: "PipelineResponse") -> HttpChallenge:
+def _update_challenge(request: PipelineRequest, challenger: PipelineResponse) -> HttpChallenge:
     """Parse challenge from a challenge response, cache it, and return it.
 
     :param request: The pipeline request that prompted the challenge response.
-    :type request: :class:`~azure.core.pipeline.PipelineRequest`
+    :type request: ~azure.core.pipeline.PipelineRequest
     :param challenger: The pipeline response containing the authentication challenge.
-    :type challenger: :class:`~azure.core.pipeline.PipelineResponse`
+    :type challenger: ~azure.core.pipeline.PipelineResponse
 
     :returns: An HttpChallenge object representing the authentication challenge.
     :rtype: HttpChallenge
@@ -64,14 +62,15 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
 
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
-    :type credential: :class:`~azure.core.credentials.TokenCredential`
+    :type credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, credential: "TokenCredential", *scopes: str, **kwargs) -> None:
+    def __init__(self, credential: TokenCredential, *scopes: str, **kwargs: Any) -> None:
         super(ChallengeAuthPolicy, self).__init__(credential, *scopes, **kwargs)
         self._credential = credential
-        self._token: "Optional[AccessToken]" = None
+        self._token: Optional[AccessToken] = None
         self._verify_challenge_resource = kwargs.pop("verify_challenge_resource", True)
+        self._request_copy: Optional[HttpRequest] = None
 
     def on_request(self, request: PipelineRequest) -> None:
         _enforce_tls(request)
@@ -81,7 +80,11 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
             if self._need_new_token:
                 # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
                 scope = challenge.get_scope() or challenge.get_resource() + "/.default"
-                self._token = self._credential.get_token(scope, tenant_id=challenge.tenant_id)
+                # Exclude tenant for AD FS authentication
+                if challenge.tenant_id and challenge.tenant_id.lower().endswith("adfs"):
+                    self._token = self._credential.get_token(scope)
+                else:
+                    self._token = self._credential.get_token(scope, tenant_id=challenge.tenant_id)
 
             # ignore mypy's warning -- although self._token is Optional, get_token raises when it fails to get a token
             request.http_request.headers["Authorization"] = f"Bearer {self._token.token}"  # type: ignore
@@ -89,14 +92,19 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
 
         # else: discover authentication information by eliciting a challenge from Key Vault. Remove any request data,
         # saving it for later. Key Vault will reject the request as unauthorized and respond with a challenge.
-        # on_challenge will parse that challenge, reattach any body removed here, authorize the request, and tell
-        # super to send it again.
-        if request.http_request.body:
-            request.context["key_vault_request_data"] = request.http_request.body
-            request.http_request.set_json_body(None)
-            request.http_request.headers["Content-Length"] = "0"
+        # on_challenge will parse that challenge, use the original request including the body, authorize the
+        # request, and tell super to send it again.
+        if request.http_request.content:
+            self._request_copy = request.http_request
+            bodiless_request = HttpRequest(
+                method=request.http_request.method,
+                url=request.http_request.url,
+                headers=deepcopy(request.http_request.headers),
+            )
+            bodiless_request.headers["Content-Length"] = "0"
+            request.http_request = bodiless_request
 
-    def on_challenge(self, request: PipelineRequest, response: "PipelineResponse") -> bool:
+    def on_challenge(self, request: PipelineRequest, response: PipelineResponse) -> bool:
         try:
             challenge = _update_challenge(request, response)
             # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
@@ -117,8 +125,9 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
                     "See https://aka.ms/azsdk/blog/vault-uri for more information."
                 )
 
-        body = request.context.pop("key_vault_request_data", None)
-        request.http_request.set_text_body(body)  # no-op when text is None
+        # If we had created a request copy in on_request, use it now to send along the original body content
+        if self._request_copy:
+            request.http_request = self._request_copy
 
         # The tenant parsed from AD FS challenges is "adfs"; we don't actually need a tenant for AD FS authentication
         # For AD FS we skip cross-tenant authentication per https://github.com/Azure/azure-sdk-for-python/issues/28648

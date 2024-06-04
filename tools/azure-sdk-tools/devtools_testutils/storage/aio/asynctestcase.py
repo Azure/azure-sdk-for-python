@@ -8,8 +8,7 @@ import functools
 
 from .. import StorageRecordedTestCase
 from ...fake_credentials_async import AsyncFakeCredential
-
-from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
+from ...helpers import trim_kwargs_from_test_function
 
 
 class AsyncStorageRecordedTestCase(StorageRecordedTestCase):

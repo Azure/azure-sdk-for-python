@@ -49,7 +49,7 @@ def main():
     # i.e. https://<ledger id>.confidential-ledger.azure.com
     ledger_id = ledger_endpoint.replace("https://", "").split(".")[0]
 
-    identity_service_client = ConfidentialLedgerCertificateClient()
+    identity_service_client = ConfidentialLedgerCertificateClient()  # type: ignore[call-arg]
     ledger_certificate = identity_service_client.get_ledger_identity(ledger_id)
 
     # The Confidential Ledger's TLS certificate must be written to a file to be used by the

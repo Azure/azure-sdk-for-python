@@ -7,21 +7,29 @@ from typing import Dict
 
 _LOGGER = logging.getLogger(__name__)
 
+# Uncomment the following lines to show debug info
+# _LOGGER.setLevel(logging.DEBUG)
+# console_handler = logging.StreamHandler()
+# _LOGGER.addHandler(console_handler)
+
 snippets = {}
 not_up_to_date = False
 
 target_snippet_sources = ["samples/*.py", "samples/*/*.py"]
 target_md_files = ["README.md"]
 
+
 def check_snippets() -> Dict:
     return snippets
+
 
 def check_not_up_to_date() -> bool:
     return not_up_to_date
 
+
 def get_snippet(file: str) -> None:
     file_obj = Path(file)
-    with open(file_obj, 'r', encoding='utf8') as f:
+    with open(file_obj, "r", encoding="utf8") as f:
         content = f.read()
     pattern = "# \\[START(?P<name>[A-Z a-z0-9_]+)\\](?P<body>[\\s\\S]+?)# \\[END[A-Z a-z0-9_]+\\]"
     matches = re.findall(pattern, content)
@@ -39,7 +47,7 @@ def get_snippet(file: str) -> None:
         #             return await pipeline.run(request)
         #         # [END trio]
         # \n
-        # On one hand, the spaces in the beginning of the line may vary. e.g. If the snippet 
+        # On one hand, the spaces in the beginning of the line may vary. e.g. If the snippet
         # is in a class, it may have more spaces than if it is not in a class.
         # On the other hand, we cannot remove all spaces because indents are part of Python syntax.
         # Here is our algorithm:
@@ -64,16 +72,17 @@ def get_snippet(file: str) -> None:
         if identifier in snippets.keys():
             _LOGGER.warning(f'Found duplicated snippet name "{identifier}".')
             _LOGGER.warning(file)
-        _LOGGER.debug(f"Found: {file_obj.name}.{name}")
+        _LOGGER.debug(f"Found snippet: {file_obj.name}.{name}")
         snippets[identifier] = snippet
 
 
 def update_snippet(file: str) -> None:
     file_obj = Path(file)
-    with open(file_obj, 'r', encoding='utf8') as f:
+    with open(file_obj, "r", encoding="utf8") as f:
         content = f.read()
-    pattern = "(?P<content>(?P<header><!-- SNIPPET:(?P<name>[A-Z a-z0-9_.]+)-->)\\n\\n```python\\n[\\s\\S]*?\\n<!-- END SNIPPET -->)"
-    matches = re.findall(pattern, content)
+    pattern = r"(?P<content>(?P<header><!-- SNIPPET:(?P<name>[A-Z a-z0-9_.]+)-->)[\n]+```python\n[\s\S]*?\n<!-- END SNIPPET -->)"
+    matches = re.findall(pattern, content, flags=re.MULTILINE)
+
     for match in matches:
         s = match
         body = s[0].strip()
@@ -89,7 +98,7 @@ def update_snippet(file: str) -> None:
             global not_up_to_date
             not_up_to_date = True
             content = content.replace(body, target_code)
-    with open(file_obj, 'w', encoding='utf8') as f:
+    with open(file_obj, "w", encoding="utf8") as f:
         f.write(content)
 
 
@@ -98,9 +107,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "path",
         nargs="?",
-        help=(
-            "The targeted path for update."
-        ),
+        help=("The targeted path for update."),
     )
     args = parser.parse_args()
     path = sys.argv[1]
@@ -120,6 +127,8 @@ if __name__ == "__main__":
             except UnicodeDecodeError:
                 pass
     if not_up_to_date:
-        _LOGGER.error(f'Error: code snippets are out of sync. Please run Python python_snippet_updater.py "{path}" to fix it.')
+        _LOGGER.error(
+            f'Error: code snippets are out of sync. Please run Python python_snippet_updater.py "{path}" to fix it.'
+        )
         exit(1)
     _LOGGER.info(f"README.md under {path} is up to date.")

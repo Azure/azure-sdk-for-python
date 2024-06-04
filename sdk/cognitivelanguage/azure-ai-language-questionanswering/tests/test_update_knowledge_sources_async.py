@@ -14,6 +14,7 @@ from testcase import QuestionAnsweringTestCase
 
 class TestSourcesQnasSynonymsAsync(QuestionAnsweringTestCase):
 
+    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     @pytest.mark.asyncio
     async def test_add_source(self, recorded_test, qna_creds):
         client = AuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))

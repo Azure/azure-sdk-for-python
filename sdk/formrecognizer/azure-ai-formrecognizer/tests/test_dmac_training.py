@@ -10,7 +10,7 @@ import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.ai.formrecognizer._generated.v2023_02_28_preview.models import DocumentModelBuildOperationDetails, DocumentModelDetails as ModelDetails
+from azure.ai.formrecognizer._generated.v2023_07_31.models import DocumentModelBuildOperationDetails, DocumentModelDetails as ModelDetails
 from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentModelDetails, DocumentModelAdministrationLROPoller
 from testcase import FormRecognizerTest
 from conftest import skip_flaky_test
@@ -29,7 +29,7 @@ class TestDMACTraining(FormRecognizerTest):
         set_bodiless_matcher()
         def check_poll_value(poll):
             if self.is_live:
-                assert poll == 5
+                assert poll == 1
             else:
                 assert poll == 0
         check_poll_value(client._client._config.polling_interval)
@@ -270,7 +270,7 @@ class TestDMACTraining(FormRecognizerTest):
         poller = client.begin_build_document_model("template", blob_container_url=None, continuation_token=cont_token)
         result = poller.result()
         assert result
-        initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+        initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
 
     @skip_flaky_test
     @FormRecognizerPreparer()

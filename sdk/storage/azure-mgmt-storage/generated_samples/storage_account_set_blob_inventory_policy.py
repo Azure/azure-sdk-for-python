@@ -42,7 +42,7 @@ def main():
                             "definition": {
                                 "filters": {
                                     "blobTypes": ["blockBlob", "appendBlob", "pageBlob"],
-                                    "excludePrefix": ["excludeprefix1", "excludeprefix2"],
+                                    "creationTime": {"lastNDays": 1000},
                                     "includeBlobVersions": True,
                                     "includeSnapshots": True,
                                     "prefixMatch": ["inventoryprefix1", "inventoryprefix2"],
@@ -99,6 +99,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2022-09-01/examples/StorageAccountSetBlobInventoryPolicy.json
+# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/examples/StorageAccountSetBlobInventoryPolicy.json
 if __name__ == "__main__":
     main()

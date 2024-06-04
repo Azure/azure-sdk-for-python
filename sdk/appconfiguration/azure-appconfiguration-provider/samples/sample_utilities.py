@@ -15,8 +15,8 @@ DESCRIPTION:
 """
 
 import os
-from azure.identity import AzureAuthorityHosts, ClientSecretCredential, DefaultAzureCredential
-from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
+from azure.identity import AzureAuthorityHosts, ClientSecretCredential, InteractiveBrowserCredential
+from azure.identity.aio import ClientSecretCredential as AsyncClientSecretCredential
 
 
 def get_authority(endpoint):
@@ -27,6 +27,8 @@ def get_authority(endpoint):
         return AzureAuthorityHosts.AZURE_CHINA
     if ".azconfig.azure.us" in endpoint:
         return AzureAuthorityHosts.AZURE_GOVERNMENT
+    if ".azconfig-test.io" in endpoint:
+        return "login.azure-test.net"
     raise ValueError(f"Endpoint ({endpoint}) could not be understood")
 
 
@@ -37,17 +39,26 @@ def get_audience(authority):
         return "https://management.chinacloudapi.cn"
     if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
         return "https://management.usgovcloudapi.net"
+    if authority == "login.azure-test.net":
+        return "https://management.azure-test.net"
 
 
 def get_credential(authority, **kwargs):
-    if authority != AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
-        return ClientSecretCredential(
-            tenant_id=os.environ.get("AZURE_TENANT_ID"),
-            client_id=os.environ.get("AZURE_CLIENT_ID"),
-            client_secret=os.environ.get("AZURE_CLIENT_SECRET"),
+    if kwargs.pop("is_async", False):
+        return AsyncClientSecretCredential(
+            tenant_id=os.environ["APPCONFIGURATION_TENANT_ID"],
+            client_id=os.environ["APPCONFIGURATION_CLIENT_ID"],
+            client_secret=os.environ["APPCONFIGURATION_CLIENT_SECRET"],
             authority=authority,
+            validate_authority=False,
         )
-    is_async = kwargs.pop("is_async", False)
-    if is_async:
-        return AsyncDefaultAzureCredential(**kwargs)
-    return DefaultAzureCredential(**kwargs)
+    return InteractiveBrowserCredential(
+        authority=authority,
+        validate_authority=False,
+    )
+
+
+def get_client_modifications():
+    modifications = {}
+    modifications["user_agent"] = "SDK/Sample"
+    return modifications

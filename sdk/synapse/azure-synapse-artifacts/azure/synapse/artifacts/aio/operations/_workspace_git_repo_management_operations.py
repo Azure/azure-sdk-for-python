@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -69,7 +69,6 @@ class WorkspaceGitRepoManagementOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GitHubAccessTokenResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.GitHubAccessTokenResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -78,7 +77,7 @@ class WorkspaceGitRepoManagementOperations:
     @overload
     async def get_git_hub_access_token(
         self,
-        git_hub_access_token_request: IO,
+        git_hub_access_token_request: IO[bytes],
         client_request_id: Optional[str] = None,
         *,
         content_type: str = "application/json",
@@ -87,14 +86,13 @@ class WorkspaceGitRepoManagementOperations:
         """Get the GitHub access token.
 
         :param git_hub_access_token_request: Required.
-        :type git_hub_access_token_request: IO
+        :type git_hub_access_token_request: IO[bytes]
         :param client_request_id: Can provide a guid, which is helpful for debugging and to provide
          better customer support. Default value is None.
         :type client_request_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GitHubAccessTokenResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.GitHubAccessTokenResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -103,23 +101,19 @@ class WorkspaceGitRepoManagementOperations:
     @distributed_trace_async
     async def get_git_hub_access_token(
         self,
-        git_hub_access_token_request: Union[_models.GitHubAccessTokenRequest, IO],
+        git_hub_access_token_request: Union[_models.GitHubAccessTokenRequest, IO[bytes]],
         client_request_id: Optional[str] = None,
         **kwargs: Any
     ) -> _models.GitHubAccessTokenResponse:
         """Get the GitHub access token.
 
-        :param git_hub_access_token_request: Is either a GitHubAccessTokenRequest type or a IO type.
-         Required.
+        :param git_hub_access_token_request: Is either a GitHubAccessTokenRequest type or a IO[bytes]
+         type. Required.
         :type git_hub_access_token_request: ~azure.synapse.artifacts.models.GitHubAccessTokenRequest or
-         IO
+         IO[bytes]
         :param client_request_id: Can provide a guid, which is helpful for debugging and to provide
          better customer support. Default value is None.
         :type client_request_id: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GitHubAccessTokenResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.GitHubAccessTokenResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -147,25 +141,24 @@ class WorkspaceGitRepoManagementOperations:
         else:
             _json = self._serialize.body(git_hub_access_token_request, "GitHubAccessTokenRequest")
 
-        request = build_get_git_hub_access_token_request(
+        _request = build_get_git_hub_access_token_request(
             client_request_id=client_request_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.get_git_hub_access_token.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -177,8 +170,6 @@ class WorkspaceGitRepoManagementOperations:
         deserialized = self._deserialize("GitHubAccessTokenResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_git_hub_access_token.metadata = {"url": "/getGitHubAccessToken"}
+        return deserialized  # type: ignore

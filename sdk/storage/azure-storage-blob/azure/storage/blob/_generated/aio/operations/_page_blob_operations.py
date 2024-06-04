@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,13 +7,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union
+from typing import Any, Callable, Dict, IO, Literal, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -65,13 +66,13 @@ class PageBlobOperations:
         content_length: int,
         blob_content_length: int,
         timeout: Optional[int] = None,
-        tier: Optional[Union[str, "_models.PremiumPageBlobAccessTier"]] = None,
+        tier: Optional[Union[str, _models.PremiumPageBlobAccessTier]] = None,
         metadata: Optional[Dict[str, str]] = None,
         blob_sequence_number: int = 0,
         request_id_parameter: Optional[str] = None,
         blob_tags_string: Optional[str] = None,
         immutability_policy_expiry: Optional[datetime.datetime] = None,
-        immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
+        immutability_policy_mode: Optional[Union[str, _models.BlobImmutabilityPolicyMode]] = None,
         legal_hold: Optional[bool] = None,
         blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -132,23 +133,23 @@ class PageBlobOperations:
         :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword blob_type: Specifies the type of blob to create: block blob, page blob, or append
-         blob. Default value is "PageBlob". Note that overriding this default value may result in
-         unsupported behavior.
-        :paramtype blob_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        blob_type = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "PageBlob"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        blob_type: Literal["PageBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "PageBlob"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _blob_content_type = None
         _blob_content_encoding = None
@@ -188,7 +189,7 @@ class PageBlobOperations:
             _if_tags = modified_access_conditions.if_tags
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_create_request(
+        _request = build_create_request(
             url=self._config.url,
             content_length=content_length,
             blob_content_length=blob_content_length,
@@ -219,15 +220,15 @@ class PageBlobOperations:
             legal_hold=legal_hold,
             blob_type=blob_type,
             version=self._config.version,
-            template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -259,15 +260,13 @@ class PageBlobOperations:
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    create.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def upload_pages(  # pylint: disable=inconsistent-return-statements
         self,
         content_length: int,
-        body: IO,
+        body: IO[bytes],
         transactional_content_md5: Optional[bytes] = None,
         transactional_content_crc64: Optional[bytes] = None,
         timeout: Optional[int] = None,
@@ -285,7 +284,7 @@ class PageBlobOperations:
         :param content_length: The length of the request. Required.
         :type content_length: int
         :param body: Initial data. Required.
-        :type body: IO
+        :type body: IO[bytes]
         :param transactional_content_md5: Specify the transactional md5 for the body, to be validated
          by the service. Default value is None.
         :type transactional_content_md5: bytes
@@ -314,34 +313,25 @@ class PageBlobOperations:
          ~azure.storage.blob.models.SequenceNumberAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "page". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword page_write: Required. You may specify one of the following options:
-
-
-         * Update: Writes the bytes specified by the request body into the specified range. The Range
-         and Content-Length headers must match to perform the update.
-         * Clear: Clears the specified range and releases the space used in storage for that range. To
-         clear a range, set the Content-Length header to zero, and the Range header to a value that
-         indicates the range to clear, up to maximum blob size. Default value is "update". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype page_write: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "page"))  # type: str
-        page_write = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp: Literal["page"] = kwargs.pop("comp", _params.pop("comp", "page"))
+        page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
         _encryption_key = None
@@ -378,7 +368,7 @@ class PageBlobOperations:
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
         _content = body
 
-        request = build_upload_pages_request(
+        _request = build_upload_pages_request(
             url=self._config.url,
             content_length=content_length,
             transactional_content_md5=transactional_content_md5,
@@ -404,15 +394,15 @@ class PageBlobOperations:
             content_type=content_type,
             version=self._config.version,
             content=_content,
-            template_url=self.upload_pages.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -449,9 +439,7 @@ class PageBlobOperations:
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    upload_pages.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def clear_pages(  # pylint: disable=inconsistent-return-statements
@@ -493,33 +481,24 @@ class PageBlobOperations:
          ~azure.storage.blob.models.SequenceNumberAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "page". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword page_write: Required. You may specify one of the following options:
-
-
-         * Update: Writes the bytes specified by the request body into the specified range. The Range
-         and Content-Length headers must match to perform the update.
-         * Clear: Clears the specified range and releases the space used in storage for that range. To
-         clear a range, set the Content-Length header to zero, and the Range header to a value that
-         indicates the range to clear, up to maximum blob size. Default value is "clear". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype page_write: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "page"))  # type: str
-        page_write = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "clear"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp: Literal["page"] = kwargs.pop("comp", _params.pop("comp", "page"))
+        page_write: Literal["clear"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "clear"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
         _encryption_key = None
@@ -555,7 +534,7 @@ class PageBlobOperations:
             _if_tags = modified_access_conditions.if_tags
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_clear_pages_request(
+        _request = build_clear_pages_request(
             url=self._config.url,
             content_length=content_length,
             timeout=timeout,
@@ -577,15 +556,15 @@ class PageBlobOperations:
             comp=comp,
             page_write=page_write,
             version=self._config.version,
-            template_url=self.clear_pages.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -613,9 +592,7 @@ class PageBlobOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    clear_pages.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def upload_pages_from_url(  # pylint: disable=inconsistent-return-statements
@@ -682,33 +659,24 @@ class PageBlobOperations:
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.blob.models.SourceModifiedAccessConditions
-        :keyword comp: comp. Default value is "page". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword page_write: Required. You may specify one of the following options:
-
-
-         * Update: Writes the bytes specified by the request body into the specified range. The Range
-         and Content-Length headers must match to perform the update.
-         * Clear: Clears the specified range and releases the space used in storage for that range. To
-         clear a range, set the Content-Length header to zero, and the Range header to a value that
-         indicates the range to clear, up to maximum blob size. Default value is "update". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype page_write: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "page"))  # type: str
-        page_write = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp: Literal["page"] = kwargs.pop("comp", _params.pop("comp", "page"))
+        page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _encryption_key = None
         _encryption_key_sha256 = None
@@ -753,7 +721,7 @@ class PageBlobOperations:
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
             _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
 
-        request = build_upload_pages_from_url_request(
+        _request = build_upload_pages_from_url_request(
             url=self._config.url,
             source_url=source_url,
             source_range=source_range,
@@ -784,15 +752,15 @@ class PageBlobOperations:
             comp=comp,
             page_write=page_write,
             version=self._config.version,
-            template_url=self.upload_pages_from_url.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -826,9 +794,7 @@ class PageBlobOperations:
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    upload_pages_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_page_ranges(
@@ -881,22 +847,23 @@ class PageBlobOperations:
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "pagelist". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PageList or the result of cls(response)
         :rtype: ~azure.storage.blob.models.PageList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "pagelist"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PageList]
+        comp: Literal["pagelist"] = kwargs.pop("comp", _params.pop("comp", "pagelist"))
+        cls: ClsType[_models.PageList] = kwargs.pop("cls", None)
 
         _lease_id = None
         _if_modified_since = None
@@ -913,7 +880,7 @@ class PageBlobOperations:
             _if_tags = modified_access_conditions.if_tags
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_get_page_ranges_request(
+        _request = build_get_page_ranges_request(
             url=self._config.url,
             snapshot=snapshot,
             timeout=timeout,
@@ -929,15 +896,15 @@ class PageBlobOperations:
             maxresults=maxresults,
             comp=comp,
             version=self._config.version,
-            template_url=self.get_page_ranges.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -963,11 +930,9 @@ class PageBlobOperations:
         deserialized = self._deserialize("PageList", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    get_page_ranges.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_page_ranges_diff(
@@ -1034,22 +999,23 @@ class PageBlobOperations:
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "pagelist". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PageList or the result of cls(response)
         :rtype: ~azure.storage.blob.models.PageList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "pagelist"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PageList]
+        comp: Literal["pagelist"] = kwargs.pop("comp", _params.pop("comp", "pagelist"))
+        cls: ClsType[_models.PageList] = kwargs.pop("cls", None)
 
         _lease_id = None
         _if_modified_since = None
@@ -1066,7 +1032,7 @@ class PageBlobOperations:
             _if_tags = modified_access_conditions.if_tags
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_get_page_ranges_diff_request(
+        _request = build_get_page_ranges_diff_request(
             url=self._config.url,
             snapshot=snapshot,
             timeout=timeout,
@@ -1084,15 +1050,15 @@ class PageBlobOperations:
             maxresults=maxresults,
             comp=comp,
             version=self._config.version,
-            template_url=self.get_page_ranges_diff.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1118,11 +1084,9 @@ class PageBlobOperations:
         deserialized = self._deserialize("PageList", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    get_page_ranges_diff.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def resize(  # pylint: disable=inconsistent-return-statements
@@ -1158,22 +1122,23 @@ class PageBlobOperations:
         :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
         _encryption_key = None
@@ -1200,7 +1165,7 @@ class PageBlobOperations:
             _if_tags = modified_access_conditions.if_tags
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_resize_request(
+        _request = build_resize_request(
             url=self._config.url,
             blob_content_length=blob_content_length,
             timeout=timeout,
@@ -1217,15 +1182,15 @@ class PageBlobOperations:
             request_id_parameter=request_id_parameter,
             comp=comp,
             version=self._config.version,
-            template_url=self.resize.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1249,14 +1214,12 @@ class PageBlobOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    resize.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def update_sequence_number(  # pylint: disable=inconsistent-return-statements
         self,
-        sequence_number_action: Union[str, "_models.SequenceNumberActionType"],
+        sequence_number_action: Union[str, _models.SequenceNumberActionType],
         timeout: Optional[int] = None,
         blob_sequence_number: int = 0,
         request_id_parameter: Optional[str] = None,
@@ -1288,22 +1251,23 @@ class PageBlobOperations:
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
         _if_modified_since = None
@@ -1320,7 +1284,7 @@ class PageBlobOperations:
             _if_tags = modified_access_conditions.if_tags
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_update_sequence_number_request(
+        _request = build_update_sequence_number_request(
             url=self._config.url,
             sequence_number_action=sequence_number_action,
             timeout=timeout,
@@ -1334,15 +1298,15 @@ class PageBlobOperations:
             request_id_parameter=request_id_parameter,
             comp=comp,
             version=self._config.version,
-            template_url=self.update_sequence_number.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1366,9 +1330,7 @@ class PageBlobOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    update_sequence_number.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def copy_incremental(  # pylint: disable=inconsistent-return-statements
@@ -1401,22 +1363,23 @@ class PageBlobOperations:
         :type request_id_parameter: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "incrementalcopy". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "incrementalcopy"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp: Literal["incrementalcopy"] = kwargs.pop("comp", _params.pop("comp", "incrementalcopy"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -1430,7 +1393,7 @@ class PageBlobOperations:
             _if_tags = modified_access_conditions.if_tags
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_copy_incremental_request(
+        _request = build_copy_incremental_request(
             url=self._config.url,
             copy_source=copy_source,
             timeout=timeout,
@@ -1442,15 +1405,15 @@ class PageBlobOperations:
             request_id_parameter=request_id_parameter,
             comp=comp,
             version=self._config.version,
-            template_url=self.copy_incremental.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1473,6 +1436,4 @@ class PageBlobOperations:
         response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    copy_incremental.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+            return cls(pipeline_response, None, response_headers)  # type: ignore

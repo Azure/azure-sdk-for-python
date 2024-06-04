@@ -4,6 +4,7 @@
 # ------------------------------------
 import asyncio
 import os
+
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
@@ -69,6 +70,7 @@ async def run_sample():
     # Let's get the bank certificate using its name
     print("\n.. Get a certificate by name")
     bank_certificate = await client.get_certificate(cert_name)
+    assert bank_certificate.name
     print(f"Certificate with name '{bank_certificate.name}' was found.")
 
     # After one year, the bank account is still active, and we have decided to update the tags.
@@ -77,6 +79,7 @@ async def run_sample():
     updated_certificate = await client.update_certificate_properties(
         certificate_name=bank_certificate.name, tags=tags
     )
+    assert updated_certificate.properties
     print(
         f"Certificate with name '{bank_certificate.name}' was updated on date "
         f"'{updated_certificate.properties.updated_on}'"

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -53,7 +53,6 @@ class SqlPoolsOperations:
     async def list(self, **kwargs: Any) -> _models.SqlPoolInfoListResult:
         """List Sql Pools.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SqlPoolInfoListResult or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.SqlPoolInfoListResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -72,21 +71,20 @@ class SqlPoolsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[_models.SqlPoolInfoListResult] = kwargs.pop("cls", None)
 
-        request = build_list_request(
+        _request = build_list_request(
             api_version=api_version,
-            template_url=self.list.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -99,11 +97,9 @@ class SqlPoolsOperations:
         deserialized = self._deserialize("SqlPoolInfoListResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list.metadata = {"url": "/sqlPools"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get(self, sql_pool_name: str, **kwargs: Any) -> _models.SqlPool:
@@ -111,7 +107,6 @@ class SqlPoolsOperations:
 
         :param sql_pool_name: The Sql Pool name. Required.
         :type sql_pool_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SqlPool or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.SqlPool
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -130,22 +125,21 @@ class SqlPoolsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[_models.SqlPool] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             sql_pool_name=sql_pool_name,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -158,8 +152,6 @@ class SqlPoolsOperations:
         deserialized = self._deserialize("SqlPool", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {"url": "/sqlPools/{sqlPoolName}"}
+        return deserialized  # type: ignore

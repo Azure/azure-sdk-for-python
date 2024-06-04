@@ -4,6 +4,7 @@
 An example to show an application using Opentelemetry tracing api and sdk with multiple exporters.
 Telemetry is exported to application insights with the AzureMonitorTraceExporter and Jaeger backend with the JaegerExporter.
 """
+# mypy: disable-error-code="attr-defined"
 import os
 from opentelemetry import trace
 from opentelemetry.exporter.jaeger.thrift import JaegerExporter

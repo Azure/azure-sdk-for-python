@@ -159,26 +159,6 @@ class CommunityGallery(PirCommunityGalleryResource):
     :vartype unique_id: str
     """
 
-    _validation = {
-        "name": {"readonly": True},
-        "location": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "unique_id": {"key": "identifier.uniqueId", "type": "str"},
-    }
-
-    def __init__(self, *, unique_id: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword unique_id: The unique id of this community gallery.
-        :paramtype unique_id: str
-        """
-        super().__init__(unique_id=unique_id, **kwargs)
-
 
 class CommunityGalleryImage(PirCommunityGalleryResource):  # pylint: disable=too-many-instance-attributes
     """Specifies information about the gallery image definition that you want to create or update.
@@ -328,7 +308,7 @@ class CommunityGalleryImage(PirCommunityGalleryResource):  # pylint: disable=too
 class CommunityGalleryImageList(_serialization.Model):
     """The List Community Gallery Images operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: A list of community gallery images. Required.
     :vartype value: list[~azure.mgmt.compute.v2022_01_03.models.CommunityGalleryImage]
@@ -441,7 +421,7 @@ class CommunityGalleryImageVersion(PirCommunityGalleryResource):
 class CommunityGalleryImageVersionList(_serialization.Model):
     """The List Community Gallery Image versions operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: A list of community gallery image versions. Required.
     :vartype value: list[~azure.mgmt.compute.v2022_01_03.models.CommunityGalleryImageVersion]
@@ -565,7 +545,7 @@ class DiskImageEncryption(_serialization.Model):
 class DataDiskImageEncryption(DiskImageEncryption):
     """Contains encryption settings for a data disk image.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar disk_encryption_set_id: A relative URI containing the resource ID of the disk encryption
      set.
@@ -690,7 +670,7 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -739,7 +719,7 @@ class Gallery(Resource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -833,7 +813,7 @@ class GalleryApplication(Resource):  # pylint: disable=too-many-instance-attribu
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -934,7 +914,7 @@ class GalleryApplication(Resource):  # pylint: disable=too-many-instance-attribu
 class GalleryApplicationList(_serialization.Model):
     """The List Gallery Applications operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: A list of Gallery Applications. Required.
     :vartype value: list[~azure.mgmt.compute.v2022_01_03.models.GalleryApplication]
@@ -1107,7 +1087,7 @@ class GalleryApplicationVersion(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -1179,7 +1159,7 @@ class GalleryApplicationVersion(Resource):
 class GalleryApplicationVersionList(_serialization.Model):
     """The List Gallery Application version operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: A list of gallery Application Versions. Required.
     :vartype value: list[~azure.mgmt.compute.v2022_01_03.models.GalleryApplicationVersion]
@@ -1312,12 +1292,12 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
 
 class GalleryApplicationVersionPublishingProfile(
     GalleryArtifactPublishingProfileBase
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """The publishing profile of a gallery image version.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_regions: The target regions where the Image Version is going to be replicated to.
      This property is updatable.
@@ -1522,7 +1502,7 @@ class GalleryApplicationVersionUpdate(UpdateResourceDefinition):
 class GalleryArtifactSource(_serialization.Model):
     """The source image from which the Image Version is going to be created.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar managed_image: The managed artifact. Required.
     :vartype managed_image: ~azure.mgmt.compute.v2022_01_03.models.ManagedArtifact
@@ -1626,7 +1606,7 @@ class GalleryDataDiskImage(GalleryDiskImage):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar size_in_gb: This property indicates the size of the VHD to be created.
     :vartype size_in_gb: int
@@ -1737,7 +1717,7 @@ class GalleryImage(Resource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -1938,7 +1918,7 @@ class GalleryImageFeature(_serialization.Model):
 class GalleryImageIdentifier(_serialization.Model):
     """This is the gallery image definition identifier.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar publisher: The name of the gallery image definition publisher. Required.
     :vartype publisher: str
@@ -1978,7 +1958,7 @@ class GalleryImageIdentifier(_serialization.Model):
 class GalleryImageList(_serialization.Model):
     """The List Gallery Images operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: A list of Shared Image Gallery images. Required.
     :vartype value: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImage]
@@ -2182,7 +2162,7 @@ class GalleryImageVersion(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -2260,7 +2240,7 @@ class GalleryImageVersion(Resource):
 class GalleryImageVersionList(_serialization.Model):
     """The List Gallery Image version operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: A list of gallery image versions. Required.
     :vartype value: list[~azure.mgmt.compute.v2022_01_03.models.GalleryImageVersion]
@@ -2325,71 +2305,6 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
     :vartype target_extended_locations:
      list[~azure.mgmt.compute.v2022_01_03.models.GalleryTargetExtendedLocation]
     """
-
-    _validation = {
-        "published_date": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "target_regions": {"key": "targetRegions", "type": "[TargetRegion]"},
-        "replica_count": {"key": "replicaCount", "type": "int"},
-        "exclude_from_latest": {"key": "excludeFromLatest", "type": "bool"},
-        "published_date": {"key": "publishedDate", "type": "iso-8601"},
-        "end_of_life_date": {"key": "endOfLifeDate", "type": "iso-8601"},
-        "storage_account_type": {"key": "storageAccountType", "type": "str"},
-        "replication_mode": {"key": "replicationMode", "type": "str"},
-        "target_extended_locations": {"key": "targetExtendedLocations", "type": "[GalleryTargetExtendedLocation]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        target_regions: Optional[List["_models.TargetRegion"]] = None,
-        replica_count: Optional[int] = None,
-        exclude_from_latest: Optional[bool] = None,
-        end_of_life_date: Optional[datetime.datetime] = None,
-        storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
-        replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = None,
-        target_extended_locations: Optional[List["_models.GalleryTargetExtendedLocation"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword target_regions: The target regions where the Image Version is going to be replicated
-         to. This property is updatable.
-        :paramtype target_regions: list[~azure.mgmt.compute.v2022_01_03.models.TargetRegion]
-        :keyword replica_count: The number of replicas of the Image Version to be created per region.
-         This property would take effect for a region when regionalReplicaCount is not specified. This
-         property is updatable.
-        :paramtype replica_count: int
-        :keyword exclude_from_latest: If set to true, Virtual Machines deployed from the latest version
-         of the Image Definition won't use this Image Version.
-        :paramtype exclude_from_latest: bool
-        :keyword end_of_life_date: The end of life date of the gallery image version. This property can
-         be used for decommissioning purposes. This property is updatable.
-        :paramtype end_of_life_date: ~datetime.datetime
-        :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
-         "Premium_LRS", and "StandardSSD_LRS".
-        :paramtype storage_account_type: str or
-         ~azure.mgmt.compute.v2022_01_03.models.StorageAccountType
-        :keyword replication_mode: Optional parameter which specifies the mode to be used for
-         replication. This property is not updatable. Known values are: "Full" and "Shallow".
-        :paramtype replication_mode: str or ~azure.mgmt.compute.v2022_01_03.models.ReplicationMode
-        :keyword target_extended_locations: The target extended locations where the Image Version is
-         going to be replicated to. This property is updatable.
-        :paramtype target_extended_locations:
-         list[~azure.mgmt.compute.v2022_01_03.models.GalleryTargetExtendedLocation]
-        """
-        super().__init__(
-            target_regions=target_regions,
-            replica_count=replica_count,
-            exclude_from_latest=exclude_from_latest,
-            end_of_life_date=end_of_life_date,
-            storage_account_type=storage_account_type,
-            replication_mode=replication_mode,
-            target_extended_locations=target_extended_locations,
-            **kwargs
-        )
 
 
 class GalleryImageVersionStorageProfile(_serialization.Model):
@@ -2505,7 +2420,7 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
 class GalleryList(_serialization.Model):
     """The List Galleries operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: A list of galleries. Required.
     :vartype value: list[~azure.mgmt.compute.v2022_01_03.models.Gallery]
@@ -2549,32 +2464,6 @@ class GalleryOSDiskImage(GalleryDiskImage):
     :ivar source: The gallery artifact version source.
     :vartype source: ~azure.mgmt.compute.v2022_01_03.models.GalleryArtifactVersionSource
     """
-
-    _validation = {
-        "size_in_gb": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "size_in_gb": {"key": "sizeInGB", "type": "int"},
-        "host_caching": {"key": "hostCaching", "type": "str"},
-        "source": {"key": "source", "type": "GalleryArtifactVersionSource"},
-    }
-
-    def __init__(
-        self,
-        *,
-        host_caching: Optional[Union[str, "_models.HostCaching"]] = None,
-        source: Optional["_models.GalleryArtifactVersionSource"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-         'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
-        :paramtype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.HostCaching
-        :keyword source: The gallery artifact version source.
-        :paramtype source: ~azure.mgmt.compute.v2022_01_03.models.GalleryArtifactVersionSource
-        """
-        super().__init__(host_caching=host_caching, source=source, **kwargs)
 
 
 class GalleryTargetExtendedLocation(_serialization.Model):
@@ -2793,7 +2682,7 @@ class InnerError(_serialization.Model):
 class ManagedArtifact(_serialization.Model):
     """The managed artifact.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The managed artifact id. Required.
     :vartype id: str
@@ -3176,24 +3065,6 @@ class SharedGallery(PirSharedGalleryResource):
     :vartype unique_id: str
     """
 
-    _validation = {
-        "name": {"readonly": True},
-        "location": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "unique_id": {"key": "identifier.uniqueId", "type": "str"},
-    }
-
-    def __init__(self, *, unique_id: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword unique_id: The unique id of this shared gallery.
-        :paramtype unique_id: str
-        """
-        super().__init__(unique_id=unique_id, **kwargs)
-
 
 class SharedGalleryDiskImage(_serialization.Model):
     """This is the disk image base class.
@@ -3234,7 +3105,7 @@ class SharedGalleryDataDiskImage(SharedGalleryDiskImage):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar disk_size_gb: This property indicates the size of the VHD to be created.
     :vartype disk_size_gb: int
@@ -3404,7 +3275,7 @@ class SharedGalleryImage(PirSharedGalleryResource):  # pylint: disable=too-many-
 class SharedGalleryImageList(_serialization.Model):
     """The List Shared Gallery Images operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: A list of shared gallery images. Required.
     :vartype value: list[~azure.mgmt.compute.v2022_01_03.models.SharedGalleryImage]
@@ -3513,7 +3384,7 @@ class SharedGalleryImageVersion(PirSharedGalleryResource):
 class SharedGalleryImageVersionList(_serialization.Model):
     """The List Shared Gallery Image versions operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: A list of shared gallery images versions. Required.
     :vartype value: list[~azure.mgmt.compute.v2022_01_03.models.SharedGalleryImageVersion]
@@ -3583,7 +3454,7 @@ class SharedGalleryImageVersionStorageProfile(_serialization.Model):
 class SharedGalleryList(_serialization.Model):
     """The List Shared Galleries operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: A list of shared galleries. Required.
     :vartype value: list[~azure.mgmt.compute.v2022_01_03.models.SharedGallery]
@@ -3625,25 +3496,6 @@ class SharedGalleryOSDiskImage(SharedGalleryDiskImage):
      'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.SharedGalleryHostCaching
     """
-
-    _validation = {
-        "disk_size_gb": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
-        "host_caching": {"key": "hostCaching", "type": "str"},
-    }
-
-    def __init__(
-        self, *, host_caching: Optional[Union[str, "_models.SharedGalleryHostCaching"]] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-         'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
-        :paramtype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.SharedGalleryHostCaching
-        """
-        super().__init__(host_caching=host_caching, **kwargs)
 
 
 class SharingProfile(_serialization.Model):
@@ -3768,7 +3620,7 @@ class SharingStatus(_serialization.Model):
 class SharingUpdate(_serialization.Model):
     """Specifies information about the gallery sharing profile update.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operation_type: This property allows you to specify the operation type of gallery sharing
      update. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Add**
@@ -3879,7 +3731,7 @@ class SubResourceReadOnly(_serialization.Model):
 class TargetRegion(_serialization.Model):
     """Describes the target region information.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the region. Required.
     :vartype name: str
@@ -3940,7 +3792,7 @@ class TargetRegion(_serialization.Model):
 class UserArtifactManage(_serialization.Model):
     """UserArtifactManage.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar install: Required. The path and arguments to install the gallery application. This is
      limited to 4096 characters. Required.
@@ -4024,7 +3876,7 @@ class UserArtifactSettings(_serialization.Model):
 class UserArtifactSource(_serialization.Model):
     """The source image from which the Image Version is going to be created.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar media_link: Required. The mediaLink of the artifact, must be a readable storage page
      blob. Required.

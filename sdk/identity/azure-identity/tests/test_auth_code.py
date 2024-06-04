@@ -30,7 +30,10 @@ def test_no_scopes():
 def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
 
-    def send(*_, **__):
+    def send(*_, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         return mock_response(json_payload=build_aad_response(access_token="**"))
 
     credential = AuthorizationCodeCredential(
@@ -54,6 +57,7 @@ def test_user_agent():
 
     credential.get_token("scope")
 
+
 def test_tenant_id():
     transport = validating_transport(
         requests=[Request(required_headers={"User-Agent": USER_AGENT})],
@@ -61,13 +65,20 @@ def test_tenant_id():
     )
 
     credential = AuthorizationCodeCredential(
-        "tenant-id", "client-id", "auth-code", "http://localhost", transport=transport, additionally_allowed_tenants=['*']
+        "tenant-id",
+        "client-id",
+        "auth-code",
+        "http://localhost",
+        transport=transport,
+        additionally_allowed_tenants=["*"],
     )
 
     credential.get_token("scope", tenant_id="tenant_id")
 
+
 def test_auth_code_credential():
     client_id = "client id"
+    secret = "fake-client-secret"
     tenant_id = "tenant"
     expected_code = "auth code"
     redirect_uri = "https://localhost"
@@ -82,6 +93,7 @@ def test_auth_code_credential():
                 url_substring=tenant_id,
                 required_data={
                     "client_id": client_id,
+                    "client_secret": secret,
                     "code": expected_code,
                     "grant_type": "authorization_code",
                     "redirect_uri": redirect_uri,
@@ -92,6 +104,7 @@ def test_auth_code_credential():
                 url_substring=tenant_id,
                 required_data={
                     "client_id": client_id,
+                    "client_secret": secret,
                     "grant_type": "refresh_token",
                     "refresh_token": expected_refresh_token,
                     "scope": expected_scope,
@@ -104,6 +117,7 @@ def test_auth_code_credential():
 
     credential = AuthorizationCodeCredential(
         client_id=client_id,
+        client_secret=secret,
         tenant_id=tenant_id,
         authorization_code=expected_code,
         redirect_uri=redirect_uri,
@@ -135,7 +149,10 @@ def test_multitenant_authentication():
     second_tenant = "second-tenant"
     second_token = first_token * 2
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
         assert tenant in (first_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
@@ -148,7 +165,7 @@ def test_multitenant_authentication():
         "authcode",
         "https://localhost",
         transport=Mock(send=send),
-        additionally_allowed_tenants=['*']
+        additionally_allowed_tenants=["*"],
     )
     token = credential.get_token("scope")
     assert token.token == first_token
@@ -163,18 +180,27 @@ def test_multitenant_authentication():
     token = credential.get_token("scope")
     assert token.token == first_token
 
+
 def test_multitenant_authentication_not_allowed():
     expected_tenant = "expected-tenant"
     expected_token = "***"
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
         token = expected_token if tenant == expected_tenant else expected_token * 2
         return mock_response(json_payload=build_aad_response(access_token=token, refresh_token="**"))
 
     credential = AuthorizationCodeCredential(
-        expected_tenant, "client-id", "authcode", "https://localhost", transport=Mock(send=send), additionally_allowed_tenants=['*']
+        expected_tenant,
+        "client-id",
+        "authcode",
+        "https://localhost",
+        transport=Mock(send=send),
+        additionally_allowed_tenants=["*"],
     )
 
     token = credential.get_token("scope")

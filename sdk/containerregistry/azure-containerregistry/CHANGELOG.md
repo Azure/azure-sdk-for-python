@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.1 (Unreleased)
+## 1.2.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,16 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Added support for Python 3.12.
+- Python 3.7 is no longer supported. Please use Python version 3.8 or later.
+
+## 1.2.0 (2023-07-11)
+
+### Bugs Fixed
+- Fixed a bug when deserializing unknown architecture and os values in `ArtifactManifestProperties` object. ([#28469](https://github.com/Azure/azure-sdk-for-python/issues/28469) [#30077](https://github.com/Azure/azure-sdk-for-python/issues/30077))
+
+### Other Changes
+- Enum type properties in `ArtifactManifestProperties` class would be type `str` when its value is not in enum's known list.
 
 ## 1.1.0 (2023-05-17)
 

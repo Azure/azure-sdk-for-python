@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.sql import SqlManagementClient
 
 """
@@ -44,6 +47,7 @@ def main():
                     "sid": "00000011-1111-2222-2222-123456789111",
                     "tenantId": "00000011-1111-2222-2222-123456789111",
                 },
+                "isIPv6Enabled": "Enabled",
                 "publicNetworkAccess": "Enabled",
                 "restrictOutboundNetworkAccess": "Enabled",
             },
@@ -52,6 +56,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/ServerCreate.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2023-05-01-preview/examples/ServerCreate.json
 if __name__ == "__main__":
     main()

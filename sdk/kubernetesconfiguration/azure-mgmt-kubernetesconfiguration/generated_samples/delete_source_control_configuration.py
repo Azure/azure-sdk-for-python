@@ -29,16 +29,15 @@ def main():
         subscription_id="subId1",
     )
 
-    response = client.source_control_configurations.begin_delete(
+    client.source_control_configurations.begin_delete(
         resource_group_name="rg1",
         cluster_rp="Microsoft.Kubernetes",
         cluster_resource_name="connectedClusters",
         cluster_name="clusterName1",
         source_control_configuration_name="SRS_GitHubConfig",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/kubernetesconfiguration/resource-manager/Microsoft.KubernetesConfiguration/stable/2022-11-01/examples/DeleteSourceControlConfiguration.json
+# x-ms-original-file: specification/kubernetesconfiguration/resource-manager/Microsoft.KubernetesConfiguration/stable/2023-05-01/examples/DeleteSourceControlConfiguration.json
 if __name__ == "__main__":
     main()

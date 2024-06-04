@@ -6,7 +6,8 @@ from devtools_testutils import (
     add_general_string_sanitizer,
     add_general_regex_sanitizer,
     add_header_regex_sanitizer,
-    test_proxy
+    test_proxy,
+    remove_batch_sanitizers,
 )
 
 
@@ -45,11 +46,11 @@ def add_sanitizers(test_proxy):
     add_body_key_sanitizer(json_path="phoneNumbers[*].id", value="sanitized")
     add_body_key_sanitizer(
         json_path="phoneNumbers[*].phoneNumber", value="sanitized")
-    
+
     add_general_regex_sanitizer(
         regex=r"-[0-9a-fA-F]{32}\.[0-9a-zA-Z\.]*(\.com|\.net|\.test)", value=".sanitized.com")
-    
-    add_general_regex_sanitizer(regex=r"[%2B\d]{10,15}", value="sanitized")
+
+    add_general_regex_sanitizer(regex=r"(?:(?:%2B)|\+)\d{10,15}", value="sanitized")
 
     add_general_regex_sanitizer(
         regex=r"phoneNumbers/[%2B\d]{10,15}", value="phoneNumbers/sanitized")
@@ -68,3 +69,9 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="x-ms-request-id", value="sanitized")
     add_header_regex_sanitizer(
         key="Content-Security-Policy-Report-Only", value="sanitized")
+
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3493: $..name
+    #  - AZSDK2003: Location
+    remove_batch_sanitizers(["AZSDK3493", "AZSDK2003"])
+

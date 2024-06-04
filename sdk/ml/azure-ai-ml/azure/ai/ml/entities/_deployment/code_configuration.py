@@ -3,7 +3,8 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Optional
+import os
+from typing import Optional, Union
 
 from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml.entities._assets import Code
@@ -14,24 +15,38 @@ module_logger = logging.getLogger(__name__)
 
 
 class CodeConfiguration(DictMixin):
-    """CodeConfiguration.
+    """Code configuration for a scoring job.
 
-    :param code: Code entity, defaults to None
-    :type code: Union[Code, str, None], optional
-    :param scoring_script: defaults to None
-    :type scoring_script: str, optional
+    :param code: The code directory containing the scoring script. The code can be an Code object, an ARM resource ID
+        of an existing code asset, a local path, or "http:", "https:", or "azureml:" url pointing to a remote location.
+    :type code: Optional[Union[~azure.ai.ml.entities.Code, str]]
+    :param scoring_script: The scoring script file path relative to the code directory.
+    :type scoring_script: Optional[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_misc.py
+            :start-after: [START code_configuration]
+            :end-before: [END code_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Creating a CodeConfiguration for a BatchDeployment.
     """
 
     def __init__(
         self,
-        code: Optional[str] = None,
-        scoring_script: Optional[str] = None,
-    ):
-        self.code = code
-        self._scoring_script = scoring_script
+        code: Optional[Union[str, os.PathLike]] = None,
+        scoring_script: Optional[Union[str, os.PathLike]] = None,
+    ) -> None:
+        self.code: Optional[Union[str, os.PathLike]] = code
+        self._scoring_script: Optional[Union[str, os.PathLike]] = scoring_script
 
     @property
-    def scoring_script(self) -> str:
+    def scoring_script(self) -> Optional[Union[str, os.PathLike]]:
+        """The scoring script file path relative to the code directory.
+
+        :rtype: str
+        """
         return self._scoring_script
 
     def _to_rest_code_configuration(self) -> RestCodeConfiguration:
@@ -49,12 +64,13 @@ class CodeConfiguration(DictMixin):
             )
 
     @staticmethod
-    def _from_rest_code_configuration(code_configuration: RestCodeConfiguration):
+    def _from_rest_code_configuration(code_configuration: RestCodeConfiguration) -> Optional["CodeConfiguration"]:
         if code_configuration:
             return CodeConfiguration(
                 code=code_configuration.code_id,
                 scoring_script=code_configuration.scoring_script,
             )
+        return None
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, CodeConfiguration):

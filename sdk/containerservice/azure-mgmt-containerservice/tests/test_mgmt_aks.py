@@ -26,24 +26,24 @@
 #   ResolvePrivateLinkServiceIdOperations : 1/1
 
 import unittest
+import pytest
 import time
 
 import azure.mgmt.containerservice
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = 'eastus'
 
 
-class MgmtContainerServiceClientTest(AzureMgmtTestCase):
+class TestMgmtContainerServiceClient(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtContainerServiceClientTest, self).setUp()
+    def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.containerservice.ContainerServiceClient
         )
 
-    @unittest.skip('hard to test')
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @pytest.mark.skip('hard to test')
+    @ResourceGroupPreparer()
     def test_managed_clusters(self, resource_group):
         CLIENT_ID = getattr(self.settings, 'CLIENT_ID', "123")
         CLIENT_SECRET = getattr(self.settings, 'CLIENT_SECRET', "123")
@@ -129,13 +129,15 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
                                                                 resource_name=RESOURCE_NAME)
         result.result()
 
-    @unittest.skip('hard to test')
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @ResourceGroupPreparer()
+    @recorded_by_proxy
     def test_operations(self):
-        result = self.mgmt_client.operations.list()
+        result = list(self.mgmt_client.operations.list())
+        for item in result:
+            print(item.as_dict())
 
-    @unittest.skip('hard to test')
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @pytest.mark.skip('hard to test')
+    @ResourceGroupPreparer()
     def test_privateLinkResources(self, resource_group):
         CLIENT_ID = getattr(self.settings, 'CLIENT_ID', "123")
         CLIENT_SECRET = getattr(self.settings, 'CLIENT_SECRET', "123")
@@ -182,8 +184,8 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
         # 1
         self.mgmt_client.private_link_resources.list(resource_group_name=RESOURCE_GROUP, resource_name=RESOURCE_NAME)
 
-    @unittest.skip('hard to test')
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @pytest.mark.skip('hard to test')
+    @ResourceGroupPreparer()
     def test_resolvePrivateLinkServiceId(self, resource_group):
         CLIENT_ID = getattr(self.settings, 'CLIENT_ID', "123")
         CLIENT_SECRET = getattr(self.settings, 'CLIENT_SECRET', "123")
@@ -234,8 +236,8 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
         self.mgmt_client.resolve_private_link_service_id.post(resource_group_name=RESOURCE_GROUP,
                                                               resource_name=RESOURCE_NAME, parameters=BODY)
 
-    @unittest.skip('hard to test')
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @pytest.mark.skip('hard to test')
+    @ResourceGroupPreparer()
     def test_agentPools(self, resource_group):
         CLIENT_ID = getattr(self.settings, 'CLIENT_ID', "123")
         CLIENT_SECRET = getattr(self.settings, 'CLIENT_SECRET', "123")
@@ -318,7 +320,7 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
         #                                                  resource_name=RESOURCE_NAME, agent_pool_name=AGENT_POOL_NAME,
         #                                                  upgrade_profile_name=UPGRADE_PROFILE_NAME)
 
-    # @ResourceGroupPreparer(location=AZURE_LOCATION)
+    # @ResourceGroupPreparer()
     # def test_privateEndpointConnections(self, resource_group):
     #     CLIENT_ID = self.settings.CLIENT_ID or "123"
     #     CLIENT_SECRET = self.settings.CLIENT_SECRET or "123"
@@ -382,7 +384,7 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
     #     result = result.result()
 
     # # the interface is going to retire, so needn't test
-    # @ResourceGroupPreparer(location=AZURE_LOCATION)
+    # @ResourceGroupPreparer()
     # def test_containerServices(self, resource_group):
     #     CLIENT_ID = self.settings.CLIENT_ID or "123"
     #     CLIENT_SECRET = self.settings.CLIENT_SECRET or "123"
@@ -452,7 +454,7 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
     #
     #     # /ContainerServices/get/List Container Service Orchestrators[get]
     #
-    #     result = self.mgmt_client.container_services.list_orchestrators(location=AZURE_LOCATION)
+    #     result = self.mgmt_client.container_services.list_orchestrators()
     #
     #     # /ContainerServices/get/List Container Services[get]
     #
@@ -463,7 +465,7 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
     #     # result = self.mgmt_client.container_services.begin_delete(resource_group_name=RESOURCE_GROUP, container_service_name=CONTAINER_SERVICE_NAME)
     #     # result = result.result()
     #
-    # @ResourceGroupPreparer(location=AZURE_LOCATION)
+    # @ResourceGroupPreparer()
     # def test_OpenShiftManagedClusters(self, resource_group):
     #     SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
     #     TENANT_ID = self.settings.TENANT_ID

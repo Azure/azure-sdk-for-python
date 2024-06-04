@@ -17,299 +17,76 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AADProfileResponse(_serialization.Model):
-    """AAD Profile specifies attributes for Azure Active Directory integration.
+class AddonStatusProfile(_serialization.Model):
+    """The status profile of the addons and other kubernetes components.
 
-    :ivar admin_group_object_i_ds: The list of AAD group object IDs that will have admin role of
-     the cluster.
-    :vartype admin_group_object_i_ds: list[str]
-    :ivar client_app_id: The client AAD application ID.
-    :vartype client_app_id: str
-    :ivar enable_azure_rbac: Whether to enable Azure RBAC for Kubernetes authorization.
-    :vartype enable_azure_rbac: bool
-    :ivar managed: Whether to enable managed AAD.
-    :vartype managed: bool
-    :ivar server_app_id: The server AAD application ID.
-    :vartype server_app_id: str
-    :ivar tenant_id: The AAD tenant ID to use for authentication. If not specified, will use the
-     tenant of the deployment subscription.
-    :vartype tenant_id: str
-    """
-
-    _attribute_map = {
-        "admin_group_object_i_ds": {"key": "adminGroupObjectIDs", "type": "[str]"},
-        "client_app_id": {"key": "clientAppID", "type": "str"},
-        "enable_azure_rbac": {"key": "enableAzureRbac", "type": "bool"},
-        "managed": {"key": "managed", "type": "bool"},
-        "server_app_id": {"key": "serverAppID", "type": "str"},
-        "tenant_id": {"key": "tenantID", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        admin_group_object_i_ds: Optional[List[str]] = None,
-        client_app_id: Optional[str] = None,
-        enable_azure_rbac: Optional[bool] = None,
-        managed: Optional[bool] = None,
-        server_app_id: Optional[str] = None,
-        tenant_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword admin_group_object_i_ds: The list of AAD group object IDs that will have admin role of
-         the cluster.
-        :paramtype admin_group_object_i_ds: list[str]
-        :keyword client_app_id: The client AAD application ID.
-        :paramtype client_app_id: str
-        :keyword enable_azure_rbac: Whether to enable Azure RBAC for Kubernetes authorization.
-        :paramtype enable_azure_rbac: bool
-        :keyword managed: Whether to enable managed AAD.
-        :paramtype managed: bool
-        :keyword server_app_id: The server AAD application ID.
-        :paramtype server_app_id: str
-        :keyword tenant_id: The AAD tenant ID to use for authentication. If not specified, will use the
-         tenant of the deployment subscription.
-        :paramtype tenant_id: str
-        """
-        super().__init__(**kwargs)
-        self.admin_group_object_i_ds = admin_group_object_i_ds
-        self.client_app_id = client_app_id
-        self.enable_azure_rbac = enable_azure_rbac
-        self.managed = managed
-        self.server_app_id = server_app_id
-        self.tenant_id = tenant_id
-
-
-class AADProfileSecret(_serialization.Model):
-    """The server AAD application secret.
-
-    :ivar server_app_secret: The server AAD application secret.
-    :vartype server_app_secret: str
-    """
-
-    _attribute_map = {
-        "server_app_secret": {"key": "serverAppSecret", "type": "str"},
-    }
-
-    def __init__(self, *, server_app_secret: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword server_app_secret: The server AAD application secret.
-        :paramtype server_app_secret: str
-        """
-        super().__init__(**kwargs)
-        self.server_app_secret = server_app_secret
-
-
-class AADProfile(AADProfileSecret, AADProfileResponse):
-    """AAD Profile specifies attributes for Azure Active Directory integration.
-
-    :ivar admin_group_object_i_ds: The list of AAD group object IDs that will have admin role of
-     the cluster.
-    :vartype admin_group_object_i_ds: list[str]
-    :ivar client_app_id: The client AAD application ID.
-    :vartype client_app_id: str
-    :ivar enable_azure_rbac: Whether to enable Azure RBAC for Kubernetes authorization.
-    :vartype enable_azure_rbac: bool
-    :ivar managed: Whether to enable managed AAD.
-    :vartype managed: bool
-    :ivar server_app_id: The server AAD application ID.
-    :vartype server_app_id: str
-    :ivar tenant_id: The AAD tenant ID to use for authentication. If not specified, will use the
-     tenant of the deployment subscription.
-    :vartype tenant_id: str
-    :ivar server_app_secret: The server AAD application secret.
-    :vartype server_app_secret: str
-    """
-
-    _attribute_map = {
-        "admin_group_object_i_ds": {"key": "adminGroupObjectIDs", "type": "[str]"},
-        "client_app_id": {"key": "clientAppID", "type": "str"},
-        "enable_azure_rbac": {"key": "enableAzureRbac", "type": "bool"},
-        "managed": {"key": "managed", "type": "bool"},
-        "server_app_id": {"key": "serverAppID", "type": "str"},
-        "tenant_id": {"key": "tenantID", "type": "str"},
-        "server_app_secret": {"key": "serverAppSecret", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        admin_group_object_i_ds: Optional[List[str]] = None,
-        client_app_id: Optional[str] = None,
-        enable_azure_rbac: Optional[bool] = None,
-        managed: Optional[bool] = None,
-        server_app_id: Optional[str] = None,
-        tenant_id: Optional[str] = None,
-        server_app_secret: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword admin_group_object_i_ds: The list of AAD group object IDs that will have admin role of
-         the cluster.
-        :paramtype admin_group_object_i_ds: list[str]
-        :keyword client_app_id: The client AAD application ID.
-        :paramtype client_app_id: str
-        :keyword enable_azure_rbac: Whether to enable Azure RBAC for Kubernetes authorization.
-        :paramtype enable_azure_rbac: bool
-        :keyword managed: Whether to enable managed AAD.
-        :paramtype managed: bool
-        :keyword server_app_id: The server AAD application ID.
-        :paramtype server_app_id: str
-        :keyword tenant_id: The AAD tenant ID to use for authentication. If not specified, will use the
-         tenant of the deployment subscription.
-        :paramtype tenant_id: str
-        :keyword server_app_secret: The server AAD application secret.
-        :paramtype server_app_secret: str
-        """
-        super().__init__(
-            server_app_secret=server_app_secret,
-            admin_group_object_i_ds=admin_group_object_i_ds,
-            client_app_id=client_app_id,
-            enable_azure_rbac=enable_azure_rbac,
-            managed=managed,
-            server_app_id=server_app_id,
-            tenant_id=tenant_id,
-            **kwargs
-        )
-        self.admin_group_object_i_ds = admin_group_object_i_ds
-        self.client_app_id = client_app_id
-        self.enable_azure_rbac = enable_azure_rbac
-        self.managed = managed
-        self.server_app_id = server_app_id
-        self.tenant_id = tenant_id
-        self.server_app_secret = server_app_secret
-
-
-class AddonProfiles(_serialization.Model):
-    """Addon configurations.
-
-    :ivar config: Config - Key-value pairs for configuring an add-on.
-    :vartype config: dict[str, str]
-    :ivar enabled: Enabled - Whether the add-on is enabled or not.
-    :vartype enabled: bool
-    """
-
-    _attribute_map = {
-        "config": {"key": "config", "type": "{str}"},
-        "enabled": {"key": "enabled", "type": "bool"},
-    }
-
-    def __init__(
-        self, *, config: Optional[Dict[str, str]] = None, enabled: Optional[bool] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword config: Config - Key-value pairs for configuring an add-on.
-        :paramtype config: dict[str, str]
-        :keyword enabled: Enabled - Whether the add-on is enabled or not.
-        :paramtype enabled: bool
-        """
-        super().__init__(**kwargs)
-        self.config = config
-        self.enabled = enabled
-
-
-class AddonStatus(_serialization.Model):
-    """Status of the addon.
-
-    :ivar error_message: ErrorMessage will be set in the event that there is a terminal problem
-     reconciling the AddOn and will contain a more verbose string suitable for logging and human
-     consumption.
-    :vartype error_message: str
-    :ivar phase: Phase represents the current phase of cluster actuation. E.g. Pending, Running,
-     Terminating, Failed etc.
-    :vartype phase: str
-    :ivar ready:
+    :ivar name: Name of the addon or component.
+    :vartype name: str
+    :ivar phase: Observed phase of the addon or component on the provisioned cluster. Possible
+     values include: 'pending', 'provisioning', 'provisioning {HelmChartInstalled}', 'provisioning
+     {MSICertificateDownloaded}', 'provisioned', 'deleting', 'failed', 'upgrading'. Known values
+     are: "pending", "provisioning", "provisioning {HelmChartInstalled}", "provisioning
+     {MSICertificateDownloaded}", "provisioned", "deleting", "failed", and "upgrading".
+    :vartype phase: str or ~azure.mgmt.hybridcontainerservice.models.AddonPhase
+    :ivar ready: Indicates whether the addon or component is ready.
     :vartype ready: bool
+    :ivar error_message: Observed error message from the addon or component.
+    :vartype error_message: str
     """
 
     _attribute_map = {
-        "error_message": {"key": "errorMessage", "type": "str"},
+        "name": {"key": "name", "type": "str"},
         "phase": {"key": "phase", "type": "str"},
         "ready": {"key": "ready", "type": "bool"},
+        "error_message": {"key": "errorMessage", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        error_message: Optional[str] = None,
-        phase: Optional[str] = None,
+        name: Optional[str] = None,
+        phase: Optional[Union[str, "_models.AddonPhase"]] = None,
         ready: Optional[bool] = None,
+        error_message: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword error_message: ErrorMessage will be set in the event that there is a terminal problem
-         reconciling the AddOn and will contain a more verbose string suitable for logging and human
-         consumption.
-        :paramtype error_message: str
-        :keyword phase: Phase represents the current phase of cluster actuation. E.g. Pending, Running,
-         Terminating, Failed etc.
-        :paramtype phase: str
-        :keyword ready:
+        :keyword name: Name of the addon or component.
+        :paramtype name: str
+        :keyword phase: Observed phase of the addon or component on the provisioned cluster. Possible
+         values include: 'pending', 'provisioning', 'provisioning {HelmChartInstalled}', 'provisioning
+         {MSICertificateDownloaded}', 'provisioned', 'deleting', 'failed', 'upgrading'. Known values
+         are: "pending", "provisioning", "provisioning {HelmChartInstalled}", "provisioning
+         {MSICertificateDownloaded}", "provisioned", "deleting", "failed", and "upgrading".
+        :paramtype phase: str or ~azure.mgmt.hybridcontainerservice.models.AddonPhase
+        :keyword ready: Indicates whether the addon or component is ready.
         :paramtype ready: bool
+        :keyword error_message: Observed error message from the addon or component.
+        :paramtype error_message: str
         """
         super().__init__(**kwargs)
-        self.error_message = error_message
+        self.name = name
         self.phase = phase
         self.ready = ready
+        self.error_message = error_message
 
 
-class AgentPool(_serialization.Model):  # pylint: disable=too-many-instance-attributes
-    """The agentPool resource definition.
+class Resource(_serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: The resource location.
-    :vartype location: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.hybridcontainerservice.models.SystemData
-    :ivar extended_location:
-    :vartype extended_location: ~azure.mgmt.hybridcontainerservice.models.AgentPoolExtendedLocation
-    :ivar count: Count - Number of agents to host docker containers. Allowed values must be in the
-     range of 1 to 100 (inclusive). The default value is 1.
-    :vartype count: int
-    :ivar availability_zones: AvailabilityZones - The list of Availability zones to use for nodes.
-     Datacenter racks modelled as zones.
-    :vartype availability_zones: list[str]
-    :ivar max_count: The maximum number of nodes for auto-scaling.
-    :vartype max_count: int
-    :ivar max_pods: The maximum number of pods that can run on a node.
-    :vartype max_pods: int
-    :ivar min_count: The minimum number of nodes for auto-scaling.
-    :vartype min_count: int
-    :ivar mode: Mode - AgentPoolMode represents mode of an agent pool. Possible values include:
-     'System', 'LB', 'User'. Default is 'User'. Known values are: "System", "LB", and "User".
-    :vartype mode: str or ~azure.mgmt.hybridcontainerservice.models.Mode
-    :ivar node_labels: NodeLabels - Agent pool node labels to be persisted across all nodes in
-     agent pool.
-    :vartype node_labels: dict[str, str]
-    :ivar node_taints: NodeTaints - Taints added to new nodes during node pool create and scale.
-     For example, key=value:NoSchedule.
-    :vartype node_taints: list[str]
-    :ivar os_type: OsType - OsType to be used to specify os type. Choose from Linux and Windows.
-     Default to Linux. Possible values include: 'Linux', 'Windows'. Known values are: "Linux" and
-     "Windows".
-    :vartype os_type: str or ~azure.mgmt.hybridcontainerservice.models.OsType
-    :ivar node_image_version: The version of node image.
-    :vartype node_image_version: str
-    :ivar vm_size: VmSize - The size of the agent pool VMs.
-    :vartype vm_size: str
-    :ivar cloud_provider_profile: The underlying cloud infra provider properties.
-    :vartype cloud_provider_profile: ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfile
-    :ivar provisioning_state: Known values are: "Succeeded", "Failed", "Deleting", "InProgress",
-     and "Canceled".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.hybridcontainerservice.models.AgentPoolProvisioningState
-    :ivar status: HybridAKSNodePoolStatus defines the observed state of HybridAKSNodePool.
-    :vartype status: ~azure.mgmt.hybridcontainerservice.models.AgentPoolProvisioningStatusStatus
     """
 
     _validation = {
@@ -317,149 +94,127 @@ class AgentPool(_serialization.Model):  # pylint: disable=too-many-instance-attr
         "name": {"readonly": True},
         "type": {"readonly": True},
         "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "extended_location": {"key": "extendedLocation", "type": "AgentPoolExtendedLocation"},
-        "count": {"key": "properties.count", "type": "int"},
-        "availability_zones": {"key": "properties.availabilityZones", "type": "[str]"},
-        "max_count": {"key": "properties.maxCount", "type": "int"},
-        "max_pods": {"key": "properties.maxPods", "type": "int"},
-        "min_count": {"key": "properties.minCount", "type": "int"},
-        "mode": {"key": "properties.mode", "type": "str"},
-        "node_labels": {"key": "properties.nodeLabels", "type": "{str}"},
-        "node_taints": {"key": "properties.nodeTaints", "type": "[str]"},
-        "os_type": {"key": "properties.osType", "type": "str"},
-        "node_image_version": {"key": "properties.nodeImageVersion", "type": "str"},
-        "vm_size": {"key": "properties.vmSize", "type": "str"},
-        "cloud_provider_profile": {"key": "properties.cloudProviderProfile", "type": "CloudProviderProfile"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "status": {"key": "properties.status", "type": "AgentPoolProvisioningStatusStatus"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.system_data = None
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridcontainerservice.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+
+
+class AgentPool(ProxyResource):
+    """The agentPool resource definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridcontainerservice.models.SystemData
+    :ivar properties: Properties of the agent pool resource.
+    :vartype properties: ~azure.mgmt.hybridcontainerservice.models.AgentPoolProperties
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar extended_location: Extended location pointing to the underlying infrastructure.
+    :vartype extended_location: ~azure.mgmt.hybridcontainerservice.models.ExtendedLocation
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "AgentPoolProperties"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
     }
 
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
+        properties: Optional["_models.AgentPoolProperties"] = None,
         tags: Optional[Dict[str, str]] = None,
-        extended_location: Optional["_models.AgentPoolExtendedLocation"] = None,
-        count: int = 1,
-        availability_zones: Optional[List[str]] = None,
-        max_count: Optional[int] = None,
-        max_pods: Optional[int] = None,
-        min_count: Optional[int] = None,
-        mode: Union[str, "_models.Mode"] = "User",
-        node_labels: Optional[Dict[str, str]] = None,
-        node_taints: Optional[List[str]] = None,
-        os_type: Union[str, "_models.OsType"] = "Linux",
-        node_image_version: Optional[str] = None,
-        vm_size: Optional[str] = None,
-        cloud_provider_profile: Optional["_models.CloudProviderProfile"] = None,
-        status: Optional["_models.AgentPoolProvisioningStatusStatus"] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: The resource location.
-        :paramtype location: str
+        :keyword properties: Properties of the agent pool resource.
+        :paramtype properties: ~azure.mgmt.hybridcontainerservice.models.AgentPoolProperties
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword extended_location:
-        :paramtype extended_location:
-         ~azure.mgmt.hybridcontainerservice.models.AgentPoolExtendedLocation
-        :keyword count: Count - Number of agents to host docker containers. Allowed values must be in
-         the range of 1 to 100 (inclusive). The default value is 1.
-        :paramtype count: int
-        :keyword availability_zones: AvailabilityZones - The list of Availability zones to use for
-         nodes. Datacenter racks modelled as zones.
-        :paramtype availability_zones: list[str]
-        :keyword max_count: The maximum number of nodes for auto-scaling.
-        :paramtype max_count: int
-        :keyword max_pods: The maximum number of pods that can run on a node.
-        :paramtype max_pods: int
-        :keyword min_count: The minimum number of nodes for auto-scaling.
-        :paramtype min_count: int
-        :keyword mode: Mode - AgentPoolMode represents mode of an agent pool. Possible values include:
-         'System', 'LB', 'User'. Default is 'User'. Known values are: "System", "LB", and "User".
-        :paramtype mode: str or ~azure.mgmt.hybridcontainerservice.models.Mode
-        :keyword node_labels: NodeLabels - Agent pool node labels to be persisted across all nodes in
-         agent pool.
-        :paramtype node_labels: dict[str, str]
-        :keyword node_taints: NodeTaints - Taints added to new nodes during node pool create and scale.
-         For example, key=value:NoSchedule.
-        :paramtype node_taints: list[str]
-        :keyword os_type: OsType - OsType to be used to specify os type. Choose from Linux and Windows.
-         Default to Linux. Possible values include: 'Linux', 'Windows'. Known values are: "Linux" and
-         "Windows".
-        :paramtype os_type: str or ~azure.mgmt.hybridcontainerservice.models.OsType
-        :keyword node_image_version: The version of node image.
-        :paramtype node_image_version: str
-        :keyword vm_size: VmSize - The size of the agent pool VMs.
-        :paramtype vm_size: str
-        :keyword cloud_provider_profile: The underlying cloud infra provider properties.
-        :paramtype cloud_provider_profile:
-         ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfile
-        :keyword status: HybridAKSNodePoolStatus defines the observed state of HybridAKSNodePool.
-        :paramtype status: ~azure.mgmt.hybridcontainerservice.models.AgentPoolProvisioningStatusStatus
+        :keyword extended_location: Extended location pointing to the underlying infrastructure.
+        :paramtype extended_location: ~azure.mgmt.hybridcontainerservice.models.ExtendedLocation
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = location
+        self.properties = properties
         self.tags = tags
-        self.system_data = None
         self.extended_location = extended_location
-        self.count = count
-        self.availability_zones = availability_zones
-        self.max_count = max_count
-        self.max_pods = max_pods
-        self.min_count = min_count
-        self.mode = mode
-        self.node_labels = node_labels
-        self.node_taints = node_taints
-        self.os_type = os_type
-        self.node_image_version = node_image_version
-        self.vm_size = vm_size
-        self.cloud_provider_profile = cloud_provider_profile
-        self.provisioning_state = None
-        self.status = status
-
-
-class AgentPoolExtendedLocation(_serialization.Model):
-    """AgentPoolExtendedLocation.
-
-    :ivar type: The extended location type.
-    :vartype type: str
-    :ivar name: The extended location name.
-    :vartype name: str
-    """
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-    }
-
-    def __init__(self, *, type: Optional[str] = None, name: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword type: The extended location type.
-        :paramtype type: str
-        :keyword name: The extended location name.
-        :paramtype name: str
-        """
-        super().__init__(**kwargs)
-        self.type = type
-        self.name = name
 
 
 class AgentPoolListResult(_serialization.Model):
-    """AgentPoolListResult.
+    """List of all agent pool resources associated with the provisioned cluster.
 
     :ivar value:
     :vartype value: list[~azure.mgmt.hybridcontainerservice.models.AgentPool]
@@ -487,10 +242,10 @@ class AgentPoolListResult(_serialization.Model):
 
 
 class AgentPoolName(_serialization.Model):
-    """AgentPool Name.
+    """Name of the default Agent Pool.
 
-    :ivar name: Unique name of the agent pool profile in the context of the subscription and
-     resource group.
+    :ivar name: Unique name of the default agent pool in the context of the provisioned cluster.
+     Default value is :code:`<clusterName>`-nodepool1.
     :vartype name: str
     """
 
@@ -500,129 +255,94 @@ class AgentPoolName(_serialization.Model):
 
     def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword name: Unique name of the agent pool profile in the context of the subscription and
-         resource group.
+        :keyword name: Unique name of the default agent pool in the context of the provisioned cluster.
+         Default value is :code:`<clusterName>`-nodepool1.
         :paramtype name: str
         """
         super().__init__(**kwargs)
         self.name = name
 
 
-class AgentPoolProfile(_serialization.Model):  # pylint: disable=too-many-instance-attributes
-    """NodePool configuration.
+class AgentPoolProfile(_serialization.Model):
+    """Profile for agent pool properties specified during creation.
 
-    :ivar count: Count - Number of agents to host docker containers. Allowed values must be in the
-     range of 1 to 100 (inclusive). The default value is 1.
-    :vartype count: int
-    :ivar availability_zones: AvailabilityZones - The list of Availability zones to use for nodes.
-     Datacenter racks modelled as zones.
-    :vartype availability_zones: list[str]
+    :ivar os_type: The particular KubernetesVersion Image OS Type (Linux, Windows). Known values
+     are: "Windows" and "Linux".
+    :vartype os_type: str or ~azure.mgmt.hybridcontainerservice.models.OsType
+    :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is CBLMariner if OSType
+     is Linux. The default is Windows2019 when OSType is Windows. Known values are: "CBLMariner",
+     "Windows2019", and "Windows2022".
+    :vartype os_sku: str or ~azure.mgmt.hybridcontainerservice.models.OSSKU
+    :ivar node_labels: The node labels to be persisted across all nodes in agent pool.
+    :vartype node_labels: dict[str, str]
+    :ivar node_taints: Taints added to new nodes during node pool create and scale. For example,
+     key=value:NoSchedule.
+    :vartype node_taints: list[str]
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
-    :ivar max_pods: The maximum number of pods that can run on a node.
-    :vartype max_pods: int
     :ivar min_count: The minimum number of nodes for auto-scaling.
     :vartype min_count: int
-    :ivar mode: Mode - AgentPoolMode represents mode of an agent pool. Possible values include:
-     'System', 'LB', 'User'. Default is 'User'. Known values are: "System", "LB", and "User".
-    :vartype mode: str or ~azure.mgmt.hybridcontainerservice.models.Mode
-    :ivar node_labels: NodeLabels - Agent pool node labels to be persisted across all nodes in
-     agent pool.
-    :vartype node_labels: dict[str, str]
-    :ivar node_taints: NodeTaints - Taints added to new nodes during node pool create and scale.
-     For example, key=value:NoSchedule.
-    :vartype node_taints: list[str]
-    :ivar os_type: OsType - OsType to be used to specify os type. Choose from Linux and Windows.
-     Default to Linux. Possible values include: 'Linux', 'Windows'. Known values are: "Linux" and
-     "Windows".
-    :vartype os_type: str or ~azure.mgmt.hybridcontainerservice.models.OsType
-    :ivar node_image_version: The version of node image.
-    :vartype node_image_version: str
-    :ivar vm_size: VmSize - The size of the agent pool VMs.
-    :vartype vm_size: str
-    :ivar cloud_provider_profile: The underlying cloud infra provider properties.
-    :vartype cloud_provider_profile: ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfile
+    :ivar enable_auto_scaling: Whether to enable auto-scaler. Default value is false.
+    :vartype enable_auto_scaling: bool
+    :ivar max_pods: The maximum number of pods that can run on a node.
+    :vartype max_pods: int
     """
 
     _attribute_map = {
-        "count": {"key": "count", "type": "int"},
-        "availability_zones": {"key": "availabilityZones", "type": "[str]"},
-        "max_count": {"key": "maxCount", "type": "int"},
-        "max_pods": {"key": "maxPods", "type": "int"},
-        "min_count": {"key": "minCount", "type": "int"},
-        "mode": {"key": "mode", "type": "str"},
+        "os_type": {"key": "osType", "type": "str"},
+        "os_sku": {"key": "osSKU", "type": "str"},
         "node_labels": {"key": "nodeLabels", "type": "{str}"},
         "node_taints": {"key": "nodeTaints", "type": "[str]"},
-        "os_type": {"key": "osType", "type": "str"},
-        "node_image_version": {"key": "nodeImageVersion", "type": "str"},
-        "vm_size": {"key": "vmSize", "type": "str"},
-        "cloud_provider_profile": {"key": "cloudProviderProfile", "type": "CloudProviderProfile"},
+        "max_count": {"key": "maxCount", "type": "int"},
+        "min_count": {"key": "minCount", "type": "int"},
+        "enable_auto_scaling": {"key": "enableAutoScaling", "type": "bool"},
+        "max_pods": {"key": "maxPods", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        count: int = 1,
-        availability_zones: Optional[List[str]] = None,
-        max_count: Optional[int] = None,
-        max_pods: Optional[int] = None,
-        min_count: Optional[int] = None,
-        mode: Union[str, "_models.Mode"] = "User",
+        os_type: Optional[Union[str, "_models.OsType"]] = None,
+        os_sku: Optional[Union[str, "_models.OSSKU"]] = None,
         node_labels: Optional[Dict[str, str]] = None,
         node_taints: Optional[List[str]] = None,
-        os_type: Union[str, "_models.OsType"] = "Linux",
-        node_image_version: Optional[str] = None,
-        vm_size: Optional[str] = None,
-        cloud_provider_profile: Optional["_models.CloudProviderProfile"] = None,
+        max_count: Optional[int] = None,
+        min_count: Optional[int] = None,
+        enable_auto_scaling: bool = False,
+        max_pods: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword count: Count - Number of agents to host docker containers. Allowed values must be in
-         the range of 1 to 100 (inclusive). The default value is 1.
-        :paramtype count: int
-        :keyword availability_zones: AvailabilityZones - The list of Availability zones to use for
-         nodes. Datacenter racks modelled as zones.
-        :paramtype availability_zones: list[str]
+        :keyword os_type: The particular KubernetesVersion Image OS Type (Linux, Windows). Known values
+         are: "Windows" and "Linux".
+        :paramtype os_type: str or ~azure.mgmt.hybridcontainerservice.models.OsType
+        :keyword os_sku: Specifies the OS SKU used by the agent pool. The default is CBLMariner if
+         OSType is Linux. The default is Windows2019 when OSType is Windows. Known values are:
+         "CBLMariner", "Windows2019", and "Windows2022".
+        :paramtype os_sku: str or ~azure.mgmt.hybridcontainerservice.models.OSSKU
+        :keyword node_labels: The node labels to be persisted across all nodes in agent pool.
+        :paramtype node_labels: dict[str, str]
+        :keyword node_taints: Taints added to new nodes during node pool create and scale. For example,
+         key=value:NoSchedule.
+        :paramtype node_taints: list[str]
         :keyword max_count: The maximum number of nodes for auto-scaling.
         :paramtype max_count: int
-        :keyword max_pods: The maximum number of pods that can run on a node.
-        :paramtype max_pods: int
         :keyword min_count: The minimum number of nodes for auto-scaling.
         :paramtype min_count: int
-        :keyword mode: Mode - AgentPoolMode represents mode of an agent pool. Possible values include:
-         'System', 'LB', 'User'. Default is 'User'. Known values are: "System", "LB", and "User".
-        :paramtype mode: str or ~azure.mgmt.hybridcontainerservice.models.Mode
-        :keyword node_labels: NodeLabels - Agent pool node labels to be persisted across all nodes in
-         agent pool.
-        :paramtype node_labels: dict[str, str]
-        :keyword node_taints: NodeTaints - Taints added to new nodes during node pool create and scale.
-         For example, key=value:NoSchedule.
-        :paramtype node_taints: list[str]
-        :keyword os_type: OsType - OsType to be used to specify os type. Choose from Linux and Windows.
-         Default to Linux. Possible values include: 'Linux', 'Windows'. Known values are: "Linux" and
-         "Windows".
-        :paramtype os_type: str or ~azure.mgmt.hybridcontainerservice.models.OsType
-        :keyword node_image_version: The version of node image.
-        :paramtype node_image_version: str
-        :keyword vm_size: VmSize - The size of the agent pool VMs.
-        :paramtype vm_size: str
-        :keyword cloud_provider_profile: The underlying cloud infra provider properties.
-        :paramtype cloud_provider_profile:
-         ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfile
+        :keyword enable_auto_scaling: Whether to enable auto-scaler. Default value is false.
+        :paramtype enable_auto_scaling: bool
+        :keyword max_pods: The maximum number of pods that can run on a node.
+        :paramtype max_pods: int
         """
         super().__init__(**kwargs)
-        self.count = count
-        self.availability_zones = availability_zones
-        self.max_count = max_count
-        self.max_pods = max_pods
-        self.min_count = min_count
-        self.mode = mode
+        self.os_type = os_type
+        self.os_sku = os_sku
         self.node_labels = node_labels
         self.node_taints = node_taints
-        self.os_type = os_type
-        self.node_image_version = node_image_version
-        self.vm_size = vm_size
-        self.cloud_provider_profile = cloud_provider_profile
+        self.max_count = max_count
+        self.min_count = min_count
+        self.enable_auto_scaling = enable_auto_scaling
+        self.max_pods = max_pods
 
 
 class AgentPoolProvisioningStatus(_serialization.Model):
@@ -630,11 +350,12 @@ class AgentPoolProvisioningStatus(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar provisioning_state: Known values are: "Succeeded", "Failed", "Deleting", "InProgress",
-     and "Canceled".
+    :ivar provisioning_state: The status of the latest long running operation for the agent pool.
+     Known values are: "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Deleting",
+     "Updating", "Upgrading", and "Accepted".
     :vartype provisioning_state: str or
-     ~azure.mgmt.hybridcontainerservice.models.AgentPoolProvisioningState
-    :ivar status: HybridAKSNodePoolStatus defines the observed state of HybridAKSNodePool.
+     ~azure.mgmt.hybridcontainerservice.models.ResourceProvisioningState
+    :ivar status: The observed status of the agent pool.
     :vartype status: ~azure.mgmt.hybridcontainerservice.models.AgentPoolProvisioningStatusStatus
     """
 
@@ -649,7 +370,7 @@ class AgentPoolProvisioningStatus(_serialization.Model):
 
     def __init__(self, *, status: Optional["_models.AgentPoolProvisioningStatusStatus"] = None, **kwargs: Any) -> None:
         """
-        :keyword status: HybridAKSNodePoolStatus defines the observed state of HybridAKSNodePool.
+        :keyword status: The observed status of the agent pool.
         :paramtype status: ~azure.mgmt.hybridcontainerservice.models.AgentPoolProvisioningStatusStatus
         """
         super().__init__(**kwargs)
@@ -657,71 +378,105 @@ class AgentPoolProvisioningStatus(_serialization.Model):
         self.status = status
 
 
-class AgentPoolProperties(
-    AgentPoolProfile, AgentPoolProvisioningStatus
-):  # pylint: disable=too-many-instance-attributes
-    """AgentPoolProperties.
+class AgentPoolUpdateProfile(_serialization.Model):
+    """Profile for agent pool properties that can be updated.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar provisioning_state: Known values are: "Succeeded", "Failed", "Deleting", "InProgress",
-     and "Canceled".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.hybridcontainerservice.models.AgentPoolProvisioningState
-    :ivar status: HybridAKSNodePoolStatus defines the observed state of HybridAKSNodePool.
-    :vartype status: ~azure.mgmt.hybridcontainerservice.models.AgentPoolProvisioningStatusStatus
-    :ivar count: Count - Number of agents to host docker containers. Allowed values must be in the
-     range of 1 to 100 (inclusive). The default value is 1.
+    :ivar count: Number of nodes in the agent pool. The default value is 1.
     :vartype count: int
-    :ivar availability_zones: AvailabilityZones - The list of Availability zones to use for nodes.
-     Datacenter racks modelled as zones.
-    :vartype availability_zones: list[str]
+    :ivar vm_size: The VM sku size of the agent pool node VMs.
+    :vartype vm_size: str
+    :ivar kubernetes_version: Version of Kubernetes in use by the agent pool. This is inherited
+     from the kubernetesVersion of the provisioned cluster.
+    :vartype kubernetes_version: str
+    """
+
+    _validation = {
+        "kubernetes_version": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "count": {"key": "count", "type": "int"},
+        "vm_size": {"key": "vmSize", "type": "str"},
+        "kubernetes_version": {"key": "kubernetesVersion", "type": "str"},
+    }
+
+    def __init__(self, *, count: int = 1, vm_size: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword count: Number of nodes in the agent pool. The default value is 1.
+        :paramtype count: int
+        :keyword vm_size: The VM sku size of the agent pool node VMs.
+        :paramtype vm_size: str
+        """
+        super().__init__(**kwargs)
+        self.count = count
+        self.vm_size = vm_size
+        self.kubernetes_version = None
+
+
+class AgentPoolProperties(
+    AgentPoolProfile, AgentPoolUpdateProfile, AgentPoolProvisioningStatus
+):  # pylint: disable=too-many-instance-attributes
+    """Properties of the agent pool resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provisioning_state: The status of the latest long running operation for the agent pool.
+     Known values are: "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Deleting",
+     "Updating", "Upgrading", and "Accepted".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.hybridcontainerservice.models.ResourceProvisioningState
+    :ivar status: The observed status of the agent pool.
+    :vartype status: ~azure.mgmt.hybridcontainerservice.models.AgentPoolProvisioningStatusStatus
+    :ivar count: Number of nodes in the agent pool. The default value is 1.
+    :vartype count: int
+    :ivar vm_size: The VM sku size of the agent pool node VMs.
+    :vartype vm_size: str
+    :ivar kubernetes_version: Version of Kubernetes in use by the agent pool. This is inherited
+     from the kubernetesVersion of the provisioned cluster.
+    :vartype kubernetes_version: str
+    :ivar os_type: The particular KubernetesVersion Image OS Type (Linux, Windows). Known values
+     are: "Windows" and "Linux".
+    :vartype os_type: str or ~azure.mgmt.hybridcontainerservice.models.OsType
+    :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is CBLMariner if OSType
+     is Linux. The default is Windows2019 when OSType is Windows. Known values are: "CBLMariner",
+     "Windows2019", and "Windows2022".
+    :vartype os_sku: str or ~azure.mgmt.hybridcontainerservice.models.OSSKU
+    :ivar node_labels: The node labels to be persisted across all nodes in agent pool.
+    :vartype node_labels: dict[str, str]
+    :ivar node_taints: Taints added to new nodes during node pool create and scale. For example,
+     key=value:NoSchedule.
+    :vartype node_taints: list[str]
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
-    :ivar max_pods: The maximum number of pods that can run on a node.
-    :vartype max_pods: int
     :ivar min_count: The minimum number of nodes for auto-scaling.
     :vartype min_count: int
-    :ivar mode: Mode - AgentPoolMode represents mode of an agent pool. Possible values include:
-     'System', 'LB', 'User'. Default is 'User'. Known values are: "System", "LB", and "User".
-    :vartype mode: str or ~azure.mgmt.hybridcontainerservice.models.Mode
-    :ivar node_labels: NodeLabels - Agent pool node labels to be persisted across all nodes in
-     agent pool.
-    :vartype node_labels: dict[str, str]
-    :ivar node_taints: NodeTaints - Taints added to new nodes during node pool create and scale.
-     For example, key=value:NoSchedule.
-    :vartype node_taints: list[str]
-    :ivar os_type: OsType - OsType to be used to specify os type. Choose from Linux and Windows.
-     Default to Linux. Possible values include: 'Linux', 'Windows'. Known values are: "Linux" and
-     "Windows".
-    :vartype os_type: str or ~azure.mgmt.hybridcontainerservice.models.OsType
-    :ivar node_image_version: The version of node image.
-    :vartype node_image_version: str
-    :ivar vm_size: VmSize - The size of the agent pool VMs.
-    :vartype vm_size: str
-    :ivar cloud_provider_profile: The underlying cloud infra provider properties.
-    :vartype cloud_provider_profile: ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfile
+    :ivar enable_auto_scaling: Whether to enable auto-scaler. Default value is false.
+    :vartype enable_auto_scaling: bool
+    :ivar max_pods: The maximum number of pods that can run on a node.
+    :vartype max_pods: int
     """
 
     _validation = {
         "provisioning_state": {"readonly": True},
+        "kubernetes_version": {"readonly": True},
     }
 
     _attribute_map = {
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "status": {"key": "status", "type": "AgentPoolProvisioningStatusStatus"},
         "count": {"key": "count", "type": "int"},
-        "availability_zones": {"key": "availabilityZones", "type": "[str]"},
-        "max_count": {"key": "maxCount", "type": "int"},
-        "max_pods": {"key": "maxPods", "type": "int"},
-        "min_count": {"key": "minCount", "type": "int"},
-        "mode": {"key": "mode", "type": "str"},
+        "vm_size": {"key": "vmSize", "type": "str"},
+        "kubernetes_version": {"key": "kubernetesVersion", "type": "str"},
+        "os_type": {"key": "osType", "type": "str"},
+        "os_sku": {"key": "osSKU", "type": "str"},
         "node_labels": {"key": "nodeLabels", "type": "{str}"},
         "node_taints": {"key": "nodeTaints", "type": "[str]"},
-        "os_type": {"key": "osType", "type": "str"},
-        "node_image_version": {"key": "nodeImageVersion", "type": "str"},
-        "vm_size": {"key": "vmSize", "type": "str"},
-        "cloud_provider_profile": {"key": "cloudProviderProfile", "type": "CloudProviderProfile"},
+        "max_count": {"key": "maxCount", "type": "int"},
+        "min_count": {"key": "minCount", "type": "int"},
+        "enable_auto_scaling": {"key": "enableAutoScaling", "type": "bool"},
+        "max_pods": {"key": "maxPods", "type": "int"},
     }
 
     def __init__(
@@ -729,382 +484,155 @@ class AgentPoolProperties(
         *,
         status: Optional["_models.AgentPoolProvisioningStatusStatus"] = None,
         count: int = 1,
-        availability_zones: Optional[List[str]] = None,
-        max_count: Optional[int] = None,
-        max_pods: Optional[int] = None,
-        min_count: Optional[int] = None,
-        mode: Union[str, "_models.Mode"] = "User",
+        vm_size: Optional[str] = None,
+        os_type: Optional[Union[str, "_models.OsType"]] = None,
+        os_sku: Optional[Union[str, "_models.OSSKU"]] = None,
         node_labels: Optional[Dict[str, str]] = None,
         node_taints: Optional[List[str]] = None,
-        os_type: Union[str, "_models.OsType"] = "Linux",
-        node_image_version: Optional[str] = None,
-        vm_size: Optional[str] = None,
-        cloud_provider_profile: Optional["_models.CloudProviderProfile"] = None,
+        max_count: Optional[int] = None,
+        min_count: Optional[int] = None,
+        enable_auto_scaling: bool = False,
+        max_pods: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword status: HybridAKSNodePoolStatus defines the observed state of HybridAKSNodePool.
+        :keyword status: The observed status of the agent pool.
         :paramtype status: ~azure.mgmt.hybridcontainerservice.models.AgentPoolProvisioningStatusStatus
-        :keyword count: Count - Number of agents to host docker containers. Allowed values must be in
-         the range of 1 to 100 (inclusive). The default value is 1.
+        :keyword count: Number of nodes in the agent pool. The default value is 1.
         :paramtype count: int
-        :keyword availability_zones: AvailabilityZones - The list of Availability zones to use for
-         nodes. Datacenter racks modelled as zones.
-        :paramtype availability_zones: list[str]
+        :keyword vm_size: The VM sku size of the agent pool node VMs.
+        :paramtype vm_size: str
+        :keyword os_type: The particular KubernetesVersion Image OS Type (Linux, Windows). Known values
+         are: "Windows" and "Linux".
+        :paramtype os_type: str or ~azure.mgmt.hybridcontainerservice.models.OsType
+        :keyword os_sku: Specifies the OS SKU used by the agent pool. The default is CBLMariner if
+         OSType is Linux. The default is Windows2019 when OSType is Windows. Known values are:
+         "CBLMariner", "Windows2019", and "Windows2022".
+        :paramtype os_sku: str or ~azure.mgmt.hybridcontainerservice.models.OSSKU
+        :keyword node_labels: The node labels to be persisted across all nodes in agent pool.
+        :paramtype node_labels: dict[str, str]
+        :keyword node_taints: Taints added to new nodes during node pool create and scale. For example,
+         key=value:NoSchedule.
+        :paramtype node_taints: list[str]
         :keyword max_count: The maximum number of nodes for auto-scaling.
         :paramtype max_count: int
-        :keyword max_pods: The maximum number of pods that can run on a node.
-        :paramtype max_pods: int
         :keyword min_count: The minimum number of nodes for auto-scaling.
         :paramtype min_count: int
-        :keyword mode: Mode - AgentPoolMode represents mode of an agent pool. Possible values include:
-         'System', 'LB', 'User'. Default is 'User'. Known values are: "System", "LB", and "User".
-        :paramtype mode: str or ~azure.mgmt.hybridcontainerservice.models.Mode
-        :keyword node_labels: NodeLabels - Agent pool node labels to be persisted across all nodes in
-         agent pool.
-        :paramtype node_labels: dict[str, str]
-        :keyword node_taints: NodeTaints - Taints added to new nodes during node pool create and scale.
-         For example, key=value:NoSchedule.
-        :paramtype node_taints: list[str]
-        :keyword os_type: OsType - OsType to be used to specify os type. Choose from Linux and Windows.
-         Default to Linux. Possible values include: 'Linux', 'Windows'. Known values are: "Linux" and
-         "Windows".
-        :paramtype os_type: str or ~azure.mgmt.hybridcontainerservice.models.OsType
-        :keyword node_image_version: The version of node image.
-        :paramtype node_image_version: str
-        :keyword vm_size: VmSize - The size of the agent pool VMs.
-        :paramtype vm_size: str
-        :keyword cloud_provider_profile: The underlying cloud infra provider properties.
-        :paramtype cloud_provider_profile:
-         ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfile
+        :keyword enable_auto_scaling: Whether to enable auto-scaler. Default value is false.
+        :paramtype enable_auto_scaling: bool
+        :keyword max_pods: The maximum number of pods that can run on a node.
+        :paramtype max_pods: int
         """
         super().__init__(
-            count=count,
-            availability_zones=availability_zones,
-            max_count=max_count,
-            max_pods=max_pods,
-            min_count=min_count,
-            mode=mode,
+            os_type=os_type,
+            os_sku=os_sku,
             node_labels=node_labels,
             node_taints=node_taints,
-            os_type=os_type,
-            node_image_version=node_image_version,
+            max_count=max_count,
+            min_count=min_count,
+            enable_auto_scaling=enable_auto_scaling,
+            max_pods=max_pods,
+            count=count,
             vm_size=vm_size,
-            cloud_provider_profile=cloud_provider_profile,
             status=status,
             **kwargs
         )
         self.provisioning_state = None
         self.status = status
         self.count = count
-        self.availability_zones = availability_zones
-        self.max_count = max_count
-        self.max_pods = max_pods
-        self.min_count = min_count
-        self.mode = mode
+        self.vm_size = vm_size
+        self.kubernetes_version = None
+        self.os_type = os_type
+        self.os_sku = os_sku
         self.node_labels = node_labels
         self.node_taints = node_taints
-        self.os_type = os_type
-        self.node_image_version = node_image_version
-        self.vm_size = vm_size
-        self.cloud_provider_profile = cloud_provider_profile
-
-
-class AgentPoolProvisioningStatusError(_serialization.Model):
-    """AgentPoolProvisioningStatusError.
-
-    :ivar code:
-    :vartype code: str
-    :ivar message:
-    :vartype message: str
-    """
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-    }
-
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword code:
-        :paramtype code: str
-        :keyword message:
-        :paramtype message: str
-        """
-        super().__init__(**kwargs)
-        self.code = code
-        self.message = message
+        self.max_count = max_count
+        self.min_count = min_count
+        self.enable_auto_scaling = enable_auto_scaling
+        self.max_pods = max_pods
 
 
 class AgentPoolProvisioningStatusStatus(_serialization.Model):
-    """HybridAKSNodePoolStatus defines the observed state of HybridAKSNodePool.
+    """The observed status of the agent pool.
 
-    :ivar error_message: ErrorMessage - Error messages during creation of cluster.
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar current_state: The current state of the agent pool. Known values are: "Succeeded",
+     "Failed", "Canceled", "Pending", "Creating", "Deleting", "Updating", "Upgrading", and
+     "Accepted".
+    :vartype current_state: str or
+     ~azure.mgmt.hybridcontainerservice.models.ResourceProvisioningState
+    :ivar error_message: Error messages during an agent pool operation or steady state.
     :vartype error_message: str
-    :ivar provisioning_status: Contains Provisioning errors.
-    :vartype provisioning_status:
-     ~azure.mgmt.hybridcontainerservice.models.AgentPoolProvisioningStatusStatusProvisioningStatus
-    :ivar ready_replicas: Total number of ready machines targeted by this deployment.
-    :vartype ready_replicas: int
-    :ivar replicas: Total number of non-terminated machines targeted by this deployment.
-    :vartype replicas: int
+    :ivar ready_replicas:
+    :vartype ready_replicas: list[~azure.mgmt.hybridcontainerservice.models.AgentPoolUpdateProfile]
     """
 
+    _validation = {
+        "current_state": {"readonly": True},
+    }
+
     _attribute_map = {
+        "current_state": {"key": "currentState", "type": "str"},
         "error_message": {"key": "errorMessage", "type": "str"},
-        "provisioning_status": {
-            "key": "provisioningStatus",
-            "type": "AgentPoolProvisioningStatusStatusProvisioningStatus",
-        },
-        "ready_replicas": {"key": "readyReplicas", "type": "int"},
-        "replicas": {"key": "replicas", "type": "int"},
+        "ready_replicas": {"key": "readyReplicas", "type": "[AgentPoolUpdateProfile]"},
     }
 
     def __init__(
         self,
         *,
         error_message: Optional[str] = None,
-        provisioning_status: Optional["_models.AgentPoolProvisioningStatusStatusProvisioningStatus"] = None,
-        ready_replicas: Optional[int] = None,
-        replicas: Optional[int] = None,
+        ready_replicas: Optional[List["_models.AgentPoolUpdateProfile"]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword error_message: ErrorMessage - Error messages during creation of cluster.
+        :keyword error_message: Error messages during an agent pool operation or steady state.
         :paramtype error_message: str
-        :keyword provisioning_status: Contains Provisioning errors.
-        :paramtype provisioning_status:
-         ~azure.mgmt.hybridcontainerservice.models.AgentPoolProvisioningStatusStatusProvisioningStatus
-        :keyword ready_replicas: Total number of ready machines targeted by this deployment.
-        :paramtype ready_replicas: int
-        :keyword replicas: Total number of non-terminated machines targeted by this deployment.
-        :paramtype replicas: int
+        :keyword ready_replicas:
+        :paramtype ready_replicas:
+         list[~azure.mgmt.hybridcontainerservice.models.AgentPoolUpdateProfile]
         """
         super().__init__(**kwargs)
+        self.current_state = None
         self.error_message = error_message
-        self.provisioning_status = provisioning_status
         self.ready_replicas = ready_replicas
-        self.replicas = replicas
-
-
-class AgentPoolProvisioningStatusStatusProvisioningStatus(_serialization.Model):
-    """Contains Provisioning errors.
-
-    :ivar error:
-    :vartype error: ~azure.mgmt.hybridcontainerservice.models.AgentPoolProvisioningStatusError
-    :ivar operation_id:
-    :vartype operation_id: str
-    :ivar phase: Phase represents the current phase of cluster actuation. E.g. Pending, Running,
-     Terminating, Failed etc.
-    :vartype phase: str
-    :ivar status:
-    :vartype status: str
-    """
-
-    _attribute_map = {
-        "error": {"key": "error", "type": "AgentPoolProvisioningStatusError"},
-        "operation_id": {"key": "operationId", "type": "str"},
-        "phase": {"key": "phase", "type": "str"},
-        "status": {"key": "status", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.AgentPoolProvisioningStatusError"] = None,
-        operation_id: Optional[str] = None,
-        phase: Optional[str] = None,
-        status: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword error:
-        :paramtype error: ~azure.mgmt.hybridcontainerservice.models.AgentPoolProvisioningStatusError
-        :keyword operation_id:
-        :paramtype operation_id: str
-        :keyword phase: Phase represents the current phase of cluster actuation. E.g. Pending, Running,
-         Terminating, Failed etc.
-        :paramtype phase: str
-        :keyword status:
-        :paramtype status: str
-        """
-        super().__init__(**kwargs)
-        self.error = error
-        self.operation_id = operation_id
-        self.phase = phase
-        self.status = status
-
-
-class ArcAgentProfile(_serialization.Model):
-    """Defines the Arc Agent properties for the Provisioned clusters.
-
-    :ivar agent_version: Version of the Arc agents to be installed on the provisioned Provisioned
-     cluster resource.
-    :vartype agent_version: str
-    :ivar agent_auto_upgrade: Indicates whether the Arc agents on the provisioned clusters be
-     upgraded automatically to the latest version. Defaults to Enabled. Known values are: "Enabled"
-     and "Disabled".
-    :vartype agent_auto_upgrade: str or
-     ~azure.mgmt.hybridcontainerservice.models.AutoUpgradeOptions
-    """
-
-    _attribute_map = {
-        "agent_version": {"key": "agentVersion", "type": "str"},
-        "agent_auto_upgrade": {"key": "agentAutoUpgrade", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        agent_version: Optional[str] = None,
-        agent_auto_upgrade: Union[str, "_models.AutoUpgradeOptions"] = "Enabled",
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword agent_version: Version of the Arc agents to be installed on the provisioned
-         Provisioned cluster resource.
-        :paramtype agent_version: str
-        :keyword agent_auto_upgrade: Indicates whether the Arc agents on the provisioned clusters be
-         upgraded automatically to the latest version. Defaults to Enabled. Known values are: "Enabled"
-         and "Disabled".
-        :paramtype agent_auto_upgrade: str or
-         ~azure.mgmt.hybridcontainerservice.models.AutoUpgradeOptions
-        """
-        super().__init__(**kwargs)
-        self.agent_version = agent_version
-        self.agent_auto_upgrade = agent_auto_upgrade
-
-
-class ArcAgentStatus(_serialization.Model):
-    """Defines the observed Arc Agent status that is resourceSynced back to the ARM resource.
-
-    :ivar deployment_state: Observed deployment state of the Arc Agents on the target cluster.
-     Possible values include: 'pending', 'provisioning', 'provisioned', 'deleting', 'failed',
-     'upgrading'. Known values are: "pending", "provisioning", "provisioned", "deleting", "failed",
-     and "upgrading".
-    :vartype deployment_state: str or ~azure.mgmt.hybridcontainerservice.models.DeploymentState
-    :ivar error_message: Error messages while onboarding/upgrading/uninstalling the Arc agents.
-    :vartype error_message: str
-    :ivar onboarding_public_key: Onboarding public key for provisioning the Managed identity for
-     the HybridAKS cluster. Will be used to create the hybridIdentityMetadata proxy resource and
-     will not be persisted.
-    :vartype onboarding_public_key: str
-    :ivar agent_version: Version of the Arc agents currently running on the Provisioned cluster
-     resource.
-    :vartype agent_version: str
-    :ivar core_count: Number of CPU cores present in the Provisioned cluster resource.
-    :vartype core_count: int
-    :ivar managed_identity_certificate_expiration_time: ManagedIdentity certificate expiration time
-     (ValidUntil).
-    :vartype managed_identity_certificate_expiration_time: ~datetime.datetime
-    :ivar last_connectivity_time: Last connected timestamp of the Provisioned cluster resource.
-    :vartype last_connectivity_time: ~datetime.datetime
-    """
-
-    _attribute_map = {
-        "deployment_state": {"key": "deploymentState", "type": "str"},
-        "error_message": {"key": "errorMessage", "type": "str"},
-        "onboarding_public_key": {"key": "onboardingPublicKey", "type": "str"},
-        "agent_version": {"key": "agentVersion", "type": "str"},
-        "core_count": {"key": "coreCount", "type": "int"},
-        "managed_identity_certificate_expiration_time": {
-            "key": "managedIdentityCertificateExpirationTime",
-            "type": "iso-8601",
-        },
-        "last_connectivity_time": {"key": "lastConnectivityTime", "type": "iso-8601"},
-    }
-
-    def __init__(
-        self,
-        *,
-        deployment_state: Optional[Union[str, "_models.DeploymentState"]] = None,
-        error_message: Optional[str] = None,
-        onboarding_public_key: Optional[str] = None,
-        agent_version: Optional[str] = None,
-        core_count: Optional[int] = None,
-        managed_identity_certificate_expiration_time: Optional[datetime.datetime] = None,
-        last_connectivity_time: Optional[datetime.datetime] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword deployment_state: Observed deployment state of the Arc Agents on the target cluster.
-         Possible values include: 'pending', 'provisioning', 'provisioned', 'deleting', 'failed',
-         'upgrading'. Known values are: "pending", "provisioning", "provisioned", "deleting", "failed",
-         and "upgrading".
-        :paramtype deployment_state: str or ~azure.mgmt.hybridcontainerservice.models.DeploymentState
-        :keyword error_message: Error messages while onboarding/upgrading/uninstalling the Arc agents.
-        :paramtype error_message: str
-        :keyword onboarding_public_key: Onboarding public key for provisioning the Managed identity for
-         the HybridAKS cluster. Will be used to create the hybridIdentityMetadata proxy resource and
-         will not be persisted.
-        :paramtype onboarding_public_key: str
-        :keyword agent_version: Version of the Arc agents currently running on the Provisioned cluster
-         resource.
-        :paramtype agent_version: str
-        :keyword core_count: Number of CPU cores present in the Provisioned cluster resource.
-        :paramtype core_count: int
-        :keyword managed_identity_certificate_expiration_time: ManagedIdentity certificate expiration
-         time (ValidUntil).
-        :paramtype managed_identity_certificate_expiration_time: ~datetime.datetime
-        :keyword last_connectivity_time: Last connected timestamp of the Provisioned cluster resource.
-        :paramtype last_connectivity_time: ~datetime.datetime
-        """
-        super().__init__(**kwargs)
-        self.deployment_state = deployment_state
-        self.error_message = error_message
-        self.onboarding_public_key = onboarding_public_key
-        self.agent_version = agent_version
-        self.core_count = core_count
-        self.managed_identity_certificate_expiration_time = managed_identity_certificate_expiration_time
-        self.last_connectivity_time = last_connectivity_time
 
 
 class CloudProviderProfile(_serialization.Model):
-    """CloudProviderProfile - The underlying cloud infra provider properties.
+    """The profile for the underlying cloud infrastructure provider for the provisioned cluster.
 
-    :ivar infra_network_profile: InfraNetworkProfile - List of infra network profiles for the
+    :ivar infra_network_profile: The profile for the infrastructure networks used by the
      provisioned cluster.
     :vartype infra_network_profile:
      ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfileInfraNetworkProfile
-    :ivar infra_storage_profile: InfraStorageProfile - List of infra storage profiles for the
-     provisioned cluster.
-    :vartype infra_storage_profile:
-     ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfileInfraStorageProfile
     """
 
     _attribute_map = {
         "infra_network_profile": {"key": "infraNetworkProfile", "type": "CloudProviderProfileInfraNetworkProfile"},
-        "infra_storage_profile": {"key": "infraStorageProfile", "type": "CloudProviderProfileInfraStorageProfile"},
     }
 
     def __init__(
         self,
         *,
         infra_network_profile: Optional["_models.CloudProviderProfileInfraNetworkProfile"] = None,
-        infra_storage_profile: Optional["_models.CloudProviderProfileInfraStorageProfile"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword infra_network_profile: InfraNetworkProfile - List of infra network profiles for the
+        :keyword infra_network_profile: The profile for the infrastructure networks used by the
          provisioned cluster.
         :paramtype infra_network_profile:
          ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfileInfraNetworkProfile
-        :keyword infra_storage_profile: InfraStorageProfile - List of infra storage profiles for the
-         provisioned cluster.
-        :paramtype infra_storage_profile:
-         ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfileInfraStorageProfile
         """
         super().__init__(**kwargs)
         self.infra_network_profile = infra_network_profile
-        self.infra_storage_profile = infra_storage_profile
 
 
 class CloudProviderProfileInfraNetworkProfile(_serialization.Model):
-    """InfraNetworkProfile - List of infra network profiles for the provisioned cluster.
+    """The profile for the infrastructure networks used by the provisioned cluster.
 
-    :ivar vnet_subnet_ids: Array of references to azure resource corresponding to the new
-     HybridAKSNetwork object e.g.
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridContainerService/virtualNetworks/{virtualNetworkName}.
+    :ivar vnet_subnet_ids: List of ARM resource Ids (maximum 1) for the infrastructure network
+     object e.g.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/logicalNetworks/{logicalNetworkName}.
     :vartype vnet_subnet_ids: list[str]
     """
 
@@ -1114,418 +642,126 @@ class CloudProviderProfileInfraNetworkProfile(_serialization.Model):
 
     def __init__(self, *, vnet_subnet_ids: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
-        :keyword vnet_subnet_ids: Array of references to azure resource corresponding to the new
-         HybridAKSNetwork object e.g.
-         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridContainerService/virtualNetworks/{virtualNetworkName}.
+        :keyword vnet_subnet_ids: List of ARM resource Ids (maximum 1) for the infrastructure network
+         object e.g.
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/logicalNetworks/{logicalNetworkName}.
         :paramtype vnet_subnet_ids: list[str]
         """
         super().__init__(**kwargs)
         self.vnet_subnet_ids = vnet_subnet_ids
 
 
-class CloudProviderProfileInfraStorageProfile(_serialization.Model):
-    """InfraStorageProfile - List of infra storage profiles for the provisioned cluster.
+class ClusterVMAccessProfile(_serialization.Model):
+    """The SSH restricted access profile for the VMs in the provisioned cluster.
 
-    :ivar storage_space_ids: Reference to azure resource corresponding to the new HybridAKSStorage
-     object e.g.
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridContainerService/storageSpaces/{storageSpaceName}.
-    :vartype storage_space_ids: list[str]
+    :ivar authorized_ip_ranges: IP Address or CIDR for SSH access to VMs in the provisioned
+     cluster.
+    :vartype authorized_ip_ranges: str
     """
 
     _attribute_map = {
-        "storage_space_ids": {"key": "storageSpaceIds", "type": "[str]"},
+        "authorized_ip_ranges": {"key": "authorizedIPRanges", "type": "str"},
     }
 
-    def __init__(self, *, storage_space_ids: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, authorized_ip_ranges: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword storage_space_ids: Reference to azure resource corresponding to the new
-         HybridAKSStorage object e.g.
-         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridContainerService/storageSpaces/{storageSpaceName}.
-        :paramtype storage_space_ids: list[str]
+        :keyword authorized_ip_ranges: IP Address or CIDR for SSH access to VMs in the provisioned
+         cluster.
+        :paramtype authorized_ip_ranges: str
         """
         super().__init__(**kwargs)
-        self.storage_space_ids = storage_space_ids
+        self.authorized_ip_ranges = authorized_ip_ranges
 
 
-class ControlPlaneEndpointProfile(_serialization.Model):
-    """controlPlaneEndpoint - API server endpoint for the control plane.
+class ControlPlaneProfile(_serialization.Model):
+    """The properties of the control plane nodes of the provisioned cluster.
 
-    :ivar control_plane_endpoint: API server endpoint for the control plane.
+    :ivar count: Number of control plane nodes. The default value is 1, and the count should be an
+     odd number.
+    :vartype count: int
+    :ivar vm_size: VM sku size of the control plane nodes.
+    :vartype vm_size: str
+    :ivar control_plane_endpoint: IP Address of the Kubernetes API server.
     :vartype control_plane_endpoint:
-     ~azure.mgmt.hybridcontainerservice.models.ControlPlaneEndpointProfileControlPlaneEndpoint
+     ~azure.mgmt.hybridcontainerservice.models.ControlPlaneProfileControlPlaneEndpoint
     """
 
     _attribute_map = {
-        "control_plane_endpoint": {
-            "key": "controlPlaneEndpoint",
-            "type": "ControlPlaneEndpointProfileControlPlaneEndpoint",
-        },
+        "count": {"key": "count", "type": "int"},
+        "vm_size": {"key": "vmSize", "type": "str"},
+        "control_plane_endpoint": {"key": "controlPlaneEndpoint", "type": "ControlPlaneProfileControlPlaneEndpoint"},
     }
 
     def __init__(
         self,
         *,
-        control_plane_endpoint: Optional["_models.ControlPlaneEndpointProfileControlPlaneEndpoint"] = None,
+        count: int = 1,
+        vm_size: Optional[str] = None,
+        control_plane_endpoint: Optional["_models.ControlPlaneProfileControlPlaneEndpoint"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword control_plane_endpoint: API server endpoint for the control plane.
+        :keyword count: Number of control plane nodes. The default value is 1, and the count should be
+         an odd number.
+        :paramtype count: int
+        :keyword vm_size: VM sku size of the control plane nodes.
+        :paramtype vm_size: str
+        :keyword control_plane_endpoint: IP Address of the Kubernetes API server.
         :paramtype control_plane_endpoint:
-         ~azure.mgmt.hybridcontainerservice.models.ControlPlaneEndpointProfileControlPlaneEndpoint
+         ~azure.mgmt.hybridcontainerservice.models.ControlPlaneProfileControlPlaneEndpoint
         """
         super().__init__(**kwargs)
+        self.count = count
+        self.vm_size = vm_size
         self.control_plane_endpoint = control_plane_endpoint
 
 
-class ControlPlaneEndpointProfileControlPlaneEndpoint(_serialization.Model):
-    """API server endpoint for the control plane.
+class ControlPlaneProfileControlPlaneEndpoint(_serialization.Model):
+    """IP Address of the Kubernetes API server.
 
-    :ivar host_ip: Host IP address for API server.
+    :ivar host_ip: IP address of the Kubernetes API server.
     :vartype host_ip: str
-    :ivar port: Port for the API server.
-    :vartype port: str
     """
 
     _attribute_map = {
         "host_ip": {"key": "hostIP", "type": "str"},
-        "port": {"key": "port", "type": "str"},
     }
 
-    def __init__(self, *, host_ip: Optional[str] = None, port: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, host_ip: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword host_ip: Host IP address for API server.
+        :keyword host_ip: IP address of the Kubernetes API server.
         :paramtype host_ip: str
-        :keyword port: Port for the API server.
-        :paramtype port: str
         """
         super().__init__(**kwargs)
         self.host_ip = host_ip
-        self.port = port
 
 
-class LinuxProfile(_serialization.Model):
-    """LinuxProfile - Profile for Linux VMs in the container service cluster.
+class CredentialResult(_serialization.Model):
+    """The credential result response.
 
-    :ivar linux_profile: Profile for Linux VMs in the container service cluster.
-    :vartype linux_profile: ~azure.mgmt.hybridcontainerservice.models.LinuxProfileProperties
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the credential.
+    :vartype name: str
+    :ivar value: Base64-encoded Kubernetes configuration file.
+    :vartype value: bytes
     """
 
-    _attribute_map = {
-        "linux_profile": {"key": "linuxProfile", "type": "LinuxProfileProperties"},
+    _validation = {
+        "name": {"readonly": True},
+        "value": {"readonly": True},
     }
 
-    def __init__(self, *, linux_profile: Optional["_models.LinuxProfileProperties"] = None, **kwargs: Any) -> None:
-        """
-        :keyword linux_profile: Profile for Linux VMs in the container service cluster.
-        :paramtype linux_profile: ~azure.mgmt.hybridcontainerservice.models.LinuxProfileProperties
-        """
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "bytearray"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.linux_profile = linux_profile
-
-
-class NamedAgentPoolProfile(AgentPoolProfile, AgentPoolName):  # pylint: disable=too-many-instance-attributes
-    """Agent pool profile along with a name parameter.
-
-    :ivar name: Unique name of the agent pool profile in the context of the subscription and
-     resource group.
-    :vartype name: str
-    :ivar count: Count - Number of agents to host docker containers. Allowed values must be in the
-     range of 1 to 100 (inclusive). The default value is 1.
-    :vartype count: int
-    :ivar availability_zones: AvailabilityZones - The list of Availability zones to use for nodes.
-     Datacenter racks modelled as zones.
-    :vartype availability_zones: list[str]
-    :ivar max_count: The maximum number of nodes for auto-scaling.
-    :vartype max_count: int
-    :ivar max_pods: The maximum number of pods that can run on a node.
-    :vartype max_pods: int
-    :ivar min_count: The minimum number of nodes for auto-scaling.
-    :vartype min_count: int
-    :ivar mode: Mode - AgentPoolMode represents mode of an agent pool. Possible values include:
-     'System', 'LB', 'User'. Default is 'User'. Known values are: "System", "LB", and "User".
-    :vartype mode: str or ~azure.mgmt.hybridcontainerservice.models.Mode
-    :ivar node_labels: NodeLabels - Agent pool node labels to be persisted across all nodes in
-     agent pool.
-    :vartype node_labels: dict[str, str]
-    :ivar node_taints: NodeTaints - Taints added to new nodes during node pool create and scale.
-     For example, key=value:NoSchedule.
-    :vartype node_taints: list[str]
-    :ivar os_type: OsType - OsType to be used to specify os type. Choose from Linux and Windows.
-     Default to Linux. Possible values include: 'Linux', 'Windows'. Known values are: "Linux" and
-     "Windows".
-    :vartype os_type: str or ~azure.mgmt.hybridcontainerservice.models.OsType
-    :ivar node_image_version: The version of node image.
-    :vartype node_image_version: str
-    :ivar vm_size: VmSize - The size of the agent pool VMs.
-    :vartype vm_size: str
-    :ivar cloud_provider_profile: The underlying cloud infra provider properties.
-    :vartype cloud_provider_profile: ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfile
-    """
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "count": {"key": "count", "type": "int"},
-        "availability_zones": {"key": "availabilityZones", "type": "[str]"},
-        "max_count": {"key": "maxCount", "type": "int"},
-        "max_pods": {"key": "maxPods", "type": "int"},
-        "min_count": {"key": "minCount", "type": "int"},
-        "mode": {"key": "mode", "type": "str"},
-        "node_labels": {"key": "nodeLabels", "type": "{str}"},
-        "node_taints": {"key": "nodeTaints", "type": "[str]"},
-        "os_type": {"key": "osType", "type": "str"},
-        "node_image_version": {"key": "nodeImageVersion", "type": "str"},
-        "vm_size": {"key": "vmSize", "type": "str"},
-        "cloud_provider_profile": {"key": "cloudProviderProfile", "type": "CloudProviderProfile"},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        count: int = 1,
-        availability_zones: Optional[List[str]] = None,
-        max_count: Optional[int] = None,
-        max_pods: Optional[int] = None,
-        min_count: Optional[int] = None,
-        mode: Union[str, "_models.Mode"] = "User",
-        node_labels: Optional[Dict[str, str]] = None,
-        node_taints: Optional[List[str]] = None,
-        os_type: Union[str, "_models.OsType"] = "Linux",
-        node_image_version: Optional[str] = None,
-        vm_size: Optional[str] = None,
-        cloud_provider_profile: Optional["_models.CloudProviderProfile"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword name: Unique name of the agent pool profile in the context of the subscription and
-         resource group.
-        :paramtype name: str
-        :keyword count: Count - Number of agents to host docker containers. Allowed values must be in
-         the range of 1 to 100 (inclusive). The default value is 1.
-        :paramtype count: int
-        :keyword availability_zones: AvailabilityZones - The list of Availability zones to use for
-         nodes. Datacenter racks modelled as zones.
-        :paramtype availability_zones: list[str]
-        :keyword max_count: The maximum number of nodes for auto-scaling.
-        :paramtype max_count: int
-        :keyword max_pods: The maximum number of pods that can run on a node.
-        :paramtype max_pods: int
-        :keyword min_count: The minimum number of nodes for auto-scaling.
-        :paramtype min_count: int
-        :keyword mode: Mode - AgentPoolMode represents mode of an agent pool. Possible values include:
-         'System', 'LB', 'User'. Default is 'User'. Known values are: "System", "LB", and "User".
-        :paramtype mode: str or ~azure.mgmt.hybridcontainerservice.models.Mode
-        :keyword node_labels: NodeLabels - Agent pool node labels to be persisted across all nodes in
-         agent pool.
-        :paramtype node_labels: dict[str, str]
-        :keyword node_taints: NodeTaints - Taints added to new nodes during node pool create and scale.
-         For example, key=value:NoSchedule.
-        :paramtype node_taints: list[str]
-        :keyword os_type: OsType - OsType to be used to specify os type. Choose from Linux and Windows.
-         Default to Linux. Possible values include: 'Linux', 'Windows'. Known values are: "Linux" and
-         "Windows".
-        :paramtype os_type: str or ~azure.mgmt.hybridcontainerservice.models.OsType
-        :keyword node_image_version: The version of node image.
-        :paramtype node_image_version: str
-        :keyword vm_size: VmSize - The size of the agent pool VMs.
-        :paramtype vm_size: str
-        :keyword cloud_provider_profile: The underlying cloud infra provider properties.
-        :paramtype cloud_provider_profile:
-         ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfile
-        """
-        super().__init__(
-            count=count,
-            availability_zones=availability_zones,
-            max_count=max_count,
-            max_pods=max_pods,
-            min_count=min_count,
-            mode=mode,
-            node_labels=node_labels,
-            node_taints=node_taints,
-            os_type=os_type,
-            node_image_version=node_image_version,
-            vm_size=vm_size,
-            cloud_provider_profile=cloud_provider_profile,
-            name=name,
-            **kwargs
-        )
-        self.name = name
-        self.count = count
-        self.availability_zones = availability_zones
-        self.max_count = max_count
-        self.max_pods = max_pods
-        self.min_count = min_count
-        self.mode = mode
-        self.node_labels = node_labels
-        self.node_taints = node_taints
-        self.os_type = os_type
-        self.node_image_version = node_image_version
-        self.vm_size = vm_size
-        self.cloud_provider_profile = cloud_provider_profile
-
-
-class ControlPlaneProfile(
-    NamedAgentPoolProfile, ControlPlaneEndpointProfile, LinuxProfile
-):  # pylint: disable=too-many-instance-attributes
-    """ControlPlaneProfile - The control plane properties for the provisioned cluster.
-
-    :ivar linux_profile: Profile for Linux VMs in the container service cluster.
-    :vartype linux_profile: ~azure.mgmt.hybridcontainerservice.models.LinuxProfileProperties
-    :ivar control_plane_endpoint: API server endpoint for the control plane.
-    :vartype control_plane_endpoint:
-     ~azure.mgmt.hybridcontainerservice.models.ControlPlaneEndpointProfileControlPlaneEndpoint
-    :ivar name: Unique name of the agent pool profile in the context of the subscription and
-     resource group.
-    :vartype name: str
-    :ivar count: Count - Number of agents to host docker containers. Allowed values must be in the
-     range of 1 to 100 (inclusive). The default value is 1.
-    :vartype count: int
-    :ivar availability_zones: AvailabilityZones - The list of Availability zones to use for nodes.
-     Datacenter racks modelled as zones.
-    :vartype availability_zones: list[str]
-    :ivar max_count: The maximum number of nodes for auto-scaling.
-    :vartype max_count: int
-    :ivar max_pods: The maximum number of pods that can run on a node.
-    :vartype max_pods: int
-    :ivar min_count: The minimum number of nodes for auto-scaling.
-    :vartype min_count: int
-    :ivar mode: Mode - AgentPoolMode represents mode of an agent pool. Possible values include:
-     'System', 'LB', 'User'. Default is 'User'. Known values are: "System", "LB", and "User".
-    :vartype mode: str or ~azure.mgmt.hybridcontainerservice.models.Mode
-    :ivar node_labels: NodeLabels - Agent pool node labels to be persisted across all nodes in
-     agent pool.
-    :vartype node_labels: dict[str, str]
-    :ivar node_taints: NodeTaints - Taints added to new nodes during node pool create and scale.
-     For example, key=value:NoSchedule.
-    :vartype node_taints: list[str]
-    :ivar os_type: OsType - OsType to be used to specify os type. Choose from Linux and Windows.
-     Default to Linux. Possible values include: 'Linux', 'Windows'. Known values are: "Linux" and
-     "Windows".
-    :vartype os_type: str or ~azure.mgmt.hybridcontainerservice.models.OsType
-    :ivar node_image_version: The version of node image.
-    :vartype node_image_version: str
-    :ivar vm_size: VmSize - The size of the agent pool VMs.
-    :vartype vm_size: str
-    :ivar cloud_provider_profile: The underlying cloud infra provider properties.
-    :vartype cloud_provider_profile: ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfile
-    """
-
-    _attribute_map = {
-        "linux_profile": {"key": "linuxProfile", "type": "LinuxProfileProperties"},
-        "control_plane_endpoint": {
-            "key": "controlPlaneEndpoint",
-            "type": "ControlPlaneEndpointProfileControlPlaneEndpoint",
-        },
-        "name": {"key": "name", "type": "str"},
-        "count": {"key": "count", "type": "int"},
-        "availability_zones": {"key": "availabilityZones", "type": "[str]"},
-        "max_count": {"key": "maxCount", "type": "int"},
-        "max_pods": {"key": "maxPods", "type": "int"},
-        "min_count": {"key": "minCount", "type": "int"},
-        "mode": {"key": "mode", "type": "str"},
-        "node_labels": {"key": "nodeLabels", "type": "{str}"},
-        "node_taints": {"key": "nodeTaints", "type": "[str]"},
-        "os_type": {"key": "osType", "type": "str"},
-        "node_image_version": {"key": "nodeImageVersion", "type": "str"},
-        "vm_size": {"key": "vmSize", "type": "str"},
-        "cloud_provider_profile": {"key": "cloudProviderProfile", "type": "CloudProviderProfile"},
-    }
-
-    def __init__(
-        self,
-        *,
-        linux_profile: Optional["_models.LinuxProfileProperties"] = None,
-        control_plane_endpoint: Optional["_models.ControlPlaneEndpointProfileControlPlaneEndpoint"] = None,
-        name: Optional[str] = None,
-        count: int = 1,
-        availability_zones: Optional[List[str]] = None,
-        max_count: Optional[int] = None,
-        max_pods: Optional[int] = None,
-        min_count: Optional[int] = None,
-        mode: Union[str, "_models.Mode"] = "User",
-        node_labels: Optional[Dict[str, str]] = None,
-        node_taints: Optional[List[str]] = None,
-        os_type: Union[str, "_models.OsType"] = "Linux",
-        node_image_version: Optional[str] = None,
-        vm_size: Optional[str] = None,
-        cloud_provider_profile: Optional["_models.CloudProviderProfile"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword linux_profile: Profile for Linux VMs in the container service cluster.
-        :paramtype linux_profile: ~azure.mgmt.hybridcontainerservice.models.LinuxProfileProperties
-        :keyword control_plane_endpoint: API server endpoint for the control plane.
-        :paramtype control_plane_endpoint:
-         ~azure.mgmt.hybridcontainerservice.models.ControlPlaneEndpointProfileControlPlaneEndpoint
-        :keyword name: Unique name of the agent pool profile in the context of the subscription and
-         resource group.
-        :paramtype name: str
-        :keyword count: Count - Number of agents to host docker containers. Allowed values must be in
-         the range of 1 to 100 (inclusive). The default value is 1.
-        :paramtype count: int
-        :keyword availability_zones: AvailabilityZones - The list of Availability zones to use for
-         nodes. Datacenter racks modelled as zones.
-        :paramtype availability_zones: list[str]
-        :keyword max_count: The maximum number of nodes for auto-scaling.
-        :paramtype max_count: int
-        :keyword max_pods: The maximum number of pods that can run on a node.
-        :paramtype max_pods: int
-        :keyword min_count: The minimum number of nodes for auto-scaling.
-        :paramtype min_count: int
-        :keyword mode: Mode - AgentPoolMode represents mode of an agent pool. Possible values include:
-         'System', 'LB', 'User'. Default is 'User'. Known values are: "System", "LB", and "User".
-        :paramtype mode: str or ~azure.mgmt.hybridcontainerservice.models.Mode
-        :keyword node_labels: NodeLabels - Agent pool node labels to be persisted across all nodes in
-         agent pool.
-        :paramtype node_labels: dict[str, str]
-        :keyword node_taints: NodeTaints - Taints added to new nodes during node pool create and scale.
-         For example, key=value:NoSchedule.
-        :paramtype node_taints: list[str]
-        :keyword os_type: OsType - OsType to be used to specify os type. Choose from Linux and Windows.
-         Default to Linux. Possible values include: 'Linux', 'Windows'. Known values are: "Linux" and
-         "Windows".
-        :paramtype os_type: str or ~azure.mgmt.hybridcontainerservice.models.OsType
-        :keyword node_image_version: The version of node image.
-        :paramtype node_image_version: str
-        :keyword vm_size: VmSize - The size of the agent pool VMs.
-        :paramtype vm_size: str
-        :keyword cloud_provider_profile: The underlying cloud infra provider properties.
-        :paramtype cloud_provider_profile:
-         ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfile
-        """
-        super().__init__(
-            name=name,
-            count=count,
-            availability_zones=availability_zones,
-            max_count=max_count,
-            max_pods=max_pods,
-            min_count=min_count,
-            mode=mode,
-            node_labels=node_labels,
-            node_taints=node_taints,
-            os_type=os_type,
-            node_image_version=node_image_version,
-            vm_size=vm_size,
-            cloud_provider_profile=cloud_provider_profile,
-            control_plane_endpoint=control_plane_endpoint,
-            linux_profile=linux_profile,
-            **kwargs
-        )
-        self.linux_profile = linux_profile
-        self.control_plane_endpoint = control_plane_endpoint
-        self.name = name
-        self.count = count
-        self.availability_zones = availability_zones
-        self.max_count = max_count
-        self.max_pods = max_pods
-        self.min_count = min_count
-        self.mode = mode
-        self.node_labels = node_labels
-        self.node_taints = node_taints
-        self.os_type = os_type
-        self.node_image_version = node_image_version
-        self.vm_size = vm_size
-        self.cloud_provider_profile = cloud_provider_profile
+        self.name = None
+        self.value = None
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -1620,213 +856,36 @@ class ErrorResponse(_serialization.Model):
         self.error = error
 
 
-class HttpProxyConfigPassword(_serialization.Model):
-    """HttpProxyConfigPassword.
+class ExtendedLocation(_serialization.Model):
+    """Extended location pointing to the underlying infrastructure.
 
-    :ivar password: Password to use for connecting to proxy server.
-    :vartype password: str
+    :ivar type: The extended location type. Allowed value: 'CustomLocation'. "CustomLocation"
+    :vartype type: str or ~azure.mgmt.hybridcontainerservice.models.ExtendedLocationTypes
+    :ivar name: ARM Id of the extended location.
+    :vartype name: str
     """
 
     _attribute_map = {
-        "password": {"key": "password", "type": "str"},
-    }
-
-    def __init__(self, *, password: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword password: Password to use for connecting to proxy server.
-        :paramtype password: str
-        """
-        super().__init__(**kwargs)
-        self.password = password
-
-
-class HttpProxyConfigResponse(_serialization.Model):
-    """Configurations for provisioning the cluster with HTTP proxy servers.
-
-    :ivar http_proxy: The HTTP proxy server endpoint to use.
-    :vartype http_proxy: str
-    :ivar https_proxy: The HTTPS proxy server endpoint to use.
-    :vartype https_proxy: str
-    :ivar no_proxy: The endpoints that should not go through proxy.
-    :vartype no_proxy: list[str]
-    :ivar trusted_ca: Alternative CA cert to use for connecting to proxy servers.
-    :vartype trusted_ca: str
-    :ivar username: Username to use for connecting to proxy server.
-    :vartype username: str
-    """
-
-    _attribute_map = {
-        "http_proxy": {"key": "httpProxy", "type": "str"},
-        "https_proxy": {"key": "httpsProxy", "type": "str"},
-        "no_proxy": {"key": "noProxy", "type": "[str]"},
-        "trusted_ca": {"key": "trustedCa", "type": "str"},
-        "username": {"key": "username", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        http_proxy: Optional[str] = None,
-        https_proxy: Optional[str] = None,
-        no_proxy: Optional[List[str]] = None,
-        trusted_ca: Optional[str] = None,
-        username: Optional[str] = None,
+        type: Optional[Union[str, "_models.ExtendedLocationTypes"]] = None,
+        name: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword http_proxy: The HTTP proxy server endpoint to use.
-        :paramtype http_proxy: str
-        :keyword https_proxy: The HTTPS proxy server endpoint to use.
-        :paramtype https_proxy: str
-        :keyword no_proxy: The endpoints that should not go through proxy.
-        :paramtype no_proxy: list[str]
-        :keyword trusted_ca: Alternative CA cert to use for connecting to proxy servers.
-        :paramtype trusted_ca: str
-        :keyword username: Username to use for connecting to proxy server.
-        :paramtype username: str
+        :keyword type: The extended location type. Allowed value: 'CustomLocation'. "CustomLocation"
+        :paramtype type: str or ~azure.mgmt.hybridcontainerservice.models.ExtendedLocationTypes
+        :keyword name: ARM Id of the extended location.
+        :paramtype name: str
         """
         super().__init__(**kwargs)
-        self.http_proxy = http_proxy
-        self.https_proxy = https_proxy
-        self.no_proxy = no_proxy
-        self.trusted_ca = trusted_ca
-        self.username = username
-
-
-class HttpProxyConfig(HttpProxyConfigResponse, HttpProxyConfigPassword):
-    """Configurations for provisioning the cluster with HTTP proxy servers.
-
-    :ivar password: Password to use for connecting to proxy server.
-    :vartype password: str
-    :ivar http_proxy: The HTTP proxy server endpoint to use.
-    :vartype http_proxy: str
-    :ivar https_proxy: The HTTPS proxy server endpoint to use.
-    :vartype https_proxy: str
-    :ivar no_proxy: The endpoints that should not go through proxy.
-    :vartype no_proxy: list[str]
-    :ivar trusted_ca: Alternative CA cert to use for connecting to proxy servers.
-    :vartype trusted_ca: str
-    :ivar username: Username to use for connecting to proxy server.
-    :vartype username: str
-    """
-
-    _attribute_map = {
-        "password": {"key": "password", "type": "str"},
-        "http_proxy": {"key": "httpProxy", "type": "str"},
-        "https_proxy": {"key": "httpsProxy", "type": "str"},
-        "no_proxy": {"key": "noProxy", "type": "[str]"},
-        "trusted_ca": {"key": "trustedCa", "type": "str"},
-        "username": {"key": "username", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        password: Optional[str] = None,
-        http_proxy: Optional[str] = None,
-        https_proxy: Optional[str] = None,
-        no_proxy: Optional[List[str]] = None,
-        trusted_ca: Optional[str] = None,
-        username: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword password: Password to use for connecting to proxy server.
-        :paramtype password: str
-        :keyword http_proxy: The HTTP proxy server endpoint to use.
-        :paramtype http_proxy: str
-        :keyword https_proxy: The HTTPS proxy server endpoint to use.
-        :paramtype https_proxy: str
-        :keyword no_proxy: The endpoints that should not go through proxy.
-        :paramtype no_proxy: list[str]
-        :keyword trusted_ca: Alternative CA cert to use for connecting to proxy servers.
-        :paramtype trusted_ca: str
-        :keyword username: Username to use for connecting to proxy server.
-        :paramtype username: str
-        """
-        super().__init__(
-            http_proxy=http_proxy,
-            https_proxy=https_proxy,
-            no_proxy=no_proxy,
-            trusted_ca=trusted_ca,
-            username=username,
-            password=password,
-            **kwargs
-        )
-        self.password = password
-        self.http_proxy = http_proxy
-        self.https_proxy = https_proxy
-        self.no_proxy = no_proxy
-        self.trusted_ca = trusted_ca
-        self.username = username
-
-
-class Resource(_serialization.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-
-
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
+        self.type = type
+        self.name = name
 
 
 class HybridIdentityMetadata(ProxyResource):
@@ -1834,25 +893,21 @@ class HybridIdentityMetadata(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: The system data.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.hybridcontainerservice.models.SystemData
-    :ivar resource_uid: Unique id of the parent provisioned cluster resource.
-    :vartype resource_uid: str
-    :ivar public_key: Onboarding public key for provisioning the Managed identity for the HybridAKS
-     cluster.
-    :vartype public_key: str
-    :ivar identity: The identity of the provisioned cluster.
-    :vartype identity: ~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterIdentity
-    :ivar provisioning_state: provisioning state of the hybridIdentityMetadata resource.
-    :vartype provisioning_state: str
+    :ivar properties: Resource properties. Required.
+    :vartype properties: ~azure.mgmt.hybridcontainerservice.models.HybridIdentityMetadataProperties
     """
 
     _validation = {
@@ -1860,7 +915,7 @@ class HybridIdentityMetadata(ProxyResource):
         "name": {"readonly": True},
         "type": {"readonly": True},
         "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
@@ -1868,35 +923,17 @@ class HybridIdentityMetadata(ProxyResource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "resource_uid": {"key": "properties.resourceUid", "type": "str"},
-        "public_key": {"key": "properties.publicKey", "type": "str"},
-        "identity": {"key": "properties.identity", "type": "ProvisionedClusterIdentity"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "properties": {"key": "properties", "type": "HybridIdentityMetadataProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        resource_uid: Optional[str] = None,
-        public_key: Optional[str] = None,
-        identity: Optional["_models.ProvisionedClusterIdentity"] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, properties: "_models.HybridIdentityMetadataProperties", **kwargs: Any) -> None:
         """
-        :keyword resource_uid: Unique id of the parent provisioned cluster resource.
-        :paramtype resource_uid: str
-        :keyword public_key: Onboarding public key for provisioning the Managed identity for the
-         HybridAKS cluster.
-        :paramtype public_key: str
-        :keyword identity: The identity of the provisioned cluster.
-        :paramtype identity: ~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterIdentity
+        :keyword properties: Resource properties. Required.
+        :paramtype properties:
+         ~azure.mgmt.hybridcontainerservice.models.HybridIdentityMetadataProperties
         """
         super().__init__(**kwargs)
-        self.system_data = None
-        self.resource_uid = resource_uid
-        self.public_key = public_key
-        self.identity = identity
-        self.provisioning_state = None
+        self.properties = properties
 
 
 class HybridIdentityMetadataList(_serialization.Model):
@@ -1933,43 +970,319 @@ class HybridIdentityMetadataList(_serialization.Model):
         self.value = value
 
 
-class LinuxProfileProperties(_serialization.Model):
-    """LinuxProfile - Profile for Linux VMs in the container service cluster.
+class HybridIdentityMetadataProperties(_serialization.Model):
+    """Defines the resource properties for the hybrid identity metadata.
 
-    :ivar admin_username: AdminUsername - The administrator username to use for Linux VMs.
-    :vartype admin_username: str
-    :ivar ssh: SSH - SSH configuration for Linux-based VMs running on Azure.
-    :vartype ssh: ~azure.mgmt.hybridcontainerservice.models.LinuxProfilePropertiesSsh
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar resource_uid: Unique id of the parent provisioned cluster resource.
+    :vartype resource_uid: str
+    :ivar public_key: Onboarding public key for provisioning the Managed identity for the connected
+     cluster.
+    :vartype public_key: str
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Pending", "Creating", "Deleting", "Updating", "Upgrading", and
+     "Accepted".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.hybridcontainerservice.models.ResourceProvisioningState
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "resource_uid": {"key": "resourceUid", "type": "str"},
+        "public_key": {"key": "publicKey", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(self, *, resource_uid: Optional[str] = None, public_key: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword resource_uid: Unique id of the parent provisioned cluster resource.
+        :paramtype resource_uid: str
+        :keyword public_key: Onboarding public key for provisioning the Managed identity for the
+         connected cluster.
+        :paramtype public_key: str
+        """
+        super().__init__(**kwargs)
+        self.resource_uid = resource_uid
+        self.public_key = public_key
+        self.provisioning_state = None
+
+
+class KubernetesPatchVersions(_serialization.Model):
+    """Kubernetes Patch Version profile.
+
+    :ivar readiness: Indicates whether the kubernetes version image is ready or not.
+    :vartype readiness: list[~azure.mgmt.hybridcontainerservice.models.KubernetesVersionReadiness]
+    :ivar upgrades: Possible upgrade paths for given patch version.
+    :vartype upgrades: list[str]
     """
 
     _attribute_map = {
-        "admin_username": {"key": "adminUsername", "type": "str"},
-        "ssh": {"key": "ssh", "type": "LinuxProfilePropertiesSsh"},
+        "readiness": {"key": "readiness", "type": "[KubernetesVersionReadiness]"},
+        "upgrades": {"key": "upgrades", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
-        admin_username: Optional[str] = None,
-        ssh: Optional["_models.LinuxProfilePropertiesSsh"] = None,
+        readiness: Optional[List["_models.KubernetesVersionReadiness"]] = None,
+        upgrades: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword admin_username: AdminUsername - The administrator username to use for Linux VMs.
-        :paramtype admin_username: str
-        :keyword ssh: SSH - SSH configuration for Linux-based VMs running on Azure.
+        :keyword readiness: Indicates whether the kubernetes version image is ready or not.
+        :paramtype readiness:
+         list[~azure.mgmt.hybridcontainerservice.models.KubernetesVersionReadiness]
+        :keyword upgrades: Possible upgrade paths for given patch version.
+        :paramtype upgrades: list[str]
+        """
+        super().__init__(**kwargs)
+        self.readiness = readiness
+        self.upgrades = upgrades
+
+
+class KubernetesVersionProfile(ProxyResource):
+    """The supported kubernetes versions.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridcontainerservice.models.SystemData
+    :ivar extended_location: Extended location pointing to the underlying infrastructure.
+    :vartype extended_location: ~azure.mgmt.hybridcontainerservice.models.ExtendedLocation
+    :ivar properties:
+    :vartype properties:
+     ~azure.mgmt.hybridcontainerservice.models.KubernetesVersionProfileProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "properties": {"key": "properties", "type": "KubernetesVersionProfileProperties"},
+    }
+
+    def __init__(self, *, extended_location: Optional["_models.ExtendedLocation"] = None, **kwargs: Any) -> None:
+        """
+        :keyword extended_location: Extended location pointing to the underlying infrastructure.
+        :paramtype extended_location: ~azure.mgmt.hybridcontainerservice.models.ExtendedLocation
+        """
+        super().__init__(**kwargs)
+        self.extended_location = extended_location
+        self.properties = None
+
+
+class KubernetesVersionProfileList(_serialization.Model):
+    """List of supported kubernetes versions.
+
+    :ivar value:
+    :vartype value: list[~azure.mgmt.hybridcontainerservice.models.KubernetesVersionProfile]
+    :ivar next_link:
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[KubernetesVersionProfile]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.KubernetesVersionProfile"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.hybridcontainerservice.models.KubernetesVersionProfile]
+        :keyword next_link:
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class KubernetesVersionProfileProperties(_serialization.Model):
+    """KubernetesVersionProfileProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Pending", "Creating", "Deleting", "Updating", "Upgrading", and
+     "Accepted".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.hybridcontainerservice.models.ResourceProvisioningState
+    :ivar values: List of supported Kubernetes versions.
+    :vartype values: list[~azure.mgmt.hybridcontainerservice.models.KubernetesVersionProperties]
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "values": {"key": "values", "type": "[KubernetesVersionProperties]"},
+    }
+
+    def __init__(self, *, values: Optional[List["_models.KubernetesVersionProperties"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword values: List of supported Kubernetes versions.
+        :paramtype values: list[~azure.mgmt.hybridcontainerservice.models.KubernetesVersionProperties]
+        """
+        super().__init__(**kwargs)
+        self.provisioning_state = None
+        self.values = values
+
+
+class KubernetesVersionProperties(_serialization.Model):
+    """Kubernetes version profile for given major.minor release.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar version: major.minor version of Kubernetes release.
+    :vartype version: str
+    :ivar is_preview: Whether this version is in preview mode.
+    :vartype is_preview: bool
+    :ivar patch_versions: Patch versions of a Kubernetes release.
+    :vartype patch_versions: dict[str,
+     ~azure.mgmt.hybridcontainerservice.models.KubernetesPatchVersions]
+    """
+
+    _validation = {
+        "version": {"readonly": True},
+        "is_preview": {"readonly": True},
+        "patch_versions": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "version": {"key": "version", "type": "str"},
+        "is_preview": {"key": "isPreview", "type": "bool"},
+        "patch_versions": {"key": "patchVersions", "type": "{KubernetesPatchVersions}"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.version = None
+        self.is_preview = None
+        self.patch_versions = None
+
+
+class KubernetesVersionReadiness(_serialization.Model):
+    """Indicates whether the kubernetes version image is ready or not.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar os_type: The particular KubernetesVersion Image OS Type (Linux, Windows). Known values
+     are: "Windows" and "Linux".
+    :vartype os_type: str or ~azure.mgmt.hybridcontainerservice.models.OsType
+    :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is CBLMariner if OSType
+     is Linux. The default is Windows2019 when OSType is Windows. Known values are: "CBLMariner",
+     "Windows2019", and "Windows2022".
+    :vartype os_sku: str or ~azure.mgmt.hybridcontainerservice.models.OSSKU
+    :ivar ready: Whether the kubernetes version image is ready or not.
+    :vartype ready: bool
+    :ivar error_message: The error message for version not being ready.
+    :vartype error_message: str
+    """
+
+    _validation = {
+        "os_type": {"readonly": True},
+        "ready": {"readonly": True},
+        "error_message": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "os_type": {"key": "osType", "type": "str"},
+        "os_sku": {"key": "osSku", "type": "str"},
+        "ready": {"key": "ready", "type": "bool"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+    }
+
+    def __init__(self, *, os_sku: Optional[Union[str, "_models.OSSKU"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword os_sku: Specifies the OS SKU used by the agent pool. The default is CBLMariner if
+         OSType is Linux. The default is Windows2019 when OSType is Windows. Known values are:
+         "CBLMariner", "Windows2019", and "Windows2022".
+        :paramtype os_sku: str or ~azure.mgmt.hybridcontainerservice.models.OSSKU
+        """
+        super().__init__(**kwargs)
+        self.os_type = None
+        self.os_sku = os_sku
+        self.ready = None
+        self.error_message = None
+
+
+class LinuxProfile(_serialization.Model):
+    """The profile for Linux VMs in the provisioned cluster.
+
+    :ivar linux_profile: Profile for Linux VMs in the container service cluster.
+    :vartype linux_profile: ~azure.mgmt.hybridcontainerservice.models.LinuxProfileProperties
+    """
+
+    _attribute_map = {
+        "linux_profile": {"key": "linuxProfile", "type": "LinuxProfileProperties"},
+    }
+
+    def __init__(self, *, linux_profile: Optional["_models.LinuxProfileProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword linux_profile: Profile for Linux VMs in the container service cluster.
+        :paramtype linux_profile: ~azure.mgmt.hybridcontainerservice.models.LinuxProfileProperties
+        """
+        super().__init__(**kwargs)
+        self.linux_profile = linux_profile
+
+
+class LinuxProfileProperties(_serialization.Model):
+    """SSH profile for control plane and nodepool VMs of the provisioned cluster.
+
+    :ivar ssh: SSH configuration for VMs of the provisioned cluster.
+    :vartype ssh: ~azure.mgmt.hybridcontainerservice.models.LinuxProfilePropertiesSsh
+    """
+
+    _attribute_map = {
+        "ssh": {"key": "ssh", "type": "LinuxProfilePropertiesSsh"},
+    }
+
+    def __init__(self, *, ssh: Optional["_models.LinuxProfilePropertiesSsh"] = None, **kwargs: Any) -> None:
+        """
+        :keyword ssh: SSH configuration for VMs of the provisioned cluster.
         :paramtype ssh: ~azure.mgmt.hybridcontainerservice.models.LinuxProfilePropertiesSsh
         """
         super().__init__(**kwargs)
-        self.admin_username = admin_username
         self.ssh = ssh
 
 
 class LinuxProfilePropertiesSsh(_serialization.Model):
-    """SSH - SSH configuration for Linux-based VMs running on Azure.
+    """SSH configuration for VMs of the provisioned cluster.
 
-    :ivar public_keys: PublicKeys - The list of SSH public keys used to authenticate with
-     Linux-based VMs. Only expect one key specified.
+    :ivar public_keys: The list of SSH public keys used to authenticate with VMs. A maximum of 1
+     key may be specified.
     :vartype public_keys:
      list[~azure.mgmt.hybridcontainerservice.models.LinuxProfilePropertiesSshPublicKeysItem]
     """
@@ -1982,8 +1295,8 @@ class LinuxProfilePropertiesSsh(_serialization.Model):
         self, *, public_keys: Optional[List["_models.LinuxProfilePropertiesSshPublicKeysItem"]] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword public_keys: PublicKeys - The list of SSH public keys used to authenticate with
-         Linux-based VMs. Only expect one key specified.
+        :keyword public_keys: The list of SSH public keys used to authenticate with VMs. A maximum of 1
+         key may be specified.
         :paramtype public_keys:
          list[~azure.mgmt.hybridcontainerservice.models.LinuxProfilePropertiesSshPublicKeysItem]
         """
@@ -1994,7 +1307,7 @@ class LinuxProfilePropertiesSsh(_serialization.Model):
 class LinuxProfilePropertiesSshPublicKeysItem(_serialization.Model):
     """LinuxProfilePropertiesSshPublicKeysItem.
 
-    :ivar key_data: KeyData - Certificate public key used to authenticate with VMs through SSH. The
+    :ivar key_data: Certificate public key used to authenticate with VMs through SSH. The
      certificate must be in PEM format with or without headers.
     :vartype key_data: str
     """
@@ -2005,456 +1318,573 @@ class LinuxProfilePropertiesSshPublicKeysItem(_serialization.Model):
 
     def __init__(self, *, key_data: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword key_data: KeyData - Certificate public key used to authenticate with VMs through SSH.
-         The certificate must be in PEM format with or without headers.
+        :keyword key_data: Certificate public key used to authenticate with VMs through SSH. The
+         certificate must be in PEM format with or without headers.
         :paramtype key_data: str
         """
         super().__init__(**kwargs)
         self.key_data = key_data
 
 
-class LoadBalancerProfile(NamedAgentPoolProfile, LinuxProfile):  # pylint: disable=too-many-instance-attributes
-    """LoadBalancerProfile - Profile of the cluster load balancer.
-
-    :ivar linux_profile: Profile for Linux VMs in the container service cluster.
-    :vartype linux_profile: ~azure.mgmt.hybridcontainerservice.models.LinuxProfileProperties
-    :ivar name: Unique name of the agent pool profile in the context of the subscription and
-     resource group.
-    :vartype name: str
-    :ivar count: Count - Number of agents to host docker containers. Allowed values must be in the
-     range of 1 to 100 (inclusive). The default value is 1.
-    :vartype count: int
-    :ivar availability_zones: AvailabilityZones - The list of Availability zones to use for nodes.
-     Datacenter racks modelled as zones.
-    :vartype availability_zones: list[str]
-    :ivar max_count: The maximum number of nodes for auto-scaling.
-    :vartype max_count: int
-    :ivar max_pods: The maximum number of pods that can run on a node.
-    :vartype max_pods: int
-    :ivar min_count: The minimum number of nodes for auto-scaling.
-    :vartype min_count: int
-    :ivar mode: Mode - AgentPoolMode represents mode of an agent pool. Possible values include:
-     'System', 'LB', 'User'. Default is 'User'. Known values are: "System", "LB", and "User".
-    :vartype mode: str or ~azure.mgmt.hybridcontainerservice.models.Mode
-    :ivar node_labels: NodeLabels - Agent pool node labels to be persisted across all nodes in
-     agent pool.
-    :vartype node_labels: dict[str, str]
-    :ivar node_taints: NodeTaints - Taints added to new nodes during node pool create and scale.
-     For example, key=value:NoSchedule.
-    :vartype node_taints: list[str]
-    :ivar os_type: OsType - OsType to be used to specify os type. Choose from Linux and Windows.
-     Default to Linux. Possible values include: 'Linux', 'Windows'. Known values are: "Linux" and
-     "Windows".
-    :vartype os_type: str or ~azure.mgmt.hybridcontainerservice.models.OsType
-    :ivar node_image_version: The version of node image.
-    :vartype node_image_version: str
-    :ivar vm_size: VmSize - The size of the agent pool VMs.
-    :vartype vm_size: str
-    :ivar cloud_provider_profile: The underlying cloud infra provider properties.
-    :vartype cloud_provider_profile: ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfile
-    """
-
-    _attribute_map = {
-        "linux_profile": {"key": "linuxProfile", "type": "LinuxProfileProperties"},
-        "name": {"key": "name", "type": "str"},
-        "count": {"key": "count", "type": "int"},
-        "availability_zones": {"key": "availabilityZones", "type": "[str]"},
-        "max_count": {"key": "maxCount", "type": "int"},
-        "max_pods": {"key": "maxPods", "type": "int"},
-        "min_count": {"key": "minCount", "type": "int"},
-        "mode": {"key": "mode", "type": "str"},
-        "node_labels": {"key": "nodeLabels", "type": "{str}"},
-        "node_taints": {"key": "nodeTaints", "type": "[str]"},
-        "os_type": {"key": "osType", "type": "str"},
-        "node_image_version": {"key": "nodeImageVersion", "type": "str"},
-        "vm_size": {"key": "vmSize", "type": "str"},
-        "cloud_provider_profile": {"key": "cloudProviderProfile", "type": "CloudProviderProfile"},
-    }
-
-    def __init__(
-        self,
-        *,
-        linux_profile: Optional["_models.LinuxProfileProperties"] = None,
-        name: Optional[str] = None,
-        count: int = 1,
-        availability_zones: Optional[List[str]] = None,
-        max_count: Optional[int] = None,
-        max_pods: Optional[int] = None,
-        min_count: Optional[int] = None,
-        mode: Union[str, "_models.Mode"] = "User",
-        node_labels: Optional[Dict[str, str]] = None,
-        node_taints: Optional[List[str]] = None,
-        os_type: Union[str, "_models.OsType"] = "Linux",
-        node_image_version: Optional[str] = None,
-        vm_size: Optional[str] = None,
-        cloud_provider_profile: Optional["_models.CloudProviderProfile"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword linux_profile: Profile for Linux VMs in the container service cluster.
-        :paramtype linux_profile: ~azure.mgmt.hybridcontainerservice.models.LinuxProfileProperties
-        :keyword name: Unique name of the agent pool profile in the context of the subscription and
-         resource group.
-        :paramtype name: str
-        :keyword count: Count - Number of agents to host docker containers. Allowed values must be in
-         the range of 1 to 100 (inclusive). The default value is 1.
-        :paramtype count: int
-        :keyword availability_zones: AvailabilityZones - The list of Availability zones to use for
-         nodes. Datacenter racks modelled as zones.
-        :paramtype availability_zones: list[str]
-        :keyword max_count: The maximum number of nodes for auto-scaling.
-        :paramtype max_count: int
-        :keyword max_pods: The maximum number of pods that can run on a node.
-        :paramtype max_pods: int
-        :keyword min_count: The minimum number of nodes for auto-scaling.
-        :paramtype min_count: int
-        :keyword mode: Mode - AgentPoolMode represents mode of an agent pool. Possible values include:
-         'System', 'LB', 'User'. Default is 'User'. Known values are: "System", "LB", and "User".
-        :paramtype mode: str or ~azure.mgmt.hybridcontainerservice.models.Mode
-        :keyword node_labels: NodeLabels - Agent pool node labels to be persisted across all nodes in
-         agent pool.
-        :paramtype node_labels: dict[str, str]
-        :keyword node_taints: NodeTaints - Taints added to new nodes during node pool create and scale.
-         For example, key=value:NoSchedule.
-        :paramtype node_taints: list[str]
-        :keyword os_type: OsType - OsType to be used to specify os type. Choose from Linux and Windows.
-         Default to Linux. Possible values include: 'Linux', 'Windows'. Known values are: "Linux" and
-         "Windows".
-        :paramtype os_type: str or ~azure.mgmt.hybridcontainerservice.models.OsType
-        :keyword node_image_version: The version of node image.
-        :paramtype node_image_version: str
-        :keyword vm_size: VmSize - The size of the agent pool VMs.
-        :paramtype vm_size: str
-        :keyword cloud_provider_profile: The underlying cloud infra provider properties.
-        :paramtype cloud_provider_profile:
-         ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfile
-        """
-        super().__init__(
-            name=name,
-            count=count,
-            availability_zones=availability_zones,
-            max_count=max_count,
-            max_pods=max_pods,
-            min_count=min_count,
-            mode=mode,
-            node_labels=node_labels,
-            node_taints=node_taints,
-            os_type=os_type,
-            node_image_version=node_image_version,
-            vm_size=vm_size,
-            cloud_provider_profile=cloud_provider_profile,
-            linux_profile=linux_profile,
-            **kwargs
-        )
-        self.linux_profile = linux_profile
-        self.name = name
-        self.count = count
-        self.availability_zones = availability_zones
-        self.max_count = max_count
-        self.max_pods = max_pods
-        self.min_count = min_count
-        self.mode = mode
-        self.node_labels = node_labels
-        self.node_taints = node_taints
-        self.os_type = os_type
-        self.node_image_version = node_image_version
-        self.vm_size = vm_size
-        self.cloud_provider_profile = cloud_provider_profile
-
-
-class NetworkProfile(_serialization.Model):
-    """NetworkProfile - Profile of network configuration.
-
-    :ivar load_balancer_profile: LoadBalancerProfile - Profile of the cluster load balancer.
-    :vartype load_balancer_profile: ~azure.mgmt.hybridcontainerservice.models.LoadBalancerProfile
-    :ivar load_balancer_sku: LoadBalancerSku - The load balancer sku for the provisioned cluster.
-     Possible values: 'unstacked-haproxy', 'stacked-kube-vip', 'stacked-metallb', 'unmanaged'. The
-     default is 'unmanaged'. Known values are: "unstacked-haproxy", "stacked-kube-vip",
-     "stacked-metallb", and "unmanaged".
-    :vartype load_balancer_sku: str or ~azure.mgmt.hybridcontainerservice.models.LoadBalancerSku
-    :ivar dns_service_ip: DNSServiceIP - An IP address assigned to the Kubernetes DNS service. It
-     must be within the Kubernetes service address range specified in serviceCidr.
-    :vartype dns_service_ip: str
-    :ivar network_policy: NetworkPolicy - Network policy used for building Kubernetes network.
-     Possible values include: 'calico', 'flannel'. Default is 'calico'. Known values are: "calico"
-     and "flannel".
-    :vartype network_policy: str or ~azure.mgmt.hybridcontainerservice.models.NetworkPolicy
-    :ivar pod_cidr: PodCidr - A CIDR notation IP range from which to assign pod IPs when kubenet is
-     used.
-    :vartype pod_cidr: str
-    :ivar pod_cidrs: The CIDR notation IP ranges from which to assign pod IPs. One IPv4 CIDR is
-     expected for single-stack networking. Two CIDRs, one for each IP family (IPv4/IPv6), is
-     expected for dual-stack networking.
-    :vartype pod_cidrs: list[str]
-    :ivar service_cidr: ServiceCidr - A CIDR notation IP range from which to assign service cluster
-     IPs. It must not overlap with any Subnet IP ranges.
-    :vartype service_cidr: str
-    :ivar service_cidrs: The CIDR notation IP ranges from which to assign service cluster IPs. One
-     IPv4 CIDR is expected for single-stack networking. Two CIDRs, one for each IP family
-     (IPv4/IPv6), is expected for dual-stack networking. They must not overlap with any Subnet IP
-     ranges.
-    :vartype service_cidrs: list[str]
-    """
-
-    _attribute_map = {
-        "load_balancer_profile": {"key": "loadBalancerProfile", "type": "LoadBalancerProfile"},
-        "load_balancer_sku": {"key": "loadBalancerSku", "type": "str"},
-        "dns_service_ip": {"key": "dnsServiceIP", "type": "str"},
-        "network_policy": {"key": "networkPolicy", "type": "str"},
-        "pod_cidr": {"key": "podCidr", "type": "str"},
-        "pod_cidrs": {"key": "podCidrs", "type": "[str]"},
-        "service_cidr": {"key": "serviceCidr", "type": "str"},
-        "service_cidrs": {"key": "serviceCidrs", "type": "[str]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        load_balancer_profile: Optional["_models.LoadBalancerProfile"] = None,
-        load_balancer_sku: Union[str, "_models.LoadBalancerSku"] = "unmanaged",
-        dns_service_ip: Optional[str] = None,
-        network_policy: Union[str, "_models.NetworkPolicy"] = "calico",
-        pod_cidr: Optional[str] = None,
-        pod_cidrs: Optional[List[str]] = None,
-        service_cidr: Optional[str] = None,
-        service_cidrs: Optional[List[str]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword load_balancer_profile: LoadBalancerProfile - Profile of the cluster load balancer.
-        :paramtype load_balancer_profile: ~azure.mgmt.hybridcontainerservice.models.LoadBalancerProfile
-        :keyword load_balancer_sku: LoadBalancerSku - The load balancer sku for the provisioned
-         cluster. Possible values: 'unstacked-haproxy', 'stacked-kube-vip', 'stacked-metallb',
-         'unmanaged'. The default is 'unmanaged'. Known values are: "unstacked-haproxy",
-         "stacked-kube-vip", "stacked-metallb", and "unmanaged".
-        :paramtype load_balancer_sku: str or ~azure.mgmt.hybridcontainerservice.models.LoadBalancerSku
-        :keyword dns_service_ip: DNSServiceIP - An IP address assigned to the Kubernetes DNS service.
-         It must be within the Kubernetes service address range specified in serviceCidr.
-        :paramtype dns_service_ip: str
-        :keyword network_policy: NetworkPolicy - Network policy used for building Kubernetes network.
-         Possible values include: 'calico', 'flannel'. Default is 'calico'. Known values are: "calico"
-         and "flannel".
-        :paramtype network_policy: str or ~azure.mgmt.hybridcontainerservice.models.NetworkPolicy
-        :keyword pod_cidr: PodCidr - A CIDR notation IP range from which to assign pod IPs when kubenet
-         is used.
-        :paramtype pod_cidr: str
-        :keyword pod_cidrs: The CIDR notation IP ranges from which to assign pod IPs. One IPv4 CIDR is
-         expected for single-stack networking. Two CIDRs, one for each IP family (IPv4/IPv6), is
-         expected for dual-stack networking.
-        :paramtype pod_cidrs: list[str]
-        :keyword service_cidr: ServiceCidr - A CIDR notation IP range from which to assign service
-         cluster IPs. It must not overlap with any Subnet IP ranges.
-        :paramtype service_cidr: str
-        :keyword service_cidrs: The CIDR notation IP ranges from which to assign service cluster IPs.
-         One IPv4 CIDR is expected for single-stack networking. Two CIDRs, one for each IP family
-         (IPv4/IPv6), is expected for dual-stack networking. They must not overlap with any Subnet IP
-         ranges.
-        :paramtype service_cidrs: list[str]
-        """
-        super().__init__(**kwargs)
-        self.load_balancer_profile = load_balancer_profile
-        self.load_balancer_sku = load_balancer_sku
-        self.dns_service_ip = dns_service_ip
-        self.network_policy = network_policy
-        self.pod_cidr = pod_cidr
-        self.pod_cidrs = pod_cidrs
-        self.service_cidr = service_cidr
-        self.service_cidrs = service_cidrs
-
-
-class OrchestratorProfile(_serialization.Model):
-    """Contains information about orchestrator.
+class ListCredentialResponse(_serialization.Model):
+    """The list kubeconfig result response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar is_preview: Whether Kubernetes version is currently in preview.
-    :vartype is_preview: bool
-    :ivar orchestrator_type: Orchestrator type.
-    :vartype orchestrator_type: str
-    :ivar orchestrator_version: Orchestrator version (major, minor, patch).
-    :vartype orchestrator_version: str
+    :ivar id: Operation Id.
+    :vartype id: str
+    :ivar name: Operation Name.
+    :vartype name: str
+    :ivar resource_id: ARM Resource Id of the provisioned cluster instance.
+    :vartype resource_id: str
+    :ivar status: Provisioning state of the resource. Known values are: "Succeeded", "Failed",
+     "Canceled", "Pending", "Creating", "Deleting", "Updating", "Upgrading", and "Accepted".
+    :vartype status: str or ~azure.mgmt.hybridcontainerservice.models.ResourceProvisioningState
+    :ivar error:
+    :vartype error: ~azure.mgmt.hybridcontainerservice.models.ListCredentialResponseError
+    :ivar properties:
+    :vartype properties: ~azure.mgmt.hybridcontainerservice.models.ListCredentialResponseProperties
     """
 
     _validation = {
-        "is_preview": {"readonly": True},
-        "orchestrator_type": {"readonly": True},
-        "orchestrator_version": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "resource_id": {"readonly": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        "is_preview": {"key": "isPreview", "type": "bool"},
-        "orchestrator_type": {"key": "orchestratorType", "type": "str"},
-        "orchestrator_version": {"key": "orchestratorVersion", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "ListCredentialResponseError"},
+        "properties": {"key": "properties", "type": "ListCredentialResponseProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        error: Optional["_models.ListCredentialResponseError"] = None,
+        properties: Optional["_models.ListCredentialResponseProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword error:
+        :paramtype error: ~azure.mgmt.hybridcontainerservice.models.ListCredentialResponseError
+        :keyword properties:
+        :paramtype properties:
+         ~azure.mgmt.hybridcontainerservice.models.ListCredentialResponseProperties
+        """
+        super().__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.resource_id = None
+        self.status = None
+        self.error = error
+        self.properties = properties
+
+
+class ListCredentialResponseError(_serialization.Model):
+    """ListCredentialResponseError.
+
+    :ivar code:
+    :vartype code: str
+    :ivar message:
+    :vartype message: str
+    """
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword code:
+        :paramtype code: str
+        :keyword message:
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
+        self.code = code
+        self.message = message
+
+
+class ListCredentialResponseProperties(_serialization.Model):
+    """ListCredentialResponseProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar kubeconfigs: Base64-encoded Kubernetes configuration file.
+    :vartype kubeconfigs: list[~azure.mgmt.hybridcontainerservice.models.CredentialResult]
+    """
+
+    _validation = {
+        "kubeconfigs": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "kubeconfigs": {"key": "kubeconfigs", "type": "[CredentialResult]"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.is_preview = None
-        self.orchestrator_type = None
-        self.orchestrator_version = None
+        self.kubeconfigs = None
 
 
-class OrchestratorVersionProfile(_serialization.Model):
-    """The profile of an orchestrator and its available versions.
+class NamedAgentPoolProfile(
+    AgentPoolProfile, AgentPoolUpdateProfile, AgentPoolName
+):  # pylint: disable=too-many-instance-attributes
+    """Profile of the default agent pool along with a name parameter.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar is_preview: Whether Kubernetes version is currently in preview.
-    :vartype is_preview: bool
-    :ivar default: Installed by default if version is not specified.
-    :vartype default: bool
-    :ivar orchestrator_type: Orchestrator type.
-    :vartype orchestrator_type: str
-    :ivar orchestrator_version: Orchestrator version major.minor.patch, for example 1.21.9.
-    :vartype orchestrator_version: str
-    :ivar upgrades: The list of available upgrade versions.
-    :vartype upgrades: list[~azure.mgmt.hybridcontainerservice.models.OrchestratorProfile]
+    :ivar name: Unique name of the default agent pool in the context of the provisioned cluster.
+     Default value is :code:`<clusterName>`-nodepool1.
+    :vartype name: str
+    :ivar count: Number of nodes in the agent pool. The default value is 1.
+    :vartype count: int
+    :ivar vm_size: The VM sku size of the agent pool node VMs.
+    :vartype vm_size: str
+    :ivar kubernetes_version: Version of Kubernetes in use by the agent pool. This is inherited
+     from the kubernetesVersion of the provisioned cluster.
+    :vartype kubernetes_version: str
+    :ivar os_type: The particular KubernetesVersion Image OS Type (Linux, Windows). Known values
+     are: "Windows" and "Linux".
+    :vartype os_type: str or ~azure.mgmt.hybridcontainerservice.models.OsType
+    :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is CBLMariner if OSType
+     is Linux. The default is Windows2019 when OSType is Windows. Known values are: "CBLMariner",
+     "Windows2019", and "Windows2022".
+    :vartype os_sku: str or ~azure.mgmt.hybridcontainerservice.models.OSSKU
+    :ivar node_labels: The node labels to be persisted across all nodes in agent pool.
+    :vartype node_labels: dict[str, str]
+    :ivar node_taints: Taints added to new nodes during node pool create and scale. For example,
+     key=value:NoSchedule.
+    :vartype node_taints: list[str]
+    :ivar max_count: The maximum number of nodes for auto-scaling.
+    :vartype max_count: int
+    :ivar min_count: The minimum number of nodes for auto-scaling.
+    :vartype min_count: int
+    :ivar enable_auto_scaling: Whether to enable auto-scaler. Default value is false.
+    :vartype enable_auto_scaling: bool
+    :ivar max_pods: The maximum number of pods that can run on a node.
+    :vartype max_pods: int
     """
 
     _validation = {
-        "is_preview": {"readonly": True},
-        "default": {"readonly": True},
-        "orchestrator_type": {"readonly": True},
-        "orchestrator_version": {"readonly": True},
+        "kubernetes_version": {"readonly": True},
     }
 
     _attribute_map = {
-        "is_preview": {"key": "isPreview", "type": "bool"},
-        "default": {"key": "default", "type": "bool"},
-        "orchestrator_type": {"key": "orchestratorType", "type": "str"},
-        "orchestrator_version": {"key": "orchestratorVersion", "type": "str"},
-        "upgrades": {"key": "upgrades", "type": "[OrchestratorProfile]"},
+        "name": {"key": "name", "type": "str"},
+        "count": {"key": "count", "type": "int"},
+        "vm_size": {"key": "vmSize", "type": "str"},
+        "kubernetes_version": {"key": "kubernetesVersion", "type": "str"},
+        "os_type": {"key": "osType", "type": "str"},
+        "os_sku": {"key": "osSKU", "type": "str"},
+        "node_labels": {"key": "nodeLabels", "type": "{str}"},
+        "node_taints": {"key": "nodeTaints", "type": "[str]"},
+        "max_count": {"key": "maxCount", "type": "int"},
+        "min_count": {"key": "minCount", "type": "int"},
+        "enable_auto_scaling": {"key": "enableAutoScaling", "type": "bool"},
+        "max_pods": {"key": "maxPods", "type": "int"},
     }
 
-    def __init__(self, *, upgrades: Optional[List["_models.OrchestratorProfile"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        count: int = 1,
+        vm_size: Optional[str] = None,
+        os_type: Optional[Union[str, "_models.OsType"]] = None,
+        os_sku: Optional[Union[str, "_models.OSSKU"]] = None,
+        node_labels: Optional[Dict[str, str]] = None,
+        node_taints: Optional[List[str]] = None,
+        max_count: Optional[int] = None,
+        min_count: Optional[int] = None,
+        enable_auto_scaling: bool = False,
+        max_pods: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword upgrades: The list of available upgrade versions.
-        :paramtype upgrades: list[~azure.mgmt.hybridcontainerservice.models.OrchestratorProfile]
+        :keyword name: Unique name of the default agent pool in the context of the provisioned cluster.
+         Default value is :code:`<clusterName>`-nodepool1.
+        :paramtype name: str
+        :keyword count: Number of nodes in the agent pool. The default value is 1.
+        :paramtype count: int
+        :keyword vm_size: The VM sku size of the agent pool node VMs.
+        :paramtype vm_size: str
+        :keyword os_type: The particular KubernetesVersion Image OS Type (Linux, Windows). Known values
+         are: "Windows" and "Linux".
+        :paramtype os_type: str or ~azure.mgmt.hybridcontainerservice.models.OsType
+        :keyword os_sku: Specifies the OS SKU used by the agent pool. The default is CBLMariner if
+         OSType is Linux. The default is Windows2019 when OSType is Windows. Known values are:
+         "CBLMariner", "Windows2019", and "Windows2022".
+        :paramtype os_sku: str or ~azure.mgmt.hybridcontainerservice.models.OSSKU
+        :keyword node_labels: The node labels to be persisted across all nodes in agent pool.
+        :paramtype node_labels: dict[str, str]
+        :keyword node_taints: Taints added to new nodes during node pool create and scale. For example,
+         key=value:NoSchedule.
+        :paramtype node_taints: list[str]
+        :keyword max_count: The maximum number of nodes for auto-scaling.
+        :paramtype max_count: int
+        :keyword min_count: The minimum number of nodes for auto-scaling.
+        :paramtype min_count: int
+        :keyword enable_auto_scaling: Whether to enable auto-scaler. Default value is false.
+        :paramtype enable_auto_scaling: bool
+        :keyword max_pods: The maximum number of pods that can run on a node.
+        :paramtype max_pods: int
+        """
+        super().__init__(
+            os_type=os_type,
+            os_sku=os_sku,
+            node_labels=node_labels,
+            node_taints=node_taints,
+            max_count=max_count,
+            min_count=min_count,
+            enable_auto_scaling=enable_auto_scaling,
+            max_pods=max_pods,
+            count=count,
+            vm_size=vm_size,
+            name=name,
+            **kwargs
+        )
+        self.name = name
+        self.count = count
+        self.vm_size = vm_size
+        self.kubernetes_version = None
+        self.os_type = os_type
+        self.os_sku = os_sku
+        self.node_labels = node_labels
+        self.node_taints = node_taints
+        self.max_count = max_count
+        self.min_count = min_count
+        self.enable_auto_scaling = enable_auto_scaling
+        self.max_pods = max_pods
+
+
+class NetworkProfile(_serialization.Model):
+    """The network configuration profile for the provisioned cluster.
+
+    :ivar load_balancer_profile: Profile of the HA Proxy load balancer.
+    :vartype load_balancer_profile:
+     ~azure.mgmt.hybridcontainerservice.models.NetworkProfileLoadBalancerProfile
+    :ivar network_policy: Network policy used for building Kubernetes network. Possible values
+     include: 'calico'. "calico"
+    :vartype network_policy: str or ~azure.mgmt.hybridcontainerservice.models.NetworkPolicy
+    :ivar pod_cidr: A CIDR notation IP Address range from which to assign pod IPs.
+    :vartype pod_cidr: str
+    """
+
+    _attribute_map = {
+        "load_balancer_profile": {"key": "loadBalancerProfile", "type": "NetworkProfileLoadBalancerProfile"},
+        "network_policy": {"key": "networkPolicy", "type": "str"},
+        "pod_cidr": {"key": "podCidr", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        load_balancer_profile: Optional["_models.NetworkProfileLoadBalancerProfile"] = None,
+        network_policy: Union[str, "_models.NetworkPolicy"] = "calico",
+        pod_cidr: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword load_balancer_profile: Profile of the HA Proxy load balancer.
+        :paramtype load_balancer_profile:
+         ~azure.mgmt.hybridcontainerservice.models.NetworkProfileLoadBalancerProfile
+        :keyword network_policy: Network policy used for building Kubernetes network. Possible values
+         include: 'calico'. "calico"
+        :paramtype network_policy: str or ~azure.mgmt.hybridcontainerservice.models.NetworkPolicy
+        :keyword pod_cidr: A CIDR notation IP Address range from which to assign pod IPs.
+        :paramtype pod_cidr: str
         """
         super().__init__(**kwargs)
-        self.is_preview = None
-        self.default = None
-        self.orchestrator_type = None
-        self.orchestrator_version = None
-        self.upgrades = upgrades
+        self.load_balancer_profile = load_balancer_profile
+        self.network_policy = network_policy
+        self.pod_cidr = pod_cidr
 
 
-class OrchestratorVersionProfileListResult(_serialization.Model):
-    """The list of versions for supported orchestrators.
+class NetworkProfileLoadBalancerProfile(_serialization.Model):
+    """Profile of the HA Proxy load balancer.
+
+    :ivar count: Number of HA Proxy load balancer VMs. The default value is 0.
+    :vartype count: int
+    """
+
+    _attribute_map = {
+        "count": {"key": "count", "type": "int"},
+    }
+
+    def __init__(self, *, count: int = 0, **kwargs: Any) -> None:
+        """
+        :keyword count: Number of HA Proxy load balancer VMs. The default value is 0.
+        :paramtype count: int
+        """
+        super().__init__(**kwargs)
+        self.count = count
+
+
+class Operation(_serialization.Model):
+    """Details of a REST API operation, returned from the Resource Provider Operations API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar orchestrators: Profile of the orchestrator versions.
-    :vartype orchestrators:
-     list[~azure.mgmt.hybridcontainerservice.models.OrchestratorVersionProfile]
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
+     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
+     data-plane operations and "false" for ARM/control-plane operations.
+    :vartype is_data_action: bool
+    :ivar display: Localized display information for this particular operation.
+    :vartype display: ~azure.mgmt.hybridcontainerservice.models.OperationDisplay
+    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
+     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
+     and "user,system".
+    :vartype origin: str or ~azure.mgmt.hybridcontainerservice.models.Origin
+    :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
+     internal only APIs. "Internal"
+    :vartype action_type: str or ~azure.mgmt.hybridcontainerservice.models.ActionType
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "is_data_action": {"readonly": True},
+        "origin": {"readonly": True},
+        "action_type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "action_type": {"key": "actionType", "type": "str"},
+    }
+
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
+        """
+        :keyword display: Localized display information for this particular operation.
+        :paramtype display: ~azure.mgmt.hybridcontainerservice.models.OperationDisplay
+        """
+        super().__init__(**kwargs)
+        self.name = None
+        self.is_data_action = None
+        self.display = display
+        self.origin = None
+        self.action_type = None
+
+
+class OperationDisplay(_serialization.Model):
+    """Localized display information for this particular operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
+     Monitoring Insights" or "Microsoft Compute".
+    :vartype provider: str
+    :ivar resource: The localized friendly name of the resource type related to this operation.
+     E.g. "Virtual Machines" or "Job Schedule Collections".
+    :vartype resource: str
+    :ivar operation: The concise, localized friendly name for the operation; suitable for
+     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
+    :vartype operation: str
+    :ivar description: The short, localized friendly description of the operation; suitable for
+     tool tips and detailed views.
+    :vartype description: str
+    """
+
+    _validation = {
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.provider = None
+        self.resource = None
+        self.operation = None
+        self.description = None
+
+
+class OperationListResult(_serialization.Model):
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link
+    to get the next set of results.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of operations supported by the resource provider.
+    :vartype value: list[~azure.mgmt.hybridcontainerservice.models.Operation]
+    :ivar next_link: URL to get the next set of operation list results (if there are any).
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class ProvisionedCluster(ProxyResource):
+    """The provisioned cluster resource definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridcontainerservice.models.SystemData
+    :ivar properties: Properties of the provisioned cluster.
+    :vartype properties: ~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterProperties
+    :ivar extended_location: Extended location pointing to the underlying infrastructure.
+    :vartype extended_location: ~azure.mgmt.hybridcontainerservice.models.ExtendedLocation
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        "orchestrators": {"key": "orchestrators", "type": "[OrchestratorVersionProfile]"},
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ProvisionedClusterProperties"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
     }
 
     def __init__(
-        self, *, orchestrators: Optional[List["_models.OrchestratorVersionProfile"]] = None, **kwargs: Any
+        self,
+        *,
+        properties: Optional["_models.ProvisionedClusterProperties"] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        **kwargs: Any
     ) -> None:
         """
-        :keyword orchestrators: Profile of the orchestrator versions.
-        :paramtype orchestrators:
-         list[~azure.mgmt.hybridcontainerservice.models.OrchestratorVersionProfile]
+        :keyword properties: Properties of the provisioned cluster.
+        :paramtype properties: ~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterProperties
+        :keyword extended_location: Extended location pointing to the underlying infrastructure.
+        :paramtype extended_location: ~azure.mgmt.hybridcontainerservice.models.ExtendedLocation
         """
         super().__init__(**kwargs)
-        self.orchestrators = orchestrators
-        self.id = None
-        self.name = None
-        self.type = None
+        self.properties = properties
+        self.extended_location = extended_location
 
 
-class ProvisionedClusterIdentity(_serialization.Model):
-    """Identity for the Provisioned cluster.
+class ProvisionedClusterLicenseProfile(_serialization.Model):
+    """The license profile of the provisioned cluster.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar principal_id: The principal id of provisioned cluster identity. This property will only
-     be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant id associated with the provisioned cluster. This property will only
-     be provided for a system assigned identity.
-    :vartype tenant_id: str
-    :ivar type: The type of identity used for the provisioned cluster. The type SystemAssigned,
-     includes a system created identity. The type None means no identity is assigned to the
-     provisioned cluster. Required. Known values are: "None" and "SystemAssigned".
-    :vartype type: str or ~azure.mgmt.hybridcontainerservice.models.ResourceIdentityType
+    :ivar azure_hybrid_benefit: Indicates whether Azure Hybrid Benefit is opted in. Default value
+     is false. Known values are: "True", "False", and "NotApplicable".
+    :vartype azure_hybrid_benefit: str or
+     ~azure.mgmt.hybridcontainerservice.models.AzureHybridBenefit
     """
 
-    _validation = {
-        "principal_id": {"readonly": True},
-        "tenant_id": {"readonly": True},
-        "type": {"required": True},
-    }
-
     _attribute_map = {
-        "principal_id": {"key": "principalId", "type": "str"},
-        "tenant_id": {"key": "tenantId", "type": "str"},
-        "type": {"key": "type", "type": "str"},
+        "azure_hybrid_benefit": {"key": "azureHybridBenefit", "type": "str"},
     }
 
-    def __init__(self, *, type: Union[str, "_models.ResourceIdentityType"], **kwargs: Any) -> None:
+    def __init__(
+        self, *, azure_hybrid_benefit: Union[str, "_models.AzureHybridBenefit"] = "NotApplicable", **kwargs: Any
+    ) -> None:
         """
-        :keyword type: The type of identity used for the provisioned cluster. The type SystemAssigned,
-         includes a system created identity. The type None means no identity is assigned to the
-         provisioned cluster. Required. Known values are: "None" and "SystemAssigned".
-        :paramtype type: str or ~azure.mgmt.hybridcontainerservice.models.ResourceIdentityType
+        :keyword azure_hybrid_benefit: Indicates whether Azure Hybrid Benefit is opted in. Default
+         value is false. Known values are: "True", "False", and "NotApplicable".
+        :paramtype azure_hybrid_benefit: str or
+         ~azure.mgmt.hybridcontainerservice.models.AzureHybridBenefit
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
-        self.type = type
+        self.azure_hybrid_benefit = azure_hybrid_benefit
+
+
+class ProvisionedClusterListResult(_serialization.Model):
+    """Lists the ProvisionedClusterInstance resource associated with the ConnectedCluster.
+
+    :ivar value:
+    :vartype value: list[~azure.mgmt.hybridcontainerservice.models.ProvisionedCluster]
+    :ivar next_link:
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ProvisionedCluster]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.ProvisionedCluster"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.hybridcontainerservice.models.ProvisionedCluster]
+        :keyword next_link:
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class ProvisionedClusterPoolUpgradeProfile(_serialization.Model):
-    """The list of available upgrade versions.
+    """The list of available kubernetes versions for upgrade.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar kubernetes_version: The Kubernetes version (major.minor.patch).
     :vartype kubernetes_version: str
-    :ivar name: The Agent Pool name.
-    :vartype name: str
-    :ivar os_type: OsType - OsType to be used to specify os type. Choose from Linux and Windows.
-     Default to Linux. Possible values include: 'Linux', 'Windows'. Known values are: "Linux" and
-     "Windows".
+    :ivar os_type: The particular KubernetesVersion Image OS Type (Linux, Windows). Known values
+     are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.hybridcontainerservice.models.OsType
-    :ivar upgrades: List of orchestrator types and versions available for upgrade.
+    :ivar upgrades: List of available kubernetes versions for upgrade.
     :vartype upgrades:
      list[~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterPoolUpgradeProfileProperties]
     """
 
     _validation = {
         "kubernetes_version": {"readonly": True},
-        "name": {"readonly": True},
         "os_type": {"readonly": True},
     }
 
     _attribute_map = {
         "kubernetes_version": {"key": "kubernetesVersion", "type": "str"},
-        "name": {"key": "name", "type": "str"},
         "os_type": {"key": "osType", "type": "str"},
         "upgrades": {"key": "upgrades", "type": "[ProvisionedClusterPoolUpgradeProfileProperties]"},
     }
@@ -2466,13 +1896,12 @@ class ProvisionedClusterPoolUpgradeProfile(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword upgrades: List of orchestrator types and versions available for upgrade.
+        :keyword upgrades: List of available kubernetes versions for upgrade.
         :paramtype upgrades:
          list[~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterPoolUpgradeProfileProperties]
         """
         super().__init__(**kwargs)
         self.kubernetes_version = None
-        self.name = None
         self.os_type = None
         self.upgrades = upgrades
 
@@ -2505,171 +1934,45 @@ class ProvisionedClusterPoolUpgradeProfileProperties(_serialization.Model):
         self.is_preview = None
 
 
-class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
+class ProvisionedClusterProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """Properties of the provisioned cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "location": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "location": {"key": "location", "type": "str"},
-    }
-
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword location: The geo-location where the resource lives. Required.
-        :paramtype location: str
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-        self.location = location
-
-
-class ProvisionedClusters(TrackedResource):
-    """The provisionedClusters resource definition.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar identity: Identity for the Provisioned cluster.
-    :vartype identity: ~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterIdentity
-    :ivar properties: All properties of the provisioned cluster.
-    :vartype properties: ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersAllProperties
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.hybridcontainerservice.models.SystemData
-    :ivar extended_location:
-    :vartype extended_location:
-     ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersExtendedLocation
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "location": {"required": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "location": {"key": "location", "type": "str"},
-        "identity": {"key": "identity", "type": "ProvisionedClusterIdentity"},
-        "properties": {"key": "properties", "type": "ProvisionedClustersAllProperties"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "extended_location": {"key": "extendedLocation", "type": "ProvisionedClustersExtendedLocation"},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        identity: Optional["_models.ProvisionedClusterIdentity"] = None,
-        properties: Optional["_models.ProvisionedClustersAllProperties"] = None,
-        extended_location: Optional["_models.ProvisionedClustersExtendedLocation"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword location: The geo-location where the resource lives. Required.
-        :paramtype location: str
-        :keyword identity: Identity for the Provisioned cluster.
-        :paramtype identity: ~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterIdentity
-        :keyword properties: All properties of the provisioned cluster.
-        :paramtype properties:
-         ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersAllProperties
-        :keyword extended_location:
-        :paramtype extended_location:
-         ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersExtendedLocation
-        """
-        super().__init__(tags=tags, location=location, **kwargs)
-        self.identity = identity
-        self.properties = properties
-        self.system_data = None
-        self.extended_location = extended_location
-
-
-class ProvisionedClustersCommonProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
-    """HybridAKSClusterSpec defines the desired state of HybridAKSCluster.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar enable_rbac: EnableRBAC - Whether to enable Kubernetes Role-Based Access Control.
-    :vartype enable_rbac: bool
-    :ivar linux_profile: LinuxProfile - The profile for Linux VMs in the Provisioned Cluster.
+    :ivar linux_profile: The profile for Linux VMs in the provisioned cluster.
     :vartype linux_profile: ~azure.mgmt.hybridcontainerservice.models.LinuxProfileProperties
-    :ivar features: Additional features specs like Arc Agent Onboarding.
-    :vartype features:
-     ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersCommonPropertiesFeatures
-    :ivar addon_profiles: AddonProfiles - Profile of managed cluster add-on.
-    :vartype addon_profiles: dict[str, ~azure.mgmt.hybridcontainerservice.models.AddonProfiles]
-    :ivar control_plane: ControlPlane - ControlPlane Configuration.
+    :ivar control_plane: The profile for control plane of the provisioned cluster.
     :vartype control_plane: ~azure.mgmt.hybridcontainerservice.models.ControlPlaneProfile
-    :ivar kubernetes_version: KubernetesVersion - Version of Kubernetes specified when creating the
-     managed cluster.
+    :ivar kubernetes_version: The version of Kubernetes in use by the provisioned cluster.
     :vartype kubernetes_version: str
-    :ivar network_profile: NetworkProfile - Profile of network configuration.
+    :ivar network_profile: The network configuration profile for the provisioned cluster.
     :vartype network_profile: ~azure.mgmt.hybridcontainerservice.models.NetworkProfile
-    :ivar node_resource_group: NodeResourceGroup - Name of the resource group containing agent pool
-     nodes.
-    :vartype node_resource_group: str
-    :ivar agent_pool_profiles: The agent pools of the cluster.
+    :ivar storage_profile: The storage configuration profile for the provisioned cluster.
+    :vartype storage_profile: ~azure.mgmt.hybridcontainerservice.models.StorageProfile
+    :ivar cluster_vm_access_profile: The SSH restricted access profile for the VMs in the
+     provisioned cluster.
+    :vartype cluster_vm_access_profile:
+     ~azure.mgmt.hybridcontainerservice.models.ClusterVMAccessProfile
+    :ivar agent_pool_profiles: The agent pool properties for the provisioned cluster.
     :vartype agent_pool_profiles:
      list[~azure.mgmt.hybridcontainerservice.models.NamedAgentPoolProfile]
-    :ivar cloud_provider_profile: The underlying cloud infra provider properties.
+    :ivar cloud_provider_profile: The profile for the underlying cloud infrastructure provider for
+     the provisioned cluster.
     :vartype cloud_provider_profile: ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfile
-    :ivar provisioning_state: Known values are: "Succeeded", "Failed", "Canceled", "InProgress",
-     "Deleting", "Updating", "Accepted", and "Created".
-    :vartype provisioning_state: str or ~azure.mgmt.hybridcontainerservice.models.ProvisioningState
-    :ivar status: HybridAKSClusterStatus defines the observed state of HybridAKSCluster.
-    :vartype status:
-     ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersCommonPropertiesStatus
+    :ivar provisioning_state: The status of the latest long running operation for the provisioned
+     cluster. Known values are: "Succeeded", "Failed", "Canceled", "Pending", "Creating",
+     "Deleting", "Updating", "Upgrading", and "Accepted".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.hybridcontainerservice.models.ResourceProvisioningState
+    :ivar status: The observed status of the provisioned cluster.
+    :vartype status: ~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterPropertiesStatus
+    :ivar license_profile: The license profile of the provisioned cluster.
+    :vartype license_profile:
+     ~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterLicenseProfile
+    :ivar auto_scaler_profile: Parameters to be applied to the cluster-autoscaler when auto scaling
+     is enabled for the provisioned cluster.
+    :vartype auto_scaler_profile:
+     ~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterPropertiesAutoScalerProfile
     """
 
     _validation = {
@@ -2678,1404 +1981,451 @@ class ProvisionedClustersCommonProperties(_serialization.Model):  # pylint: disa
     }
 
     _attribute_map = {
-        "enable_rbac": {"key": "enableRbac", "type": "bool"},
         "linux_profile": {"key": "linuxProfile", "type": "LinuxProfileProperties"},
-        "features": {"key": "features", "type": "ProvisionedClustersCommonPropertiesFeatures"},
-        "addon_profiles": {"key": "addonProfiles", "type": "{AddonProfiles}"},
         "control_plane": {"key": "controlPlane", "type": "ControlPlaneProfile"},
         "kubernetes_version": {"key": "kubernetesVersion", "type": "str"},
         "network_profile": {"key": "networkProfile", "type": "NetworkProfile"},
-        "node_resource_group": {"key": "nodeResourceGroup", "type": "str"},
+        "storage_profile": {"key": "storageProfile", "type": "StorageProfile"},
+        "cluster_vm_access_profile": {"key": "clusterVMAccessProfile", "type": "ClusterVMAccessProfile"},
         "agent_pool_profiles": {"key": "agentPoolProfiles", "type": "[NamedAgentPoolProfile]"},
         "cloud_provider_profile": {"key": "cloudProviderProfile", "type": "CloudProviderProfile"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
-        "status": {"key": "status", "type": "ProvisionedClustersCommonPropertiesStatus"},
+        "status": {"key": "status", "type": "ProvisionedClusterPropertiesStatus"},
+        "license_profile": {"key": "licenseProfile", "type": "ProvisionedClusterLicenseProfile"},
+        "auto_scaler_profile": {"key": "autoScalerProfile", "type": "ProvisionedClusterPropertiesAutoScalerProfile"},
     }
 
     def __init__(
         self,
         *,
-        enable_rbac: Optional[bool] = None,
         linux_profile: Optional["_models.LinuxProfileProperties"] = None,
-        features: Optional["_models.ProvisionedClustersCommonPropertiesFeatures"] = None,
-        addon_profiles: Optional[Dict[str, "_models.AddonProfiles"]] = None,
         control_plane: Optional["_models.ControlPlaneProfile"] = None,
         kubernetes_version: Optional[str] = None,
         network_profile: Optional["_models.NetworkProfile"] = None,
-        node_resource_group: Optional[str] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
+        cluster_vm_access_profile: Optional["_models.ClusterVMAccessProfile"] = None,
         agent_pool_profiles: Optional[List["_models.NamedAgentPoolProfile"]] = None,
         cloud_provider_profile: Optional["_models.CloudProviderProfile"] = None,
+        license_profile: Optional["_models.ProvisionedClusterLicenseProfile"] = None,
+        auto_scaler_profile: Optional["_models.ProvisionedClusterPropertiesAutoScalerProfile"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword enable_rbac: EnableRBAC - Whether to enable Kubernetes Role-Based Access Control.
-        :paramtype enable_rbac: bool
-        :keyword linux_profile: LinuxProfile - The profile for Linux VMs in the Provisioned Cluster.
+        :keyword linux_profile: The profile for Linux VMs in the provisioned cluster.
         :paramtype linux_profile: ~azure.mgmt.hybridcontainerservice.models.LinuxProfileProperties
-        :keyword features: Additional features specs like Arc Agent Onboarding.
-        :paramtype features:
-         ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersCommonPropertiesFeatures
-        :keyword addon_profiles: AddonProfiles - Profile of managed cluster add-on.
-        :paramtype addon_profiles: dict[str, ~azure.mgmt.hybridcontainerservice.models.AddonProfiles]
-        :keyword control_plane: ControlPlane - ControlPlane Configuration.
+        :keyword control_plane: The profile for control plane of the provisioned cluster.
         :paramtype control_plane: ~azure.mgmt.hybridcontainerservice.models.ControlPlaneProfile
-        :keyword kubernetes_version: KubernetesVersion - Version of Kubernetes specified when creating
-         the managed cluster.
+        :keyword kubernetes_version: The version of Kubernetes in use by the provisioned cluster.
         :paramtype kubernetes_version: str
-        :keyword network_profile: NetworkProfile - Profile of network configuration.
+        :keyword network_profile: The network configuration profile for the provisioned cluster.
         :paramtype network_profile: ~azure.mgmt.hybridcontainerservice.models.NetworkProfile
-        :keyword node_resource_group: NodeResourceGroup - Name of the resource group containing agent
-         pool nodes.
-        :paramtype node_resource_group: str
-        :keyword agent_pool_profiles: The agent pools of the cluster.
+        :keyword storage_profile: The storage configuration profile for the provisioned cluster.
+        :paramtype storage_profile: ~azure.mgmt.hybridcontainerservice.models.StorageProfile
+        :keyword cluster_vm_access_profile: The SSH restricted access profile for the VMs in the
+         provisioned cluster.
+        :paramtype cluster_vm_access_profile:
+         ~azure.mgmt.hybridcontainerservice.models.ClusterVMAccessProfile
+        :keyword agent_pool_profiles: The agent pool properties for the provisioned cluster.
         :paramtype agent_pool_profiles:
          list[~azure.mgmt.hybridcontainerservice.models.NamedAgentPoolProfile]
-        :keyword cloud_provider_profile: The underlying cloud infra provider properties.
+        :keyword cloud_provider_profile: The profile for the underlying cloud infrastructure provider
+         for the provisioned cluster.
         :paramtype cloud_provider_profile:
          ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfile
+        :keyword license_profile: The license profile of the provisioned cluster.
+        :paramtype license_profile:
+         ~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterLicenseProfile
+        :keyword auto_scaler_profile: Parameters to be applied to the cluster-autoscaler when auto
+         scaling is enabled for the provisioned cluster.
+        :paramtype auto_scaler_profile:
+         ~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterPropertiesAutoScalerProfile
         """
         super().__init__(**kwargs)
-        self.enable_rbac = enable_rbac
         self.linux_profile = linux_profile
-        self.features = features
-        self.addon_profiles = addon_profiles
         self.control_plane = control_plane
         self.kubernetes_version = kubernetes_version
         self.network_profile = network_profile
-        self.node_resource_group = node_resource_group
+        self.storage_profile = storage_profile
+        self.cluster_vm_access_profile = cluster_vm_access_profile
         self.agent_pool_profiles = agent_pool_profiles
         self.cloud_provider_profile = cloud_provider_profile
         self.provisioning_state = None
         self.status = None
+        self.license_profile = license_profile
+        self.auto_scaler_profile = auto_scaler_profile
 
 
-class ProvisionedClustersPropertiesWithSecrets(_serialization.Model):
-    """Properties of provisioned clusters that contain secrets.
-
-    :ivar aad_profile: AAD profile for the provisioned cluster.
-    :vartype aad_profile: ~azure.mgmt.hybridcontainerservice.models.AADProfile
-    :ivar windows_profile: WindowsProfile - Profile for Windows VMs in the Provisioned Cluster.
-    :vartype windows_profile: ~azure.mgmt.hybridcontainerservice.models.WindowsProfile
-    :ivar http_proxy_config: HttpProxyConfig - Configurations for provisioning the cluster with
-     HTTP proxy servers.
-    :vartype http_proxy_config: ~azure.mgmt.hybridcontainerservice.models.HttpProxyConfig
-    """
-
-    _attribute_map = {
-        "aad_profile": {"key": "aadProfile", "type": "AADProfile"},
-        "windows_profile": {"key": "windowsProfile", "type": "WindowsProfile"},
-        "http_proxy_config": {"key": "httpProxyConfig", "type": "HttpProxyConfig"},
-    }
-
-    def __init__(
-        self,
-        *,
-        aad_profile: Optional["_models.AADProfile"] = None,
-        windows_profile: Optional["_models.WindowsProfile"] = None,
-        http_proxy_config: Optional["_models.HttpProxyConfig"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword aad_profile: AAD profile for the provisioned cluster.
-        :paramtype aad_profile: ~azure.mgmt.hybridcontainerservice.models.AADProfile
-        :keyword windows_profile: WindowsProfile - Profile for Windows VMs in the Provisioned Cluster.
-        :paramtype windows_profile: ~azure.mgmt.hybridcontainerservice.models.WindowsProfile
-        :keyword http_proxy_config: HttpProxyConfig - Configurations for provisioning the cluster with
-         HTTP proxy servers.
-        :paramtype http_proxy_config: ~azure.mgmt.hybridcontainerservice.models.HttpProxyConfig
-        """
-        super().__init__(**kwargs)
-        self.aad_profile = aad_profile
-        self.windows_profile = windows_profile
-        self.http_proxy_config = http_proxy_config
-
-
-class ProvisionedClustersAllProperties(
-    ProvisionedClustersPropertiesWithSecrets, ProvisionedClustersCommonProperties
+class ProvisionedClusterPropertiesAutoScalerProfile(
+    _serialization.Model
 ):  # pylint: disable=too-many-instance-attributes
-    """All properties of the provisioned cluster.
+    """Parameters to be applied to the cluster-autoscaler when auto scaling is enabled for the
+    provisioned cluster.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar enable_rbac: EnableRBAC - Whether to enable Kubernetes Role-Based Access Control.
-    :vartype enable_rbac: bool
-    :ivar linux_profile: LinuxProfile - The profile for Linux VMs in the Provisioned Cluster.
-    :vartype linux_profile: ~azure.mgmt.hybridcontainerservice.models.LinuxProfileProperties
-    :ivar features: Additional features specs like Arc Agent Onboarding.
-    :vartype features:
-     ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersCommonPropertiesFeatures
-    :ivar addon_profiles: AddonProfiles - Profile of managed cluster add-on.
-    :vartype addon_profiles: dict[str, ~azure.mgmt.hybridcontainerservice.models.AddonProfiles]
-    :ivar control_plane: ControlPlane - ControlPlane Configuration.
-    :vartype control_plane: ~azure.mgmt.hybridcontainerservice.models.ControlPlaneProfile
-    :ivar kubernetes_version: KubernetesVersion - Version of Kubernetes specified when creating the
-     managed cluster.
-    :vartype kubernetes_version: str
-    :ivar network_profile: NetworkProfile - Profile of network configuration.
-    :vartype network_profile: ~azure.mgmt.hybridcontainerservice.models.NetworkProfile
-    :ivar node_resource_group: NodeResourceGroup - Name of the resource group containing agent pool
-     nodes.
-    :vartype node_resource_group: str
-    :ivar agent_pool_profiles: The agent pools of the cluster.
-    :vartype agent_pool_profiles:
-     list[~azure.mgmt.hybridcontainerservice.models.NamedAgentPoolProfile]
-    :ivar cloud_provider_profile: The underlying cloud infra provider properties.
-    :vartype cloud_provider_profile: ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfile
-    :ivar provisioning_state: Known values are: "Succeeded", "Failed", "Canceled", "InProgress",
-     "Deleting", "Updating", "Accepted", and "Created".
-    :vartype provisioning_state: str or ~azure.mgmt.hybridcontainerservice.models.ProvisioningState
-    :ivar status: HybridAKSClusterStatus defines the observed state of HybridAKSCluster.
-    :vartype status:
-     ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersCommonPropertiesStatus
-    :ivar aad_profile: AAD profile for the provisioned cluster.
-    :vartype aad_profile: ~azure.mgmt.hybridcontainerservice.models.AADProfile
-    :ivar windows_profile: WindowsProfile - Profile for Windows VMs in the Provisioned Cluster.
-    :vartype windows_profile: ~azure.mgmt.hybridcontainerservice.models.WindowsProfile
-    :ivar http_proxy_config: HttpProxyConfig - Configurations for provisioning the cluster with
-     HTTP proxy servers.
-    :vartype http_proxy_config: ~azure.mgmt.hybridcontainerservice.models.HttpProxyConfig
+    :ivar balance_similar_node_groups: Valid values are 'true' and 'false'.
+    :vartype balance_similar_node_groups: str
+    :ivar expander: If not specified, the default is 'random'. See `expanders
+     <https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-expanders>`_
+     for more information. Known values are: "least-waste", "most-pods", "priority", and "random".
+    :vartype expander: str or ~azure.mgmt.hybridcontainerservice.models.Expander
+    :ivar max_empty_bulk_delete: The default is 10.
+    :vartype max_empty_bulk_delete: str
+    :ivar max_graceful_termination_sec: The default is 600.
+    :vartype max_graceful_termination_sec: str
+    :ivar max_node_provision_time: The default is '15m'. Values must be an integer followed by an
+     'm'. No unit of time other than minutes (m) is supported.
+    :vartype max_node_provision_time: str
+    :ivar max_total_unready_percentage: The default is 45. The maximum is 100 and the minimum is 0.
+    :vartype max_total_unready_percentage: str
+    :ivar new_pod_scale_up_delay: For scenarios like burst/batch scale where you don't want CA to
+     act before the kubernetes scheduler could schedule all the pods, you can tell CA to ignore
+     unscheduled pods before they're a certain age. The default is '0s'. Values must be an integer
+     followed by a unit ('s' for seconds, 'm' for minutes, 'h' for hours, etc).
+    :vartype new_pod_scale_up_delay: str
+    :ivar ok_total_unready_count: This must be an integer. The default is 3.
+    :vartype ok_total_unready_count: str
+    :ivar scan_interval: The default is '10'. Values must be an integer number of seconds.
+    :vartype scan_interval: str
+    :ivar scale_down_delay_after_add: The default is '10m'. Values must be an integer followed by
+     an 'm'. No unit of time other than minutes (m) is supported.
+    :vartype scale_down_delay_after_add: str
+    :ivar scale_down_delay_after_delete: The default is the scan-interval. Values must be an
+     integer followed by an 'm'. No unit of time other than minutes (m) is supported.
+    :vartype scale_down_delay_after_delete: str
+    :ivar scale_down_delay_after_failure: The default is '3m'. Values must be an integer followed
+     by an 'm'. No unit of time other than minutes (m) is supported.
+    :vartype scale_down_delay_after_failure: str
+    :ivar scale_down_unneeded_time: The default is '10m'. Values must be an integer followed by an
+     'm'. No unit of time other than minutes (m) is supported.
+    :vartype scale_down_unneeded_time: str
+    :ivar scale_down_unready_time: The default is '20m'. Values must be an integer followed by an
+     'm'. No unit of time other than minutes (m) is supported.
+    :vartype scale_down_unready_time: str
+    :ivar scale_down_utilization_threshold: The default is '0.5'.
+    :vartype scale_down_utilization_threshold: str
+    :ivar skip_nodes_with_local_storage: The default is true.
+    :vartype skip_nodes_with_local_storage: str
+    :ivar skip_nodes_with_system_pods: The default is true.
+    :vartype skip_nodes_with_system_pods: str
     """
 
-    _validation = {
-        "provisioning_state": {"readonly": True},
-        "status": {"readonly": True},
-    }
-
     _attribute_map = {
-        "enable_rbac": {"key": "enableRbac", "type": "bool"},
-        "linux_profile": {"key": "linuxProfile", "type": "LinuxProfileProperties"},
-        "features": {"key": "features", "type": "ProvisionedClustersCommonPropertiesFeatures"},
-        "addon_profiles": {"key": "addonProfiles", "type": "{AddonProfiles}"},
-        "control_plane": {"key": "controlPlane", "type": "ControlPlaneProfile"},
-        "kubernetes_version": {"key": "kubernetesVersion", "type": "str"},
-        "network_profile": {"key": "networkProfile", "type": "NetworkProfile"},
-        "node_resource_group": {"key": "nodeResourceGroup", "type": "str"},
-        "agent_pool_profiles": {"key": "agentPoolProfiles", "type": "[NamedAgentPoolProfile]"},
-        "cloud_provider_profile": {"key": "cloudProviderProfile", "type": "CloudProviderProfile"},
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
-        "status": {"key": "status", "type": "ProvisionedClustersCommonPropertiesStatus"},
-        "aad_profile": {"key": "aadProfile", "type": "AADProfile"},
-        "windows_profile": {"key": "windowsProfile", "type": "WindowsProfile"},
-        "http_proxy_config": {"key": "httpProxyConfig", "type": "HttpProxyConfig"},
+        "balance_similar_node_groups": {"key": "balance-similar-node-groups", "type": "str"},
+        "expander": {"key": "expander", "type": "str"},
+        "max_empty_bulk_delete": {"key": "max-empty-bulk-delete", "type": "str"},
+        "max_graceful_termination_sec": {"key": "max-graceful-termination-sec", "type": "str"},
+        "max_node_provision_time": {"key": "max-node-provision-time", "type": "str"},
+        "max_total_unready_percentage": {"key": "max-total-unready-percentage", "type": "str"},
+        "new_pod_scale_up_delay": {"key": "new-pod-scale-up-delay", "type": "str"},
+        "ok_total_unready_count": {"key": "ok-total-unready-count", "type": "str"},
+        "scan_interval": {"key": "scan-interval", "type": "str"},
+        "scale_down_delay_after_add": {"key": "scale-down-delay-after-add", "type": "str"},
+        "scale_down_delay_after_delete": {"key": "scale-down-delay-after-delete", "type": "str"},
+        "scale_down_delay_after_failure": {"key": "scale-down-delay-after-failure", "type": "str"},
+        "scale_down_unneeded_time": {"key": "scale-down-unneeded-time", "type": "str"},
+        "scale_down_unready_time": {"key": "scale-down-unready-time", "type": "str"},
+        "scale_down_utilization_threshold": {"key": "scale-down-utilization-threshold", "type": "str"},
+        "skip_nodes_with_local_storage": {"key": "skip-nodes-with-local-storage", "type": "str"},
+        "skip_nodes_with_system_pods": {"key": "skip-nodes-with-system-pods", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        enable_rbac: Optional[bool] = None,
-        linux_profile: Optional["_models.LinuxProfileProperties"] = None,
-        features: Optional["_models.ProvisionedClustersCommonPropertiesFeatures"] = None,
-        addon_profiles: Optional[Dict[str, "_models.AddonProfiles"]] = None,
-        control_plane: Optional["_models.ControlPlaneProfile"] = None,
-        kubernetes_version: Optional[str] = None,
-        network_profile: Optional["_models.NetworkProfile"] = None,
-        node_resource_group: Optional[str] = None,
-        agent_pool_profiles: Optional[List["_models.NamedAgentPoolProfile"]] = None,
-        cloud_provider_profile: Optional["_models.CloudProviderProfile"] = None,
-        aad_profile: Optional["_models.AADProfile"] = None,
-        windows_profile: Optional["_models.WindowsProfile"] = None,
-        http_proxy_config: Optional["_models.HttpProxyConfig"] = None,
+        balance_similar_node_groups: Optional[str] = None,
+        expander: Optional[Union[str, "_models.Expander"]] = None,
+        max_empty_bulk_delete: Optional[str] = None,
+        max_graceful_termination_sec: Optional[str] = None,
+        max_node_provision_time: Optional[str] = None,
+        max_total_unready_percentage: Optional[str] = None,
+        new_pod_scale_up_delay: Optional[str] = None,
+        ok_total_unready_count: Optional[str] = None,
+        scan_interval: Optional[str] = None,
+        scale_down_delay_after_add: Optional[str] = None,
+        scale_down_delay_after_delete: Optional[str] = None,
+        scale_down_delay_after_failure: Optional[str] = None,
+        scale_down_unneeded_time: Optional[str] = None,
+        scale_down_unready_time: Optional[str] = None,
+        scale_down_utilization_threshold: Optional[str] = None,
+        skip_nodes_with_local_storage: Optional[str] = None,
+        skip_nodes_with_system_pods: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword enable_rbac: EnableRBAC - Whether to enable Kubernetes Role-Based Access Control.
-        :paramtype enable_rbac: bool
-        :keyword linux_profile: LinuxProfile - The profile for Linux VMs in the Provisioned Cluster.
-        :paramtype linux_profile: ~azure.mgmt.hybridcontainerservice.models.LinuxProfileProperties
-        :keyword features: Additional features specs like Arc Agent Onboarding.
-        :paramtype features:
-         ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersCommonPropertiesFeatures
-        :keyword addon_profiles: AddonProfiles - Profile of managed cluster add-on.
-        :paramtype addon_profiles: dict[str, ~azure.mgmt.hybridcontainerservice.models.AddonProfiles]
-        :keyword control_plane: ControlPlane - ControlPlane Configuration.
-        :paramtype control_plane: ~azure.mgmt.hybridcontainerservice.models.ControlPlaneProfile
-        :keyword kubernetes_version: KubernetesVersion - Version of Kubernetes specified when creating
-         the managed cluster.
-        :paramtype kubernetes_version: str
-        :keyword network_profile: NetworkProfile - Profile of network configuration.
-        :paramtype network_profile: ~azure.mgmt.hybridcontainerservice.models.NetworkProfile
-        :keyword node_resource_group: NodeResourceGroup - Name of the resource group containing agent
-         pool nodes.
-        :paramtype node_resource_group: str
-        :keyword agent_pool_profiles: The agent pools of the cluster.
-        :paramtype agent_pool_profiles:
-         list[~azure.mgmt.hybridcontainerservice.models.NamedAgentPoolProfile]
-        :keyword cloud_provider_profile: The underlying cloud infra provider properties.
-        :paramtype cloud_provider_profile:
-         ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfile
-        :keyword aad_profile: AAD profile for the provisioned cluster.
-        :paramtype aad_profile: ~azure.mgmt.hybridcontainerservice.models.AADProfile
-        :keyword windows_profile: WindowsProfile - Profile for Windows VMs in the Provisioned Cluster.
-        :paramtype windows_profile: ~azure.mgmt.hybridcontainerservice.models.WindowsProfile
-        :keyword http_proxy_config: HttpProxyConfig - Configurations for provisioning the cluster with
-         HTTP proxy servers.
-        :paramtype http_proxy_config: ~azure.mgmt.hybridcontainerservice.models.HttpProxyConfig
-        """
-        super().__init__(
-            aad_profile=aad_profile,
-            windows_profile=windows_profile,
-            http_proxy_config=http_proxy_config,
-            enable_rbac=enable_rbac,
-            linux_profile=linux_profile,
-            features=features,
-            addon_profiles=addon_profiles,
-            control_plane=control_plane,
-            kubernetes_version=kubernetes_version,
-            network_profile=network_profile,
-            node_resource_group=node_resource_group,
-            agent_pool_profiles=agent_pool_profiles,
-            cloud_provider_profile=cloud_provider_profile,
-            **kwargs
-        )
-        self.enable_rbac = enable_rbac
-        self.linux_profile = linux_profile
-        self.features = features
-        self.addon_profiles = addon_profiles
-        self.control_plane = control_plane
-        self.kubernetes_version = kubernetes_version
-        self.network_profile = network_profile
-        self.node_resource_group = node_resource_group
-        self.agent_pool_profiles = agent_pool_profiles
-        self.cloud_provider_profile = cloud_provider_profile
-        self.provisioning_state = None
-        self.status = None
-        self.aad_profile = aad_profile
-        self.windows_profile = windows_profile
-        self.http_proxy_config = http_proxy_config
-
-
-class ProvisionedClustersCommonPropertiesFeatures(_serialization.Model):
-    """Additional features specs like Arc Agent Onboarding.
-
-    :ivar arc_agent_profile: Arc agentry configuration for the provisioned cluster.
-    :vartype arc_agent_profile: ~azure.mgmt.hybridcontainerservice.models.ArcAgentProfile
-    """
-
-    _attribute_map = {
-        "arc_agent_profile": {"key": "arcAgentProfile", "type": "ArcAgentProfile"},
-    }
-
-    def __init__(self, *, arc_agent_profile: Optional["_models.ArcAgentProfile"] = None, **kwargs: Any) -> None:
-        """
-        :keyword arc_agent_profile: Arc agentry configuration for the provisioned cluster.
-        :paramtype arc_agent_profile: ~azure.mgmt.hybridcontainerservice.models.ArcAgentProfile
+        :keyword balance_similar_node_groups: Valid values are 'true' and 'false'.
+        :paramtype balance_similar_node_groups: str
+        :keyword expander: If not specified, the default is 'random'. See `expanders
+         <https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-expanders>`_
+         for more information. Known values are: "least-waste", "most-pods", "priority", and "random".
+        :paramtype expander: str or ~azure.mgmt.hybridcontainerservice.models.Expander
+        :keyword max_empty_bulk_delete: The default is 10.
+        :paramtype max_empty_bulk_delete: str
+        :keyword max_graceful_termination_sec: The default is 600.
+        :paramtype max_graceful_termination_sec: str
+        :keyword max_node_provision_time: The default is '15m'. Values must be an integer followed by
+         an 'm'. No unit of time other than minutes (m) is supported.
+        :paramtype max_node_provision_time: str
+        :keyword max_total_unready_percentage: The default is 45. The maximum is 100 and the minimum is
+         0.
+        :paramtype max_total_unready_percentage: str
+        :keyword new_pod_scale_up_delay: For scenarios like burst/batch scale where you don't want CA
+         to act before the kubernetes scheduler could schedule all the pods, you can tell CA to ignore
+         unscheduled pods before they're a certain age. The default is '0s'. Values must be an integer
+         followed by a unit ('s' for seconds, 'm' for minutes, 'h' for hours, etc).
+        :paramtype new_pod_scale_up_delay: str
+        :keyword ok_total_unready_count: This must be an integer. The default is 3.
+        :paramtype ok_total_unready_count: str
+        :keyword scan_interval: The default is '10'. Values must be an integer number of seconds.
+        :paramtype scan_interval: str
+        :keyword scale_down_delay_after_add: The default is '10m'. Values must be an integer followed
+         by an 'm'. No unit of time other than minutes (m) is supported.
+        :paramtype scale_down_delay_after_add: str
+        :keyword scale_down_delay_after_delete: The default is the scan-interval. Values must be an
+         integer followed by an 'm'. No unit of time other than minutes (m) is supported.
+        :paramtype scale_down_delay_after_delete: str
+        :keyword scale_down_delay_after_failure: The default is '3m'. Values must be an integer
+         followed by an 'm'. No unit of time other than minutes (m) is supported.
+        :paramtype scale_down_delay_after_failure: str
+        :keyword scale_down_unneeded_time: The default is '10m'. Values must be an integer followed by
+         an 'm'. No unit of time other than minutes (m) is supported.
+        :paramtype scale_down_unneeded_time: str
+        :keyword scale_down_unready_time: The default is '20m'. Values must be an integer followed by
+         an 'm'. No unit of time other than minutes (m) is supported.
+        :paramtype scale_down_unready_time: str
+        :keyword scale_down_utilization_threshold: The default is '0.5'.
+        :paramtype scale_down_utilization_threshold: str
+        :keyword skip_nodes_with_local_storage: The default is true.
+        :paramtype skip_nodes_with_local_storage: str
+        :keyword skip_nodes_with_system_pods: The default is true.
+        :paramtype skip_nodes_with_system_pods: str
         """
         super().__init__(**kwargs)
-        self.arc_agent_profile = arc_agent_profile
+        self.balance_similar_node_groups = balance_similar_node_groups
+        self.expander = expander
+        self.max_empty_bulk_delete = max_empty_bulk_delete
+        self.max_graceful_termination_sec = max_graceful_termination_sec
+        self.max_node_provision_time = max_node_provision_time
+        self.max_total_unready_percentage = max_total_unready_percentage
+        self.new_pod_scale_up_delay = new_pod_scale_up_delay
+        self.ok_total_unready_count = ok_total_unready_count
+        self.scan_interval = scan_interval
+        self.scale_down_delay_after_add = scale_down_delay_after_add
+        self.scale_down_delay_after_delete = scale_down_delay_after_delete
+        self.scale_down_delay_after_failure = scale_down_delay_after_failure
+        self.scale_down_unneeded_time = scale_down_unneeded_time
+        self.scale_down_unready_time = scale_down_unready_time
+        self.scale_down_utilization_threshold = scale_down_utilization_threshold
+        self.skip_nodes_with_local_storage = skip_nodes_with_local_storage
+        self.skip_nodes_with_system_pods = skip_nodes_with_system_pods
 
 
-class ProvisionedClustersCommonPropertiesStatus(_serialization.Model):
-    """HybridAKSClusterStatus defines the observed state of HybridAKSCluster.
+class ProvisionedClusterPropertiesStatus(_serialization.Model):
+    """The observed status of the provisioned cluster.
 
-    :ivar features_status: Additional features status like Arc Agent Onboarding.
-    :vartype features_status:
-     ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersCommonPropertiesStatusFeaturesStatus
-    :ivar addon_status: AddonStatus - Status of Addons.
-    :vartype addon_status: dict[str, ~azure.mgmt.hybridcontainerservice.models.AddonStatus]
-    :ivar error_message: ErrorMessage - Error messages during creation of cluster.
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar control_plane_status: The detailed status of the provisioned cluster components including
+     addons.
+    :vartype control_plane_status:
+     list[~azure.mgmt.hybridcontainerservice.models.AddonStatusProfile]
+    :ivar current_state: The current state of the provisioned cluster. Known values are:
+     "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Deleting", "Updating", "Upgrading",
+     and "Accepted".
+    :vartype current_state: str or
+     ~azure.mgmt.hybridcontainerservice.models.ResourceProvisioningState
+    :ivar error_message: Error messages during a provisioned cluster operation or steady state.
     :vartype error_message: str
-    :ivar provisioning_status: Contains Provisioning errors.
-    :vartype provisioning_status:
-     ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersCommonPropertiesStatusProvisioningStatus
     """
 
+    _validation = {
+        "current_state": {"readonly": True},
+    }
+
     _attribute_map = {
-        "features_status": {"key": "featuresStatus", "type": "ProvisionedClustersCommonPropertiesStatusFeaturesStatus"},
-        "addon_status": {"key": "addonStatus", "type": "{AddonStatus}"},
+        "control_plane_status": {"key": "controlPlaneStatus", "type": "[AddonStatusProfile]"},
+        "current_state": {"key": "currentState", "type": "str"},
         "error_message": {"key": "errorMessage", "type": "str"},
-        "provisioning_status": {
-            "key": "provisioningStatus",
-            "type": "ProvisionedClustersCommonPropertiesStatusProvisioningStatus",
-        },
     }
 
     def __init__(
         self,
         *,
-        features_status: Optional["_models.ProvisionedClustersCommonPropertiesStatusFeaturesStatus"] = None,
-        addon_status: Optional[Dict[str, "_models.AddonStatus"]] = None,
+        control_plane_status: Optional[List["_models.AddonStatusProfile"]] = None,
         error_message: Optional[str] = None,
-        provisioning_status: Optional["_models.ProvisionedClustersCommonPropertiesStatusProvisioningStatus"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword features_status: Additional features status like Arc Agent Onboarding.
-        :paramtype features_status:
-         ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersCommonPropertiesStatusFeaturesStatus
-        :keyword addon_status: AddonStatus - Status of Addons.
-        :paramtype addon_status: dict[str, ~azure.mgmt.hybridcontainerservice.models.AddonStatus]
-        :keyword error_message: ErrorMessage - Error messages during creation of cluster.
+        :keyword control_plane_status: The detailed status of the provisioned cluster components
+         including addons.
+        :paramtype control_plane_status:
+         list[~azure.mgmt.hybridcontainerservice.models.AddonStatusProfile]
+        :keyword error_message: Error messages during a provisioned cluster operation or steady state.
         :paramtype error_message: str
-        :keyword provisioning_status: Contains Provisioning errors.
-        :paramtype provisioning_status:
-         ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersCommonPropertiesStatusProvisioningStatus
         """
         super().__init__(**kwargs)
-        self.features_status = features_status
-        self.addon_status = addon_status
+        self.control_plane_status = control_plane_status
+        self.current_state = None
         self.error_message = error_message
-        self.provisioning_status = provisioning_status
-
-
-class ProvisionedClustersCommonPropertiesStatusFeaturesStatus(_serialization.Model):
-    """Additional features status like Arc Agent Onboarding.
-
-    :ivar arc_agent_status: Defines the observed Arc Agent status that is resourceSynced back to
-     the ARM resource.
-    :vartype arc_agent_status: ~azure.mgmt.hybridcontainerservice.models.ArcAgentStatus
-    """
-
-    _attribute_map = {
-        "arc_agent_status": {"key": "arcAgentStatus", "type": "ArcAgentStatus"},
-    }
-
-    def __init__(self, *, arc_agent_status: Optional["_models.ArcAgentStatus"] = None, **kwargs: Any) -> None:
-        """
-        :keyword arc_agent_status: Defines the observed Arc Agent status that is resourceSynced back to
-         the ARM resource.
-        :paramtype arc_agent_status: ~azure.mgmt.hybridcontainerservice.models.ArcAgentStatus
-        """
-        super().__init__(**kwargs)
-        self.arc_agent_status = arc_agent_status
-
-
-class ProvisionedClustersCommonPropertiesStatusProvisioningStatus(_serialization.Model):
-    """Contains Provisioning errors.
-
-    :ivar error:
-    :vartype error:
-     ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersCommonPropertiesStatusProvisioningStatusError
-    :ivar operation_id:
-    :vartype operation_id: str
-    :ivar phase: Phase represents the current phase of cluster actuation. E.g. Pending, Running,
-     Terminating, Failed etc.
-    :vartype phase: str
-    :ivar status:
-    :vartype status: str
-    """
-
-    _attribute_map = {
-        "error": {"key": "error", "type": "ProvisionedClustersCommonPropertiesStatusProvisioningStatusError"},
-        "operation_id": {"key": "operationId", "type": "str"},
-        "phase": {"key": "phase", "type": "str"},
-        "status": {"key": "status", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.ProvisionedClustersCommonPropertiesStatusProvisioningStatusError"] = None,
-        operation_id: Optional[str] = None,
-        phase: Optional[str] = None,
-        status: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword error:
-        :paramtype error:
-         ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersCommonPropertiesStatusProvisioningStatusError
-        :keyword operation_id:
-        :paramtype operation_id: str
-        :keyword phase: Phase represents the current phase of cluster actuation. E.g. Pending, Running,
-         Terminating, Failed etc.
-        :paramtype phase: str
-        :keyword status:
-        :paramtype status: str
-        """
-        super().__init__(**kwargs)
-        self.error = error
-        self.operation_id = operation_id
-        self.phase = phase
-        self.status = status
-
-
-class ProvisionedClustersCommonPropertiesStatusProvisioningStatusError(_serialization.Model):
-    """ProvisionedClustersCommonPropertiesStatusProvisioningStatusError.
-
-    :ivar code:
-    :vartype code: str
-    :ivar message:
-    :vartype message: str
-    """
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-    }
-
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword code:
-        :paramtype code: str
-        :keyword message:
-        :paramtype message: str
-        """
-        super().__init__(**kwargs)
-        self.code = code
-        self.message = message
-
-
-class ProvisionedClustersExtendedLocation(_serialization.Model):
-    """ProvisionedClustersExtendedLocation.
-
-    :ivar type: The extended location type.
-    :vartype type: str
-    :ivar name: The extended location name.
-    :vartype name: str
-    """
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-    }
-
-    def __init__(self, *, type: Optional[str] = None, name: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword type: The extended location type.
-        :paramtype type: str
-        :keyword name: The extended location name.
-        :paramtype name: str
-        """
-        super().__init__(**kwargs)
-        self.type = type
-        self.name = name
-
-
-class ProvisionedClustersPatch(_serialization.Model):
-    """The provisionedClusters resource patch definition.
-
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    """
-
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-
-
-class ProvisionedClustersPropertiesWithoutSecrets(_serialization.Model):
-    """Properties of provisioned clusters without the corresponding secrets.
-
-    :ivar aad_profile: AAD profile for the provisioned cluster.
-    :vartype aad_profile: ~azure.mgmt.hybridcontainerservice.models.AADProfileResponse
-    :ivar windows_profile: WindowsProfile - Profile for Windows VMs in the Provisioned Cluster.
-    :vartype windows_profile: ~azure.mgmt.hybridcontainerservice.models.WindowsProfileResponse
-    :ivar http_proxy_config: HttpProxyConfig - Configurations for provisioning the cluster with
-     HTTP proxy servers.
-    :vartype http_proxy_config: ~azure.mgmt.hybridcontainerservice.models.HttpProxyConfigResponse
-    """
-
-    _attribute_map = {
-        "aad_profile": {"key": "aadProfile", "type": "AADProfileResponse"},
-        "windows_profile": {"key": "windowsProfile", "type": "WindowsProfileResponse"},
-        "http_proxy_config": {"key": "httpProxyConfig", "type": "HttpProxyConfigResponse"},
-    }
-
-    def __init__(
-        self,
-        *,
-        aad_profile: Optional["_models.AADProfileResponse"] = None,
-        windows_profile: Optional["_models.WindowsProfileResponse"] = None,
-        http_proxy_config: Optional["_models.HttpProxyConfigResponse"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword aad_profile: AAD profile for the provisioned cluster.
-        :paramtype aad_profile: ~azure.mgmt.hybridcontainerservice.models.AADProfileResponse
-        :keyword windows_profile: WindowsProfile - Profile for Windows VMs in the Provisioned Cluster.
-        :paramtype windows_profile: ~azure.mgmt.hybridcontainerservice.models.WindowsProfileResponse
-        :keyword http_proxy_config: HttpProxyConfig - Configurations for provisioning the cluster with
-         HTTP proxy servers.
-        :paramtype http_proxy_config: ~azure.mgmt.hybridcontainerservice.models.HttpProxyConfigResponse
-        """
-        super().__init__(**kwargs)
-        self.aad_profile = aad_profile
-        self.windows_profile = windows_profile
-        self.http_proxy_config = http_proxy_config
-
-
-class ProvisionedClustersResponse(TrackedResource):
-    """The provisionedClusters resource definition.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar identity: Identity for the Provisioned cluster.
-    :vartype identity: ~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterIdentity
-    :ivar properties:
-    :vartype properties:
-     ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersResponseProperties
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.hybridcontainerservice.models.SystemData
-    :ivar extended_location:
-    :vartype extended_location:
-     ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersResponseExtendedLocation
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "location": {"required": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "location": {"key": "location", "type": "str"},
-        "identity": {"key": "identity", "type": "ProvisionedClusterIdentity"},
-        "properties": {"key": "properties", "type": "ProvisionedClustersResponseProperties"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "extended_location": {"key": "extendedLocation", "type": "ProvisionedClustersResponseExtendedLocation"},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        identity: Optional["_models.ProvisionedClusterIdentity"] = None,
-        properties: Optional["_models.ProvisionedClustersResponseProperties"] = None,
-        extended_location: Optional["_models.ProvisionedClustersResponseExtendedLocation"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword location: The geo-location where the resource lives. Required.
-        :paramtype location: str
-        :keyword identity: Identity for the Provisioned cluster.
-        :paramtype identity: ~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterIdentity
-        :keyword properties:
-        :paramtype properties:
-         ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersResponseProperties
-        :keyword extended_location:
-        :paramtype extended_location:
-         ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersResponseExtendedLocation
-        """
-        super().__init__(tags=tags, location=location, **kwargs)
-        self.identity = identity
-        self.properties = properties
-        self.system_data = None
-        self.extended_location = extended_location
-
-
-class ProvisionedClustersResponseExtendedLocation(_serialization.Model):
-    """ProvisionedClustersResponseExtendedLocation.
-
-    :ivar type: The extended location type.
-    :vartype type: str
-    :ivar name: The extended location name.
-    :vartype name: str
-    """
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-    }
-
-    def __init__(self, *, type: Optional[str] = None, name: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword type: The extended location type.
-        :paramtype type: str
-        :keyword name: The extended location name.
-        :paramtype name: str
-        """
-        super().__init__(**kwargs)
-        self.type = type
-        self.name = name
-
-
-class ProvisionedClustersResponseListResult(_serialization.Model):
-    """ProvisionedClustersResponseListResult.
-
-    :ivar value:
-    :vartype value: list[~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersResponse]
-    :ivar next_link:
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[ProvisionedClustersResponse]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ProvisionedClustersResponse"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value:
-        :paramtype value: list[~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersResponse]
-        :keyword next_link:
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class ProvisionedClustersResponseProperties(
-    ProvisionedClustersPropertiesWithoutSecrets, ProvisionedClustersCommonProperties
-):  # pylint: disable=too-many-instance-attributes
-    """ProvisionedClustersResponseProperties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar enable_rbac: EnableRBAC - Whether to enable Kubernetes Role-Based Access Control.
-    :vartype enable_rbac: bool
-    :ivar linux_profile: LinuxProfile - The profile for Linux VMs in the Provisioned Cluster.
-    :vartype linux_profile: ~azure.mgmt.hybridcontainerservice.models.LinuxProfileProperties
-    :ivar features: Additional features specs like Arc Agent Onboarding.
-    :vartype features:
-     ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersCommonPropertiesFeatures
-    :ivar addon_profiles: AddonProfiles - Profile of managed cluster add-on.
-    :vartype addon_profiles: dict[str, ~azure.mgmt.hybridcontainerservice.models.AddonProfiles]
-    :ivar control_plane: ControlPlane - ControlPlane Configuration.
-    :vartype control_plane: ~azure.mgmt.hybridcontainerservice.models.ControlPlaneProfile
-    :ivar kubernetes_version: KubernetesVersion - Version of Kubernetes specified when creating the
-     managed cluster.
-    :vartype kubernetes_version: str
-    :ivar network_profile: NetworkProfile - Profile of network configuration.
-    :vartype network_profile: ~azure.mgmt.hybridcontainerservice.models.NetworkProfile
-    :ivar node_resource_group: NodeResourceGroup - Name of the resource group containing agent pool
-     nodes.
-    :vartype node_resource_group: str
-    :ivar agent_pool_profiles: The agent pools of the cluster.
-    :vartype agent_pool_profiles:
-     list[~azure.mgmt.hybridcontainerservice.models.NamedAgentPoolProfile]
-    :ivar cloud_provider_profile: The underlying cloud infra provider properties.
-    :vartype cloud_provider_profile: ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfile
-    :ivar provisioning_state: Known values are: "Succeeded", "Failed", "Canceled", "InProgress",
-     "Deleting", "Updating", "Accepted", and "Created".
-    :vartype provisioning_state: str or ~azure.mgmt.hybridcontainerservice.models.ProvisioningState
-    :ivar status: HybridAKSClusterStatus defines the observed state of HybridAKSCluster.
-    :vartype status:
-     ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersCommonPropertiesStatus
-    :ivar aad_profile: AAD profile for the provisioned cluster.
-    :vartype aad_profile: ~azure.mgmt.hybridcontainerservice.models.AADProfileResponse
-    :ivar windows_profile: WindowsProfile - Profile for Windows VMs in the Provisioned Cluster.
-    :vartype windows_profile: ~azure.mgmt.hybridcontainerservice.models.WindowsProfileResponse
-    :ivar http_proxy_config: HttpProxyConfig - Configurations for provisioning the cluster with
-     HTTP proxy servers.
-    :vartype http_proxy_config: ~azure.mgmt.hybridcontainerservice.models.HttpProxyConfigResponse
-    """
-
-    _validation = {
-        "provisioning_state": {"readonly": True},
-        "status": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "enable_rbac": {"key": "enableRbac", "type": "bool"},
-        "linux_profile": {"key": "linuxProfile", "type": "LinuxProfileProperties"},
-        "features": {"key": "features", "type": "ProvisionedClustersCommonPropertiesFeatures"},
-        "addon_profiles": {"key": "addonProfiles", "type": "{AddonProfiles}"},
-        "control_plane": {"key": "controlPlane", "type": "ControlPlaneProfile"},
-        "kubernetes_version": {"key": "kubernetesVersion", "type": "str"},
-        "network_profile": {"key": "networkProfile", "type": "NetworkProfile"},
-        "node_resource_group": {"key": "nodeResourceGroup", "type": "str"},
-        "agent_pool_profiles": {"key": "agentPoolProfiles", "type": "[NamedAgentPoolProfile]"},
-        "cloud_provider_profile": {"key": "cloudProviderProfile", "type": "CloudProviderProfile"},
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
-        "status": {"key": "status", "type": "ProvisionedClustersCommonPropertiesStatus"},
-        "aad_profile": {"key": "aadProfile", "type": "AADProfileResponse"},
-        "windows_profile": {"key": "windowsProfile", "type": "WindowsProfileResponse"},
-        "http_proxy_config": {"key": "httpProxyConfig", "type": "HttpProxyConfigResponse"},
-    }
-
-    def __init__(
-        self,
-        *,
-        enable_rbac: Optional[bool] = None,
-        linux_profile: Optional["_models.LinuxProfileProperties"] = None,
-        features: Optional["_models.ProvisionedClustersCommonPropertiesFeatures"] = None,
-        addon_profiles: Optional[Dict[str, "_models.AddonProfiles"]] = None,
-        control_plane: Optional["_models.ControlPlaneProfile"] = None,
-        kubernetes_version: Optional[str] = None,
-        network_profile: Optional["_models.NetworkProfile"] = None,
-        node_resource_group: Optional[str] = None,
-        agent_pool_profiles: Optional[List["_models.NamedAgentPoolProfile"]] = None,
-        cloud_provider_profile: Optional["_models.CloudProviderProfile"] = None,
-        aad_profile: Optional["_models.AADProfileResponse"] = None,
-        windows_profile: Optional["_models.WindowsProfileResponse"] = None,
-        http_proxy_config: Optional["_models.HttpProxyConfigResponse"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword enable_rbac: EnableRBAC - Whether to enable Kubernetes Role-Based Access Control.
-        :paramtype enable_rbac: bool
-        :keyword linux_profile: LinuxProfile - The profile for Linux VMs in the Provisioned Cluster.
-        :paramtype linux_profile: ~azure.mgmt.hybridcontainerservice.models.LinuxProfileProperties
-        :keyword features: Additional features specs like Arc Agent Onboarding.
-        :paramtype features:
-         ~azure.mgmt.hybridcontainerservice.models.ProvisionedClustersCommonPropertiesFeatures
-        :keyword addon_profiles: AddonProfiles - Profile of managed cluster add-on.
-        :paramtype addon_profiles: dict[str, ~azure.mgmt.hybridcontainerservice.models.AddonProfiles]
-        :keyword control_plane: ControlPlane - ControlPlane Configuration.
-        :paramtype control_plane: ~azure.mgmt.hybridcontainerservice.models.ControlPlaneProfile
-        :keyword kubernetes_version: KubernetesVersion - Version of Kubernetes specified when creating
-         the managed cluster.
-        :paramtype kubernetes_version: str
-        :keyword network_profile: NetworkProfile - Profile of network configuration.
-        :paramtype network_profile: ~azure.mgmt.hybridcontainerservice.models.NetworkProfile
-        :keyword node_resource_group: NodeResourceGroup - Name of the resource group containing agent
-         pool nodes.
-        :paramtype node_resource_group: str
-        :keyword agent_pool_profiles: The agent pools of the cluster.
-        :paramtype agent_pool_profiles:
-         list[~azure.mgmt.hybridcontainerservice.models.NamedAgentPoolProfile]
-        :keyword cloud_provider_profile: The underlying cloud infra provider properties.
-        :paramtype cloud_provider_profile:
-         ~azure.mgmt.hybridcontainerservice.models.CloudProviderProfile
-        :keyword aad_profile: AAD profile for the provisioned cluster.
-        :paramtype aad_profile: ~azure.mgmt.hybridcontainerservice.models.AADProfileResponse
-        :keyword windows_profile: WindowsProfile - Profile for Windows VMs in the Provisioned Cluster.
-        :paramtype windows_profile: ~azure.mgmt.hybridcontainerservice.models.WindowsProfileResponse
-        :keyword http_proxy_config: HttpProxyConfig - Configurations for provisioning the cluster with
-         HTTP proxy servers.
-        :paramtype http_proxy_config: ~azure.mgmt.hybridcontainerservice.models.HttpProxyConfigResponse
-        """
-        super().__init__(
-            aad_profile=aad_profile,
-            windows_profile=windows_profile,
-            http_proxy_config=http_proxy_config,
-            enable_rbac=enable_rbac,
-            linux_profile=linux_profile,
-            features=features,
-            addon_profiles=addon_profiles,
-            control_plane=control_plane,
-            kubernetes_version=kubernetes_version,
-            network_profile=network_profile,
-            node_resource_group=node_resource_group,
-            agent_pool_profiles=agent_pool_profiles,
-            cloud_provider_profile=cloud_provider_profile,
-            **kwargs
-        )
-        self.enable_rbac = enable_rbac
-        self.linux_profile = linux_profile
-        self.features = features
-        self.addon_profiles = addon_profiles
-        self.control_plane = control_plane
-        self.kubernetes_version = kubernetes_version
-        self.network_profile = network_profile
-        self.node_resource_group = node_resource_group
-        self.agent_pool_profiles = agent_pool_profiles
-        self.cloud_provider_profile = cloud_provider_profile
-        self.provisioning_state = None
-        self.status = None
-        self.aad_profile = aad_profile
-        self.windows_profile = windows_profile
-        self.http_proxy_config = http_proxy_config
 
 
 class ProvisionedClusterUpgradeProfile(ProxyResource):
-    """The list of available upgrades for compute pools.
+    """The list of available kubernetes version upgrades for the provisioned cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar provisioning_state:
-    :vartype provisioning_state: str
-    :ivar control_plane_profile: The list of available upgrade versions for the control plane.
-     Required.
-    :vartype control_plane_profile:
-     ~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterPoolUpgradeProfile
-    :ivar agent_pool_profiles: The list of available upgrade versions for agent pools. Required.
-    :vartype agent_pool_profiles:
-     list[~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterPoolUpgradeProfile]
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridcontainerservice.models.SystemData
+    :ivar properties: The properties of the upgrade profile. Required.
+    :vartype properties:
+     ~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterUpgradeProfileProperties
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "control_plane_profile": {"required": True},
-        "agent_pool_profiles": {"required": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "control_plane_profile": {
-            "key": "properties.controlPlaneProfile",
-            "type": "ProvisionedClusterPoolUpgradeProfile",
-        },
-        "agent_pool_profiles": {
-            "key": "properties.agentPoolProfiles",
-            "type": "[ProvisionedClusterPoolUpgradeProfile]",
-        },
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ProvisionedClusterUpgradeProfileProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        control_plane_profile: "_models.ProvisionedClusterPoolUpgradeProfile",
-        agent_pool_profiles: List["_models.ProvisionedClusterPoolUpgradeProfile"],
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, properties: "_models.ProvisionedClusterUpgradeProfileProperties", **kwargs: Any) -> None:
         """
-        :keyword control_plane_profile: The list of available upgrade versions for the control plane.
-         Required.
+        :keyword properties: The properties of the upgrade profile. Required.
+        :paramtype properties:
+         ~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterUpgradeProfileProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class ProvisionedClusterUpgradeProfileProperties(_serialization.Model):
+    """Control plane and agent pool upgrade profiles.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Pending", "Creating", "Deleting", "Updating", "Upgrading", and
+     "Accepted".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.hybridcontainerservice.models.ResourceProvisioningState
+    :ivar control_plane_profile: The list of available kubernetes version upgrades for the control
+     plane. Required.
+    :vartype control_plane_profile:
+     ~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterPoolUpgradeProfile
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+        "control_plane_profile": {"required": True},
+    }
+
+    _attribute_map = {
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "control_plane_profile": {"key": "controlPlaneProfile", "type": "ProvisionedClusterPoolUpgradeProfile"},
+    }
+
+    def __init__(self, *, control_plane_profile: "_models.ProvisionedClusterPoolUpgradeProfile", **kwargs: Any) -> None:
+        """
+        :keyword control_plane_profile: The list of available kubernetes version upgrades for the
+         control plane. Required.
         :paramtype control_plane_profile:
          ~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterPoolUpgradeProfile
-        :keyword agent_pool_profiles: The list of available upgrade versions for agent pools. Required.
-        :paramtype agent_pool_profiles:
-         list[~azure.mgmt.hybridcontainerservice.models.ProvisionedClusterPoolUpgradeProfile]
         """
         super().__init__(**kwargs)
         self.provisioning_state = None
         self.control_plane_profile = control_plane_profile
-        self.agent_pool_profiles = agent_pool_profiles
 
 
-class ResourceProviderOperation(_serialization.Model):
-    """Results of the request to list operations.
+class StorageProfile(_serialization.Model):
+    """The storage configuration profile for the provisioned cluster.
 
-    :ivar is_data_action: Indicates whether the operation applies to data-plane.
-    :vartype is_data_action: str
-    :ivar name: Operation name, in format of {provider}/{resource}/{operation}.
-    :vartype name: str
-    :ivar display: Display metadata associated with the operation.
-    :vartype display: ~azure.mgmt.hybridcontainerservice.models.ResourceProviderOperationDisplay
+    :ivar smb_csi_driver: SMB CSI Driver settings for the storage profile.
+    :vartype smb_csi_driver: ~azure.mgmt.hybridcontainerservice.models.StorageProfileSmbCSIDriver
+    :ivar nfs_csi_driver: NFS CSI Driver settings for the storage profile.
+    :vartype nfs_csi_driver: ~azure.mgmt.hybridcontainerservice.models.StorageProfileNfsCSIDriver
     """
 
     _attribute_map = {
-        "is_data_action": {"key": "isDataAction", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "display": {"key": "display", "type": "ResourceProviderOperationDisplay"},
+        "smb_csi_driver": {"key": "smbCsiDriver", "type": "StorageProfileSmbCSIDriver"},
+        "nfs_csi_driver": {"key": "nfsCsiDriver", "type": "StorageProfileNfsCSIDriver"},
     }
 
     def __init__(
         self,
         *,
-        is_data_action: Optional[str] = None,
-        name: Optional[str] = None,
-        display: Optional["_models.ResourceProviderOperationDisplay"] = None,
+        smb_csi_driver: Optional["_models.StorageProfileSmbCSIDriver"] = None,
+        nfs_csi_driver: Optional["_models.StorageProfileNfsCSIDriver"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword is_data_action: Indicates whether the operation applies to data-plane.
-        :paramtype is_data_action: str
-        :keyword name: Operation name, in format of {provider}/{resource}/{operation}.
-        :paramtype name: str
-        :keyword display: Display metadata associated with the operation.
-        :paramtype display: ~azure.mgmt.hybridcontainerservice.models.ResourceProviderOperationDisplay
+        :keyword smb_csi_driver: SMB CSI Driver settings for the storage profile.
+        :paramtype smb_csi_driver: ~azure.mgmt.hybridcontainerservice.models.StorageProfileSmbCSIDriver
+        :keyword nfs_csi_driver: NFS CSI Driver settings for the storage profile.
+        :paramtype nfs_csi_driver: ~azure.mgmt.hybridcontainerservice.models.StorageProfileNfsCSIDriver
         """
         super().__init__(**kwargs)
-        self.is_data_action = is_data_action
-        self.name = name
-        self.display = display
+        self.smb_csi_driver = smb_csi_driver
+        self.nfs_csi_driver = nfs_csi_driver
 
 
-class ResourceProviderOperationDisplay(_serialization.Model):
-    """Display metadata associated with the operation.
+class StorageProfileNfsCSIDriver(_serialization.Model):
+    """NFS CSI Driver settings for the storage profile.
 
-    :ivar provider: The resource provider.
-    :vartype provider: str
-    :ivar resource: Resource on which the operation is performed.
-    :vartype resource: str
-    :ivar operation: Type of operation: get, read, delete, etc.
-    :vartype operation: str
-    :ivar description: Description of this operation.
-    :vartype description: str
+    :ivar enabled: Indicates whether to enable NFS CSI Driver. The default value is true.
+    :vartype enabled: bool
     """
 
     _attribute_map = {
-        "provider": {"key": "provider", "type": "str"},
-        "resource": {"key": "resource", "type": "str"},
-        "operation": {"key": "operation", "type": "str"},
-        "description": {"key": "description", "type": "str"},
+        "enabled": {"key": "enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        provider: Optional[str] = None,
-        resource: Optional[str] = None,
-        operation: Optional[str] = None,
-        description: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, enabled: bool = True, **kwargs: Any) -> None:
         """
-        :keyword provider: The resource provider.
-        :paramtype provider: str
-        :keyword resource: Resource on which the operation is performed.
-        :paramtype resource: str
-        :keyword operation: Type of operation: get, read, delete, etc.
-        :paramtype operation: str
-        :keyword description: Description of this operation.
-        :paramtype description: str
+        :keyword enabled: Indicates whether to enable NFS CSI Driver. The default value is true.
+        :paramtype enabled: bool
         """
         super().__init__(**kwargs)
-        self.provider = provider
-        self.resource = resource
-        self.operation = operation
-        self.description = description
+        self.enabled = enabled
 
 
-class ResourceProviderOperationList(_serialization.Model):
-    """Results of the request to list operations.
+class StorageProfileSmbCSIDriver(_serialization.Model):
+    """SMB CSI Driver settings for the storage profile.
 
-    :ivar value:
-    :vartype value: list[~azure.mgmt.hybridcontainerservice.models.ResourceProviderOperation]
-    :ivar next_link:
-    :vartype next_link: str
+    :ivar enabled: Indicates whether to enable SMB CSI Driver. The default value is true.
+    :vartype enabled: bool
     """
 
     _attribute_map = {
-        "value": {"key": "value", "type": "[ResourceProviderOperation]"},
-        "next_link": {"key": "nextLink", "type": "str"},
+        "enabled": {"key": "enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ResourceProviderOperation"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, enabled: bool = True, **kwargs: Any) -> None:
         """
-        :keyword value:
-        :paramtype value: list[~azure.mgmt.hybridcontainerservice.models.ResourceProviderOperation]
-        :keyword next_link:
-        :paramtype next_link: str
+        :keyword enabled: Indicates whether to enable SMB CSI Driver. The default value is true.
+        :paramtype enabled: bool
         """
         super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class StorageSpaces(TrackedResource):
-    """The storageSpaces resource definition.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar properties: HybridAKSStorageSpec defines the desired state of HybridAKSStorage.
-    :vartype properties: ~azure.mgmt.hybridcontainerservice.models.StorageSpacesProperties
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.hybridcontainerservice.models.SystemData
-    :ivar extended_location:
-    :vartype extended_location:
-     ~azure.mgmt.hybridcontainerservice.models.StorageSpacesExtendedLocation
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "location": {"required": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "location": {"key": "location", "type": "str"},
-        "properties": {"key": "properties", "type": "StorageSpacesProperties"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "extended_location": {"key": "extendedLocation", "type": "StorageSpacesExtendedLocation"},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        properties: Optional["_models.StorageSpacesProperties"] = None,
-        extended_location: Optional["_models.StorageSpacesExtendedLocation"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword location: The geo-location where the resource lives. Required.
-        :paramtype location: str
-        :keyword properties: HybridAKSStorageSpec defines the desired state of HybridAKSStorage.
-        :paramtype properties: ~azure.mgmt.hybridcontainerservice.models.StorageSpacesProperties
-        :keyword extended_location:
-        :paramtype extended_location:
-         ~azure.mgmt.hybridcontainerservice.models.StorageSpacesExtendedLocation
-        """
-        super().__init__(tags=tags, location=location, **kwargs)
-        self.properties = properties
-        self.system_data = None
-        self.extended_location = extended_location
-
-
-class StorageSpacesExtendedLocation(_serialization.Model):
-    """StorageSpacesExtendedLocation.
-
-    :ivar type: The extended location type.
-    :vartype type: str
-    :ivar name: The extended location name.
-    :vartype name: str
-    """
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-    }
-
-    def __init__(self, *, type: Optional[str] = None, name: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword type: The extended location type.
-        :paramtype type: str
-        :keyword name: The extended location name.
-        :paramtype name: str
-        """
-        super().__init__(**kwargs)
-        self.type = type
-        self.name = name
-
-
-class StorageSpacesListResult(_serialization.Model):
-    """StorageSpacesListResult.
-
-    :ivar value:
-    :vartype value: list[~azure.mgmt.hybridcontainerservice.models.StorageSpaces]
-    :ivar next_link:
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[StorageSpaces]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.StorageSpaces"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value:
-        :paramtype value: list[~azure.mgmt.hybridcontainerservice.models.StorageSpaces]
-        :keyword next_link:
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class StorageSpacesPatch(_serialization.Model):
-    """The storageSpaces resource patch definition.
-
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    """
-
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-
-
-class StorageSpacesProperties(_serialization.Model):
-    """HybridAKSStorageSpec defines the desired state of HybridAKSStorage.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar hci_storage_profile:
-    :vartype hci_storage_profile:
-     ~azure.mgmt.hybridcontainerservice.models.StorageSpacesPropertiesHciStorageProfile
-    :ivar vmware_storage_profile:
-    :vartype vmware_storage_profile:
-     ~azure.mgmt.hybridcontainerservice.models.StorageSpacesPropertiesVmwareStorageProfile
-    :ivar provisioning_state: Known values are: "Succeeded", "Failed", "Canceled", "InProgress",
-     "Deleting", "Updating", "Accepted", and "Created".
-    :vartype provisioning_state: str or ~azure.mgmt.hybridcontainerservice.models.ProvisioningState
-    :ivar status: HybridAKSStorageStatus defines the observed state of HybridAKSStorage.
-    :vartype status: ~azure.mgmt.hybridcontainerservice.models.StorageSpacesPropertiesStatus
-    """
-
-    _validation = {
-        "provisioning_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "hci_storage_profile": {"key": "hciStorageProfile", "type": "StorageSpacesPropertiesHciStorageProfile"},
-        "vmware_storage_profile": {
-            "key": "vmwareStorageProfile",
-            "type": "StorageSpacesPropertiesVmwareStorageProfile",
-        },
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
-        "status": {"key": "status", "type": "StorageSpacesPropertiesStatus"},
-    }
-
-    def __init__(
-        self,
-        *,
-        hci_storage_profile: Optional["_models.StorageSpacesPropertiesHciStorageProfile"] = None,
-        vmware_storage_profile: Optional["_models.StorageSpacesPropertiesVmwareStorageProfile"] = None,
-        status: Optional["_models.StorageSpacesPropertiesStatus"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword hci_storage_profile:
-        :paramtype hci_storage_profile:
-         ~azure.mgmt.hybridcontainerservice.models.StorageSpacesPropertiesHciStorageProfile
-        :keyword vmware_storage_profile:
-        :paramtype vmware_storage_profile:
-         ~azure.mgmt.hybridcontainerservice.models.StorageSpacesPropertiesVmwareStorageProfile
-        :keyword status: HybridAKSStorageStatus defines the observed state of HybridAKSStorage.
-        :paramtype status: ~azure.mgmt.hybridcontainerservice.models.StorageSpacesPropertiesStatus
-        """
-        super().__init__(**kwargs)
-        self.hci_storage_profile = hci_storage_profile
-        self.vmware_storage_profile = vmware_storage_profile
-        self.provisioning_state = None
-        self.status = status
-
-
-class StorageSpacesPropertiesHciStorageProfile(_serialization.Model):
-    """StorageSpacesPropertiesHciStorageProfile.
-
-    :ivar moc_group: Resource group in MOC(Microsoft On-premises Cloud).
-    :vartype moc_group: str
-    :ivar moc_location: Location in MOC(Microsoft On-premises Cloud).
-    :vartype moc_location: str
-    :ivar moc_storage_container: Name of the storage container in MOC(Microsoft On-premises Cloud).
-    :vartype moc_storage_container: str
-    """
-
-    _attribute_map = {
-        "moc_group": {"key": "mocGroup", "type": "str"},
-        "moc_location": {"key": "mocLocation", "type": "str"},
-        "moc_storage_container": {"key": "mocStorageContainer", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        moc_group: Optional[str] = None,
-        moc_location: Optional[str] = None,
-        moc_storage_container: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword moc_group: Resource group in MOC(Microsoft On-premises Cloud).
-        :paramtype moc_group: str
-        :keyword moc_location: Location in MOC(Microsoft On-premises Cloud).
-        :paramtype moc_location: str
-        :keyword moc_storage_container: Name of the storage container in MOC(Microsoft On-premises
-         Cloud).
-        :paramtype moc_storage_container: str
-        """
-        super().__init__(**kwargs)
-        self.moc_group = moc_group
-        self.moc_location = moc_location
-        self.moc_storage_container = moc_storage_container
-
-
-class StorageSpacesPropertiesStatus(_serialization.Model):
-    """HybridAKSStorageStatus defines the observed state of HybridAKSStorage.
-
-    :ivar provisioning_status: Contains Provisioning errors.
-    :vartype provisioning_status:
-     ~azure.mgmt.hybridcontainerservice.models.StorageSpacesPropertiesStatusProvisioningStatus
-    """
-
-    _attribute_map = {
-        "provisioning_status": {"key": "provisioningStatus", "type": "StorageSpacesPropertiesStatusProvisioningStatus"},
-    }
-
-    def __init__(
-        self,
-        *,
-        provisioning_status: Optional["_models.StorageSpacesPropertiesStatusProvisioningStatus"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword provisioning_status: Contains Provisioning errors.
-        :paramtype provisioning_status:
-         ~azure.mgmt.hybridcontainerservice.models.StorageSpacesPropertiesStatusProvisioningStatus
-        """
-        super().__init__(**kwargs)
-        self.provisioning_status = provisioning_status
-
-
-class StorageSpacesPropertiesStatusProvisioningStatus(_serialization.Model):
-    """Contains Provisioning errors.
-
-    :ivar error:
-    :vartype error:
-     ~azure.mgmt.hybridcontainerservice.models.StorageSpacesPropertiesStatusProvisioningStatusError
-    :ivar operation_id:
-    :vartype operation_id: str
-    :ivar phase: Phase represents the current phase of cluster actuation. E.g. Pending, Running,
-     Terminating, Failed etc.
-    :vartype phase: str
-    :ivar status:
-    :vartype status: str
-    """
-
-    _attribute_map = {
-        "error": {"key": "error", "type": "StorageSpacesPropertiesStatusProvisioningStatusError"},
-        "operation_id": {"key": "operationId", "type": "str"},
-        "phase": {"key": "phase", "type": "str"},
-        "status": {"key": "status", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.StorageSpacesPropertiesStatusProvisioningStatusError"] = None,
-        operation_id: Optional[str] = None,
-        phase: Optional[str] = None,
-        status: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword error:
-        :paramtype error:
-         ~azure.mgmt.hybridcontainerservice.models.StorageSpacesPropertiesStatusProvisioningStatusError
-        :keyword operation_id:
-        :paramtype operation_id: str
-        :keyword phase: Phase represents the current phase of cluster actuation. E.g. Pending, Running,
-         Terminating, Failed etc.
-        :paramtype phase: str
-        :keyword status:
-        :paramtype status: str
-        """
-        super().__init__(**kwargs)
-        self.error = error
-        self.operation_id = operation_id
-        self.phase = phase
-        self.status = status
-
-
-class StorageSpacesPropertiesStatusProvisioningStatusError(_serialization.Model):
-    """StorageSpacesPropertiesStatusProvisioningStatusError.
-
-    :ivar code:
-    :vartype code: str
-    :ivar message:
-    :vartype message: str
-    """
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-    }
-
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword code:
-        :paramtype code: str
-        :keyword message:
-        :paramtype message: str
-        """
-        super().__init__(**kwargs)
-        self.code = code
-        self.message = message
-
-
-class StorageSpacesPropertiesVmwareStorageProfile(_serialization.Model):
-    """StorageSpacesPropertiesVmwareStorageProfile.
-
-    :ivar datacenter: Name of the datacenter in VSphere.
-    :vartype datacenter: str
-    :ivar datastore: Name of the datastore in VSphere.
-    :vartype datastore: str
-    :ivar folder: Name of the folder in VSphere.
-    :vartype folder: str
-    :ivar resource_pool: Name of the resource pool in VSphere.
-    :vartype resource_pool: str
-    """
-
-    _attribute_map = {
-        "datacenter": {"key": "datacenter", "type": "str"},
-        "datastore": {"key": "datastore", "type": "str"},
-        "folder": {"key": "folder", "type": "str"},
-        "resource_pool": {"key": "resourcePool", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        datacenter: Optional[str] = None,
-        datastore: Optional[str] = None,
-        folder: Optional[str] = None,
-        resource_pool: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword datacenter: Name of the datacenter in VSphere.
-        :paramtype datacenter: str
-        :keyword datastore: Name of the datastore in VSphere.
-        :paramtype datastore: str
-        :keyword folder: Name of the folder in VSphere.
-        :paramtype folder: str
-        :keyword resource_pool: Name of the resource pool in VSphere.
-        :paramtype resource_pool: str
-        """
-        super().__init__(**kwargs)
-        self.datacenter = datacenter
-        self.datastore = datastore
-        self.folder = folder
-        self.resource_pool = resource_pool
+        self.enabled = enabled
 
 
 class SystemData(_serialization.Model):
@@ -4143,51 +2493,106 @@ class SystemData(_serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class VirtualNetworks(TrackedResource):
-    """The virtualNetworks resource definition.
+class TrackedResource(Resource):
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridcontainerservice.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar properties: HybridAKSNetworkSpec defines the desired state of HybridAKSNetwork.
-    :vartype properties: ~azure.mgmt.hybridcontainerservice.models.VirtualNetworksProperties
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.hybridcontainerservice.models.SystemData
-    :ivar extended_location:
-    :vartype extended_location:
-     ~azure.mgmt.hybridcontainerservice.models.VirtualNetworksExtendedLocation
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "location": {"required": True},
         "system_data": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
-        "properties": {"key": "properties", "type": "VirtualNetworksProperties"},
+    }
+
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.location = location
+
+
+class VirtualNetwork(TrackedResource):
+    """The Virtual Network resource definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridcontainerservice.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Properties of the virtual network resource.
+    :vartype properties: ~azure.mgmt.hybridcontainerservice.models.VirtualNetworkProperties
+    :ivar extended_location: Extended location pointing to the underlying infrastructure.
+    :vartype extended_location:
+     ~azure.mgmt.hybridcontainerservice.models.VirtualNetworkExtendedLocation
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "extended_location": {"key": "extendedLocation", "type": "VirtualNetworksExtendedLocation"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "VirtualNetworkProperties"},
+        "extended_location": {"key": "extendedLocation", "type": "VirtualNetworkExtendedLocation"},
     }
 
     def __init__(
@@ -4195,8 +2600,8 @@ class VirtualNetworks(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        properties: Optional["_models.VirtualNetworksProperties"] = None,
-        extended_location: Optional["_models.VirtualNetworksExtendedLocation"] = None,
+        properties: Optional["_models.VirtualNetworkProperties"] = None,
+        extended_location: Optional["_models.VirtualNetworkExtendedLocation"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4204,24 +2609,23 @@ class VirtualNetworks(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
-        :keyword properties: HybridAKSNetworkSpec defines the desired state of HybridAKSNetwork.
-        :paramtype properties: ~azure.mgmt.hybridcontainerservice.models.VirtualNetworksProperties
-        :keyword extended_location:
+        :keyword properties: Properties of the virtual network resource.
+        :paramtype properties: ~azure.mgmt.hybridcontainerservice.models.VirtualNetworkProperties
+        :keyword extended_location: Extended location pointing to the underlying infrastructure.
         :paramtype extended_location:
-         ~azure.mgmt.hybridcontainerservice.models.VirtualNetworksExtendedLocation
+         ~azure.mgmt.hybridcontainerservice.models.VirtualNetworkExtendedLocation
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.properties = properties
-        self.system_data = None
         self.extended_location = extended_location
 
 
-class VirtualNetworksExtendedLocation(_serialization.Model):
-    """VirtualNetworksExtendedLocation.
+class VirtualNetworkExtendedLocation(_serialization.Model):
+    """Extended location pointing to the underlying infrastructure.
 
-    :ivar type: The extended location type.
-    :vartype type: str
-    :ivar name: The extended location name.
+    :ivar type: The extended location type. Allowed value: 'CustomLocation'. "CustomLocation"
+    :vartype type: str or ~azure.mgmt.hybridcontainerservice.models.ExtendedLocationTypes
+    :ivar name: ARM Id of the extended location.
     :vartype name: str
     """
 
@@ -4230,11 +2634,17 @@ class VirtualNetworksExtendedLocation(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[str] = None, name: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.ExtendedLocationTypes"]] = None,
+        name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword type: The extended location type.
-        :paramtype type: str
-        :keyword name: The extended location name.
+        :keyword type: The extended location type. Allowed value: 'CustomLocation'. "CustomLocation"
+        :paramtype type: str or ~azure.mgmt.hybridcontainerservice.models.ExtendedLocationTypes
+        :keyword name: ARM Id of the extended location.
         :paramtype name: str
         """
         super().__init__(**kwargs)
@@ -4242,195 +2652,125 @@ class VirtualNetworksExtendedLocation(_serialization.Model):
         self.name = name
 
 
-class VirtualNetworksListResult(_serialization.Model):
-    """VirtualNetworksListResult.
-
-    :ivar value:
-    :vartype value: list[~azure.mgmt.hybridcontainerservice.models.VirtualNetworks]
-    :ivar next_link:
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[VirtualNetworks]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.VirtualNetworks"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value:
-        :paramtype value: list[~azure.mgmt.hybridcontainerservice.models.VirtualNetworks]
-        :keyword next_link:
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class VirtualNetworksPatch(_serialization.Model):
-    """The virtualNetworks resource patch definition.
-
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    """
-
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-
-
-class VirtualNetworksProperties(_serialization.Model):
-    """HybridAKSNetworkSpec defines the desired state of HybridAKSNetwork.
+class VirtualNetworkProperties(_serialization.Model):
+    """Properties of the virtual network resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar infra_vnet_profile:
     :vartype infra_vnet_profile:
-     ~azure.mgmt.hybridcontainerservice.models.VirtualNetworksPropertiesInfraVnetProfile
-    :ivar vip_pool: Virtual IP Pool for Kubernetes.
+     ~azure.mgmt.hybridcontainerservice.models.VirtualNetworkPropertiesInfraVnetProfile
+    :ivar vip_pool: Range of IP Addresses for Kubernetes API Server and services if using HA Proxy
+     load balancer.
     :vartype vip_pool:
-     list[~azure.mgmt.hybridcontainerservice.models.VirtualNetworksPropertiesVipPoolItem]
-    :ivar vmip_pool: IP Pool for Virtual Machines.
+     list[~azure.mgmt.hybridcontainerservice.models.VirtualNetworkPropertiesVipPoolItem]
+    :ivar vmip_pool: Range of IP Addresses for Kubernetes node VMs.
     :vartype vmip_pool:
-     list[~azure.mgmt.hybridcontainerservice.models.VirtualNetworksPropertiesVmipPoolItem]
-    :ivar dhcp_servers: Address of the DHCP servers associated with the network.
-    :vartype dhcp_servers: list[str]
-    :ivar dns_servers: Address of the DNS servers associated with the network.
+     list[~azure.mgmt.hybridcontainerservice.models.VirtualNetworkPropertiesVmipPoolItem]
+    :ivar dns_servers: List of DNS server IP Addresses associated with the network.
     :vartype dns_servers: list[str]
-    :ivar gateway: Address of the Gateway associated with the network.
+    :ivar gateway: IP Address of the Gateway associated with the network.
     :vartype gateway: str
     :ivar ip_address_prefix: IP Address Prefix of the network.
     :vartype ip_address_prefix: str
     :ivar vlan_id: VLAN Id used by the network.
-    :vartype vlan_id: str
-    :ivar provisioning_state: Known values are: "Succeeded", "Failed", "Canceled", "InProgress",
-     "Deleting", "Updating", "Accepted", and "Created".
+    :vartype vlan_id: int
+    :ivar provisioning_state: Known values are: "Succeeded", "Failed", "Canceled", "Pending",
+     "Creating", "Deleting", "Updating", and "Accepted".
     :vartype provisioning_state: str or ~azure.mgmt.hybridcontainerservice.models.ProvisioningState
-    :ivar status: HybridAKSNetworkStatus defines the observed state of HybridAKSNetwork.
-    :vartype status: ~azure.mgmt.hybridcontainerservice.models.VirtualNetworksPropertiesStatus
+    :ivar status: Status of the virtual network resource.
+    :vartype status: ~azure.mgmt.hybridcontainerservice.models.VirtualNetworkPropertiesStatus
     """
 
     _validation = {
-        "dhcp_servers": {"readonly": True},
-        "vlan_id": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "status": {"readonly": True},
     }
 
     _attribute_map = {
-        "infra_vnet_profile": {"key": "infraVnetProfile", "type": "VirtualNetworksPropertiesInfraVnetProfile"},
-        "vip_pool": {"key": "vipPool", "type": "[VirtualNetworksPropertiesVipPoolItem]"},
-        "vmip_pool": {"key": "vmipPool", "type": "[VirtualNetworksPropertiesVmipPoolItem]"},
-        "dhcp_servers": {"key": "dhcpServers", "type": "[str]"},
+        "infra_vnet_profile": {"key": "infraVnetProfile", "type": "VirtualNetworkPropertiesInfraVnetProfile"},
+        "vip_pool": {"key": "vipPool", "type": "[VirtualNetworkPropertiesVipPoolItem]"},
+        "vmip_pool": {"key": "vmipPool", "type": "[VirtualNetworkPropertiesVmipPoolItem]"},
         "dns_servers": {"key": "dnsServers", "type": "[str]"},
         "gateway": {"key": "gateway", "type": "str"},
         "ip_address_prefix": {"key": "ipAddressPrefix", "type": "str"},
-        "vlan_id": {"key": "vlanID", "type": "str"},
+        "vlan_id": {"key": "vlanID", "type": "int"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
-        "status": {"key": "status", "type": "VirtualNetworksPropertiesStatus"},
+        "status": {"key": "status", "type": "VirtualNetworkPropertiesStatus"},
     }
 
     def __init__(
         self,
         *,
-        infra_vnet_profile: Optional["_models.VirtualNetworksPropertiesInfraVnetProfile"] = None,
-        vip_pool: Optional[List["_models.VirtualNetworksPropertiesVipPoolItem"]] = None,
-        vmip_pool: Optional[List["_models.VirtualNetworksPropertiesVmipPoolItem"]] = None,
+        infra_vnet_profile: Optional["_models.VirtualNetworkPropertiesInfraVnetProfile"] = None,
+        vip_pool: Optional[List["_models.VirtualNetworkPropertiesVipPoolItem"]] = None,
+        vmip_pool: Optional[List["_models.VirtualNetworkPropertiesVmipPoolItem"]] = None,
         dns_servers: Optional[List[str]] = None,
         gateway: Optional[str] = None,
         ip_address_prefix: Optional[str] = None,
+        vlan_id: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword infra_vnet_profile:
         :paramtype infra_vnet_profile:
-         ~azure.mgmt.hybridcontainerservice.models.VirtualNetworksPropertiesInfraVnetProfile
-        :keyword vip_pool: Virtual IP Pool for Kubernetes.
+         ~azure.mgmt.hybridcontainerservice.models.VirtualNetworkPropertiesInfraVnetProfile
+        :keyword vip_pool: Range of IP Addresses for Kubernetes API Server and services if using HA
+         Proxy load balancer.
         :paramtype vip_pool:
-         list[~azure.mgmt.hybridcontainerservice.models.VirtualNetworksPropertiesVipPoolItem]
-        :keyword vmip_pool: IP Pool for Virtual Machines.
+         list[~azure.mgmt.hybridcontainerservice.models.VirtualNetworkPropertiesVipPoolItem]
+        :keyword vmip_pool: Range of IP Addresses for Kubernetes node VMs.
         :paramtype vmip_pool:
-         list[~azure.mgmt.hybridcontainerservice.models.VirtualNetworksPropertiesVmipPoolItem]
-        :keyword dns_servers: Address of the DNS servers associated with the network.
+         list[~azure.mgmt.hybridcontainerservice.models.VirtualNetworkPropertiesVmipPoolItem]
+        :keyword dns_servers: List of DNS server IP Addresses associated with the network.
         :paramtype dns_servers: list[str]
-        :keyword gateway: Address of the Gateway associated with the network.
+        :keyword gateway: IP Address of the Gateway associated with the network.
         :paramtype gateway: str
         :keyword ip_address_prefix: IP Address Prefix of the network.
         :paramtype ip_address_prefix: str
+        :keyword vlan_id: VLAN Id used by the network.
+        :paramtype vlan_id: int
         """
         super().__init__(**kwargs)
         self.infra_vnet_profile = infra_vnet_profile
         self.vip_pool = vip_pool
         self.vmip_pool = vmip_pool
-        self.dhcp_servers = None
         self.dns_servers = dns_servers
         self.gateway = gateway
         self.ip_address_prefix = ip_address_prefix
-        self.vlan_id = None
+        self.vlan_id = vlan_id
         self.provisioning_state = None
         self.status = None
 
 
-class VirtualNetworksPropertiesInfraVnetProfile(_serialization.Model):
-    """VirtualNetworksPropertiesInfraVnetProfile.
+class VirtualNetworkPropertiesInfraVnetProfile(_serialization.Model):
+    """VirtualNetworkPropertiesInfraVnetProfile.
 
-    :ivar hci: Infra network profile for HCI platform.
+    :ivar hci: Infrastructure network profile for HCI platform.
     :vartype hci:
-     ~azure.mgmt.hybridcontainerservice.models.VirtualNetworksPropertiesInfraVnetProfileHci
-    :ivar network_cloud: Infra network profile for the NetworkCloud platform.
-    :vartype network_cloud:
-     ~azure.mgmt.hybridcontainerservice.models.VirtualNetworksPropertiesInfraVnetProfileNetworkCloud
-    :ivar vmware: Infra network profile for VMware platform.
-    :vartype vmware:
-     ~azure.mgmt.hybridcontainerservice.models.VirtualNetworksPropertiesInfraVnetProfileVmware
+     ~azure.mgmt.hybridcontainerservice.models.VirtualNetworkPropertiesInfraVnetProfileHci
     """
 
     _attribute_map = {
-        "hci": {"key": "hci", "type": "VirtualNetworksPropertiesInfraVnetProfileHci"},
-        "network_cloud": {"key": "networkCloud", "type": "VirtualNetworksPropertiesInfraVnetProfileNetworkCloud"},
-        "vmware": {"key": "vmware", "type": "VirtualNetworksPropertiesInfraVnetProfileVmware"},
+        "hci": {"key": "hci", "type": "VirtualNetworkPropertiesInfraVnetProfileHci"},
     }
 
     def __init__(
-        self,
-        *,
-        hci: Optional["_models.VirtualNetworksPropertiesInfraVnetProfileHci"] = None,
-        network_cloud: Optional["_models.VirtualNetworksPropertiesInfraVnetProfileNetworkCloud"] = None,
-        vmware: Optional["_models.VirtualNetworksPropertiesInfraVnetProfileVmware"] = None,
-        **kwargs: Any
+        self, *, hci: Optional["_models.VirtualNetworkPropertiesInfraVnetProfileHci"] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword hci: Infra network profile for HCI platform.
+        :keyword hci: Infrastructure network profile for HCI platform.
         :paramtype hci:
-         ~azure.mgmt.hybridcontainerservice.models.VirtualNetworksPropertiesInfraVnetProfileHci
-        :keyword network_cloud: Infra network profile for the NetworkCloud platform.
-        :paramtype network_cloud:
-         ~azure.mgmt.hybridcontainerservice.models.VirtualNetworksPropertiesInfraVnetProfileNetworkCloud
-        :keyword vmware: Infra network profile for VMware platform.
-        :paramtype vmware:
-         ~azure.mgmt.hybridcontainerservice.models.VirtualNetworksPropertiesInfraVnetProfileVmware
+         ~azure.mgmt.hybridcontainerservice.models.VirtualNetworkPropertiesInfraVnetProfileHci
         """
         super().__init__(**kwargs)
         self.hci = hci
-        self.network_cloud = network_cloud
-        self.vmware = vmware
 
 
-class VirtualNetworksPropertiesInfraVnetProfileHci(_serialization.Model):
-    """Infra network profile for HCI platform.
+class VirtualNetworkPropertiesInfraVnetProfileHci(_serialization.Model):
+    """Infrastructure network profile for HCI platform.
 
-    :ivar moc_group: Resource group in MOC(Microsoft On-premises Cloud).
+    :ivar moc_group: Group in MOC(Microsoft On-premises Cloud).
     :vartype moc_group: str
     :ivar moc_location: Location in MOC(Microsoft On-premises Cloud).
     :vartype moc_location: str
@@ -4453,7 +2793,7 @@ class VirtualNetworksPropertiesInfraVnetProfileHci(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword moc_group: Resource group in MOC(Microsoft On-premises Cloud).
+        :keyword moc_group: Group in MOC(Microsoft On-premises Cloud).
         :paramtype moc_group: str
         :keyword moc_location: Location in MOC(Microsoft On-premises Cloud).
         :paramtype moc_location: str
@@ -4466,134 +2806,80 @@ class VirtualNetworksPropertiesInfraVnetProfileHci(_serialization.Model):
         self.moc_vnet_name = moc_vnet_name
 
 
-class VirtualNetworksPropertiesInfraVnetProfileNetworkCloud(_serialization.Model):
-    """Infra network profile for the NetworkCloud platform.
+class VirtualNetworkPropertiesStatus(_serialization.Model):
+    """Status of the virtual network resource.
 
-    :ivar network_id: The ARM ID of Network Cloud Network Resource to Associate with this
-     VirtualNetwork.
-    :vartype network_id: str
+    :ivar operation_status: The detailed status of the long running operation.
+    :vartype operation_status:
+     ~azure.mgmt.hybridcontainerservice.models.VirtualNetworkPropertiesStatusOperationStatus
     """
 
     _attribute_map = {
-        "network_id": {"key": "networkId", "type": "str"},
-    }
-
-    def __init__(self, *, network_id: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword network_id: The ARM ID of Network Cloud Network Resource to Associate with this
-         VirtualNetwork.
-        :paramtype network_id: str
-        """
-        super().__init__(**kwargs)
-        self.network_id = network_id
-
-
-class VirtualNetworksPropertiesInfraVnetProfileVmware(_serialization.Model):
-    """Infra network profile for VMware platform.
-
-    :ivar segment_name: Name of the network segment in VSphere.
-    :vartype segment_name: str
-    """
-
-    _attribute_map = {
-        "segment_name": {"key": "segmentName", "type": "str"},
-    }
-
-    def __init__(self, *, segment_name: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword segment_name: Name of the network segment in VSphere.
-        :paramtype segment_name: str
-        """
-        super().__init__(**kwargs)
-        self.segment_name = segment_name
-
-
-class VirtualNetworksPropertiesStatus(_serialization.Model):
-    """HybridAKSNetworkStatus defines the observed state of HybridAKSNetwork.
-
-    :ivar provisioning_status: Contains Provisioning errors.
-    :vartype provisioning_status:
-     ~azure.mgmt.hybridcontainerservice.models.VirtualNetworksPropertiesStatusProvisioningStatus
-    """
-
-    _attribute_map = {
-        "provisioning_status": {
-            "key": "provisioningStatus",
-            "type": "VirtualNetworksPropertiesStatusProvisioningStatus",
-        },
+        "operation_status": {"key": "operationStatus", "type": "VirtualNetworkPropertiesStatusOperationStatus"},
     }
 
     def __init__(
         self,
         *,
-        provisioning_status: Optional["_models.VirtualNetworksPropertiesStatusProvisioningStatus"] = None,
+        operation_status: Optional["_models.VirtualNetworkPropertiesStatusOperationStatus"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword provisioning_status: Contains Provisioning errors.
-        :paramtype provisioning_status:
-         ~azure.mgmt.hybridcontainerservice.models.VirtualNetworksPropertiesStatusProvisioningStatus
+        :keyword operation_status: The detailed status of the long running operation.
+        :paramtype operation_status:
+         ~azure.mgmt.hybridcontainerservice.models.VirtualNetworkPropertiesStatusOperationStatus
         """
         super().__init__(**kwargs)
-        self.provisioning_status = provisioning_status
+        self.operation_status = operation_status
 
 
-class VirtualNetworksPropertiesStatusProvisioningStatus(_serialization.Model):
-    """Contains Provisioning errors.
+class VirtualNetworkPropertiesStatusOperationStatus(_serialization.Model):
+    """The detailed status of the long running operation.
 
-    :ivar error:
+    :ivar error: The error if any from the operation.
     :vartype error:
-     ~azure.mgmt.hybridcontainerservice.models.VirtualNetworksPropertiesStatusProvisioningStatusError
-    :ivar operation_id:
+     ~azure.mgmt.hybridcontainerservice.models.VirtualNetworkPropertiesStatusOperationStatusError
+    :ivar operation_id: The identifier of the operation.
     :vartype operation_id: str
-    :ivar phase: Phase represents the current phase of cluster actuation. E.g. Pending, Running,
-     Terminating, Failed etc.
-    :vartype phase: str
-    :ivar status:
+    :ivar status: The status of the operation.
     :vartype status: str
     """
 
     _attribute_map = {
-        "error": {"key": "error", "type": "VirtualNetworksPropertiesStatusProvisioningStatusError"},
+        "error": {"key": "error", "type": "VirtualNetworkPropertiesStatusOperationStatusError"},
         "operation_id": {"key": "operationId", "type": "str"},
-        "phase": {"key": "phase", "type": "str"},
         "status": {"key": "status", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        error: Optional["_models.VirtualNetworksPropertiesStatusProvisioningStatusError"] = None,
+        error: Optional["_models.VirtualNetworkPropertiesStatusOperationStatusError"] = None,
         operation_id: Optional[str] = None,
-        phase: Optional[str] = None,
         status: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword error:
+        :keyword error: The error if any from the operation.
         :paramtype error:
-         ~azure.mgmt.hybridcontainerservice.models.VirtualNetworksPropertiesStatusProvisioningStatusError
-        :keyword operation_id:
+         ~azure.mgmt.hybridcontainerservice.models.VirtualNetworkPropertiesStatusOperationStatusError
+        :keyword operation_id: The identifier of the operation.
         :paramtype operation_id: str
-        :keyword phase: Phase represents the current phase of cluster actuation. E.g. Pending, Running,
-         Terminating, Failed etc.
-        :paramtype phase: str
-        :keyword status:
+        :keyword status: The status of the operation.
         :paramtype status: str
         """
         super().__init__(**kwargs)
         self.error = error
         self.operation_id = operation_id
-        self.phase = phase
         self.status = status
 
 
-class VirtualNetworksPropertiesStatusProvisioningStatusError(_serialization.Model):
-    """VirtualNetworksPropertiesStatusProvisioningStatusError.
+class VirtualNetworkPropertiesStatusOperationStatusError(_serialization.Model):
+    """The error if any from the operation.
 
-    :ivar code:
+    :ivar code: The error code from the operation.
     :vartype code: str
-    :ivar message:
+    :ivar message: The error message from the operation.
     :vartype message: str
     """
 
@@ -4604,9 +2890,9 @@ class VirtualNetworksPropertiesStatusProvisioningStatusError(_serialization.Mode
 
     def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword code:
+        :keyword code: The error code from the operation.
         :paramtype code: str
-        :keyword message:
+        :keyword message: The error message from the operation.
         :paramtype message: str
         """
         super().__init__(**kwargs)
@@ -4614,8 +2900,8 @@ class VirtualNetworksPropertiesStatusProvisioningStatusError(_serialization.Mode
         self.message = message
 
 
-class VirtualNetworksPropertiesVipPoolItem(_serialization.Model):
-    """VirtualNetworksPropertiesVipPoolItem.
+class VirtualNetworkPropertiesVipPoolItem(_serialization.Model):
+    """VirtualNetworkPropertiesVipPoolItem.
 
     :ivar end_ip: Ending IP address for the IP Pool.
     :vartype end_ip: str
@@ -4640,8 +2926,8 @@ class VirtualNetworksPropertiesVipPoolItem(_serialization.Model):
         self.start_ip = start_ip
 
 
-class VirtualNetworksPropertiesVmipPoolItem(_serialization.Model):
-    """VirtualNetworksPropertiesVmipPoolItem.
+class VirtualNetworkPropertiesVmipPoolItem(_serialization.Model):
+    """VirtualNetworkPropertiesVmipPoolItem.
 
     :ivar end_ip: Ending IP address for the IP Pool.
     :vartype end_ip: str
@@ -4666,206 +2952,231 @@ class VirtualNetworksPropertiesVmipPoolItem(_serialization.Model):
         self.start_ip = start_ip
 
 
-class VMSkuListResult(_serialization.Model):
-    """The list of supported VM SKUs.
+class VirtualNetworksListResult(_serialization.Model):
+    """A list of virtual network resources.
+
+    :ivar value:
+    :vartype value: list[~azure.mgmt.hybridcontainerservice.models.VirtualNetwork]
+    :ivar next_link:
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[VirtualNetwork]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.VirtualNetwork"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.hybridcontainerservice.models.VirtualNetwork]
+        :keyword next_link:
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class VirtualNetworksPatch(_serialization.Model):
+    """The Virtual Network resource patch definition.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+
+
+class VmSkuCapabilities(_serialization.Model):
+    """Describes the VM SKU capabilities like MemoryGB, vCPUs, etc.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar vm_sk_us: Supported VM SKUs.
-    :vartype vm_sk_us: list[str]
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: Name of the VM SKU capability.
     :vartype name: str
-    :ivar type: Resource Type.
-    :vartype type: str
+    :ivar value: Value of the VM SKU capability.
+    :vartype value: str
     """
 
     _validation = {
-        "vm_sk_us": {"readonly": True},
-        "id": {"readonly": True},
         "name": {"readonly": True},
-        "type": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        "vm_sk_us": {"key": "vmSKUs", "type": "[str]"},
-        "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.vm_sk_us = None
-        self.id = None
         self.name = None
-        self.type = None
+        self.value = None
 
 
-class WindowsProfilePassword(_serialization.Model):
-    """Password for the Windows Profile to be used by the Windows VMs in the cluster.
+class VmSkuProfile(ProxyResource):
+    """The list of supported VM SKUs.
 
-    :ivar admin_password: AdminPassword - Specifies the password of the administrator account.
-     :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>`
-     **Max-length:** 123 characters :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4
-     conditions below need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper
-     characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\W_])
-     :code:`<br>`:code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
-     "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22", "iloveyou!".
-    :vartype admin_password: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridcontainerservice.models.SystemData
+    :ivar extended_location: Extended location pointing to the underlying infrastructure.
+    :vartype extended_location: ~azure.mgmt.hybridcontainerservice.models.ExtendedLocation
+    :ivar properties:
+    :vartype properties: ~azure.mgmt.hybridcontainerservice.models.VmSkuProfileProperties
     """
 
-    _attribute_map = {
-        "admin_password": {"key": "adminPassword", "type": "str"},
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"readonly": True},
     }
 
-    def __init__(self, *, admin_password: Optional[str] = None, **kwargs: Any) -> None:
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "properties": {"key": "properties", "type": "VmSkuProfileProperties"},
+    }
+
+    def __init__(self, *, extended_location: Optional["_models.ExtendedLocation"] = None, **kwargs: Any) -> None:
         """
-        :keyword admin_password: AdminPassword - Specifies the password of the administrator account.
-         :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>`
-         **Max-length:** 123 characters :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4
-         conditions below need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper
-         characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\W_])
-         :code:`<br>`:code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
-         "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22", "iloveyou!".
-        :paramtype admin_password: str
+        :keyword extended_location: Extended location pointing to the underlying infrastructure.
+        :paramtype extended_location: ~azure.mgmt.hybridcontainerservice.models.ExtendedLocation
         """
         super().__init__(**kwargs)
-        self.admin_password = admin_password
+        self.extended_location = extended_location
+        self.properties = None
 
 
-class WindowsProfileResponse(_serialization.Model):
-    """Profile for Windows VMs in the container service cluster.
+class VmSkuProfileList(_serialization.Model):
+    """The list of supported VM SKUs.
 
-    :ivar admin_username: AdminUsername - Specifies the name of the administrator account.
-     :code:`<br>`:code:`<br>` **restriction:** Cannot end in "." :code:`<br>`:code:`<br>`
-     **Disallowed values:** "administrator", "admin", "user", "user1", "test", "user2", "test1",
-     "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console",
-     "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0",
-     "sys", "test2", "test3", "user4", "user5". :code:`<br>`:code:`<br>` **Minimum-length:** 1
-     character :code:`<br>`:code:`<br>` **Max-length:** 20 characters.
-    :vartype admin_username: str
-    :ivar enable_csi_proxy: EnableCSIProxy - Whether to enable CSI proxy.
-    :vartype enable_csi_proxy: bool
-    :ivar license_type: LicenseType - The licenseType to use for Windows VMs. Windows_Server is
-     used to enable Azure Hybrid User Benefits for Windows VMs. Possible values include: 'None',
-     'Windows_Server'. Known values are: "Windows_Server" and "None".
-    :vartype license_type: str or ~azure.mgmt.hybridcontainerservice.models.LicenseType
+    :ivar value:
+    :vartype value: list[~azure.mgmt.hybridcontainerservice.models.VmSkuProfile]
+    :ivar next_link:
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        "admin_username": {"key": "adminUsername", "type": "str"},
-        "enable_csi_proxy": {"key": "enableCsiProxy", "type": "bool"},
-        "license_type": {"key": "licenseType", "type": "str"},
+        "value": {"key": "value", "type": "[VmSkuProfile]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        admin_username: Optional[str] = None,
-        enable_csi_proxy: Optional[bool] = None,
-        license_type: Optional[Union[str, "_models.LicenseType"]] = None,
-        **kwargs: Any
+        self, *, value: Optional[List["_models.VmSkuProfile"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword admin_username: AdminUsername - Specifies the name of the administrator account.
-         :code:`<br>`:code:`<br>` **restriction:** Cannot end in "." :code:`<br>`:code:`<br>`
-         **Disallowed values:** "administrator", "admin", "user", "user1", "test", "user2", "test1",
-         "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console",
-         "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0",
-         "sys", "test2", "test3", "user4", "user5". :code:`<br>`:code:`<br>` **Minimum-length:** 1
-         character :code:`<br>`:code:`<br>` **Max-length:** 20 characters.
-        :paramtype admin_username: str
-        :keyword enable_csi_proxy: EnableCSIProxy - Whether to enable CSI proxy.
-        :paramtype enable_csi_proxy: bool
-        :keyword license_type: LicenseType - The licenseType to use for Windows VMs. Windows_Server is
-         used to enable Azure Hybrid User Benefits for Windows VMs. Possible values include: 'None',
-         'Windows_Server'. Known values are: "Windows_Server" and "None".
-        :paramtype license_type: str or ~azure.mgmt.hybridcontainerservice.models.LicenseType
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.hybridcontainerservice.models.VmSkuProfile]
+        :keyword next_link:
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
-        self.admin_username = admin_username
-        self.enable_csi_proxy = enable_csi_proxy
-        self.license_type = license_type
+        self.value = value
+        self.next_link = next_link
 
 
-class WindowsProfile(WindowsProfileResponse, WindowsProfilePassword):
-    """WindowsProfile - Profile for Windows VMs in the container service cluster.
+class VmSkuProfileProperties(_serialization.Model):
+    """VmSkuProfileProperties.
 
-    :ivar admin_password: AdminPassword - Specifies the password of the administrator account.
-     :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>`
-     **Max-length:** 123 characters :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4
-     conditions below need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper
-     characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\W_])
-     :code:`<br>`:code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
-     "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22", "iloveyou!".
-    :vartype admin_password: str
-    :ivar admin_username: AdminUsername - Specifies the name of the administrator account.
-     :code:`<br>`:code:`<br>` **restriction:** Cannot end in "." :code:`<br>`:code:`<br>`
-     **Disallowed values:** "administrator", "admin", "user", "user1", "test", "user2", "test1",
-     "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console",
-     "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0",
-     "sys", "test2", "test3", "user4", "user5". :code:`<br>`:code:`<br>` **Minimum-length:** 1
-     character :code:`<br>`:code:`<br>` **Max-length:** 20 characters.
-    :vartype admin_username: str
-    :ivar enable_csi_proxy: EnableCSIProxy - Whether to enable CSI proxy.
-    :vartype enable_csi_proxy: bool
-    :ivar license_type: LicenseType - The licenseType to use for Windows VMs. Windows_Server is
-     used to enable Azure Hybrid User Benefits for Windows VMs. Possible values include: 'None',
-     'Windows_Server'. Known values are: "Windows_Server" and "None".
-    :vartype license_type: str or ~azure.mgmt.hybridcontainerservice.models.LicenseType
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Pending", "Creating", "Deleting", "Updating", "Upgrading", and
+     "Accepted".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.hybridcontainerservice.models.ResourceProvisioningState
+    :ivar values: List of supported VM SKUs.
+    :vartype values: list[~azure.mgmt.hybridcontainerservice.models.VmSkuProperties]
     """
 
-    _attribute_map = {
-        "admin_password": {"key": "adminPassword", "type": "str"},
-        "admin_username": {"key": "adminUsername", "type": "str"},
-        "enable_csi_proxy": {"key": "enableCsiProxy", "type": "bool"},
-        "license_type": {"key": "licenseType", "type": "str"},
+    _validation = {
+        "provisioning_state": {"readonly": True},
     }
 
-    def __init__(
-        self,
-        *,
-        admin_password: Optional[str] = None,
-        admin_username: Optional[str] = None,
-        enable_csi_proxy: Optional[bool] = None,
-        license_type: Optional[Union[str, "_models.LicenseType"]] = None,
-        **kwargs: Any
-    ) -> None:
+    _attribute_map = {
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "values": {"key": "values", "type": "[VmSkuProperties]"},
+    }
+
+    def __init__(self, *, values: Optional[List["_models.VmSkuProperties"]] = None, **kwargs: Any) -> None:
         """
-        :keyword admin_password: AdminPassword - Specifies the password of the administrator account.
-         :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>`
-         **Max-length:** 123 characters :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4
-         conditions below need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper
-         characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\W_])
-         :code:`<br>`:code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
-         "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22", "iloveyou!".
-        :paramtype admin_password: str
-        :keyword admin_username: AdminUsername - Specifies the name of the administrator account.
-         :code:`<br>`:code:`<br>` **restriction:** Cannot end in "." :code:`<br>`:code:`<br>`
-         **Disallowed values:** "administrator", "admin", "user", "user1", "test", "user2", "test1",
-         "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console",
-         "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0",
-         "sys", "test2", "test3", "user4", "user5". :code:`<br>`:code:`<br>` **Minimum-length:** 1
-         character :code:`<br>`:code:`<br>` **Max-length:** 20 characters.
-        :paramtype admin_username: str
-        :keyword enable_csi_proxy: EnableCSIProxy - Whether to enable CSI proxy.
-        :paramtype enable_csi_proxy: bool
-        :keyword license_type: LicenseType - The licenseType to use for Windows VMs. Windows_Server is
-         used to enable Azure Hybrid User Benefits for Windows VMs. Possible values include: 'None',
-         'Windows_Server'. Known values are: "Windows_Server" and "None".
-        :paramtype license_type: str or ~azure.mgmt.hybridcontainerservice.models.LicenseType
+        :keyword values: List of supported VM SKUs.
+        :paramtype values: list[~azure.mgmt.hybridcontainerservice.models.VmSkuProperties]
         """
-        super().__init__(
-            admin_username=admin_username,
-            enable_csi_proxy=enable_csi_proxy,
-            license_type=license_type,
-            admin_password=admin_password,
-            **kwargs
-        )
-        self.admin_password = admin_password
-        self.admin_username = admin_username
-        self.enable_csi_proxy = enable_csi_proxy
-        self.license_type = license_type
+        super().__init__(**kwargs)
+        self.provisioning_state = None
+        self.values = values
+
+
+class VmSkuProperties(_serialization.Model):
+    """The profile for supported VM SKUs.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar resource_type: The type of resource the SKU applies to.
+    :vartype resource_type: str
+    :ivar capabilities: The list of name-value pairs to describe VM SKU capabilities like MemoryGB,
+     vCPUs, etc.
+    :vartype capabilities: list[~azure.mgmt.hybridcontainerservice.models.VmSkuCapabilities]
+    :ivar name: The name of the VM SKU.
+    :vartype name: str
+    :ivar tier: The tier of the VM SKU.
+    :vartype tier: str
+    :ivar size: The size of the VM SKU.
+    :vartype size: str
+    """
+
+    _validation = {
+        "resource_type": {"readonly": True},
+        "capabilities": {"readonly": True},
+        "name": {"readonly": True},
+        "tier": {"readonly": True},
+        "size": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "capabilities": {"key": "capabilities", "type": "[VmSkuCapabilities]"},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "size": {"key": "size", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.resource_type = None
+        self.capabilities = None
+        self.name = None
+        self.tier = None
+        self.size = None

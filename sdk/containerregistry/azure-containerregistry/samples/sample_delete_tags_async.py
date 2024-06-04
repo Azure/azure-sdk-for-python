@@ -37,7 +37,7 @@ from utilities import load_registry, get_authority, get_credential
 class DeleteTagsAsync(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
+        self.endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         self.authority = get_authority(self.endpoint)
         self.credential = get_credential(self.authority, is_async=True)
 
@@ -56,7 +56,7 @@ class DeleteTagsAsync(object):
                     repository_name, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING
                 ):
                     tag_count += 1
-                    if tag_count > 3:                        
+                    if tag_count > 3:
                         print(f"Deleting {repository_name}:{tag.name}")
                         await client.delete_tag(repository_name, tag.name)
 

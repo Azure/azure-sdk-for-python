@@ -1,0 +1,20 @@
+$schema: https://componentsdk.azureedge.net/jsonschema/AetherBridgeComponent.json
+name: aether_bridge_component
+version: 0.0.1
+display_name: Aether Bridge Component
+type: AetherBridgeComponent
+inputs:
+  mock_param1:
+    type: AnyFile
+    optional: false
+  mock_param2:
+    type: AnyFile
+    optional: false
+outputs:
+  job_info:
+    type: AnyFile
+command: >-
+  mock.exe {inputs.mock_param1} {inputs.mock_param2} {outputs.job_info}
+aether:
+  module_type: ScrapingCloud
+  ref_id: mock_ref_id

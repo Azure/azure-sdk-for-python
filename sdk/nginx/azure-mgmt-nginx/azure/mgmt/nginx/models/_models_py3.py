@@ -17,50 +17,305 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ErrorResponseBody(_serialization.Model):
-    """ErrorResponseBody.
+class AnalysisCreate(_serialization.Model):
+    """The request body for creating an analysis for an NGINX configuration.
 
-    :ivar code:
-    :vartype code: str
-    :ivar message:
-    :vartype message: str
-    :ivar target:
-    :vartype target: str
-    :ivar details:
-    :vartype details: list[~azure.mgmt.nginx.models.ErrorResponseBody]
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar config: Required.
+    :vartype config: ~azure.mgmt.nginx.models.AnalysisCreateConfig
+    """
+
+    _validation = {
+        "config": {"required": True},
+    }
+
+    _attribute_map = {
+        "config": {"key": "config", "type": "AnalysisCreateConfig"},
+    }
+
+    def __init__(self, *, config: "_models.AnalysisCreateConfig", **kwargs: Any) -> None:
+        """
+        :keyword config: Required.
+        :paramtype config: ~azure.mgmt.nginx.models.AnalysisCreateConfig
+        """
+        super().__init__(**kwargs)
+        self.config = config
+
+
+class AnalysisCreateConfig(_serialization.Model):
+    """AnalysisCreateConfig.
+
+    :ivar root_file: The root file of the NGINX config file(s). It must match one of the files'
+     filepath.
+    :vartype root_file: str
+    :ivar files:
+    :vartype files: list[~azure.mgmt.nginx.models.NginxConfigurationFile]
+    :ivar protected_files:
+    :vartype protected_files: list[~azure.mgmt.nginx.models.NginxConfigurationFile]
+    :ivar package:
+    :vartype package: ~azure.mgmt.nginx.models.NginxConfigurationPackage
     """
 
     _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[ErrorResponseBody]"},
+        "root_file": {"key": "rootFile", "type": "str"},
+        "files": {"key": "files", "type": "[NginxConfigurationFile]"},
+        "protected_files": {"key": "protectedFiles", "type": "[NginxConfigurationFile]"},
+        "package": {"key": "package", "type": "NginxConfigurationPackage"},
     }
 
     def __init__(
         self,
         *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        target: Optional[str] = None,
-        details: Optional[List["_models.ErrorResponseBody"]] = None,
+        root_file: Optional[str] = None,
+        files: Optional[List["_models.NginxConfigurationFile"]] = None,
+        protected_files: Optional[List["_models.NginxConfigurationFile"]] = None,
+        package: Optional["_models.NginxConfigurationPackage"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword code:
-        :paramtype code: str
-        :keyword message:
-        :paramtype message: str
-        :keyword target:
-        :paramtype target: str
-        :keyword details:
-        :paramtype details: list[~azure.mgmt.nginx.models.ErrorResponseBody]
+        :keyword root_file: The root file of the NGINX config file(s). It must match one of the files'
+         filepath.
+        :paramtype root_file: str
+        :keyword files:
+        :paramtype files: list[~azure.mgmt.nginx.models.NginxConfigurationFile]
+        :keyword protected_files:
+        :paramtype protected_files: list[~azure.mgmt.nginx.models.NginxConfigurationFile]
+        :keyword package:
+        :paramtype package: ~azure.mgmt.nginx.models.NginxConfigurationPackage
         """
         super().__init__(**kwargs)
-        self.code = code
+        self.root_file = root_file
+        self.files = files
+        self.protected_files = protected_files
+        self.package = package
+
+
+class AnalysisDiagnostic(_serialization.Model):
+    """An error object found during the analysis of an NGINX configuration.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Unique identifier for the error.
+    :vartype id: str
+    :ivar directive: Required.
+    :vartype directive: str
+    :ivar description: Required.
+    :vartype description: str
+    :ivar file: the filepath of the most relevant config file. Required.
+    :vartype file: str
+    :ivar line: Required.
+    :vartype line: float
+    :ivar message: Required.
+    :vartype message: str
+    :ivar rule: Required.
+    :vartype rule: str
+    """
+
+    _validation = {
+        "directive": {"required": True},
+        "description": {"required": True},
+        "file": {"required": True},
+        "line": {"required": True},
+        "message": {"required": True},
+        "rule": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "directive": {"key": "directive", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "file": {"key": "file", "type": "str"},
+        "line": {"key": "line", "type": "float"},
+        "message": {"key": "message", "type": "str"},
+        "rule": {"key": "rule", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        directive: str,
+        description: str,
+        file: str,
+        line: float,
+        message: str,
+        rule: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: Unique identifier for the error.
+        :paramtype id: str
+        :keyword directive: Required.
+        :paramtype directive: str
+        :keyword description: Required.
+        :paramtype description: str
+        :keyword file: the filepath of the most relevant config file. Required.
+        :paramtype file: str
+        :keyword line: Required.
+        :paramtype line: float
+        :keyword message: Required.
+        :paramtype message: str
+        :keyword rule: Required.
+        :paramtype rule: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.directive = directive
+        self.description = description
+        self.file = file
+        self.line = line
         self.message = message
-        self.target = target
-        self.details = details
+        self.rule = rule
+
+
+class AnalysisResult(_serialization.Model):
+    """The response body for an analysis request. Contains the status of the analysis and any errors.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar status: The status of the analysis. Required.
+    :vartype status: str
+    :ivar data:
+    :vartype data: ~azure.mgmt.nginx.models.AnalysisResultData
+    """
+
+    _validation = {
+        "status": {"required": True},
+    }
+
+    _attribute_map = {
+        "status": {"key": "status", "type": "str"},
+        "data": {"key": "data", "type": "AnalysisResultData"},
+    }
+
+    def __init__(self, *, status: str, data: Optional["_models.AnalysisResultData"] = None, **kwargs: Any) -> None:
+        """
+        :keyword status: The status of the analysis. Required.
+        :paramtype status: str
+        :keyword data:
+        :paramtype data: ~azure.mgmt.nginx.models.AnalysisResultData
+        """
+        super().__init__(**kwargs)
+        self.status = status
+        self.data = data
+
+
+class AnalysisResultData(_serialization.Model):
+    """AnalysisResultData.
+
+    :ivar errors:
+    :vartype errors: list[~azure.mgmt.nginx.models.AnalysisDiagnostic]
+    """
+
+    _attribute_map = {
+        "errors": {"key": "errors", "type": "[AnalysisDiagnostic]"},
+    }
+
+    def __init__(self, *, errors: Optional[List["_models.AnalysisDiagnostic"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword errors:
+        :paramtype errors: list[~azure.mgmt.nginx.models.AnalysisDiagnostic]
+        """
+        super().__init__(**kwargs)
+        self.errors = errors
+
+
+class AutoUpgradeProfile(_serialization.Model):
+    """Autoupgrade settings of a deployment.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar upgrade_channel: Channel used for autoupgrade. Required.
+    :vartype upgrade_channel: str
+    """
+
+    _validation = {
+        "upgrade_channel": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_channel": {"key": "upgradeChannel", "type": "str"},
+    }
+
+    def __init__(self, *, upgrade_channel: str, **kwargs: Any) -> None:
+        """
+        :keyword upgrade_channel: Channel used for autoupgrade. Required.
+        :paramtype upgrade_channel: str
+        """
+        super().__init__(**kwargs)
+        self.upgrade_channel = upgrade_channel
+
+
+class ErrorAdditionalInfo(_serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: JSON
+    """
+
+    _validation = {
+        "type": {"readonly": True},
+        "info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.nginx.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.nginx.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
 
 
 class IdentityProperties(_serialization.Model):
@@ -125,8 +380,6 @@ class NginxCertificate(_serialization.Model):
     :vartype type: str
     :ivar properties:
     :vartype properties: ~azure.mgmt.nginx.models.NginxCertificateProperties
-    :ivar tags: Dictionary of :code:`<string>`.
-    :vartype tags: dict[str, str]
     :ivar location:
     :vartype location: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
@@ -145,7 +398,6 @@ class NginxCertificate(_serialization.Model):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "properties": {"key": "properties", "type": "NginxCertificateProperties"},
-        "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
@@ -154,15 +406,12 @@ class NginxCertificate(_serialization.Model):
         self,
         *,
         properties: Optional["_models.NginxCertificateProperties"] = None,
-        tags: Optional[Dict[str, str]] = None,
         location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword properties:
         :paramtype properties: ~azure.mgmt.nginx.models.NginxCertificateProperties
-        :keyword tags: Dictionary of :code:`<string>`.
-        :paramtype tags: dict[str, str]
         :keyword location:
         :paramtype location: str
         """
@@ -171,9 +420,34 @@ class NginxCertificate(_serialization.Model):
         self.name = None
         self.type = None
         self.properties = properties
-        self.tags = tags
         self.location = location
         self.system_data = None
+
+
+class NginxCertificateErrorResponseBody(_serialization.Model):
+    """NginxCertificateErrorResponseBody.
+
+    :ivar code:
+    :vartype code: str
+    :ivar message:
+    :vartype message: str
+    """
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword code:
+        :paramtype code: str
+        :keyword message:
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
+        self.code = code
+        self.message = message
 
 
 class NginxCertificateListResponse(_serialization.Model):
@@ -222,10 +496,21 @@ class NginxCertificateProperties(_serialization.Model):
     :vartype certificate_virtual_path: str
     :ivar key_vault_secret_id:
     :vartype key_vault_secret_id: str
+    :ivar sha1_thumbprint:
+    :vartype sha1_thumbprint: str
+    :ivar key_vault_secret_version:
+    :vartype key_vault_secret_version: str
+    :ivar key_vault_secret_created:
+    :vartype key_vault_secret_created: ~datetime.datetime
+    :ivar certificate_error:
+    :vartype certificate_error: ~azure.mgmt.nginx.models.NginxCertificateErrorResponseBody
     """
 
     _validation = {
         "provisioning_state": {"readonly": True},
+        "sha1_thumbprint": {"readonly": True},
+        "key_vault_secret_version": {"readonly": True},
+        "key_vault_secret_created": {"readonly": True},
     }
 
     _attribute_map = {
@@ -233,6 +518,10 @@ class NginxCertificateProperties(_serialization.Model):
         "key_virtual_path": {"key": "keyVirtualPath", "type": "str"},
         "certificate_virtual_path": {"key": "certificateVirtualPath", "type": "str"},
         "key_vault_secret_id": {"key": "keyVaultSecretId", "type": "str"},
+        "sha1_thumbprint": {"key": "sha1Thumbprint", "type": "str"},
+        "key_vault_secret_version": {"key": "keyVaultSecretVersion", "type": "str"},
+        "key_vault_secret_created": {"key": "keyVaultSecretCreated", "type": "iso-8601"},
+        "certificate_error": {"key": "certificateError", "type": "NginxCertificateErrorResponseBody"},
     }
 
     def __init__(
@@ -241,6 +530,7 @@ class NginxCertificateProperties(_serialization.Model):
         key_virtual_path: Optional[str] = None,
         certificate_virtual_path: Optional[str] = None,
         key_vault_secret_id: Optional[str] = None,
+        certificate_error: Optional["_models.NginxCertificateErrorResponseBody"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -250,12 +540,18 @@ class NginxCertificateProperties(_serialization.Model):
         :paramtype certificate_virtual_path: str
         :keyword key_vault_secret_id:
         :paramtype key_vault_secret_id: str
+        :keyword certificate_error:
+        :paramtype certificate_error: ~azure.mgmt.nginx.models.NginxCertificateErrorResponseBody
         """
         super().__init__(**kwargs)
         self.provisioning_state = None
         self.key_virtual_path = key_virtual_path
         self.certificate_virtual_path = certificate_virtual_path
         self.key_vault_secret_id = key_vault_secret_id
+        self.sha1_thumbprint = None
+        self.key_vault_secret_version = None
+        self.key_vault_secret_created = None
+        self.certificate_error = certificate_error
 
 
 class NginxConfiguration(_serialization.Model):
@@ -271,8 +567,6 @@ class NginxConfiguration(_serialization.Model):
     :vartype type: str
     :ivar properties:
     :vartype properties: ~azure.mgmt.nginx.models.NginxConfigurationProperties
-    :ivar tags: Dictionary of :code:`<string>`.
-    :vartype tags: dict[str, str]
     :ivar location:
     :vartype location: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
@@ -291,7 +585,6 @@ class NginxConfiguration(_serialization.Model):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "properties": {"key": "properties", "type": "NginxConfigurationProperties"},
-        "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
@@ -300,15 +593,12 @@ class NginxConfiguration(_serialization.Model):
         self,
         *,
         properties: Optional["_models.NginxConfigurationProperties"] = None,
-        tags: Optional[Dict[str, str]] = None,
         location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword properties:
         :paramtype properties: ~azure.mgmt.nginx.models.NginxConfigurationProperties
-        :keyword tags: Dictionary of :code:`<string>`.
-        :paramtype tags: dict[str, str]
         :keyword location:
         :paramtype location: str
         """
@@ -317,7 +607,6 @@ class NginxConfiguration(_serialization.Model):
         self.name = None
         self.type = None
         self.properties = properties
-        self.tags = tags
         self.location = location
         self.system_data = None
 
@@ -385,19 +674,27 @@ class NginxConfigurationPackage(_serialization.Model):
 
     :ivar data:
     :vartype data: str
+    :ivar protected_files:
+    :vartype protected_files: list[str]
     """
 
     _attribute_map = {
         "data": {"key": "data", "type": "str"},
+        "protected_files": {"key": "protectedFiles", "type": "[str]"},
     }
 
-    def __init__(self, *, data: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, data: Optional[str] = None, protected_files: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword data:
         :paramtype data: str
+        :keyword protected_files:
+        :paramtype protected_files: list[str]
         """
         super().__init__(**kwargs)
         self.data = data
+        self.protected_files = protected_files
 
 
 class NginxConfigurationProperties(_serialization.Model):
@@ -584,6 +881,12 @@ class NginxDeploymentProperties(_serialization.Model):
     :vartype enable_diagnostics_support: bool
     :ivar logging:
     :vartype logging: ~azure.mgmt.nginx.models.NginxLogging
+    :ivar scaling_properties: Information on how the deployment will be scaled.
+    :vartype scaling_properties: ~azure.mgmt.nginx.models.NginxDeploymentScalingProperties
+    :ivar auto_upgrade_profile: Autoupgrade settings of a deployment.
+    :vartype auto_upgrade_profile: ~azure.mgmt.nginx.models.AutoUpgradeProfile
+    :ivar user_profile:
+    :vartype user_profile: ~azure.mgmt.nginx.models.NginxDeploymentUserProfile
     """
 
     _validation = {
@@ -600,6 +903,9 @@ class NginxDeploymentProperties(_serialization.Model):
         "ip_address": {"key": "ipAddress", "type": "str"},
         "enable_diagnostics_support": {"key": "enableDiagnosticsSupport", "type": "bool"},
         "logging": {"key": "logging", "type": "NginxLogging"},
+        "scaling_properties": {"key": "scalingProperties", "type": "NginxDeploymentScalingProperties"},
+        "auto_upgrade_profile": {"key": "autoUpgradeProfile", "type": "AutoUpgradeProfile"},
+        "user_profile": {"key": "userProfile", "type": "NginxDeploymentUserProfile"},
     }
 
     def __init__(
@@ -609,6 +915,9 @@ class NginxDeploymentProperties(_serialization.Model):
         network_profile: Optional["_models.NginxNetworkProfile"] = None,
         enable_diagnostics_support: Optional[bool] = None,
         logging: Optional["_models.NginxLogging"] = None,
+        scaling_properties: Optional["_models.NginxDeploymentScalingProperties"] = None,
+        auto_upgrade_profile: Optional["_models.AutoUpgradeProfile"] = None,
+        user_profile: Optional["_models.NginxDeploymentUserProfile"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -621,6 +930,12 @@ class NginxDeploymentProperties(_serialization.Model):
         :paramtype enable_diagnostics_support: bool
         :keyword logging:
         :paramtype logging: ~azure.mgmt.nginx.models.NginxLogging
+        :keyword scaling_properties: Information on how the deployment will be scaled.
+        :paramtype scaling_properties: ~azure.mgmt.nginx.models.NginxDeploymentScalingProperties
+        :keyword auto_upgrade_profile: Autoupgrade settings of a deployment.
+        :paramtype auto_upgrade_profile: ~azure.mgmt.nginx.models.AutoUpgradeProfile
+        :keyword user_profile:
+        :paramtype user_profile: ~azure.mgmt.nginx.models.NginxDeploymentUserProfile
         """
         super().__init__(**kwargs)
         self.provisioning_state = None
@@ -630,6 +945,37 @@ class NginxDeploymentProperties(_serialization.Model):
         self.ip_address = None
         self.enable_diagnostics_support = enable_diagnostics_support
         self.logging = logging
+        self.scaling_properties = scaling_properties
+        self.auto_upgrade_profile = auto_upgrade_profile
+        self.user_profile = user_profile
+
+
+class NginxDeploymentScalingProperties(_serialization.Model):
+    """Information on how the deployment will be scaled.
+
+    :ivar capacity:
+    :vartype capacity: int
+    :ivar profiles:
+    :vartype profiles: list[~azure.mgmt.nginx.models.ScaleProfile]
+    """
+
+    _attribute_map = {
+        "capacity": {"key": "capacity", "type": "int"},
+        "profiles": {"key": "autoScaleSettings.profiles", "type": "[ScaleProfile]"},
+    }
+
+    def __init__(
+        self, *, capacity: Optional[int] = None, profiles: Optional[List["_models.ScaleProfile"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword capacity:
+        :paramtype capacity: int
+        :keyword profiles:
+        :paramtype profiles: list[~azure.mgmt.nginx.models.ScaleProfile]
+        """
+        super().__init__(**kwargs)
+        self.capacity = capacity
+        self.profiles = profiles
 
 
 class NginxDeploymentUpdateParameters(_serialization.Model):
@@ -692,11 +1038,20 @@ class NginxDeploymentUpdateProperties(_serialization.Model):
     :vartype enable_diagnostics_support: bool
     :ivar logging:
     :vartype logging: ~azure.mgmt.nginx.models.NginxLogging
+    :ivar scaling_properties: Information on how the deployment will be scaled.
+    :vartype scaling_properties: ~azure.mgmt.nginx.models.NginxDeploymentScalingProperties
+    :ivar user_profile:
+    :vartype user_profile: ~azure.mgmt.nginx.models.NginxDeploymentUserProfile
+    :ivar auto_upgrade_profile: Autoupgrade settings of a deployment.
+    :vartype auto_upgrade_profile: ~azure.mgmt.nginx.models.AutoUpgradeProfile
     """
 
     _attribute_map = {
         "enable_diagnostics_support": {"key": "enableDiagnosticsSupport", "type": "bool"},
         "logging": {"key": "logging", "type": "NginxLogging"},
+        "scaling_properties": {"key": "scalingProperties", "type": "NginxDeploymentScalingProperties"},
+        "user_profile": {"key": "userProfile", "type": "NginxDeploymentUserProfile"},
+        "auto_upgrade_profile": {"key": "autoUpgradeProfile", "type": "AutoUpgradeProfile"},
     }
 
     def __init__(
@@ -704,6 +1059,9 @@ class NginxDeploymentUpdateProperties(_serialization.Model):
         *,
         enable_diagnostics_support: Optional[bool] = None,
         logging: Optional["_models.NginxLogging"] = None,
+        scaling_properties: Optional["_models.NginxDeploymentScalingProperties"] = None,
+        user_profile: Optional["_models.NginxDeploymentUserProfile"] = None,
+        auto_upgrade_profile: Optional["_models.AutoUpgradeProfile"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -711,10 +1069,45 @@ class NginxDeploymentUpdateProperties(_serialization.Model):
         :paramtype enable_diagnostics_support: bool
         :keyword logging:
         :paramtype logging: ~azure.mgmt.nginx.models.NginxLogging
+        :keyword scaling_properties: Information on how the deployment will be scaled.
+        :paramtype scaling_properties: ~azure.mgmt.nginx.models.NginxDeploymentScalingProperties
+        :keyword user_profile:
+        :paramtype user_profile: ~azure.mgmt.nginx.models.NginxDeploymentUserProfile
+        :keyword auto_upgrade_profile: Autoupgrade settings of a deployment.
+        :paramtype auto_upgrade_profile: ~azure.mgmt.nginx.models.AutoUpgradeProfile
         """
         super().__init__(**kwargs)
         self.enable_diagnostics_support = enable_diagnostics_support
         self.logging = logging
+        self.scaling_properties = scaling_properties
+        self.user_profile = user_profile
+        self.auto_upgrade_profile = auto_upgrade_profile
+
+
+class NginxDeploymentUserProfile(_serialization.Model):
+    """NginxDeploymentUserProfile.
+
+    :ivar preferred_email: The preferred support contact email address of the user used for sending
+     alerts and notification. Can be an empty string or a valid email address.
+    :vartype preferred_email: str
+    """
+
+    _validation = {
+        "preferred_email": {"pattern": r"^$|^[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,}$"},
+    }
+
+    _attribute_map = {
+        "preferred_email": {"key": "preferredEmail", "type": "str"},
+    }
+
+    def __init__(self, *, preferred_email: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword preferred_email: The preferred support contact email address of the user used for
+         sending alerts and notification. Can be an empty string or a valid email address.
+        :paramtype preferred_email: str
+        """
+        super().__init__(**kwargs)
+        self.preferred_email = preferred_email
 
 
 class NginxFrontendIPConfiguration(_serialization.Model):
@@ -1031,18 +1424,18 @@ class OperationResult(_serialization.Model):
 class ResourceProviderDefaultErrorResponse(_serialization.Model):
     """ResourceProviderDefaultErrorResponse.
 
-    :ivar error:
-    :vartype error: ~azure.mgmt.nginx.models.ErrorResponseBody
+    :ivar error: The error detail.
+    :vartype error: ~azure.mgmt.nginx.models.ErrorDetail
     """
 
     _attribute_map = {
-        "error": {"key": "error", "type": "ErrorResponseBody"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorResponseBody"] = None, **kwargs: Any) -> None:
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
-        :keyword error:
-        :paramtype error: ~azure.mgmt.nginx.models.ErrorResponseBody
+        :keyword error: The error detail.
+        :paramtype error: ~azure.mgmt.nginx.models.ErrorDetail
         """
         super().__init__(**kwargs)
         self.error = error
@@ -1072,6 +1465,78 @@ class ResourceSku(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.name = name
+
+
+class ScaleProfile(_serialization.Model):
+    """The autoscale profile.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Required.
+    :vartype name: str
+    :ivar capacity: The capacity parameters of the profile. Required.
+    :vartype capacity: ~azure.mgmt.nginx.models.ScaleProfileCapacity
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "capacity": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "capacity": {"key": "capacity", "type": "ScaleProfileCapacity"},
+    }
+
+    def __init__(self, *, name: str, capacity: "_models.ScaleProfileCapacity", **kwargs: Any) -> None:
+        """
+        :keyword name: Required.
+        :paramtype name: str
+        :keyword capacity: The capacity parameters of the profile. Required.
+        :paramtype capacity: ~azure.mgmt.nginx.models.ScaleProfileCapacity
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.capacity = capacity
+
+
+class ScaleProfileCapacity(_serialization.Model):
+    """The capacity parameters of the profile.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar min: The minimum number of NCUs the deployment can be autoscaled to. Required.
+    :vartype min: int
+    :ivar max: The maximum number of NCUs the deployment can be autoscaled to. Required.
+    :vartype max: int
+    """
+
+    _validation = {
+        "min": {"required": True, "minimum": 0},
+        "max": {"required": True, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "min": {"key": "min", "type": "int"},
+        "max": {"key": "max", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        min: int,  # pylint: disable=redefined-builtin
+        max: int,  # pylint: disable=redefined-builtin
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword min: The minimum number of NCUs the deployment can be autoscaled to. Required.
+        :paramtype min: int
+        :keyword max: The maximum number of NCUs the deployment can be autoscaled to. Required.
+        :paramtype max: int
+        """
+        super().__init__(**kwargs)
+        self.min = min
+        self.max = max
 
 
 class SystemData(_serialization.Model):

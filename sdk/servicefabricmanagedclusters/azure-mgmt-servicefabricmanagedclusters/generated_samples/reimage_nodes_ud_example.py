@@ -29,15 +29,14 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.node_types.begin_reimage(
+    client.node_types.begin_reimage(
         resource_group_name="resRg",
         cluster_name="myCluster",
         node_type_name="BE",
         parameters={"updateType": "ByUpgradeDomain"},
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/servicefabricmanagedclusters/resource-manager/Microsoft.ServiceFabric/preview/2023-02-01-preview/examples/ReimageNodes_UD_example.json
+# x-ms-original-file: specification/servicefabricmanagedclusters/resource-manager/Microsoft.ServiceFabric/preview/2023-12-01-preview/examples/ReimageNodes_UD_example.json
 if __name__ == "__main__":
     main()

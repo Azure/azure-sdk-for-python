@@ -35,57 +35,25 @@ def main():
         parameters={
             "location": "eastus",
             "properties": {
-                "device": {
-                    "id": "/subscriptions/subid/resourcegroups/rg/providers/Microsoft.HybridNetwork/devices/testDevice"
+                "allowSoftwareUpdate": False,
+                "configurationType": "Open",
+                "deploymentValues": '{"releaseName":"testReleaseName","namespace":"testNamespace"}',
+                "networkFunctionDefinitionVersionResourceReference": {
+                    "id": "/subscriptions/subid/resourcegroups/rg/providers/Microsoft.HybridNetwork/publishers/testVendor/networkFunctionDefinitionGroups/testnetworkFunctionDefinitionGroupName/networkFunctionDefinitionVersions/1.0.1",
+                    "idType": "Open",
                 },
-                "managedApplicationParameters": {},
-                "networkFunctionUserConfigurations": [
-                    {
-                        "networkInterfaces": [
-                            {
-                                "ipConfigurations": [
-                                    {
-                                        "dnsServers": None,
-                                        "gateway": "",
-                                        "ipAddress": "",
-                                        "ipAllocationMethod": "Dynamic",
-                                        "ipVersion": "IPv4",
-                                        "subnet": "",
-                                    }
-                                ],
-                                "macAddress": "",
-                                "networkInterfaceName": "nic1",
-                                "vmSwitchType": "Management",
-                            },
-                            {
-                                "ipConfigurations": [
-                                    {
-                                        "dnsServers": None,
-                                        "gateway": "",
-                                        "ipAddress": "",
-                                        "ipAllocationMethod": "Dynamic",
-                                        "ipVersion": "IPv4",
-                                        "subnet": "",
-                                    }
-                                ],
-                                "macAddress": "DC-97-F8-79-16-7D",
-                                "networkInterfaceName": "nic2",
-                                "vmSwitchType": "Wan",
-                            },
-                        ],
-                        "roleName": "testRole",
-                        "userDataParameters": {},
-                    }
+                "nfviId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testResourceGroup/providers/Microsoft.ExtendedLocation/customLocations/testCustomLocation",
+                "nfviType": "AzureArcKubernetes",
+                "roleOverrideValues": [
+                    '{"name":"testRoleOne","deployParametersMappingRuleProfile":{"helmMappingRuleProfile":{"helmPackageVersion":"2.1.3","values":"{\\"roleOneParam\\":\\"roleOneOverrideValue\\"}"}}}',
+                    '{"name":"testRoleTwo","deployParametersMappingRuleProfile":{"helmMappingRuleProfile":{"releaseName":"overrideReleaseName","releaseNamespace":"overrideNamespace","values":"{\\"roleTwoParam\\":\\"roleTwoOverrideValue\\"}"}}}',
                 ],
-                "skuName": "testSku",
-                "skuType": "SDWAN",
-                "vendorName": "testVendor",
             },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/hybridnetwork/resource-manager/Microsoft.HybridNetwork/preview/2022-01-01-preview/examples/NetworkFunctionCreate.json
+# x-ms-original-file: specification/hybridnetwork/resource-manager/Microsoft.HybridNetwork/stable/2023-09-01/examples/NetworkFunctionCreate.json
 if __name__ == "__main__":
     main()

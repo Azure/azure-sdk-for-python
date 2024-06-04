@@ -35,9 +35,8 @@ import xml.etree.ElementTree as ET
 import types
 import re
 import uuid
-from typing import IO, cast, Union, Optional, AnyStr, Dict, MutableMapping, Any, Set, Mapping
+from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, Set, MutableMapping
 import urllib.parse
-from typing_extensions import Protocol
 
 from azure.core import __version__ as azcore_version
 from azure.core.exceptions import DecodeError
@@ -45,36 +44,16 @@ from azure.core.exceptions import DecodeError
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from ._base import SansIOHTTPPolicy
 
+from ..transport import HttpRequest as LegacyHttpRequest
+from ..transport._base import _HttpResponseBase as LegacySansIOHttpResponse
+from ...rest import HttpRequest
+from ...rest._rest_py3 import _HttpResponseBase as SansIOHttpResponse
 
 _LOGGER = logging.getLogger(__name__)
 
-
-class HTTPRequestType(Protocol):
-    """Protocol compatible with new rest request and legacy transport request"""
-
-    headers: MutableMapping[str, str]
-    url: str
-    method: str
-    body: bytes
-
-
-class HTTPResponseType(Protocol):
-    """Protocol compatible with new rest response and legacy transport response"""
-
-    @property
-    def headers(self) -> MutableMapping[str, str]:
-        ...
-
-    @property
-    def status_code(self) -> int:
-        ...
-
-    @property
-    def content_type(self) -> Optional[str]:
-        ...
-
-    def text(self, encoding: Optional[str] = None) -> str:
-        ...
+HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
+HTTPResponseType = Union[LegacySansIOHttpResponse, SansIOHttpResponse]
+PipelineResponseType = PipelineResponse[HTTPRequestType, HTTPResponseType]
 
 
 class HeadersPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
@@ -284,7 +263,6 @@ class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
 
 
 class NetworkTraceLoggingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
-
     """The logging policy in the pipeline is used to output HTTP network trace to the configured logger.
 
     This accepts both global configuration, and per-request level with "enable_http_logger"
@@ -594,7 +572,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     @classmethod
     def deserialize_from_text(
         cls,
-        data: Optional[Union[AnyStr, IO]],
+        data: Optional[Union[AnyStr, IO[AnyStr]]],
         mime_type: Optional[str] = None,
         response: Optional[HTTPResponseType] = None,
     ) -> Any:
@@ -706,7 +684,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
                 response.read()  # type: ignore
         return cls.deserialize_from_text(response.text(encoding), mime_type, response=response)
 
-    def on_request(self, request: PipelineRequest) -> None:
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         options = request.context.options
         response_encoding = options.pop("response_encoding", self._response_encoding)
         if response_encoding:
@@ -748,7 +726,7 @@ class ProxyPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     Dictionary mapping protocol or protocol and host to the URL of the proxy
     to be used on each Request.
 
-    :param dict proxies: Maps protocol or protocol and hostname to the URL
+    :param MutableMapping proxies: Maps protocol or protocol and hostname to the URL
      of the proxy.
 
     .. admonition:: Example:
@@ -762,7 +740,7 @@ class ProxyPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """
 
     def __init__(
-        self, proxies: Optional[Mapping[str, str]] = None, **kwargs: Any
+        self, proxies: Optional[MutableMapping[str, str]] = None, **kwargs: Any
     ):  # pylint: disable=unused-argument,super-init-not-called
         self.proxies = proxies
 

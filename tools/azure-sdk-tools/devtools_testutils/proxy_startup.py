@@ -19,17 +19,25 @@ import certifi
 from dotenv import load_dotenv, find_dotenv
 import pytest
 import subprocess
-from urllib3 import PoolManager, Retry
 from urllib3.exceptions import SSLError
 
 from ci_tools.variables import in_ci
 
 from .config import PROXY_URL
-from .helpers import is_live_and_not_recording
-from .sanitizers import add_remove_header_sanitizer, set_custom_default_matcher
+from .fake_credentials import FAKE_ACCESS_TOKEN, FAKE_ID, SERVICEBUS_FAKE_SAS, SANITIZED
+from .helpers import get_http_client, is_live_and_not_recording
+from .sanitizers import (
+    add_batch_sanitizers,
+    Sanitizer,
+    set_custom_default_matcher,
+    remove_batch_sanitizers,
+)
 
 
 load_dotenv(find_dotenv())
+
+# Raise urllib3's exposed logging level so that we don't see tons of warnings while polling the proxy's availability
+logging.getLogger("urllib3.connectionpool").setLevel(logging.ERROR)
 
 _LOGGER = logging.getLogger()
 
@@ -82,23 +90,21 @@ PROXY_DOWNLOAD_URL = "https://github.com/Azure/azure-sdk-tools/releases/download
 
 discovered_roots = []
 
-if os.getenv("REQUESTS_CA_BUNDLE"):
-    http_client = PoolManager(
-        retries=Retry(total=3, raise_on_status=False),
-        cert_reqs="CERT_REQUIRED",
-        ca_certs=os.getenv("REQUESTS_CA_BUNDLE"),
-    )
-else:
-    http_client = PoolManager(retries=Retry(total=1, raise_on_status=False))
-
 
 def get_target_version(repo_root: str) -> str:
     """Gets the target test-proxy version from the target_version.txt file in /eng/common/testproxy"""
     version_file_location = os.path.relpath("eng/common/testproxy/target_version.txt")
-    version_file_location_from_root = os.path.abspath(os.path.join(repo_root, version_file_location))
+    override_version_file_location = os.path.relpath("eng/target_proxy_version.txt")
 
-    with open(version_file_location_from_root, "r") as f:
-        target_version = f.read().strip()
+    version_file_location_from_root = os.path.abspath(os.path.join(repo_root, version_file_location))
+    override_version_file_location_from_root = os.path.abspath(os.path.join(repo_root, override_version_file_location))
+
+    if os.path.exists(override_version_file_location_from_root):
+        with open(override_version_file_location_from_root, "r") as f:
+            target_version = f.read().strip()
+    else:
+        with open(version_file_location_from_root, "r") as f:
+            target_version = f.read().strip()
 
     return target_version
 
@@ -143,6 +149,7 @@ def ascend_to_root(start_dir_or_file: str) -> str:
 def check_availability() -> None:
     """Attempts request to /Info/Available. If a test-proxy instance is responding, we should get a response."""
     try:
+        http_client = get_http_client(raise_on_status=False)
         response = http_client.request(method="GET", url=PROXY_CHECK_URL, timeout=10)
         return response.status
     # We get an SSLError if the container is started but the endpoint isn't available yet
@@ -155,48 +162,59 @@ def check_availability() -> None:
 
 
 def check_certificate_location(repo_root: str) -> None:
-    """Checks for SSL_CERT_DIR and REQUESTS_CA_BUNDLE environment variables.
+    """Checks for a certificate bundle containing the test proxy's self-signed certificate.
 
-    If both variables aren't set, this function configures the certificate bundle and sets these environment variables
-    for the duration of the process.
+    If a certificate bundle either isn't present or doesn't contain the correct test proxy certificate, a bundle is
+    automatically created. SSL_CERT_DIR and REQUESTS_CA_BUNDLE are set to point to this bundle for the session.
     """
-    ssl_cert_dir = "SSL_CERT_DIR"
-    requests_ca_bundle = "REQUESTS_CA_BUNDLE"
 
-    if PROXY_URL.startswith("https") and not (os.environ.get(ssl_cert_dir) and os.environ.get(requests_ca_bundle)):
-        _LOGGER.info(
-            "Missing SSL_CERT_DIR and/or REQUESTS_CA_BUNDLE environment variables. "
-            "Setting these for the current session."
-        )
+    existing_root_pem = certifi.where()
+    local_dev_cert = os.path.abspath(os.path.join(repo_root, 'eng', 'common', 'testproxy', 'dotnet-devcert.crt'))
+    combined_filename = os.path.basename(local_dev_cert).split(".")[0] + ".pem"
+    combined_folder = os.path.join(repo_root, '.certificate')
+    combined_location = os.path.join(combined_folder, combined_filename)
 
-        existing_root_pem = certifi.where()
-        local_dev_cert = os.path.abspath(os.path.join(repo_root, 'eng', 'common', 'testproxy', 'dotnet-devcert.crt'))
-        combined_filename = os.path.basename(local_dev_cert).split(".")[0] + ".pem"
-        combined_folder = os.path.join(repo_root, '.certificate')
-        combined_location = os.path.join(combined_folder, combined_filename)
+    # If no local certificate folder exists, create one
+    if not os.path.exists(combined_folder):
+        _LOGGER.info("Missing a test proxy certificate under azure-sdk-for-python/.certificate. Creating one now.")
+        os.mkdir(combined_folder)
 
-        # If no local certificate folder exists, create one
-        if not os.path.exists(combined_folder):
-            _LOGGER.info("Missing a test proxy certificate under azure-sdk-for-python/.certificate. Creating one now.")
-            os.mkdir(combined_folder)
+    def write_dev_cert_bundle():
+        """Creates a certificate bundle with the test proxy certificate, followed by the user's existing CA bundle."""
+        _LOGGER.info("Writing latest test proxy certificate to local certificate bundle.")
+        # Copy the dev cert's content into the new certificate bundle
+        with open(local_dev_cert, "r") as f:
+            data = f.read()
+        with open(combined_location, "w") as f:
+            f.write(data)
 
-        if not os.path.exists(combined_location):
-            # Copy the dev cert's content into the new certificate bundle
-            with open(local_dev_cert, "r") as f:
-                data = f.read()
-            with open(combined_location, "w") as f:
-                f.write(data)
+        # Copy the existing CA bundle contents into the repository's certificate bundle
+        with open(existing_root_pem, "r") as f:
+            content = f.readlines()
+        with open(combined_location, "a") as f:
+            f.writelines(content)
 
-            # Copy the existing CA bundle contents into the repository's certificate bundle
-            with open(existing_root_pem, "r") as f:
-                content = f.readlines()
-            with open(combined_location, "a") as f:
-                f.writelines(content)
+    # If the certificate bundle isn't set up, set it up. If the bundle is present, make sure that it starts with the
+    # correct certificate from eng/common/testproxy/dotnet-devcert.crt (to account for certificate rotation)
+    if not os.path.exists(combined_location):
+        write_dev_cert_bundle()
+    else:
+        with open(local_dev_cert, "r") as f:
+            repo_cert = f.read()
+        with open(combined_location, "r") as f:
+            # The bundle should start with the test proxy's cert; only read as far in as the cert's length
+            bundle_data = f.read(len(repo_cert))
+        if repo_cert != bundle_data:
+            write_dev_cert_bundle()
 
-        if not os.environ.get(ssl_cert_dir):
-            os.environ[ssl_cert_dir] = combined_folder
-        if not os.environ.get(requests_ca_bundle):
-            os.environ[requests_ca_bundle] = combined_location
+    _LOGGER.info(
+        "Setting SSL_CERT_DIR, SSL_CERT_FILE, and REQUESTS_CA_BUNDLE environment variables for the current session.\n"
+        f"SSL_CERT_DIR={combined_folder}\n"
+        f"SSL_CERT_FILE=REQUESTS_CA_BUNDLE={combined_location}"
+    )
+    os.environ["SSL_CERT_DIR"] = combined_folder
+    os.environ["SSL_CERT_FILE"] = combined_location
+    os.environ["REQUESTS_CA_BUNDLE"] = combined_location
 
 
 def check_proxy_availability() -> None:
@@ -237,7 +255,7 @@ def prepare_local_tool(repo_root: str) -> str:
                 download_url = PROXY_DOWNLOAD_URL.format(target_proxy_version, target_info["file_name"])
                 download_file = os.path.join(download_folder, target_info["file_name"])
 
-                http_client = PoolManager()
+                http_client = get_http_client()
                 with open(download_file, "wb") as out:
                     r = http_client.request("GET", download_url, preload_content=False)
                     shutil.copyfileobj(r, out)
@@ -273,6 +291,50 @@ def prepare_local_tool(repo_root: str) -> str:
             "Unable to download a compatible standalone proxy for the current system. File an issue against "
             "Azure/azure-sdk-tools with this error."
         )
+
+
+def set_common_sanitizers() -> None:
+    """Register sanitizers that will apply to all recordings throughout the SDK."""
+    batch_sanitizers = {}
+
+    # Remove headers from recordings if we don't need them, and ignore them if present
+    # Authorization, for example, can contain sensitive info and can cause matching failures during challenge auth
+    headers_to_ignore = "Authorization, x-ms-client-request-id, x-ms-request-id"
+    set_custom_default_matcher(excluded_headers=headers_to_ignore)
+    batch_sanitizers[Sanitizer.REMOVE_HEADER] = [{"headers": headers_to_ignore}]
+
+    # Remove OAuth interactions, which can contain client secrets and aren't necessary for playback testing
+    # TODO: Determine why this breaks some test playbacks. Since sensitive info in OAuth responses is sanitized
+    # through other sanitizers, it's fine to keep this off for now.
+    # batch_sanitizers[Sanitizer.OAUTH_RESPONSE] = [None]
+
+    # Body key sanitizers for sensitive fields in JSON requests/responses
+    batch_sanitizers[Sanitizer.BODY_KEY] = []
+
+    # Body regex sanitizers for sensitive patterns in request/response bodies
+    batch_sanitizers[Sanitizer.BODY_REGEX] = []
+
+    # General regex sanitizers for sensitive patterns throughout interactions
+    batch_sanitizers[Sanitizer.GENERAL_REGEX] = [
+        {
+            "regex": "(?:[\\?&](sig|se|st|sv)=)(?<secret>[^&\\\"\\s]*)",
+            "group_for_replace": "secret",
+            "value": SANITIZED
+        },
+    ]
+
+    # Header regex sanitizers for sensitive patterns in request/response headers
+    batch_sanitizers[Sanitizer.HEADER_REGEX] = []
+
+    # URI regex sanitizers for sensitive patterns in request/response URLs
+    batch_sanitizers[Sanitizer.URI_REGEX] = []
+
+    # Send all the above sanitizers to the test proxy in a single, batch request
+    add_batch_sanitizers(sanitizers=batch_sanitizers)
+
+    # Remove certain sanitizers that are too aggressive and cause excessive playback failures
+    #  - AZSDK2030: operation-location
+    remove_batch_sanitizers(["AZSDK2030"])
 
 
 def start_test_proxy(request) -> None:
@@ -329,11 +391,7 @@ def start_test_proxy(request) -> None:
 
     # Wait for the proxy server to become available
     check_proxy_availability()
-    # remove headers from recordings if we don't need them, and ignore them if present
-    # Authorization, for example, can contain sensitive info and can cause matching failures during challenge auth
-    headers_to_ignore = "Authorization, x-ms-client-request-id, x-ms-request-id"
-    add_remove_header_sanitizer(headers=headers_to_ignore)
-    set_custom_default_matcher(excluded_headers=headers_to_ignore)
+    set_common_sanitizers()
 
 
 def stop_test_proxy() -> None:

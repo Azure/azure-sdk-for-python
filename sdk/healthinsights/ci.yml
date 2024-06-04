@@ -37,3 +37,8 @@ extends:
     - name: azure-healthinsights-clinicalmatching
       safeName: azurehealthinsightsclinicalmatching
       skipVerifyChangeLog: true
+
+    - name: azure-healthinsights-radiologyinsights
+      safeName: azurehealthinsightsradiologyinsights
+      skipVerifyChangeLog: true
+

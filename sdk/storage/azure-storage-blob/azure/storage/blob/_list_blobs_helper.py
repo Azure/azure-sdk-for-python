@@ -29,7 +29,7 @@ from ._shared.response_handlers import (
 
 
 class IgnoreListBlobsDeserializer(Deserializer):
-    def __call__(self, target_obj, response_data, content_type=None):
+    def __call__(self, target_obj, response_data, content_type=None):  # pylint: disable=inconsistent-return-statements
         if target_obj == "ListBlobsFlatSegmentResponse":
             return None
         super().__call__(target_obj, response_data, content_type)

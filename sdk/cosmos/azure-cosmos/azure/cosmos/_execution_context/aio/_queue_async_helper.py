@@ -20,13 +20,22 @@
 # SOFTWARE.
 
 async def heap_push(heap, item, document_producer_comparator):
-    """Push item onto heap, maintaining the heap invariant."""
+    """Push item onto heap, maintaining the heap invariant.
+    :param list heap:
+    :param Any item:
+    :param _PartitionKeyRangeDocumentProducerComparator document_producer_comparator:
+    """
     heap.append(item)
     await _sift_down(heap, document_producer_comparator, 0, len(heap) - 1)
 
 
 async def heap_pop(heap, document_producer_comparator):
-    """Pop the smallest item off the heap, maintaining the heap invariant."""
+    """Pop the smallest item off the heap, maintaining the heap invariant.
+    :param list heap: the heap to use for comparing
+    :param _PartitionKeyRangeDocumentProducerComparator document_producer_comparator: the document producer comparator
+    :returns: the popped item from the heap
+    :rtype: Any
+    """
     last_elt = heap.pop()  # raises appropriate IndexError if heap is empty
     if heap:
         return_item = heap[0]

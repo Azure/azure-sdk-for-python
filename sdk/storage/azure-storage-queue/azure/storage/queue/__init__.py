@@ -13,7 +13,8 @@ from ._shared.models import(
     LocationMode,
     ResourceTypes,
     AccountSasPermissions,
-    StorageErrorCode
+    StorageErrorCode,
+    Services,
 )
 from ._message_encoding import (
     TextBase64EncodePolicy,
@@ -56,5 +57,6 @@ __all__ = [
     'CorsRule',
     'RetentionPolicy',
     'generate_account_sas',
-    'generate_queue_sas'
+    'generate_queue_sas',
+    'Services'
 ]

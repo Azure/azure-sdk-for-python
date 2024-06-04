@@ -27,8 +27,12 @@ class StorageStreamDownloader(object):
 
         # Parse additional Datalake-only properties
         encryption_context = self._downloader._response.response.headers.get('x-ms-encryption-context')  # pylint: disable=line-too-long,protected-access
+        acl = self._downloader._response.response.headers.get('x-ms-acl')  # pylint: disable=line-too-long, protected-access
 
-        self.properties = from_blob_properties(self._downloader.properties, encryption_context=encryption_context)  # pylint: disable=protected-access
+        self.properties = from_blob_properties(
+            self._downloader.properties,
+            encryption_context=encryption_context,
+            acl=acl)  # pylint: disable=protected-access
         self.size = self._downloader.size
 
     def __len__(self):
@@ -37,6 +41,7 @@ class StorageStreamDownloader(object):
     def chunks(self) -> AsyncIterator[bytes]:
         """Iterate over chunks in the download stream.
 
+        :returns: An async iterator over the chunks in the download stream.
         :rtype: AsyncIterator[bytes]
         """
         return self._downloader.chunks()
@@ -46,7 +51,7 @@ class StorageStreamDownloader(object):
         Read up to size bytes from the stream and return them. If size
         is unspecified or is -1, all bytes will be read.
 
-        :param size:
+        :param Optional[int] size:
             The number of bytes to download from the stream. Leave unspecified
             or set to -1 to download all bytes.
         :returns:
@@ -59,6 +64,7 @@ class StorageStreamDownloader(object):
         """Download the contents of this file.
 
         This operation is blocking until all data is downloaded.
+        :returns: The contents of the file.
         :rtype: bytes
         """
         return await self._downloader.readall()
@@ -66,7 +72,7 @@ class StorageStreamDownloader(object):
     async def readinto(self, stream: IO[bytes]) -> int:
         """Download the contents of this file to a stream.
 
-        :param stream:
+        :param IO[bytes] stream:
             The stream to download to. This can be an open file-handle,
             or any writable stream. The stream must be seekable if the download
             uses more than one parallel connection.

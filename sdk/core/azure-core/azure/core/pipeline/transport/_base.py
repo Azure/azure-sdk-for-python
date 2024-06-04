@@ -23,9 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from __future__ import annotations
 import abc
-from collections.abc import MutableMapping
-from contextlib import AbstractContextManager
 from email.message import Message
 import json
 import logging
@@ -47,11 +46,16 @@ from typing import (
     Type,
     Dict,
     List,
+    Sequence,
+    MutableMapping,
+    ContextManager,
+    TYPE_CHECKING,
 )
 
 from http.client import HTTPResponse as _HTTPResponse
 
 from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from ...utils._utils import case_insensitive_dict
 from ...utils._pipeline_transport_rest_shared import (
     _format_parameters_helper,
@@ -67,15 +71,19 @@ from ...utils._pipeline_transport_rest_shared import (
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
-PipelineType = TypeVar("PipelineType")
-DataType = Optional[Union[bytes, Dict[str, Union[str, int]]]]
+DataType = Union[bytes, str, Dict[str, Union[str, int]]]
+
+if TYPE_CHECKING:
+    # We need a transport to define a pipeline, this "if" avoid a circular import
+    from azure.core.pipeline import Pipeline
+    from azure.core.rest._helpers import FileContent
 
 _LOGGER = logging.getLogger(__name__)
 
 binary_type = str
 
 
-def _format_url_section(template, **kwargs):
+def _format_url_section(template, **kwargs: Dict[str, str]) -> str:
     """String format the template with the kwargs, auto-skip sections of the template that are NOT in the kwargs.
 
     By default in Python, "format" will raise a KeyError if a template element is not found. Here the section between
@@ -84,10 +92,10 @@ def _format_url_section(template, **kwargs):
     This is used for API like Storage, where when Swagger has template section not defined as parameter.
 
     :param str template: a string template to fill
-    :keyword dict[str,str] kwargs: Template values as string
     :rtype: str
     :returns: Template completed
     """
+    last_template = template
     components = template.split("/")
     while components:
         try:
@@ -96,7 +104,12 @@ def _format_url_section(template, **kwargs):
             formatted_components = template.split("/")
             components = [c for c in formatted_components if "{{{}}}".format(key.args[0]) not in c]
             template = "/".join(components)
-    # No URL sections left - returning None
+            if last_template == template:
+                raise ValueError(
+                    f"The value provided for the url part '{template}' was incorrect, and resulted in an invalid url"
+                ) from key
+            last_template = template
+    return last_template
 
 
 def _urljoin(base_url: str, stub_url: str) -> str:
@@ -115,7 +128,7 @@ def _urljoin(base_url: str, stub_url: str) -> str:
     stub_url_path = split_url.pop(0)
     stub_url_query = split_url.pop() if split_url else None
 
-    # Note that _replace is a public API named that way to avoid to avoid conflicts in namedtuple
+    # Note that _replace is a public API named that way to avoid conflicts in namedtuple
     # https://docs.python.org/3/library/collections.html?highlight=namedtuple#collections.namedtuple
     parsed_base_url = parsed_base_url._replace(
         path=parsed_base_url.path.rstrip("/") + "/" + stub_url_path,
@@ -128,11 +141,11 @@ def _urljoin(base_url: str, stub_url: str) -> str:
     return parsed_base_url.geturl()
 
 
-class HttpTransport(AbstractContextManager, abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
+class HttpTransport(ContextManager["HttpTransport"], abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """An http sender ABC."""
 
     @abc.abstractmethod
-    def send(self, request: HTTPRequestType, **kwargs) -> HTTPResponseType:
+    def send(self, request: HTTPRequestType, **kwargs: Any) -> HTTPResponseType:
         """Send the request using this HTTP sender.
 
         :param request: The pipeline request object
@@ -142,11 +155,11 @@ class HttpTransport(AbstractContextManager, abc.ABC, Generic[HTTPRequestType, HT
         """
 
     @abc.abstractmethod
-    def open(self):
+    def open(self) -> None:
         """Assign new session if one does not already exist."""
 
     @abc.abstractmethod
-    def close(self):
+    def close(self) -> None:
         """Close the session if it is not externally owned."""
 
     def sleep(self, duration: float) -> None:
@@ -165,7 +178,7 @@ class HttpTransport(AbstractContextManager, abc.ABC, Generic[HTTPRequestType, HT
 
 
 class HttpRequest:
-    """Represents a HTTP request.
+    """Represents an HTTP request.
 
     URL can be given without query parameters, to be added later using "format_parameters".
 
@@ -193,15 +206,15 @@ class HttpRequest:
     ) -> None:
         self.method = method
         self.url = url
-        self.headers = case_insensitive_dict(headers)
-        self.files = files
-        self.data = data
-        self.multipart_mixed_info: Optional[Tuple] = None
+        self.headers: MutableMapping[str, str] = case_insensitive_dict(headers)
+        self.files: Optional[Any] = files
+        self.data: Optional[DataType] = data
+        self.multipart_mixed_info: Optional[Tuple[Sequence[Any], Sequence[Any], Optional[str], Dict[str, Any]]] = None
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<HttpRequest [{}], url: '{}'>".format(self.method, self.url)
 
-    def __deepcopy__(self, memo=None):
+    def __deepcopy__(self, memo: Optional[Dict[int, Any]] = None) -> "HttpRequest":
         try:
             data = copy.deepcopy(self.body, memo)
             files = copy.deepcopy(self.files, memo)
@@ -224,20 +237,20 @@ class HttpRequest:
         return {}
 
     @property
-    def body(self) -> DataType:
+    def body(self) -> Optional[DataType]:
         """Alias to data.
 
-        :rtype: bytes or dict
+        :rtype: bytes or str or dict or None
         :return: The body of the request.
         """
         return self.data
 
     @body.setter
-    def body(self, value: DataType):
+    def body(self, value: Optional[DataType]) -> None:
         self.data = value
 
     @staticmethod
-    def _format_data(data: Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]:
+    def _format_data(data: Union[str, IO]) -> Union[Tuple[Optional[str], str], Tuple[Optional[str], FileContent, str]]:
         """Format field data according to whether it is a stream or
         a string for a form-data request.
 
@@ -257,7 +270,7 @@ class HttpRequest:
         """
         return _format_parameters_helper(self, params)
 
-    def set_streamed_data_body(self, data):
+    def set_streamed_data_body(self, data: Any) -> None:
         """Set a streamable data body.
 
         :param data: The request field data.
@@ -270,7 +283,7 @@ class HttpRequest:
         self.data = data
         self.files = None
 
-    def set_text_body(self, data):
+    def set_text_body(self, data: str) -> None:
         """Set a text as body of the request.
 
         :param data: A text to send as body.
@@ -283,7 +296,7 @@ class HttpRequest:
             self.headers["Content-Length"] = str(len(self.data))
         self.files = None
 
-    def set_xml_body(self, data):
+    def set_xml_body(self, data: Any) -> None:
         """Set an XML element tree as the body of the request.
 
         :param data: The request field data.
@@ -292,12 +305,12 @@ class HttpRequest:
         if data is None:
             self.data = None
         else:
-            bytes_data = ET.tostring(data, encoding="utf8")
+            bytes_data: bytes = ET.tostring(data, encoding="utf8")
             self.data = bytes_data.replace(b"encoding='utf8'", b"encoding='utf-8'")
             self.headers["Content-Length"] = str(len(self.data))
         self.files = None
 
-    def set_json_body(self, data):
+    def set_json_body(self, data: Any) -> None:
         """Set a JSON-friendly object as the body of the request.
 
         :param data: A JSON serializable object
@@ -310,7 +323,7 @@ class HttpRequest:
             self.headers["Content-Length"] = str(len(self.data))
         self.files = None
 
-    def set_formdata_body(self, data=None):
+    def set_formdata_body(self, data: Optional[Dict[str, str]] = None) -> None:
         """Set form-encoded data as the body of the request.
 
         :param data: The request field data.
@@ -327,7 +340,7 @@ class HttpRequest:
             self.files = {f: self._format_data(d) for f, d in data.items() if d is not None}
             self.data = None
 
-    def set_bytes_body(self, data):
+    def set_bytes_body(self, data: bytes) -> None:
         """Set generic bytes as the body of the request.
 
         Will set content-length.
@@ -340,7 +353,13 @@ class HttpRequest:
         self.data = data
         self.files = None
 
-    def set_multipart_mixed(self, *requests: "HttpRequest", **kwargs) -> None:
+    def set_multipart_mixed(
+        self,
+        *requests: "HttpRequest",
+        policies: Optional[List[SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]]] = None,
+        boundary: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
         """Set the part of a multipart/mixed.
 
         Only supported args for now are HttpRequest objects.
@@ -357,10 +376,11 @@ class HttpRequest:
         :keyword list[SansIOHTTPPolicy] policies: SansIOPolicy to apply at preparation time
         :keyword str boundary: Optional boundary
         """
+        policies = policies or []
         self.multipart_mixed_info = (
             requests,
-            kwargs.pop("policies", []),
-            kwargs.pop("boundary", None),
+            policies,
+            boundary,
             kwargs,
         )
 
@@ -403,13 +423,17 @@ class _HttpResponseBase:
 
     def __init__(
         self,
-        request: HttpRequest,
+        request: "HttpRequest",
         internal_response: Any,
         block_size: Optional[int] = None,
     ) -> None:
-        self.request = request
+        self.request: HttpRequest = request
         self.internal_response = internal_response
-        self.status_code: Optional[int] = None
+        # This is actually never None, and set by all implementations after the call to
+        # __init__ of this class. This class is also a legacy impl, so it's risky to change it
+        # for low benefits The new "rest" implementation does define correctly status_code
+        # as non-optional.
+        self.status_code: int = None  # type: ignore
         self.headers: MutableMapping[str, str] = {}
         self.reason: Optional[str] = None
         self.content_type: Optional[str] = None
@@ -444,7 +468,7 @@ class _HttpResponseBase:
         self,
         message: Message,
         http_response_type: Type["_HttpResponseBase"],
-        requests: List[HttpRequest],
+        requests: Sequence[HttpRequest],
     ) -> List["HttpResponse"]:
         """Rebuild an HTTP response from pure string.
 
@@ -477,13 +501,13 @@ class _HttpResponseBase:
         if not self.status_code or self.status_code >= 400:
             raise HttpResponseError(response=self)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         content_type_str = ", Content-Type: {}".format(self.content_type) if self.content_type else ""
         return "<{}: {} {}{}>".format(type(self).__name__, self.status_code, self.reason, content_type_str)
 
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
-    def stream_download(self, pipeline: PipelineType, **kwargs) -> Iterator[bytes]:
+    def stream_download(self, pipeline: Pipeline[HttpRequest, "HttpResponse"], **kwargs: Any) -> Iterator[bytes]:
         """Generator for streaming request body data.
 
         Should be implemented by sub-classes if streaming download
@@ -621,7 +645,7 @@ class PipelineClientBase:
 
         return request
 
-    def format_url(self, url_template: str, **kwargs) -> str:
+    def format_url(self, url_template: str, **kwargs: Any) -> str:
         """Format request URL with the client base URL, unless the
         supplied URL is already absolute.
 
@@ -654,7 +678,7 @@ class PipelineClientBase:
         headers: Optional[Dict[str, str]] = None,
         content: Any = None,
         form_content: Optional[Dict[str, Any]] = None,
-    ) -> HttpRequest:
+    ) -> "HttpRequest":
         """Create a GET request object.
 
         :param str url: The request URL.
@@ -815,7 +839,14 @@ class PipelineClientBase:
         return request
 
     def options(
-        self, url: str, params: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None, **kwargs
+        self,  # pylint: disable=unused-argument
+        url: str,
+        params: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        *,
+        content: Optional[Union[bytes, str, Dict[Any, Any]]] = None,
+        form_content: Optional[Dict[Any, Any]] = None,
+        **kwargs: Any,
     ) -> HttpRequest:
         """Create a OPTIONS request object.
 
@@ -828,7 +859,5 @@ class PipelineClientBase:
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        content = kwargs.get("content")
-        form_content = kwargs.get("form_content")
         request = self._request("OPTIONS", url, params, headers, content, form_content, None)
         return request

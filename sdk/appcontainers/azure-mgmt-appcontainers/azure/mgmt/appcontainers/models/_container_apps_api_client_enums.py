@@ -71,6 +71,38 @@ class BindingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SNI_ENABLED = "SniEnabled"
 
 
+class BuilderProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Resource instance provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+
+
+class BuildProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Resource instance provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+
+
+class BuildStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the build once it has been provisioned."""
+
+    NOT_STARTED = "NotStarted"
+    IN_PROGRESS = "InProgress"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+
+
 class CertificateProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the certificate."""
 
@@ -79,6 +111,15 @@ class CertificateProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     CANCELED = "Canceled"
     DELETE_FAILED = "DeleteFailed"
     PENDING = "Pending"
+
+
+class CertificateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the certificate. Allowed values are ``ServerSSLCertificate`` and
+    ``ImagePullTrustedCA``.
+    """
+
+    SERVER_SSL_CERTIFICATE = "ServerSSLCertificate"
+    IMAGE_PULL_TRUSTED_CA = "ImagePullTrustedCA"
 
 
 class CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -101,6 +142,14 @@ class ConnectedEnvironmentProvisioningState(str, Enum, metaclass=CaseInsensitive
     SCHEDULED_FOR_DELETE = "ScheduledForDelete"
 
 
+class ContainerAppContainerRunningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current running state of the container."""
+
+    RUNNING = "Running"
+    TERMINATED = "Terminated"
+    WAITING = "Waiting"
+
+
 class ContainerAppProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the Container App."""
 
@@ -109,6 +158,14 @@ class ContainerAppProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta
     FAILED = "Failed"
     CANCELED = "Canceled"
     DELETING = "Deleting"
+
+
+class ContainerAppReplicaRunningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current running state of the replica."""
+
+    RUNNING = "Running"
+    NOT_RUNNING = "NotRunning"
+    UNKNOWN = "Unknown"
 
 
 class CookieExpirationConvention(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -133,6 +190,23 @@ class DnsVerificationTestResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PASSED = "Passed"
     FAILED = "Failed"
     SKIPPED = "Skipped"
+
+
+class DotNetComponentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the .NET Component."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    DELETING = "Deleting"
+    IN_PROGRESS = "InProgress"
+
+
+class DotNetComponentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the .NET Component."""
+
+    ASPIRE_DASHBOARD = "AspireDashboard"
+    ASPIRE_RESOURCE_SERVER_API = "AspireResourceServerApi"
 
 
 class EnvironmentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -175,6 +249,13 @@ class IngressClientCertificateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     REQUIRE = "require"
 
 
+class IngressTargetPortHttpScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether an http app listens on http or https."""
+
+    HTTP = "http"
+    HTTPS = "https"
+
+
 class IngressTransportMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Ingress transport protocol."""
 
@@ -182,6 +263,24 @@ class IngressTransportMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HTTP = "http"
     HTTP2 = "http2"
     TCP = "tcp"
+
+
+class JavaComponentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the Java Component."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    DELETING = "Deleting"
+    IN_PROGRESS = "InProgress"
+
+
+class JavaComponentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the Java Component."""
+
+    SPRING_BOOT_ADMIN = "SpringBootAdmin"
+    SPRING_CLOUD_EUREKA = "SpringCloudEureka"
+    SPRING_CLOUD_CONFIG = "SpringCloudConfig"
 
 
 class JobExecutionRunningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -254,6 +353,17 @@ class RevisionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DEPROVISIONED = "Deprovisioned"
 
 
+class RevisionRunningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current running state of the revision."""
+
+    RUNNING = "Running"
+    PROCESSING = "Processing"
+    STOPPED = "Stopped"
+    DEGRADED = "Degraded"
+    FAILED = "Failed"
+    UNKNOWN = "Unknown"
+
+
 class Scheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Scheme to use for connecting to the host. Defaults to HTTP."""
 
@@ -276,12 +386,13 @@ class StorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_FILE = "AzureFile"
     EMPTY_DIR = "EmptyDir"
     SECRET = "Secret"
+    NFS_AZURE_FILE = "NfsAzureFile"
 
 
 class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Trigger type of the job."""
 
-    SCHEDULED = "Scheduled"
+    SCHEDULE = "Schedule"
     EVENT = "Event"
     MANUAL = "Manual"
 

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -29,7 +29,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -85,7 +85,7 @@ def build_create_or_update_pipeline_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -122,7 +122,7 @@ def build_get_pipeline_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -155,7 +155,7 @@ def build_delete_pipeline_request(pipeline_name: str, **kwargs: Any) -> HttpRequ
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -187,7 +187,7 @@ def build_rename_pipeline_request(pipeline_name: str, **kwargs: Any) -> HttpRequ
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -228,7 +228,7 @@ def build_create_pipeline_run_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -272,7 +272,6 @@ class PipelineOperations:
     def get_pipelines_by_workspace(self, **kwargs: Any) -> Iterable["_models.PipelineResource"]:
         """Lists pipelines.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PipelineResource or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.synapse.artifacts.models.PipelineResource]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -294,31 +293,30 @@ class PipelineOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_pipelines_by_workspace_request(
+                _request = build_get_pipelines_by_workspace_request(
                     api_version=api_version,
-                    template_url=self.get_pipelines_by_workspace.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("PipelineListResponse", pipeline_response)
@@ -328,11 +326,11 @@ class PipelineOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -344,12 +342,10 @@ class PipelineOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    get_pipelines_by_workspace.metadata = {"url": "/pipelines"}
-
     def _create_or_update_pipeline_initial(
         self,
         pipeline_name: str,
-        pipeline: Union[_models.PipelineResource, IO],
+        pipeline: Union[_models.PipelineResource, IO[bytes]],
         if_match: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[_models.PipelineResource]:
@@ -376,26 +372,25 @@ class PipelineOperations:
         else:
             _json = self._serialize.body(pipeline, "PipelineResource")
 
-        request = build_create_or_update_pipeline_request(
+        _request = build_create_or_update_pipeline_request(
             pipeline_name=pipeline_name,
             if_match=if_match,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_pipeline_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -409,11 +404,9 @@ class PipelineOperations:
             deserialized = self._deserialize("PipelineResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _create_or_update_pipeline_initial.metadata = {"url": "/pipelines/{pipelineName}"}
+        return deserialized  # type: ignore
 
     @overload
     def begin_create_or_update_pipeline(
@@ -437,14 +430,6 @@ class PipelineOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either PipelineResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.PipelineResource]
@@ -455,7 +440,7 @@ class PipelineOperations:
     def begin_create_or_update_pipeline(
         self,
         pipeline_name: str,
-        pipeline: IO,
+        pipeline: IO[bytes],
         if_match: Optional[str] = None,
         *,
         content_type: str = "application/json",
@@ -466,21 +451,13 @@ class PipelineOperations:
         :param pipeline_name: The pipeline name. Required.
         :type pipeline_name: str
         :param pipeline: Pipeline resource definition. Required.
-        :type pipeline: IO
+        :type pipeline: IO[bytes]
         :param if_match: ETag of the pipeline entity.  Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update. Default value is None.
         :type if_match: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either PipelineResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.PipelineResource]
@@ -491,7 +468,7 @@ class PipelineOperations:
     def begin_create_or_update_pipeline(
         self,
         pipeline_name: str,
-        pipeline: Union[_models.PipelineResource, IO],
+        pipeline: Union[_models.PipelineResource, IO[bytes]],
         if_match: Optional[str] = None,
         **kwargs: Any
     ) -> LROPoller[_models.PipelineResource]:
@@ -499,23 +476,12 @@ class PipelineOperations:
 
         :param pipeline_name: The pipeline name. Required.
         :type pipeline_name: str
-        :param pipeline: Pipeline resource definition. Is either a PipelineResource type or a IO type.
-         Required.
-        :type pipeline: ~azure.synapse.artifacts.models.PipelineResource or IO
+        :param pipeline: Pipeline resource definition. Is either a PipelineResource type or a IO[bytes]
+         type. Required.
+        :type pipeline: ~azure.synapse.artifacts.models.PipelineResource or IO[bytes]
         :param if_match: ETag of the pipeline entity.  Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update. Default value is None.
         :type if_match: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either PipelineResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.PipelineResource]
@@ -547,7 +513,7 @@ class PipelineOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("PipelineResource", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -563,15 +529,15 @@ class PipelineOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.PipelineResource].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update_pipeline.metadata = {"url": "/pipelines/{pipelineName}"}
+        return LROPoller[_models.PipelineResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def get_pipeline(
@@ -585,7 +551,6 @@ class PipelineOperations:
          ETag matches the existing entity tag, or if * was provided, then no content will be returned.
          Default value is None.
         :type if_none_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PipelineResource or None or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.PipelineResource or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -604,23 +569,22 @@ class PipelineOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[Optional[_models.PipelineResource]] = kwargs.pop("cls", None)
 
-        request = build_get_pipeline_request(
+        _request = build_get_pipeline_request(
             pipeline_name=pipeline_name,
             if_none_match=if_none_match,
             api_version=api_version,
-            template_url=self.get_pipeline.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -634,11 +598,9 @@ class PipelineOperations:
             deserialized = self._deserialize("PipelineResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_pipeline.metadata = {"url": "/pipelines/{pipelineName}"}
+        return deserialized  # type: ignore
 
     def _delete_pipeline_initial(  # pylint: disable=inconsistent-return-statements
         self, pipeline_name: str, **kwargs: Any
@@ -657,22 +619,21 @@ class PipelineOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_pipeline_request(
+        _request = build_delete_pipeline_request(
             pipeline_name=pipeline_name,
             api_version=api_version,
-            template_url=self._delete_pipeline_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -682,9 +643,7 @@ class PipelineOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_pipeline_initial.metadata = {"url": "/pipelines/{pipelineName}"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete_pipeline(self, pipeline_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -692,14 +651,6 @@ class PipelineOperations:
 
         :param pipeline_name: The pipeline name. Required.
         :type pipeline_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -725,7 +676,7 @@ class PipelineOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -740,15 +691,13 @@ class PipelineOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete_pipeline.metadata = {"url": "/pipelines/{pipelineName}"}
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _rename_pipeline_initial(  # pylint: disable=inconsistent-return-statements
         self, pipeline_name: str, new_name: Optional[str] = None, **kwargs: Any
@@ -771,24 +720,23 @@ class PipelineOperations:
         _request = _models.ArtifactRenameRequest(new_name=new_name)
         _json = self._serialize.body(_request, "ArtifactRenameRequest")
 
-        request = build_rename_pipeline_request(
+        _request = build_rename_pipeline_request(
             pipeline_name=pipeline_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._rename_pipeline_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -798,9 +746,7 @@ class PipelineOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _rename_pipeline_initial.metadata = {"url": "/pipelines/{pipelineName}/rename"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_rename_pipeline(
@@ -812,14 +758,6 @@ class PipelineOperations:
         :type pipeline_name: str
         :param new_name: New name of the artifact. Default value is None.
         :type new_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -848,7 +786,7 @@ class PipelineOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -863,15 +801,13 @@ class PipelineOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_rename_pipeline.metadata = {"url": "/pipelines/{pipelineName}/rename"}
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @overload
     def create_pipeline_run(
@@ -905,7 +841,6 @@ class PipelineOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CreateRunResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.CreateRunResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -918,7 +853,7 @@ class PipelineOperations:
         reference_pipeline_run_id: Optional[str] = None,
         is_recovery: Optional[bool] = None,
         start_activity_name: Optional[str] = None,
-        parameters: Optional[IO] = None,
+        parameters: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -939,11 +874,10 @@ class PipelineOperations:
         :type start_activity_name: str
         :param parameters: Parameters of the pipeline run. These parameters will be used only if the
          runId is not specified. Default value is None.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CreateRunResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.CreateRunResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -956,7 +890,7 @@ class PipelineOperations:
         reference_pipeline_run_id: Optional[str] = None,
         is_recovery: Optional[bool] = None,
         start_activity_name: Optional[str] = None,
-        parameters: Optional[Union[Dict[str, JSON], IO]] = None,
+        parameters: Optional[Union[Dict[str, JSON], IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.CreateRunResponse:
         """Creates a run of a pipeline.
@@ -974,12 +908,9 @@ class PipelineOperations:
          specified, all activities will run. Default value is None.
         :type start_activity_name: str
         :param parameters: Parameters of the pipeline run. These parameters will be used only if the
-         runId is not specified. Is either a {str: JSON} type or a IO type. Default value is None.
-        :type parameters: dict[str, JSON] or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         runId is not specified. Is either a {str: JSON} type or a IO[bytes] type. Default value is
+         None.
+        :type parameters: dict[str, JSON] or IO[bytes]
         :return: CreateRunResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.CreateRunResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1010,7 +941,7 @@ class PipelineOperations:
             else:
                 _json = None
 
-        request = build_create_pipeline_run_request(
+        _request = build_create_pipeline_run_request(
             pipeline_name=pipeline_name,
             reference_pipeline_run_id=reference_pipeline_run_id,
             is_recovery=is_recovery,
@@ -1019,19 +950,18 @@ class PipelineOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_pipeline_run.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1043,8 +973,6 @@ class PipelineOperations:
         deserialized = self._deserialize("CreateRunResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_pipeline_run.metadata = {"url": "/pipelines/{pipelineName}/createRun"}
+        return deserialized  # type: ignore

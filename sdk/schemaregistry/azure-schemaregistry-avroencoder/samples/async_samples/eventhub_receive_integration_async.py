@@ -17,7 +17,7 @@ USAGE:
     2) AZURE_CLIENT_ID - Required for use of the credential. The service principal's client ID.
      Also called its 'application' ID.
     3) AZURE_CLIENT_SECRET - Required for use of the credential. One of the service principal's client secrets.
-    4) SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
+    4) SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
      which should follow the format: `<your-namespace>.servicebus.windows.net`
     5) SCHEMAREGISTRY_GROUP - The name of the schema group.
     6) EVENT_HUB_CONN_STR - The connection string of the Event Hubs namespace to receive events from.
@@ -37,7 +37,7 @@ from azure.schemaregistry.encoder.avroencoder.aio import AvroEncoder
 EVENTHUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
-SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
+SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ['SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE']
 GROUP_NAME = os.environ['SCHEMAREGISTRY_GROUP']
 
 
@@ -62,7 +62,7 @@ async def on_event(partition_context, event):
     print(f"Received event from partition: {partition_context.partition_id}.")
 
     bytes_payload = b"".join(b for b in event.body)
-    print(f'The received bytes of the EventData is {bytes_payload}.')
+    print(f'The received bytes of the EventData is {bytes_payload!r}.')
 
     # Use the decode method to decode the payload of the event.
     # The decode method will extract the schema id from the content_type, and automatically retrieve the Avro Schema

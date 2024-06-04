@@ -12,7 +12,7 @@ from ._constants import AmqpMessageBodyType
 from .._mixin import DictMixin
 
 
-class AmqpAnnotatedMessage(object):
+class AmqpAnnotatedMessage:
     # pylint: disable=too-many-instance-attributes
     """
     The AMQP Annotated Message for advanced sending and receiving scenarios which allows you to
@@ -44,8 +44,7 @@ class AmqpAnnotatedMessage(object):
     :paramtype delivery_annotations: Optional[Dict]
     """
 
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
+    def __init__(self, **kwargs: Any) -> None:
         self._encoding = kwargs.pop("encoding", "UTF-8")
         self._data_body: Optional[Union[str, bytes, List[Union[str, bytes]]]] = None
         self._sequence_body: Optional[List[Any]] = None

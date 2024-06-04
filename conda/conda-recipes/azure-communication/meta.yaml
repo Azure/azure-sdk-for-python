@@ -1,0 +1,70 @@
+{% set name = "azure-communication" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('COMMUNICATION_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - pip
+    - python
+    - six
+    - aiohttp
+    - isodate
+  run:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - python
+    - six
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.communication.chat
+    - azure.communication.chat.aio
+    - azure.communication.email
+    - azure.communication.email.aio
+    - azure.communication.identity
+    - azure.communication.identity.aio
+    - azure.communication.phonenumbers
+    - azure.communication.phonenumbers.aio
+    - azure.communication.sms
+    - azure.communication.sms.aio
+    - azure.communication.jobrouter
+    - azure.communication.jobrouter.aio
+    - azure.communication.rooms
+    - azure.communication.rooms.aio
+    - azure.communication.callautomation
+    - azure.communication.callautomation.aio
+    - azure.communication.messages
+    - azure.communication.messages.aio
+
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Azure Communication Package client library for Python"
+  description: |
+    This is the Microsoft Azure Communication libraries bundle.
+    Please see https://aka.ms/azsdk/conda/releases/communication for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

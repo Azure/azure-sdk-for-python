@@ -23,14 +23,8 @@ from .autorest_tools import (
     generate_code,
     merge_options,
 )
-from azure_devtools.ci_tools.git_tools import (
-    checkout_and_create_branch,
-    do_commit,
-)
-from azure_devtools.ci_tools.github_tools import (
-    configure_user,
-    manage_git_folder,
-)
+from ci_tools.git_tools import checkout_and_create_branch, do_commit
+from ci_tools.github_tools import configure_user, manage_git_folder
 
 
 _LOGGER = logging.getLogger(__name__)

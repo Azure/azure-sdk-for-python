@@ -14,8 +14,6 @@ def test_supported_version(version):
 
 
 def test_unsupported_version():
-    """When given an unsupported API version, the client should raise an error listing supported versions"""
+    """When given an unsupported API version, the client should _not_ raise an error"""
 
-    with pytest.raises(NotImplementedError) as ex:
-        client = CertificateClient("https://localhost", credential=object(), api_version="nonsense")
-    assert all(version.value in str(ex.value) for version in ApiVersion)
+    CertificateClient("https://localhost", credential=object(), api_version="nonsense")

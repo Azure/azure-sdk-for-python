@@ -1,0 +1,60 @@
+{% set name = "azure-ai-translation-document" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('TRANSLATION_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - pip
+    - python
+    - six
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+  run:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - python
+    - six
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.ai.translation.document
+    - azure.ai.translation.document.aio
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Azure Document Translation client library for Python"
+  description: |
+    Azure Cognitive Services Document Translation is a cloud service that can be used to translate multiple and 
+    complex documents across languages and dialects while preserving original document structure and data format. 
+    Use the client library for Document Translation to: 
+    Translate numerous, large files from an Azure Blob Storage container to a target container in your language of choice. 
+    Check the translation status and progress of each document in the translation operation. 
+    Apply a custom translation model or glossaries to tailor translation to your specific case.
+    Please see https://aka.ms/azsdk/conda/releases/document-translation for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

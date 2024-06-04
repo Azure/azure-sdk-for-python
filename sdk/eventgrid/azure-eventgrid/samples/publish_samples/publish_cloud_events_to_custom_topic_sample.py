@@ -23,7 +23,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.messaging import CloudEvent
 from azure.eventgrid import EventGridPublisherClient
 
-key = os.environ.get("EVENTGRID_CLOUD_EVENT_TOPIC_KEY")
+key = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_KEY"]
 endpoint = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT"]
 
 # authenticate client

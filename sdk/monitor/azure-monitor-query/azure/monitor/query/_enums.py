@@ -4,6 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# cspell:ignore milli
 from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta

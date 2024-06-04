@@ -158,26 +158,6 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         assert snapshot_props.metadata == metadata2
         await self._delete_shares(share.share_name)
 
-
-    @FileSharePreparer()
-    @recorded_by_proxy_async
-    async def test_delete_share_with_snapshots(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key)
-        share = self._get_share_reference()
-        await share.create_share()
-        snapshot = await share.create_snapshot()
-
-        # Act
-        with pytest.raises(HttpResponseError):
-            await share.delete_share()
-
-        deleted = await share.delete_share(delete_snapshots=True)
-        assert deleted is None
-        await self._delete_shares(share.share_name)
-
     @pytest.mark.playback_test_only
     @FileSharePreparer()
     @recorded_by_proxy_async
@@ -836,6 +816,37 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         self.assertNamedItemInContainer(all_shares, snapshot1['snapshot'])
         self.assertNamedItemInContainer(all_shares, snapshot2['snapshot'])
         await self._delete_shares(share.share_name)
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_delete_snapshots_options(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        share = await self._create_share('prefix')
+        await share.create_snapshot()
+        await share.create_snapshot()
+
+        # Act / Assert
+
+        # Test backwards compatibility (False)
+        with pytest.raises(ResourceExistsError):
+            await share.delete_share(delete_snapshots=False)
+
+        # Test backwards compatibility (True)
+        await share.delete_share(delete_snapshots=True)
+
+        # Test "include"
+        share = await self._create_share('prefix2')
+        await share.create_snapshot()
+        await share.delete_share(delete_snapshots='include')
+
+        # Test "include-leased"
+        share = await self._create_share('prefix3')
+        lease = await share.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        await share.create_snapshot()
+        await share.delete_share(delete_snapshots='include-leased', lease='00000000-1111-2222-3333-444444444444')
 
     @FileSharePreparer()
     @recorded_by_proxy_async

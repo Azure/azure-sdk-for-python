@@ -1,5 +1,37 @@
 # Release History
 
+## 1.3.0 (2023-12-18)
+
+### Features Added
+
+  - Added operation BackupInstancesOperations.begin_trigger_cross_region_restore
+  - Added operation BackupInstancesOperations.begin_validate_cross_region_restore
+  - Added operation group FetchCrossRegionRestoreJobOperations
+  - Added operation group FetchCrossRegionRestoreJobsOperations
+  - Added operation group FetchSecondaryRecoveryPointsOperations
+  - Model AzureBackupDiscreteRecoveryPoint has a new parameter recovery_point_state
+  - Model BackupVault has a new parameter replicated_regions
+  - Model JobExtendedInfo has a new parameter warning_details
+
+## 1.2.0 (2023-07-21)
+
+### Features Added
+
+  - Model AzureBackupJob has a new parameter rehydration_priority
+  - Model AzureBackupRecoveryPointBasedRestoreRequest has a new parameter identity_details
+  - Model AzureBackupRecoveryTimeBasedRestoreRequest has a new parameter identity_details
+  - Model AzureBackupRestoreRequest has a new parameter identity_details
+  - Model AzureBackupRestoreWithRehydrationRequest has a new parameter identity_details
+  - Model BackupInstance has a new parameter identity_details
+  - Model BackupVault has a new parameter secure_score
+  - Model Datasource has a new parameter resource_properties
+  - Model DatasourceSet has a new parameter resource_properties
+  - Model DeletedBackupInstance has a new parameter identity_details
+  - Model DppIdentityDetails has a new parameter user_assigned_identities
+  - Model FeatureSettings has a new parameter cross_region_restore_settings
+  - Model KubernetesClusterBackupDatasourceParameters has a new parameter backup_hook_references
+  - Model KubernetesClusterRestoreCriteria has a new parameter restore_hook_references
+
 ## 1.1.0 (2023-06-16)
 
 ### Features Added

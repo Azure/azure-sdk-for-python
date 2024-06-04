@@ -4,6 +4,7 @@
 # ------------------------------------
 import base64
 import os
+
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.certificates import CertificateClient, CertificatePolicy
 from azure.keyvault.secrets import SecretClient
@@ -87,6 +88,7 @@ delete_operation_poller = certificate_client.begin_delete_certificate(
     certificate_name=cert_name
 )
 deleted_certificate = delete_operation_poller.result()
+assert deleted_certificate.name
 delete_operation_poller.wait()
 print(f"Certificate with name '{deleted_certificate.name}' was deleted.")
 

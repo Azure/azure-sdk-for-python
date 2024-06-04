@@ -12,8 +12,10 @@ from ._skus_operations import SkusOperations
 from ._databases_operations import DatabasesOperations
 from ._attached_database_configurations_operations import AttachedDatabaseConfigurationsOperations
 from ._managed_private_endpoints_operations import ManagedPrivateEndpointsOperations
+from ._database_operations import DatabaseOperations
 from ._database_principal_assignments_operations import DatabasePrincipalAssignmentsOperations
 from ._scripts_operations import ScriptsOperations
+from ._sandbox_custom_images_operations import SandboxCustomImagesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._data_connections_operations import DataConnectionsOperations
@@ -32,8 +34,10 @@ __all__ = [
     "DatabasesOperations",
     "AttachedDatabaseConfigurationsOperations",
     "ManagedPrivateEndpointsOperations",
+    "DatabaseOperations",
     "DatabasePrincipalAssignmentsOperations",
     "ScriptsOperations",
+    "SandboxCustomImagesOperations",
     "PrivateEndpointConnectionsOperations",
     "PrivateLinkResourcesOperations",
     "DataConnectionsOperations",

@@ -26,23 +26,39 @@
 import json
 import logging
 import time
-from typing import Optional
+from typing import Optional, Union, TYPE_CHECKING
 
-from azure.core.pipeline import PipelineRequest, PipelineResponse, HTTPRequestType, HTTPResponseType
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import HttpLoggingPolicy
+
 from .http_constants import HttpHeaders
+
+if TYPE_CHECKING:
+    from azure.core.rest import HttpRequest, HttpResponse, AsyncHttpResponse
+    from azure.core.pipeline.transport import (  # pylint: disable=no-legacy-azure-core-http-response-import
+        HttpRequest as LegacyHttpRequest,
+        HttpResponse as LegacyHttpResponse,
+        AsyncHttpResponse as LegacyAsyncHttpResponse
+    )
+
+HTTPRequestType = Union["LegacyHttpRequest", "HttpRequest"]
+HTTPResponseType = Union["LegacyHttpResponse", "HttpResponse", "LegacyAsyncHttpResponse", "AsyncHttpResponse"]
+
 
 def _format_error(payload: str) -> str:
     output = json.loads(payload)
     return output['message'].replace("\r", " ")
+
+
 class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
 
     def __init__(
-            self,
-            logger: Optional[logging.Logger] = None,
-            *,
-            enable_diagnostics_logging: Optional[bool] = False,
-            **kwargs): # pylint: disable=unused-argument
+        self,
+        logger: Optional[logging.Logger] = None,
+        *,
+        enable_diagnostics_logging: bool = False,
+        **kwargs
+    ):
         self._enable_diagnostics_logging = enable_diagnostics_logging
         super().__init__(logger, **kwargs)
         if self._enable_diagnostics_logging:
@@ -52,8 +68,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             ]
             self.allowed_header_names = set(cosmos_allow_list)
 
-    def on_request(self, request): # pylint: disable=too-many-return-statements, too-many-statements
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         super().on_request(request)
         if self._enable_diagnostics_logging:
             request.context["start_time"] = time.time()
@@ -61,7 +76,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
     def on_response(
         self,
         request: PipelineRequest[HTTPRequestType],
-        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
+        response: PipelineResponse[HTTPRequestType, HTTPResponseType],  # type: ignore[override]
     ) -> None:
         super().on_response(request, response)
         if self._enable_diagnostics_logging:
@@ -69,7 +84,10 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             options = response.context.options
             logger = request.context.setdefault("logger", options.pop("logger", self.logger))
             try:
-                logger.info("Elapsed time in seconds: {}".format(time.time() - request.context.get("start_time")))
+                if "start_time" in request.context:
+                    logger.info("Elapsed time in seconds: {}".format(time.time() - request.context["start_time"]))
+                else:
+                    logger.info("Elapsed time in seconds: unknown")
                 if http_response.status_code >= 400:
                     logger.info("Response error message: %r", _format_error(http_response.text()))
             except Exception as err:  # pylint: disable=broad-except

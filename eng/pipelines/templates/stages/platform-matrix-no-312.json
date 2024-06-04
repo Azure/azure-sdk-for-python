@@ -1,0 +1,31 @@
+{
+    "displayNames": {
+      "--disablecov": "",
+      "false": "",
+      "true": ""
+    },
+    "matrix": {
+      "Agent": {
+        "windows-2022": { "OSVmImage": "env:WINDOWSVMIMAGE", "Pool": "env:WINDOWSPOOL" },
+        "ubuntu-20.04": { "OSVmImage": "env:LINUXVMIMAGE", "Pool": "env:LINUXPOOL" },
+        "macos-11": { "OSVmImage": "env:MACVMIMAGE", "Pool": "env:MACPOOL" }
+      },
+      "PythonVersion": [ "pypy3.9", "3.8", "3.10", "3.11" ],
+      "CoverageArg": "--disablecov",
+      "TestSamples": "false"
+    },
+    "include": [
+      {
+        "CoverageConfig": {
+          "ubuntu2004_39_coverage": {
+            "OSVmImage": "env:LINUXVMIMAGE",
+            "Pool": "env:LINUXPOOL",
+            "PythonVersion": "3.9",
+            "CoverageArg": "",
+            "TestSamples": "false"
+          }
+        }
+      }
+    ]
+  }
+  

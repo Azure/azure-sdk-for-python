@@ -147,7 +147,7 @@ try:
         }
       }
     }
-    result = client.create_or_replace_workflow(workflow_id=workflow_id, workflow_create_or_update_command=workflow)
+    result = client.workflow.create_or_replace(workflow_id=workflow_id, workflow_create_or_update_command=workflow)
     print(result)
 except HttpResponseError as e:
     print(f"Failed to send JSON message: {e}")

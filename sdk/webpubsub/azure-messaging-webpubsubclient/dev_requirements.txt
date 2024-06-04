@@ -1,6 +1,6 @@
--e ../../../tools/azure-devtools
 -e ../../../tools/azure-sdk-tools
 ../../core/azure-core
 ../../identity/azure-identity
-aiohttp
--e ../azure-messaging-webpubsubservice
+azure-messaging-webpubsubservice==1.1.0b1
+psutil
+aiohttp>=3.9.3

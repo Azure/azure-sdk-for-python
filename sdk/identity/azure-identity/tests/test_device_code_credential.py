@@ -53,7 +53,7 @@ def test_authenticate():
     access_token = "***"
     scope = "scope"
 
-    # mock AAD response with id token
+    # mock Microsoft Entra ID response with id token
     object_id = "object-id"
     home_tenant = "home-tenant-id"
     username = "me@work.com"
@@ -178,7 +178,7 @@ def test_device_code_credential():
         requests=[Request()] * 3,  # not validating requests because they're formed by MSAL
         responses=[
             # expected requests: discover tenant, start device code flow, poll for completion
-            mock_response(json_payload={"authorization_endpoint": "https://a/b", "token_endpoint": "https://a/b"}),
+            get_discovery_response(),
             mock_response(
                 json_payload={
                     "device_code": "_",
@@ -203,7 +203,10 @@ def test_device_code_credential():
 
     callback = Mock()
     credential = DeviceCodeCredential(
-        client_id=client_id, prompt_callback=callback, transport=transport, disable_instance_discovery=True,
+        client_id=client_id,
+        prompt_callback=callback,
+        transport=transport,
+        disable_instance_discovery=True,
     )
 
     now = datetime.datetime.utcnow()
@@ -234,7 +237,7 @@ def test_tenant_id():
         requests=[Request()] * 3,  # not validating requests because they're formed by MSAL
         responses=[
             # expected requests: discover tenant, start device code flow, poll for completion
-            mock_response(json_payload={"authorization_endpoint": "https://a/b", "token_endpoint": "https://a/b"}),
+            get_discovery_response(),
             mock_response(
                 json_payload={
                     "device_code": "_",
@@ -259,7 +262,11 @@ def test_tenant_id():
 
     callback = Mock()
     credential = DeviceCodeCredential(
-        client_id=client_id, prompt_callback=callback, transport=transport, disable_instance_discovery=True, additionally_allowed_tenants=['*']
+        client_id=client_id,
+        prompt_callback=callback,
+        transport=transport,
+        disable_instance_discovery=True,
+        additionally_allowed_tenants=["*"],
     )
 
     now = datetime.datetime.utcnow()
@@ -282,24 +289,22 @@ def test_timeout():
 
 
 def test_client_capabilities():
-    """the credential should configure MSAL for capability CP1 unless AZURE_IDENTITY_DISABLE_CP1 is set"""
+    """the credential should configure MSAL for capability CP1 only if enable_cae is passed."""
 
     transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
-
+    credential = DeviceCodeCredential(transport=transport)
     with patch("msal.PublicClientApplication") as PublicClientApplication:
-        DeviceCodeCredential(transport=transport)._get_app()
+        credential._get_app()
 
-    assert PublicClientApplication.call_count == 1
-    _, kwargs = PublicClientApplication.call_args
-    assert kwargs["client_capabilities"] == ["CP1"]
+        assert PublicClientApplication.call_count == 1
+        _, kwargs = PublicClientApplication.call_args
+        assert kwargs["client_capabilities"] == None
 
-    with patch.dict("os.environ", {"AZURE_IDENTITY_DISABLE_CP1": "true"}):
-        with patch("msal.PublicClientApplication") as PublicClientApplication:
-            DeviceCodeCredential(transport=transport)._get_app()
+        credential._get_app(enable_cae=True)
 
-    assert PublicClientApplication.call_count == 1
-    _, kwargs = PublicClientApplication.call_args
-    assert kwargs["client_capabilities"] is None
+        assert PublicClientApplication.call_count == 2
+        _, kwargs = PublicClientApplication.call_args
+        assert kwargs["client_capabilities"] == ["CP1"]
 
 
 def test_claims_challenge():

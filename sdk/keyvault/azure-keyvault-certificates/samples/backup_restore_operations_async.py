@@ -4,6 +4,7 @@
 # ------------------------------------
 import asyncio
 import os
+
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.keyvault.certificates import CertificatePolicy
 from azure.identity.aio import DefaultAzureCredential

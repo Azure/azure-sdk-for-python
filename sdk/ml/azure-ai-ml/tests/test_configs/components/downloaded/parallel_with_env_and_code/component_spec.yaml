@@ -1,0 +1,54 @@
+$schema: http://azureml/sdk-2-0/ParallelComponent.json
+name: random_component_name
+version: 1.0.0
+display_name: BatchScore
+description: parallel component for batch score
+type: parallel
+inputs:
+  job_data_path:
+    type: mltable
+    description: The data to be split and scored in parallel.
+    optional: false
+  score_model:
+    type: uri_folder
+    description: The model for batch score.
+    optional: false
+outputs:
+  job_out_path:
+    type: uri_file
+error_threshold: -1
+input_data: ${{inputs.job_data_path}}
+is_deterministic: true
+logging_level: DEBUG
+max_concurrency_per_instance: 2
+mini_batch_error_threshold: 5
+mini_batch_size: '100'
+retry_settings:
+  timeout: 60
+  max_retries: 2
+task:
+  type: run_function
+  code: ./code
+  entry_script: tabular_run_with_model.py
+  program_arguments: --model ${{inputs.score_model}}
+  append_row_to: ${{outputs.job_out_path}}
+  environment:
+    image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
+    conda_file:
+      channels:
+      - conda-forge
+      dependencies:
+      - python=3.8
+      - pip
+      - pip:
+        - mlflow
+        - azureml-dataset-runtime[pandas,fuse]
+        - azureml-telemetry
+        - pandas
+        - pillow
+        - azureml-core
+        - scikit-learn~=0.20.0
+        - cloudpickle==1.1.1
+        - tensorflow==1.15.2
+      name: prs-env
+    os_type: linux

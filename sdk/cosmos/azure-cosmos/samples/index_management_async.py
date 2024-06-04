@@ -85,7 +85,7 @@ async def query_entities(parent, entity_type, id = None):
         raise
     if id == None:
         return entities
-    if len(entities) == 1:
+    if entities and len(entities) == 1:
         return entities[0]
     return None
 
@@ -119,7 +119,7 @@ async def fetch_all_databases(client):
 
 async def query_documents_with_custom_query(container, query_with_optional_parameters, message = "Document(s) found by query: "):
     try:
-        results = container.query_items(query_with_optional_parameters, enable_cross_partition_query=True)
+        results = container.query_items(query_with_optional_parameters)
         print(message)
         async for doc in results:
             print(doc)
@@ -377,8 +377,7 @@ async def range_scan_on_hash_index(db):
         # using the enableScanInQuery directive
         results = created_Container.query_items(
             query,
-            enable_scan_in_query=True,
-            enable_cross_partition_query=True
+            enable_scan_in_query=True
         )
         print("Printing documents queried by range by providing enableScanInQuery = True")
         async for doc in results: print(doc["id"])
@@ -629,6 +628,71 @@ async def perform_multi_orderby_query(db):
         print("Entity doesn't exist")
 
 
+async def use_vector_embedding_policy(db):
+    try:
+        await delete_container_if_exists(db, CONTAINER_ID)
+
+        # Create a container with vector embedding policy and vector indexes
+        indexing_policy = {
+            "vectorIndexes": [
+                {"path": "/vector", "type": "quantizedFlat"},
+            ]
+        }
+        vector_embedding_policy = {
+            "vectorEmbeddings": [
+                {
+                    "path": "/vector",
+                    "dataType": "float32",
+                    "dimensions": 1000,
+                    "distanceFunction": "cosine"
+                }
+            ]
+        }
+
+        created_container = await db.create_container(
+            id=CONTAINER_ID,
+            partition_key=PARTITION_KEY,
+            indexing_policy=indexing_policy,
+            vector_embedding_policy=vector_embedding_policy
+        )
+        properties = await created_container.read()
+        print(created_container)
+
+        print("\n" + "-" * 25 + "\n9. Container created with vector embedding policy and vector indexes")
+        print_dictionary_items(properties["indexingPolicy"])
+        print_dictionary_items(properties["vectorEmbeddingPolicy"])
+
+        # We define our own get_embeddings() function for the sake of the sample, but you should be using a third
+        # party service to generate these properly.
+        def get_embeddings(num):
+            return [num, num, num]
+
+        # Create some items with vector embeddings
+        for i in range(10):
+            created_container.create_item({"id": "vector_item" + str(i), "embeddings": get_embeddings(i)})
+
+        # Run vector similarity search queries using VectorDistance
+        query = "SELECT TOP 5 c.id,VectorDistance(c.embeddings, [{}]) AS " \
+                "SimilarityScore FROM c ORDER BY VectorDistance(c.embeddings, [{}])".format(get_embeddings(1),
+                                                                                            get_embeddings(1))
+        await query_documents_with_custom_query(created_container, query)
+
+        # Run vector similarity search queries using VectorDistance with specifications
+        query = "SELECT TOP 5 c.id,VectorDistance(c.embeddings, [{}], true, {{'dataType': 'float32' ," \
+                " 'distanceFunction': 'cosine'}}) AS SimilarityScore FROM c ORDER BY VectorDistance(c.embeddings," \
+                " [{}], true, {{'dataType': 'float32', 'distanceFunction': 'cosine'}})".format(get_embeddings(1),
+                                                                                               get_embeddings(1))
+        await query_documents_with_custom_query(created_container, query)
+
+        # Cleanup
+        await db.delete_container(created_container)
+        print("\n")
+    except exceptions.CosmosResourceExistsError:
+        print("Entity already exists")
+    except exceptions.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
+
+
 async def run_sample():
     try:
         async with obtain_client() as client:
@@ -659,8 +723,8 @@ async def run_sample():
             # 8. Perform Multi Orderby queries using composite indexes
             await perform_multi_orderby_query(created_db)
 
-            print('Sample done, cleaning up sample-generated data')
-            await client.delete_database(DATABASE_ID)
+            # 9. Create and use a vector embedding policy
+            await use_vector_embedding_policy(created_db)
 
     except exceptions.AzureError as e:
         raise e

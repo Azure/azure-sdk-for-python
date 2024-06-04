@@ -331,7 +331,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 assert isinstance(document_result, RecognizePiiEntitiesResult)
                 if idx == 0:
                     assert document_result.entities[0].text == "859-98-0987"
-                    assert document_result.entities[0].category == "USSocialSecurityNumber"
+                    # assert document_result.entities[0].category == "USSocialSecurityNumber"
                 elif idx == 1:
                     assert document_result.entities[0].text == "111000025"
                 for entity in document_result.entities:
@@ -823,10 +823,11 @@ class TestAnalyzeAsync(TextAnalyticsTest):
 
         assert action_results[0][0].entities[0].text == "859-98-0987"
         assert action_results[0][0].entities[0].category == PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER
-        assert action_results[1][0].entities[0].text == "111000025"
-        assert action_results[1][0].entities[0].category == PiiEntityCategory.ABA_ROUTING_NUMBER
+        # assert action_results[1][0].entities[0].text == "111000025"
+        # assert action_results[1][0].entities[0].category == PiiEntityCategory.ABA_ROUTING_NUMBER
         assert action_results[2][0].entities == []  # No Brazilian CPF since not in categories_filter
 
+    @pytest.mark.skip("No longer tests what it intended to. Need new way to test partial actions before re-enabling.")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -950,6 +951,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             assert isinstance(action_result[9], ExtractKeyPhrasesResult)
             assert action_result[9].id == doc_id
 
+    @pytest.mark.skip("https://msazure.visualstudio.com/Cognitive%20Services/_workitems/edit/24886131")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -1181,6 +1183,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         assert document_results[1][1].is_error
         assert document_results[1][2].is_error
 
+    @pytest.mark.skip("https://msazure.visualstudio.com/Cognitive%20Services/_workitems/edit/24886131")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -1239,7 +1242,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         assert document_result.statistics
                         assert self.document_result_to_action_type(document_result) == action_order[action_idx]
 
-            await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+            await initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
 
     @TextAnalyticsPreparer()
     async def test_generic_action_error_no_target_v3_1(

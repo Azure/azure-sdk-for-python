@@ -23,17 +23,18 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Union, Generic, TypeVar, List, Dict, Optional, Iterable
-from contextlib import AbstractAsyncContextManager
+from __future__ import annotations
+from types import TracebackType
+from typing import Any, Union, Generic, TypeVar, List, Dict, Optional, Iterable, Type, AsyncContextManager
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 from ._tools_async import await_result as _await_result
+from ._base import cleanup_kwargs_for_transport
 from .transport import AsyncHttpTransport
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
-AsyncPoliciesType = Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
 
 class _SansIOAsyncHTTPPolicyRunner(
@@ -68,8 +69,7 @@ class _SansIOAsyncHTTPPolicyRunner(
         except Exception:  # pylint: disable=broad-except
             await _await_result(self._policy.on_exception, request)
             raise
-        else:
-            await _await_result(self._policy.on_response, request, response)
+        await _await_result(self._policy.on_response, request, response)
         return response
 
 
@@ -98,12 +98,7 @@ class _AsyncTransportRunner(
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        # "insecure_domain_change" is used to indicate that a redirect
-        # has occurred to a different domain. This tells the SensitiveHeaderCleanupPolicy
-        # to clean up sensitive headers. We need to remove it before sending the request
-        # to the transport layer. This code is needed to handle the case that the
-        # SensitiveHeaderCleanupPolicy is not added into the pipeline and "insecure_domain_change" is not popped.
-        request.context.options.pop("insecure_domain_change", False)
+        cleanup_kwargs_for_transport(request.context.options)
         return PipelineResponse(
             request.http_request,
             await self._sender.send(request.http_request, **request.context.options),
@@ -111,7 +106,7 @@ class _AsyncTransportRunner(
         )
 
 
-class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncHTTPResponseType]):
+class AsyncPipeline(AsyncContextManager["AsyncPipeline"], Generic[HTTPRequestType, AsyncHTTPResponseType]):
     """Async pipeline implementation.
 
     This is implemented as a context manager, that will activate the context
@@ -131,10 +126,17 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
             :caption: Builds the async pipeline for asynchronous transport.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=super-init-not-called
         self,
         transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
-        policies: Optional[AsyncPoliciesType] = None,
+        policies: Optional[
+            Iterable[
+                Union[
+                    AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType],
+                    SansIOHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType],
+                ]
+            ]
+        ] = None,
     ) -> None:
         self._impl_policies: List[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]] = []
         self._transport = transport
@@ -149,12 +151,17 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
         if self._impl_policies:
             self._impl_policies[-1].next = _AsyncTransportRunner(self._transport)
 
-    async def __aenter__(self) -> "AsyncPipeline":
+    async def __aenter__(self) -> AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]:
         await self._transport.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
-        await self._transport.__aexit__(*exc_details)
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
+        await self._transport.__aexit__(exc_type, exc_value, traceback)
 
     async def _prepare_multipart_mixed_request(self, request: HTTPRequestType) -> None:
         """Will execute the multipart policies.

@@ -28,10 +28,9 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.views.delete(
+    client.views.delete(
         view_name="TestView",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/cost-management/resource-manager/Microsoft.CostManagement/stable/2022-10-01/examples/PrivateViewDelete.json

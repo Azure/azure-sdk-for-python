@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.network import NetworkManagementClient
 
 """
@@ -84,6 +87,24 @@ def main():
                         "rateLimitThreshold": 10,
                         "ruleType": "RateLimitRule",
                     },
+                    {
+                        "action": "JSChallenge",
+                        "matchConditions": [
+                            {
+                                "matchValues": ["192.168.1.0/24"],
+                                "matchVariables": [{"selector": None, "variableName": "RemoteAddr"}],
+                                "operator": "IPMatch",
+                            },
+                            {
+                                "matchValues": ["Bot"],
+                                "matchVariables": [{"selector": "UserAgent", "variableName": "RequestHeaders"}],
+                                "operator": "Contains",
+                            },
+                        ],
+                        "name": "Rule4",
+                        "priority": 4,
+                        "ruleType": "MatchRule",
+                    },
                 ],
                 "managedRules": {
                     "exclusions": [
@@ -133,10 +154,21 @@ def main():
                             ],
                             "ruleSetType": "OWASP",
                             "ruleSetVersion": "3.2",
-                        }
+                        },
+                        {
+                            "ruleGroupOverrides": [
+                                {
+                                    "ruleGroupName": "UnknownBots",
+                                    "rules": [{"action": "JSChallenge", "ruleId": "300700", "state": "Enabled"}],
+                                }
+                            ],
+                            "ruleSetType": "Microsoft_BotManagerRuleSet",
+                            "ruleSetVersion": "1.0",
+                        },
                     ],
                 },
                 "policySettings": {
+                    "jsChallengeCookieExpirationInMins": 100,
                     "logScrubbing": {
                         "scrubbingRules": [
                             {
@@ -147,13 +179,12 @@ def main():
                             },
                             {
                                 "matchVariable": "RequestIPAddress",
-                                "selector": "*",
                                 "selectorMatchOperator": "EqualsAny",
                                 "state": "Enabled",
                             },
                         ],
                         "state": "Enabled",
-                    }
+                    },
                 },
             },
         },
@@ -161,6 +192,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/WafPolicyCreateOrUpdate.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-11-01/examples/WafPolicyCreateOrUpdate.json
 if __name__ == "__main__":
     main()

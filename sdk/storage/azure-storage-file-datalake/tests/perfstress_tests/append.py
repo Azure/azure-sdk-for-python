@@ -5,7 +5,7 @@
 
 import uuid
 
-from azure_devtools.perfstress_tests import RandomStream, AsyncRandomStream
+from devtools_testutils.perfstress_tests import RandomStream, AsyncRandomStream
 
 from ._test_base import _FileSystemTest
 

@@ -10,9 +10,8 @@ is also mentioned in the sample. Please take a look at the commented code.
 
 # Declare OpenTelemetry as enabled tracing plugin for Azure SDKs
 from azure.core.settings import settings
-from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 
-settings.tracing_implementation = OpenTelemetrySpan
+settings.tracing_implementation = "opentelemetry"
 
 # In the below example, we use a simple console exporter, uncomment these lines to use
 # the OpenTelemetry exporter for Azure Monitor.
@@ -36,7 +35,8 @@ exporter = ConsoleSpanExporter()
 
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
-trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))
+# see issue https://github.com/open-telemetry/opentelemetry-python/issues/3713
+trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))  # type: ignore
 
 from azure.eventhub import EventHubProducerClient, EventData, EventHubConsumerClient
 import os

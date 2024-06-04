@@ -14,6 +14,8 @@ from ._linked_server_operations import LinkedServerOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._async_operation_status_operations import AsyncOperationStatusOperations
+from ._access_policy_operations import AccessPolicyOperations
+from ._access_policy_assignment_operations import AccessPolicyAssignmentOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -28,6 +30,8 @@ __all__ = [
     "PrivateEndpointConnectionsOperations",
     "PrivateLinkResourcesOperations",
     "AsyncOperationStatusOperations",
+    "AccessPolicyOperations",
+    "AccessPolicyAssignmentOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

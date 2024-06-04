@@ -1,11 +1,11 @@
 from azure.mgmt.managementpartner import ACEProvisioningManagementPartnerAPI
 from azure.mgmt.managementpartner.models import PartnerResponse
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureMgmtRecordedTestCase
 import unittest
 
 
 @unittest.skip("hard to test")
-class MgmtPartnerTest(AzureMgmtTestCase):
+class TestMgmtPartner(AzureMgmtRecordedTestCase):
 
     def _validate_partner(self, PartnerResponse):
         self.assertIsNotNone(PartnerResponse)
@@ -20,7 +20,7 @@ class MgmtPartnerTest(AzureMgmtTestCase):
         self.assertIsNotNone(PartnerResponse.version)
 
     def setUp(self):
-        super(MgmtPartnerTest, self).setUp()
+        super(TestMgmtPartner, self).setUp()
         self.managementpartner_client = self.create_basic_client(ACEProvisioningManagementPartnerAPI)
 
     def test_managementpartner_get(self):

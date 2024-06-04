@@ -58,17 +58,19 @@ class TestSearchBatchingClient:
 
     def test_flush(self):
         DOCUMENT = {
-            "Category": "Hotel",
-            "HotelId": "1000",
-            "Rating": 4.0,
-            "Rooms": [],
-            "HotelName": "Azure Inn",
+            "category": "Hotel",
+            "hotelId": "1000",
+            "rating": 4.0,
+            "rooms": [],
+            "hotelName": "Azure Inn",
         }
         with mock.patch.object(
-            SearchIndexingBufferedSender, "_index_documents_actions", side_effect=HttpResponseError("Error")
+            SearchIndexingBufferedSender,
+            "_index_documents_actions",
+            side_effect=HttpResponseError("Error"),
         ):
             with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:
-                client._index_key = "HotelId"
+                client._index_key = "hotelId"
                 client.upload_documents([DOCUMENT])
                 client.flush()
                 assert len(client.actions) == 0
@@ -137,7 +139,12 @@ class TestSearchBatchingClient:
         on_progress = mock.Mock()
         on_remove = mock.Mock()
         with SearchIndexingBufferedSender(
-            "endpoint", "index name", CREDENTIAL, auto_flush=False, on_progress=on_progress, on_remove=on_remove
+            "endpoint",
+            "index name",
+            CREDENTIAL,
+            auto_flush=False,
+            on_progress=on_progress,
+            on_remove=on_remove,
         ) as client:
             client._index_documents_actions = mock_successful_index_documents
             client._index_key = "id"

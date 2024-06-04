@@ -4,7 +4,7 @@
 
 import json
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union, cast
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
@@ -17,7 +17,7 @@ module_logger = logging.getLogger(__name__)
 class BaseProperty(dict):
     """Base class for entity classes to be used as value of JobResourceConfiguration.properties."""
 
-    def __init__(self, **kwargs: Any):
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__()
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -31,8 +31,9 @@ class BaseProperty(dict):
     def __getattr__(self, key: str) -> Any:
         if key.startswith("_"):
             super().__getattribute__(key)
-        else:
-            return self[key]
+            return None
+
+        return self[key]
 
     def __repr__(self) -> str:
         return json.dumps(self.as_dict())
@@ -45,8 +46,8 @@ class BaseProperty(dict):
         return False
 
     def as_dict(self) -> Dict[str, Any]:
-        """Return a dict representation of the object."""
-        return self._to_dict(self)
+        res: dict = self._to_dict(self)
+        return res
 
     @classmethod
     def _to_dict(cls, obj: Any) -> Any:
@@ -80,35 +81,34 @@ class Properties(BaseProperty):
                 key = self._KEY_MAPPING[key.lower()]
             result[key] = value
         # recursively convert Ordered Dict to dictionary
-        return convert_ordered_dict_to_dict(result)
+        return cast(dict, convert_ordered_dict_to_dict(result))
 
 
 class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
-    """Class for job resource, inherited and extended functionalities from ResourceConfiguration.
+    """Job resource configuration class, inherited and extended functionalities from ResourceConfiguration.
 
-    :param locations: A list of locations where the job can run.
-    :type locations: list[str]
-    :param instance_count: The number of instances or nodes used by the compute target.
-    :type instance_count: int
-    :param instance_type: The type of VM to be used, as supported by the compute target.
-    :type instance_type: str
-    :param properties: A dictionary of properties for the job.
-    :type properties: dict[str, Any]
-    :param docker_args: Extra arguments to pass to the Docker run command. This would override any
-     parameters that have already been set by the system, or in this section. This parameter is only
-     supported for Azure ML compute types.
-    :type docker_args: str
-    :param shm_size: The size of the docker container's shared memory block. This should be in the
-     format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
-     b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
-    :type shm_size: str
-    :param max_instance_count: The maximum number of instances or nodes used by the compute target.
-    :type max_instance_count: int
-    :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict[str, Any]
+    :keyword locations: A list of locations where the job can run.
+    :paramtype locations: Optional[List[str]]
+    :keyword instance_count: The number of instances or nodes used by the compute target.
+    :paramtype instance_count: Optional[int]
+    :keyword instance_type: The type of VM to be used, as supported by the compute target.
+    :paramtype instance_type: Optional[str]
+    :keyword properties: A dictionary of properties for the job.
+    :paramtype properties: Optional[dict[str, Any]]
+    :keyword docker_args: Extra arguments to pass to the Docker run command. This would override any
+        parameters that have already been set by the system, or in this section. This parameter is only
+        supported for Azure ML compute types.
+    :paramtype docker_args: Optional[str]
+    :keyword shm_size: The size of the docker container's shared memory block. This should be in the
+        format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
+        b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
+    :paramtype shm_size: Optional[str]
+    :keyword max_instance_count: The maximum number of instances or nodes used by the compute target.
+    :paramtype max_instance_count: Optional[int]
+    :keyword kwargs: A dictionary of additional configuration parameters.
+    :paramtype kwargs: dict
 
     .. admonition:: Example:
-        :class: tip
 
         .. literalinclude:: ../samples/ml_samples_command_configurations.py
             :start-after: [START command_job_resource_configuration]
@@ -119,16 +119,16 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
     """
 
     def __init__(
-        self,
+        self,  # pylint: disable=unused-argument
         *,
         locations: Optional[List[str]] = None,
         instance_count: Optional[int] = None,
-        instance_type: Optional[str] = None,
-        properties: Optional[Dict[str, Any]] = None,
+        instance_type: Optional[Union[str, List]] = None,
+        properties: Optional[Union[Properties, Dict]] = None,
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
         max_instance_count: Optional[int] = None,
-        **kwargs  # pylint: disable=unused-argument
+        **kwargs: Any
     ) -> None:
         self.locations = locations
         self.instance_count = instance_count
@@ -140,7 +140,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         self.properties = properties
 
     @property
-    def properties(self) -> Properties:
+    def properties(self) -> Optional[Union[Properties, Dict]]:
         """The properties of the job.
 
         :rtype: ~azure.ai.ml.entities._job.job_resource_configuration.Properties
@@ -148,7 +148,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         return self._properties
 
     @properties.setter
-    def properties(self, properties: Dict[str, Any]):
+    def properties(self, properties: Dict[str, Any]) -> None:
         """Sets the properties of the job.
 
         :param properties: A dictionary of properties for the job.
@@ -168,7 +168,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
             instance_count=self.instance_count,
             instance_type=self.instance_type,
             max_instance_count=self.max_instance_count,
-            properties=self.properties.as_dict(),
+            properties=self.properties.as_dict() if isinstance(self.properties, Properties) else None,
             docker_args=self.docker_args,
             shm_size=self.shm_size,
         )

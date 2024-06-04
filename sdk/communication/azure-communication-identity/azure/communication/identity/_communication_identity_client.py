@@ -5,14 +5,13 @@
 # ------------------------------------
 
 from typing import TYPE_CHECKING, Any, Tuple, Union
-
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import AccessToken
-
 from ._generated._client import (
     CommunicationIdentityClient as CommunicationIdentityClientGen,
 )
-from ._shared.utils import parse_connection_str, get_authentication_policy
+from ._shared.auth_policy_utils import get_authentication_policy
+from ._shared.utils import parse_connection_str
 from ._shared.models import CommunicationUserIdentifier
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
@@ -20,7 +19,6 @@ from ._utils import convert_timedelta_to_mins
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential, AzureKeyCredential
-    from ._generated.models import CommunicationTokenScope
 
 
 class CommunicationIdentityClient(object):
@@ -51,8 +49,8 @@ class CommunicationIdentityClient(object):
         try:
             if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as err:
+            raise ValueError("Account URL must be a string.") from err
 
         if not credential:
             raise ValueError("You need to provide account shared key to authenticate.")
@@ -88,7 +86,10 @@ class CommunicationIdentityClient(object):
                 :caption: Creating the CommunicationIdentityClient from a connection string.
         """
         endpoint, access_key = parse_connection_str(conn_str)
-        return cls(endpoint, access_key, **kwargs)
+
+        # There is logic downstream in method `get_authentication_policy` to handle string credential.
+        # Marking this as type: ignore to resolve mypy warning.
+        return cls(endpoint, access_key, **kwargs)  # type: ignore
 
     @distributed_trace
     def create_user(self, **kwargs):
@@ -98,11 +99,12 @@ class CommunicationIdentityClient(object):
         :return: CommunicationUserIdentifier
         :rtype: ~azure.communication.identity.CommunicationUserIdentifier
         """
-        return self._identity_service_client.communication_identity.create(
-            cls=lambda pr, u, e: CommunicationUserIdentifier(
-                u.identity.id, raw_id=u.identity.id
-            ),
-            **kwargs
+        identity_access_token = (
+            self._identity_service_client.communication_identity.create(**kwargs)
+        )
+
+        return CommunicationUserIdentifier(
+            identity_access_token.identity.id, raw_id=identity_access_token.identity.id
         )
 
     @distributed_trace
@@ -128,14 +130,19 @@ class CommunicationIdentityClient(object):
             "createTokenWithScopes": scopes,
             "expiresInMinutes": convert_timedelta_to_mins(token_expires_in),
         }
-        return self._identity_service_client.communication_identity.create(
-            cls=lambda pr, u, e: (
-                CommunicationUserIdentifier(u.identity.id, raw_id=u.identity.id),
-                AccessToken(u.access_token.token, u.access_token.expires_on),
-            ),
-            body=request_body,
-            **kwargs
+        identity_access_token = self._identity_service_client.communication_identity.create(
+            body=request_body, **kwargs  # type: ignore
         )
+
+        user_identifier = CommunicationUserIdentifier(
+            identity_access_token.identity.id, raw_id=identity_access_token.identity.id
+        )
+        access_token = AccessToken(
+            identity_access_token.access_token.token,
+            identity_access_token.access_token.expires_on,
+        )
+
+        return user_identifier, access_token
 
     @distributed_trace
     def delete_user(
@@ -181,12 +188,11 @@ class CommunicationIdentityClient(object):
             "expiresInMinutes": convert_timedelta_to_mins(token_expires_in),
         }
 
-        return self._identity_service_client.communication_identity.issue_access_token(
-            user.properties["id"],
-            body=request_body,
-            cls=lambda pr, u, e: AccessToken(u.token, u.expires_on),
-            **kwargs
+        access_token = self._identity_service_client.communication_identity.issue_access_token(
+            user.properties["id"], body=request_body, **kwargs  # type: ignore
         )
+
+        return AccessToken(access_token.token, access_token.expires_on)
 
     @distributed_trace
     def revoke_tokens(
@@ -202,10 +208,8 @@ class CommunicationIdentityClient(object):
         :return: None
         :rtype: None
         """
-        return (
-            self._identity_service_client.communication_identity.revoke_access_tokens(
-                user.properties["id"] if user else None, **kwargs
-            )
+        return self._identity_service_client.communication_identity.revoke_access_tokens(
+            user.properties["id"] if user else None, **kwargs  # type: ignore
         )
 
     @distributed_trace
@@ -237,8 +241,8 @@ class CommunicationIdentityClient(object):
             "userId": user_object_id,
         }
 
-        return self._identity_service_client.communication_identity.exchange_teams_user_access_token(
-            body=request_body,
-            cls=lambda pr, u, e: AccessToken(u.token, u.expires_on),
-            **kwargs
+        access_token = self._identity_service_client.communication_identity.exchange_teams_user_access_token(
+            body=request_body, **kwargs  # type: ignore
         )
+
+        return AccessToken(access_token.token, access_token.expires_on)

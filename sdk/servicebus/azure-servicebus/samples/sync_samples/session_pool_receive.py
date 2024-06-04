@@ -7,6 +7,7 @@
 import os
 import uuid
 import concurrent
+from typing import List
 
 from azure.servicebus import ServiceBusClient, ServiceBusMessage, AutoLockRenewer, NEXT_AVAILABLE_SESSION
 from azure.servicebus.exceptions import OperationTimeoutError
@@ -19,6 +20,7 @@ SESSION_QUEUE_NAME = os.environ["SERVICEBUS_SESSION_QUEUE_NAME"]
 def message_processing(sb_client, queue_name, messages):
     while True:
         try:
+            # max_wait_time below is the maximum time the receiver will wait to connect to a session and to receive messages from the service
             with sb_client.get_queue_receiver(queue_name, max_wait_time=1, session_id=NEXT_AVAILABLE_SESSION) as receiver:
                 renewer = AutoLockRenewer()
                 renewer.register(receiver, receiver.session)
@@ -56,7 +58,7 @@ def sample_session_send_receive_with_pool(connection_string, queue_name):
                     message = ServiceBusMessage("Sample message no. {}".format(i), session_id=session_id)
                     sender.send_messages(message)
 
-        all_messages = []
+        all_messages: List = []
         futures = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=concurrent_receivers) as thread_pool:
             for _ in range(concurrent_receivers):

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from pathlib import Path
+from typing import Optional
 
 from ...constants._common import AzureDevopsArtifactsType
 from ...entities._component._additional_includes import AdditionalIncludes
@@ -17,7 +18,7 @@ class InternalAdditionalIncludes(AdditionalIncludes):
         return self.origin_configs
 
     @property
-    def code_path(self) -> Path:
+    def code_path(self) -> Optional[Path]:
         return self.resolved_code_path
 
     @property

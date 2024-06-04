@@ -11,7 +11,7 @@ import azure.mgmt.media
 import azure.mgmt.storage
 
 from devtools_testutils import (
-    AzureMgmtTestCase, ResourceGroupPreparer,
+    AzureMgmtRecordedTestCase, ResourceGroupPreparer,
     StorageAccountPreparer, FakeStorageAccount,
 )
 
@@ -28,7 +28,7 @@ FAKE_STORAGE = FakeStorageAccount(
 )
 
 raise unittest.SkipTest("Skipping all tests")
-class MgmtMediaTest(AzureMgmtTestCase):
+class TestMgmtMedia(AzureMgmtRecordedTestCase):
 
     def setUp(self):
         super(MgmtMediaTest, self).setUp()

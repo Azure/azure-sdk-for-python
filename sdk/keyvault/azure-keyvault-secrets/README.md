@@ -22,7 +22,7 @@ create, manage, and deploy public and private SSL/TLS certificates
 ## _Disclaimer_
 
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_.
-_Python 3.7 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)._
+_Python 3.8 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)._
 
 ## Getting started
 ### Install packages
@@ -36,7 +36,7 @@ authentication as demonstrated below.
 
 ### Prerequisites
 * An [Azure subscription][azure_sub]
-* Python 3.7 or later
+* Python 3.8 or later
 * An existing [Azure Key Vault][azure_keyvault]. If you need to create one, you can do so using the Azure CLI by following the steps in [this document][azure_keyvault_cli].
 
 ### Authenticate the client
@@ -313,12 +313,11 @@ secret_client.get_secret("my-secret", logging_enable=True)
 ## Next steps
 Several samples are available in the Azure SDK for Python GitHub repository.
 These provide example code for additional Key Vault scenarios:
-| File | Description |
-|-------------|-------------|
-| [hello_world.py][hello_world_sample] ([async version][hello_world_async_sample]) | create/get/update/delete secrets |
-| [list_operations.py][list_operations_sample] ([async version][list_operations_async_sample]) | basic list operations for secrets |
-| [backup_restore_operations.py][backup_operations_sample] ([async version][backup_operations_async_sample]) | back up and restore secrets |
-| [recover_purge_operations.py][recover_purge_sample] ([async version][recover_purge_async_sample]) | recover and purge secrets |
+
+- [Create/get/update/delete secrets][hello_world_sample] ([async version][hello_world_async_sample])
+- [Basic list operations for secrets][list_operations_sample] ([async version][list_operations_async_sample])
+- [Back up and restore secrets][backup_operations_sample] ([async version][backup_operations_async_sample])
+- [Recover and purge secrets][recover_purge_sample] ([async version][recover_purge_async_sample])
 
 ###  Additional Documentation
 For more extensive documentation on Azure Key Vault, see the

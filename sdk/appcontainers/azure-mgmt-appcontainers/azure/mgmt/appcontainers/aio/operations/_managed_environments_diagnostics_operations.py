@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -26,6 +26,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._managed_environments_diagnostics_operations import build_get_root_request
+from .._vendor import ContainerAppsAPIClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -63,7 +64,6 @@ class ManagedEnvironmentsDiagnosticsOperations:
         :type resource_group_name: str
         :param environment_name: Name of the Environment. Required.
         :type environment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedEnvironment or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.ManagedEnvironment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -82,21 +82,20 @@ class ManagedEnvironmentsDiagnosticsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ManagedEnvironment] = kwargs.pop("cls", None)
 
-        request = build_get_root_request(
+        _request = build_get_root_request(
             resource_group_name=resource_group_name,
             environment_name=environment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_root.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -109,10 +108,6 @@ class ManagedEnvironmentsDiagnosticsOperations:
         deserialized = self._deserialize("ManagedEnvironment", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_root.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/detectorProperties/rootApi/"
-    }
+        return deserialized  # type: ignore

@@ -170,7 +170,7 @@ import datetime
 import os
 import uuid
 from azure.data.tables import TableServiceClient
-from azure.identity import AzureNamedKeyCredential
+from azure.core.credentials import AzureNamedKeyCredential
 
 entity = {
     "PartitionKey": "pk0001",

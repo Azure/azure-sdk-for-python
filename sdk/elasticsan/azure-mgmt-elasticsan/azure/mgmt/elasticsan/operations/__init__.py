@@ -11,9 +11,12 @@ from ._skus_operations import SkusOperations
 from ._elastic_sans_operations import ElasticSansOperations
 from ._volume_groups_operations import VolumeGroupsOperations
 from ._volumes_operations import VolumesOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._volume_snapshots_operations import VolumeSnapshotsOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -22,6 +25,9 @@ __all__ = [
     "ElasticSansOperations",
     "VolumeGroupsOperations",
     "VolumesOperations",
+    "PrivateEndpointConnectionsOperations",
+    "PrivateLinkResourcesOperations",
+    "VolumeSnapshotsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

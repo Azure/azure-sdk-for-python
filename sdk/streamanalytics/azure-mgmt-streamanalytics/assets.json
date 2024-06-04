@@ -1,0 +1,6 @@
+{
+    "AssetsRepo": "Azure/azure-sdk-assets",
+    "AssetsRepoPrefixPath": "python",
+    "TagPrefix": "python/streamanalytics/azure-mgmt-streamanalytics",
+    "Tag": "python/streamanalytics/azure-mgmt-streamanalytics_f178bd8ce2"
+}

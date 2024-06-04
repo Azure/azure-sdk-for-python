@@ -13,7 +13,7 @@ USAGE:
     1) STORAGE_QUEUE_CONN_STR: The connection string to the Storage account
     3) STORAGE_QUEUE_NAME: The name of the storage queue.
 """
-
+from typing import List
 from azure.core.messaging import CloudEvent
 from azure.storage.queue import QueueServiceClient, BinaryBase64DecodePolicy
 import os
@@ -30,7 +30,7 @@ with QueueServiceClient.from_connection_string(connection_str) as qsc:
         ).peek_messages(max_messages=32)
 
     ## deserialize payload into a list of typed Events
-    events = [CloudEvent.from_json(msg) for msg in payload]
+    events: List[CloudEvent] = [CloudEvent.from_json(msg) for msg in payload]
 
     for event in events:
         print(type(event)) ## CloudEvent

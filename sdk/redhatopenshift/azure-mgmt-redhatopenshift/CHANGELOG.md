@@ -1,5 +1,19 @@
 # Release History
 
+## 1.4.0 (2023-10-23)
+
+### Features Added
+
+  - Model NetworkProfile has a new parameter preconfigured_nsg
+  - Model OpenShiftCluster has a new parameter worker_profiles_status
+  - Model OpenShiftClusterUpdate has a new parameter worker_profiles_status
+
+## 1.3.0 (2023-08-18)
+
+### Features Added
+
+  - Model NetworkProfile has a new parameter outbound_type
+
 ## 1.3.0b1 (2023-02-16)
 
 ### Other Changes

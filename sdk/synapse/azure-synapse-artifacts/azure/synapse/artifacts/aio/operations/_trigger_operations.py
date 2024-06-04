@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -67,7 +67,6 @@ class TriggerOperations:
     def get_triggers_by_workspace(self, **kwargs: Any) -> AsyncIterable["_models.TriggerResource"]:
         """Lists triggers.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either TriggerResource or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.synapse.artifacts.models.TriggerResource]
@@ -90,31 +89,30 @@ class TriggerOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_triggers_by_workspace_request(
+                _request = build_get_triggers_by_workspace_request(
                     api_version=api_version,
-                    template_url=self.get_triggers_by_workspace.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("TriggerListResponse", pipeline_response)
@@ -124,11 +122,11 @@ class TriggerOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -139,8 +137,6 @@ class TriggerOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    get_triggers_by_workspace.metadata = {"url": "/triggers"}
 
     async def _create_or_update_trigger_initial(
         self, trigger_name: str, properties: _models.Trigger, if_match: Optional[str] = None, **kwargs: Any
@@ -163,25 +159,24 @@ class TriggerOperations:
         _trigger = _models.TriggerResource(properties=properties)
         _json = self._serialize.body(_trigger, "TriggerResource")
 
-        request = build_create_or_update_trigger_request(
+        _request = build_create_or_update_trigger_request(
             trigger_name=trigger_name,
             if_match=if_match,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._create_or_update_trigger_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -195,11 +190,9 @@ class TriggerOperations:
             deserialized = self._deserialize("TriggerResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _create_or_update_trigger_initial.metadata = {"url": "/triggers/{triggerName}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_create_or_update_trigger(
@@ -214,14 +207,6 @@ class TriggerOperations:
         :param if_match: ETag of the trigger entity.  Should only be specified for update, for which it
          should match existing entity or can be * for unconditional update. Default value is None.
         :type if_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either TriggerResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.TriggerResource]
@@ -253,7 +238,7 @@ class TriggerOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("TriggerResource", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -270,15 +255,15 @@ class TriggerOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.TriggerResource].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update_trigger.metadata = {"url": "/triggers/{triggerName}"}
+        return AsyncLROPoller[_models.TriggerResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def get_trigger(
@@ -292,7 +277,6 @@ class TriggerOperations:
          matches the existing entity tag, or if * was provided, then no content will be returned.
          Default value is None.
         :type if_none_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TriggerResource or None or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.TriggerResource or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -311,23 +295,22 @@ class TriggerOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[Optional[_models.TriggerResource]] = kwargs.pop("cls", None)
 
-        request = build_get_trigger_request(
+        _request = build_get_trigger_request(
             trigger_name=trigger_name,
             if_none_match=if_none_match,
             api_version=api_version,
-            template_url=self.get_trigger.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -341,11 +324,9 @@ class TriggerOperations:
             deserialized = self._deserialize("TriggerResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_trigger.metadata = {"url": "/triggers/{triggerName}"}
+        return deserialized  # type: ignore
 
     async def _delete_trigger_initial(  # pylint: disable=inconsistent-return-statements
         self, trigger_name: str, **kwargs: Any
@@ -364,22 +345,21 @@ class TriggerOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_trigger_request(
+        _request = build_delete_trigger_request(
             trigger_name=trigger_name,
             api_version=api_version,
-            template_url=self._delete_trigger_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -389,9 +369,7 @@ class TriggerOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_trigger_initial.metadata = {"url": "/triggers/{triggerName}"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_delete_trigger(self, trigger_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -399,14 +377,6 @@ class TriggerOperations:
 
         :param trigger_name: The trigger name. Required.
         :type trigger_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -432,7 +402,7 @@ class TriggerOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -448,15 +418,13 @@ class TriggerOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete_trigger.metadata = {"url": "/triggers/{triggerName}"}
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _subscribe_trigger_to_events_initial(
         self, trigger_name: str, **kwargs: Any
@@ -475,22 +443,21 @@ class TriggerOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[Optional[_models.TriggerSubscriptionOperationStatus]] = kwargs.pop("cls", None)
 
-        request = build_subscribe_trigger_to_events_request(
+        _request = build_subscribe_trigger_to_events_request(
             trigger_name=trigger_name,
             api_version=api_version,
-            template_url=self._subscribe_trigger_to_events_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -504,11 +471,9 @@ class TriggerOperations:
             deserialized = self._deserialize("TriggerSubscriptionOperationStatus", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _subscribe_trigger_to_events_initial.metadata = {"url": "/triggers/{triggerName}/subscribeToEvents"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_subscribe_trigger_to_events(
@@ -518,14 +483,6 @@ class TriggerOperations:
 
         :param trigger_name: The trigger name. Required.
         :type trigger_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either TriggerSubscriptionOperationStatus
          or the result of cls(response)
         :rtype:
@@ -554,7 +511,7 @@ class TriggerOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("TriggerSubscriptionOperationStatus", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -571,15 +528,15 @@ class TriggerOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.TriggerSubscriptionOperationStatus].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_subscribe_trigger_to_events.metadata = {"url": "/triggers/{triggerName}/subscribeToEvents"}
+        return AsyncLROPoller[_models.TriggerSubscriptionOperationStatus](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def get_event_subscription_status(
@@ -589,7 +546,6 @@ class TriggerOperations:
 
         :param trigger_name: The trigger name. Required.
         :type trigger_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TriggerSubscriptionOperationStatus or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.TriggerSubscriptionOperationStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -608,22 +564,21 @@ class TriggerOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[_models.TriggerSubscriptionOperationStatus] = kwargs.pop("cls", None)
 
-        request = build_get_event_subscription_status_request(
+        _request = build_get_event_subscription_status_request(
             trigger_name=trigger_name,
             api_version=api_version,
-            template_url=self.get_event_subscription_status.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -635,11 +590,9 @@ class TriggerOperations:
         deserialized = self._deserialize("TriggerSubscriptionOperationStatus", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_event_subscription_status.metadata = {"url": "/triggers/{triggerName}/getEventSubscriptionStatus"}
+        return deserialized  # type: ignore
 
     async def _unsubscribe_trigger_from_events_initial(
         self, trigger_name: str, **kwargs: Any
@@ -658,22 +611,21 @@ class TriggerOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[Optional[_models.TriggerSubscriptionOperationStatus]] = kwargs.pop("cls", None)
 
-        request = build_unsubscribe_trigger_from_events_request(
+        _request = build_unsubscribe_trigger_from_events_request(
             trigger_name=trigger_name,
             api_version=api_version,
-            template_url=self._unsubscribe_trigger_from_events_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -687,11 +639,9 @@ class TriggerOperations:
             deserialized = self._deserialize("TriggerSubscriptionOperationStatus", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _unsubscribe_trigger_from_events_initial.metadata = {"url": "/triggers/{triggerName}/unsubscribeFromEvents"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_unsubscribe_trigger_from_events(
@@ -701,14 +651,6 @@ class TriggerOperations:
 
         :param trigger_name: The trigger name. Required.
         :type trigger_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either TriggerSubscriptionOperationStatus
          or the result of cls(response)
         :rtype:
@@ -737,7 +679,7 @@ class TriggerOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("TriggerSubscriptionOperationStatus", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -754,15 +696,15 @@ class TriggerOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.TriggerSubscriptionOperationStatus].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_unsubscribe_trigger_from_events.metadata = {"url": "/triggers/{triggerName}/unsubscribeFromEvents"}
+        return AsyncLROPoller[_models.TriggerSubscriptionOperationStatus](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _start_trigger_initial(  # pylint: disable=inconsistent-return-statements
         self, trigger_name: str, **kwargs: Any
@@ -781,22 +723,21 @@ class TriggerOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_start_trigger_request(
+        _request = build_start_trigger_request(
             trigger_name=trigger_name,
             api_version=api_version,
-            template_url=self._start_trigger_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -806,9 +747,7 @@ class TriggerOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _start_trigger_initial.metadata = {"url": "/triggers/{triggerName}/start"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_start_trigger(self, trigger_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -816,14 +755,6 @@ class TriggerOperations:
 
         :param trigger_name: The trigger name. Required.
         :type trigger_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -849,7 +780,7 @@ class TriggerOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -865,15 +796,13 @@ class TriggerOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_start_trigger.metadata = {"url": "/triggers/{triggerName}/start"}
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _stop_trigger_initial(  # pylint: disable=inconsistent-return-statements
         self, trigger_name: str, **kwargs: Any
@@ -892,22 +821,21 @@ class TriggerOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_stop_trigger_request(
+        _request = build_stop_trigger_request(
             trigger_name=trigger_name,
             api_version=api_version,
-            template_url=self._stop_trigger_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -917,9 +845,7 @@ class TriggerOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _stop_trigger_initial.metadata = {"url": "/triggers/{triggerName}/stop"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_stop_trigger(self, trigger_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -927,14 +853,6 @@ class TriggerOperations:
 
         :param trigger_name: The trigger name. Required.
         :type trigger_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -960,7 +878,7 @@ class TriggerOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -976,12 +894,10 @@ class TriggerOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_stop_trigger.metadata = {"url": "/triggers/{triggerName}/stop"}
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

@@ -1,26 +1,31 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from typing import Dict, Optional, Union
+
+from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._builders.do_while import DoWhile
+from azure.ai.ml.entities._builders.pipeline import Pipeline
+from azure.ai.ml.entities._inputs_outputs import Output
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput
 
 
-def do_while(body, mapping, max_iteration_count: int, condition=None):
-    """Build a do_while node by specifying the loop body, output-input mapping and termination condition.
+def do_while(
+    body: Union[Pipeline, Command], mapping: Dict, max_iteration_count: int, condition: Optional[Output] = None
+) -> DoWhile:
+    """Build a do_while node by specifying the loop body, output-input mapping, and termination condition.
 
-    .. remarks::
-        The following example shows how to use do_while function to create a pipeline with do_while node.
+    .. note::
+        The following example shows how to use the `do_while` function to create a pipeline with a `do_while` node.
 
         .. code-block:: python
 
             from azure.ai.ml.dsl import pipeline
             from mldesigner.dsl import do_while
 
-
             @pipeline()
             def your_do_while_body():
                 pass
-
 
             @pipeline()
             def pipeline_with_do_while_node():
@@ -41,26 +46,31 @@ def do_while(body, mapping, max_iteration_count: int, condition=None):
                     input1=do_while_body.outputs.output1, input2=do_while_body.outputs.output2
                 )
 
-    :param body: Pipeline job or command node for the do-while loop body.
-    :type body: Union[Pipeline, Command]
-    :param mapping: Output-Input mapping for reach round of the do-while loop.
-                    Key is the last round output of the body. Value is the input port for current body.
-    :type mapping: Dict[Union[str, Output], Union[str, Input, List]]
-    :param max_iteration_count: limits in running the do-while node.
+    :param body: The pipeline job or command node for the do-while loop body.
+    :type body: Union[~azure.ai.ml.entities._builders.pipeline.Pipeline, ~azure.ai.ml.entities._builders.Command]
+    :param mapping: The output-input mapping for each round of the do-while loop.
+        The key is the last round's output of the body, and the value is the input port for the current body.
+    :type mapping: Dict[
+        Union[str,  ~azure.ai.ml.entities.Output],
+        Union[str, ~azure.ai.ml.entities.Input, List]]
+    :param max_iteration_count: The limit on running the do-while node.
     :type max_iteration_count: int
-    :param condition: Name of a boolean output of body, do-while loop stops if its value is evaluated to be negative;
-                      If not specified, handle as while true.
-    :type condition: Output
+    :param condition: The name of a boolean output of the body.
+        The do-while loop stops if its value is evaluated to be negative.
+        If not specified, it handles as a while-true loop.
+    :type condition:  ~azure.ai.ml.entities.Output
+    :return: The do-while node.
+    :rtype: ~azure.ai.ml.entities._builders.do_while.DoWhile
     """
     do_while_node = DoWhile(
         body=body,
-        condition=condition,
+        condition=condition,  # type: ignore[arg-type]
         mapping=mapping,
         _from_component_func=True,
     )
     do_while_node.set_limits(max_iteration_count=max_iteration_count)
 
-    def _infer_and_update_body_input_from_mapping():
+    def _infer_and_update_body_input_from_mapping() -> None:
         # pylint: disable=protected-access
         for source_output, body_input in mapping.items():
             # handle case that mapping key is a NodeOutput
@@ -81,8 +91,8 @@ def do_while(body, mapping, max_iteration_count: int, condition=None):
                 single_input.type = inferred_type
                 # update node corresponding component input
                 input_name = single_input._meta.name
-                body.component.inputs[input_name]._is_inferred_optional = True
-                body.component.inputs[input_name].type = inferred_type
+                body.component.inputs[input_name]._is_inferred_optional = True  # type: ignore[union-attr]
+                body.component.inputs[input_name].type = inferred_type  # type: ignore[union-attr]
 
     # when mapping is a dictionary, infer and update for dynamic input
     if isinstance(mapping, dict):

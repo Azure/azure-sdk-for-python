@@ -1,0 +1,62 @@
+name: generation-safety-quality-test
+trigger:
+  type: recurrence
+  frequency: week
+  time_zone: utc
+  interval: 1
+  schedule:
+    hours:
+      - 22
+      - 20
+    minutes:
+      - 0
+      - 30
+    week_days:
+      - monday
+      - tuesday
+      - wednesday
+      - thursday
+      - friday
+create_monitor:
+  compute:
+    instance_type: "standard_e8s_v3"
+    runtime_version: "3.3"
+  monitoring_target:
+    ml_task: classification
+    endpoint_deployment_id: fake_endpoint_id
+  monitoring_signals:
+    testSignal:
+      type: generation_safety_quality
+      alert_enabled: true
+      production_data:
+        - input_data:
+            path: azureml:my_model_inputs_data:1
+            type: mltable
+          data_window:
+            lookback_window_size: P7D
+            lookback_window_offset: P0D
+          data_column_names:
+            correlation_id: inference_correlation_id
+        - input_data:
+            path: azureml:my_model_outputs_data:1
+            type: mltable
+          data_window:
+            lookback_window_size: P7D
+            lookback_window_offset: P0D
+          data_column_names:
+            prediction: is_fraud
+            prediction_probability: is_fraud_probability
+            correlation_id: inference_correlation_id
+      connection_id: fake_workspace_connection_id
+      sampling_rate: 1
+      metric_thresholds:
+        groundedness:
+          aggregated_groundedness_pass_rate: 0.01
+          acceptable_groundedness_score_per_instance: 3
+        fluency:
+          aggregated_fluency_pass_rate: 0.02
+          acceptable_fluency_score_per_instance: 3
+properties:
+  prop1: value
+tags:
+  tag1: tag

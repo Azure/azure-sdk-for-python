@@ -12,7 +12,7 @@ from typing import Any, TYPE_CHECKING
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
-from . import models
+from . import models as _models
 from ._configuration import ServiceFabricManagementClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
@@ -23,6 +23,7 @@ from .operations import (
     ClustersOperations,
     Operations,
     ServicesOperations,
+    UnsupportedVmSizesOperations,
 )
 
 if TYPE_CHECKING:
@@ -39,6 +40,8 @@ class ServiceFabricManagementClient:  # pylint: disable=client-accepts-api-versi
     :vartype cluster_versions: azure.mgmt.servicefabric.operations.ClusterVersionsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.servicefabric.operations.Operations
+    :ivar unsupported_vm_sizes: UnsupportedVmSizesOperations operations
+    :vartype unsupported_vm_sizes: azure.mgmt.servicefabric.operations.UnsupportedVmSizesOperations
     :ivar application_types: ApplicationTypesOperations operations
     :vartype application_types: azure.mgmt.servicefabric.operations.ApplicationTypesOperations
     :ivar application_type_versions: ApplicationTypeVersionsOperations operations
@@ -54,8 +57,8 @@ class ServiceFabricManagementClient:  # pylint: disable=client-accepts-api-versi
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2021-06-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-11-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -71,9 +74,9 @@ class ServiceFabricManagementClient:  # pylint: disable=client-accepts-api-versi
         self._config = ServiceFabricManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -82,6 +85,9 @@ class ServiceFabricManagementClient:  # pylint: disable=client-accepts-api-versi
             self._client, self._config, self._serialize, self._deserialize
         )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.unsupported_vm_sizes = UnsupportedVmSizesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.application_types = ApplicationTypesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -113,15 +119,12 @@ class ServiceFabricManagementClient:  # pylint: disable=client-accepts-api-versi
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> ServiceFabricManagementClient
+    def __enter__(self) -> "ServiceFabricManagementClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

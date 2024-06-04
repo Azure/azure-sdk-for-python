@@ -5,7 +5,6 @@ import os
 from pathlib import Path
 from subprocess import check_call
 
-from azure_devtools.ci_tools.git_tools import get_diff_file_list
 from .package_utils import create_package, change_log_generate, extract_breaking_change
 
 _LOGGER = logging.getLogger(__name__)
@@ -61,9 +60,6 @@ def main(generate_input, generate_output):
             "full": "You can install the use using pip install of the artifacts.",
             "lite": f"pip install {package_name}",
         }
-        # to distinguish with track1
-        if "azure-mgmt-" in package_name:
-            package["packageName"] = "track2_" + package["packageName"]
         for artifact in package["artifacts"]:
             if ".whl" in artifact:
                 package["language"] = "Python"

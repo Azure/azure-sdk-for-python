@@ -6,16 +6,19 @@
 
 import json
 import logging
+import os
 import re
+import time
 import typing
 from collections import Counter
-from typing import Dict, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from marshmallow import Schema
 
 from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion, ComponentVersionProperties
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentSchema
+from azure.ai.ml._utils._asset_utils import get_object_hash
 from azure.ai.ml._utils.utils import hash_dict, is_data_binding_expression
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ARM_ID_REGEX_FORMAT, COMPONENT_TYPE
 from azure.ai.ml.constants._component import ComponentSource, NodeType
@@ -25,10 +28,7 @@ from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode, Lo
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-from azure.ai.ml.entities._job.pipeline._attr_dict import (
-    has_attr_safe,
-    try_get_non_arbitrary_attr_for_potential_attr_dict,
-)
+from azure.ai.ml.entities._job.pipeline._attr_dict import has_attr_safe, try_get_non_arbitrary_attr
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.entities._validation import MutableValidationResult
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -37,7 +37,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class PipelineComponent(Component):
-    """Pipeline component, currently used to store components in a azure.ai.ml.dsl.pipeline.
+    """Pipeline component, currently used to store components in an azure.ai.ml.dsl.pipeline.
 
     :param name: Name of the component.
     :type name: str
@@ -49,11 +49,14 @@ class PipelineComponent(Component):
     :type tags: dict
     :param display_name: Display name of the component.
     :type display_name: str
-    :type inputs: Component inputs
-    :param outputs: Outputs of the component.
-    :type outputs: Component outputs
-    :param jobs: Id to components dict inside pipeline definition.
-    :type jobs: OrderedDict[str, Component]
+    :param inputs: Component inputs.
+    :type inputs: dict
+    :param outputs: Component outputs.
+    :type outputs: dict
+    :param jobs: Id to components dict inside the pipeline definition.
+    :type jobs: Dict[str, ~azure.ai.ml.entities._builders.BaseNode]
+    :param is_deterministic: Whether the pipeline component is deterministic.
+    :type is_deterministic: bool
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if PipelineComponent cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -70,8 +73,8 @@ class PipelineComponent(Component):
         outputs: Optional[Dict] = None,
         jobs: Optional[Dict[str, BaseNode]] = None,
         is_deterministic: Optional[bool] = None,
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         kwargs[COMPONENT_TYPE] = NodeType.PIPELINE
         super().__init__(
             name=name,
@@ -81,7 +84,7 @@ class PipelineComponent(Component):
             display_name=display_name,
             inputs=inputs,
             outputs=outputs,
-            is_deterministic=is_deterministic,
+            is_deterministic=is_deterministic,  # type: ignore[arg-type]
             **kwargs,
         )
         self._jobs = self._process_jobs(jobs) if jobs else {}
@@ -91,8 +94,14 @@ class PipelineComponent(Component):
         self._source_job_id = kwargs.pop("source_job_id", None)
         # TODO: set anonymous hash for reuse
 
-    def _process_jobs(self, jobs):
-        """Process and validate jobs."""
+    def _process_jobs(self, jobs: Dict[str, BaseNode]) -> Dict[str, BaseNode]:
+        """Process and validate jobs.
+
+        :param jobs: A map of node name to node
+        :type jobs: Dict[str, BaseNode]
+        :return: The processed jobs
+        :rtype: Dict[str, BaseNode]
+        """
         # Remove swept Command
         node_names_to_skip = []
         for node_name, job_instance in jobs.items():
@@ -118,7 +127,11 @@ class PipelineComponent(Component):
         return jobs
 
     def _customized_validate(self) -> MutableValidationResult:
-        """Validate pipeline component structure."""
+        """Validate pipeline component structure.
+
+        :return: The validation result
+        :rtype: MutableValidationResult
+        """
         validation_result = super(PipelineComponent, self)._customized_validate()
 
         # Validate inputs
@@ -151,7 +164,7 @@ class PipelineComponent(Component):
 
         return validation_result
 
-    def _validate_compute_is_set(self, *, parent_node_name=None):
+    def _validate_compute_is_set(self, *, parent_node_name: Optional[str] = None) -> MutableValidationResult:
         """Validate compute in pipeline component.
 
         This function will only be called from pipeline_job._validate_compute_is_set
@@ -161,6 +174,11 @@ class PipelineComponent(Component):
         - For general node:
             - If _skip_required_compute_missing_validation is True, validation will be skipped.
             - All the rest of cases without compute will add compute not set error to validation result.
+
+        :keyword parent_node_name: The name of the parent node.
+        :type parent_node_name: Optional[str]
+        :return: The validation result
+        :rtype: MutableValidationResult
         """
 
         # Note: do not put this into customized validate, as we would like call
@@ -186,11 +204,18 @@ class PipelineComponent(Component):
         return validation_result
 
     def _get_input_binding_dict(self, node: BaseNode) -> Tuple[dict, dict]:
-        """Return the input binding dict for each node."""
+        """Return the input binding dict for each node.
+
+        :param node: The node
+        :type node: BaseNode
+        :return: A 2-tuple of (binding_dict, optional_binding_in_expression_dict)
+        :rtype: Tuple[dict, dict]
+        """
         # pylint: disable=too-many-nested-blocks
         binding_inputs = node._build_inputs()
         # Collect binding relation dict {'pipeline_input': ['node_input']}
-        binding_dict, optional_binding_in_expression_dict = {}, {}
+        binding_dict: dict = {}
+        optional_binding_in_expression_dict: dict = {}
         for component_input_name, component_binding_input in binding_inputs.items():
             if isinstance(component_binding_input, PipelineExpression):
                 for pipeline_input_name in component_binding_input._inputs.keys():
@@ -207,7 +232,7 @@ class PipelineComponent(Component):
                     component_binding_input = component_binding_input.path
                 if is_data_binding_expression(component_binding_input, ["parent"]):
                     # data binding may have more than one PipelineInput now
-                    for pipeline_input_name in PipelineExpression.parse_pipeline_input_names_from_data_binding(
+                    for pipeline_input_name in PipelineExpression.parse_pipeline_inputs_from_data_binding(
                         component_binding_input
                     ):
                         if pipeline_input_name not in self.inputs:
@@ -227,6 +252,11 @@ class PipelineComponent(Component):
 
         Mark input as optional if all binding is optional and optional not set. Raise error if pipeline input is
         optional but link to required inputs.
+
+        :param node: The node to validate
+        :type node: BaseNode
+        :return: The validation result
+        :rtype: MutableValidationResult
         """
         component_definition_inputs = {}
         # Add flattened group input into definition inputs.
@@ -247,7 +277,7 @@ class PipelineComponent(Component):
                 # not check optional/required for pipeline input used in pipeline expression
                 if name in optional_binding_in_expression_dict.get(pipeline_input_name, []):
                     continue
-                if component_definition_inputs[name].optional is not True:
+                if name in component_definition_inputs and component_definition_inputs[name].optional is not True:
                     required_bindings.append(f"{node.name}.inputs.{name}")
             if pipeline_input.optional is None and not required_bindings:
                 # Set input as optional if all binding is optional and optional not set.
@@ -265,9 +295,16 @@ class PipelineComponent(Component):
                     )
         return validation_result
 
-    def _get_job_type_and_source(self):
-        """Get job type and source for telemetry."""
-        job_types, job_sources = [], []
+    def _get_job_type_and_source(self) -> Tuple[Dict[str, int], Dict[str, int]]:
+        """Get job types and sources for telemetry.
+
+        :return: A 2-tuple of
+          * A map of job type to the number of occurrences
+          * A map of job source to the number of occurrences
+        :rtype: Tuple[Dict[str, int], Dict[str, int]]
+        """
+        job_types: list = []
+        job_sources = []
         for job in self.jobs.values():
             job_types.append(job.type)
             if isinstance(job, BaseNode):
@@ -283,18 +320,47 @@ class PipelineComponent(Component):
 
     @property
     def jobs(self) -> Dict[str, BaseNode]:
-        """Return a dictionary from component variable name to component object."""
+        """Return a dictionary from component variable name to component object.
+
+        :return: Dictionary mapping component variable names to component objects.
+        :rtype: Dict[str, ~azure.ai.ml.entities._builders.BaseNode]
+        """
         return self._jobs
 
     def _get_anonymous_hash(self) -> str:
-        """Get anonymous hash for pipeline component."""
+        """Get anonymous hash for pipeline component.
+
+        :return: The anonymous hash of the pipeline component
+        :rtype: str
+        """
         # ideally we should always use rest object to generate hash as it's the same as
         # what we send to server-side, but changing the hash function will break reuse of
         # existing components except for command component (hash result is the same for
         # command component), so we just use rest object to generate hash for pipeline component,
         # which doesn't have reuse issue.
         component_interface_dict = self._to_rest_object().properties.component_spec
-        hash_value = hash_dict(
+        # Hash local inputs in pipeline component jobs
+        for job_name, job in self.jobs.items():
+            if getattr(job, "inputs", None):
+                for input_name, input_value in job.inputs.items():
+                    try:
+                        if (
+                            isinstance(input_value._data, Input)
+                            and input_value.path
+                            and os.path.exists(input_value.path)
+                        ):
+                            start_time = time.time()
+                            component_interface_dict["jobs"][job_name]["inputs"][input_name]["content_hash"] = (
+                                get_object_hash(input_value.path)
+                            )
+                            module_logger.debug(
+                                "Takes %s seconds to calculate the content hash of local input %s",
+                                time.time() - start_time,
+                                input_value.path,
+                            )
+                    except ValidationException:
+                        pass
+        hash_value: str = hash_dict(
             component_interface_dict,
             keys_to_omit=[
                 # omit name since anonymous component will have same name
@@ -310,7 +376,7 @@ class PipelineComponent(Component):
         return hash_value
 
     @classmethod
-    def _load_from_rest_pipeline_job(cls, data: Dict):
+    def _load_from_rest_pipeline_job(cls, data: Dict) -> "PipelineComponent":
         # TODO: refine this?
         # Set type as None here to avoid schema validation failed
         definition_inputs = {p: {"type": None} for p in data.get("inputs", {}).keys()}
@@ -325,7 +391,7 @@ class PipelineComponent(Component):
         )
 
     @classmethod
-    def _resolve_sub_nodes(cls, rest_jobs):
+    def _resolve_sub_nodes(cls, rest_jobs: Dict) -> Dict:
         from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
 
         sub_nodes = {}
@@ -347,7 +413,7 @@ class PipelineComponent(Component):
         return sub_nodes
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         return PipelineComponentSchema(context=context)
 
     @classmethod
@@ -356,21 +422,23 @@ class PipelineComponent(Component):
         return ["jobs"]
 
     @classmethod
-    def _check_ignored_keys(cls, obj):
-        """Return ignored keys in obj as a pipeline component when its value be set."""
+    def _check_ignored_keys(cls, obj: object) -> List[str]:
+        """Return ignored keys in obj as a pipeline component when its value be set.
+
+        :param obj: The object to examine
+        :type obj: object
+        :return: List of keys to ignore
+        :rtype: List[str]
+        """
         examine_mapping = {
             "compute": lambda val: val is not None,
             "settings": lambda val: val is not None and any(v is not None for v in val._to_dict().values()),
         }
         # Avoid new attr added by use `try_get_non...` instead of `hasattr` or `getattr` directly.
-        return [
-            k
-            for k, has_set in examine_mapping.items()
-            if has_set(try_get_non_arbitrary_attr_for_potential_attr_dict(obj, k))
-        ]
+        return [k for k, has_set in examine_mapping.items() if has_set(try_get_non_arbitrary_attr(obj, k))]
 
-    def _get_telemetry_values(self, *args, **kwargs):
-        telemetry_values = super()._get_telemetry_values()
+    def _get_telemetry_values(self, *args: Any, **kwargs: Any) -> Dict:
+        telemetry_values: dict = super()._get_telemetry_values()
         telemetry_values.update(
             {
                 "source": self._source,
@@ -385,26 +453,25 @@ class PipelineComponent(Component):
     def _from_rest_object_to_init_params(cls, obj: ComponentVersion) -> Dict:
         # Pop jobs to avoid it goes with schema load
         jobs = obj.properties.component_spec.pop("jobs", None)
-        init_params_dict = super()._from_rest_object_to_init_params(obj)
+        init_params_dict: dict = super()._from_rest_object_to_init_params(obj)
         if jobs:
             try:
                 init_params_dict["jobs"] = PipelineComponent._resolve_sub_nodes(jobs)
-            except Exception as e:  # pylint: disable=broad-except
+            except Exception as e:  # pylint: disable=W0718
                 # Skip parse jobs if error exists.
                 # TODO: https://msdata.visualstudio.com/Vienna/_workitems/edit/2052262
                 module_logger.debug("Parse pipeline component jobs failed with: %s", e)
         return init_params_dict
 
     def _to_dict(self) -> Dict:
-        """Dump the command component content into a dictionary."""
+        return {**self._other_parameter, **super()._to_dict()}
 
-        # Replace the name of $schema to schema.
-        component_schema_dict = self._dump_for_validation()
-        component_schema_dict.pop("base_path", None)
-        return {**self._other_parameter, **component_schema_dict}
+    def _build_rest_component_jobs(self) -> Dict[str, dict]:
+        """Build pipeline component jobs to rest.
 
-    def _build_rest_component_jobs(self):
-        """Build pipeline component jobs to rest."""
+        :return: A map of job name to rest objects
+        :rtype: Dict[str, dict]
+        """
         # Build the jobs to dict
         rest_component_jobs = {}
         for job_name, job in self.jobs.items():
@@ -424,7 +491,11 @@ class PipelineComponent(Component):
         return rest_component_jobs
 
     def _to_rest_object(self) -> ComponentVersion:
-        """Check ignored keys and return rest object."""
+        """Check ignored keys and return rest object.
+
+        :return: The component version
+        :rtype: ComponentVersion
+        """
         ignored_keys = self._check_ignored_keys(self)
         if ignored_keys:
             module_logger.warning("%s ignored on pipeline component %r.", ignored_keys, self.name)
@@ -448,8 +519,10 @@ class PipelineComponent(Component):
         result.name = self.name
         return result
 
-    def __str__(self):
+    def __str__(self) -> str:
         try:
-            return self._to_yaml()
-        except BaseException:  # pylint: disable=broad-except
-            return super(PipelineComponent, self).__str__()
+            toYaml: str = self._to_yaml()
+            return toYaml
+        except BaseException:  # pylint: disable=W0718
+            toStr: str = super(PipelineComponent, self).__str__()
+            return toStr

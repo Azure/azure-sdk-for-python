@@ -26,17 +26,31 @@ from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 def main():
     client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="1234ABCD-0A1B-1234-5678-123456ABCDEF",
     )
 
     response = client.ip_prefixes.begin_update(
-        resource_group_name="resourcegroupname",
+        resource_group_name="example-rg",
         ip_prefix_name="example-ipPrefix",
-        body={"tags": {"key3127": "key"}},
+        body={
+            "properties": {
+                "annotation": "annotation",
+                "ipPrefixRules": [
+                    {
+                        "action": "Permit",
+                        "condition": "GreaterThanOrEqualTo",
+                        "networkPrefix": "10.10.10.10/30",
+                        "sequenceNumber": 4155123341,
+                        "subnetMaskLength": "10",
+                    }
+                ],
+            },
+            "tags": {"keyID": "KeyValue"},
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/IpPrefixes_Update_MaximumSet_Gen.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/stable/2023-06-15/examples/IpPrefixes_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

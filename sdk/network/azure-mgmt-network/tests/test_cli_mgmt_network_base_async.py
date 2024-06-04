@@ -71,7 +71,7 @@ class TestMgmtNetwork(AzureMgmtRecordedAsyncTestCase):
         # Check IP address availability[get]
         IP_ADDRESS = "10.0.0.4"
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.virtual_networks.check_ip_address_availability(resource_group.name, VIRTUAL_NETWORK_NAME, IP_ADDRESS)
+            self.mgmt_client.virtual_networks.check_ip_address_availability(resource_group.name, VIRTUAL_NETWORK_NAME, ip_address=IP_ADDRESS)
         )
 
         # Get subnet[get]

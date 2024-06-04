@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.netapp import NetAppManagementClient
 
 """
@@ -38,7 +41,7 @@ def main():
                 "activeDirectories": [
                     {
                         "aesEncryption": True,
-                        "dns": "10.10.10.3, 10.10.10.4",
+                        "dns": "10.10.10.3",
                         "domain": "10.10.10.3",
                         "ldapOverTLS": False,
                         "ldapSigning": False,
@@ -55,6 +58,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2022-09-01/examples/Accounts_CreateOrUpdateAD.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2023-11-01/examples/Accounts_CreateOrUpdateAD.json
 if __name__ == "__main__":
     main()

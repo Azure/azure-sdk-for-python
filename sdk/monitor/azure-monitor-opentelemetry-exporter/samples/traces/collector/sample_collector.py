@@ -6,6 +6,7 @@ and the Azure monitor exporter.
 Telemetry is exported to application insights with the AzureMonitorTraceExporter and Zipkin with the
 OTLP Span exporter.
 """
+# mypy: disable-error-code="attr-defined"
 import os
 from opentelemetry import trace 
 

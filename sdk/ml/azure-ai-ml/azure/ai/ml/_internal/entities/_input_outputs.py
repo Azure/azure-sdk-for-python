@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, overload
 
 from ... import Input, Output
 from ..._utils.utils import get_all_enum_values_iter
@@ -91,14 +91,31 @@ class InternalInput(Input):
         if self._lower_type in [_INPUT_TYPE_ENUM, _INPUT_TYPE_FLOAT]:
             return self._lower_type
         if self._is_primitive_type:
-            return IOConstants.PRIMITIVE_STR_2_TYPE[self._lower_type].__name__
+            return IOConstants.PRIMITIVE_STR_2_TYPE[self._lower_type].__name__  # type: ignore[index]
+            # TODO: Bug 2881900
         return super()._get_python_builtin_type_str()
 
+    @overload
     @classmethod
-    def _from_base(cls, _input: Union[Input, Dict]) -> Optional["InternalInput"]:
+    def _from_base(cls, _input: None) -> None:  # type: ignore[misc]
+        ...
+
+    @overload
+    @classmethod
+    def _from_base(cls, _input: Union[Input, Dict]) -> "InternalInput": ...
+
+    @classmethod
+    def _from_base(cls, _input: Optional[Union[Input, Dict]]) -> Optional["InternalInput"]:
         """Cast from Input or Dict to InternalInput.
 
         Do not guarantee to create a new object.
+
+        :param _input: The base input
+        :type _input: Union[Input, Dict]
+        :return:
+          * None if _input is None
+          * InternalInput
+        :rtype: Optional["InternalInput"]
         """
         if _input is None:
             return None
@@ -108,16 +125,30 @@ class InternalInput(Input):
             # do force cast directly as there is no new field added in InternalInput
             # need to change the logic if new field is added
             _input.__class__ = InternalInput
-            return _input
+            return _input  # type: ignore[return-value]
         return InternalInput(**_input)
 
 
 def _map_v1_io_type(output_type: str) -> str:
-    """Map v1 IO type to v2."""
+    """Map v1 IO type to v2.
+
+    :param output_type: The v1 IO type
+    :type output_type: str
+    :return: The v2 IO type name
+    :rtype: str
+    """
 
     # TODO: put it in a common place
-    def _map_primitive_type(_type):
-        """Convert double and float to number type."""
+    def _map_primitive_type(_type: str) -> str:
+        """Convert double and float to number type.
+
+        :param _type: A primitive v1 IO type
+        :type _type: str
+        :return:
+          * InputTypes.NUMBER if _type is "double" or "float"
+          * The provided type otherwise
+        :rtype: str
+        """
         _type = _type.lower()
         if _type in ["double", "float"]:
             return InputTypes.NUMBER
@@ -149,10 +180,14 @@ class InternalOutput(Output):
             # do force cast directly as there is no new field added in InternalInput
             # need to change the logic if new field is added
             _output.__class__ = InternalOutput
-            return _output
+            return _output  # type: ignore[return-value]
         return InternalOutput(**_output)
 
-    def map_pipeline_output_type(self):
-        """Map output type to pipeline output type."""
+    def map_pipeline_output_type(self) -> str:
+        """Map output type to pipeline output type.
+
+        :return: The pipeline output type
+        :rtype: str
+        """
         # TODO: call this for node output
         return _map_v1_io_type(self.type)

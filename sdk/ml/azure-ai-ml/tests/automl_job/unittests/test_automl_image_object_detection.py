@@ -12,6 +12,8 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ObjectDetectionPrimaryMetrics,
     SamplingAlgorithmType,
     StochasticOptimizer,
+    LogTrainingMetrics,
+    LogValidationLoss,
 )
 from azure.ai.ml._restclient.v2023_04_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ValidationMetricType
@@ -136,24 +138,38 @@ class TestAutoMLImageObjectDetection:
         "settings, expected",
         [
             (
-                ("adam", "warmup_cosine", "coco_voc", "large"),
+                ("adam", "warmup_cosine", "coco_voc", "large", "enable", "enable"),
                 (
                     StochasticOptimizer.ADAM,
                     LearningRateScheduler.WARMUP_COSINE,
                     ValidationMetricType.COCO_VOC,
                     ModelSize.LARGE,
+                    LogTrainingMetrics.ENABLE,
+                    LogValidationLoss.ENABLE,
                 ),
             ),
             (
-                ("Adam", "WarmupCosine", "CocoVoc", "Large"),
+                ("Adam", "WarmupCosine", "CocoVoc", "Large", "Enable", "Enable"),
                 (
                     StochasticOptimizer.ADAM,
                     LearningRateScheduler.WARMUP_COSINE,
                     ValidationMetricType.COCO_VOC,
                     ModelSize.LARGE,
+                    LogTrainingMetrics.ENABLE,
+                    LogValidationLoss.ENABLE,
                 ),
             ),
-            ((None, None, "coco_voc", "large"), (None, None, ValidationMetricType.COCO_VOC, ModelSize.LARGE)),
+            (
+                (None, None, "coco_voc", "large", "enable", "enable"),
+                (
+                    None,
+                    None,
+                    ValidationMetricType.COCO_VOC,
+                    ModelSize.LARGE,
+                    LogTrainingMetrics.ENABLE,
+                    LogValidationLoss.ENABLE,
+                ),
+            ),
         ],
         ids=["snake case", "camel case", "with None"],
     )
@@ -167,25 +183,33 @@ class TestAutoMLImageObjectDetection:
             learning_rate_scheduler=settings[1],
             validation_metric_type=settings[2],
             model_size=settings[3],
+            log_training_metrics=settings[4],
+            log_validation_loss=settings[5],
         )
         assert image_object_detection_job.training_parameters.optimizer == expected[0]
         assert image_object_detection_job.training_parameters.learning_rate_scheduler == expected[1]
         assert image_object_detection_job.training_parameters.validation_metric_type == expected[2]
         assert image_object_detection_job.training_parameters.model_size == expected[3]
+        assert image_object_detection_job.training_parameters.log_training_metrics == expected[4]
+        assert image_object_detection_job.training_parameters.log_validation_loss == expected[5]
 
     @pytest.mark.parametrize(
         "settings, expected",
         [
-            (("adamW", None, None, None), pytest.raises(KeyError)),
-            ((None, "Warmup_Cosine", None, None), pytest.raises(KeyError)),
-            ((None, None, "Coco_Voc", "large"), pytest.raises(KeyError)),
-            ((None, None, None, "Extra_Large"), pytest.raises(KeyError)),
+            (("adamW", None, None, None, "Enable", "Enable"), pytest.raises(KeyError)),
+            ((None, "Warmup_Cosine", None, None, "Enable", "Enable"), pytest.raises(KeyError)),
+            ((None, None, "Coco_Voc", "large", "Enable", "Enable"), pytest.raises(KeyError)),
+            ((None, None, None, "Extra_Large", "Enable", "Enable"), pytest.raises(KeyError)),
+            ((None, None, None, None, "false", "Enable"), pytest.raises(KeyError)),
+            ((None, None, None, None, "Enable", "false"), pytest.raises(KeyError)),
         ],
         ids=[
             "optimizer invalid",
             "learning rate scheduler invalid",
             "validation metric type invalid",
             "model size invalid",
+            "log_training_metrics invalid",
+            "log_validation_loss invalid",
         ],
     )
     def test_image_set_training_parameters_with_invalid_values(self, settings, expected):
@@ -199,30 +223,46 @@ class TestAutoMLImageObjectDetection:
                 learning_rate_scheduler=settings[1],
                 validation_metric_type=settings[2],
                 model_size=settings[3],
+                log_training_metrics=settings[4],
+                log_validation_loss=settings[5],
             )
 
     @pytest.mark.parametrize(
         "settings, expected",
         [
             (
-                ("adam", "warmup_cosine", "coco_voc", "large"),
+                ("adam", "warmup_cosine", "coco_voc", "large", "enable", "enable"),
                 (
                     StochasticOptimizer.ADAM,
                     LearningRateScheduler.WARMUP_COSINE,
                     ValidationMetricType.COCO_VOC,
                     ModelSize.LARGE,
+                    LogTrainingMetrics.ENABLE,
+                    LogValidationLoss.ENABLE,
                 ),
             ),
             (
-                ("Adam", "WarmupCosine", "CocoVoc", "Large"),
+                ("Adam", "WarmupCosine", "CocoVoc", "Large", "Enable", "Enable"),
                 (
                     StochasticOptimizer.ADAM,
                     LearningRateScheduler.WARMUP_COSINE,
                     ValidationMetricType.COCO_VOC,
                     ModelSize.LARGE,
+                    LogTrainingMetrics.ENABLE,
+                    LogValidationLoss.ENABLE,
                 ),
             ),
-            ((None, None, "coco_voc", "large"), (None, None, ValidationMetricType.COCO_VOC, ModelSize.LARGE)),
+            (
+                (None, None, "coco_voc", "large", "enable", "enable"),
+                (
+                    None,
+                    None,
+                    ValidationMetricType.COCO_VOC,
+                    ModelSize.LARGE,
+                    LogTrainingMetrics.ENABLE,
+                    LogValidationLoss.ENABLE,
+                ),
+            ),
         ],
         ids=["snake case", "camel case", "with None"],
     )
@@ -232,6 +272,8 @@ class TestAutoMLImageObjectDetection:
             learning_rate_scheduler=settings[1],
             validation_metric_type=settings[2],
             model_size=settings[3],
+            log_training_metrics=settings[4],
+            log_validation_loss=settings[5],
         )
         image_object_detection_job = image_object_detection(
             training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
@@ -242,3 +284,5 @@ class TestAutoMLImageObjectDetection:
         assert image_object_detection_job.training_parameters.learning_rate_scheduler == expected[1]
         assert image_object_detection_job.training_parameters.validation_metric_type == expected[2]
         assert image_object_detection_job.training_parameters.model_size == expected[3]
+        assert image_object_detection_job.training_parameters.log_training_metrics == expected[4]
+        assert image_object_detection_job.training_parameters.log_validation_loss == expected[5]

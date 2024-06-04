@@ -107,7 +107,7 @@ async def stress_send_list_async(producer: EventHubProducerClientAsync, args, st
     return len(send_list)
 
 
-class StressTestRunner(object):
+class StressTestRunner:
     def __init__(self, argument_parser):
         self.argument_parser = argument_parser
         self.argument_parser.add_argument("-m", "--method", default="stress_send_list_sync")

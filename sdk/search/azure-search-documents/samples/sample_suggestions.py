@@ -22,9 +22,9 @@ USAGE:
 
 import os
 
-service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
-index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
-key = os.getenv("AZURE_SEARCH_API_KEY")
+service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
+index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
+key = os.environ["AZURE_SEARCH_API_KEY"]
 
 
 def suggest_query():
@@ -38,8 +38,8 @@ def suggest_query():
 
     print("Search suggestions for 'coffee'")
     for result in results:
-        hotel = search_client.get_document(key=result["HotelId"])
-        print("    Text: {} for Hotel: {}".format(repr(result["text"]), hotel["HotelName"]))
+        hotel = search_client.get_document(key=result["hotelId"])
+        print("    Text: {} for Hotel: {}".format(repr(result["text"]), hotel["hotelName"]))
     # [END suggest_query]
 
 

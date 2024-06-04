@@ -3,6 +3,7 @@
 """
 An example showing how to include context correlation information in logging telemetry.
 """
+# mypy: disable-error-code="attr-defined"
 import os
 import logging
 

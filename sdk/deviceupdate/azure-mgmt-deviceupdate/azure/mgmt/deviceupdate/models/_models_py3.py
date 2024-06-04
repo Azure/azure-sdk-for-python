@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -49,7 +49,7 @@ class Resource(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -59,7 +59,8 @@ class Resource(_serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -99,7 +100,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -149,6 +150,8 @@ class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
      list[~azure.mgmt.deviceupdate.models.PrivateEndpointConnection]
     :ivar sku: Device Update Sku. Known values are: "Free" and "Standard".
     :vartype sku: str or ~azure.mgmt.deviceupdate.models.SKU
+    :ivar encryption: CMK encryption at rest properties.
+    :vartype encryption: ~azure.mgmt.deviceupdate.models.Encryption
     :ivar locations: Device Update account primary and failover location details.
     :vartype locations: list[~azure.mgmt.deviceupdate.models.Location]
     """
@@ -180,6 +183,7 @@ class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
             "type": "[PrivateEndpointConnection]",
         },
         "sku": {"key": "properties.sku", "type": "str"},
+        "encryption": {"key": "properties.encryption", "type": "Encryption"},
         "locations": {"key": "properties.locations", "type": "[Location]"},
     }
 
@@ -192,8 +196,9 @@ class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
         public_network_access: Union[str, "_models.PublicNetworkAccess"] = "Enabled",
         private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None,
         sku: Union[str, "_models.SKU"] = "Standard",
-        **kwargs
-    ):
+        encryption: Optional["_models.Encryption"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -210,6 +215,8 @@ class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
          list[~azure.mgmt.deviceupdate.models.PrivateEndpointConnection]
         :keyword sku: Device Update Sku. Known values are: "Free" and "Standard".
         :paramtype sku: str or ~azure.mgmt.deviceupdate.models.SKU
+        :keyword encryption: CMK encryption at rest properties.
+        :paramtype encryption: ~azure.mgmt.deviceupdate.models.Encryption
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
@@ -218,6 +225,7 @@ class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.public_network_access = public_network_access
         self.private_endpoint_connections = private_endpoint_connections
         self.sku = sku
+        self.encryption = encryption
         self.locations = None
 
 
@@ -235,7 +243,9 @@ class AccountList(_serialization.Model):
         "value": {"key": "value", "type": "[Account]"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, value: Optional[List["_models.Account"]] = None, **kwargs):
+    def __init__(
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.Account"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The link used to get the next page of Accounts list.
         :paramtype next_link: str
@@ -259,7 +269,7 @@ class TagUpdate(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: List of key value pairs that describe the resource. This will overwrite the
          existing tags.
@@ -293,8 +303,8 @@ class AccountUpdate(TagUpdate):
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         location: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: List of key value pairs that describe the resource. This will overwrite the
          existing tags.
@@ -323,7 +333,7 @@ class CheckNameAvailabilityRequest(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the resource for which availability needs to be checked.
         :paramtype name: str
@@ -359,8 +369,8 @@ class CheckNameAvailabilityResponse(_serialization.Model):
         name_available: Optional[bool] = None,
         reason: Optional[Union[str, "_models.CheckNameAvailabilityReason"]] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name_available: Indicates if the resource name is available.
         :paramtype name_available: bool
@@ -409,7 +419,7 @@ class ConnectionDetails(_serialization.Model):
         "member_name": {"key": "memberName", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -449,8 +459,8 @@ class DiagnosticStorageProperties(_serialization.Model):
         authentication_type: Union[str, "_models.AuthenticationType"],
         resource_id: str,
         connection_string: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword authentication_type: Authentication Type. Required. "KeyBased"
         :paramtype authentication_type: str or ~azure.mgmt.deviceupdate.models.AuthenticationType
@@ -463,6 +473,36 @@ class DiagnosticStorageProperties(_serialization.Model):
         self.authentication_type = authentication_type
         self.connection_string = connection_string
         self.resource_id = resource_id
+
+
+class Encryption(_serialization.Model):
+    """The CMK encryption settings on the Device Update account.
+
+    :ivar key_vault_key_uri: The URI of the key vault.
+    :vartype key_vault_key_uri: str
+    :ivar user_assigned_identity: The full resourceId of the user assigned identity to be used for
+     key vault access. Identity has to be also assigned to the Account.
+    :vartype user_assigned_identity: str
+    """
+
+    _attribute_map = {
+        "key_vault_key_uri": {"key": "keyVaultKeyUri", "type": "str"},
+        "user_assigned_identity": {"key": "userAssignedIdentity", "type": "str"},
+    }
+
+    def __init__(
+        self, *, key_vault_key_uri: Optional[str] = None, user_assigned_identity: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword key_vault_key_uri: The URI of the key vault.
+        :paramtype key_vault_key_uri: str
+        :keyword user_assigned_identity: The full resourceId of the user assigned identity to be used
+         for key vault access. Identity has to be also assigned to the Account.
+        :paramtype user_assigned_identity: str
+        """
+        super().__init__(**kwargs)
+        self.key_vault_key_uri = key_vault_key_uri
+        self.user_assigned_identity = user_assigned_identity
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -486,7 +526,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -526,7 +566,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -537,7 +577,8 @@ class ErrorDetail(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.deviceupdate.models.ErrorDetail
@@ -547,7 +588,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.deviceupdate.models.ErrorDetail
@@ -596,8 +637,8 @@ class GroupConnectivityInformation(_serialization.Model):
         customer_visible_fqdns: Optional[List[str]] = None,
         redirect_map_id: Optional[str] = None,
         private_link_service_arm_region: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword customer_visible_fqdns: List of customer visible FQDNs.
         :paramtype customer_visible_fqdns: list[str]
@@ -616,7 +657,8 @@ class GroupConnectivityInformation(_serialization.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -647,7 +689,7 @@ class ProxyResource(Resource):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -700,7 +742,7 @@ class GroupInformation(ProxyResource):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword required_zone_names: The private link resource Private link DNS zone name.
         :paramtype required_zone_names: list[str]
@@ -736,7 +778,7 @@ class PrivateLinkResourceProperties(_serialization.Model):
         "required_zone_names": {"key": "requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword required_zone_names: The private link resource Private link DNS zone name.
         :paramtype required_zone_names: list[str]
@@ -776,7 +818,7 @@ class GroupInformationProperties(PrivateLinkResourceProperties):
         "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword required_zone_names: The private link resource Private link DNS zone name.
         :paramtype required_zone_names: list[str]
@@ -857,8 +899,8 @@ class Instance(TrackedResource):  # pylint: disable=too-many-instance-attributes
         iot_hubs: Optional[List["_models.IotHubSettings"]] = None,
         enable_diagnostics: Optional[bool] = None,
         diagnostic_storage_properties: Optional["_models.DiagnosticStorageProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -895,7 +937,9 @@ class InstanceList(_serialization.Model):
         "value": {"key": "value", "type": "[Instance]"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, value: Optional[List["_models.Instance"]] = None, **kwargs):
+    def __init__(
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.Instance"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The link used to get the next page of Instances list.
         :paramtype next_link: str
@@ -924,7 +968,7 @@ class IotHubSettings(_serialization.Model):
         "resource_id": {"key": "resourceId", "type": "str"},
     }
 
-    def __init__(self, *, resource_id: str, **kwargs):
+    def __init__(self, *, resource_id: str, **kwargs: Any) -> None:
         """
         :keyword resource_id: IoTHub resource ID. Required.
         :paramtype resource_id: str
@@ -948,7 +992,9 @@ class Location(_serialization.Model):
         "role": {"key": "role", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, role: Union[str, "_models.Role"] = "Primary", **kwargs):
+    def __init__(
+        self, *, name: Optional[str] = None, role: Union[str, "_models.Role"] = "Primary", **kwargs: Any
+    ) -> None:
         """
         :keyword name:
         :paramtype name: str
@@ -1004,8 +1050,8 @@ class ManagedServiceIdentity(_serialization.Model):
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Type of managed service identity (where both SystemAssigned and UserAssigned
          types are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
@@ -1062,7 +1108,7 @@ class Operation(_serialization.Model):
         "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
         :keyword display: Localized display information for this particular operation.
         :paramtype display: ~azure.mgmt.deviceupdate.models.OperationDisplay
@@ -1108,7 +1154,7 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provider = None
@@ -1118,7 +1164,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link
+    to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1138,7 +1185,7 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1162,7 +1209,7 @@ class PrivateEndpoint(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -1229,8 +1276,8 @@ class PrivateEndpointConnection(Resource):
         private_link_service_connection_state: "_models.PrivateLinkServiceConnectionState",
         private_endpoint: Optional["_models.PrivateEndpoint"] = None,
         group_ids: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint: The resource of private end point.
         :paramtype private_endpoint: ~azure.mgmt.deviceupdate.models.PrivateEndpoint
@@ -1259,7 +1306,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private endpoint connections.
         :paramtype value: list[~azure.mgmt.deviceupdate.models.PrivateEndpointConnection]
@@ -1296,8 +1343,8 @@ class PrivateEndpointConnectionProxyProperties(_serialization.Model):
         *,
         remote_private_endpoint: Optional["_models.RemotePrivateEndpoint"] = None,
         status: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword remote_private_endpoint: Remote private endpoint details.
         :paramtype remote_private_endpoint: ~azure.mgmt.deviceupdate.models.RemotePrivateEndpoint
@@ -1363,8 +1410,8 @@ class PrivateEndpointConnectionProxy(ProxyResource, PrivateEndpointConnectionPro
         *,
         remote_private_endpoint: Optional["_models.RemotePrivateEndpoint"] = None,
         status: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword remote_private_endpoint: Remote private endpoint details.
         :paramtype remote_private_endpoint: ~azure.mgmt.deviceupdate.models.RemotePrivateEndpoint
@@ -1383,7 +1430,8 @@ class PrivateEndpointConnectionProxy(ProxyResource, PrivateEndpointConnectionPro
 
 
 class PrivateEndpointConnectionProxyListResult(_serialization.Model):
-    """The available private endpoint connection proxies for an Account (not to be used by anyone, here because of ARM requirements).
+    """The available private endpoint connection proxies for an Account (not to be used by anyone,
+    here because of ARM requirements).
 
     :ivar value: The list of available private endpoint connection proxies for an Account.
     :vartype value: list[~azure.mgmt.deviceupdate.models.PrivateEndpointConnectionProxy]
@@ -1402,8 +1450,8 @@ class PrivateEndpointConnectionProxyListResult(_serialization.Model):
         *,
         value: Optional[List["_models.PrivateEndpointConnectionProxy"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of available private endpoint connection proxies for an Account.
         :paramtype value: list[~azure.mgmt.deviceupdate.models.PrivateEndpointConnectionProxy]
@@ -1447,8 +1495,8 @@ class PrivateEndpointUpdate(_serialization.Model):
         immutable_subscription_id: Optional[str] = None,
         immutable_resource_id: Optional[str] = None,
         vnet_traffic_tag: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Remote endpoint resource ID.
         :paramtype id: str
@@ -1484,8 +1532,12 @@ class PrivateLinkResourceListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.GroupInformation"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.GroupInformation"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of available private link resources for an Account.
         :paramtype value: list[~azure.mgmt.deviceupdate.models.GroupInformation]
@@ -1521,8 +1573,8 @@ class PrivateLinkServiceConnection(_serialization.Model):
         name: Optional[str] = None,
         group_ids: Optional[List[str]] = None,
         request_message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Private link service connection name.
         :paramtype name: str
@@ -1538,7 +1590,8 @@ class PrivateLinkServiceConnection(_serialization.Model):
 
 
 class PrivateLinkServiceConnectionState(_serialization.Model):
-    """A collection of information about the state of the connection between service consumer and provider.
+    """A collection of information about the state of the connection between service consumer and
+    provider.
 
     :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
      of the service. Known values are: "Pending", "Approved", and "Rejected".
@@ -1562,8 +1615,8 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = None,
         description: Optional[str] = None,
         actions_required: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
          owner of the service. Known values are: "Pending", "Approved", and "Rejected".
@@ -1623,8 +1676,8 @@ class PrivateLinkServiceProxy(_serialization.Model):
             "_models.PrivateLinkServiceProxyRemotePrivateEndpointConnection"
         ] = None,
         group_connectivity_information: Optional[List["_models.GroupConnectivityInformation"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: NRP resource ID.
         :paramtype id: str
@@ -1663,7 +1716,7 @@ class RemotePrivateEndpointConnection(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -1686,7 +1739,7 @@ class PrivateLinkServiceProxyRemotePrivateEndpointConnection(RemotePrivateEndpoi
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -1749,8 +1802,8 @@ class RemotePrivateEndpoint(_serialization.Model):
         private_link_service_connections: Optional[List["_models.PrivateLinkServiceConnection"]] = None,
         private_link_service_proxies: Optional[List["_models.PrivateLinkServiceProxy"]] = None,
         connection_details: Optional[List["_models.ConnectionDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Remote endpoint resource ID.
         :paramtype id: str
@@ -1825,8 +1878,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -1873,7 +1926,7 @@ class UserAssignedIdentity(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None

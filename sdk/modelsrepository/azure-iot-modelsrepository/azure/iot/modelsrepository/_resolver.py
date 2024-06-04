@@ -8,8 +8,7 @@ import json
 import abc
 import os
 import io
-import six.moves.urllib as urllib
-import six
+import urllib
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.exceptions import (
     map_error,
@@ -74,8 +73,7 @@ class DtmiResolver(object):
         return model_map
 
 
-@six.add_metaclass(abc.ABCMeta)
-class Fetcher(object):
+class Fetcher(metaclass=abc.ABCMeta):
     """Interface for fetching from a generic location"""
 
     @abc.abstractmethod

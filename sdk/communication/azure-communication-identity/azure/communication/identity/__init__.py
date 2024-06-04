@@ -3,9 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 from ._communication_identity_client import CommunicationIdentityClient
-
 from ._generated.models import CommunicationTokenScope
 
 from ._shared.models import (
@@ -15,10 +13,10 @@ from ._shared.models import (
     CommunicationUserIdentifier,
     CommunicationUserProperties,
     identifier_from_raw_id,
+    MicrosoftTeamsAppIdentifier,
+    MicrosoftTeamsAppProperties,
     MicrosoftTeamsUserIdentifier,
     MicrosoftTeamsUserProperties,
-    MicrosoftBotProperties,
-    MicrosoftBotIdentifier,
     PhoneNumberIdentifier,
     PhoneNumberProperties,
     UnknownIdentifier,
@@ -35,10 +33,10 @@ __all__ = [
     "CommunicationUserIdentifier",
     "CommunicationUserProperties",
     "identifier_from_raw_id",
+    "MicrosoftTeamsAppIdentifier",
+    "MicrosoftTeamsAppProperties",
     "MicrosoftTeamsUserIdentifier",
     "MicrosoftTeamsUserProperties",
-    "MicrosoftBotIdentifier",
-    "MicrosoftBotProperties",
     "PhoneNumberIdentifier",
     "PhoneNumberProperties",
     "UnknownIdentifier",

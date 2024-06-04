@@ -49,6 +49,27 @@ class TestSweepJob(AzureRecordedTestCase):
         sweep_job_resource_2 = client.jobs.get(job_name)
         assert sweep_job_resource.name == sweep_job_resource_2.name
 
+    @pytest.mark.e2etest
+    def test_sweep_job_submit_with_resources(self, randstr: Callable[[], str], client: MLClient) -> None:
+        # TODO: need to create a workspace under a e2e-testing-only subscription and reousrce group
+
+        job_name = randstr("job_name")
+
+        params_override = [{"name": job_name}]
+        sweep_job = load_job(
+            source="./tests/test_configs/sweep_job/sweep_job_test_with_resources.yaml",
+            params_override=params_override,
+        )
+
+        sweep_job_resource = client.jobs.create_or_update(job=sweep_job)
+        assert sweep_job_resource.name == job_name
+        assert sweep_job_resource.trial.environment_variables["test_var1"] == "set"
+        assert sweep_job_resource.status in RunHistoryConstants.IN_PROGRESS_STATUSES
+        assert sweep_job_resource.resources.instance_count == 2
+
+        sweep_job_resource_2 = client.jobs.get(job_name)
+        assert sweep_job_resource.name == sweep_job_resource_2.name
+
     @pytest.mark.skipif(
         condition=not is_live(),
         reason="TODO (2374610): hash sanitizer is being applied unnecessarily and forcing playback failures",
@@ -188,7 +209,10 @@ class TestSweepJob(AzureRecordedTestCase):
 
         result = client.create_or_update(sweep_node)
         assert result.description == "new-description"
-        assert result.trial.environment == "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
+        assert (
+            result.trial.environment
+            == "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/versions/33"
+        )
         assert result.display_name == "new_builder_command_job"
         assert result.compute == "testCompute"
         assert result.experiment_name == "mfe-test1-dataset"

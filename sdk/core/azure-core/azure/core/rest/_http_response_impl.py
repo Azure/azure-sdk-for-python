@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from json import loads
-from typing import cast, Any, Optional, Iterator, MutableMapping, Callable
+from typing import Any, Optional, Iterator, MutableMapping, Callable
 from http.client import HTTPResponse as _HTTPResponse
 from ._helpers import (
     get_charset_encoding,
@@ -344,7 +344,7 @@ class _HttpResponseBaseImpl(
 
         If response is good, does nothing.
         """
-        if cast(int, self.status_code) >= 400:
+        if self.status_code >= 400:
             raise HttpResponseError(response=self)
 
     @property
@@ -415,17 +415,16 @@ class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse, HttpResponseBackcom
         :rtype: Iterator[str]
         """
         if self._content is not None:
-            chunk_size = cast(int, self._block_size)
+            chunk_size = self._block_size
             for i in range(0, len(self.content), chunk_size):
                 yield self.content[i : i + chunk_size]
         else:
             self._stream_download_check()
-            for part in self._stream_download_generator(
+            yield from self._stream_download_generator(
                 response=self,
                 pipeline=None,
                 decompress=True,
-            ):
-                yield part
+            )
         self.close()
 
     def iter_raw(self, **kwargs) -> Iterator[bytes]:
@@ -435,8 +434,7 @@ class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse, HttpResponseBackcom
         :rtype: Iterator[str]
         """
         self._stream_download_check()
-        for part in self._stream_download_generator(response=self, pipeline=None, decompress=False):
-            yield part
+        yield from self._stream_download_generator(response=self, pipeline=None, decompress=False)
         self.close()
 
 

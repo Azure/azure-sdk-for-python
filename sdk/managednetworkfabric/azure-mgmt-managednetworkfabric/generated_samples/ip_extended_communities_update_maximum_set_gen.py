@@ -26,17 +26,24 @@ from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 def main():
     client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="1234ABCD-0A1B-1234-5678-123456ABCDEF",
     )
 
     response = client.ip_extended_communities.begin_update(
-        resource_group_name="rgIpExtendedCommunityLists",
-        ip_extended_community_name="example_ipExtendedCommunity",
-        body={"tags": {"key5054": "key1"}},
+        resource_group_name="example-rg",
+        ip_extended_community_name="example-ipExtendedCommunity",
+        body={
+            "properties": {
+                "ipExtendedCommunityRules": [
+                    {"action": "Permit", "routeTargets": ["1234:2345"], "sequenceNumber": 4155123341}
+                ]
+            },
+            "tags": {"keyID": "KeyValue"},
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/IpExtendedCommunities_Update_MaximumSet_Gen.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/stable/2023-06-15/examples/IpExtendedCommunities_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

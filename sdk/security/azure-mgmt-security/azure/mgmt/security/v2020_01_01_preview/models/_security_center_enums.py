@@ -56,6 +56,17 @@ class HybridComputeProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMet
     """the service principal details are expired"""
 
 
+class MinimalSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the minimal alert severity which will be sent as email notifications."""
+
+    HIGH = "High"
+    """Get notifications on new alerts with High severity"""
+    MEDIUM = "Medium"
+    """Get notifications on new alerts with medium or high severity"""
+    LOW = "Low"
+    """Don't get notifications on new alerts with low, medium or high severity"""
+
+
 class PermissionProperty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A permission detected in the cloud account."""
 
@@ -65,6 +76,28 @@ class PermissionProperty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This permission grants access to read security configuration metadata."""
     AWS_AMAZON_SSM_AUTOMATION_ROLE = "AWS::AmazonSSMAutomationRole"
     """The permission provides for EC2 Automation service to execute activities defined within
-    #: Automation documents."""
+    Automation documents."""
     GCP_SECURITY_CENTER_ADMIN_VIEWER = "GCP::Security Center Admin Viewer"
     """This permission provides read only access to GCP Security Command Center."""
+
+
+class Roles(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A possible role to configure sending security notification alerts to."""
+
+    ACCOUNT_ADMIN = "AccountAdmin"
+    """If enabled, send notification on new alerts to the account admins"""
+    SERVICE_ADMIN = "ServiceAdmin"
+    """If enabled, send notification on new alerts to the service admins"""
+    OWNER = "Owner"
+    """If enabled, send notification on new alerts to the subscription owners"""
+    CONTRIBUTOR = "Contributor"
+    """If enabled, send notification on new alerts to the subscription contributors"""
+
+
+class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines if email notifications will be sent about new security alerts."""
+
+    ON = "On"
+    """Get notifications on new alerts"""
+    OFF = "Off"
+    """Don't get notifications on new alerts"""

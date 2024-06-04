@@ -79,11 +79,7 @@ def test_tenant_id():
     )
 
     credential = UsernamePasswordCredential(
-        "client-id",
-        "username",
-        "password",
-        transport=transport,
-        additionally_allowed_tenants=['*']
+        "client-id", "username", "password", transport=transport, additionally_allowed_tenants=["*"]
     )
 
     credential.get_token("scope", tenant_id="tenant_id")
@@ -111,7 +107,7 @@ def test_username_password_credential():
         username="user@azure",
         password="secret_password",
         transport=transport,
-        disable_instance_discovery=True,  # kwargs are passed to MSAL; this one prevents an AAD verification request
+        disable_instance_discovery=True,  # kwargs are passed to MSAL; this one prevents a Microsoft Entra verification request
     )
 
     token = credential.get_token("scope")
@@ -128,7 +124,7 @@ def test_authenticate():
     access_token = "***"
     scope = "scope"
 
-    # mock AAD response with id token
+    # mock Microsoft Entra response with id token
     object_id = "object-id"
     home_tenant = "home-tenant-id"
     username = "me@work.com"
@@ -167,7 +163,7 @@ def test_authenticate():
 
 
 def test_client_capabilities():
-    """the credential should configure MSAL for capability CP1 unless AZURE_IDENTITY_DISABLE_CP1 is set"""
+    """the credential should configure MSAL for capability CP1 only if enable_cae is passed."""
 
     transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
 
@@ -175,18 +171,15 @@ def test_client_capabilities():
     with patch("msal.PublicClientApplication") as PublicClientApplication:
         credential._get_app()
 
-    assert PublicClientApplication.call_count == 1
-    _, kwargs = PublicClientApplication.call_args
-    assert kwargs["client_capabilities"] == ["CP1"]
+        assert PublicClientApplication.call_count == 1
+        _, kwargs = PublicClientApplication.call_args
+        assert kwargs["client_capabilities"] == None
 
-    credential = UsernamePasswordCredential("client-id", "username", "password", transport=transport)
-    with patch.dict("os.environ", {"AZURE_IDENTITY_DISABLE_CP1": "true"}):
-        with patch("msal.PublicClientApplication") as PublicClientApplication:
-            credential._get_app()
+        credential._get_app(enable_cae=True)
 
-    assert PublicClientApplication.call_count == 1
-    _, kwargs = PublicClientApplication.call_args
-    assert kwargs["client_capabilities"] is None
+        assert PublicClientApplication.call_count == 2
+        _, kwargs = PublicClientApplication.call_args
+        assert kwargs["client_capabilities"] == ["CP1"]
 
 
 def test_claims_challenge():

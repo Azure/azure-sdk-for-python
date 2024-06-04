@@ -6,6 +6,7 @@
 
 from ._logs_query_client import LogsQueryClient
 from ._metrics_query_client import MetricsQueryClient
+from ._metrics_client import MetricsClient
 
 from ._enums import (
     LogsQueryStatus,
@@ -45,6 +46,7 @@ __all__ = [
     "LogsTableRow",
     "LogsBatchQuery",
     "MetricsQueryClient",
+    "MetricsClient",
     "MetricNamespace",
     "MetricNamespaceClassification",
     "MetricDefinition",

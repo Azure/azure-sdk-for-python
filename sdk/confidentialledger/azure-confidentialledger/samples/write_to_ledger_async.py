@@ -50,7 +50,7 @@ async def main():
     # i.e. https://<ledger id>.confidential-ledger.azure.com
     ledger_id = ledger_endpoint.replace("https://", "").split(".")[0]
 
-    identity_service_client = ConfidentialLedgerCertificateClient()
+    identity_service_client = ConfidentialLedgerCertificateClient()  # type: ignore[call-arg]
     async with identity_service_client:
         ledger_certificate = await identity_service_client.get_ledger_identity(
             ledger_id
@@ -91,7 +91,7 @@ async def main():
                         f"at transaction id {transaction_id}"
                     )
                 except HttpResponseError as e:
-                    print("Request failed: {}".format(e.response.json()))
+                    print("Request failed: {}".format(e.response.json()))  # type: ignore[union-attr]
                     raise
 
                 # For some scenarios, users may want to eventually ensure the written entry is
@@ -102,14 +102,14 @@ async def main():
                         "when writing less important entries where client throughput is "
                         "prioritized."
                     )
-                    wait_poller = await ledger_client.begin_wait_for_commit(transaction_id)
+                    wait_poller = await ledger_client.begin_wait_for_commit(transaction_id)  # type: ignore[attr-defined]
                     await wait_poller.wait()
                     print(
                         f"Ledger entry at transaction id {transaction_id} has been committed "
                         "successfully"
                     )
                 except HttpResponseError as e:
-                    print("Request failed: {}".format(e.response.json()))
+                    print("Request failed: {}".format(e.response.json()))  # type: ignore[union-attr]
                     raise
 
                 # Get the latest ledger entry.
@@ -118,7 +118,7 @@ async def main():
                     current_ledger_entry = current_ledger_entry["contents"]
                     print(f"The current ledger entry is {current_ledger_entry}")
                 except HttpResponseError as e:
-                    print("Request failed: {}".format(e.response.json()))
+                    print("Request failed: {}".format(e.response.json()))  # type: ignore[union-attr]
                     raise
 
                 # Users may wait for a durable commit when writing a ledger entry though this will
@@ -128,7 +128,7 @@ async def main():
                         f"Writing another entry. This time, we'll have the client method wait for "
                         "commit."
                     )
-                    post_poller = await ledger_client.begin_create_ledger_entry(
+                    post_poller = await ledger_client.begin_create_ledger_entry(  # type: ignore[attr-defined]
                         {"contents": "Hello world again!"}
                     )
                     new_post_result = await post_poller.result()
@@ -137,7 +137,7 @@ async def main():
                         f'{new_post_result["transactionId"]}'
                     )
                 except HttpResponseError as e:
-                    print("Request failed: {}".format(e.response.json()))
+                    print("Request failed: {}".format(e.response.json()))  # type: ignore[union-attr]
                     raise
 
                 # Get the latest ledger entry.
@@ -146,20 +146,20 @@ async def main():
                     current_ledger_entry = current_ledger_entry["contents"]
                     print(f"The current ledger entry is {current_ledger_entry}")
                 except HttpResponseError as e:
-                    print("Request failed: {}".format(e.response.json()))
+                    print("Request failed: {}".format(e.response.json()))  # type: ignore[union-attr]
                     raise
 
                 # Make a query for a prior ledger entry. The service may take some time to load the
                 # result, so a poller is provided.
                 try:
-                    get_entry_poller = await ledger_client.begin_get_ledger_entry(transaction_id)
+                    get_entry_poller = await ledger_client.begin_get_ledger_entry(transaction_id)  # type: ignore[attr-defined]
                     get_entry_result = await get_entry_poller.result()
                     print(
                         f'At transaction id {get_entry_result["entry"]["transactionId"]}, the '
                         f'ledger entry contains \'{get_entry_result["entry"]["contents"]}\''
                     )
                 except HttpResponseError as e:
-                    print("Request failed: {}".format(e.response.json()))
+                    print("Request failed: {}".format(e.response.json()))  # type: ignore[union-attr]
                     raise
 
 

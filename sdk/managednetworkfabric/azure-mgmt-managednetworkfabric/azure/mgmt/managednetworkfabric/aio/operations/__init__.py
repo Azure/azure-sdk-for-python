@@ -7,6 +7,8 @@
 # --------------------------------------------------------------------------
 
 from ._access_control_lists_operations import AccessControlListsOperations
+from ._internet_gateways_operations import InternetGatewaysOperations
+from ._internet_gateway_rules_operations import InternetGatewayRulesOperations
 from ._ip_communities_operations import IpCommunitiesOperations
 from ._ip_extended_communities_operations import IpExtendedCommunitiesOperations
 from ._ip_prefixes_operations import IpPrefixesOperations
@@ -14,6 +16,7 @@ from ._l2_isolation_domains_operations import L2IsolationDomainsOperations
 from ._l3_isolation_domains_operations import L3IsolationDomainsOperations
 from ._internal_networks_operations import InternalNetworksOperations
 from ._external_networks_operations import ExternalNetworksOperations
+from ._neighbor_groups_operations import NeighborGroupsOperations
 from ._network_device_skus_operations import NetworkDeviceSkusOperations
 from ._network_devices_operations import NetworkDevicesOperations
 from ._network_interfaces_operations import NetworkInterfacesOperations
@@ -21,8 +24,10 @@ from ._network_fabric_controllers_operations import NetworkFabricControllersOper
 from ._network_fabric_skus_operations import NetworkFabricSkusOperations
 from ._network_fabrics_operations import NetworkFabricsOperations
 from ._network_to_network_interconnects_operations import NetworkToNetworkInterconnectsOperations
-from ._network_rack_skus_operations import NetworkRackSkusOperations
+from ._network_packet_brokers_operations import NetworkPacketBrokersOperations
 from ._network_racks_operations import NetworkRacksOperations
+from ._network_tap_rules_operations import NetworkTapRulesOperations
+from ._network_taps_operations import NetworkTapsOperations
 from ._operations import Operations
 from ._route_policies_operations import RoutePoliciesOperations
 
@@ -32,6 +37,8 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AccessControlListsOperations",
+    "InternetGatewaysOperations",
+    "InternetGatewayRulesOperations",
     "IpCommunitiesOperations",
     "IpExtendedCommunitiesOperations",
     "IpPrefixesOperations",
@@ -39,6 +46,7 @@ __all__ = [
     "L3IsolationDomainsOperations",
     "InternalNetworksOperations",
     "ExternalNetworksOperations",
+    "NeighborGroupsOperations",
     "NetworkDeviceSkusOperations",
     "NetworkDevicesOperations",
     "NetworkInterfacesOperations",
@@ -46,8 +54,10 @@ __all__ = [
     "NetworkFabricSkusOperations",
     "NetworkFabricsOperations",
     "NetworkToNetworkInterconnectsOperations",
-    "NetworkRackSkusOperations",
+    "NetworkPacketBrokersOperations",
     "NetworkRacksOperations",
+    "NetworkTapRulesOperations",
+    "NetworkTapsOperations",
     "Operations",
     "RoutePoliciesOperations",
 ]

@@ -76,7 +76,7 @@ try:
         ],
         "comment": "Thanks!"
     }
-    result = client.submit_user_requests(user_requests_payload)
+    result = client.user_requests.submit(user_requests_payload)
     print(result)
 except HttpResponseError as e:
     print(f"Failed to send JSON message: {e}")

@@ -83,19 +83,19 @@ class TestIfElse(TestControlFlowPipeline):
                 "type": "if_else",
             },
             "node1": {
-                "_source": "REMOTE.WORKSPACE.COMPONENT",
+                "_source": "YAML.COMPONENT",
                 "inputs": {"component_in_number": {"job_input_type": "literal", "value": "1"}},
                 "name": "node1",
                 "type": "command",
             },
             "node2": {
-                "_source": "REMOTE.WORKSPACE.COMPONENT",
+                "_source": "YAML.COMPONENT",
                 "inputs": {"component_in_number": {"job_input_type": "literal", "value": "2"}},
                 "name": "node2",
                 "type": "command",
             },
             "result": {
-                "_source": "REMOTE.WORKSPACE.COMPONENT",
+                "_source": "YAML.COMPONENT",
                 "name": "result",
                 "type": "command",
             },
@@ -129,13 +129,13 @@ class TestIfElse(TestControlFlowPipeline):
                 "type": "if_else",
             },
             "node1": {
-                "_source": "REMOTE.WORKSPACE.COMPONENT",
+                "_source": "YAML.COMPONENT",
                 "inputs": {"component_in_number": {"job_input_type": "literal", "value": "1"}},
                 "name": "node1",
                 "type": "command",
             },
             "node2": {
-                "_source": "REMOTE.WORKSPACE.COMPONENT",
+                "_source": "YAML.COMPONENT",
                 "inputs": {"component_in_number": {"job_input_type": "literal", "value": "2"}},
                 "name": "node2",
                 "type": "command",
@@ -167,7 +167,7 @@ class TestIfElse(TestControlFlowPipeline):
                 "type": "if_else",
             },
             "node1": {
-                "_source": "REMOTE.WORKSPACE.COMPONENT",
+                "_source": "YAML.COMPONENT",
                 "inputs": {"component_in_number": {"job_input_type": "literal", "value": "1"}},
                 "name": "node1",
                 "type": "command",
@@ -184,10 +184,10 @@ class TestIfElse(TestControlFlowPipeline):
         # Assert is_control with correct bool type
         expected_dict = {
             "output_data": {"type": "uri_folder"},
-            "bool_param_output": {"type": "boolean", "is_control": True, "early_available": True},
-            "int_param_output": {"type": "integer", "is_control": True},
-            "float_param_output": {"type": "number", "is_control": True},
-            "str_param_output": {"type": "string", "is_control": True},
+            "bool_param_output": {"type": "boolean", "early_available": True},
+            "int_param_output": {"type": "integer"},
+            "float_param_output": {"type": "number"},
+            "str_param_output": {"type": "string"},
         }
         assert rest_dict["outputs"] == expected_dict
 
@@ -270,7 +270,7 @@ class TestIfElse(TestControlFlowPipeline):
                 "type": "if_else",
             },
             "do_while_body_func": {
-                "_source": "REMOTE.WORKSPACE.COMPONENT",
+                "_source": "YAML.COMPONENT",
                 "inputs": {
                     "bool_param": {"job_input_type": "literal", "value": "${{parent.inputs.bool_param}}"},
                     "float_param": {"job_input_type": "literal", "value": "${{parent.inputs.float_param}}"},
@@ -298,7 +298,7 @@ class TestIfElse(TestControlFlowPipeline):
                 "type": "do_while",
             },
             "primitive_output_component_true": {
-                "_source": "REMOTE.WORKSPACE.COMPONENT",
+                "_source": "YAML.COMPONENT",
                 "inputs": {
                     "input_data": {
                         "job_input_type": "literal",
@@ -581,7 +581,7 @@ class TestParallelForPipeline(TestControlFlowPipeline):
         dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
             "after_node": {
-                "_source": "REMOTE.WORKSPACE.COMPONENT",
+                "_source": "YAML.COMPONENT",
                 "computeId": "cpu-cluster",
                 "inputs": {
                     "component_in_path": {
@@ -593,7 +593,7 @@ class TestParallelForPipeline(TestControlFlowPipeline):
                 "type": "command",
             },
             "parallel_body": {
-                "_source": "REMOTE.WORKSPACE.COMPONENT",
+                "_source": "YAML.COMPONENT",
                 "inputs": {
                     "component_in_path": {
                         "job_input_type": "uri_file",
@@ -637,7 +637,7 @@ class TestParallelForPipeline(TestControlFlowPipeline):
         dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
             "after_node": {
-                "_source": "REMOTE.WORKSPACE.COMPONENT",
+                "_source": "YAML.COMPONENT",
                 "computeId": "cpu-cluster",
                 "inputs": {
                     "component_in_number": {"job_input_type": "literal", "value": "1"},
@@ -650,7 +650,7 @@ class TestParallelForPipeline(TestControlFlowPipeline):
                 "type": "command",
             },
             "parallel_body": {
-                "_source": "REMOTE.WORKSPACE.COMPONENT",
+                "_source": "YAML.COMPONENT",
                 "inputs": {
                     "component_in_path": {
                         "job_input_type": "uri_file",
@@ -700,7 +700,7 @@ class TestParallelForPipeline(TestControlFlowPipeline):
         dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
             "after_node": {
-                "_source": "REMOTE.WORKSPACE.COMPONENT",
+                "_source": "YAML.COMPONENT",
                 "computeId": "cpu-cluster",
                 "inputs": {
                     "component_in_path": {
@@ -711,7 +711,7 @@ class TestParallelForPipeline(TestControlFlowPipeline):
                 "name": "after_node",
                 "type": "command",
             },
-            "parallel_body": {"_source": "REMOTE.WORKSPACE.COMPONENT", "name": "parallel_body", "type": "pipeline"},
+            "parallel_body": {"_source": "DSL", "name": "parallel_body", "type": "pipeline"},
             "parallel_node": {
                 "_source": "DSL",
                 "body": "${{parent.jobs.parallel_body}}",
@@ -752,7 +752,7 @@ class TestParallelForPipeline(TestControlFlowPipeline):
         dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
             "after_node": {
-                "_source": "REMOTE.WORKSPACE.COMPONENT",
+                "_source": "YAML.COMPONENT",
                 "computeId": "cpu-cluster",
                 "inputs": {
                     "component_in_path": {
@@ -763,7 +763,7 @@ class TestParallelForPipeline(TestControlFlowPipeline):
                 "name": "after_node",
                 "type": "command",
             },
-            "parallel_body": {"_source": "REMOTE.WORKSPACE.COMPONENT", "name": "parallel_body", "type": "pipeline"},
+            "parallel_body": {"_source": "DSL", "name": "parallel_body", "type": "pipeline"},
             "parallel_node": {
                 "_source": "DSL",
                 "body": "${{parent.jobs.parallel_body}}",
@@ -811,7 +811,7 @@ class TestParallelForPipeline(TestControlFlowPipeline):
         dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
             "parallel_body": {
-                "_source": "REMOTE.WORKSPACE.COMPONENT",
+                "_source": "YAML.COMPONENT",
                 "inputs": {
                     "component_in_path": {
                         "job_input_type": "uri_file",
@@ -907,7 +907,7 @@ class TestParallelForPipeline(TestControlFlowPipeline):
 
         rest_pipeline_component = pipeline_job.jobs["parallel_for_pipeline"].component._to_rest_object().as_dict()
         assert rest_pipeline_component["properties"]["component_spec"]["outputs"] == {
-            "component_out_boolean": {"is_control": True, "type": "string"},
+            "component_out_boolean": {"type": "string"},
             "component_out_number": {"type": "string"},
             "component_out_path": {"type": "mltable"},
         }

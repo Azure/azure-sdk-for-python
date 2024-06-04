@@ -52,9 +52,7 @@ class TablePropertiesPaged(AsyncPageIterator):
 
     async def _extract_data_cb(self, get_next_return):
         self._location_mode, self._response, self._headers = get_next_return
-        props_list = [
-            TableItem._from_generated(t, **self._headers) for t in self._response.value  # pylint: disable=protected-access
-        ]
+        props_list = [TableItem(t.table_name) for t in self._response.value]
         return self._headers[NEXT_TABLE_NAME] or None, props_list
 
 
@@ -85,9 +83,7 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
         self._location_mode = None
 
     async def _get_next_cb(self, continuation_token, **kwargs):
-        next_partition_key, next_row_key = _extract_continuation_token(
-            continuation_token
-        )
+        next_partition_key, next_row_key = _extract_continuation_token(continuation_token)
         try:
             return await self._command(
                 top=self.results_per_page,

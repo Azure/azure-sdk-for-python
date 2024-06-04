@@ -24,6 +24,7 @@ from azure.containerregistry import ContainerRegistryClient
 from azure.identity import AzureAuthorityHosts, ClientSecretCredential
 from azure.identity.aio import ClientSecretCredential as AsyncClientSecretCredential
 
+
 def load_registry(endpoint):
     print("loading registry...")
     repo = "library/hello-world"
@@ -33,13 +34,14 @@ def load_registry(endpoint):
     except Exception as e:
         raise
 
+
 def _import_images(endpoint, repository, tags):
     authority = get_authority(endpoint)
     credential = ClientSecretCredential(
-        tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
-        client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
-        client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
-        authority=authority
+        tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
+        client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
+        client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
+        authority=authority,
     )
     with ContainerRegistryClient(endpoint, credential) as client:
         # Upload a layer
@@ -52,20 +54,22 @@ def _import_images(endpoint, repository, tags):
             "config": {
                 "digest": config_digest,
                 "mediaType": "application/vnd.docker.container.image.v1+json",
-                "size": config_size
+                "size": config_size,
             },
             "layers": [
                 {
                     "digest": layer_digest,
                     "mediaType": "application/vnd.docker.image.rootfs.diff.tar.gzip",
-                    "size": layer_size
+                    "size": layer_size,
                 }
             ],
             "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
-            "schemaVersion": 2
+            "schemaVersion": 2,
         }
         for tag in tags:
-            client.set_manifest(repository, docker_manifest, tag=tag, media_type="application/vnd.docker.distribution.manifest.v2+json")
+            client.set_manifest(
+                repository, docker_manifest, tag=tag, media_type="application/vnd.docker.distribution.manifest.v2+json"
+            )
 
 
 def get_authority(endpoint):
@@ -77,6 +81,7 @@ def get_authority(endpoint):
         return AzureAuthorityHosts.AZURE_GOVERNMENT
     raise ValueError(f"Endpoint ({endpoint}) could not be understood")
 
+
 def get_audience(authority):
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
         return "https://management.azure.com"
@@ -85,18 +90,19 @@ def get_audience(authority):
     if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
         return "https://management.usgovcloudapi.net"
 
+
 def get_credential(authority, **kwargs):
     is_async = kwargs.pop("is_async", False)
     if is_async:
         return AsyncClientSecretCredential(
-            tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
-            client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
-            client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
-            authority=authority
+            tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
+            client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
+            client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
+            authority=authority,
         )
     return ClientSecretCredential(
-        tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
-        client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
-        client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
-        authority=authority
+        tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
+        client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
+        client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
+        authority=authority,
     )

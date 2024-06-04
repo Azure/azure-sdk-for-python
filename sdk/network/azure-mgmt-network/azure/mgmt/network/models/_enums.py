@@ -30,9 +30,13 @@ class ApplicationGatewayProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Application Gateway protocol."""
 
     HTTP = "Http"
+    """Supported for httpListeners and  backendHttpSettingsCollection properties."""
     HTTPS = "Https"
+    """Supported for httpListeners and  backendHttpSettingsCollection properties."""
     TCP = "Tcp"
+    """Supported for listeners and backendSettingsCollection properties."""
     TLS = "Tls"
+    """Supported for listeners and backendSettingsCollection properties."""
 
 class ApplicationGatewayRequestRoutingRuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Rule type."""
@@ -50,6 +54,7 @@ class ApplicationGatewaySkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WAF_LARGE = "WAF_Large"
     STANDARD_V2 = "Standard_v2"
     WAF_V2 = "WAF_v2"
+    BASIC = "Basic"
 
 class ApplicationGatewayTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tier of an application gateway."""
@@ -58,6 +63,7 @@ class ApplicationGatewayTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WAF = "WAF"
     STANDARD_V2 = "Standard_v2"
     WAF_V2 = "WAF_v2"
+    BASIC = "Basic"
 
 class AuthorizationUseStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The authorization use status."""
@@ -227,6 +233,7 @@ class VirtualNetworkGatewaySkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     ER_GW1_AZ = "ErGw1AZ"
     ER_GW2_AZ = "ErGw2AZ"
     ER_GW3_AZ = "ErGw3AZ"
+    ER_GW_SCALE = "ErGwScale"
 
 class VirtualNetworkGatewaySkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gateway SKU tier."""
@@ -248,6 +255,7 @@ class VirtualNetworkGatewaySkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     ER_GW1_AZ = "ErGw1AZ"
     ER_GW2_AZ = "ErGw2AZ"
     ER_GW3_AZ = "ErGw3AZ"
+    ER_GW_SCALE = "ErGwScale"
 
 class VirtualNetworkGatewayType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of this virtual network gateway."""
@@ -692,7 +700,6 @@ class ApplicationGatewayCustomErrorStatusCode(str, Enum, metaclass=CaseInsensiti
     HTTP_STATUS404 = "HttpStatus404"
     HTTP_STATUS405 = "HttpStatus405"
     HTTP_STATUS408 = "HttpStatus408"
-    HTTP_STATUS499 = "HttpStatus499"
     HTTP_STATUS500 = "HttpStatus500"
     HTTP_STATUS502 = "HttpStatus502"
     HTTP_STATUS503 = "HttpStatus503"
@@ -823,6 +830,7 @@ class WebApplicationFirewallAction(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     ALLOW = "Allow"
     BLOCK = "Block"
     LOG = "Log"
+    JS_CHALLENGE = "JSChallenge"
 
 class WebApplicationFirewallEnabledState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state of the policy."""
@@ -1163,6 +1171,7 @@ class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MMA_WORKSPACE_NETWORK = "MMAWorkspaceNetwork"
     AZURE_ARC_VM = "AzureArcVM"
     AZURE_VMSS = "AzureVMSS"
+    AZURE_ARC_NETWORK = "AzureArcNetwork"
 
 class ExpressRouteLinkMacSecSciState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Sci mode enabled/disabled."""
@@ -1222,7 +1231,6 @@ class LoadBalancerSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tier of a load balancer SKU."""
 
     REGIONAL = "Regional"
-    GLOBAL = "Global"
     GLOBAL_ENUM = "Global"
 
 class NetworkInterfaceNicType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1244,14 +1252,12 @@ class PublicIPAddressSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tier of a public IP address SKU."""
 
     REGIONAL = "Regional"
-    GLOBAL = "Global"
     GLOBAL_ENUM = "Global"
 
 class PublicIPPrefixSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tier of a public IP prefix SKU."""
 
     REGIONAL = "Regional"
-    GLOBAL = "Global"
     GLOBAL_ENUM = "Global"
 
 class VirtualNetworkGatewayConnectionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1266,6 +1272,8 @@ class VirtualNetworkPrivateEndpointNetworkPolicies(str, Enum, metaclass=CaseInse
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+    NETWORK_SECURITY_GROUP_ENABLED = "NetworkSecurityGroupEnabled"
+    ROUTE_TABLE_ENABLED = "RouteTableEnabled"
 
 class VirtualNetworkPrivateLinkServiceNetworkPolicies(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enable or Disable apply network policies on private link service in the subnet."""
@@ -1315,6 +1323,7 @@ class BastionHostSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     BASIC = "Basic"
     STANDARD = "Standard"
+    DEVELOPER = "Developer"
 
 class DeleteOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specify what happens to the public IP address when the VM using it is deleted."""
@@ -1530,6 +1539,15 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALLOW = "Allow"
     BLOCK = "Block"
     LOG = "Log"
+    JS_CHALLENGE = "JSChallenge"
+
+class AdminState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Property to indicate if the Express Route Gateway serves traffic when there are multiple
+    Express Route Gateways in the vnet.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 class ApplicationGatewayClientRevocationOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Verify client certificate revocation status."""
@@ -1639,13 +1657,15 @@ class FirewallPolicyIDPSQuerySortOrder(str, Enum, metaclass=CaseInsensitiveEnumM
     DESCENDING = "Descending"
 
 class FirewallPolicyIDPSSignatureDirection(int, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describes in which direction signature is being enforced: 0 - Inbound, 1 - OutBound, 2 -
-    Bidirectional.
+    """Describes in which direction signature is being enforced: 0 - OutBound, 1 - InBound, 2 - Any, 3
+    - Internal, 4 - InternalOutbound.
     """
 
     ZERO = 0
     ONE = 1
     TWO = 2
+    THREE = 3
+    FOUR = 4
 
 class FirewallPolicyIDPSSignatureMode(int, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current mode enforced, 0 - Disabled, 1 - Alert, 2 -Deny."""
@@ -1655,7 +1675,7 @@ class FirewallPolicyIDPSSignatureMode(int, Enum, metaclass=CaseInsensitiveEnumMe
     TWO = 2
 
 class FirewallPolicyIDPSSignatureSeverity(int, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describes the severity of signature: 1 - Low, 2 - Medium, 3 - High."""
+    """Describes the severity of signature: 1 - High, 2 - Medium, 3 - Low."""
 
     ONE = 1
     TWO = 2
@@ -1664,7 +1684,7 @@ class FirewallPolicyIDPSSignatureSeverity(int, Enum, metaclass=CaseInsensitiveEn
 class Geo(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Geo for CIDR advertising. Should be an Geo code."""
 
-    GLOBAL = "GLOBAL"
+    GLOBAL_ENUM = "GLOBAL"
     AFRI = "AFRI"
     APAC = "APAC"
     EURO = "EURO"
@@ -1673,7 +1693,6 @@ class Geo(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ME = "ME"
     OCEANIA = "OCEANIA"
     AQ = "AQ"
-    GLOBAL_ENUM = "GLOBAL"
 
 class HubRoutingPreference(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The hub routing preference gateway types."""
@@ -1726,9 +1745,8 @@ class NextStep(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported next step behaviors after a rule is applied to a matched route."""
 
     UNKNOWN = "Unknown"
-    CONTINUE = "Continue"
-    TERMINATE = "Terminate"
     CONTINUE_ENUM = "Continue"
+    TERMINATE = "Terminate"
 
 class PacketCaptureTargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Target type of the resource provided."""
@@ -1840,4 +1858,54 @@ class WebApplicationFirewallState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DISABLED = "Disabled"
     ENABLED = "Enabled"
+
+class SyncMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Backend address synchronous mode for the backend pool."""
+
+    AUTOMATIC = "Automatic"
+    MANUAL = "Manual"
+
+class FirewallPolicyIntrusionDetectionProfileType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Possible Intrusion Detection profile values."""
+
+    BASIC = "Basic"
+    STANDARD = "Standard"
+    ADVANCED = "Advanced"
+    EXTENDED = "Extended"
+
+class ApplicationGatewaySkuFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Family of an application gateway SKU."""
+
+    GENERATION1 = "Generation_1"
+    GENERATION2 = "Generation_2"
+
+class InboundSecurityRuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Rule Type. This should be either AutoExpire or Permanent. Auto Expire Rule only creates NSG
+    rules. Permanent Rule creates NSG rule and SLB LB Rule.
+    """
+
+    AUTO_EXPIRE = "AutoExpire"
+    PERMANENT = "Permanent"
+
+class NicTypeInRequest(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """NIC type. This should be either PublicNic or PrivateNic."""
+
+    PUBLIC_NIC = "PublicNic"
+    PRIVATE_NIC = "PrivateNic"
+
+class NicTypeInResponse(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """NIC type - PublicNic, PrivateNic, or AdditionalNic."""
+
+    PUBLIC_NIC = "PublicNic"
+    PRIVATE_NIC = "PrivateNic"
+    ADDITIONAL_NIC = "AdditionalNic"
+
+class SharingScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Set this property to Tenant to allow sharing subnet with other subscriptions in your AAD
+    tenant. This property can only be set if defaultOutboundAccess is set to false, both properties
+    can only be set if subnet is empty.
+    """
+
+    TENANT = "Tenant"
+    DELEGATED_SERVICES = "DelegatedServices"
 

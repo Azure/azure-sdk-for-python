@@ -1,0 +1,37 @@
+parameters:
+- name: LanguageVersion
+  displayName: LanguageVersion (3.8, 3.9, 3.10, 3.11, 3.12)
+  type: string
+  default: '3.11'
+- name: PackageVersions
+  displayName: PackageVersions (regex of package versions to run)
+  type: string
+  default: '1|source'
+- name: Tests
+  displayName: Tests (regex of tests to run)
+  type: string
+  default: '^(upload-binary|download-binary|update-entity|query-entities|list-entities)$'
+- name: Arguments
+  displayName: Arguments (regex of arguments to run)
+  type: string
+  default: '(1024)|(10240)|(500)'
+- name: Iterations
+  displayName: Iterations (times to run each test)
+  type: number
+  default: '5'
+- name: AdditionalArguments
+  displayName: AdditionalArguments (passed to PerfAutomation)
+  type: string
+  default: ' '
+
+extends:
+  template: /eng/pipelines/templates/jobs/perf.yml
+  parameters:
+    TimeoutInMinutes: 720
+    ServiceDirectory: core/corehttp
+    LanguageVersion: ${{ parameters.LanguageVersion }}
+    PackageVersions: ${{ parameters.PackageVersions }}
+    Tests: ${{ parameters.Tests }}
+    Arguments: ${{ parameters.Arguments }}
+    Iterations: ${{ parameters.Iterations }}
+    AdditionalArguments: ${{ parameters.AdditionalArguments }}

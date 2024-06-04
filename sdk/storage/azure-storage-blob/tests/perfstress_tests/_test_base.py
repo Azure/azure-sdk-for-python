@@ -5,9 +5,11 @@
 
 import uuid
 
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 from azure.storage.blob import BlobServiceClient as SyncBlobServiceClient
 from azure.storage.blob.aio import BlobServiceClient as AsyncBlobServiceClient
+from azure.identity import ClientSecretCredential as SyncClientSecretCredential
+from azure.identity.aio import ClientSecretCredential as AsyncClientSecretCredential
 
 from .key_wrapper import KeyWrapper
 
@@ -18,7 +20,6 @@ class _ServiceTest(PerfStressTest):
 
     def __init__(self, arguments):
         super().__init__(arguments)
-        connection_string = self.get_from_env("AZURE_STORAGE_CONNECTION_STRING")
         if self.args.test_proxies:
             self._client_kwargs['_additional_pipeline_policies'] = self._client_kwargs['per_retry_policies']
         self._client_kwargs['max_single_put_size'] = self.args.max_put_size
@@ -32,8 +33,29 @@ class _ServiceTest(PerfStressTest):
         # self._client_kwargs['api_version'] = '2019-02-02'  # Used only for comparison with T1 legacy tests
 
         if not _ServiceTest.service_client or self.args.no_client_share:
-            _ServiceTest.service_client = SyncBlobServiceClient.from_connection_string(conn_str=connection_string, **self._client_kwargs)
-            _ServiceTest.async_service_client = AsyncBlobServiceClient.from_connection_string(conn_str=connection_string, **self._client_kwargs)
+            if self.args.use_entra_id:
+                tenant_id = self.get_from_env("AZURE-STORAGE-BLOB_TENANT_ID")
+                client_id = self.get_from_env("AZURE-STORAGE-BLOB_CLIENT_ID")
+                client_secret = self.get_from_env("AZURE-STORAGE-BLOB_CLIENT_SECRET")
+                sync_token_credential = SyncClientSecretCredential(
+                    tenant_id,
+                    client_id,
+                    client_secret
+                )
+                async_token_credential = AsyncClientSecretCredential(
+                    tenant_id,
+                    client_id,
+                    client_secret
+                )
+                account_name = self.get_from_env("AZURE_STORAGE_ACCOUNT_NAME")
+                # We assume these tests will only be run on the Azure public cloud for now.
+                url = f"https://{account_name}.blob.core.windows.net"
+                _ServiceTest.service_client = SyncBlobServiceClient(account_url=url, credential=sync_token_credential, **self._client_kwargs)
+                _ServiceTest.async_service_client = AsyncBlobServiceClient(account_url=url, credential=async_token_credential, **self._client_kwargs)
+            else:
+                connection_string = self.get_from_env("AZURE_STORAGE_CONNECTION_STRING")
+                _ServiceTest.service_client = SyncBlobServiceClient.from_connection_string(conn_str=connection_string, **self._client_kwargs)
+                _ServiceTest.async_service_client = AsyncBlobServiceClient.from_connection_string(conn_str=connection_string, **self._client_kwargs)
         self.service_client = _ServiceTest.service_client
         self.async_service_client = _ServiceTest.async_service_client
 
@@ -51,6 +73,9 @@ class _ServiceTest(PerfStressTest):
         parser.add_argument('--max-concurrency', nargs='?', type=int, help='Maximum number of concurrent threads used for data transfer. Defaults to 1', default=1)
         parser.add_argument('-s', '--size', nargs='?', type=int, help='Size of data to transfer.  Default is 10240.', default=10240)
         parser.add_argument('--no-client-share', action='store_true', help='Create one ServiceClient per test instance.  Default is to share a single ServiceClient.', default=False)
+        parser.add_argument(
+            "--use-entra-id", action="store_true", help="Use Microsoft Entra ID authentication instead of connection string."
+        )
 
 
 class _ContainerTest(_ServiceTest):

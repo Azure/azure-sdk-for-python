@@ -26,8 +26,10 @@ from ._credentials import (
     UsernamePasswordCredential,
     VisualStudioCodeCredential,
     WorkloadIdentityCredential,
+    AzurePipelinesCredential,
 )
 from ._persistent_cache import TokenCachePersistenceOptions
+from ._bearer_token_provider import get_bearer_token_provider
 
 
 __all__ = [
@@ -37,6 +39,7 @@ __all__ = [
     "AzureAuthorityHosts",
     "AzureCliCredential",
     "AzureDeveloperCliCredential",
+    "AzurePipelinesCredential",
     "AzurePowerShellCredential",
     "CertificateCredential",
     "ChainedTokenCredential",
@@ -55,6 +58,7 @@ __all__ = [
     "UsernamePasswordCredential",
     "VisualStudioCodeCredential",
     "WorkloadIdentityCredential",
+    "get_bearer_token_provider",
 ]
 
 from ._version import VERSION

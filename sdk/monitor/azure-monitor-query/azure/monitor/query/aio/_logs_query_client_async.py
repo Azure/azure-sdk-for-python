@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime, timedelta
-from typing import Any, cast, Tuple, Union, Sequence, Dict, List, Optional
+from typing import Any, cast, Tuple, Union, Sequence, Dict, List, Optional, MutableMapping
 from urllib.parse import urlparse
 
 from azure.core.credentials_async import AsyncTokenCredential
@@ -17,6 +17,8 @@ from .._helpers import construct_iso8601, order_results, process_error, process_
 from .._models import LogsQueryResult, LogsBatchQuery, LogsQueryPartialResult
 from ._helpers_async import get_authentication_policy
 from .._exceptions import LogsQueryError
+
+JSON = MutableMapping[str, Any]
 
 
 class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-keyword
@@ -41,6 +43,15 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
             :language: python
             :dedent: 4
             :caption: Creating the asynchronous LogsQueryClient with a TokenCredential.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_logs_query_client_sovereign_cloud_async]
+            :end-before: [END create_logs_query_client_sovereign_cloud_async]
+            :language: python
+            :dedent: 4
+            :caption: Creating the LogsQueryClient for use with a sovereign cloud (i.e. non-public cloud).
     """
 
     def __init__(self, credential: AsyncTokenCredential, **kwargs: Any) -> None:
@@ -67,6 +78,10 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
         query: str,
         *,
         timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]],
+        server_timeout: Optional[int] = None,
+        include_statistics: bool = False,
+        include_visualization: bool = False,
+        additional_workspaces: Optional[Sequence[str]] = None,
         **kwargs: Any,
     ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
         """Execute an Analytics query.
@@ -95,7 +110,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
         :paramtype additional_workspaces: Optional[List[str]]
         :return: LogsQueryResult if there is a success or LogsQueryPartialResult when there is a partial success.
         :rtype: ~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryPartialResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -107,15 +122,11 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
                 :caption: Get a response for a single log query.
         """
         timespan_iso = construct_iso8601(timespan)
-        include_statistics = kwargs.pop("include_statistics", False)
-        include_visualization = kwargs.pop("include_visualization", False)
-        server_timeout = kwargs.pop("server_timeout", None)
-        additional_workspaces = kwargs.pop("additional_workspaces", None)
-
         prefer = process_prefer(server_timeout, include_statistics, include_visualization)
 
         body = {"query": query, "timespan": timespan_iso, "workspaces": additional_workspaces}
 
+        generated_response: JSON = {}
         try:
             generated_response = await self._query_op.execute(  # pylint: disable=protected-access
                 workspace_id=workspace_id, body=body, prefer=prefer, **kwargs
@@ -148,7 +159,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
          The status of each response can be checked using `LogsQueryStatus` enum.
         :rtype: list[~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryPartialResult
          or ~azure.monitor.query.LogsQueryError]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -184,6 +195,10 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
         query: str,
         *,
         timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]],
+        server_timeout: Optional[int] = None,
+        include_statistics: bool = False,
+        include_visualization: bool = False,
+        additional_workspaces: Optional[Sequence[str]] = None,
         **kwargs: Any,
     ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
         """Execute a Kusto query on a resource.
@@ -212,7 +227,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
         :paramtype additional_workspaces: Optional[List[str]]
         :return: LogsQueryResult if there is a success or LogsQueryPartialResult when there is a partial success.
         :rtype: Union[~azure.monitor.query.LogsQueryResult, ~azure.monitor.query.LogsQueryPartialResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -224,11 +239,6 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
                 :caption: Get a response for a single query on a resource's logs.
         """
         timespan_iso = construct_iso8601(timespan)
-        include_statistics = kwargs.pop("include_statistics", False)
-        include_visualization = kwargs.pop("include_visualization", False)
-        server_timeout = kwargs.pop("server_timeout", None)
-        additional_workspaces = kwargs.pop("additional_workspaces", None)
-
         prefer = process_prefer(server_timeout, include_statistics, include_visualization)
 
         body = {
@@ -237,6 +247,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
             "additional_workspaces": additional_workspaces,
         }
 
+        generated_response: JSON = {}
         try:
             generated_response = await self._query_op.resource_execute(  # pylint: disable=protected-access
                 resource_id=resource_id, body=body, prefer=prefer, **kwargs

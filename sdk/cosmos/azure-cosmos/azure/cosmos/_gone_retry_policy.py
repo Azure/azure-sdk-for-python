@@ -37,10 +37,11 @@ class PartitionKeyRangeGoneRetryPolicy(object):
         self.exception = None
 
     def ShouldRetry(self, exception):
-        """Returns true if should retry based on the passed-in exception.
+        """Returns true if the request should retry based on the passed-in exception.
 
         :param (exceptions.CosmosHttpResponseError instance) exception:
-        :rtype: boolean
+        :returns: a boolean stating whether the request should be retried
+        :rtype: bool
 
         """
         self.exception = exception  # needed for pylint

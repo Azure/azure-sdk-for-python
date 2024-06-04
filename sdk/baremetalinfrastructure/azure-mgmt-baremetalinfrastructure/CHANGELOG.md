@@ -1,5 +1,18 @@
 # Release History
 
+## 1.1.0b2 (2023-10-23)
+
+### Features Added
+
+  - Added operation AzureBareMetalInstancesOperations.begin_restart
+  - Added operation AzureBareMetalInstancesOperations.begin_shutdown
+  - Added operation AzureBareMetalInstancesOperations.begin_start
+  - Added operation group AzureBareMetalStorageInstancesOperations
+  - Model Operation has a new parameter action_type
+  - Model Operation has a new parameter origin
+  - Model Resource has a new parameter system_data
+  - Model TrackedResource has a new parameter system_data
+
 ## 1.1.0b1 (2022-11-09)
 
 ### Other Changes

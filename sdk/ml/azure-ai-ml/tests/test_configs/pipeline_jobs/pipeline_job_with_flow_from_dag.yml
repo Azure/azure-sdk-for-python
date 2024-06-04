@@ -1,0 +1,29 @@
+type: pipeline
+
+name: simplePipelineJobWithFlow
+description: The hello world pipeline job with flow option 1
+
+compute: "azureml:cpu-cluster"
+
+inputs:
+  data:
+    type: uri_file
+    path: "../flows/data/web_classification.jsonl"
+
+outputs:
+  output_data:
+    mode: mount
+
+jobs:
+  anonymous_node:
+    type: parallel
+    # type of the component will be determined by node type
+    # if there is default value in flow.dag.yaml, it will be used as component input default value
+    component: ../flows/web_classification_with_additional_includes/flow.dag.yaml
+    inputs:
+      data: ${{parent.inputs.data}}
+      url: "${data.url}"
+      connections.summarize_text_content.connection: azure_open_ai_connection
+      connections.summarize_text_content.deployment_name: text-davinci-003
+    outputs:
+      flow_outputs: ${{parent.outputs.output_data}}

@@ -10,8 +10,8 @@ Let's get started with how to setup the repo itself.
 
 To get started with any of the packages, change directory to the package you want to install and run the `pip install .` command. This will install all of the local files necessary for you to run the corresponding tests. It's important to note that if you made changes to the local files and want to run the tests again, you must run the `pip install .` command from the package root folder to update the files with your new changes.
 
-In each SDK directory, run the following command to ensure packages to support development is installed correctly,
-`python -m pip install -r .\dev_requirements.txt`.
+In each SDK directory, run the following commands to ensure packages to support development is installed correctly,
+`python -m pip install -r .\dev_requirements.txt` and in the main directory of the repo run `python -m pip install -r .\shared_requirements.txt`.
 
 Once the package has been installed on your machine, let's jump on how to run the tests to see that everything is in order.
 
@@ -19,6 +19,7 @@ Once the package has been installed on your machine, let's jump on how to run th
 
 Make sure to check out the general contributing guide the Azure SDK repo has for a more in-depth look at testing and setting up your dev environment. You can check out the contributing file [here](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md)
 
+You will also need to follow the Python instructions to install the SSL certificates for the test proxy to work [Dev Certificates](https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/test-proxy/trusting-cert-per-language.md#python)
 
 When you go inside the tests folder of the package you are working with, you will see a folder called `recordings`. This folder contains, as its name suggests, recordings of successful calls to the API that allow us to run the tests in PLAYBACK mode and remove the necessity of hitting the actual resources every time we may want to test.
 

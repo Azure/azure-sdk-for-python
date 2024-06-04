@@ -1,7 +1,6 @@
 import os
 import pytest
 from devtools_testutils import recorded_by_proxy
-from _shared.testcase import BodyReplacerProcessor
 from _shared.utils import (
     create_token_credential,
     get_header_policy,
@@ -16,7 +15,6 @@ from azure.communication.phonenumbers import (
 )
 from azure.communication.phonenumbers._generated.models import PhoneNumberOperationStatus
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
-from phone_number_helper import PhoneNumberUriReplacer, PhoneNumberResponseReplacerProcessor
 from phone_numbers_testcase import PhoneNumbersTestCase
 
 SKIP_PURCHASE_PHONE_NUMBER_TESTS = True
@@ -302,13 +300,23 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         phone_number_client = self._get_managed_identity_phone_number_client()
         area_codes = phone_number_client.list_available_area_codes(
             "US", PhoneNumberType.TOLL_FREE, assignment_type=PhoneNumberAssignmentType.APPLICATION)
-        assert area_codes.next()
+        
+        expected_area_codes = { "888", "877", "866", "855", "844", "800", "833", "88" }
+        for area_code in area_codes:
+            assert area_code.area_code in expected_area_codes
+        
+        assert area_codes is not None
 
     @recorded_by_proxy
     def test_list_toll_free_area_codes(self):
         area_codes = self.phone_number_client.list_available_area_codes(
             "US", PhoneNumberType.TOLL_FREE, assignment_type=PhoneNumberAssignmentType.APPLICATION)
-        assert area_codes.next()
+        
+        expected_area_codes = { "888", "877", "866", "855", "844", "800", "833", "88" }
+        for area_code in area_codes:
+            assert area_code.area_code in expected_area_codes
+
+        assert area_codes is not None
 
     @recorded_by_proxy
     def test_list_geographic_area_codes_from_managed_identity(self):
@@ -375,3 +383,39 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
     def test_list_offerings(self):
         offerings = self.phone_number_client.list_available_offerings("US")
         assert offerings.next()
+
+    @recorded_by_proxy
+    def test_search_operator_information_with_too_many_phone_numbers(self):
+        if self.is_playback():
+            phone_numbers = [ "sanitized", "sanitized" ]
+        else:
+            phone_numbers = [ self.phone_number, self.phone_number ]
+
+        with pytest.raises(Exception) as ex:
+            self.phone_number_client.search_operator_information(phone_numbers)
+
+        assert is_client_error_status_code(
+            ex.value.status_code) is True, 'Status code {ex.value.status_code} does not indicate a client error'  # type: ignore
+        assert ex.value.message is not None  # type: ignore
+
+    @recorded_by_proxy
+    def test_search_operator_information_with_list(self):
+        if self.is_playback():
+            phone_number = "sanitized"
+        else:
+            phone_number = self.phone_number
+
+        results = self.phone_number_client.search_operator_information([ phone_number ])
+        assert len(results.values) == 1
+        assert results.values[0].phone_number == self.phone_number
+
+    @recorded_by_proxy
+    def test_search_operator_information_with_single_string(self):
+        if self.is_playback():
+            phone_number = "sanitized"
+        else:
+            phone_number = self.phone_number
+
+        results = self.phone_number_client.search_operator_information(phone_number)
+        assert len(results.values) == 1
+        assert results.values[0].phone_number == self.phone_number

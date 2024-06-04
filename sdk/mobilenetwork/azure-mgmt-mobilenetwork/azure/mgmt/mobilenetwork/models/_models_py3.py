@@ -45,7 +45,7 @@ class Ambr(_serialization.Model):
         "downlink": {"key": "downlink", "type": "str"},
     }
 
-    def __init__(self, *, uplink: str, downlink: str, **kwargs):
+    def __init__(self, *, uplink: str, downlink: str, **kwargs: Any) -> None:
         """
         :keyword uplink: Uplink bit rate. Required.
         :paramtype uplink: str
@@ -90,8 +90,8 @@ class Arp(_serialization.Model):
         priority_level: int,
         preempt_cap: Union[str, "_models.PreemptionCapability"],
         preempt_vuln: Union[str, "_models.PreemptionVulnerability"],
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword priority_level: ARP priority level. Required.
         :paramtype priority_level: int
@@ -128,7 +128,7 @@ class AsyncOperationId(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Azure Async Operation ID. Required.
         :paramtype id: str
@@ -192,8 +192,8 @@ class AsyncOperationStatus(_serialization.Model):
         percent_complete: Optional[float] = None,
         properties: Optional[JSON] = None,
         error: Optional["_models.ErrorDetail"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Fully qualified ID for the async operation.
         :paramtype id: str
@@ -232,8 +232,8 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -259,7 +259,7 @@ class Resource(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -269,14 +269,15 @@ class Resource(_serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -309,7 +310,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -322,14 +323,15 @@ class TrackedResource(Resource):
 
 
 class AttachedDataNetwork(TrackedResource):  # pylint: disable=too-many-instance-attributes
-    """Attached data network resource. Must be created in the same location as its parent packet core data plane.
+    """Attached data network resource. Must be created in the same location as its parent packet core
+    data plane.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -417,8 +419,8 @@ class AttachedDataNetwork(TrackedResource):  # pylint: disable=too-many-instance
         napt_configuration: Optional["_models.NaptConfiguration"] = None,
         user_equipment_address_pool_prefix: Optional[List[str]] = None,
         user_equipment_static_address_pool_prefix: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -481,7 +483,7 @@ class AttachedDataNetworkListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.AttachedDataNetwork"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.AttachedDataNetwork"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of data networks in a resource group.
         :paramtype value: list[~azure.mgmt.mobilenetwork.models.AttachedDataNetwork]
@@ -511,7 +513,7 @@ class AttachedDataNetworkResourceId(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Attached data network resource ID. Required.
         :paramtype id: str
@@ -540,7 +542,7 @@ class AzureStackEdgeDeviceResourceId(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Azure Stack Edge device resource ID. Required.
         :paramtype id: str
@@ -569,7 +571,7 @@ class AzureStackHCIClusterResourceId(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Azure Stack HCI cluster resource ID. Required.
         :paramtype id: str
@@ -600,7 +602,7 @@ class CertificateProvisioning(_serialization.Model):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.state = None
@@ -678,8 +680,8 @@ class CommonSimPropertiesFormat(_serialization.Model):
         device_type: Optional[str] = None,
         sim_policy: Optional["_models.SimPolicyResourceId"] = None,
         static_ip_configuration: Optional[List["_models.SimStaticIpProperties"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword international_mobile_subscriber_identity: The international mobile subscriber identity
          (IMSI) for the SIM. Required.
@@ -732,7 +734,7 @@ class ConnectedClusterResourceId(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Azure Arc connected cluster resource ID. Required.
         :paramtype id: str
@@ -761,7 +763,7 @@ class CustomLocationResourceId(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Azure Arc custom location resource ID. Required.
         :paramtype id: str
@@ -777,8 +779,8 @@ class DataNetwork(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -820,8 +822,8 @@ class DataNetwork(TrackedResource):
     }
 
     def __init__(
-        self, *, location: str, tags: Optional[Dict[str, str]] = None, description: Optional[str] = None, **kwargs
-    ):
+        self, *, location: str, tags: Optional[Dict[str, str]] = None, description: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -847,12 +849,9 @@ class DataNetworkConfiguration(_serialization.Model):
      session. See 3GPP TS23.501 section 5.7.2.6 for a full description of the Session-AMBR.
      Required.
     :vartype session_ambr: ~azure.mgmt.mobilenetwork.models.Ambr
-    :ivar five_qi: Default QoS Flow 5G QoS Indicator value. The 5QI identifies a specific QoS
-     forwarding treatment to be provided to a flow. This must not be a standardized 5QI value
-     corresponding to a GBR (guaranteed bit rate) QoS Flow. The illegal GBR 5QI values are: 1, 2, 3,
-     4, 65, 66, 67, 71, 72, 73, 74, 75, 76, 82, 83, 84, and 85. See 3GPP TS23.501 section 5.7.2.1
-     for a full description of the 5QI parameter, and table 5.7.4-1 for the definition of which are
-     the GBR 5QI values.
+    :ivar five_qi: Default 5G QoS Flow Indicator value. The 5QI identifies a specific QoS
+     forwarding treatment to be provided to a flow. See 3GPP TS23.501 section 5.7.2.1 for a full
+     description of the 5QI parameter, and table 5.7.4-1 for the definition the 5QI values.
     :vartype five_qi: int
     :ivar allocation_and_retention_priority_level: Default QoS Flow allocation and retention
      priority (ARP) level. Flows with higher priority preempt flows with lower priority, if the
@@ -925,8 +924,8 @@ class DataNetworkConfiguration(_serialization.Model):
         default_session_type: Optional[Union[str, "_models.PduSessionType"]] = None,
         additional_allowed_session_types: Optional[List[Union[str, "_models.PduSessionType"]]] = None,
         maximum_number_of_buffered_packets: int = 10,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_network: A reference to the data network that these settings apply to. The data
          network must be in the same location as the SIM policy. Required.
@@ -935,12 +934,9 @@ class DataNetworkConfiguration(_serialization.Model):
          session. See 3GPP TS23.501 section 5.7.2.6 for a full description of the Session-AMBR.
          Required.
         :paramtype session_ambr: ~azure.mgmt.mobilenetwork.models.Ambr
-        :keyword five_qi: Default QoS Flow 5G QoS Indicator value. The 5QI identifies a specific QoS
-         forwarding treatment to be provided to a flow. This must not be a standardized 5QI value
-         corresponding to a GBR (guaranteed bit rate) QoS Flow. The illegal GBR 5QI values are: 1, 2, 3,
-         4, 65, 66, 67, 71, 72, 73, 74, 75, 76, 82, 83, 84, and 85. See 3GPP TS23.501 section 5.7.2.1
-         for a full description of the 5QI parameter, and table 5.7.4-1 for the definition of which are
-         the GBR 5QI values.
+        :keyword five_qi: Default 5G QoS Flow Indicator value. The 5QI identifies a specific QoS
+         forwarding treatment to be provided to a flow. See 3GPP TS23.501 section 5.7.2.1 for a full
+         description of the 5QI parameter, and table 5.7.4-1 for the definition the 5QI values.
         :paramtype five_qi: int
         :keyword allocation_and_retention_priority_level: Default QoS Flow allocation and retention
          priority (ARP) level. Flows with higher priority preempt flows with lower priority, if the
@@ -1009,7 +1005,7 @@ class DataNetworkListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.DataNetwork"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.DataNetwork"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of data networks.
         :paramtype value: list[~azure.mgmt.mobilenetwork.models.DataNetwork]
@@ -1039,13 +1035,196 @@ class DataNetworkResourceId(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Data network resource ID. Required.
         :paramtype id: str
         """
         super().__init__(**kwargs)
         self.id = id
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mobilenetwork.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+
+
+class DiagnosticsPackage(ProxyResource):
+    """Diagnostics package resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mobilenetwork.models.SystemData
+    :ivar provisioning_state: The provisioning state of the diagnostics package resource. Known
+     values are: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", and
+     "Deleted".
+    :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
+    :ivar status: The status of the diagnostics package collection. Known values are: "NotStarted",
+     "Collecting", "Collected", and "Error".
+    :vartype status: str or ~azure.mgmt.mobilenetwork.models.DiagnosticsPackageStatus
+    :ivar reason: The reason for the current state of the diagnostics package collection.
+    :vartype reason: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "status": {"readonly": True},
+        "reason": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "reason": {"key": "properties.reason", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.provisioning_state = None
+        self.status = None
+        self.reason = None
+
+
+class DiagnosticsPackageListResult(_serialization.Model):
+    """Response for diagnostics package API service call.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: A list of diagnostics packages under a packet core control plane.
+    :vartype value: list[~azure.mgmt.mobilenetwork.models.DiagnosticsPackage]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[DiagnosticsPackage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.DiagnosticsPackage"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: A list of diagnostics packages under a packet core control plane.
+        :paramtype value: list[~azure.mgmt.mobilenetwork.models.DiagnosticsPackage]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class DiagnosticsUploadConfiguration(_serialization.Model):
+    """Configuration for uploading packet core diagnostics.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar storage_account_container_url: The Storage Account Container URL to upload diagnostics
+     to. Required.
+    :vartype storage_account_container_url: str
+    """
+
+    _validation = {
+        "storage_account_container_url": {"required": True},
+    }
+
+    _attribute_map = {
+        "storage_account_container_url": {"key": "storageAccountContainerUrl", "type": "str"},
+    }
+
+    def __init__(self, *, storage_account_container_url: str, **kwargs: Any) -> None:
+        """
+        :keyword storage_account_container_url: The Storage Account Container URL to upload diagnostics
+         to. Required.
+        :paramtype storage_account_container_url: str
+        """
+        super().__init__(**kwargs)
+        self.storage_account_container_url = storage_account_container_url
+
+
+class DnnIpPair(_serialization.Model):
+    """DNN and UE IP address.
+
+    :ivar dnn: Data network name.
+    :vartype dnn: str
+    :ivar ip_v4_addr: IPv4 address.
+    :vartype ip_v4_addr: str
+    """
+
+    _validation = {
+        "ip_v4_addr": {
+            "pattern": r"^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$"
+        },
+    }
+
+    _attribute_map = {
+        "dnn": {"key": "dnn", "type": "str"},
+        "ip_v4_addr": {"key": "ueIpAddress.ipV4Addr", "type": "str"},
+    }
+
+    def __init__(self, *, dnn: Optional[str] = None, ip_v4_addr: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword dnn: Data network name.
+        :paramtype dnn: str
+        :keyword ip_v4_addr: IPv4 address.
+        :paramtype ip_v4_addr: str
+        """
+        super().__init__(**kwargs)
+        self.dnn = dnn
+        self.ip_v4_addr = ip_v4_addr
 
 
 class EncryptedSimPropertiesFormat(CommonSimPropertiesFormat):  # pylint: disable=too-many-instance-attributes
@@ -1124,8 +1303,8 @@ class EncryptedSimPropertiesFormat(CommonSimPropertiesFormat):  # pylint: disabl
         sim_policy: Optional["_models.SimPolicyResourceId"] = None,
         static_ip_configuration: Optional[List["_models.SimStaticIpProperties"]] = None,
         encrypted_credentials: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword international_mobile_subscriber_identity: The international mobile subscriber identity
          (IMSI) for the SIM. Required.
@@ -1208,8 +1387,8 @@ class EncryptedSimUploadList(_serialization.Model):
         encrypted_transport_key: str,
         signed_transport_key: str,
         sims: List["_models.SimNameAndEncryptedProperties"],
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword version: The upload file format version. Required.
         :paramtype version: int
@@ -1258,7 +1437,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -1298,7 +1477,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -1309,7 +1488,8 @@ class ErrorDetail(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.mobilenetwork.models.ErrorDetail
@@ -1319,13 +1499,199 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.mobilenetwork.models.ErrorDetail
         """
         super().__init__(**kwargs)
         self.error = error
+
+
+class EventHubConfiguration(_serialization.Model):
+    """Configuration for sending packet core events to Azure Event Hub.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID  of Azure Event Hub to send packet core events to. Required.
+    :vartype id: str
+    :ivar reporting_interval: The duration (in seconds) between UE usage reports.
+    :vartype reporting_interval: int
+    """
+
+    _validation = {
+        "id": {
+            "required": True,
+            "pattern": r"^/[sS][uU][bB][sS][cC][rR][iI][pP][tT][iI][oO][nN][sS]/[^/?#]+/[rR][eE][sS][oO][uU][rR][cC][eE][gG][rR][oO][uU][pP][sS]/[^/?#]+/[pP][rR][oO][vV][iI][dD][eE][rR][sS]/[mM][iI][cC][rR][oO][sS][oO][fF][tT]\.[eE][vV][eE][nN][tT][hH][uU][bB]/[nN][aA][mM][eE][sS][pP][aA][cC][eE][sS]/[^/?#]+/[eV][vV][eE][nN][tT][hH][uU][bB][sS]/[^/?#]+$",
+        },
+        "reporting_interval": {"maximum": 3600, "minimum": 30},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "reporting_interval": {"key": "reportingInterval", "type": "int"},
+    }
+
+    def __init__(
+        self, *, id: str, reporting_interval: int = 1800, **kwargs: Any  # pylint: disable=redefined-builtin
+    ) -> None:
+        """
+        :keyword id: Resource ID  of Azure Event Hub to send packet core events to. Required.
+        :paramtype id: str
+        :keyword reporting_interval: The duration (in seconds) between UE usage reports.
+        :paramtype reporting_interval: int
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.reporting_interval = reporting_interval
+
+
+class ExtendedUeInfo(ProxyResource):
+    """Extended User Equipment (UE) information.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mobilenetwork.models.SystemData
+    :ivar properties: Extended UE Information Properties. Required.
+    :vartype properties: ~azure.mgmt.mobilenetwork.models.ExtendedUeInfoProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ExtendedUeInfoProperties"},
+    }
+
+    def __init__(self, *, properties: "_models.ExtendedUeInfoProperties", **kwargs: Any) -> None:
+        """
+        :keyword properties: Extended UE Information Properties. Required.
+        :paramtype properties: ~azure.mgmt.mobilenetwork.models.ExtendedUeInfoProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class ExtendedUeInfoProperties(_serialization.Model):
+    """Extended UE Information Properties.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    UeInfo4G, UeInfo5G
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar rat_type: RAT Type. Required. Known values are: "4G" and "5G".
+    :vartype rat_type: str or ~azure.mgmt.mobilenetwork.models.RatType
+    :ivar last_read_at: The timestamp of last UE info read from the packet core (UTC).
+    :vartype last_read_at: ~datetime.datetime
+    """
+
+    _validation = {
+        "rat_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "rat_type": {"key": "ratType", "type": "str"},
+        "last_read_at": {"key": "lastReadAt", "type": "iso-8601"},
+    }
+
+    _subtype_map = {"rat_type": {"4G": "UeInfo4G", "5G": "UeInfo5G"}}
+
+    def __init__(self, *, last_read_at: Optional[datetime.datetime] = None, **kwargs: Any) -> None:
+        """
+        :keyword last_read_at: The timestamp of last UE info read from the packet core (UTC).
+        :paramtype last_read_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.rat_type: Optional[str] = None
+        self.last_read_at = last_read_at
+
+
+class HomeNetworkPrivateKeysProvisioning(_serialization.Model):
+    """HomeNetworkPrivateKeysProvisioning.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar state: The provisioning state of the private keys for SUPI concealment. Required. Known
+     values are: "NotProvisioned", "Provisioned", and "Failed".
+    :vartype state: str or ~azure.mgmt.mobilenetwork.models.HomeNetworkPrivateKeysProvisioningState
+    """
+
+    _validation = {
+        "state": {"required": True, "readonly": True},
+    }
+
+    _attribute_map = {
+        "state": {"key": "state", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.state = None
+
+
+class HomeNetworkPublicKey(_serialization.Model):
+    """A key used for SUPI concealment.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The Home Network Public Key Identifier determines which public key was used to
+     generate the SUCI sent to the AMF. See TS 23.003 Section 2.2B Section 5. Required.
+    :vartype id: int
+    :ivar url: The URL of Azure Key Vault secret containing the private key, versioned or
+     unversioned. For example:
+     https://contosovault.vault.azure.net/secrets/mySuciPrivateKey/562a4bb76b524a1493a6afe8e536ee78.
+    :vartype url: str
+    """
+
+    _validation = {
+        "id": {"required": True, "maximum": 255, "minimum": 1},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "int"},
+        "url": {"key": "url", "type": "str"},
+    }
+
+    def __init__(
+        self, *, id: int, url: Optional[str] = None, **kwargs: Any  # pylint: disable=redefined-builtin
+    ) -> None:
+        """
+        :keyword id: The Home Network Public Key Identifier determines which public key was used to
+         generate the SUCI sent to the AMF. See TS 23.003 Section 2.2B Section 5. Required.
+        :paramtype id: int
+        :keyword url: The URL of Azure Key Vault secret containing the private key, versioned or
+         unversioned. For example:
+         https://contosovault.vault.azure.net/secrets/mySuciPrivateKey/562a4bb76b524a1493a6afe8e536ee78.
+        :paramtype url: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.url = url
 
 
 class HttpsServerCertificate(_serialization.Model):
@@ -1352,7 +1718,7 @@ class HttpsServerCertificate(_serialization.Model):
         "provisioning": {"key": "provisioning", "type": "CertificateProvisioning"},
     }
 
-    def __init__(self, *, certificate_url: str, **kwargs):
+    def __init__(self, *, certificate_url: str, **kwargs: Any) -> None:
         """
         :keyword certificate_url: The certificate URL, unversioned. For example:
          https://contosovault.vault.azure.net/certificates/ingress. Required.
@@ -1363,38 +1729,87 @@ class HttpsServerCertificate(_serialization.Model):
         self.provisioning = None
 
 
-class Installation(_serialization.Model):
-    """The installation state of the packet core.
+class IdentityAndTagsObject(_serialization.Model):
+    """Identity and Tags object for patch operations.
 
-    :ivar state: Installation state. Known values are: "Uninstalled", "Installing", "Installed",
-     "Updating", "Upgrading", "Uninstalling", "Reinstalling", "RollingBack", and "Failed".
-    :vartype state: str or ~azure.mgmt.mobilenetwork.models.InstallationState
-    :ivar operation: A reference to an in-progress installation operation.
-    :vartype operation: ~azure.mgmt.mobilenetwork.models.AsyncOperationId
+    :ivar identity: The managed service identity associated with this resource.
+    :vartype identity: ~azure.mgmt.mobilenetwork.models.ManagedServiceIdentity
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        "state": {"key": "state", "type": "str"},
-        "operation": {"key": "operation", "type": "AsyncOperationId"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        state: Optional[Union[str, "_models.InstallationState"]] = None,
-        operation: Optional["_models.AsyncOperationId"] = None,
-        **kwargs
-    ):
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword state: Installation state. Known values are: "Uninstalled", "Installing", "Installed",
-         "Updating", "Upgrading", "Uninstalling", "Reinstalling", "RollingBack", and "Failed".
-        :paramtype state: str or ~azure.mgmt.mobilenetwork.models.InstallationState
-        :keyword operation: A reference to an in-progress installation operation.
-        :paramtype operation: ~azure.mgmt.mobilenetwork.models.AsyncOperationId
+        :keyword identity: The managed service identity associated with this resource.
+        :paramtype identity: ~azure.mgmt.mobilenetwork.models.ManagedServiceIdentity
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.state = state
-        self.operation = operation
+        self.identity = identity
+        self.tags = tags
+
+
+class Installation(_serialization.Model):
+    """The installation state of the packet core.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar desired_state: The desired installation state. Known values are: "Uninstalled" and
+     "Installed".
+    :vartype desired_state: str or ~azure.mgmt.mobilenetwork.models.DesiredInstallationState
+    :ivar state: Installation state. Known values are: "Uninstalled", "Installing", "Installed",
+     "Updating", "Upgrading", "Uninstalling", "Reinstalling", "RollingBack", and "Failed".
+    :vartype state: str or ~azure.mgmt.mobilenetwork.models.InstallationState
+    :ivar reinstall_required: Whether a reinstall of the packet core is required to pick up the
+     latest configuration changes. Known values are: "Required" and "NotRequired".
+    :vartype reinstall_required: str or ~azure.mgmt.mobilenetwork.models.ReinstallRequired
+    :ivar reasons: Reason(s) for the current installation state of the packet core.
+    :vartype reasons: list[str or ~azure.mgmt.mobilenetwork.models.InstallationReason]
+    :ivar operation: A reference to an in-progress installation operation.
+    :vartype operation: ~azure.mgmt.mobilenetwork.models.AsyncOperationId
+    """
+
+    _validation = {
+        "state": {"readonly": True},
+        "reinstall_required": {"readonly": True},
+        "reasons": {"readonly": True, "unique": True},
+        "operation": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "desired_state": {"key": "desiredState", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "reinstall_required": {"key": "reinstallRequired", "type": "str"},
+        "reasons": {"key": "reasons", "type": "[str]"},
+        "operation": {"key": "operation", "type": "AsyncOperationId"},
+    }
+
+    def __init__(
+        self, *, desired_state: Optional[Union[str, "_models.DesiredInstallationState"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword desired_state: The desired installation state. Known values are: "Uninstalled" and
+         "Installed".
+        :paramtype desired_state: str or ~azure.mgmt.mobilenetwork.models.DesiredInstallationState
+        """
+        super().__init__(**kwargs)
+        self.desired_state = desired_state
+        self.state = None
+        self.reinstall_required = None
+        self.reasons = None
+        self.operation = None
 
 
 class InterfaceProperties(_serialization.Model):
@@ -1437,8 +1852,8 @@ class InterfaceProperties(_serialization.Model):
         ipv4_address: Optional[str] = None,
         ipv4_subnet: Optional[str] = None,
         ipv4_gateway: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The logical name for this interface. This should match one of the interfaces
          configured on your Azure Stack Edge device.
@@ -1469,7 +1884,7 @@ class KeyVaultKey(_serialization.Model):
         "key_url": {"key": "keyUrl", "type": "str"},
     }
 
-    def __init__(self, *, key_url: Optional[str] = None, **kwargs):
+    def __init__(self, *, key_url: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword key_url: The key URL, unversioned. For example:
          https://contosovault.vault.azure.net/keys/azureKey.
@@ -1480,7 +1895,8 @@ class KeyVaultKey(_serialization.Model):
 
 
 class LocalDiagnosticsAccessConfiguration(_serialization.Model):
-    """The kubernetes ingress configuration to control access to packet core diagnostics over local APIs.
+    """The kubernetes ingress configuration to control access to packet core diagnostics over local
+    APIs.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1506,8 +1922,8 @@ class LocalDiagnosticsAccessConfiguration(_serialization.Model):
         *,
         authentication_type: Union[str, "_models.AuthenticationType"],
         https_server_certificate: Optional["_models.HttpsServerCertificate"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword authentication_type: How to authenticate users who access local diagnostics APIs.
          Required. Known values are: "AAD" and "Password".
@@ -1522,21 +1938,12 @@ class LocalDiagnosticsAccessConfiguration(_serialization.Model):
 
 
 class ManagedServiceIdentity(_serialization.Model):
-    """Managed service identity (system assigned and/or user assigned identities).
-
-    Variables are only populated by the server, and will be ignored when sending a request.
+    """Managed service identity (User assigned identity).
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
-     provided for a system assigned identity.
-    :vartype tenant_id: str
-    :ivar type: Type of managed service identity (where both SystemAssigned and UserAssigned types
-     are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
-     "SystemAssigned,UserAssigned".
+    :ivar type: Type of managed service identity (currently only UserAssigned allowed). Required.
+     Known values are: "None" and "UserAssigned".
     :vartype type: str or ~azure.mgmt.mobilenetwork.models.ManagedServiceIdentityType
     :ivar user_assigned_identities: The set of user assigned identities associated with the
      resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
@@ -1547,14 +1954,10 @@ class ManagedServiceIdentity(_serialization.Model):
     """
 
     _validation = {
-        "principal_id": {"readonly": True},
-        "tenant_id": {"readonly": True},
         "type": {"required": True},
     }
 
     _attribute_map = {
-        "principal_id": {"key": "principalId", "type": "str"},
-        "tenant_id": {"key": "tenantId", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
     }
@@ -1564,12 +1967,11 @@ class ManagedServiceIdentity(_serialization.Model):
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword type: Type of managed service identity (where both SystemAssigned and UserAssigned
-         types are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
-         "SystemAssigned,UserAssigned".
+        :keyword type: Type of managed service identity (currently only UserAssigned allowed).
+         Required. Known values are: "None" and "UserAssigned".
         :paramtype type: str or ~azure.mgmt.mobilenetwork.models.ManagedServiceIdentityType
         :keyword user_assigned_identities: The set of user assigned identities associated with the
          resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
@@ -1579,21 +1981,19 @@ class ManagedServiceIdentity(_serialization.Model):
          ~azure.mgmt.mobilenetwork.models.UserAssignedIdentity]
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
 
-class MobileNetwork(TrackedResource):
+class MobileNetwork(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Mobile network resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1607,14 +2007,21 @@ class MobileNetwork(TrackedResource):
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
+    :ivar identity: The identity used to retrieve any private keys used for SUPI concealment from
+     Azure key vault.
+    :vartype identity: ~azure.mgmt.mobilenetwork.models.ManagedServiceIdentity
     :ivar provisioning_state: The provisioning state of the mobile network resource. Known values
      are: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", and "Deleted".
     :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
     :ivar public_land_mobile_network_identifier: The unique public land mobile network identifier
-     for the network. This is made up of the mobile country code and mobile network code, as defined
-     in https://www.itu.int/rec/T-REC-E.212. The values 001-01 and 001-001 can be used for testing
-     and the values 999-99 and 999-999 can be used on internal private networks. Required.
+     for the network. If both 'publicLandMobileNetworks' and 'publicLandMobileNetworkIdentifier' are
+     specified, then the 'publicLandMobileNetworks' will take precedence. Required.
     :vartype public_land_mobile_network_identifier: ~azure.mgmt.mobilenetwork.models.PlmnId
+    :ivar public_land_mobile_networks: A list of public land mobile networks including their
+     identifiers. If both 'publicLandMobileNetworks' and 'publicLandMobileNetworkIdentifier' are
+     specified, then the 'publicLandMobileNetworks' will take precedence.
+    :vartype public_land_mobile_networks:
+     list[~azure.mgmt.mobilenetwork.models.PublicLandMobileNetwork]
     :ivar service_key: The mobile network resource identifier.
     :vartype service_key: str
     """
@@ -1627,6 +2034,7 @@ class MobileNetwork(TrackedResource):
         "location": {"required": True},
         "provisioning_state": {"readonly": True},
         "public_land_mobile_network_identifier": {"required": True},
+        "public_land_mobile_networks": {"min_items": 1, "unique": True},
         "service_key": {"readonly": True},
     }
 
@@ -1637,10 +2045,15 @@ class MobileNetwork(TrackedResource):
         "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "public_land_mobile_network_identifier": {
             "key": "properties.publicLandMobileNetworkIdentifier",
             "type": "PlmnId",
+        },
+        "public_land_mobile_networks": {
+            "key": "properties.publicLandMobileNetworks",
+            "type": "[PublicLandMobileNetwork]",
         },
         "service_key": {"key": "properties.serviceKey", "type": "str"},
     }
@@ -1651,23 +2064,34 @@ class MobileNetwork(TrackedResource):
         location: str,
         public_land_mobile_network_identifier: "_models.PlmnId",
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        public_land_mobile_networks: Optional[List["_models.PublicLandMobileNetwork"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
+        :keyword identity: The identity used to retrieve any private keys used for SUPI concealment
+         from Azure key vault.
+        :paramtype identity: ~azure.mgmt.mobilenetwork.models.ManagedServiceIdentity
         :keyword public_land_mobile_network_identifier: The unique public land mobile network
-         identifier for the network. This is made up of the mobile country code and mobile network code,
-         as defined in https://www.itu.int/rec/T-REC-E.212. The values 001-01 and 001-001 can be used
-         for testing and the values 999-99 and 999-999 can be used on internal private networks.
-         Required.
+         identifier for the network. If both 'publicLandMobileNetworks' and
+         'publicLandMobileNetworkIdentifier' are specified, then the 'publicLandMobileNetworks' will
+         take precedence. Required.
         :paramtype public_land_mobile_network_identifier: ~azure.mgmt.mobilenetwork.models.PlmnId
+        :keyword public_land_mobile_networks: A list of public land mobile networks including their
+         identifiers. If both 'publicLandMobileNetworks' and 'publicLandMobileNetworkIdentifier' are
+         specified, then the 'publicLandMobileNetworks' will take precedence.
+        :paramtype public_land_mobile_networks:
+         list[~azure.mgmt.mobilenetwork.models.PublicLandMobileNetwork]
         """
         super().__init__(tags=tags, location=location, **kwargs)
+        self.identity = identity
         self.provisioning_state = None
         self.public_land_mobile_network_identifier = public_land_mobile_network_identifier
+        self.public_land_mobile_networks = public_land_mobile_networks
         self.service_key = None
 
 
@@ -1691,7 +2115,7 @@ class MobileNetworkListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.MobileNetwork"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.MobileNetwork"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of mobile networks in a resource group.
         :paramtype value: list[~azure.mgmt.mobilenetwork.models.MobileNetwork]
@@ -1721,7 +2145,7 @@ class MobileNetworkResourceId(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Mobile network resource ID. Required.
         :paramtype id: str
@@ -1774,8 +2198,8 @@ class NaptConfiguration(_serialization.Model):
         port_reuse_hold_time: Optional["_models.PortReuseHoldTimes"] = None,
         pinhole_limits: int = 65536,
         pinhole_timeouts: Optional["_models.PinholeTimeouts"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Whether NAPT is enabled for connections to this attached data network. Known
          values are: "Enabled" and "Disabled".
@@ -1806,6 +2230,34 @@ class NaptConfiguration(_serialization.Model):
         self.pinhole_timeouts = pinhole_timeouts
 
 
+class NASRerouteConfiguration(_serialization.Model):
+    """Configuration enabling NAS reroute.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar macro_mme_group_id: The macro network's MME group ID. This is where unknown UEs are sent
+     to via NAS reroute. Required.
+    :vartype macro_mme_group_id: int
+    """
+
+    _validation = {
+        "macro_mme_group_id": {"required": True, "maximum": 65535, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "macro_mme_group_id": {"key": "macroMmeGroupId", "type": "int"},
+    }
+
+    def __init__(self, *, macro_mme_group_id: int, **kwargs: Any) -> None:
+        """
+        :keyword macro_mme_group_id: The macro network's MME group ID. This is where unknown UEs are
+         sent to via NAS reroute. Required.
+        :paramtype macro_mme_group_id: int
+        """
+        super().__init__(**kwargs)
+        self.macro_mme_group_id = macro_mme_group_id
+
+
 class Operation(_serialization.Model):
     """Object that describes a single Microsoft.MobileNetwork operation.
 
@@ -1830,7 +2282,7 @@ class Operation(_serialization.Model):
         "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(self, *, is_data_action: Optional[bool] = None, **kwargs):
+    def __init__(self, *, is_data_action: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword is_data_action: Indicates whether the operation applies to data-plane.
         :paramtype is_data_action: bool
@@ -1869,8 +2321,8 @@ class OperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Service provider: Microsoft.MobileNetwork.
         :paramtype provider: str
@@ -1910,10 +2362,144 @@ class OperationList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
+        self.next_link = None
+
+
+class PacketCapture(ProxyResource):  # pylint: disable=too-many-instance-attributes
+    """Packet capture session resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mobilenetwork.models.SystemData
+    :ivar provisioning_state: The provisioning state of the packet capture session resource. Known
+     values are: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", and
+     "Deleted".
+    :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
+    :ivar status: The status of the packet capture session. Known values are: "NotStarted",
+     "Running", "Stopped", and "Error".
+    :vartype status: str or ~azure.mgmt.mobilenetwork.models.PacketCaptureStatus
+    :ivar reason: The reason the current packet capture session state.
+    :vartype reason: str
+    :ivar capture_start_time: The start time of the packet capture session.
+    :vartype capture_start_time: ~datetime.datetime
+    :ivar network_interfaces: List of network interfaces to capture on.
+    :vartype network_interfaces: list[str]
+    :ivar bytes_to_capture_per_packet: Number of bytes captured per packet, the remaining bytes are
+     truncated. The default "0" means the entire packet is captured.
+    :vartype bytes_to_capture_per_packet: int
+    :ivar total_bytes_per_session: Maximum size of the capture output.
+    :vartype total_bytes_per_session: int
+    :ivar time_limit_in_seconds: Maximum duration of the capture session in seconds.
+    :vartype time_limit_in_seconds: int
+    :ivar output_files: The list of output files of a packet capture session.
+    :vartype output_files: list[str]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "status": {"readonly": True},
+        "reason": {"readonly": True},
+        "capture_start_time": {"readonly": True},
+        "network_interfaces": {"min_items": 1, "unique": True},
+        "bytes_to_capture_per_packet": {"maximum": 4294967295, "minimum": 0},
+        "total_bytes_per_session": {"maximum": 4294967295, "minimum": 1000},
+        "time_limit_in_seconds": {"maximum": 18000, "minimum": 5},
+        "output_files": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "reason": {"key": "properties.reason", "type": "str"},
+        "capture_start_time": {"key": "properties.captureStartTime", "type": "iso-8601"},
+        "network_interfaces": {"key": "properties.networkInterfaces", "type": "[str]"},
+        "bytes_to_capture_per_packet": {"key": "properties.bytesToCapturePerPacket", "type": "int"},
+        "total_bytes_per_session": {"key": "properties.totalBytesPerSession", "type": "int"},
+        "time_limit_in_seconds": {"key": "properties.timeLimitInSeconds", "type": "int"},
+        "output_files": {"key": "properties.outputFiles", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        network_interfaces: Optional[List[str]] = None,
+        bytes_to_capture_per_packet: int = 0,
+        total_bytes_per_session: int = 67108864,
+        time_limit_in_seconds: int = 18000,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword network_interfaces: List of network interfaces to capture on.
+        :paramtype network_interfaces: list[str]
+        :keyword bytes_to_capture_per_packet: Number of bytes captured per packet, the remaining bytes
+         are truncated. The default "0" means the entire packet is captured.
+        :paramtype bytes_to_capture_per_packet: int
+        :keyword total_bytes_per_session: Maximum size of the capture output.
+        :paramtype total_bytes_per_session: int
+        :keyword time_limit_in_seconds: Maximum duration of the capture session in seconds.
+        :paramtype time_limit_in_seconds: int
+        """
+        super().__init__(**kwargs)
+        self.provisioning_state = None
+        self.status = None
+        self.reason = None
+        self.capture_start_time = None
+        self.network_interfaces = network_interfaces
+        self.bytes_to_capture_per_packet = bytes_to_capture_per_packet
+        self.total_bytes_per_session = total_bytes_per_session
+        self.time_limit_in_seconds = time_limit_in_seconds
+        self.output_files = None
+
+
+class PacketCaptureListResult(_serialization.Model):
+    """Response for packet capture API service call.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: A list of packet capture sessions under a packet core control plane.
+    :vartype value: list[~azure.mgmt.mobilenetwork.models.PacketCapture]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[PacketCapture]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.PacketCapture"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: A list of packet capture sessions under a packet core control plane.
+        :paramtype value: list[~azure.mgmt.mobilenetwork.models.PacketCapture]
+        """
+        super().__init__(**kwargs)
+        self.value = value
         self.next_link = None
 
 
@@ -1924,8 +2510,8 @@ class PacketCoreControlPlane(TrackedResource):  # pylint: disable=too-many-insta
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1953,18 +2539,26 @@ class PacketCoreControlPlane(TrackedResource):  # pylint: disable=too-many-insta
     :ivar platform: The platform where the packet core is deployed. Required.
     :vartype platform: ~azure.mgmt.mobilenetwork.models.PlatformConfiguration
     :ivar core_network_technology: The core network technology generation (5G core or EPC / 4G
-     core). Known values are: "5GC" and "EPC".
+     core). Known values are: "5GC", "EPC", and "EPC + 5GC".
     :vartype core_network_technology: str or ~azure.mgmt.mobilenetwork.models.CoreNetworkType
-    :ivar version: The version of the packet core software that is deployed.
+    :ivar version: The desired version of the packet core software.
     :vartype version: str
+    :ivar installed_version: The currently installed version of the packet core software.
+    :vartype installed_version: str
     :ivar rollback_version: The previous version of the packet core software that was deployed.
      Used when performing the rollback action.
     :vartype rollback_version: str
     :ivar control_plane_access_interface: The control plane interface on the access network. For 5G
      networks, this is the N2 interface. For 4G networks, this is the S1-MME interface. Required.
     :vartype control_plane_access_interface: ~azure.mgmt.mobilenetwork.models.InterfaceProperties
+    :ivar control_plane_access_virtual_ipv4_addresses: The virtual IP address(es) for the control
+     plane on the access network in a High Availability (HA) system. In an HA deployment the access
+     network router should be configured to anycast traffic for this address to the control plane
+     access interfaces on the active and standby nodes. In non-HA system this list should be omitted
+     or empty.
+    :vartype control_plane_access_virtual_ipv4_addresses: list[str]
     :ivar sku: The SKU defining the throughput and SIM allowances for this packet core control
-     plane deployment. Required. Known values are: "G0", "G1", "G2", "G3", "G4", "G5", and "G10".
+     plane deployment. Required. Known values are: "G0", "G1", "G2", "G5", and "G10".
     :vartype sku: str or ~azure.mgmt.mobilenetwork.models.BillingSku
     :ivar ue_mtu: The MTU (in bytes) signaled to the UE. The same MTU is set on the user plane data
      links for all data networks. The MTU set on the user plane access link is calculated to be 60
@@ -1974,9 +2568,19 @@ class PacketCoreControlPlane(TrackedResource):  # pylint: disable=too-many-insta
      packet core diagnostics over local APIs. Required.
     :vartype local_diagnostics_access:
      ~azure.mgmt.mobilenetwork.models.LocalDiagnosticsAccessConfiguration
+    :ivar diagnostics_upload: Configuration for uploading packet core diagnostics.
+    :vartype diagnostics_upload: ~azure.mgmt.mobilenetwork.models.DiagnosticsUploadConfiguration
+    :ivar event_hub: Configuration for sending packet core events to an Azure Event Hub.
+    :vartype event_hub: ~azure.mgmt.mobilenetwork.models.EventHubConfiguration
+    :ivar signaling: Signaling configuration for the packet core.
+    :vartype signaling: ~azure.mgmt.mobilenetwork.models.SignalingConfiguration
     :ivar interop_settings: Settings to allow interoperability with third party components e.g.
      RANs and UEs.
     :vartype interop_settings: JSON
+    :ivar home_network_private_keys_provisioning: The provisioning state of the secret containing
+     private keys and keyIds for SUPI concealment.
+    :vartype home_network_private_keys_provisioning:
+     ~azure.mgmt.mobilenetwork.models.HomeNetworkPrivateKeysProvisioning
     """
 
     _validation = {
@@ -1986,14 +2590,16 @@ class PacketCoreControlPlane(TrackedResource):  # pylint: disable=too-many-insta
         "system_data": {"readonly": True},
         "location": {"required": True},
         "provisioning_state": {"readonly": True},
-        "installation": {"readonly": True},
         "sites": {"required": True, "min_items": 1, "unique": True},
         "platform": {"required": True},
+        "installed_version": {"readonly": True},
         "rollback_version": {"readonly": True},
         "control_plane_access_interface": {"required": True},
+        "control_plane_access_virtual_ipv4_addresses": {"unique": True},
         "sku": {"required": True},
         "ue_mtu": {"maximum": 1930, "minimum": 1280},
         "local_diagnostics_access": {"required": True},
+        "home_network_private_keys_provisioning": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2010,10 +2616,15 @@ class PacketCoreControlPlane(TrackedResource):  # pylint: disable=too-many-insta
         "platform": {"key": "properties.platform", "type": "PlatformConfiguration"},
         "core_network_technology": {"key": "properties.coreNetworkTechnology", "type": "str"},
         "version": {"key": "properties.version", "type": "str"},
+        "installed_version": {"key": "properties.installedVersion", "type": "str"},
         "rollback_version": {"key": "properties.rollbackVersion", "type": "str"},
         "control_plane_access_interface": {
             "key": "properties.controlPlaneAccessInterface",
             "type": "InterfaceProperties",
+        },
+        "control_plane_access_virtual_ipv4_addresses": {
+            "key": "properties.controlPlaneAccessVirtualIpv4Addresses",
+            "type": "[str]",
         },
         "sku": {"key": "properties.sku", "type": "str"},
         "ue_mtu": {"key": "properties.ueMtu", "type": "int"},
@@ -2021,10 +2632,17 @@ class PacketCoreControlPlane(TrackedResource):  # pylint: disable=too-many-insta
             "key": "properties.localDiagnosticsAccess",
             "type": "LocalDiagnosticsAccessConfiguration",
         },
+        "diagnostics_upload": {"key": "properties.diagnosticsUpload", "type": "DiagnosticsUploadConfiguration"},
+        "event_hub": {"key": "properties.eventHub", "type": "EventHubConfiguration"},
+        "signaling": {"key": "properties.signaling", "type": "SignalingConfiguration"},
         "interop_settings": {"key": "properties.interopSettings", "type": "object"},
+        "home_network_private_keys_provisioning": {
+            "key": "properties.homeNetworkPrivateKeysProvisioning",
+            "type": "HomeNetworkPrivateKeysProvisioning",
+        },
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
@@ -2035,12 +2653,17 @@ class PacketCoreControlPlane(TrackedResource):  # pylint: disable=too-many-insta
         local_diagnostics_access: "_models.LocalDiagnosticsAccessConfiguration",
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
+        installation: Optional["_models.Installation"] = None,
         core_network_technology: Union[str, "_models.CoreNetworkType"] = "5GC",
         version: Optional[str] = None,
+        control_plane_access_virtual_ipv4_addresses: Optional[List[str]] = None,
         ue_mtu: int = 1440,
+        diagnostics_upload: Optional["_models.DiagnosticsUploadConfiguration"] = None,
+        event_hub: Optional["_models.EventHubConfiguration"] = None,
+        signaling: Optional["_models.SignalingConfiguration"] = None,
         interop_settings: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -2048,21 +2671,29 @@ class PacketCoreControlPlane(TrackedResource):  # pylint: disable=too-many-insta
         :paramtype location: str
         :keyword identity: The identity used to retrieve the ingress certificate from Azure key vault.
         :paramtype identity: ~azure.mgmt.mobilenetwork.models.ManagedServiceIdentity
+        :keyword installation: The installation state of the packet core control plane resource.
+        :paramtype installation: ~azure.mgmt.mobilenetwork.models.Installation
         :keyword sites: Site(s) under which this packet core control plane should be deployed. The
          sites must be in the same location as the packet core control plane. Required.
         :paramtype sites: list[~azure.mgmt.mobilenetwork.models.SiteResourceId]
         :keyword platform: The platform where the packet core is deployed. Required.
         :paramtype platform: ~azure.mgmt.mobilenetwork.models.PlatformConfiguration
         :keyword core_network_technology: The core network technology generation (5G core or EPC / 4G
-         core). Known values are: "5GC" and "EPC".
+         core). Known values are: "5GC", "EPC", and "EPC + 5GC".
         :paramtype core_network_technology: str or ~azure.mgmt.mobilenetwork.models.CoreNetworkType
-        :keyword version: The version of the packet core software that is deployed.
+        :keyword version: The desired version of the packet core software.
         :paramtype version: str
         :keyword control_plane_access_interface: The control plane interface on the access network. For
          5G networks, this is the N2 interface. For 4G networks, this is the S1-MME interface. Required.
         :paramtype control_plane_access_interface: ~azure.mgmt.mobilenetwork.models.InterfaceProperties
+        :keyword control_plane_access_virtual_ipv4_addresses: The virtual IP address(es) for the
+         control plane on the access network in a High Availability (HA) system. In an HA deployment the
+         access network router should be configured to anycast traffic for this address to the control
+         plane access interfaces on the active and standby nodes. In non-HA system this list should be
+         omitted or empty.
+        :paramtype control_plane_access_virtual_ipv4_addresses: list[str]
         :keyword sku: The SKU defining the throughput and SIM allowances for this packet core control
-         plane deployment. Required. Known values are: "G0", "G1", "G2", "G3", "G4", "G5", and "G10".
+         plane deployment. Required. Known values are: "G0", "G1", "G2", "G5", and "G10".
         :paramtype sku: str or ~azure.mgmt.mobilenetwork.models.BillingSku
         :keyword ue_mtu: The MTU (in bytes) signaled to the UE. The same MTU is set on the user plane
          data links for all data networks. The MTU set on the user plane access link is calculated to be
@@ -2072,6 +2703,12 @@ class PacketCoreControlPlane(TrackedResource):  # pylint: disable=too-many-insta
          packet core diagnostics over local APIs. Required.
         :paramtype local_diagnostics_access:
          ~azure.mgmt.mobilenetwork.models.LocalDiagnosticsAccessConfiguration
+        :keyword diagnostics_upload: Configuration for uploading packet core diagnostics.
+        :paramtype diagnostics_upload: ~azure.mgmt.mobilenetwork.models.DiagnosticsUploadConfiguration
+        :keyword event_hub: Configuration for sending packet core events to an Azure Event Hub.
+        :paramtype event_hub: ~azure.mgmt.mobilenetwork.models.EventHubConfiguration
+        :keyword signaling: Signaling configuration for the packet core.
+        :paramtype signaling: ~azure.mgmt.mobilenetwork.models.SignalingConfiguration
         :keyword interop_settings: Settings to allow interoperability with third party components e.g.
          RANs and UEs.
         :paramtype interop_settings: JSON
@@ -2079,17 +2716,23 @@ class PacketCoreControlPlane(TrackedResource):  # pylint: disable=too-many-insta
         super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.provisioning_state = None
-        self.installation = None
+        self.installation = installation
         self.sites = sites
         self.platform = platform
         self.core_network_technology = core_network_technology
         self.version = version
+        self.installed_version = None
         self.rollback_version = None
         self.control_plane_access_interface = control_plane_access_interface
+        self.control_plane_access_virtual_ipv4_addresses = control_plane_access_virtual_ipv4_addresses
         self.sku = sku
         self.ue_mtu = ue_mtu
         self.local_diagnostics_access = local_diagnostics_access
+        self.diagnostics_upload = diagnostics_upload
+        self.event_hub = event_hub
+        self.signaling = signaling
         self.interop_settings = interop_settings
+        self.home_network_private_keys_provisioning = None
 
 
 class PacketCoreControlPlaneCollectDiagnosticsPackage(_serialization.Model):
@@ -2110,7 +2753,7 @@ class PacketCoreControlPlaneCollectDiagnosticsPackage(_serialization.Model):
         "storage_account_blob_url": {"key": "storageAccountBlobUrl", "type": "str"},
     }
 
-    def __init__(self, *, storage_account_blob_url: str, **kwargs):
+    def __init__(self, *, storage_account_blob_url: str, **kwargs: Any) -> None:
         """
         :keyword storage_account_blob_url: The Storage Account Blob URL to upload the diagnostics
          package to. Required.
@@ -2140,7 +2783,7 @@ class PacketCoreControlPlaneListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PacketCoreControlPlane"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.PacketCoreControlPlane"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of packet core control planes in a resource group.
         :paramtype value: list[~azure.mgmt.mobilenetwork.models.PacketCoreControlPlane]
@@ -2150,41 +2793,33 @@ class PacketCoreControlPlaneListResult(_serialization.Model):
         self.next_link = None
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+class PacketCoreControlPlaneResourceId(_serialization.Model):
+    """Reference to an packet core control plane resource.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Packet core control plane resource ID. Required.
     :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.mobilenetwork.models.SystemData
     """
 
     _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
+        "id": {
+            "required": True,
+            "pattern": r"^/[sS][uU][bB][sS][cC][rR][iI][pP][tT][iI][oO][nN][sS]/[^/?#]+/[rR][eE][sS][oO][uU][rR][cC][eE][gG][rR][oO][uU][pP][sS]/[^/?#]+/[pP][rR][oO][vV][iI][dD][eE][rR][sS]/[mM][iI][cC][rR][oO][sS][oO][fF][tT]\.[mM][oO][bB][iI][lL][eE][nN][eE][tT][wW][oO][rR][kK]/[pP][aA][cC][kK][eE][tT][cC][oO][rR][eE][cC][oO][nN][tT][rR][oO][lL][pP][lL][aA][nN][eE][sS]/[^/?#]+$",
+        },
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
-        """ """
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        """
+        :keyword id: Packet core control plane resource ID. Required.
+        :paramtype id: str
+        """
         super().__init__(**kwargs)
+        self.id = id
 
 
 class PacketCoreControlPlaneVersion(ProxyResource):
@@ -2192,8 +2827,8 @@ class PacketCoreControlPlaneVersion(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2228,7 +2863,7 @@ class PacketCoreControlPlaneVersion(ProxyResource):
         "platforms": {"key": "properties.platforms", "type": "[Platform]"},
     }
 
-    def __init__(self, *, platforms: Optional[List["_models.Platform"]] = None, **kwargs):
+    def __init__(self, *, platforms: Optional[List["_models.Platform"]] = None, **kwargs: Any) -> None:
         """
         :keyword platforms: Platform specific packet core control plane version properties.
         :paramtype platforms: list[~azure.mgmt.mobilenetwork.models.Platform]
@@ -2258,7 +2893,7 @@ class PacketCoreControlPlaneVersionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PacketCoreControlPlaneVersion"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.PacketCoreControlPlaneVersion"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of supported packet core control plane versions.
         :paramtype value: list[~azure.mgmt.mobilenetwork.models.PacketCoreControlPlaneVersion]
@@ -2269,14 +2904,15 @@ class PacketCoreControlPlaneVersionListResult(_serialization.Model):
 
 
 class PacketCoreDataPlane(TrackedResource):
-    """Packet core data plane resource. Must be created in the same location as its parent packet core control plane.
+    """Packet core data plane resource. Must be created in the same location as its parent packet core
+    control plane.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2297,6 +2933,12 @@ class PacketCoreDataPlane(TrackedResource):
     :ivar user_plane_access_interface: The user plane interface on the access network. For 5G
      networks, this is the N3 interface. For 4G networks, this is the S1-U interface. Required.
     :vartype user_plane_access_interface: ~azure.mgmt.mobilenetwork.models.InterfaceProperties
+    :ivar user_plane_access_virtual_ipv4_addresses: The virtual IP address(es) for the user plane
+     on the access network in a High Availability (HA) system. In an HA deployment the access
+     network router should be configured to forward traffic for this address to the control plane
+     access interface on the active or standby node. In non-HA system this list should be omitted or
+     empty.
+    :vartype user_plane_access_virtual_ipv4_addresses: list[str]
     """
 
     _validation = {
@@ -2307,6 +2949,7 @@ class PacketCoreDataPlane(TrackedResource):
         "location": {"required": True},
         "provisioning_state": {"readonly": True},
         "user_plane_access_interface": {"required": True},
+        "user_plane_access_virtual_ipv4_addresses": {"unique": True},
     }
 
     _attribute_map = {
@@ -2318,6 +2961,10 @@ class PacketCoreDataPlane(TrackedResource):
         "location": {"key": "location", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "user_plane_access_interface": {"key": "properties.userPlaneAccessInterface", "type": "InterfaceProperties"},
+        "user_plane_access_virtual_ipv4_addresses": {
+            "key": "properties.userPlaneAccessVirtualIpv4Addresses",
+            "type": "[str]",
+        },
     }
 
     def __init__(
@@ -2326,8 +2973,9 @@ class PacketCoreDataPlane(TrackedResource):
         location: str,
         user_plane_access_interface: "_models.InterfaceProperties",
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        user_plane_access_virtual_ipv4_addresses: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -2336,10 +2984,17 @@ class PacketCoreDataPlane(TrackedResource):
         :keyword user_plane_access_interface: The user plane interface on the access network. For 5G
          networks, this is the N3 interface. For 4G networks, this is the S1-U interface. Required.
         :paramtype user_plane_access_interface: ~azure.mgmt.mobilenetwork.models.InterfaceProperties
+        :keyword user_plane_access_virtual_ipv4_addresses: The virtual IP address(es) for the user
+         plane on the access network in a High Availability (HA) system. In an HA deployment the access
+         network router should be configured to forward traffic for this address to the control plane
+         access interface on the active or standby node. In non-HA system this list should be omitted or
+         empty.
+        :paramtype user_plane_access_virtual_ipv4_addresses: list[str]
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.provisioning_state = None
         self.user_plane_access_interface = user_plane_access_interface
+        self.user_plane_access_virtual_ipv4_addresses = user_plane_access_virtual_ipv4_addresses
 
 
 class PacketCoreDataPlaneListResult(_serialization.Model):
@@ -2362,7 +3017,7 @@ class PacketCoreDataPlaneListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PacketCoreDataPlane"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.PacketCoreDataPlane"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of packet core data planes in a resource group.
         :paramtype value: list[~azure.mgmt.mobilenetwork.models.PacketCoreDataPlane]
@@ -2405,7 +3060,7 @@ class PccRuleConfiguration(_serialization.Model):
             "pattern": r"^(?!(default|requested|service)$)[a-zA-Z0-9][a-zA-Z0-9_-]*$",
         },
         "rule_precedence": {"required": True, "maximum": 255, "minimum": 0},
-        "service_data_flow_templates": {"required": True, "min_items": 1, "unique": True},
+        "service_data_flow_templates": {"required": True, "max_items": 15, "min_items": 1, "unique": True},
     }
 
     _attribute_map = {
@@ -2424,8 +3079,8 @@ class PccRuleConfiguration(_serialization.Model):
         service_data_flow_templates: List["_models.ServiceDataFlowTemplate"],
         rule_qos_policy: Optional["_models.PccRuleQosPolicy"] = None,
         traffic_control: Optional[Union[str, "_models.TrafficControlPermission"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword rule_name: The name of the rule. This must be unique within the parent service. You
          must not use any of the following reserved strings - ``default``\ , ``requested`` or
@@ -2460,12 +3115,9 @@ class QosPolicy(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar five_qi: QoS Flow 5G QoS Indicator value. The 5QI identifies a specific QoS forwarding
-     treatment to be provided to a flow. This must not be a standardized 5QI value corresponding to
-     a GBR (guaranteed bit rate) QoS Flow. The illegal GBR 5QI values are: 1, 2, 3, 4, 65, 66, 67,
-     71, 72, 73, 74, 75, 76, 82, 83, 84, and 85. See 3GPP TS23.501 section 5.7.2.1 for a full
-     description of the 5QI parameter, and table 5.7.4-1 for the definition of which are the GBR 5QI
-     values.
+    :ivar five_qi: 5G QoS Flow Indicator value. The 5QI identifies a specific QoS forwarding
+     treatment to be provided to a flow. See 3GPP TS23.501 section 5.7.2.1 for a full description of
+     the 5QI parameter, and table 5.7.4-1 for the definition the 5QI values.
     :vartype five_qi: int
     :ivar allocation_and_retention_priority_level: QoS Flow allocation and retention priority (ARP)
      level. Flows with higher priority preempt flows with lower priority, if the settings of
@@ -2511,15 +3163,12 @@ class QosPolicy(_serialization.Model):
         allocation_and_retention_priority_level: Optional[int] = None,
         preemption_capability: Optional[Union[str, "_models.PreemptionCapability"]] = None,
         preemption_vulnerability: Optional[Union[str, "_models.PreemptionVulnerability"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword five_qi: QoS Flow 5G QoS Indicator value. The 5QI identifies a specific QoS forwarding
-         treatment to be provided to a flow. This must not be a standardized 5QI value corresponding to
-         a GBR (guaranteed bit rate) QoS Flow. The illegal GBR 5QI values are: 1, 2, 3, 4, 65, 66, 67,
-         71, 72, 73, 74, 75, 76, 82, 83, 84, and 85. See 3GPP TS23.501 section 5.7.2.1 for a full
-         description of the 5QI parameter, and table 5.7.4-1 for the definition of which are the GBR 5QI
-         values.
+        :keyword five_qi: 5G QoS Flow Indicator value. The 5QI identifies a specific QoS forwarding
+         treatment to be provided to a flow. See 3GPP TS23.501 section 5.7.2.1 for a full description of
+         the 5QI parameter, and table 5.7.4-1 for the definition the 5QI values.
         :paramtype five_qi: int
         :keyword allocation_and_retention_priority_level: QoS Flow allocation and retention priority
          (ARP) level. Flows with higher priority preempt flows with lower priority, if the settings of
@@ -2555,12 +3204,9 @@ class PccRuleQosPolicy(QosPolicy):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar five_qi: QoS Flow 5G QoS Indicator value. The 5QI identifies a specific QoS forwarding
-     treatment to be provided to a flow. This must not be a standardized 5QI value corresponding to
-     a GBR (guaranteed bit rate) QoS Flow. The illegal GBR 5QI values are: 1, 2, 3, 4, 65, 66, 67,
-     71, 72, 73, 74, 75, 76, 82, 83, 84, and 85. See 3GPP TS23.501 section 5.7.2.1 for a full
-     description of the 5QI parameter, and table 5.7.4-1 for the definition of which are the GBR 5QI
-     values.
+    :ivar five_qi: 5G QoS Flow Indicator value. The 5QI identifies a specific QoS forwarding
+     treatment to be provided to a flow. See 3GPP TS23.501 section 5.7.2.1 for a full description of
+     the 5QI parameter, and table 5.7.4-1 for the definition the 5QI values.
     :vartype five_qi: int
     :ivar allocation_and_retention_priority_level: QoS Flow allocation and retention priority (ARP)
      level. Flows with higher priority preempt flows with lower priority, if the settings of
@@ -2612,15 +3258,12 @@ class PccRuleQosPolicy(QosPolicy):
         preemption_capability: Optional[Union[str, "_models.PreemptionCapability"]] = None,
         preemption_vulnerability: Optional[Union[str, "_models.PreemptionVulnerability"]] = None,
         guaranteed_bit_rate: Optional["_models.Ambr"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword five_qi: QoS Flow 5G QoS Indicator value. The 5QI identifies a specific QoS forwarding
-         treatment to be provided to a flow. This must not be a standardized 5QI value corresponding to
-         a GBR (guaranteed bit rate) QoS Flow. The illegal GBR 5QI values are: 1, 2, 3, 4, 65, 66, 67,
-         71, 72, 73, 74, 75, 76, 82, 83, 84, and 85. See 3GPP TS23.501 section 5.7.2.1 for a full
-         description of the 5QI parameter, and table 5.7.4-1 for the definition of which are the GBR 5QI
-         values.
+        :keyword five_qi: 5G QoS Flow Indicator value. The 5QI identifies a specific QoS forwarding
+         treatment to be provided to a flow. See 3GPP TS23.501 section 5.7.2.1 for a full description of
+         the 5QI parameter, and table 5.7.4-1 for the definition the 5QI values.
         :paramtype five_qi: int
         :keyword allocation_and_retention_priority_level: QoS Flow allocation and retention priority
          (ARP) level. Flows with higher priority preempt flows with lower priority, if the settings of
@@ -2681,7 +3324,7 @@ class PinholeTimeouts(_serialization.Model):
         "icmp": {"key": "icmp", "type": "int"},
     }
 
-    def __init__(self, *, tcp: int = 180, udp: int = 30, icmp: int = 30, **kwargs):
+    def __init__(self, *, tcp: int = 180, udp: int = 30, icmp: int = 30, **kwargs: Any) -> None:
         """
         :keyword tcp: Pinhole timeout for TCP pinholes in seconds. Default for TCP is 3 minutes.
         :paramtype tcp: int
@@ -2739,8 +3382,8 @@ class Platform(_serialization.Model):
         maximum_platform_software_version: Optional[str] = None,
         recommended_version: Optional[Union[str, "_models.RecommendedVersion"]] = None,
         obsolete_version: Optional[Union[str, "_models.ObsoleteVersion"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword platform_type: The platform type where this version can be deployed. Known values are:
          "AKS-HCI" and "3P-AZURE-STACK-HCI".
@@ -2820,8 +3463,8 @@ class PlatformConfiguration(_serialization.Model):
         azure_stack_hci_cluster: Optional["_models.AzureStackHCIClusterResourceId"] = None,
         connected_cluster: Optional["_models.ConnectedClusterResourceId"] = None,
         custom_location: Optional["_models.CustomLocationResourceId"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The platform type where packet core is deployed. Required. Known values are:
          "AKS-HCI" and "3P-AZURE-STACK-HCI".
@@ -2850,7 +3493,10 @@ class PlatformConfiguration(_serialization.Model):
 
 
 class PlmnId(_serialization.Model):
-    """Public land mobile network (PLMN) ID.
+    """Public land mobile network (PLMN) ID. This is made up of the mobile country code and mobile
+    network code, as defined in https://www.itu.int/rec/T-REC-E.212. The values 001-01 and 001-001
+    can be used for testing and the values 999-99 and 999-999 can be used on internal private
+    networks.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2870,7 +3516,7 @@ class PlmnId(_serialization.Model):
         "mnc": {"key": "mnc", "type": "str"},
     }
 
-    def __init__(self, *, mcc: str, mnc: str, **kwargs):
+    def __init__(self, *, mcc: str, mnc: str, **kwargs: Any) -> None:
         """
         :keyword mcc: Mobile country code (MCC). Required.
         :paramtype mcc: str
@@ -2885,12 +3531,13 @@ class PlmnId(_serialization.Model):
 class PortRange(_serialization.Model):
     """Range of port numbers to use as translated ports on each translated address.
     If not specified and NAPT is enabled, this range defaults to 1,024 - 49,999.
-    (Ports under 1,024 should not be used because these are special purpose ports reserved by IANA. Ports 50,000 and above are reserved for non-NAPT use.).
+    (Ports under 1,024 should not be used because these are special purpose ports reserved by IANA.
+    Ports 50,000 and above are reserved for non-NAPT use.).
 
-        :ivar min_port: The minimum port number.
-        :vartype min_port: int
-        :ivar max_port: The maximum port number.
-        :vartype max_port: int
+    :ivar min_port: The minimum port number.
+    :vartype min_port: int
+    :ivar max_port: The maximum port number.
+    :vartype max_port: int
     """
 
     _validation = {
@@ -2903,7 +3550,7 @@ class PortRange(_serialization.Model):
         "max_port": {"key": "maxPort", "type": "int"},
     }
 
-    def __init__(self, *, min_port: int = 1024, max_port: int = 49999, **kwargs):
+    def __init__(self, *, min_port: int = 1024, max_port: int = 49999, **kwargs: Any) -> None:
         """
         :keyword min_port: The minimum port number.
         :paramtype min_port: int
@@ -2916,7 +3563,8 @@ class PortRange(_serialization.Model):
 
 
 class PortReuseHoldTimes(_serialization.Model):
-    """The minimum time (in seconds) that will pass before a port that was used by a closed pinhole can be recycled for use by another pinhole. All hold times must be minimum 1 second.
+    """The minimum time (in seconds) that will pass before a port that was used by a closed pinhole
+    can be recycled for use by another pinhole. All hold times must be minimum 1 second.
 
     :ivar tcp: Minimum time in seconds that will pass before a TCP port that was used by a closed
      pinhole can be reused. Default for TCP is 2 minutes.
@@ -2936,7 +3584,7 @@ class PortReuseHoldTimes(_serialization.Model):
         "udp": {"key": "udp", "type": "int"},
     }
 
-    def __init__(self, *, tcp: int = 120, udp: int = 60, **kwargs):
+    def __init__(self, *, tcp: int = 120, udp: int = 60, **kwargs: Any) -> None:
         """
         :keyword tcp: Minimum time in seconds that will pass before a TCP port that was used by a
          closed pinhole can be reused. Default for TCP is 2 minutes.
@@ -2950,6 +3598,96 @@ class PortReuseHoldTimes(_serialization.Model):
         self.udp = udp
 
 
+class PublicLandMobileNetwork(PlmnId):
+    """Configuration relating to a particular PLMN.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar mcc: Mobile country code (MCC). Required.
+    :vartype mcc: str
+    :ivar mnc: Mobile network code (MNC). Required.
+    :vartype mnc: str
+    :ivar home_network_public_keys: Configuration relating to SUPI concealment.
+    :vartype home_network_public_keys:
+     ~azure.mgmt.mobilenetwork.models.PublicLandMobileNetworkHomeNetworkPublicKeys
+    """
+
+    _validation = {
+        "mcc": {"required": True, "pattern": r"^\d{3}$"},
+        "mnc": {"required": True, "pattern": r"^\d{2,3}$"},
+    }
+
+    _attribute_map = {
+        "mcc": {"key": "mcc", "type": "str"},
+        "mnc": {"key": "mnc", "type": "str"},
+        "home_network_public_keys": {
+            "key": "homeNetworkPublicKeys",
+            "type": "PublicLandMobileNetworkHomeNetworkPublicKeys",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        mcc: str,
+        mnc: str,
+        home_network_public_keys: Optional["_models.PublicLandMobileNetworkHomeNetworkPublicKeys"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword mcc: Mobile country code (MCC). Required.
+        :paramtype mcc: str
+        :keyword mnc: Mobile network code (MNC). Required.
+        :paramtype mnc: str
+        :keyword home_network_public_keys: Configuration relating to SUPI concealment.
+        :paramtype home_network_public_keys:
+         ~azure.mgmt.mobilenetwork.models.PublicLandMobileNetworkHomeNetworkPublicKeys
+        """
+        super().__init__(mcc=mcc, mnc=mnc, **kwargs)
+        self.home_network_public_keys = home_network_public_keys
+
+
+class PublicLandMobileNetworkHomeNetworkPublicKeys(_serialization.Model):
+    """Configuration relating to SUPI concealment.
+
+    :ivar profile_a: This provides a mapping to identify which public key has been used for SUPI
+     concealment using the Profile A Protection Scheme.
+    :vartype profile_a: list[~azure.mgmt.mobilenetwork.models.HomeNetworkPublicKey]
+    :ivar profile_b: This provides a mapping to identify which public key has been used for SUPI
+     concealment using the Profile B Protection Scheme.
+    :vartype profile_b: list[~azure.mgmt.mobilenetwork.models.HomeNetworkPublicKey]
+    """
+
+    _validation = {
+        "profile_a": {"unique": True},
+        "profile_b": {"unique": True},
+    }
+
+    _attribute_map = {
+        "profile_a": {"key": "profileA", "type": "[HomeNetworkPublicKey]"},
+        "profile_b": {"key": "profileB", "type": "[HomeNetworkPublicKey]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        profile_a: Optional[List["_models.HomeNetworkPublicKey"]] = None,
+        profile_b: Optional[List["_models.HomeNetworkPublicKey"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword profile_a: This provides a mapping to identify which public key has been used for SUPI
+         concealment using the Profile A Protection Scheme.
+        :paramtype profile_a: list[~azure.mgmt.mobilenetwork.models.HomeNetworkPublicKey]
+        :keyword profile_b: This provides a mapping to identify which public key has been used for SUPI
+         concealment using the Profile B Protection Scheme.
+        :paramtype profile_b: list[~azure.mgmt.mobilenetwork.models.HomeNetworkPublicKey]
+        """
+        super().__init__(**kwargs)
+        self.profile_a = profile_a
+        self.profile_b = profile_b
+
+
 class Service(TrackedResource):
     """Service resource. Must be created in the same location as its parent mobile network.
 
@@ -2957,8 +3695,8 @@ class Service(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3019,8 +3757,8 @@ class Service(TrackedResource):
         pcc_rules: List["_models.PccRuleConfiguration"],
         tags: Optional[Dict[str, str]] = None,
         service_qos_policy: Optional["_models.QosPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -3106,8 +3844,8 @@ class ServiceDataFlowTemplate(_serialization.Model):
         protocol: List[str],
         remote_ip_list: List[str],
         ports: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword template_name: The name of the data flow template. This must be unique within the
          parent data flow policy rule. You must not use any of the following reserved strings -
@@ -3166,7 +3904,7 @@ class ServiceListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Service"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Service"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of services.
         :paramtype value: list[~azure.mgmt.mobilenetwork.models.Service]
@@ -3196,13 +3934,33 @@ class ServiceResourceId(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Service resource ID. Required.
         :paramtype id: str
         """
         super().__init__(**kwargs)
         self.id = id
+
+
+class SignalingConfiguration(_serialization.Model):
+    """Signaling configuration for the packet core.
+
+    :ivar nas_reroute: Configuration enabling 4G NAS reroute.
+    :vartype nas_reroute: ~azure.mgmt.mobilenetwork.models.NASRerouteConfiguration
+    """
+
+    _attribute_map = {
+        "nas_reroute": {"key": "nasReroute", "type": "NASRerouteConfiguration"},
+    }
+
+    def __init__(self, *, nas_reroute: Optional["_models.NASRerouteConfiguration"] = None, **kwargs: Any) -> None:
+        """
+        :keyword nas_reroute: Configuration enabling 4G NAS reroute.
+        :paramtype nas_reroute: ~azure.mgmt.mobilenetwork.models.NASRerouteConfiguration
+        """
+        super().__init__(**kwargs)
+        self.nas_reroute = nas_reroute
 
 
 class Sim(ProxyResource):  # pylint: disable=too-many-instance-attributes
@@ -3212,8 +3970,8 @@ class Sim(ProxyResource):  # pylint: disable=too-many-instance-attributes
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3308,8 +4066,8 @@ class Sim(ProxyResource):  # pylint: disable=too-many-instance-attributes
         static_ip_configuration: Optional[List["_models.SimStaticIpProperties"]] = None,
         authentication_key: Optional[str] = None,
         operator_key_code: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword international_mobile_subscriber_identity: The international mobile subscriber identity
          (IMSI) for the SIM. Required.
@@ -3365,7 +4123,7 @@ class SimDeleteList(_serialization.Model):
         "sims": {"key": "sims", "type": "[str]"},
     }
 
-    def __init__(self, *, sims: List[str], **kwargs):
+    def __init__(self, *, sims: List[str], **kwargs: Any) -> None:
         """
         :keyword sims: A list of SIM resource names to delete. Required.
         :paramtype sims: list[str]
@@ -3381,8 +4139,8 @@ class SimGroup(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3438,8 +4196,8 @@ class SimGroup(TrackedResource):
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         encryption_key: Optional["_models.KeyVaultKey"] = None,
         mobile_network: Optional["_models.MobileNetworkResourceId"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -3480,7 +4238,7 @@ class SimGroupListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.SimGroup"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.SimGroup"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of SIM groups in a resource group.
         :paramtype value: list[~azure.mgmt.mobilenetwork.models.SimGroup]
@@ -3510,7 +4268,7 @@ class SimGroupResourceId(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: SIM group resource ID. Required.
         :paramtype id: str
@@ -3539,7 +4297,7 @@ class SimListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Sim"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Sim"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of SIMs in a resource group.
         :paramtype value: list[~azure.mgmt.mobilenetwork.models.Sim]
@@ -3633,8 +4391,8 @@ class SimNameAndEncryptedProperties(_serialization.Model):  # pylint: disable=to
         sim_policy: Optional["_models.SimPolicyResourceId"] = None,
         static_ip_configuration: Optional[List["_models.SimStaticIpProperties"]] = None,
         encrypted_credentials: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the SIM. Required.
         :paramtype name: str
@@ -3762,8 +4520,8 @@ class SimNameAndProperties(_serialization.Model):  # pylint: disable=too-many-in
         static_ip_configuration: Optional[List["_models.SimStaticIpProperties"]] = None,
         authentication_key: Optional[str] = None,
         operator_key_code: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the SIM. Required.
         :paramtype name: str
@@ -3812,8 +4570,8 @@ class SimPolicy(TrackedResource):  # pylint: disable=too-many-instance-attribute
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3844,8 +4602,8 @@ class SimPolicy(TrackedResource):  # pylint: disable=too-many-instance-attribute
     :ivar rfsp_index: RAT/Frequency Selection Priority Index, defined in 3GPP TS 36.413. This is an
      optional setting and by default is unspecified.
     :vartype rfsp_index: int
-    :ivar registration_timer: Interval for the UE periodic registration update procedure, in
-     seconds.
+    :ivar registration_timer: UE periodic registration update timer (5G) or UE periodic tracking
+     area update timer (4G), in seconds.
     :vartype registration_timer: int
     :ivar slice_configurations: The allowed slices and the settings to use for them. The list must
      not contain duplicate items and must contain at least one item. Required.
@@ -3893,8 +4651,8 @@ class SimPolicy(TrackedResource):  # pylint: disable=too-many-instance-attribute
         tags: Optional[Dict[str, str]] = None,
         rfsp_index: Optional[int] = None,
         registration_timer: int = 3240,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -3911,8 +4669,8 @@ class SimPolicy(TrackedResource):  # pylint: disable=too-many-instance-attribute
         :keyword rfsp_index: RAT/Frequency Selection Priority Index, defined in 3GPP TS 36.413. This is
          an optional setting and by default is unspecified.
         :paramtype rfsp_index: int
-        :keyword registration_timer: Interval for the UE periodic registration update procedure, in
-         seconds.
+        :keyword registration_timer: UE periodic registration update timer (5G) or UE periodic tracking
+         area update timer (4G), in seconds.
         :paramtype registration_timer: int
         :keyword slice_configurations: The allowed slices and the settings to use for them. The list
          must not contain duplicate items and must contain at least one item. Required.
@@ -3948,7 +4706,7 @@ class SimPolicyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.SimPolicy"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.SimPolicy"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of SIM policies.
         :paramtype value: list[~azure.mgmt.mobilenetwork.models.SimPolicy]
@@ -3978,7 +4736,7 @@ class SimPolicyResourceId(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: SIM policy resource ID. Required.
         :paramtype id: str
@@ -4068,8 +4826,8 @@ class SimPropertiesFormat(CommonSimPropertiesFormat):  # pylint: disable=too-man
         static_ip_configuration: Optional[List["_models.SimStaticIpProperties"]] = None,
         authentication_key: Optional[str] = None,
         operator_key_code: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword international_mobile_subscriber_identity: The international mobile subscriber identity
          (IMSI) for the SIM. Required.
@@ -4132,8 +4890,8 @@ class SimStaticIpProperties(_serialization.Model):
         attached_data_network: Optional["_models.AttachedDataNetworkResourceId"] = None,
         slice: Optional["_models.SliceResourceId"] = None,
         static_ip: Optional["_models.SimStaticIpPropertiesStaticIp"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword attached_data_network: The attached data network on which the static IP address will
          be used. The combination of attached data network and slice defines the network scope of the IP
@@ -4172,7 +4930,7 @@ class SimStaticIpPropertiesStaticIp(_serialization.Model):
         "ipv4_address": {"key": "ipv4Address", "type": "str"},
     }
 
-    def __init__(self, *, ipv4_address: Optional[str] = None, **kwargs):
+    def __init__(self, *, ipv4_address: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword ipv4_address: The IPv4 address assigned to the SIM at this network scope. This address
          must be in the userEquipmentStaticAddressPoolPrefix defined in the attached data network.
@@ -4199,7 +4957,7 @@ class SimUploadList(_serialization.Model):
         "sims": {"key": "sims", "type": "[SimNameAndProperties]"},
     }
 
-    def __init__(self, *, sims: List["_models.SimNameAndProperties"], **kwargs):
+    def __init__(self, *, sims: List["_models.SimNameAndProperties"], **kwargs: Any) -> None:
         """
         :keyword sims: A list of SIMs to upload. Required.
         :paramtype sims: list[~azure.mgmt.mobilenetwork.models.SimNameAndProperties]
@@ -4215,8 +4973,8 @@ class Site(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4259,7 +5017,7 @@ class Site(TrackedResource):
         "network_functions": {"key": "properties.networkFunctions", "type": "[SubResource]"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -4269,6 +5027,28 @@ class Site(TrackedResource):
         super().__init__(tags=tags, location=location, **kwargs)
         self.provisioning_state = None
         self.network_functions = None
+
+
+class SiteDeletePacketCore(_serialization.Model):
+    """The packet core to delete under a site.
+
+    :ivar packet_core: Reference to an packet core control plane resource.
+    :vartype packet_core: ~azure.mgmt.mobilenetwork.models.PacketCoreControlPlaneResourceId
+    """
+
+    _attribute_map = {
+        "packet_core": {"key": "packetCore", "type": "PacketCoreControlPlaneResourceId"},
+    }
+
+    def __init__(
+        self, *, packet_core: Optional["_models.PacketCoreControlPlaneResourceId"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword packet_core: Reference to an packet core control plane resource.
+        :paramtype packet_core: ~azure.mgmt.mobilenetwork.models.PacketCoreControlPlaneResourceId
+        """
+        super().__init__(**kwargs)
+        self.packet_core = packet_core
 
 
 class SiteListResult(_serialization.Model):
@@ -4291,7 +5071,7 @@ class SiteListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Site"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Site"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of sites in a mobile network.
         :paramtype value: list[~azure.mgmt.mobilenetwork.models.Site]
@@ -4321,7 +5101,7 @@ class SiteResourceId(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Site resource ID. Required.
         :paramtype id: str
@@ -4337,8 +5117,8 @@ class Slice(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4391,8 +5171,8 @@ class Slice(TrackedResource):
         snssai: "_models.Snssai",
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -4446,8 +5226,8 @@ class SliceConfiguration(_serialization.Model):
         slice: "_models.SliceResourceId",
         default_data_network: "_models.DataNetworkResourceId",
         data_network_configurations: List["_models.DataNetworkConfiguration"],
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword slice: A reference to the slice that these settings apply to. The slice must be in the
          same location as the SIM policy. Required.
@@ -4487,7 +5267,7 @@ class SliceListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Slice"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Slice"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of network slices in a mobile network.
         :paramtype value: list[~azure.mgmt.mobilenetwork.models.Slice]
@@ -4517,7 +5297,7 @@ class SliceResourceId(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Slice resource ID. Required.
         :paramtype id: str
@@ -4547,7 +5327,7 @@ class Snssai(_serialization.Model):
         "sd": {"key": "sd", "type": "str"},
     }
 
-    def __init__(self, *, sst: int, sd: Optional[str] = None, **kwargs):
+    def __init__(self, *, sst: int, sd: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword sst: Slice/service type (SST). Required.
         :paramtype sst: int
@@ -4576,7 +5356,7 @@ class SubResource(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID. Required.
         :paramtype id: str
@@ -4622,8 +5402,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -4660,13 +5440,961 @@ class TagsObject(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
         self.tags = tags
+
+
+class UeInfo(ProxyResource):
+    """Basic UE Information.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mobilenetwork.models.SystemData
+    :ivar rat_type: RAT Type. Required. Known values are: "4G" and "5G".
+    :vartype rat_type: str or ~azure.mgmt.mobilenetwork.models.RatType
+    :ivar ue_state: State of the UE. Required. Known values are: "Connected", "Idle", "Detached",
+     "Deregistered", and "Unknown".
+    :vartype ue_state: str or ~azure.mgmt.mobilenetwork.models.UeState
+    :ivar ue_ip_addresses:
+    :vartype ue_ip_addresses: list[~azure.mgmt.mobilenetwork.models.DnnIpPair]
+    :ivar last_read_at: The timestamp of last list UEs call to the packet core (UTC).
+    :vartype last_read_at: ~datetime.datetime
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "rat_type": {"required": True},
+        "ue_state": {"required": True},
+        "ue_ip_addresses": {"min_items": 1},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "rat_type": {"key": "properties.ratType", "type": "str"},
+        "ue_state": {"key": "properties.ueState", "type": "str"},
+        "ue_ip_addresses": {"key": "properties.ueIpAddresses", "type": "[DnnIpPair]"},
+        "last_read_at": {"key": "properties.lastReadAt", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        rat_type: Union[str, "_models.RatType"],
+        ue_state: Union[str, "_models.UeState"],
+        ue_ip_addresses: Optional[List["_models.DnnIpPair"]] = None,
+        last_read_at: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword rat_type: RAT Type. Required. Known values are: "4G" and "5G".
+        :paramtype rat_type: str or ~azure.mgmt.mobilenetwork.models.RatType
+        :keyword ue_state: State of the UE. Required. Known values are: "Connected", "Idle",
+         "Detached", "Deregistered", and "Unknown".
+        :paramtype ue_state: str or ~azure.mgmt.mobilenetwork.models.UeState
+        :keyword ue_ip_addresses:
+        :paramtype ue_ip_addresses: list[~azure.mgmt.mobilenetwork.models.DnnIpPair]
+        :keyword last_read_at: The timestamp of last list UEs call to the packet core (UTC).
+        :paramtype last_read_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.rat_type = rat_type
+        self.ue_state = ue_state
+        self.ue_ip_addresses = ue_ip_addresses
+        self.last_read_at = last_read_at
+
+
+class UeInfo4G(ExtendedUeInfoProperties):  # pylint: disable=too-many-instance-attributes
+    """UE Information for 4G.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar rat_type: RAT Type. Required. Known values are: "4G" and "5G".
+    :vartype rat_type: str or ~azure.mgmt.mobilenetwork.models.RatType
+    :ivar last_read_at: The timestamp of last UE info read from the packet core (UTC).
+    :vartype last_read_at: ~datetime.datetime
+    :ivar imsi: International mobile subscriber identifier. Required.
+    :vartype imsi: str
+    :ivar imei: International mobile equipment identity.
+    :vartype imei: str
+    :ivar imeisv: International mobile equipment identity – software version.
+    :vartype imeisv: str
+    :ivar session_info:
+    :vartype session_info: list[~azure.mgmt.mobilenetwork.models.UeSessionInfo4G]
+    :ivar per_ue_tnla: Per-UE transport network layer association.
+    :vartype per_ue_tnla: str
+    :ivar mme_s1_ap_id: MME S1AP identifier.
+    :vartype mme_s1_ap_id: int
+    :ivar enb_s1_ap_id: eNodeB S1AP identifier.
+    :vartype enb_s1_ap_id: int
+    :ivar last_visited_tai: Last Visited TAI.
+    :vartype last_visited_tai: str
+    :ivar ue_state: State of the UE. Known values are: "Connected", "Idle", "Detached",
+     "Deregistered", and "Unknown".
+    :vartype ue_state: str or ~azure.mgmt.mobilenetwork.models.UeState
+    :ivar rrc_establishment_cause: Radio connection establishment cause. Known values are:
+     "Emergency", "MobileOriginatedSignaling", "MobileTerminatedSignaling", "MobileOriginatedData",
+     "MobileTerminatedData", and "SMS".
+    :vartype rrc_establishment_cause: str or ~azure.mgmt.mobilenetwork.models.RrcEstablishmentCause
+    :ivar ue_usage_setting: The UE's usage setting. Known values are: "VoiceCentric" and
+     "DataCentric".
+    :vartype ue_usage_setting: str or ~azure.mgmt.mobilenetwork.models.UeUsageSetting
+    :ivar last_activity_time: The timestamp of last activity of UE (UTC).
+    :vartype last_activity_time: ~datetime.datetime
+    :ivar nge_nb_id: NG-eNodeB identifier.
+    :vartype nge_nb_id: str
+    :ivar e_nb_id: eNodeB identifier.
+    :vartype e_nb_id: str
+    :ivar n3_iwf_id: N3 IWF identifier.
+    :vartype n3_iwf_id: str
+    :ivar wagf_id: W-AGF identifier.
+    :vartype wagf_id: str
+    :ivar tngf_id: TNGF identifier.
+    :vartype tngf_id: str
+    :ivar nid: Network identifier.
+    :vartype nid: str
+    :ivar bit_length:
+    :vartype bit_length: int
+    :ivar g_nb_value:
+    :vartype g_nb_value: str
+    :ivar mcc_info_connection_info_global_ran_node_id_plmn_id_mcc: Mobile country code (MCC).
+    :vartype mcc_info_connection_info_global_ran_node_id_plmn_id_mcc: str
+    :ivar mnc_info_connection_info_global_ran_node_id_plmn_id_mnc: Mobile network code (MNC).
+    :vartype mnc_info_connection_info_global_ran_node_id_plmn_id_mnc: str
+    :ivar location_type: Location Type.
+    :vartype location_type: str
+    :ivar tac: Type Allocation Code of UE.
+    :vartype tac: str
+    :ivar mcc_info_connection_info_location_info_plmn_mcc: Mobile country code (MCC).
+    :vartype mcc_info_connection_info_location_info_plmn_mcc: str
+    :ivar mnc_info_connection_info_location_info_plmn_mnc: Mobile network code (MNC).
+    :vartype mnc_info_connection_info_location_info_plmn_mnc: str
+    :ivar m_tmsi: MME Temporary Mobile Subscriber Identity. Required.
+    :vartype m_tmsi: int
+    :ivar group_id: MME group identifier. Required.
+    :vartype group_id: int
+    :ivar code: MME code. Required.
+    :vartype code: int
+    :ivar mcc_info_guti_plmn_mcc: Mobile country code (MCC). Required.
+    :vartype mcc_info_guti_plmn_mcc: str
+    :ivar mnc_info_guti_plmn_mnc: Mobile network code (MNC). Required.
+    :vartype mnc_info_guti_plmn_mnc: str
+    """
+
+    _validation = {
+        "rat_type": {"required": True},
+        "imsi": {"required": True, "pattern": r"^[0-9]{5,15}$"},
+        "imei": {"pattern": r"^[0-9]{15}$"},
+        "imeisv": {"pattern": r"^[0-9]{16}$"},
+        "session_info": {"max_items": 11, "min_items": 0},
+        "mme_s1_ap_id": {"maximum": 4294967295, "minimum": 0},
+        "enb_s1_ap_id": {"maximum": 16777215, "minimum": 0},
+        "nge_nb_id": {
+            "pattern": r"^(MacroNGeNB-[A-Fa-f0-9]{5}|LMacroNGeNB-[A-Fa-f0-9]{6}|SMacroNGeNB-[A-Fa-f0-9]{5})$"
+        },
+        "e_nb_id": {
+            "pattern": r"^(MacroeNB-[A-Fa-f0-9]{5}|LMacroeNB-[A-Fa-f0-9]{6}|SMacroeNB-[A-Fa-f0-9]{5}|HomeeNB-[A-Fa-f0-9]{7})$"
+        },
+        "n3_iwf_id": {"pattern": r"^[A-Fa-f0-9]+$"},
+        "wagf_id": {"pattern": r"^[A-Fa-f0-9]+$"},
+        "tngf_id": {"pattern": r"^[A-Fa-f0-9]+$"},
+        "nid": {"pattern": r"^[A-Fa-f0-9]{11}$"},
+        "bit_length": {"maximum": 32, "minimum": 22},
+        "g_nb_value": {"pattern": r"^[A-Fa-f0-9]{6,8}$"},
+        "mcc_info_connection_info_global_ran_node_id_plmn_id_mcc": {"pattern": r"^\d{3}$"},
+        "mnc_info_connection_info_global_ran_node_id_plmn_id_mnc": {"pattern": r"^\d{2,3}$"},
+        "tac": {"pattern": r"(^[A-Fa-f0-9]{4}$)|(^[A-Fa-f0-9]{6}$)"},
+        "mcc_info_connection_info_location_info_plmn_mcc": {"pattern": r"^\d{3}$"},
+        "mnc_info_connection_info_location_info_plmn_mnc": {"pattern": r"^\d{2,3}$"},
+        "m_tmsi": {"required": True, "maximum": 4294967295, "minimum": 0},
+        "group_id": {"required": True, "maximum": 65535, "minimum": 0},
+        "code": {"required": True, "maximum": 255, "minimum": 0},
+        "mcc_info_guti_plmn_mcc": {"required": True, "pattern": r"^\d{3}$"},
+        "mnc_info_guti_plmn_mnc": {"required": True, "pattern": r"^\d{2,3}$"},
+    }
+
+    _attribute_map = {
+        "rat_type": {"key": "ratType", "type": "str"},
+        "last_read_at": {"key": "lastReadAt", "type": "iso-8601"},
+        "imsi": {"key": "info.imsi", "type": "str"},
+        "imei": {"key": "info.imei", "type": "str"},
+        "imeisv": {"key": "info.imeisv", "type": "str"},
+        "session_info": {"key": "info.sessionInfo", "type": "[UeSessionInfo4G]"},
+        "per_ue_tnla": {"key": "info.connectionInfo.perUeTnla", "type": "str"},
+        "mme_s1_ap_id": {"key": "info.connectionInfo.mmeS1apId", "type": "int"},
+        "enb_s1_ap_id": {"key": "info.connectionInfo.enbS1apId", "type": "int"},
+        "last_visited_tai": {"key": "info.connectionInfo.lastVisitedTai", "type": "str"},
+        "ue_state": {"key": "info.connectionInfo.ueState", "type": "str"},
+        "rrc_establishment_cause": {"key": "info.connectionInfo.rrcEstablishmentCause", "type": "str"},
+        "ue_usage_setting": {"key": "info.connectionInfo.ueUsageSetting", "type": "str"},
+        "last_activity_time": {"key": "info.connectionInfo.lastActivityTime", "type": "iso-8601"},
+        "nge_nb_id": {"key": "info.connectionInfo.globalRanNodeId.ngeNbId", "type": "str"},
+        "e_nb_id": {"key": "info.connectionInfo.globalRanNodeId.eNbId", "type": "str"},
+        "n3_iwf_id": {"key": "info.connectionInfo.globalRanNodeId.n3IwfId", "type": "str"},
+        "wagf_id": {"key": "info.connectionInfo.globalRanNodeId.wagfId", "type": "str"},
+        "tngf_id": {"key": "info.connectionInfo.globalRanNodeId.tngfId", "type": "str"},
+        "nid": {"key": "info.connectionInfo.globalRanNodeId.nid", "type": "str"},
+        "bit_length": {"key": "info.connectionInfo.globalRanNodeId.gNbId.bitLength", "type": "int"},
+        "g_nb_value": {"key": "info.connectionInfo.globalRanNodeId.gNbId.gNBValue", "type": "str"},
+        "mcc_info_connection_info_global_ran_node_id_plmn_id_mcc": {
+            "key": "info.connectionInfo.globalRanNodeId.plmnId.mcc",
+            "type": "str",
+        },
+        "mnc_info_connection_info_global_ran_node_id_plmn_id_mnc": {
+            "key": "info.connectionInfo.globalRanNodeId.plmnId.mnc",
+            "type": "str",
+        },
+        "location_type": {"key": "info.connectionInfo.locationInfo.locationType", "type": "str"},
+        "tac": {"key": "info.connectionInfo.locationInfo.tac", "type": "str"},
+        "mcc_info_connection_info_location_info_plmn_mcc": {
+            "key": "info.connectionInfo.locationInfo.plmn.mcc",
+            "type": "str",
+        },
+        "mnc_info_connection_info_location_info_plmn_mnc": {
+            "key": "info.connectionInfo.locationInfo.plmn.mnc",
+            "type": "str",
+        },
+        "m_tmsi": {"key": "info.guti.mTmsi", "type": "int"},
+        "group_id": {"key": "info.guti.mmeId.groupId", "type": "int"},
+        "code": {"key": "info.guti.mmeId.code", "type": "int"},
+        "mcc_info_guti_plmn_mcc": {"key": "info.guti.plmn.mcc", "type": "str"},
+        "mnc_info_guti_plmn_mnc": {"key": "info.guti.plmn.mnc", "type": "str"},
+    }
+
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        imsi: str,
+        m_tmsi: int,
+        group_id: int,
+        code: int,
+        mcc_info_guti_plmn_mcc: str,
+        mnc_info_guti_plmn_mnc: str,
+        last_read_at: Optional[datetime.datetime] = None,
+        imei: Optional[str] = None,
+        imeisv: Optional[str] = None,
+        session_info: Optional[List["_models.UeSessionInfo4G"]] = None,
+        per_ue_tnla: Optional[str] = None,
+        mme_s1_ap_id: Optional[int] = None,
+        enb_s1_ap_id: Optional[int] = None,
+        last_visited_tai: Optional[str] = None,
+        ue_state: Optional[Union[str, "_models.UeState"]] = None,
+        rrc_establishment_cause: Optional[Union[str, "_models.RrcEstablishmentCause"]] = None,
+        ue_usage_setting: Optional[Union[str, "_models.UeUsageSetting"]] = None,
+        last_activity_time: Optional[datetime.datetime] = None,
+        nge_nb_id: Optional[str] = None,
+        e_nb_id: Optional[str] = None,
+        n3_iwf_id: Optional[str] = None,
+        wagf_id: Optional[str] = None,
+        tngf_id: Optional[str] = None,
+        nid: Optional[str] = None,
+        bit_length: Optional[int] = None,
+        g_nb_value: Optional[str] = None,
+        mcc_info_connection_info_global_ran_node_id_plmn_id_mcc: Optional[str] = None,
+        mnc_info_connection_info_global_ran_node_id_plmn_id_mnc: Optional[str] = None,
+        location_type: Optional[str] = None,
+        tac: Optional[str] = None,
+        mcc_info_connection_info_location_info_plmn_mcc: Optional[str] = None,
+        mnc_info_connection_info_location_info_plmn_mnc: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword last_read_at: The timestamp of last UE info read from the packet core (UTC).
+        :paramtype last_read_at: ~datetime.datetime
+        :keyword imsi: International mobile subscriber identifier. Required.
+        :paramtype imsi: str
+        :keyword imei: International mobile equipment identity.
+        :paramtype imei: str
+        :keyword imeisv: International mobile equipment identity – software version.
+        :paramtype imeisv: str
+        :keyword session_info:
+        :paramtype session_info: list[~azure.mgmt.mobilenetwork.models.UeSessionInfo4G]
+        :keyword per_ue_tnla: Per-UE transport network layer association.
+        :paramtype per_ue_tnla: str
+        :keyword mme_s1_ap_id: MME S1AP identifier.
+        :paramtype mme_s1_ap_id: int
+        :keyword enb_s1_ap_id: eNodeB S1AP identifier.
+        :paramtype enb_s1_ap_id: int
+        :keyword last_visited_tai: Last Visited TAI.
+        :paramtype last_visited_tai: str
+        :keyword ue_state: State of the UE. Known values are: "Connected", "Idle", "Detached",
+         "Deregistered", and "Unknown".
+        :paramtype ue_state: str or ~azure.mgmt.mobilenetwork.models.UeState
+        :keyword rrc_establishment_cause: Radio connection establishment cause. Known values are:
+         "Emergency", "MobileOriginatedSignaling", "MobileTerminatedSignaling", "MobileOriginatedData",
+         "MobileTerminatedData", and "SMS".
+        :paramtype rrc_establishment_cause: str or
+         ~azure.mgmt.mobilenetwork.models.RrcEstablishmentCause
+        :keyword ue_usage_setting: The UE's usage setting. Known values are: "VoiceCentric" and
+         "DataCentric".
+        :paramtype ue_usage_setting: str or ~azure.mgmt.mobilenetwork.models.UeUsageSetting
+        :keyword last_activity_time: The timestamp of last activity of UE (UTC).
+        :paramtype last_activity_time: ~datetime.datetime
+        :keyword nge_nb_id: NG-eNodeB identifier.
+        :paramtype nge_nb_id: str
+        :keyword e_nb_id: eNodeB identifier.
+        :paramtype e_nb_id: str
+        :keyword n3_iwf_id: N3 IWF identifier.
+        :paramtype n3_iwf_id: str
+        :keyword wagf_id: W-AGF identifier.
+        :paramtype wagf_id: str
+        :keyword tngf_id: TNGF identifier.
+        :paramtype tngf_id: str
+        :keyword nid: Network identifier.
+        :paramtype nid: str
+        :keyword bit_length:
+        :paramtype bit_length: int
+        :keyword g_nb_value:
+        :paramtype g_nb_value: str
+        :keyword mcc_info_connection_info_global_ran_node_id_plmn_id_mcc: Mobile country code (MCC).
+        :paramtype mcc_info_connection_info_global_ran_node_id_plmn_id_mcc: str
+        :keyword mnc_info_connection_info_global_ran_node_id_plmn_id_mnc: Mobile network code (MNC).
+        :paramtype mnc_info_connection_info_global_ran_node_id_plmn_id_mnc: str
+        :keyword location_type: Location Type.
+        :paramtype location_type: str
+        :keyword tac: Type Allocation Code of UE.
+        :paramtype tac: str
+        :keyword mcc_info_connection_info_location_info_plmn_mcc: Mobile country code (MCC).
+        :paramtype mcc_info_connection_info_location_info_plmn_mcc: str
+        :keyword mnc_info_connection_info_location_info_plmn_mnc: Mobile network code (MNC).
+        :paramtype mnc_info_connection_info_location_info_plmn_mnc: str
+        :keyword m_tmsi: MME Temporary Mobile Subscriber Identity. Required.
+        :paramtype m_tmsi: int
+        :keyword group_id: MME group identifier. Required.
+        :paramtype group_id: int
+        :keyword code: MME code. Required.
+        :paramtype code: int
+        :keyword mcc_info_guti_plmn_mcc: Mobile country code (MCC). Required.
+        :paramtype mcc_info_guti_plmn_mcc: str
+        :keyword mnc_info_guti_plmn_mnc: Mobile network code (MNC). Required.
+        :paramtype mnc_info_guti_plmn_mnc: str
+        """
+        super().__init__(last_read_at=last_read_at, **kwargs)
+        self.rat_type: str = "4G"
+        self.imsi = imsi
+        self.imei = imei
+        self.imeisv = imeisv
+        self.session_info = session_info
+        self.per_ue_tnla = per_ue_tnla
+        self.mme_s1_ap_id = mme_s1_ap_id
+        self.enb_s1_ap_id = enb_s1_ap_id
+        self.last_visited_tai = last_visited_tai
+        self.ue_state = ue_state
+        self.rrc_establishment_cause = rrc_establishment_cause
+        self.ue_usage_setting = ue_usage_setting
+        self.last_activity_time = last_activity_time
+        self.nge_nb_id = nge_nb_id
+        self.e_nb_id = e_nb_id
+        self.n3_iwf_id = n3_iwf_id
+        self.wagf_id = wagf_id
+        self.tngf_id = tngf_id
+        self.nid = nid
+        self.bit_length = bit_length
+        self.g_nb_value = g_nb_value
+        self.mcc_info_connection_info_global_ran_node_id_plmn_id_mcc = (
+            mcc_info_connection_info_global_ran_node_id_plmn_id_mcc
+        )
+        self.mnc_info_connection_info_global_ran_node_id_plmn_id_mnc = (
+            mnc_info_connection_info_global_ran_node_id_plmn_id_mnc
+        )
+        self.location_type = location_type
+        self.tac = tac
+        self.mcc_info_connection_info_location_info_plmn_mcc = mcc_info_connection_info_location_info_plmn_mcc
+        self.mnc_info_connection_info_location_info_plmn_mnc = mnc_info_connection_info_location_info_plmn_mnc
+        self.m_tmsi = m_tmsi
+        self.group_id = group_id
+        self.code = code
+        self.mcc_info_guti_plmn_mcc = mcc_info_guti_plmn_mcc
+        self.mnc_info_guti_plmn_mnc = mnc_info_guti_plmn_mnc
+
+
+class UeInfo5G(ExtendedUeInfoProperties):  # pylint: disable=too-many-instance-attributes
+    """UE Information for 5G.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar rat_type: RAT Type. Required. Known values are: "4G" and "5G".
+    :vartype rat_type: str or ~azure.mgmt.mobilenetwork.models.RatType
+    :ivar last_read_at: The timestamp of last UE info read from the packet core (UTC).
+    :vartype last_read_at: ~datetime.datetime
+    :ivar supi: Subscription Permanent Identifier. Required.
+    :vartype supi: str
+    :ivar pei: Permanent Equipment Identifier.
+    :vartype pei: str
+    :ivar session_info:
+    :vartype session_info: list[~azure.mgmt.mobilenetwork.models.UeSessionInfo5G]
+    :ivar per_ue_tnla: Per-UE transport network layer association.
+    :vartype per_ue_tnla: str
+    :ivar amf_ue_ngap_id: The AMF UE NGAP ID.
+    :vartype amf_ue_ngap_id: int
+    :ivar ran_ue_ngap_id: The RAN UE NGAP ID.
+    :vartype ran_ue_ngap_id: int
+    :ivar last_visited_tai: Last Visited TAI.
+    :vartype last_visited_tai: str
+    :ivar allowed_nssai: Allowed Network Slice Selection Assistance Information.
+    :vartype allowed_nssai: list[~azure.mgmt.mobilenetwork.models.Snssai]
+    :ivar ue_state: State of the UE. Known values are: "Connected", "Idle", "Detached",
+     "Deregistered", and "Unknown".
+    :vartype ue_state: str or ~azure.mgmt.mobilenetwork.models.UeState
+    :ivar rrc_establishment_cause: Radio connection establishment cause. Known values are:
+     "Emergency", "MobileOriginatedSignaling", "MobileTerminatedSignaling", "MobileOriginatedData",
+     "MobileTerminatedData", and "SMS".
+    :vartype rrc_establishment_cause: str or ~azure.mgmt.mobilenetwork.models.RrcEstablishmentCause
+    :ivar ue_usage_setting: The UE's usage setting. Known values are: "VoiceCentric" and
+     "DataCentric".
+    :vartype ue_usage_setting: str or ~azure.mgmt.mobilenetwork.models.UeUsageSetting
+    :ivar last_activity_time: The timestamp of last activity of UE (UTC).
+    :vartype last_activity_time: ~datetime.datetime
+    :ivar nge_nb_id: NG-eNodeB identifier.
+    :vartype nge_nb_id: str
+    :ivar e_nb_id: eNodeB identifier.
+    :vartype e_nb_id: str
+    :ivar n3_iwf_id: N3 IWF identifier.
+    :vartype n3_iwf_id: str
+    :ivar wagf_id: W-AGF identifier.
+    :vartype wagf_id: str
+    :ivar tngf_id: TNGF identifier.
+    :vartype tngf_id: str
+    :ivar nid: Network identifier.
+    :vartype nid: str
+    :ivar bit_length:
+    :vartype bit_length: int
+    :ivar g_nb_value:
+    :vartype g_nb_value: str
+    :ivar mcc_info_connection_info_global_ran_node_id_plmn_id_mcc: Mobile country code (MCC).
+    :vartype mcc_info_connection_info_global_ran_node_id_plmn_id_mcc: str
+    :ivar mnc_info_connection_info_global_ran_node_id_plmn_id_mnc: Mobile network code (MNC).
+    :vartype mnc_info_connection_info_global_ran_node_id_plmn_id_mnc: str
+    :ivar location_type: Location Type.
+    :vartype location_type: str
+    :ivar tac: Type Allocation Code of UE.
+    :vartype tac: str
+    :ivar mcc_info_connection_info_location_info_plmn_mcc: Mobile country code (MCC).
+    :vartype mcc_info_connection_info_location_info_plmn_mcc: str
+    :ivar mnc_info_connection_info_location_info_plmn_mnc: Mobile network code (MNC).
+    :vartype mnc_info_connection_info_location_info_plmn_mnc: str
+    :ivar fiveg_tmsi: 5G Temporary Mobile Subscriber Identity. Required.
+    :vartype fiveg_tmsi: int
+    :ivar region_id: AMF region identifier. Required.
+    :vartype region_id: int
+    :ivar set_id: AMF set identifier. Required.
+    :vartype set_id: int
+    :ivar pointer: AMF pointer. Required.
+    :vartype pointer: int
+    :ivar mcc_info_fiveg_guti_plmn_mcc: Mobile country code (MCC). Required.
+    :vartype mcc_info_fiveg_guti_plmn_mcc: str
+    :ivar mnc_info_fiveg_guti_plmn_mnc: Mobile network code (MNC). Required.
+    :vartype mnc_info_fiveg_guti_plmn_mnc: str
+    """
+
+    _validation = {
+        "rat_type": {"required": True},
+        "supi": {"required": True, "pattern": r"^(imsi-[0-9]{5,15}|nai-.+|.+)$"},
+        "pei": {"pattern": r"^(imei-[0-9]{15}|imeisv-[0-9]{16}|.+)$"},
+        "session_info": {"max_items": 15, "min_items": 0},
+        "amf_ue_ngap_id": {"minimum": 0},
+        "ran_ue_ngap_id": {"maximum": 4294967295, "minimum": 0},
+        "allowed_nssai": {"max_items": 8, "min_items": 0},
+        "nge_nb_id": {
+            "pattern": r"^(MacroNGeNB-[A-Fa-f0-9]{5}|LMacroNGeNB-[A-Fa-f0-9]{6}|SMacroNGeNB-[A-Fa-f0-9]{5})$"
+        },
+        "e_nb_id": {
+            "pattern": r"^(MacroeNB-[A-Fa-f0-9]{5}|LMacroeNB-[A-Fa-f0-9]{6}|SMacroeNB-[A-Fa-f0-9]{5}|HomeeNB-[A-Fa-f0-9]{7})$"
+        },
+        "n3_iwf_id": {"pattern": r"^[A-Fa-f0-9]+$"},
+        "wagf_id": {"pattern": r"^[A-Fa-f0-9]+$"},
+        "tngf_id": {"pattern": r"^[A-Fa-f0-9]+$"},
+        "nid": {"pattern": r"^[A-Fa-f0-9]{11}$"},
+        "bit_length": {"maximum": 32, "minimum": 22},
+        "g_nb_value": {"pattern": r"^[A-Fa-f0-9]{6,8}$"},
+        "mcc_info_connection_info_global_ran_node_id_plmn_id_mcc": {"pattern": r"^\d{3}$"},
+        "mnc_info_connection_info_global_ran_node_id_plmn_id_mnc": {"pattern": r"^\d{2,3}$"},
+        "tac": {"pattern": r"(^[A-Fa-f0-9]{4}$)|(^[A-Fa-f0-9]{6}$)"},
+        "mcc_info_connection_info_location_info_plmn_mcc": {"pattern": r"^\d{3}$"},
+        "mnc_info_connection_info_location_info_plmn_mnc": {"pattern": r"^\d{2,3}$"},
+        "fiveg_tmsi": {"required": True, "maximum": 4294967295, "minimum": 0},
+        "region_id": {"required": True, "maximum": 255, "minimum": 0},
+        "set_id": {"required": True, "maximum": 1023, "minimum": 0},
+        "pointer": {"required": True, "maximum": 63, "minimum": 0},
+        "mcc_info_fiveg_guti_plmn_mcc": {"required": True, "pattern": r"^\d{3}$"},
+        "mnc_info_fiveg_guti_plmn_mnc": {"required": True, "pattern": r"^\d{2,3}$"},
+    }
+
+    _attribute_map = {
+        "rat_type": {"key": "ratType", "type": "str"},
+        "last_read_at": {"key": "lastReadAt", "type": "iso-8601"},
+        "supi": {"key": "info.supi", "type": "str"},
+        "pei": {"key": "info.pei", "type": "str"},
+        "session_info": {"key": "info.sessionInfo", "type": "[UeSessionInfo5G]"},
+        "per_ue_tnla": {"key": "info.connectionInfo.perUeTnla", "type": "str"},
+        "amf_ue_ngap_id": {"key": "info.connectionInfo.amfUeNgapId", "type": "int"},
+        "ran_ue_ngap_id": {"key": "info.connectionInfo.ranUeNgapId", "type": "int"},
+        "last_visited_tai": {"key": "info.connectionInfo.lastVisitedTai", "type": "str"},
+        "allowed_nssai": {"key": "info.connectionInfo.allowedNssai", "type": "[Snssai]"},
+        "ue_state": {"key": "info.connectionInfo.ueState", "type": "str"},
+        "rrc_establishment_cause": {"key": "info.connectionInfo.rrcEstablishmentCause", "type": "str"},
+        "ue_usage_setting": {"key": "info.connectionInfo.ueUsageSetting", "type": "str"},
+        "last_activity_time": {"key": "info.connectionInfo.lastActivityTime", "type": "iso-8601"},
+        "nge_nb_id": {"key": "info.connectionInfo.globalRanNodeId.ngeNbId", "type": "str"},
+        "e_nb_id": {"key": "info.connectionInfo.globalRanNodeId.eNbId", "type": "str"},
+        "n3_iwf_id": {"key": "info.connectionInfo.globalRanNodeId.n3IwfId", "type": "str"},
+        "wagf_id": {"key": "info.connectionInfo.globalRanNodeId.wagfId", "type": "str"},
+        "tngf_id": {"key": "info.connectionInfo.globalRanNodeId.tngfId", "type": "str"},
+        "nid": {"key": "info.connectionInfo.globalRanNodeId.nid", "type": "str"},
+        "bit_length": {"key": "info.connectionInfo.globalRanNodeId.gNbId.bitLength", "type": "int"},
+        "g_nb_value": {"key": "info.connectionInfo.globalRanNodeId.gNbId.gNBValue", "type": "str"},
+        "mcc_info_connection_info_global_ran_node_id_plmn_id_mcc": {
+            "key": "info.connectionInfo.globalRanNodeId.plmnId.mcc",
+            "type": "str",
+        },
+        "mnc_info_connection_info_global_ran_node_id_plmn_id_mnc": {
+            "key": "info.connectionInfo.globalRanNodeId.plmnId.mnc",
+            "type": "str",
+        },
+        "location_type": {"key": "info.connectionInfo.locationInfo.locationType", "type": "str"},
+        "tac": {"key": "info.connectionInfo.locationInfo.tac", "type": "str"},
+        "mcc_info_connection_info_location_info_plmn_mcc": {
+            "key": "info.connectionInfo.locationInfo.plmn.mcc",
+            "type": "str",
+        },
+        "mnc_info_connection_info_location_info_plmn_mnc": {
+            "key": "info.connectionInfo.locationInfo.plmn.mnc",
+            "type": "str",
+        },
+        "fiveg_tmsi": {"key": "info.fivegGuti.fivegTmsi", "type": "int"},
+        "region_id": {"key": "info.fivegGuti.amfId.regionId", "type": "int"},
+        "set_id": {"key": "info.fivegGuti.amfId.setId", "type": "int"},
+        "pointer": {"key": "info.fivegGuti.amfId.pointer", "type": "int"},
+        "mcc_info_fiveg_guti_plmn_mcc": {"key": "info.fivegGuti.plmn.mcc", "type": "str"},
+        "mnc_info_fiveg_guti_plmn_mnc": {"key": "info.fivegGuti.plmn.mnc", "type": "str"},
+    }
+
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        supi: str,
+        fiveg_tmsi: int,
+        region_id: int,
+        set_id: int,
+        pointer: int,
+        mcc_info_fiveg_guti_plmn_mcc: str,
+        mnc_info_fiveg_guti_plmn_mnc: str,
+        last_read_at: Optional[datetime.datetime] = None,
+        pei: Optional[str] = None,
+        session_info: Optional[List["_models.UeSessionInfo5G"]] = None,
+        per_ue_tnla: Optional[str] = None,
+        amf_ue_ngap_id: Optional[int] = None,
+        ran_ue_ngap_id: Optional[int] = None,
+        last_visited_tai: Optional[str] = None,
+        allowed_nssai: Optional[List["_models.Snssai"]] = None,
+        ue_state: Optional[Union[str, "_models.UeState"]] = None,
+        rrc_establishment_cause: Optional[Union[str, "_models.RrcEstablishmentCause"]] = None,
+        ue_usage_setting: Optional[Union[str, "_models.UeUsageSetting"]] = None,
+        last_activity_time: Optional[datetime.datetime] = None,
+        nge_nb_id: Optional[str] = None,
+        e_nb_id: Optional[str] = None,
+        n3_iwf_id: Optional[str] = None,
+        wagf_id: Optional[str] = None,
+        tngf_id: Optional[str] = None,
+        nid: Optional[str] = None,
+        bit_length: Optional[int] = None,
+        g_nb_value: Optional[str] = None,
+        mcc_info_connection_info_global_ran_node_id_plmn_id_mcc: Optional[str] = None,
+        mnc_info_connection_info_global_ran_node_id_plmn_id_mnc: Optional[str] = None,
+        location_type: Optional[str] = None,
+        tac: Optional[str] = None,
+        mcc_info_connection_info_location_info_plmn_mcc: Optional[str] = None,
+        mnc_info_connection_info_location_info_plmn_mnc: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword last_read_at: The timestamp of last UE info read from the packet core (UTC).
+        :paramtype last_read_at: ~datetime.datetime
+        :keyword supi: Subscription Permanent Identifier. Required.
+        :paramtype supi: str
+        :keyword pei: Permanent Equipment Identifier.
+        :paramtype pei: str
+        :keyword session_info:
+        :paramtype session_info: list[~azure.mgmt.mobilenetwork.models.UeSessionInfo5G]
+        :keyword per_ue_tnla: Per-UE transport network layer association.
+        :paramtype per_ue_tnla: str
+        :keyword amf_ue_ngap_id: The AMF UE NGAP ID.
+        :paramtype amf_ue_ngap_id: int
+        :keyword ran_ue_ngap_id: The RAN UE NGAP ID.
+        :paramtype ran_ue_ngap_id: int
+        :keyword last_visited_tai: Last Visited TAI.
+        :paramtype last_visited_tai: str
+        :keyword allowed_nssai: Allowed Network Slice Selection Assistance Information.
+        :paramtype allowed_nssai: list[~azure.mgmt.mobilenetwork.models.Snssai]
+        :keyword ue_state: State of the UE. Known values are: "Connected", "Idle", "Detached",
+         "Deregistered", and "Unknown".
+        :paramtype ue_state: str or ~azure.mgmt.mobilenetwork.models.UeState
+        :keyword rrc_establishment_cause: Radio connection establishment cause. Known values are:
+         "Emergency", "MobileOriginatedSignaling", "MobileTerminatedSignaling", "MobileOriginatedData",
+         "MobileTerminatedData", and "SMS".
+        :paramtype rrc_establishment_cause: str or
+         ~azure.mgmt.mobilenetwork.models.RrcEstablishmentCause
+        :keyword ue_usage_setting: The UE's usage setting. Known values are: "VoiceCentric" and
+         "DataCentric".
+        :paramtype ue_usage_setting: str or ~azure.mgmt.mobilenetwork.models.UeUsageSetting
+        :keyword last_activity_time: The timestamp of last activity of UE (UTC).
+        :paramtype last_activity_time: ~datetime.datetime
+        :keyword nge_nb_id: NG-eNodeB identifier.
+        :paramtype nge_nb_id: str
+        :keyword e_nb_id: eNodeB identifier.
+        :paramtype e_nb_id: str
+        :keyword n3_iwf_id: N3 IWF identifier.
+        :paramtype n3_iwf_id: str
+        :keyword wagf_id: W-AGF identifier.
+        :paramtype wagf_id: str
+        :keyword tngf_id: TNGF identifier.
+        :paramtype tngf_id: str
+        :keyword nid: Network identifier.
+        :paramtype nid: str
+        :keyword bit_length:
+        :paramtype bit_length: int
+        :keyword g_nb_value:
+        :paramtype g_nb_value: str
+        :keyword mcc_info_connection_info_global_ran_node_id_plmn_id_mcc: Mobile country code (MCC).
+        :paramtype mcc_info_connection_info_global_ran_node_id_plmn_id_mcc: str
+        :keyword mnc_info_connection_info_global_ran_node_id_plmn_id_mnc: Mobile network code (MNC).
+        :paramtype mnc_info_connection_info_global_ran_node_id_plmn_id_mnc: str
+        :keyword location_type: Location Type.
+        :paramtype location_type: str
+        :keyword tac: Type Allocation Code of UE.
+        :paramtype tac: str
+        :keyword mcc_info_connection_info_location_info_plmn_mcc: Mobile country code (MCC).
+        :paramtype mcc_info_connection_info_location_info_plmn_mcc: str
+        :keyword mnc_info_connection_info_location_info_plmn_mnc: Mobile network code (MNC).
+        :paramtype mnc_info_connection_info_location_info_plmn_mnc: str
+        :keyword fiveg_tmsi: 5G Temporary Mobile Subscriber Identity. Required.
+        :paramtype fiveg_tmsi: int
+        :keyword region_id: AMF region identifier. Required.
+        :paramtype region_id: int
+        :keyword set_id: AMF set identifier. Required.
+        :paramtype set_id: int
+        :keyword pointer: AMF pointer. Required.
+        :paramtype pointer: int
+        :keyword mcc_info_fiveg_guti_plmn_mcc: Mobile country code (MCC). Required.
+        :paramtype mcc_info_fiveg_guti_plmn_mcc: str
+        :keyword mnc_info_fiveg_guti_plmn_mnc: Mobile network code (MNC). Required.
+        :paramtype mnc_info_fiveg_guti_plmn_mnc: str
+        """
+        super().__init__(last_read_at=last_read_at, **kwargs)
+        self.rat_type: str = "5G"
+        self.supi = supi
+        self.pei = pei
+        self.session_info = session_info
+        self.per_ue_tnla = per_ue_tnla
+        self.amf_ue_ngap_id = amf_ue_ngap_id
+        self.ran_ue_ngap_id = ran_ue_ngap_id
+        self.last_visited_tai = last_visited_tai
+        self.allowed_nssai = allowed_nssai
+        self.ue_state = ue_state
+        self.rrc_establishment_cause = rrc_establishment_cause
+        self.ue_usage_setting = ue_usage_setting
+        self.last_activity_time = last_activity_time
+        self.nge_nb_id = nge_nb_id
+        self.e_nb_id = e_nb_id
+        self.n3_iwf_id = n3_iwf_id
+        self.wagf_id = wagf_id
+        self.tngf_id = tngf_id
+        self.nid = nid
+        self.bit_length = bit_length
+        self.g_nb_value = g_nb_value
+        self.mcc_info_connection_info_global_ran_node_id_plmn_id_mcc = (
+            mcc_info_connection_info_global_ran_node_id_plmn_id_mcc
+        )
+        self.mnc_info_connection_info_global_ran_node_id_plmn_id_mnc = (
+            mnc_info_connection_info_global_ran_node_id_plmn_id_mnc
+        )
+        self.location_type = location_type
+        self.tac = tac
+        self.mcc_info_connection_info_location_info_plmn_mcc = mcc_info_connection_info_location_info_plmn_mcc
+        self.mnc_info_connection_info_location_info_plmn_mnc = mnc_info_connection_info_location_info_plmn_mnc
+        self.fiveg_tmsi = fiveg_tmsi
+        self.region_id = region_id
+        self.set_id = set_id
+        self.pointer = pointer
+        self.mcc_info_fiveg_guti_plmn_mcc = mcc_info_fiveg_guti_plmn_mcc
+        self.mnc_info_fiveg_guti_plmn_mnc = mnc_info_fiveg_guti_plmn_mnc
+
+
+class UeInfoList(_serialization.Model):
+    """Response for packet core list UEs API call.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: A list of UEs in a packet core and their basic information.
+    :vartype value: list[~azure.mgmt.mobilenetwork.models.UeInfo]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[UeInfo]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.UeInfo"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: A list of UEs in a packet core and their basic information.
+        :paramtype value: list[~azure.mgmt.mobilenetwork.models.UeInfo]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class UeQOSFlow(_serialization.Model):
+    """QoS Flow.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar qfi: Qos Flow Identifier. Required.
+    :vartype qfi: int
+    :ivar fiveqi: 5G QoS Identifier. Required.
+    :vartype fiveqi: int
+    :ivar uplink_gbr_uplink: Uplink bit rate.
+    :vartype uplink_gbr_uplink: str
+    :ivar downlink_gbr_downlink: Downlink bit rate.
+    :vartype downlink_gbr_downlink: str
+    :ivar uplink_mbr_uplink: Uplink bit rate.
+    :vartype uplink_mbr_uplink: str
+    :ivar downlink_mbr_downlink: Downlink bit rate.
+    :vartype downlink_mbr_downlink: str
+    """
+
+    _validation = {
+        "qfi": {"required": True, "maximum": 63, "minimum": 0},
+        "fiveqi": {"required": True, "maximum": 255, "minimum": 0},
+        "uplink_gbr_uplink": {"pattern": r"^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$"},
+        "downlink_gbr_downlink": {"pattern": r"^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$"},
+        "uplink_mbr_uplink": {"pattern": r"^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$"},
+        "downlink_mbr_downlink": {"pattern": r"^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$"},
+    }
+
+    _attribute_map = {
+        "qfi": {"key": "qfi", "type": "int"},
+        "fiveqi": {"key": "fiveqi", "type": "int"},
+        "uplink_gbr_uplink": {"key": "gbr.uplink", "type": "str"},
+        "downlink_gbr_downlink": {"key": "gbr.downlink", "type": "str"},
+        "uplink_mbr_uplink": {"key": "mbr.uplink", "type": "str"},
+        "downlink_mbr_downlink": {"key": "mbr.downlink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        qfi: int,
+        fiveqi: int,
+        uplink_gbr_uplink: Optional[str] = None,
+        downlink_gbr_downlink: Optional[str] = None,
+        uplink_mbr_uplink: Optional[str] = None,
+        downlink_mbr_downlink: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword qfi: Qos Flow Identifier. Required.
+        :paramtype qfi: int
+        :keyword fiveqi: 5G QoS Identifier. Required.
+        :paramtype fiveqi: int
+        :keyword uplink_gbr_uplink: Uplink bit rate.
+        :paramtype uplink_gbr_uplink: str
+        :keyword downlink_gbr_downlink: Downlink bit rate.
+        :paramtype downlink_gbr_downlink: str
+        :keyword uplink_mbr_uplink: Uplink bit rate.
+        :paramtype uplink_mbr_uplink: str
+        :keyword downlink_mbr_downlink: Downlink bit rate.
+        :paramtype downlink_mbr_downlink: str
+        """
+        super().__init__(**kwargs)
+        self.qfi = qfi
+        self.fiveqi = fiveqi
+        self.uplink_gbr_uplink = uplink_gbr_uplink
+        self.downlink_gbr_downlink = downlink_gbr_downlink
+        self.uplink_mbr_uplink = uplink_mbr_uplink
+        self.downlink_mbr_downlink = downlink_mbr_downlink
+
+
+class UeSessionInfo4G(_serialization.Model):
+    """UE Session Info for 4G.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar ebi: EPS bearer identifier. Required.
+    :vartype ebi: int
+    :ivar apn: Access point name. Required.
+    :vartype apn: str
+    :ivar pdn_type: Packet Data Network Type. Required. "IPV4"
+    :vartype pdn_type: str or ~azure.mgmt.mobilenetwork.models.PdnType
+    :ivar ip_v4_addr: IPv4 address.
+    :vartype ip_v4_addr: str
+    """
+
+    _validation = {
+        "ebi": {"required": True, "maximum": 15, "minimum": 5},
+        "apn": {"required": True},
+        "pdn_type": {"required": True},
+        "ip_v4_addr": {
+            "pattern": r"^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$"
+        },
+    }
+
+    _attribute_map = {
+        "ebi": {"key": "ebi", "type": "int"},
+        "apn": {"key": "apn", "type": "str"},
+        "pdn_type": {"key": "pdnType", "type": "str"},
+        "ip_v4_addr": {"key": "ueIpAddress.ipV4Addr", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        ebi: int,
+        apn: str,
+        pdn_type: Union[str, "_models.PdnType"],
+        ip_v4_addr: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword ebi: EPS bearer identifier. Required.
+        :paramtype ebi: int
+        :keyword apn: Access point name. Required.
+        :paramtype apn: str
+        :keyword pdn_type: Packet Data Network Type. Required. "IPV4"
+        :paramtype pdn_type: str or ~azure.mgmt.mobilenetwork.models.PdnType
+        :keyword ip_v4_addr: IPv4 address.
+        :paramtype ip_v4_addr: str
+        """
+        super().__init__(**kwargs)
+        self.ebi = ebi
+        self.apn = apn
+        self.pdn_type = pdn_type
+        self.ip_v4_addr = ip_v4_addr
+
+
+class UeSessionInfo5G(_serialization.Model):
+    """UE Session Info for 5G.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar pdu_session_id: PDU session identifier. Required.
+    :vartype pdu_session_id: int
+    :ivar dnn: Data network name. Required.
+    :vartype dnn: str
+    :ivar pdn_type: Packet Data Network Type. Required. "IPV4"
+    :vartype pdn_type: str or ~azure.mgmt.mobilenetwork.models.PdnType
+    :ivar qos_flow: Required.
+    :vartype qos_flow: list[~azure.mgmt.mobilenetwork.models.UeQOSFlow]
+    :ivar uplink: Uplink bit rate. Required.
+    :vartype uplink: str
+    :ivar downlink: Downlink bit rate. Required.
+    :vartype downlink: str
+    :ivar ip_v4_addr: IPv4 address.
+    :vartype ip_v4_addr: str
+    :ivar sst: Slice/service type (SST). Required.
+    :vartype sst: int
+    :ivar sd: Slice differentiator (SD).
+    :vartype sd: str
+    """
+
+    _validation = {
+        "pdu_session_id": {"required": True, "maximum": 255, "minimum": 0},
+        "dnn": {"required": True},
+        "pdn_type": {"required": True},
+        "qos_flow": {"required": True},
+        "uplink": {"required": True, "pattern": r"^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$"},
+        "downlink": {"required": True, "pattern": r"^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$"},
+        "ip_v4_addr": {
+            "pattern": r"^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$"
+        },
+        "sst": {"required": True, "maximum": 255, "minimum": 0},
+        "sd": {"pattern": r"^[A-Fa-f0-9]{6}$"},
+    }
+
+    _attribute_map = {
+        "pdu_session_id": {"key": "pduSessionId", "type": "int"},
+        "dnn": {"key": "dnn", "type": "str"},
+        "pdn_type": {"key": "pdnType", "type": "str"},
+        "qos_flow": {"key": "qosFlow", "type": "[UeQOSFlow]"},
+        "uplink": {"key": "ambr.uplink", "type": "str"},
+        "downlink": {"key": "ambr.downlink", "type": "str"},
+        "ip_v4_addr": {"key": "ueIpAddress.ipV4Addr", "type": "str"},
+        "sst": {"key": "snssai.sst", "type": "int"},
+        "sd": {"key": "snssai.sd", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        pdu_session_id: int,
+        dnn: str,
+        pdn_type: Union[str, "_models.PdnType"],
+        qos_flow: List["_models.UeQOSFlow"],
+        uplink: str,
+        downlink: str,
+        sst: int,
+        ip_v4_addr: Optional[str] = None,
+        sd: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword pdu_session_id: PDU session identifier. Required.
+        :paramtype pdu_session_id: int
+        :keyword dnn: Data network name. Required.
+        :paramtype dnn: str
+        :keyword pdn_type: Packet Data Network Type. Required. "IPV4"
+        :paramtype pdn_type: str or ~azure.mgmt.mobilenetwork.models.PdnType
+        :keyword qos_flow: Required.
+        :paramtype qos_flow: list[~azure.mgmt.mobilenetwork.models.UeQOSFlow]
+        :keyword uplink: Uplink bit rate. Required.
+        :paramtype uplink: str
+        :keyword downlink: Downlink bit rate. Required.
+        :paramtype downlink: str
+        :keyword ip_v4_addr: IPv4 address.
+        :paramtype ip_v4_addr: str
+        :keyword sst: Slice/service type (SST). Required.
+        :paramtype sst: int
+        :keyword sd: Slice differentiator (SD).
+        :paramtype sd: str
+        """
+        super().__init__(**kwargs)
+        self.pdu_session_id = pdu_session_id
+        self.dnn = dnn
+        self.pdn_type = pdn_type
+        self.qos_flow = qos_flow
+        self.uplink = uplink
+        self.downlink = downlink
+        self.ip_v4_addr = ip_v4_addr
+        self.sst = sst
+        self.sd = sd
 
 
 class UserAssignedIdentity(_serialization.Model):
@@ -4690,7 +6418,7 @@ class UserAssignedIdentity(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None

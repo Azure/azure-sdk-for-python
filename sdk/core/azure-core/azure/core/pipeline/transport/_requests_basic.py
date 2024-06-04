@@ -24,13 +24,14 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from typing import Iterator, Optional, Union, TypeVar, overload, TYPE_CHECKING
-import urllib3
+from typing import Iterator, Optional, Union, TypeVar, overload, cast, TYPE_CHECKING, MutableMapping
 from urllib3.util.retry import Retry
 from urllib3.exceptions import (
     DecodeError as CoreDecodeError,
     ReadTimeoutError,
     ProtocolError,
+    NewConnectionError,
+    ConnectTimeoutError,
 )
 import requests
 
@@ -70,8 +71,7 @@ def _read_raw_stream(response, chunk_size=1):
     # Special case for urllib3.
     if hasattr(response.raw, "stream"):
         try:
-            for chunk in response.raw.stream(chunk_size, decode_content=False):
-                yield chunk
+            yield from response.raw.stream(chunk_size, decode_content=False)
         except ProtocolError as e:
             raise ServiceResponseError(e, error=e) from e
         except CoreDecodeError as e:
@@ -246,6 +246,8 @@ class RequestsTransport(HttpTransport):
     def __init__(self, **kwargs) -> None:
         self.session = kwargs.get("session", None)
         self._session_owner = kwargs.get("session_owner", True)
+        if not self._session_owner and not self.session:
+            raise ValueError("session_owner cannot be False if no session is provided")
         self.connection_config = ConnectionConfiguration(**kwargs)
         self._use_env_settings = kwargs.pop("use_env_settings", True)
 
@@ -273,6 +275,8 @@ class RequestsTransport(HttpTransport):
         if not self.session and self._session_owner:
             self.session = requests.Session()
             self._init_session(self.session)
+        # pyright has trouble to understand that self.session is not None, since we raised at worst in the init
+        self.session = cast(requests.Session, self.session)
 
     def close(self):
         if self._session_owner and self.session:
@@ -281,7 +285,9 @@ class RequestsTransport(HttpTransport):
             self.session = None
 
     @overload
-    def send(self, request: HttpRequest, **kwargs) -> HttpResponse:
+    def send(
+        self, request: HttpRequest, *, proxies: Optional[MutableMapping[str, str]] = None, **kwargs
+    ) -> HttpResponse:
         """Send a rest request and get back a rest response.
 
         :param request: The request object to be sent.
@@ -289,13 +295,13 @@ class RequestsTransport(HttpTransport):
         :return: An HTTPResponse object.
         :rtype: ~azure.core.pipeline.transport.HttpResponse
 
-        :keyword requests.Session session: will override the driver session and use yours.
-         Should NOT be done unless really required. Anything else is sent straight to requests.
-        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
     @overload
-    def send(self, request: "RestHttpRequest", **kwargs) -> "RestHttpResponse":
+    def send(
+        self, request: "RestHttpRequest", *, proxies: Optional[MutableMapping[str, str]] = None, **kwargs
+    ) -> "RestHttpResponse":
         """Send an `azure.core.rest` request and get back a rest response.
 
         :param request: The request object to be sent.
@@ -303,12 +309,16 @@ class RequestsTransport(HttpTransport):
         :return: An HTTPResponse object.
         :rtype: ~azure.core.rest.HttpResponse
 
-        :keyword requests.Session session: will override the driver session and use yours.
-         Should NOT be done unless really required. Anything else is sent straight to requests.
-        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
-    def send(self, request, **kwargs):
+    def send(
+        self,
+        request: Union[HttpRequest, "RestHttpRequest"],
+        *,
+        proxies: Optional[MutableMapping[str, str]] = None,
+        **kwargs
+    ) -> Union[HttpResponse, "RestHttpResponse"]:
         """Send request object according to configuration.
 
         :param request: The request object to be sent.
@@ -316,9 +326,7 @@ class RequestsTransport(HttpTransport):
         :return: An HTTPResponse object.
         :rtype: ~azure.core.pipeline.transport.HttpResponse
 
-        :keyword requests.Session session: will override the driver session and use yours.
-         Should NOT be done unless really required. Anything else is sent straight to requests.
-        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
         response = None
@@ -345,19 +353,20 @@ class RequestsTransport(HttpTransport):
                 timeout=timeout,
                 cert=kwargs.pop("connection_cert", self.connection_config.cert),
                 allow_redirects=False,
+                proxies=proxies,
                 **kwargs
             )
             response.raw.enforce_content_length = True
 
         except (
-            urllib3.exceptions.NewConnectionError,
-            urllib3.exceptions.ConnectTimeoutError,
+            NewConnectionError,
+            ConnectTimeoutError,
         ) as err:
             error = ServiceRequestError(err, error=err)
         except requests.exceptions.ReadTimeout as err:
             error = ServiceResponseError(err, error=err)
         except requests.exceptions.ConnectionError as err:
-            if err.args and isinstance(err.args[0], urllib3.exceptions.ProtocolError):
+            if err.args and isinstance(err.args[0], ProtocolError):
                 error = ServiceResponseError(err, error=err)
             else:
                 error = ServiceRequestError(err, error=err)
@@ -377,7 +386,7 @@ class RequestsTransport(HttpTransport):
         if _is_rest(request):
             from azure.core.rest._requests_basic import RestRequestsTransportResponse
 
-            retval = RestRequestsTransportResponse(
+            retval: RestHttpResponse = RestRequestsTransportResponse(
                 request=request,
                 internal_response=response,
                 block_size=self.connection_config.data_block_size,

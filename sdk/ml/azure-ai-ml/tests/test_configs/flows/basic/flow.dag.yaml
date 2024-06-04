@@ -1,0 +1,33 @@
+$schema: https://azuremlschemas.azureedge.net/promptflow/latest/Flow.schema.json
+inputs:
+  text:
+    type: string
+    default: Hello World!
+outputs:
+  output:
+    type: string
+    reference: ${llm.output}
+nodes:
+- name: hello_prompt
+  type: prompt
+  source:
+    type: code
+    path: hello.jinja2
+  inputs:
+    text: ${inputs.text}
+- name: llm
+  type: python
+  source:
+    type: code
+    path: hello.py
+  inputs:
+    prompt: ${hello_prompt.output}
+    deployment_name: text-davinci-003
+    max_tokens: "120"
+environment:
+  python_requirements_txt: requirements.txt
+environment_variables:
+  AZURE_OPENAI_API_TYPE: azure
+  AZURE_OPENAI_API_VERSION: 2023-03-15-preview
+  AZURE_OPENAI_API_KEY: ${my_connection.api_key}
+  AZURE_OPENAI_API_BASE: ${my_connection.api_base}

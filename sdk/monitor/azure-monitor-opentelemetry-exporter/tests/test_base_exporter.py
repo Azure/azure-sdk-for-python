@@ -10,11 +10,16 @@ from datetime import datetime
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.pipeline.transport import HttpResponse
 from azure.monitor.opentelemetry.exporter.export._base import (
+    _MONITOR_DOMAIN_MAPPING,
+    _format_storage_telemetry_item,
     _get_auth_policy,
     BaseExporter,
     ExportResult,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    _REQUESTS_MAP,
+    _STATSBEAT_STATE,
+)
 from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_DURATION_NAME,
     _REQ_EXCEPTION_NAME,
@@ -25,13 +30,23 @@ from azure.monitor.opentelemetry.exporter._constants import (
 )
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated.models import (
+    MessageData,
+    MetricDataPoint,
+    MetricsData,
+    MonitorBase,
+    RemoteDependencyData,
+    RequestData,
     TelemetryErrorDetails,
+    TelemetryExceptionDetails,
+    TelemetryEventData,
+    TelemetryExceptionData,
     TelemetryItem,
     TrackResponse,
 )
 
 
 TEST_AUTH_POLICY = "TEST_AUTH_POLICY"
+TEST_TEMP_DIR = "TEST_TEMP_DIR"
 
 
 def throw(exc_type, *args, **kwargs):
@@ -72,6 +87,11 @@ class TestBaseExporter(unittest.TestCase):
 
     def setUp(self) -> None:
         _REQUESTS_MAP.clear()
+        _STATSBEAT_STATE = {
+            "INITIAL_FAILURE_COUNT": 0,
+            "INITIAL_SUCCESS": False,
+            "SHUTDOWN": False,
+        }
 
     def tearDown(self):
         clean_folder(self._base.storage._path)
@@ -82,6 +102,7 @@ class TestBaseExporter(unittest.TestCase):
             api_version="2021-02-10_Preview",
             connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
             disable_offline_storage=False,
+            distro_version="1.0.0",
             storage_maintenance_period=30,
             storage_max_size=1000,
             storage_min_retry_interval=100,
@@ -96,6 +117,7 @@ class TestBaseExporter(unittest.TestCase):
             base._endpoint,
             "https://westus-0.in.applicationinsights.azure.com/",
         )
+        self.assertEqual(base._distro_version, "1.0.0")
         self.assertIsNotNone(base.storage)
         self.assertEqual(base.storage._max_size, 1000)
         self.assertEqual(base.storage._retention_period, 2000)
@@ -105,8 +127,107 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._storage_min_retry_interval, 100)
         self.assertEqual(base._storage_directory, "test/path")
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
+    def test_constructor_no_storage_directory(self, mock_get_temp_dir):
+        mock_get_temp_dir.return_value = TEST_TEMP_DIR
+        base = BaseExporter(
+            api_version="2021-02-10_Preview",
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+            distro_version="1.0.0",
+            storage_maintenance_period=30,
+            storage_max_size=1000,
+            storage_min_retry_interval=100,
+            storage_retention_period=2000,
+        )
+        self.assertEqual(
+            base._instrumentation_key,
+            "4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+        self.assertEqual(
+            base._endpoint,
+            "https://westus-0.in.applicationinsights.azure.com/",
+        )
+        self.assertEqual(base._distro_version, "1.0.0")
+        self.assertIsNotNone(base.storage)
+        self.assertEqual(base.storage._max_size, 1000)
+        self.assertEqual(base.storage._retention_period, 2000)
+        self.assertEqual(base._storage_maintenance_period, 30)
+        self.assertEqual(base._timeout, 10)
+        self.assertEqual(base._api_version, "2021-02-10_Preview")
+        self.assertEqual(base._storage_min_retry_interval, 100)
+        self.assertEqual(
+            base._storage_directory,
+            os.path.join(
+                TEST_TEMP_DIR, "Microsoft/AzureMonitor", "opentelemetry-python-" + "4321abcd-5678-4efa-8abc-1234567890ab"
+            )
+        )
+        mock_get_temp_dir.assert_called_once()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
+    def test_constructor_disable_offline_storage(self, mock_get_temp_dir):
+        mock_get_temp_dir.side_effect = Exception()
+        base = BaseExporter(
+            api_version="2021-02-10_Preview",
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=True,
+            distro_version="1.0.0",
+            storage_maintenance_period=30,
+            storage_max_size=1000,
+            storage_min_retry_interval=100,
+            storage_retention_period=2000,
+        )
+        self.assertEqual(
+            base._instrumentation_key,
+            "4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+        self.assertEqual(
+            base._endpoint,
+            "https://westus-0.in.applicationinsights.azure.com/",
+        )
+        self.assertEqual(base._distro_version, "1.0.0")
+        self.assertIsNone(base.storage)
+        self.assertEqual(base._storage_maintenance_period, 30)
+        self.assertEqual(base._timeout, 10)
+        self.assertEqual(base._api_version, "2021-02-10_Preview")
+        self.assertEqual(base._storage_min_retry_interval, 100)
+        self.assertIsNone(base._storage_directory)
+        mock_get_temp_dir.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
+    def test_constructor_disable_offline_storage_with_storage_directory(self, mock_get_temp_dir):
+        mock_get_temp_dir.side_effect = Exception()
+        base = BaseExporter(
+            api_version="2021-02-10_Preview",
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=True,
+            distro_version="1.0.0",
+            storage_maintenance_period=30,
+            storage_max_size=1000,
+            storage_min_retry_interval=100,
+            storage_directory="test/path",
+            storage_retention_period=2000,
+        )
+        self.assertEqual(
+            base._instrumentation_key,
+            "4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+        self.assertEqual(
+            base._endpoint,
+            "https://westus-0.in.applicationinsights.azure.com/",
+        )
+        self.assertEqual(base._distro_version, "1.0.0")
+        self.assertIsNone(base.storage)
+        self.assertEqual(base._storage_maintenance_period, 30)
+        self.assertEqual(base._timeout, 10)
+        self.assertEqual(base._api_version, "2021-02-10_Preview")
+        self.assertEqual(base._storage_min_retry_interval, 100)
+        self.assertEqual(base._storage_directory, "test/path")
+        mock_get_temp_dir.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._format_storage_telemetry_item")
     @mock.patch.object(TelemetryItem, "from_dict")
-    def test_transmit_from_storage_success(self, dict_patch):
+    def test_transmit_from_storage_success(self, dict_patch, format_patch):
         exporter = BaseExporter()
         exporter.storage = mock.Mock()
         blob_mock = mock.Mock()
@@ -114,6 +235,7 @@ class TestBaseExporter(unittest.TestCase):
         envelope_mock = {"name":"test","time":"time"}
         blob_mock.get.return_value = [envelope_mock]
         dict_patch.return_value = {"name":"test","time":"time"}
+        format_patch.return_value = envelope_mock
         exporter.storage.gets.return_value = [blob_mock]
         with mock.patch.object(AzureMonitorClient, 'track') as post:
             post.return_value = TrackResponse(
@@ -126,8 +248,9 @@ class TestBaseExporter(unittest.TestCase):
         blob_mock.lease.assert_called_once()
         blob_mock.delete.assert_called_once()
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._format_storage_telemetry_item")
     @mock.patch.object(TelemetryItem, "from_dict")
-    def test_transmit_from_storage_store_again(self, dict_patch):
+    def test_transmit_from_storage_store_again(self, dict_patch, format_patch):
         exporter = BaseExporter()
         exporter.storage = mock.Mock()
         blob_mock = mock.Mock()
@@ -135,6 +258,7 @@ class TestBaseExporter(unittest.TestCase):
         envelope_mock = {"name":"test","time":"time"}
         blob_mock.get.return_value = [envelope_mock]
         dict_patch.return_value = {"name":"test","time":"time"}
+        format_patch.return_value = envelope_mock
         exporter.storage.gets.return_value = [blob_mock]
         with mock.patch("azure.monitor.opentelemetry.exporter.export._base._is_retryable_code"):
             with mock.patch.object(AzureMonitorClient, 'track', throw(HttpResponseError)):
@@ -142,11 +266,6 @@ class TestBaseExporter(unittest.TestCase):
         exporter.storage.gets.assert_called_once()
         blob_mock.lease.assert_called()
         blob_mock.delete.assert_not_called()
-
-    def test_transmit_from_storage_nothing(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = None
-            self._base._transmit_from_storage()
 
     def test_transmit_from_storage_lease_failure(self):
         exporter = BaseExporter()
@@ -161,6 +280,182 @@ class TestBaseExporter(unittest.TestCase):
         transmit_mock.assert_not_called()
         blob_mock.lease.assert_called_once()
         blob_mock.delete.assert_not_called()
+
+    def test_format_storage_telemetry_item(self):
+        time=datetime.now()
+        base = MonitorBase(
+            base_type="",
+            base_data=None
+        )
+        ti = TelemetryItem(
+            name="test_telemetry_item",
+            time=time,
+            version=1,
+            sample_rate=50.0,
+            sequence="test_sequence",
+            instrumentation_key="4321abcd-5678-4efa-8abc-1234567890ab",
+            tags={"tag1": "val1", "tag2": "val2"},
+            data=base
+        )
+        # MessageData
+        message_data = MessageData(
+            version=2,
+            message="test_message",
+            severity_level="Warning",
+            properties={"key1": "val1"},
+        )
+        base.base_type = "MessageData"
+        self.assertEqual(_MONITOR_DOMAIN_MAPPING.get(base.base_type), MessageData)
+        base.base_data = message_data
+        ti.data = base
+
+        # Format is called on custom serialized TelemetryItem
+        converted_ti = ti.from_dict(ti.as_dict())
+        format_ti = _format_storage_telemetry_item(converted_ti)
+        self.assertTrue(validate_telemetry_item(format_ti, ti))
+        self.assertEqual(format_ti.data.base_type, "MessageData")
+        self.assertEqual(message_data.__dict__.items(), format_ti.data.base_data.__dict__.items())
+
+        # EventData
+        event_data = TelemetryEventData(
+            version=2,
+            name="test_name",
+            properties={"key1": "val1"},
+        )
+        base.base_type = "EventData"
+        self.assertEqual(_MONITOR_DOMAIN_MAPPING.get(base.base_type), TelemetryEventData)
+        base.base_data = event_data
+        ti.data = base
+
+        # Format is called on custom serialized TelemetryItem
+        converted_ti = ti.from_dict(ti.as_dict())
+        format_ti = _format_storage_telemetry_item(converted_ti)
+        self.assertTrue(validate_telemetry_item(format_ti, ti))
+        self.assertEqual(format_ti.data.base_type, "EventData")
+        self.assertEqual(event_data.__dict__.items(), format_ti.data.base_data.__dict__.items())
+
+        # ExceptionData
+        exc_data_details = TelemetryExceptionDetails(
+            type_name="ZeroDivisionError",
+            message="division by zero",
+            has_full_stack=True,
+            stack="Traceback \n",
+        )
+        exc_data = TelemetryExceptionData(
+            version=2,
+            properties={"key1": "val1"},
+            severity_level="3",
+            exceptions=[exc_data_details]
+        )
+        base.base_type = "ExceptionData"
+        self.assertEqual(_MONITOR_DOMAIN_MAPPING.get(base.base_type), TelemetryExceptionData)
+        base.base_data = exc_data
+        ti.data = base
+
+        # Format is called on custom serialized TelemetryItem
+        converted_ti = ti.from_dict(ti.as_dict())
+        format_ti = _format_storage_telemetry_item(converted_ti)
+        self.assertTrue(validate_telemetry_item(format_ti, ti))
+        self.assertEqual(format_ti.data.base_type, "ExceptionData")
+        self.assertEqual(exc_data.version, format_ti.data.base_data.version)
+        self.assertEqual(exc_data.properties, format_ti.data.base_data.properties)
+        self.assertEqual(exc_data.severity_level, format_ti.data.base_data.severity_level)
+        self.assertEqual(exc_data.exceptions[0].type_name, format_ti.data.base_data.exceptions[0].type_name)
+        self.assertEqual(exc_data.exceptions[0].message, format_ti.data.base_data.exceptions[0].message)
+        self.assertEqual(exc_data.exceptions[0].has_full_stack, format_ti.data.base_data.exceptions[0].has_full_stack)
+        self.assertEqual(exc_data.exceptions[0].stack, format_ti.data.base_data.exceptions[0].stack)
+
+        # MetricsData
+        counter_data_point = MetricDataPoint(
+            name="counter",
+            value=1.0,
+            count=1,
+            min=None,
+            max=None,
+        )
+        hist_data_point = MetricDataPoint(
+            name="histogram",
+            value=99.0,
+            count=1,
+            min=99.0,
+            max=99.0,
+        )
+        metric_data = MetricsData(
+            version=2,
+            properties={"key1": "val1"},
+            metrics=[counter_data_point, hist_data_point],
+        )
+        base.base_type = "MetricData"
+        self.assertEqual(_MONITOR_DOMAIN_MAPPING.get(base.base_type), MetricsData)
+        base.base_data = metric_data
+        ti.data = base
+
+        # Format is called on custom serialized TelemetryItem
+        converted_ti = ti.from_dict(ti.as_dict())
+        format_ti = _format_storage_telemetry_item(converted_ti)
+        self.assertTrue(validate_telemetry_item(format_ti, ti))
+        self.assertEqual(format_ti.data.base_type, "MetricData")
+        self.assertEqual(metric_data.version, format_ti.data.base_data.version)
+        self.assertEqual(metric_data.properties, format_ti.data.base_data.properties)
+        self.assertEqual(metric_data.metrics[0].name, format_ti.data.base_data.metrics[0].name)
+        self.assertEqual(metric_data.metrics[0].value, format_ti.data.base_data.metrics[0].value)
+        self.assertEqual(metric_data.metrics[0].count, format_ti.data.base_data.metrics[0].count)
+        self.assertEqual(metric_data.metrics[0].min, format_ti.data.base_data.metrics[0].min)
+        self.assertEqual(metric_data.metrics[0].max, format_ti.data.base_data.metrics[0].max)
+        self.assertEqual(metric_data.metrics[1].name, format_ti.data.base_data.metrics[1].name)
+        self.assertEqual(metric_data.metrics[1].value, format_ti.data.base_data.metrics[1].value)
+        self.assertEqual(metric_data.metrics[1].count, format_ti.data.base_data.metrics[1].count)
+        self.assertEqual(metric_data.metrics[1].min, format_ti.data.base_data.metrics[1].min)
+        self.assertEqual(metric_data.metrics[1].max, format_ti.data.base_data.metrics[1].max)
+
+        # RemoteDependencyData
+        dep_data = RemoteDependencyData(
+            version=2,
+            id="191306b0186ce6a8",
+            name="GET /",
+            result_code="200",
+            data="https://example.com/",
+            type="HTTP",
+            target="example.com",
+            duration="0.00:00:01.143",
+            success=True,
+            properties={"key1": "val1"},
+        )
+        base.base_type = "RemoteDependencyData"
+        self.assertEqual(_MONITOR_DOMAIN_MAPPING.get(base.base_type), RemoteDependencyData)
+        base.base_data = dep_data
+        ti.data = base
+
+        # Format is called on custom serialized TelemetryItem
+        converted_ti = ti.from_dict(ti.as_dict())
+        format_ti = _format_storage_telemetry_item(converted_ti)
+        self.assertTrue(validate_telemetry_item(format_ti, ti))
+        self.assertEqual(format_ti.data.base_type, "RemoteDependencyData")
+        self.assertEqual(dep_data.__dict__.items(), format_ti.data.base_data.__dict__.items())
+
+        # RequestData
+        req_data = RequestData(
+            version=2,
+            id="04f4d2ab2b9b6825",
+            name="GET /",
+            duration="0.00:00:00.053",
+            success=True,
+            response_code="200",
+            url="http://localhost:8080/",
+            source="test source",
+            properties={"key1": "val1"},
+        )
+        base.base_type = "RequestData"
+        self.assertEqual(_MONITOR_DOMAIN_MAPPING.get(base.base_type), RequestData)
+        base.base_data = req_data
+        ti.data = base
+
+        # Format is called on custom serialized TelemetryItem
+        converted_ti = ti.from_dict(ti.as_dict())
+        format_ti = _format_storage_telemetry_item(converted_ti)
+        self.assertTrue(validate_telemetry_item(format_ti, ti))
+        self.assertEqual(format_ti.data.base_type, "RequestData")
+        self.assertEqual(req_data.__dict__.items(), format_ti.data.base_data.__dict__.items())
 
     def test_transmit_http_error_retryable(self):
         with mock.patch("azure.monitor.opentelemetry.exporter.export._base._is_retryable_code") as m:
@@ -322,7 +617,7 @@ class TestBaseExporter(unittest.TestCase):
                 ],
             )
             result = exporter._transmit(custom_envelopes_to_export)
-        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
         exporter.storage.put.assert_called_once()
 
     @mock.patch.dict(
@@ -361,7 +656,7 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(_REQUESTS_MAP[_REQ_RETRY_NAME[1]][500], 1)
         self.assertEqual(_REQUESTS_MAP["count"], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
-        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     def test_transmission_206_no_retry(self):
         exporter = BaseExporter(disable_offline_storage=True)
@@ -429,13 +724,15 @@ class TestBaseExporter(unittest.TestCase):
         "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
         }
     )
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.shutdown_statsbeat_metrics")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
-    def test_statsbeat_400(self, stats_mock):
+    def test_statsbeat_400(self, stats_mock, stats_shutdown_mock):
         exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(400, "{}")
             result = exporter._transmit(self._envelopes_to_export)
         stats_mock.assert_called_once()
+        stats_shutdown_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
         self.assertEqual(_REQUESTS_MAP[_REQ_FAILURE_NAME[1]][400], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
@@ -668,6 +965,22 @@ class TestBaseExporter(unittest.TestCase):
             def invalid_get_token():
                 return "TEST_TOKEN"
         self.assertRaises(ValueError, _get_auth_policy, credential=InvalidTestCredential(), default_auth_policy=TEST_AUTH_POLICY)
+
+
+def validate_telemetry_item(item1, item2):
+    return item1.name == item2.name and \
+        item1.time.year == item2.time.year and \
+        item1.time.month == item2.time.month and \
+        item1.time.day == item2.time.day and \
+        item1.time.hour == item2.time.hour and \
+        item1.time.minute == item2.time.minute and \
+        item1.time.second == item2.time.second and \
+        item1.time.microsecond == item2.time.microsecond and \
+        item1.version == item2.version and \
+        item1.sample_rate == item2.sample_rate and \
+        item1.sequence == item2.sequence and \
+        item1.instrumentation_key == item2.instrumentation_key and \
+        item1.tags == item2.tags
 
 
 class MockResponse:

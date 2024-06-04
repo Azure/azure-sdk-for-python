@@ -5,16 +5,13 @@
 import abc
 import logging
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Optional
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ..._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 
 if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports,unused-import
-    from typing import Any, Optional
-
     from azure.core.credentials import AccessToken
 
 _LOGGER = logging.getLogger(__name__)
@@ -25,13 +22,15 @@ class GetTokenMixin(abc.ABC):
         self._last_request_time = 0
 
         # https://github.com/python/mypy/issues/5887
-        super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
+        super(GetTokenMixin, self).__init__(*args, **kwargs)
 
     @abc.abstractmethod
+    # pylint: disable-next=docstring-missing-param
     async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
         """Attempt to acquire an access token from a cache or by redeeming a refresh token."""
 
     @abc.abstractmethod
+    # pylint: disable-next=docstring-missing-param
     async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Request an access token from the STS."""
 
@@ -48,15 +47,14 @@ class GetTokenMixin(abc.ABC):
 
         This method is called automatically by Azure SDK clients.
 
-        :param str scopes: desired scopes for the access token. This method requires at least one scope.
-        :keyword str tenant_id: optional tenant to include in the token request.
-
-        :rtype: :class:`azure.core.credentials.AccessToken`
-
+        :param scopes: Scopes to request access for
+        :type: str
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
             required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
             attribute gives a reason.
+        :return: The access token
+        :rtype: ~azure.core.credentials.AccessToken
         """
         if not scopes:
             msg = '"get_token" requires at least one scope'

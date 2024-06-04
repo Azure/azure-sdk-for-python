@@ -187,6 +187,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
                                          value=2)
         client.add_feedback(period_feedback)
 
+    @pytest.mark.skip("InternalServerError")
     @pytest.mark.parametrize("credential", API_KEY, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
@@ -199,6 +200,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         ))
         assert len(results) > 0
 
+    @pytest.mark.skip("InternalServerError")
     @pytest.mark.parametrize("credential", API_KEY, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy

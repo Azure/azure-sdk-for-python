@@ -18,26 +18,21 @@ from azure.ai.ml.entities._util import load_from_dict
 class KubernetesCompute(Compute):
     """Kubernetes Compute resource.
 
-    :param name: Name of the compute
-    :type name: str
-    :param location: The resource location, defaults to None
-    :type location: Optional[str], optional
-    :param description: Description of the resource.
-    :type description: Optional[str], optional
-    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
-    :type tags: Optional[dict[str, str]]
-    :param resource_id: ARM resource id of the underlying compute, defaults to None
-    :type resource_id: Optional[str], optional
-    :param created_on: defaults to None
-    :type created_on: Optional[~datetime.datetime], optional
-    :param provisioning_state: defaults to None
-    :type provisioning_state: Optional[str], optional
-    :param namespace: Namespace of the KubernetesCompute
-    :type namespace: Optional[str], optional
-    :param properties: KubernetesProperties, defaults to None
-    :type properties: Optional[Dict], optional
-    :param identity:  The identity configuration, identities that are associated with the compute cluster.
-    :type identity: IdentityConfiguration, optional
+    :param namespace: The namespace of the KubernetesCompute. Defaults to "default".
+    :type namespace: Optional[str]
+    :param properties: The properties of the Kubernetes compute resource.
+    :type properties: Optional[Dict]
+    :param identity: The identities that are associated with the compute cluster.
+    :type identity: ~azure.ai.ml.entities.IdentityConfiguration
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_compute.py
+            :start-after: [START kubernetes_compute]
+            :end-before: [END kubernetes_compute]
+            :language: python
+            :dedent: 8
+            :caption: Creating a KubernetesCompute object.
     """
 
     def __init__(
@@ -46,8 +41,8 @@ class KubernetesCompute(Compute):
         namespace: str = "default",
         properties: Optional[Dict[str, Any]] = None,
         identity: Optional[IdentityConfiguration] = None,
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         kwargs[TYPE] = ComputeType.KUBERNETES
         super().__init__(**kwargs)
         self.namespace = namespace
@@ -67,9 +62,11 @@ class KubernetesCompute(Compute):
             resource_id=prop.resource_id,
             tags=rest_obj.tags if rest_obj.tags else None,
             provisioning_state=prop.provisioning_state,
-            provisioning_errors=prop.provisioning_errors[0].error.code
-            if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
-            else None,
+            provisioning_errors=(
+                prop.provisioning_errors[0].error.code
+                if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
+                else None
+            ),
             created_on=prop.additional_properties.get("createdOn", None),
             properties=prop.properties.as_dict() if prop.properties else None,
             namespace=prop.properties.namespace,
@@ -78,10 +75,11 @@ class KubernetesCompute(Compute):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return KubernetesComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = KubernetesComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "KubernetesCompute":
+    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs: Any) -> "KubernetesCompute":
         if not data:
             data = {"namespace": "default"}
         if "namespace" not in data:

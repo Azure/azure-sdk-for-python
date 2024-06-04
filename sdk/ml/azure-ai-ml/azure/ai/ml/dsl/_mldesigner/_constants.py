@@ -6,6 +6,7 @@
 from azure.ai.ml._internal._schema.component import NodeType as V1NodeType
 from azure.ai.ml._internal.entities import (
     Ae365exepool,
+    AetherBridge,
     Command as InternalCommand,
     Parallel as InternalParallel,
     Pipeline as InternalPipeline,
@@ -28,4 +29,5 @@ V1_COMPONENT_TO_NODE = {
     V1NodeType.STARLITE: Starlite,
     V1NodeType.HEMERA: Hemera,
     V1NodeType.AE365EXEPOOL: Ae365exepool,
+    V1NodeType.AETHER_BRIDGE: AetherBridge,
 }

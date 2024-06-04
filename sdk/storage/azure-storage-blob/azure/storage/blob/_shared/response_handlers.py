@@ -3,29 +3,22 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
-    TYPE_CHECKING
-)
 import logging
+from typing import NoReturn
 from xml.etree.ElementTree import Element
 
-from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.exceptions import (
-    HttpResponseError,
-    ResourceNotFoundError,
-    ResourceModifiedError,
-    ResourceExistsError,
     ClientAuthenticationError,
-    DecodeError)
+    DecodeError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceModifiedError,
+    ResourceNotFoundError,
+)
+from azure.core.pipeline.policies import ContentDecodePolicy
 
-from .parser import _to_utc_datetime
 from .models import StorageErrorCode, UserDelegationKey, get_enum_value
-
-
-if TYPE_CHECKING:
-    from datetime import datetime
-    from azure.core.exceptions import AzureError
+from .parser import _to_utc_datetime
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -44,10 +37,8 @@ class PartialBatchErrorException(HttpResponseError):
         super(PartialBatchErrorException, self).__init__(message=message, response=response)
 
 
+# Parses the blob length from the content range header: bytes 1-3/65537
 def parse_length_from_content_range(content_range):
-    '''
-    Parses the blob length from the content range header: bytes 1-3/65537
-    '''
     if content_range is None:
         return None
 
@@ -90,10 +81,10 @@ def return_raw_deserialized(response, *_):
     return response.http_response.location_mode, response.context[ContentDecodePolicy.CONTEXT_NAME]
 
 
-def process_storage_error(storage_error):   # pylint:disable=too-many-statements
+def process_storage_error(storage_error) -> NoReturn: # type: ignore [misc] # pylint:disable=too-many-statements
     raise_error = HttpResponseError
     serialized = False
-    if not storage_error.response:
+    if not storage_error.response or storage_error.response.status_code in [200, 204]:
         raise storage_error
     # If it is one of those three then it has been serialized prior by the generated layer.
     if isinstance(storage_error, (PartialBatchErrorException,
@@ -106,7 +97,8 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
     try:
         error_body = ContentDecodePolicy.deserialize_from_http_generics(storage_error.response)
         try:
-            error_body = error_body or storage_error.response.reason
+            if error_body is None or len(error_body) == 0:
+                error_body = storage_error.response.reason
         except AttributeError:
             error_body = ''
         # If it is an XML response
@@ -124,7 +116,8 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
             error_dict = {'message': str(error_body)}
 
         # If we extracted from a Json or XML response
-        if error_dict:
+        # There is a chance error_dict is just a string
+        if error_dict and isinstance(error_dict, dict):
             error_code = error_dict.get('code')
             error_message = error_dict.get('message')
             additional_data = {k: v for k, v in error_dict.items() if k not in {'code', 'message'}}
@@ -187,8 +180,8 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
     try:
         # `from None` prevents us from double printing the exception (suppresses generated layer error context)
         exec("raise error from None")   # pylint: disable=exec-used # nosec
-    except SyntaxError:
-        raise error
+    except SyntaxError as exc:
+        raise error from exc
 
 
 def parse_to_internal_user_delegation_key(service_user_delegation_key):

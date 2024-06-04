@@ -7,7 +7,7 @@
 from azure.core.exceptions import ResponseNotReadError
 import pytest
 from azure.core.rest import HttpRequest
-from rest_client_async import AsyncTestRestClient
+from rest_client_async import AsyncMockRestClient
 
 
 @pytest.mark.asyncio

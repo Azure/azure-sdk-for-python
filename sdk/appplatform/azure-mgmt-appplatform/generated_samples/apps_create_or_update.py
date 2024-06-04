@@ -62,6 +62,7 @@ def main():
                 "customPersistentDisks": [
                     {
                         "customPersistentDiskProperties": {
+                            "enableSubPath": True,
                             "mountOptions": ["uid=0", "gid=0", "dir_mode=0777", "file_mode=0777"],
                             "mountPath": "/mypath1/mypath2",
                             "shareName": "myFileShare",
@@ -91,6 +92,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/stable/2022-12-01/examples/Apps_CreateOrUpdate.json
+# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/stable/2023-12-01/examples/Apps_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

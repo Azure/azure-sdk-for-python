@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.certificates import AdministratorContact, CertificateClient
 
@@ -49,6 +50,7 @@ client.create_issuer(
 
 # Now we get this issuer by name
 issuer1 = client.get_issuer(issuer_name="issuer1")
+assert issuer1.admin_contacts
 
 print(issuer1.name)
 print(issuer1.provider)
@@ -65,6 +67,7 @@ admin_contacts = [
     AdministratorContact(first_name="Jane", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
 ]
 issuer1 = client.update_issuer(issuer_name="issuer1", admin_contacts=admin_contacts)
+assert issuer1.admin_contacts
 
 for contact in issuer1.admin_contacts:
     print(contact.first_name)

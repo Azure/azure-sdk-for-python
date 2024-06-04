@@ -60,6 +60,9 @@ class ServiceBusSASTokenCredential(object):
     ) -> AccessToken:
         """
         This method is automatically called when token is about to expire.
+        :param any scopes: The list of scopes for which the token has to be fetched.
+        :return: The access token.
+        :rtype: ~azure.core.credentials.AccessToken
         """
         return AccessToken(self.token, self.expiry)
 
@@ -84,7 +87,7 @@ class ServiceBusSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
-class ServiceBusAzureNamedKeyTokenCredentialAsync(object):
+class ServiceBusAzureNamedKeyTokenCredentialAsync(object): # pylint:disable=name-too-long
     """The named key credential used for authentication.
     :param credential: The AzureNamedKeyCredential that should be used.
     :type credential: ~azure.core.credentials.AzureNamedKeyCredential
@@ -114,6 +117,9 @@ class ServiceBusAzureSasTokenCredentialAsync(object):
     async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         This method is automatically called when token is about to expire.
+        :param any scopes: The list of scopes for which the token has to be fetched.
+        :return: The access token.
+        :rtype: ~azure.core.credentials.AccessToken
         """
         signature, expiry = parse_sas_credential(self._credential)
         return AccessToken(signature, expiry)
@@ -130,7 +136,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransportAsync)
 
         # If the user provided http:// or sb://, let's be polite and strip that.
-        self.fully_qualified_namespace = strip_protocol_from_uri(
+        self.fully_qualified_namespace: str = strip_protocol_from_uri(
             fully_qualified_namespace.strip()
         )
         self._entity_name = entity_name
@@ -171,16 +177,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             **kwargs
         )
 
-    async def __aenter__(self):
-        if self._shutdown.is_set():
-            raise ValueError(
-                "The handler has already been shutdown. Please use ServiceBusClient to "
-                "create a new instance."
-            )
-        await self._open_with_retry()
-        return self
-
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any) -> None:
         await self.close()
 
     async def _handle_exception(self, exception):
@@ -277,7 +274,15 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                         self._container_id,
                         last_exception,
                     )
-                    raise last_exception
+                    if isinstance(last_exception, OperationTimeoutError):
+                        description = "If trying to receive from NEXT_AVAILABLE_SESSION, "\
+                            "use max_wait_time on the ServiceBusReceiver to control the"\
+                                " timeout."
+                        error = OperationTimeoutError(
+                            message=description,
+                        )
+                        raise error from last_exception
+                    raise last_exception from None
                 await self._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,
@@ -309,6 +314,14 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 entity_name,
                 last_exception,
             )
+            if isinstance(last_exception, OperationTimeoutError):
+                description = "If trying to receive from NEXT_AVAILABLE_SESSION, "\
+                    "use max_wait_time on the ServiceBusReceiver to control the"\
+                        " timeout."
+                error = OperationTimeoutError(
+                    message=description,
+                )
+                raise error from last_exception
             raise last_exception
 
     async def _mgmt_request_response(
@@ -327,13 +340,15 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
          be service-specific, but common values include READ, CREATE and UPDATE.
          This value will be added as an application property on the message.
         :param message: The message to send in the management request.
-        :paramtype message: ~uamqp.message.Message
+        :type message: ~uamqp.message.Message
         :param callback: The callback which is used to parse the returning message.
-        :paramtype callback: Callable[int, ~uamqp.message.Message, str]
-        :param keep_alive_associated_link: A boolean flag for keeping associated amqp sender/receiver link alive when
+        :type callback: Callable[int, ~uamqp.message.Message, str]
+        :param bool keep_alive_associated_link: A boolean flag for keeping
+         associated amqp sender/receiver link alive when
          executing operation on mgmt links.
-        :param timeout: timeout in seconds for executing the mgmt operation.
-        :rtype: None
+        :param float or None timeout: timeout in seconds for executing the mgmt operation.
+        :return: The message response.
+        :rtype: Message
         """
         await self._open()
 
@@ -367,7 +382,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             )
         except Exception as exp:  # pylint: disable=broad-except
             if isinstance(exp, self._amqp_transport.TIMEOUT_ERROR):
-                raise OperationTimeoutError(error=exp)
+                raise OperationTimeoutError(error=exp) from exp
             raise
 
     async def _mgmt_request_response_with_retry(
@@ -388,7 +403,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             **kwargs
         )
 
-    async def _open(self):  # pylint: disable=no-self-use
+    async def _open(self):
         raise ValueError("Subclass should override the method.")
 
     async def _open_with_retry(self):

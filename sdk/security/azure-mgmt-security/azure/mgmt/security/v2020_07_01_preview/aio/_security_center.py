@@ -9,8 +9,10 @@
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
+from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
+from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
 
 from .. import models as _models
 from ..._serialization import Deserializer, Serializer
@@ -29,6 +31,10 @@ if TYPE_CHECKING:
 class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
     """API spec for Microsoft.Security (Azure Security Center) resource provider.
 
+    :ivar sql_vulnerability_assessment_baseline_rules:
+     SqlVulnerabilityAssessmentBaselineRulesOperations operations
+    :vartype sql_vulnerability_assessment_baseline_rules:
+     azure.mgmt.security.v2020_07_01_preview.aio.operations.SqlVulnerabilityAssessmentBaselineRulesOperations
     :ivar sql_vulnerability_assessment_scans: SqlVulnerabilityAssessmentScansOperations operations
     :vartype sql_vulnerability_assessment_scans:
      azure.mgmt.security.v2020_07_01_preview.aio.operations.SqlVulnerabilityAssessmentScansOperations
@@ -36,10 +42,6 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
      SqlVulnerabilityAssessmentScanResultsOperations operations
     :vartype sql_vulnerability_assessment_scan_results:
      azure.mgmt.security.v2020_07_01_preview.aio.operations.SqlVulnerabilityAssessmentScanResultsOperations
-    :ivar sql_vulnerability_assessment_baseline_rules:
-     SqlVulnerabilityAssessmentBaselineRulesOperations operations
-    :vartype sql_vulnerability_assessment_baseline_rules:
-     azure.mgmt.security.v2020_07_01_preview.aio.operations.SqlVulnerabilityAssessmentBaselineRulesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param base_url: Service URL. Default value is "https://management.azure.com".
@@ -53,23 +55,43 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
         self, credential: "AsyncTokenCredential", base_url: str = "https://management.azure.com", **kwargs: Any
     ) -> None:
         self._config = SecurityCenterConfiguration(credential=credential, **kwargs)
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                AsyncARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self.sql_vulnerability_assessment_baseline_rules = SqlVulnerabilityAssessmentBaselineRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-07-01-preview"
+        )
         self.sql_vulnerability_assessment_scans = SqlVulnerabilityAssessmentScansOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-07-01-preview"
         )
         self.sql_vulnerability_assessment_scan_results = SqlVulnerabilityAssessmentScanResultsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.sql_vulnerability_assessment_baseline_rules = SqlVulnerabilityAssessmentBaselineRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-07-01-preview"
         )
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -89,7 +111,7 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
         await self._client.close()

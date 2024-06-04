@@ -4,12 +4,13 @@
 # license information.
 #--------------------------------------------------------------------------
 # TODO: Check types of kwargs (issue exists for this)
+# pylint: disable=too-many-lines
 import asyncio
 import logging
 import time
 import queue
 from functools import partial
-from typing import Any, Dict, Optional, Tuple, Union, overload, cast
+from typing import Any, Callable, Coroutine, List, Dict, Optional, Tuple, Union, overload, cast
 from typing_extensions import Literal
 import certifi
 
@@ -23,7 +24,7 @@ from ..client import (
     SendClient as SendClientSync,
     Outcomes
 )
-from ..message import _MessageDelivery
+from ..message import _MessageDelivery, Message
 from ..constants import (
     MessageDeliveryState,
     SEND_DISPOSITION_ACCEPT,
@@ -38,7 +39,6 @@ from ..error import (
     AMQPException,
     MessageException
 )
-from ..constants import LinkState
 
 _logger = logging.getLogger(__name__)
 
@@ -151,11 +151,6 @@ class AMQPClientAsync(AMQPClientSync):
                 current_time = time.time()
                 elapsed_time = current_time - start_time
                 if elapsed_time >= self._keep_alive_interval:
-                    _logger.debug(
-                        "Keeping %r connection alive.",
-                        self.__class__.__name__,
-                        extra=self._network_trace_params
-                    )
                     await asyncio.shield(self._connection.listen(wait=self._socket_timeout,
                         batch=self._link.current_link_credit))
                     start_time = current_time
@@ -169,19 +164,25 @@ class AMQPClientAsync(AMQPClientSync):
             )
 
     async def __aenter__(self):
-        """Run Client in an async context manager."""
+        """Run Client in an async context manager.
+        :return: The Client object.
+        :rtype: ~pyamqp.AMQPClient
+        """
         await self.open_async()
         return self
 
     async def __aexit__(self, *args):
-        """Close and destroy Client on exiting an async context manager."""
+        """Close and destroy Client on exiting an async context manager.
+        :param any args: Ignored.
+        """
         await self.close_async()
 
-    async def _client_ready_async(self):  # pylint: disable=no-self-use
+    async def _client_ready_async(self):
         """Determine whether the client is ready to start sending and/or
         receiving messages. To be ready, the connection must be open and
         authentication complete.
 
+        :return: Whether or not the client is ready for operation.
         :rtype: bool
         """
         return True
@@ -299,13 +300,14 @@ class AMQPClientAsync(AMQPClientSync):
         if self._keep_alive_thread:
             await self._keep_alive_thread
             self._keep_alive_thread = None
-        self._network_trace_params["amqpConnection"] = None
-        self._network_trace_params["amqpSession"] = None
+        self._network_trace_params["amqpConnection"] = ""
+        self._network_trace_params["amqpSession"] = ""
 
     async def auth_complete_async(self):
         """Whether the authentication handshake is complete during
         connection initialization.
 
+        :return: Whether the authentication handshake is complete.
         :rtype: bool
         """
         if self._cbs_authenticator and not await self._cbs_authenticator.handle_token():
@@ -319,6 +321,7 @@ class AMQPClientAsync(AMQPClientSync):
         establishing the connection, session, link and authentication, and
         is not ready to process messages.
 
+        :return: Whether the client is ready to process messages.
         :rtype: bool
         """
         if not await self.auth_complete_async():
@@ -337,6 +340,7 @@ class AMQPClientAsync(AMQPClientSync):
         and ready to be used for further work, or `False` if it needs
         to be shut down.
 
+        :return: Whether the connection is still open and ready for work.
         :rtype: bool
         :raises: TimeoutError if CBS authentication timeout reached.
         """
@@ -347,7 +351,16 @@ class AMQPClientAsync(AMQPClientSync):
             return True
         return await self._client_run_async(**kwargs)
 
-    async def mgmt_request_async(self, message, **kwargs):
+    async def mgmt_request_async(
+            self,
+            message,
+            *,
+            operation: Optional[Union[bytes, str]] = None,
+            operation_type: Optional[Union[bytes, str]] = None,
+            node: str = "$management",
+            timeout: float = 0,
+            **kwargs
+        ):
         """
         :param message: The message to send in the management request.
         :type message: ~pyamqp.message.Message
@@ -360,16 +373,13 @@ class AMQPClientAsync(AMQPClientSync):
         :keyword str node: The target node. Default node is `$management`.
         :keyword float timeout: Provide an optional timeout in seconds within which a response
          to the management request must be received.
+        :return: The response to the management request.
         :rtype: ~pyamqp.message.Message
         """
 
         # The method also takes "status_code_field" and "status_description_field"
         # keyword arguments as alternate names for the status code and description
         # in the response body. Those two keyword arguments are used in Azure services only.
-        operation = kwargs.pop("operation", None)
-        operation_type = kwargs.pop("operation_type", None)
-        node = kwargs.pop("node", "$management")
-        timeout = kwargs.pop('timeout', 0)
         async with self._mgmt_link_lock_async:
             try:
                 mgmt_link = self._mgmt_links[node]
@@ -492,6 +502,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
         The Session, Link and MessageReceiver must be open and in non-errored
         states.
 
+        :return: Whether or not the client is ready to start sending messages.
         :rtype: bool
         """
         # pylint: disable=protected-access
@@ -515,6 +526,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
         Will return True if operation successful and client can remain open for
         further work.
 
+        :return: Whether or not the client should remain open for further work.
         :rtype: bool
         """
         await self._link.update_pending_deliveries()
@@ -563,8 +575,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
                 condition=ErrorCondition.UnknownError
             )
 
-    async def _send_message_impl_async(self, message, **kwargs):
-        timeout = kwargs.pop("timeout", 0)
+    async def _send_message_impl_async(self, message, *, timeout: float = 0):
         expire_time = (time.time() + timeout) if timeout else None
         await self.open_async()
         message_delivery = _MessageDelivery(
@@ -596,14 +607,21 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
                 raise message_delivery.error  # pylint: disable=raising-bad-type
             except TypeError:
                 # This is a default handler
-                raise MessageException(condition=ErrorCondition.UnknownError, description="Send failed.")
+                raise MessageException(condition=ErrorCondition.UnknownError, description="Send failed.") from None
 
-    async def send_message_async(self, message, **kwargs):
+    async def send_message_async(self, message, *, timeout: float = 0, **kwargs):
         """
-        :param ~pyamqp.message.Message message:
-        :param int timeout: timeout in seconds
+        :param ~pyamqp.message.Message message: The message to send.
+        :keyword float timeout: timeout in seconds. If set to
+         0, the client will continue to wait until the message is sent or error happens. The
+         default is 0.
         """
-        await self._do_retryable_operation_async(self._send_message_impl_async, message=message, **kwargs)
+        await self._do_retryable_operation_async(
+            self._send_message_impl_async,
+            message=message,
+            timeout=timeout,
+            **kwargs
+        )
 
 
 class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
@@ -706,13 +724,14 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         The Session, Link and MessageReceiver must be open and in non-errored
         states.
 
+        :return: Whether the client is ready to start receiving messages.
         :rtype: bool
         """
         # pylint: disable=protected-access
         if not self._link:
             self._link = self._session.create_receiver_link(
                 source_address=self.source,
-                link_credit=self._link_credit,
+                link_credit=0,  # link_credit=0 on flow frame sent before client is ready
                 send_settle_mode=self._send_settle_mode,
                 rcv_settle_mode=self._receive_settle_mode,
                 max_message_size=self._max_message_size,
@@ -732,11 +751,12 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         Will return True if operation successful and client can remain open for
         further work.
 
+        :return: Whether the client can remain open for further work.
         :rtype: bool
         """
         try:
-            if self._link.current_link_credit == 0:
-                await self._link.flow()
+            if self._link.current_link_credit <= 0:
+                await self._link.flow(link_credit=self._link_credit)
             await self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
             _logger.info("Timeout reached, closing receiver.", extra=self._network_trace_params)
@@ -750,6 +770,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         Additionally if the client is retrieving messages for a batch
         or iterator, the message will be added to an internal queue.
 
+        :param tuple frame: Received frame.
         :param message: Received message.
         :type message: ~pyamqp.message.Message
         """
@@ -759,12 +780,17 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         if not self._streaming_receive:
             self._received_messages.put((frame, message))
 
-    async def _receive_message_batch_impl_async(self, max_batch_size=None, on_message_received=None, timeout=0):
+    async def _receive_message_batch_impl_async(
+            self,
+            max_batch_size: Optional[int] = None,
+            on_message_received: Optional[Callable] = None,
+            timeout: float = 0,
+        ):
         self._message_received_callback = on_message_received
         max_batch_size = max_batch_size or self._link_credit
         timeout_time = time.time() + timeout if timeout else 0
         receiving = True
-        batch = []
+        batch: List[Message] = []
         await self.open_async()
         while len(batch) < max_batch_size:
             try:
@@ -817,7 +843,14 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         self._received_messages = queue.Queue()
         await super(ReceiveClientAsync, self).close_async()
 
-    async def receive_message_batch_async(self, **kwargs):
+    async def receive_message_batch_async( # pylint: disable=unused-argument
+            self,
+            *,
+            max_batch_size: Optional[int] = None,
+            on_message_received: Optional[Callable] = None,
+            timeout: float = 0,
+            **kwargs
+        ) -> Coroutine[Any, Any, list]:
         """Receive a batch of messages. Messages returned in the batch have already been
         accepted - if you wish to add logic to accept or reject messages based on custom
         criteria, pass in a callback. This method will return as soon as some messages are
@@ -836,10 +869,14 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
          0, the client will continue to wait until at least one message is received. The
          default is 0.
         :paramtype timeout: float
+        :returns: Retryable operation coroutine.
+        :rtype: Coroutine[Any, Any, list]
         """
         return await self._do_retryable_operation_async(
             self._receive_message_batch_impl_async,
-            **kwargs
+            max_batch_size=max_batch_size,
+            on_message_received=on_message_received,
+            timeout=timeout,
         )
 
     async def receive_messages_iter_async(self, timeout=None, on_message_received=None):
@@ -850,6 +887,9 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :param on_message_received: A callback to process messages as they arrive from the
          service. It takes a single argument, a ~pyamqp.message.Message object.
         :type on_message_received: callable[~pyamqp.message.Message]
+        :param float timeout: Timeout in seconds for which to wait to receive any messages.
+        :return: A generator of messages.
+        :rtype: generator[~pyamqp.message.Message]
         """
         self._message_received_callback = on_message_received
         return self._message_generator_async(timeout=timeout)
@@ -857,6 +897,8 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def _message_generator_async(self, timeout=None):
         """Iterate over processed messages in the receive queue.
 
+        :param float timeout: Timeout in seconds for which to wait to receive any messages.
+        :return: A generator of messages.
         :rtype: generator[~pyamqp.message.Message]
         """
         self.open()

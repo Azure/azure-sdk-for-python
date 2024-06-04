@@ -9,7 +9,7 @@ from time import sleep
 
 import pytest
 from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceNotFoundError
 from azure.storage.filedatalake import (
     AccessPolicy,
     AccountSasPermissions,
@@ -1041,6 +1041,8 @@ class TestFileSystem(StorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_system_client = self._create_file_system("fs2")
+        if file_system_client is None:
+            file_system_client = self.dsc.get_file_system_client(self._get_file_system_reference(prefix="fs2"))
         dir_path = 'dir10'
         dir_client = file_system_client.create_directory(dir_path)
         resp = dir_client.delete_directory()
@@ -1058,7 +1060,9 @@ class TestFileSystem(StorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_system_client = self._create_file_system("fs3")
-        file_path = 'dir10/fileŇ'
+        if file_system_client is None:
+            file_system_client = self.dsc.get_file_system_client(self._get_file_system_reference(prefix="fs3"))
+        file_path = 'dir10/file'
         dir_client = file_system_client.create_file(file_path)
         resp = dir_client.delete_file()
         with pytest.raises(HttpResponseError):
@@ -1066,6 +1070,61 @@ class TestFileSystem(StorageRecordedTestCase):
         restored_file_client = file_system_client._undelete_path(file_path, resp['deletion_id'])
         resp = restored_file_client.get_file_properties()
         assert resp is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_storage_account_audience_service_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        file_system_name = self._get_file_system_reference()
+        file_system_client = self.dsc.get_file_system_client(file_system_name)
+        file_system_client.create_file_system()
+        file_system_client.create_directory('testdir1')
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        fsc = FileSystemClient(
+            url, file_system_name,
+            credential=token_credential,
+            audience=f'https://{datalake_storage_account_name}.blob.core.windows.net/'
+        )
+
+        # Assert
+        response1 = fsc.exists()
+        response2 = fsc.create_directory('testdir11')
+        assert response1 is not None
+        assert response2 is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_bad_audience_service_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        file_system_name = self._get_file_system_reference()
+        file_system_client = self.dsc.get_file_system_client(file_system_name)
+        file_system_client.create_file_system()
+        file_system_client.create_directory('testdir2')
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        fsc = FileSystemClient(
+            url, file_system_name,
+            credential=token_credential,
+            audience=f'https://badaudience.blob.core.windows.net/'
+        )
+
+        # Assert
+        with pytest.raises(ClientAuthenticationError):
+            fsc.exists()
+            fsc.create_directory('testdir22')
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

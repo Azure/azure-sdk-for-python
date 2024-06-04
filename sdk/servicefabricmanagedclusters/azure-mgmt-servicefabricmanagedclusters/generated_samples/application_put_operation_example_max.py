@@ -47,7 +47,7 @@ def main():
                         },
                         "maxPercentUnhealthyDeployedApplications": 0,
                         "serviceTypeHealthPolicyMap": {
-                            "myService": {
+                            "service1": {
                                 "maxPercentUnhealthyPartitionsPerService": 30,
                                 "maxPercentUnhealthyReplicasPerPartition": 30,
                                 "maxPercentUnhealthyServices": 30,
@@ -76,6 +76,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/servicefabricmanagedclusters/resource-manager/Microsoft.ServiceFabric/preview/2023-02-01-preview/examples/ApplicationPutOperation_example_max.json
+# x-ms-original-file: specification/servicefabricmanagedclusters/resource-manager/Microsoft.ServiceFabric/preview/2023-12-01-preview/examples/ApplicationPutOperation_example_max.json
 if __name__ == "__main__":
     main()

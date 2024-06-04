@@ -26,10 +26,10 @@ try:
 except ImportError:
     pass
 
-from azure_devtools.scenario_tests.exceptions import AzureTestError
-
 from . import AzureMgmtPreparer, ResourceGroupPreparer, FakeResource
+from .exceptions import AzureTestError
 from .resource_testcase import RESOURCE_GROUP_PARAM
+from .sanitizers import add_general_string_sanitizer
 
 
 FakeStorageAccount = FakeResource
@@ -80,7 +80,7 @@ class StorageAccountPreparer(AzureMgmtPreparer):
             storage_keys = {v.key_name: v.value for v in self.client.storage_accounts.list_keys(group.name, name).keys}
             self.storage_key = storage_keys["key1"]
 
-            self.test_class_instance.scrubber.register_name_pair(name, self.resource_moniker)
+            add_general_string_sanitizer(target=name, value=self.resource_moniker)
         else:
             self.resource = StorageAccount(
                 location=self.location,

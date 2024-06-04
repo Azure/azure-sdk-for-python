@@ -31,7 +31,7 @@ import subprocess
 import random
 import platform
 import urllib
-from rest_client import TestRestClient
+from rest_client import MockRestClient
 import sys
 
 # If opencensus is loadable while doing these tests, register an empty tracer to avoid this:
@@ -107,4 +107,4 @@ def testserver():
 
 @pytest.fixture
 def client(port):
-    return TestRestClient(port)
+    return MockRestClient(port)

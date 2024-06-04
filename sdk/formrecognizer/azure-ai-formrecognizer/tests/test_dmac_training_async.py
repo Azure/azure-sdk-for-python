@@ -11,7 +11,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.ai.formrecognizer._generated.v2023_02_28_preview.models import DocumentModelBuildOperationDetails, DocumentModelDetails as ModelDetails
+from azure.ai.formrecognizer._generated.v2023_07_31.models import DocumentModelBuildOperationDetails, DocumentModelDetails as ModelDetails
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, AsyncDocumentModelAdministrationLROPoller
 from azure.ai.formrecognizer import DocumentModelDetails
 from preparers import FormRecognizerPreparer
@@ -32,7 +32,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         set_bodiless_matcher()
         def check_poll_value(poll):
             if self.is_live:
-                assert poll == 5
+                assert poll == 1
             else:
                 assert poll == 0
         check_poll_value(client._client._config.polling_interval)
@@ -251,7 +251,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
             poller = await client.begin_build_document_model("template", blob_container_url=None, continuation_token=cont_token)
             result = await poller.result()
             assert result
-            await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+            await initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
 
     @skip_flaky_test
     @FormRecognizerPreparer()

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -28,7 +28,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -91,7 +91,7 @@ def build_create_or_update_notebook_request(
         "notebookName": _SERIALIZER.url("notebook_name", notebook_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -121,7 +121,7 @@ def build_get_notebook_request(
         "notebookName": _SERIALIZER.url("notebook_name", notebook_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -147,7 +147,7 @@ def build_delete_notebook_request(notebook_name: str, **kwargs: Any) -> HttpRequ
         "notebookName": _SERIALIZER.url("notebook_name", notebook_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -172,7 +172,7 @@ def build_rename_notebook_request(notebook_name: str, **kwargs: Any) -> HttpRequ
         "notebookName": _SERIALIZER.url("notebook_name", notebook_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -208,7 +208,6 @@ class NotebookOperations:
     def get_notebooks_by_workspace(self, **kwargs: Any) -> Iterable["_models.NotebookResource"]:
         """Lists Notebooks.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NotebookResource or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.synapse.artifacts.models.NotebookResource]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -230,31 +229,30 @@ class NotebookOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_notebooks_by_workspace_request(
+                _request = build_get_notebooks_by_workspace_request(
                     api_version=api_version,
-                    template_url=self.get_notebooks_by_workspace.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("NotebookListResponse", pipeline_response)
@@ -264,11 +262,11 @@ class NotebookOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -279,14 +277,11 @@ class NotebookOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    get_notebooks_by_workspace.metadata = {"url": "/notebooks"}
 
     @distributed_trace
     def get_notebook_summary_by_work_space(self, **kwargs: Any) -> Iterable["_models.NotebookResource"]:
         """Lists a summary of Notebooks.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NotebookResource or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.synapse.artifacts.models.NotebookResource]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -308,31 +303,30 @@ class NotebookOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_notebook_summary_by_work_space_request(
+                _request = build_get_notebook_summary_by_work_space_request(
                     api_version=api_version,
-                    template_url=self.get_notebook_summary_by_work_space.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("NotebookListResponse", pipeline_response)
@@ -342,11 +336,11 @@ class NotebookOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -358,12 +352,10 @@ class NotebookOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    get_notebook_summary_by_work_space.metadata = {"url": "/notebooksSummary"}
-
     def _create_or_update_notebook_initial(
         self,
         notebook_name: str,
-        notebook: Union[_models.NotebookResource, IO],
+        notebook: Union[_models.NotebookResource, IO[bytes]],
         if_match: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[_models.NotebookResource]:
@@ -390,26 +382,25 @@ class NotebookOperations:
         else:
             _json = self._serialize.body(notebook, "NotebookResource")
 
-        request = build_create_or_update_notebook_request(
+        _request = build_create_or_update_notebook_request(
             notebook_name=notebook_name,
             if_match=if_match,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_notebook_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -423,11 +414,9 @@ class NotebookOperations:
             deserialized = self._deserialize("NotebookResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _create_or_update_notebook_initial.metadata = {"url": "/notebooks/{notebookName}"}
+        return deserialized  # type: ignore
 
     @overload
     def begin_create_or_update_notebook(
@@ -451,14 +440,6 @@ class NotebookOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either NotebookResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.NotebookResource]
@@ -469,7 +450,7 @@ class NotebookOperations:
     def begin_create_or_update_notebook(
         self,
         notebook_name: str,
-        notebook: IO,
+        notebook: IO[bytes],
         if_match: Optional[str] = None,
         *,
         content_type: str = "application/json",
@@ -480,21 +461,13 @@ class NotebookOperations:
         :param notebook_name: The notebook name. Required.
         :type notebook_name: str
         :param notebook: Note book resource definition. Required.
-        :type notebook: IO
+        :type notebook: IO[bytes]
         :param if_match: ETag of the Note book entity.  Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update. Default value is None.
         :type if_match: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either NotebookResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.NotebookResource]
@@ -505,7 +478,7 @@ class NotebookOperations:
     def begin_create_or_update_notebook(
         self,
         notebook_name: str,
-        notebook: Union[_models.NotebookResource, IO],
+        notebook: Union[_models.NotebookResource, IO[bytes]],
         if_match: Optional[str] = None,
         **kwargs: Any
     ) -> LROPoller[_models.NotebookResource]:
@@ -513,23 +486,12 @@ class NotebookOperations:
 
         :param notebook_name: The notebook name. Required.
         :type notebook_name: str
-        :param notebook: Note book resource definition. Is either a NotebookResource type or a IO type.
-         Required.
-        :type notebook: ~azure.synapse.artifacts.models.NotebookResource or IO
+        :param notebook: Note book resource definition. Is either a NotebookResource type or a
+         IO[bytes] type. Required.
+        :type notebook: ~azure.synapse.artifacts.models.NotebookResource or IO[bytes]
         :param if_match: ETag of the Note book entity.  Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update. Default value is None.
         :type if_match: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either NotebookResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.NotebookResource]
@@ -561,7 +523,7 @@ class NotebookOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("NotebookResource", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -577,15 +539,15 @@ class NotebookOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.NotebookResource].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update_notebook.metadata = {"url": "/notebooks/{notebookName}"}
+        return LROPoller[_models.NotebookResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def get_notebook(
@@ -599,7 +561,6 @@ class NotebookOperations:
          ETag matches the existing entity tag, or if * was provided, then no content will be returned.
          Default value is None.
         :type if_none_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NotebookResource or None or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.NotebookResource or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -618,23 +579,22 @@ class NotebookOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[Optional[_models.NotebookResource]] = kwargs.pop("cls", None)
 
-        request = build_get_notebook_request(
+        _request = build_get_notebook_request(
             notebook_name=notebook_name,
             if_none_match=if_none_match,
             api_version=api_version,
-            template_url=self.get_notebook.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -648,11 +608,9 @@ class NotebookOperations:
             deserialized = self._deserialize("NotebookResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_notebook.metadata = {"url": "/notebooks/{notebookName}"}
+        return deserialized  # type: ignore
 
     def _delete_notebook_initial(  # pylint: disable=inconsistent-return-statements
         self, notebook_name: str, **kwargs: Any
@@ -671,22 +629,21 @@ class NotebookOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_notebook_request(
+        _request = build_delete_notebook_request(
             notebook_name=notebook_name,
             api_version=api_version,
-            template_url=self._delete_notebook_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -696,9 +653,7 @@ class NotebookOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_notebook_initial.metadata = {"url": "/notebooks/{notebookName}"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete_notebook(self, notebook_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -706,14 +661,6 @@ class NotebookOperations:
 
         :param notebook_name: The notebook name. Required.
         :type notebook_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -739,7 +686,7 @@ class NotebookOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -754,15 +701,13 @@ class NotebookOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete_notebook.metadata = {"url": "/notebooks/{notebookName}"}
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _rename_notebook_initial(  # pylint: disable=inconsistent-return-statements
         self, notebook_name: str, new_name: Optional[str] = None, **kwargs: Any
@@ -785,24 +730,23 @@ class NotebookOperations:
         _request = _models.ArtifactRenameRequest(new_name=new_name)
         _json = self._serialize.body(_request, "ArtifactRenameRequest")
 
-        request = build_rename_notebook_request(
+        _request = build_rename_notebook_request(
             notebook_name=notebook_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._rename_notebook_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -812,9 +756,7 @@ class NotebookOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _rename_notebook_initial.metadata = {"url": "/notebooks/{notebookName}/rename"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_rename_notebook(
@@ -826,14 +768,6 @@ class NotebookOperations:
         :type notebook_name: str
         :param new_name: New name of the artifact. Default value is None.
         :type new_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -862,7 +796,7 @@ class NotebookOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -877,12 +811,10 @@ class NotebookOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_rename_notebook.metadata = {"url": "/notebooks/{notebookName}/rename"}
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

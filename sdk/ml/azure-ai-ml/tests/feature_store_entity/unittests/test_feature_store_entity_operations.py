@@ -4,14 +4,14 @@ from unittest.mock import Mock, patch
 import pytest
 from test_utilities.constants import Test_Resource_Group, Test_Workspace_Name
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_10_01.models._models_py3 import (
     FeaturestoreEntityContainer,
     FeaturestoreEntityContainerProperties,
     FeaturestoreEntityVersion,
     FeaturestoreEntityVersionProperties,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-from azure.ai.ml.entities import FeatureStoreEntity, DataColumn, DataColumnType
+from azure.ai.ml.entities import DataColumn, DataColumnType, FeatureStoreEntity
 from azure.ai.ml.operations._feature_store_entity_operations import FeatureStoreEntityOperations
 from azure.core.paging import ItemPaged
 
@@ -20,12 +20,12 @@ from azure.core.paging import ItemPaged
 def mock_feature_store_entity_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2023_02_01_preview: Mock,
+    mock_aml_services_2023_10_01: Mock,
 ) -> FeatureStoreEntityOperations:
     yield FeatureStoreEntityOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client=mock_aml_services_2023_02_01_preview,
+        service_client=mock_aml_services_2023_10_01,
     )
 
 

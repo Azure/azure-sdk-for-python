@@ -13,11 +13,20 @@ class NlpLimitSettings(RestTranslatableMixin):
     """Limit settings for all AutoML NLP Verticals.
 
     :param max_concurrent_trials: Maximum number of concurrent AutoML iterations.
-    :type max_concurrent_trials: int, optional
+    :type max_concurrent_trials: int
     :param max_trials: Maximum number of AutoML iterations.
-    :type max_trials: int, optional
+    :type max_trials: int
     :param timeout_minutes: AutoML job timeout.
-    :type timeout_minutes: int, optional
+    :type timeout_minutes: int
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_nlp.py
+                :start-after: [START automl.nlp_limit_settings]
+                :end-before: [END automl.nlp_limit_settings]
+                :language: python
+                :dedent: 8
+                :caption: creating an nlp limit settings
     """
 
     def __init__(

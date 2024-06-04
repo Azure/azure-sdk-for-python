@@ -45,7 +45,7 @@ class ActivateApplicationPackageParameters(_serialization.Model):
         "format": {"key": "format", "type": "str"},
     }
 
-    def __init__(self, *, format: str, **kwargs):
+    def __init__(self, *, format: str, **kwargs: Any) -> None:
         """
         :keyword format: The format of the application package binary file. Required.
         :paramtype format: str
@@ -83,7 +83,7 @@ class ProxyResource(_serialization.Model):
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -138,8 +138,8 @@ class Application(ProxyResource):
         display_name: Optional[str] = None,
         allow_updates: Optional[bool] = None,
         default_version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: The display name for the application.
         :paramtype display_name: str
@@ -207,7 +207,7 @@ class ApplicationPackage(ProxyResource):
         "last_activation_time": {"key": "properties.lastActivationTime", "type": "iso-8601"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.state = None
@@ -241,7 +241,9 @@ class ApplicationPackageReference(_serialization.Model):
         "version": {"key": "version", "type": "str"},
     }
 
-    def __init__(self, *, id: str, version: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(
+        self, *, id: str, version: Optional[str] = None, **kwargs: Any  # pylint: disable=redefined-builtin
+    ) -> None:
         """
         :keyword id: The ID of the application package to install. This must be inside the same batch
          account as the pool. This can either be a reference to a specific version or the default
@@ -255,6 +257,66 @@ class ApplicationPackageReference(_serialization.Model):
         super().__init__(**kwargs)
         self.id = id
         self.version = version
+
+
+class AutomaticOSUpgradePolicy(_serialization.Model):
+    """The configuration parameters used for performing automatic OS upgrade.
+
+    :ivar disable_automatic_rollback: Whether OS image rollback feature should be disabled.
+    :vartype disable_automatic_rollback: bool
+    :ivar enable_automatic_os_upgrade: Indicates whether OS upgrades should automatically be
+     applied to scale set instances in a rolling fashion when a newer version of the OS image
+     becomes available. :code:`<br />`:code:`<br />` If this is set to true for Windows based pools,
+     `WindowsConfiguration.enableAutomaticUpdates
+     <https://learn.microsoft.com/en-us/rest/api/batchmanagement/pool/create?tabs=HTTP#windowsconfiguration>`_
+     cannot be set to true.
+    :vartype enable_automatic_os_upgrade: bool
+    :ivar use_rolling_upgrade_policy: Indicates whether rolling upgrade policy should be used
+     during Auto OS Upgrade. Auto OS Upgrade will fallback to the default policy if no policy is
+     defined on the VMSS.
+    :vartype use_rolling_upgrade_policy: bool
+    :ivar os_rolling_upgrade_deferral: Defer OS upgrades on the TVMs if they are running tasks.
+    :vartype os_rolling_upgrade_deferral: bool
+    """
+
+    _attribute_map = {
+        "disable_automatic_rollback": {"key": "disableAutomaticRollback", "type": "bool"},
+        "enable_automatic_os_upgrade": {"key": "enableAutomaticOSUpgrade", "type": "bool"},
+        "use_rolling_upgrade_policy": {"key": "useRollingUpgradePolicy", "type": "bool"},
+        "os_rolling_upgrade_deferral": {"key": "osRollingUpgradeDeferral", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        disable_automatic_rollback: Optional[bool] = None,
+        enable_automatic_os_upgrade: Optional[bool] = None,
+        use_rolling_upgrade_policy: Optional[bool] = None,
+        os_rolling_upgrade_deferral: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword disable_automatic_rollback: Whether OS image rollback feature should be disabled.
+        :paramtype disable_automatic_rollback: bool
+        :keyword enable_automatic_os_upgrade: Indicates whether OS upgrades should automatically be
+         applied to scale set instances in a rolling fashion when a newer version of the OS image
+         becomes available. :code:`<br />`:code:`<br />` If this is set to true for Windows based pools,
+         `WindowsConfiguration.enableAutomaticUpdates
+         <https://learn.microsoft.com/en-us/rest/api/batchmanagement/pool/create?tabs=HTTP#windowsconfiguration>`_
+         cannot be set to true.
+        :paramtype enable_automatic_os_upgrade: bool
+        :keyword use_rolling_upgrade_policy: Indicates whether rolling upgrade policy should be used
+         during Auto OS Upgrade. Auto OS Upgrade will fallback to the default policy if no policy is
+         defined on the VMSS.
+        :paramtype use_rolling_upgrade_policy: bool
+        :keyword os_rolling_upgrade_deferral: Defer OS upgrades on the TVMs if they are running tasks.
+        :paramtype os_rolling_upgrade_deferral: bool
+        """
+        super().__init__(**kwargs)
+        self.disable_automatic_rollback = disable_automatic_rollback
+        self.enable_automatic_os_upgrade = enable_automatic_os_upgrade
+        self.use_rolling_upgrade_policy = use_rolling_upgrade_policy
+        self.os_rolling_upgrade_deferral = os_rolling_upgrade_deferral
 
 
 class AutoScaleRun(_serialization.Model):
@@ -287,8 +349,8 @@ class AutoScaleRun(_serialization.Model):
         evaluation_time: datetime.datetime,
         results: Optional[str] = None,
         error: Optional["_models.AutoScaleRunError"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword evaluation_time: The time at which the autoscale formula was last evaluated. Required.
         :paramtype evaluation_time: ~datetime.datetime
@@ -331,8 +393,8 @@ class AutoScaleRunError(_serialization.Model):
     }
 
     def __init__(
-        self, *, code: str, message: str, details: Optional[List["_models.AutoScaleRunError"]] = None, **kwargs
-    ):
+        self, *, code: str, message: str, details: Optional[List["_models.AutoScaleRunError"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically. Required.
@@ -369,7 +431,9 @@ class AutoScaleSettings(_serialization.Model):
         "evaluation_interval": {"key": "evaluationInterval", "type": "duration"},
     }
 
-    def __init__(self, *, formula: str, evaluation_interval: Optional[datetime.timedelta] = None, **kwargs):
+    def __init__(
+        self, *, formula: str, evaluation_interval: Optional[datetime.timedelta] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword formula: A formula for the desired number of compute nodes in the pool. Required.
         :paramtype formula: str
@@ -413,8 +477,8 @@ class AutoStorageBaseProperties(_serialization.Model):
         storage_account_id: str,
         authentication_mode: Union[str, "_models.AutoStorageAuthenticationMode"] = "StorageKeys",
         node_identity_reference: Optional["_models.ComputeNodeIdentityReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_account_id: The resource ID of the storage account to be used for auto-storage
          account. Required.
@@ -471,8 +535,8 @@ class AutoStorageProperties(AutoStorageBaseProperties):
         last_key_sync: datetime.datetime,
         authentication_mode: Union[str, "_models.AutoStorageAuthenticationMode"] = "StorageKeys",
         node_identity_reference: Optional["_models.ComputeNodeIdentityReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_account_id: The resource ID of the storage account to be used for auto-storage
          account. Required.
@@ -520,8 +584,8 @@ class AutoUserSpecification(_serialization.Model):
         *,
         scope: Optional[Union[str, "_models.AutoUserScope"]] = None,
         elevation_level: Optional[Union[str, "_models.ElevationLevel"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword scope: The default value is Pool. If the pool is running Windows a value of Task
          should be specified if stricter isolation between tasks is required. For example, if the task
@@ -589,8 +653,8 @@ class AzureBlobFileSystemConfiguration(_serialization.Model):
         sas_key: Optional[str] = None,
         blobfuse_options: Optional[str] = None,
         identity_reference: Optional["_models.ComputeNodeIdentityReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword account_name: The Azure Storage Account name. Required.
         :paramtype account_name: str
@@ -662,8 +726,8 @@ class AzureFileShareConfiguration(_serialization.Model):
         account_key: str,
         relative_mount_path: str,
         mount_options: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword account_name: The Azure Storage account name. Required.
         :paramtype account_name: str
@@ -719,7 +783,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -866,8 +930,8 @@ class BatchAccount(Resource):  # pylint: disable=too-many-instance-attributes
         identity: Optional["_models.BatchAccountIdentity"] = None,
         public_network_access: Union[str, "_models.PublicNetworkAccessType"] = "Enabled",
         network_profile: Optional["_models.NetworkProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: The identity of the Batch account.
         :paramtype identity: ~azure.mgmt.batch.models.BatchAccountIdentity
@@ -914,9 +978,8 @@ class BatchAccountCreateParameters(_serialization.Model):
     :vartype auto_storage: ~azure.mgmt.batch.models.AutoStorageBaseProperties
     :ivar pool_allocation_mode: The pool allocation mode also affects how clients may authenticate
      to the Batch Service API. If the mode is BatchService, clients may authenticate using access
-     keys or Azure Active Directory. If the mode is UserSubscription, clients must use Azure Active
-     Directory. The default is BatchService. Known values are: "BatchService" and
-     "UserSubscription".
+     keys or Microsoft Entra ID. If the mode is UserSubscription, clients must use Microsoft Entra
+     ID. The default is BatchService. Known values are: "BatchService" and "UserSubscription".
     :vartype pool_allocation_mode: str or ~azure.mgmt.batch.models.PoolAllocationMode
     :ivar key_vault_reference: A reference to the Azure key vault associated with the Batch
      account.
@@ -967,8 +1030,8 @@ class BatchAccountCreateParameters(_serialization.Model):
         network_profile: Optional["_models.NetworkProfile"] = None,
         encryption: Optional["_models.EncryptionProperties"] = None,
         allowed_authentication_modes: Optional[List[Union[str, "_models.AuthenticationMode"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The region in which to create the account. Required.
         :paramtype location: str
@@ -980,8 +1043,8 @@ class BatchAccountCreateParameters(_serialization.Model):
         :paramtype auto_storage: ~azure.mgmt.batch.models.AutoStorageBaseProperties
         :keyword pool_allocation_mode: The pool allocation mode also affects how clients may
          authenticate to the Batch Service API. If the mode is BatchService, clients may authenticate
-         using access keys or Azure Active Directory. If the mode is UserSubscription, clients must use
-         Azure Active Directory. The default is BatchService. Known values are: "BatchService" and
+         using access keys or Microsoft Entra ID. If the mode is UserSubscription, clients must use
+         Microsoft Entra ID. The default is BatchService. Known values are: "BatchService" and
          "UserSubscription".
         :paramtype pool_allocation_mode: str or ~azure.mgmt.batch.models.PoolAllocationMode
         :keyword key_vault_reference: A reference to the Azure key vault associated with the Batch
@@ -1017,7 +1080,9 @@ class BatchAccountCreateParameters(_serialization.Model):
 
 
 class BatchAccountIdentity(_serialization.Model):
-    """The identity of the Batch account, if configured. This is used when the user specifies 'Microsoft.KeyVault' as their Batch account encryption configuration or when ``ManagedIdentity`` is selected as the auto-storage authentication mode.
+    """The identity of the Batch account, if configured. This is used when the user specifies
+    'Microsoft.KeyVault' as their Batch account encryption configuration or when
+    ``ManagedIdentity`` is selected as the auto-storage authentication mode.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1054,8 +1119,8 @@ class BatchAccountIdentity(_serialization.Model):
         *,
         type: Union[str, "_models.ResourceIdentityType"],
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentities"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of identity used for the Batch account. Required. Known values are:
          "SystemAssigned", "UserAssigned", and "None".
@@ -1096,7 +1161,7 @@ class BatchAccountKeys(_serialization.Model):
         "secondary": {"key": "secondary", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.account_name = None
@@ -1119,8 +1184,8 @@ class BatchAccountListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.BatchAccount"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.BatchAccount"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection of Batch accounts returned by the listing operation.
         :paramtype value: list[~azure.mgmt.batch.models.BatchAccount]
@@ -1150,7 +1215,7 @@ class BatchAccountRegenerateKeyParameters(_serialization.Model):
         "key_name": {"key": "keyName", "type": "str"},
     }
 
-    def __init__(self, *, key_name: Union[str, "_models.AccountKeyType"], **kwargs):
+    def __init__(self, *, key_name: Union[str, "_models.AccountKeyType"], **kwargs: Any) -> None:
         """
         :keyword key_name: The type of account key to regenerate. Required. Known values are: "Primary"
          and "Secondary".
@@ -1205,8 +1270,8 @@ class BatchAccountUpdateParameters(_serialization.Model):
         allowed_authentication_modes: Optional[List[Union[str, "_models.AuthenticationMode"]]] = None,
         public_network_access: Union[str, "_models.PublicNetworkAccessType"] = "Enabled",
         network_profile: Optional["_models.NetworkProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: The user-specified tags associated with the account.
         :paramtype tags: dict[str, str]
@@ -1258,14 +1323,16 @@ class BatchLocationQuota(_serialization.Model):
         "account_quota": {"key": "accountQuota", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.account_quota = None
 
 
 class BatchPoolIdentity(_serialization.Model):
-    """The identity of the Batch pool, if configured. If the pool identity is updated during update an existing pool, only the new vms which are created after the pool shrinks to 0 will have the updated identities.
+    """The identity of the Batch pool, if configured. If the pool identity is updated during update an
+    existing pool, only the new vms which are created after the pool shrinks to 0 will have the
+    updated identities.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1290,8 +1357,8 @@ class BatchPoolIdentity(_serialization.Model):
         *,
         type: Union[str, "_models.PoolIdentityType"],
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentities"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of identity used for the Batch Pool. Required. Known values are:
          "UserAssigned" and "None".
@@ -1382,8 +1449,8 @@ class Certificate(ProxyResource):  # pylint: disable=too-many-instance-attribute
         thumbprint_algorithm: Optional[str] = None,
         thumbprint: Optional[str] = None,
         format: Optional[Union[str, "_models.CertificateFormat"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword thumbprint_algorithm: This must match the first portion of the certificate name.
          Currently required to be 'SHA1'.
@@ -1431,8 +1498,8 @@ class CertificateBaseProperties(_serialization.Model):
         thumbprint_algorithm: Optional[str] = None,
         thumbprint: Optional[str] = None,
         format: Optional[Union[str, "_models.CertificateFormat"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword thumbprint_algorithm: This must match the first portion of the certificate name.
          Currently required to be 'SHA1'.
@@ -1503,8 +1570,8 @@ class CertificateCreateOrUpdateParameters(ProxyResource):
         format: Optional[Union[str, "_models.CertificateFormat"]] = None,
         data: Optional[str] = None,
         password: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword thumbprint_algorithm: This must match the first portion of the certificate name.
          Currently required to be 'SHA1'.
@@ -1566,8 +1633,8 @@ class CertificateCreateOrUpdateProperties(CertificateBaseProperties):
         thumbprint: Optional[str] = None,
         format: Optional[Union[str, "_models.CertificateFormat"]] = None,
         password: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword thumbprint_algorithm: This must match the first portion of the certificate name.
          Currently required to be 'SHA1'.
@@ -1649,8 +1716,8 @@ class CertificateProperties(CertificateBaseProperties):
         thumbprint_algorithm: Optional[str] = None,
         thumbprint: Optional[str] = None,
         format: Optional[Union[str, "_models.CertificateFormat"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword thumbprint_algorithm: This must match the first portion of the certificate name.
          Currently required to be 'SHA1'.
@@ -1671,7 +1738,9 @@ class CertificateProperties(CertificateBaseProperties):
 
 
 class CertificateReference(_serialization.Model):
-    """Warning: This object is deprecated and will be removed after February, 2024. Please use the `Azure KeyVault Extension <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
+    """Warning: This object is deprecated and will be removed after February, 2024. Please use the
+    `Azure KeyVault Extension
+    <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1716,8 +1785,8 @@ class CertificateReference(_serialization.Model):
         store_location: Optional[Union[str, "_models.CertificateStoreLocation"]] = None,
         store_name: Optional[str] = None,
         visibility: Optional[List[Union[str, "_models.CertificateVisibility"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The fully qualified ID of the certificate to install on the pool. This must be
          inside the same batch account as the pool. Required.
@@ -1773,7 +1842,7 @@ class CheckNameAvailabilityParameters(_serialization.Model):
 
     type = "Microsoft.Batch/batchAccounts"
 
-    def __init__(self, *, name: str, **kwargs):
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
         :keyword name: The name to check for availability. Required.
         :paramtype name: str
@@ -1810,7 +1879,7 @@ class CheckNameAvailabilityResult(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name_available = None
@@ -1859,8 +1928,8 @@ class CIFSMountConfiguration(_serialization.Model):
         relative_mount_path: str,
         password: str,
         mount_options: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword user_name: The user to use for authentication against the CIFS file system. Required.
         :paramtype user_name: str
@@ -1913,8 +1982,8 @@ class CloudErrorBody(_serialization.Model):
         message: Optional[str] = None,
         target: Optional[str] = None,
         details: Optional[List["_models.CloudErrorBody"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically.
@@ -1961,7 +2030,7 @@ class CloudServiceConfiguration(_serialization.Model):
         "os_version": {"key": "osVersion", "type": "str"},
     }
 
-    def __init__(self, *, os_family: str, os_version: Optional[str] = None, **kwargs):
+    def __init__(self, *, os_family: str, os_version: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword os_family: Possible values are: 2 - OS Family 2, equivalent to Windows Server 2008 R2
          SP1. 3 - OS Family 3, equivalent to Windows Server 2012. 4 - OS Family 4, equivalent to Windows
@@ -1980,7 +2049,8 @@ class CloudServiceConfiguration(_serialization.Model):
 
 
 class ComputeNodeIdentityReference(_serialization.Model):
-    """The reference to a user assigned identity associated with the Batch pool which a compute node will use.
+    """The reference to a user assigned identity associated with the Batch pool which a compute node
+    will use.
 
     :ivar resource_id: The ARM resource id of the user assigned identity.
     :vartype resource_id: str
@@ -1990,7 +2060,7 @@ class ComputeNodeIdentityReference(_serialization.Model):
         "resource_id": {"key": "resourceId", "type": "str"},
     }
 
-    def __init__(self, *, resource_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, resource_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword resource_id: The ARM resource id of the user assigned identity.
         :paramtype resource_id: str
@@ -2002,12 +2072,11 @@ class ComputeNodeIdentityReference(_serialization.Model):
 class ContainerConfiguration(_serialization.Model):
     """The configuration for container-enabled pools.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: The container technology to be used. Required. Default value is "DockerCompatible".
-    :vartype type: str
+    :ivar type: The container technology to be used. Required. Known values are: "DockerCompatible"
+     and "CriCompatible".
+    :vartype type: str or ~azure.mgmt.batch.models.ContainerType
     :ivar container_image_names: This is the full image reference, as would be specified to "docker
      pull". An image will be sourced from the default Docker registry unless the image is fully
      qualified with an alternative registry.
@@ -2018,7 +2087,7 @@ class ContainerConfiguration(_serialization.Model):
     """
 
     _validation = {
-        "type": {"required": True, "constant": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
@@ -2027,16 +2096,18 @@ class ContainerConfiguration(_serialization.Model):
         "container_registries": {"key": "containerRegistries", "type": "[ContainerRegistry]"},
     }
 
-    type = "DockerCompatible"
-
     def __init__(
         self,
         *,
+        type: Union[str, "_models.ContainerType"],
         container_image_names: Optional[List[str]] = None,
         container_registries: Optional[List["_models.ContainerRegistry"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
+        :keyword type: The container technology to be used. Required. Known values are:
+         "DockerCompatible" and "CriCompatible".
+        :paramtype type: str or ~azure.mgmt.batch.models.ContainerType
         :keyword container_image_names: This is the full image reference, as would be specified to
          "docker pull". An image will be sourced from the default Docker registry unless the image is
          fully qualified with an alternative registry.
@@ -2046,6 +2117,7 @@ class ContainerConfiguration(_serialization.Model):
         :paramtype container_registries: list[~azure.mgmt.batch.models.ContainerRegistry]
         """
         super().__init__(**kwargs)
+        self.type = type
         self.container_image_names = container_image_names
         self.container_registries = container_registries
 
@@ -2078,8 +2150,8 @@ class ContainerRegistry(_serialization.Model):
         password: Optional[str] = None,
         registry_server: Optional[str] = None,
         identity_reference: Optional["_models.ComputeNodeIdentityReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword user_name: The user name to log into the registry server.
         :paramtype user_name: str
@@ -2099,7 +2171,8 @@ class ContainerRegistry(_serialization.Model):
 
 
 class DataDisk(_serialization.Model):
-    """Settings which will be used by the data disks associated to Compute Nodes in the Pool. When using attached data disks, you need to mount and format the disks from within a VM to use them.
+    """Settings which will be used by the data disks associated to Compute Nodes in the Pool. When
+    using attached data disks, you need to mount and format the disks from within a VM to use them.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2122,7 +2195,7 @@ class DataDisk(_serialization.Model):
 
       Standard_LRS - The data disk should use standard locally redundant storage.
       Premium_LRS - The data disk should use premium locally redundant storage. Known values are:
-     "Standard_LRS" and "Premium_LRS".
+     "Standard_LRS", "Premium_LRS", and "StandardSSD_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.batch.models.StorageAccountType
     """
 
@@ -2145,8 +2218,8 @@ class DataDisk(_serialization.Model):
         disk_size_gb: int,
         caching: Optional[Union[str, "_models.CachingType"]] = None,
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword lun: The lun is used to uniquely identify each data disk. If attaching multiple disks,
          each should have a distinct lun. The value must be between 0 and 63, inclusive. Required.
@@ -2167,7 +2240,7 @@ class DataDisk(_serialization.Model):
 
           Standard_LRS - The data disk should use standard locally redundant storage.
           Premium_LRS - The data disk should use premium locally redundant storage. Known values are:
-         "Standard_LRS" and "Premium_LRS".
+         "Standard_LRS", "Premium_LRS", and "StandardSSD_LRS".
         :paramtype storage_account_type: str or ~azure.mgmt.batch.models.StorageAccountType
         """
         super().__init__(**kwargs)
@@ -2214,8 +2287,8 @@ class DeleteCertificateError(_serialization.Model):
         message: str,
         target: Optional[str] = None,
         details: Optional[List["_models.DeleteCertificateError"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically. Required.
@@ -2258,8 +2331,8 @@ class DeploymentConfiguration(_serialization.Model):
         *,
         cloud_service_configuration: Optional["_models.CloudServiceConfiguration"] = None,
         virtual_machine_configuration: Optional["_models.VirtualMachineConfiguration"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword cloud_service_configuration: This property and virtualMachineConfiguration are
          mutually exclusive and one of the properties must be specified. This property cannot be
@@ -2290,8 +2363,12 @@ class DetectorListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.DetectorResponse"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.DetectorResponse"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection of Batch account detectors returned by the listing operation.
         :paramtype value: list[~azure.mgmt.batch.models.DetectorResponse]
@@ -2335,7 +2412,7 @@ class DetectorResponse(ProxyResource):
         "value": {"key": "properties.value", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: A base64 encoded string that represents the content of a detector.
         :paramtype value: str
@@ -2345,7 +2422,8 @@ class DetectorResponse(ProxyResource):
 
 
 class DiffDiskSettings(_serialization.Model):
-    """Specifies the ephemeral Disk Settings for the operating system disk used by the virtual machine.
+    """Specifies the ephemeral Disk Settings for the operating system disk used by the virtual
+    machine.
 
     :ivar placement: This property can be used by user in the request to choose which location the
      operating system should be in. e.g., cache disk space for Ephemeral OS disk provisioning. For
@@ -2362,7 +2440,7 @@ class DiffDiskSettings(_serialization.Model):
         "placement": {"key": "placement", "type": "str"},
     }
 
-    def __init__(self, *, placement: Optional[Literal["CacheDisk"]] = None, **kwargs):
+    def __init__(self, *, placement: Optional[Literal["CacheDisk"]] = None, **kwargs: Any) -> None:
         """
         :keyword placement: This property can be used by user in the request to choose which location
          the operating system should be in. e.g., cache disk space for Ephemeral OS disk provisioning.
@@ -2379,7 +2457,9 @@ class DiffDiskSettings(_serialization.Model):
 
 
 class DiskEncryptionConfiguration(_serialization.Model):
-    """The disk encryption configuration applied on compute nodes in the pool. Disk encryption configuration is not supported on Linux pool created with Virtual Machine Image or Shared Image Gallery Image.
+    """The disk encryption configuration applied on compute nodes in the pool. Disk encryption
+    configuration is not supported on Linux pool created with Virtual Machine Image or Azure
+    Compute Gallery Image.
 
     :ivar targets: On Linux pool, only "TemporaryDisk" is supported; on Windows pool, "OsDisk" and
      "TemporaryDisk" must be specified.
@@ -2390,7 +2470,9 @@ class DiskEncryptionConfiguration(_serialization.Model):
         "targets": {"key": "targets", "type": "[str]"},
     }
 
-    def __init__(self, *, targets: Optional[List[Union[str, "_models.DiskEncryptionTarget"]]] = None, **kwargs):
+    def __init__(
+        self, *, targets: Optional[List[Union[str, "_models.DiskEncryptionTarget"]]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword targets: On Linux pool, only "TemporaryDisk" is supported; on Windows pool, "OsDisk"
          and "TemporaryDisk" must be specified.
@@ -2401,7 +2483,9 @@ class DiskEncryptionConfiguration(_serialization.Model):
 
 
 class EncryptionProperties(_serialization.Model):
-    """Configures how customer data is encrypted inside the Batch account. By default, accounts are encrypted using a Microsoft managed key. For additional control, a customer-managed key can be used instead.
+    """Configures how customer data is encrypted inside the Batch account. By default, accounts are
+    encrypted using a Microsoft managed key. For additional control, a customer-managed key can be
+    used instead.
 
     :ivar key_source: Type of the key source. Known values are: "Microsoft.Batch" and
      "Microsoft.KeyVault".
@@ -2420,8 +2504,8 @@ class EncryptionProperties(_serialization.Model):
         *,
         key_source: Optional[Union[str, "_models.KeySource"]] = None,
         key_vault_properties: Optional["_models.KeyVaultProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_source: Type of the key source. Known values are: "Microsoft.Batch" and
          "Microsoft.KeyVault".
@@ -2460,8 +2544,8 @@ class EndpointAccessProfile(_serialization.Model):
         *,
         default_action: Union[str, "_models.EndpointAccessDefaultAction"],
         ip_rules: Optional[List["_models.IPRule"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword default_action: Default action for endpoint access. It is only applicable when
          publicNetworkAccess is enabled. Required. Known values are: "Allow" and "Deny".
@@ -2501,7 +2585,7 @@ class EndpointDependency(_serialization.Model):
         "endpoint_details": {"key": "endpointDetails", "type": "[EndpointDetail]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.domain_name = None
@@ -2526,7 +2610,7 @@ class EndpointDetail(_serialization.Model):
         "port": {"key": "port", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.port = None
@@ -2552,7 +2636,7 @@ class EnvironmentSetting(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: str, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: str, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the environment variable. Required.
         :paramtype name: str
@@ -2594,12 +2678,12 @@ class FixedScaleSettings(_serialization.Model):
     def __init__(
         self,
         *,
-        resize_timeout: Optional[datetime.timedelta] = None,
+        resize_timeout: datetime.timedelta = "PT15M",
         target_dedicated_nodes: Optional[int] = None,
         target_low_priority_nodes: Optional[int] = None,
         node_deallocation_option: Optional[Union[str, "_models.ComputeNodeDeallocationOption"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resize_timeout: The default value is 15 minutes. Timeout values use ISO 8601 format.
          For example, use PT10M for 10 minutes. The minimum value is 5 minutes. If you specify a value
@@ -2625,7 +2709,9 @@ class FixedScaleSettings(_serialization.Model):
 
 
 class ImageReference(_serialization.Model):
-    """A reference to an Azure Virtual Machines Marketplace image or the Azure Image resource of a custom Virtual Machine. To get the list of all imageReferences verified by Azure Batch, see the 'List supported node agent SKUs' operation.
+    """A reference to an Azure Virtual Machines Marketplace image or the Azure Image resource of a
+    custom Virtual Machine. To get the list of all imageReferences verified by Azure Batch, see the
+    'List supported node agent SKUs' operation.
 
     :ivar publisher: For example, Canonical or MicrosoftWindowsServer.
     :vartype publisher: str
@@ -2636,8 +2722,8 @@ class ImageReference(_serialization.Model):
     :ivar version: A value of 'latest' can be specified to select the latest version of an image.
      If omitted, the default is 'latest'.
     :vartype version: str
-    :ivar id: This property is mutually exclusive with other properties. The Shared Image Gallery
-     image must have replicas in the same region as the Azure Batch account. For information about
+    :ivar id: This property is mutually exclusive with other properties. The Azure Compute Gallery
+     Image must have replicas in the same region as the Azure Batch account. For information about
      the firewall settings for the Batch node agent to communicate with the Batch service see
      https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
     :vartype id: str
@@ -2659,8 +2745,8 @@ class ImageReference(_serialization.Model):
         sku: Optional[str] = None,
         version: Optional[str] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword publisher: For example, Canonical or MicrosoftWindowsServer.
         :paramtype publisher: str
@@ -2671,8 +2757,8 @@ class ImageReference(_serialization.Model):
         :keyword version: A value of 'latest' can be specified to select the latest version of an
          image. If omitted, the default is 'latest'.
         :paramtype version: str
-        :keyword id: This property is mutually exclusive with other properties. The Shared Image
-         Gallery image must have replicas in the same region as the Azure Batch account. For information
+        :keyword id: This property is mutually exclusive with other properties. The Azure Compute
+         Gallery Image must have replicas in the same region as the Azure Batch account. For information
          about the firewall settings for the Batch node agent to communicate with the Batch service see
          https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
         :paramtype id: str
@@ -2686,7 +2772,8 @@ class ImageReference(_serialization.Model):
 
 
 class InboundNatPool(_serialization.Model):
-    """A inbound NAT pool that can be used to address specific ports on compute nodes in a Batch pool externally.
+    """A inbound NAT pool that can be used to address specific ports on compute nodes in a Batch pool
+    externally.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2745,8 +2832,8 @@ class InboundNatPool(_serialization.Model):
         frontend_port_range_start: int,
         frontend_port_range_end: int,
         network_security_group_rules: Optional[List["_models.NetworkSecurityGroupRule"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name must be unique within a Batch pool, can contain letters, numbers,
          underscores, periods, and hyphens. Names must start with a letter or number, must end with a
@@ -2811,7 +2898,7 @@ class IPRule(_serialization.Model):
 
     action = "Allow"
 
-    def __init__(self, *, value: str, **kwargs):
+    def __init__(self, *, value: str, **kwargs: Any) -> None:
         """
         :keyword value: IPv4 address, or IPv4 address range in CIDR format. Required.
         :paramtype value: str
@@ -2823,9 +2910,10 @@ class IPRule(_serialization.Model):
 class KeyVaultProperties(_serialization.Model):
     """KeyVault configuration when using an encryption KeySource of Microsoft.KeyVault.
 
-    :ivar key_identifier: Full path to the versioned secret. Example
-     https://mykeyvault.vault.azure.net/keys/testkey/6e34a81fef704045975661e297a4c053. To be usable
-     the following prerequisites must be met:
+    :ivar key_identifier: Full path to the secret with or without version. Example
+     https://mykeyvault.vault.azure.net/keys/testkey/6e34a81fef704045975661e297a4c053. or
+     https://mykeyvault.vault.azure.net/keys/testkey. To be usable the following prerequisites must
+     be met:
 
       The Batch Account has a System Assigned identity
       The account identity has been granted Key/Get, Key/Unwrap and Key/Wrap permissions
@@ -2837,11 +2925,12 @@ class KeyVaultProperties(_serialization.Model):
         "key_identifier": {"key": "keyIdentifier", "type": "str"},
     }
 
-    def __init__(self, *, key_identifier: Optional[str] = None, **kwargs):
+    def __init__(self, *, key_identifier: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword key_identifier: Full path to the versioned secret. Example
-         https://mykeyvault.vault.azure.net/keys/testkey/6e34a81fef704045975661e297a4c053. To be usable
-         the following prerequisites must be met:
+        :keyword key_identifier: Full path to the secret with or without version. Example
+         https://mykeyvault.vault.azure.net/keys/testkey/6e34a81fef704045975661e297a4c053. or
+         https://mykeyvault.vault.azure.net/keys/testkey. To be usable the following prerequisites must
+         be met:
 
           The Batch Account has a System Assigned identity
           The account identity has been granted Key/Get, Key/Unwrap and Key/Wrap permissions
@@ -2873,7 +2962,7 @@ class KeyVaultReference(_serialization.Model):
         "url": {"key": "url", "type": "str"},
     }
 
-    def __init__(self, *, id: str, url: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, url: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: The resource ID of the Azure key vault associated with the Batch account.
          Required.
@@ -2911,8 +3000,13 @@ class LinuxUserConfiguration(_serialization.Model):
     }
 
     def __init__(
-        self, *, uid: Optional[int] = None, gid: Optional[int] = None, ssh_private_key: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        uid: Optional[int] = None,
+        gid: Optional[int] = None,
+        ssh_private_key: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword uid: The uid and gid properties must be specified together or not at all. If not
          specified the underlying operating system picks the uid.
@@ -2949,8 +3043,12 @@ class ListApplicationPackagesResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ApplicationPackage"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.ApplicationPackage"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of application packages.
         :paramtype value: list[~azure.mgmt.batch.models.ApplicationPackage]
@@ -2977,8 +3075,8 @@ class ListApplicationsResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Application"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.Application"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of applications.
         :paramtype value: list[~azure.mgmt.batch.models.Application]
@@ -3005,8 +3103,8 @@ class ListCertificatesResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Certificate"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.Certificate"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection of returned certificates.
         :paramtype value: list[~azure.mgmt.batch.models.Certificate]
@@ -3032,7 +3130,9 @@ class ListPoolsResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Pool"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Pool"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection of returned pools.
         :paramtype value: list[~azure.mgmt.batch.models.Pool]
@@ -3063,8 +3163,8 @@ class ListPrivateEndpointConnectionsResult(_serialization.Model):
         *,
         value: Optional[List["_models.PrivateEndpointConnection"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection of returned private endpoint connection.
         :paramtype value: list[~azure.mgmt.batch.models.PrivateEndpointConnection]
@@ -3091,8 +3191,12 @@ class ListPrivateLinkResourcesResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.PrivateLinkResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection of returned private link resources.
         :paramtype value: list[~azure.mgmt.batch.models.PrivateLinkResource]
@@ -3104,8 +3208,33 @@ class ListPrivateLinkResourcesResult(_serialization.Model):
         self.next_link = next_link
 
 
+class ManagedDisk(_serialization.Model):
+    """ManagedDisk.
+
+    :ivar storage_account_type: The storage account type for use in creating data disks or OS disk.
+     Known values are: "Standard_LRS", "Premium_LRS", and "StandardSSD_LRS".
+    :vartype storage_account_type: str or ~azure.mgmt.batch.models.StorageAccountType
+    """
+
+    _attribute_map = {
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
+    }
+
+    def __init__(
+        self, *, storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword storage_account_type: The storage account type for use in creating data disks or OS
+         disk. Known values are: "Standard_LRS", "Premium_LRS", and "StandardSSD_LRS".
+        :paramtype storage_account_type: str or ~azure.mgmt.batch.models.StorageAccountType
+        """
+        super().__init__(**kwargs)
+        self.storage_account_type = storage_account_type
+
+
 class MetadataItem(_serialization.Model):
-    """The Batch service does not assign any meaning to this metadata; it is solely for the use of user code.
+    """The Batch service does not assign any meaning to this metadata; it is solely for the use of
+    user code.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3125,7 +3254,7 @@ class MetadataItem(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: str, value: str, **kwargs):
+    def __init__(self, *, name: str, value: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the metadata item. Required.
         :paramtype name: str
@@ -3170,8 +3299,8 @@ class MountConfiguration(_serialization.Model):
         nfs_mount_configuration: Optional["_models.NFSMountConfiguration"] = None,
         cifs_mount_configuration: Optional["_models.CIFSMountConfiguration"] = None,
         azure_file_share_configuration: Optional["_models.AzureFileShareConfiguration"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword azure_blob_file_system_configuration: This property is mutually exclusive with all
          other properties.
@@ -3225,6 +3354,11 @@ class NetworkConfiguration(_serialization.Model):
     :ivar public_ip_address_configuration: This property is only supported on Pools with the
      virtualMachineConfiguration property.
     :vartype public_ip_address_configuration: ~azure.mgmt.batch.models.PublicIPAddressConfiguration
+    :ivar enable_accelerated_networking: Accelerated networking enables single root I/O
+     virtualization (SR-IOV) to a VM, which may lead to improved networking performance. For more
+     details, see:
+     https://learn.microsoft.com/azure/virtual-network/accelerated-networking-overview.
+    :vartype enable_accelerated_networking: bool
     """
 
     _attribute_map = {
@@ -3235,17 +3369,19 @@ class NetworkConfiguration(_serialization.Model):
             "key": "publicIPAddressConfiguration",
             "type": "PublicIPAddressConfiguration",
         },
+        "enable_accelerated_networking": {"key": "enableAcceleratedNetworking", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
         subnet_id: Optional[str] = None,
-        dynamic_vnet_assignment_scope: Optional[Union[str, "_models.DynamicVNetAssignmentScope"]] = None,
+        dynamic_vnet_assignment_scope: Union[str, "_models.DynamicVNetAssignmentScope"] = "none",
         endpoint_configuration: Optional["_models.PoolEndpointConfiguration"] = None,
         public_ip_address_configuration: Optional["_models.PublicIPAddressConfiguration"] = None,
-        **kwargs
-    ):
+        enable_accelerated_networking: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword subnet_id: The virtual network must be in the same region and subscription as the
          Azure Batch account. The specified subnet should have enough free IP addresses to accommodate
@@ -3276,12 +3412,18 @@ class NetworkConfiguration(_serialization.Model):
          virtualMachineConfiguration property.
         :paramtype public_ip_address_configuration:
          ~azure.mgmt.batch.models.PublicIPAddressConfiguration
+        :keyword enable_accelerated_networking: Accelerated networking enables single root I/O
+         virtualization (SR-IOV) to a VM, which may lead to improved networking performance. For more
+         details, see:
+         https://learn.microsoft.com/azure/virtual-network/accelerated-networking-overview.
+        :paramtype enable_accelerated_networking: bool
         """
         super().__init__(**kwargs)
         self.subnet_id = subnet_id
         self.dynamic_vnet_assignment_scope = dynamic_vnet_assignment_scope
         self.endpoint_configuration = endpoint_configuration
         self.public_ip_address_configuration = public_ip_address_configuration
+        self.enable_accelerated_networking = enable_accelerated_networking
 
 
 class NetworkProfile(_serialization.Model):
@@ -3305,8 +3447,8 @@ class NetworkProfile(_serialization.Model):
         *,
         account_access: Optional["_models.EndpointAccessProfile"] = None,
         node_management_access: Optional["_models.EndpointAccessProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword account_access: Network access profile for batchAccount endpoint (Batch account data
          plane API).
@@ -3365,8 +3507,8 @@ class NetworkSecurityGroupRule(_serialization.Model):
         access: Union[str, "_models.NetworkSecurityGroupRuleAccess"],
         source_address_prefix: str,
         source_port_ranges: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword priority: Priorities within a pool must be unique and are evaluated in order of
          priority. The lower the number the higher the priority. For example, rules could be specified
@@ -3419,7 +3561,9 @@ class NFSMountConfiguration(_serialization.Model):
         "mount_options": {"key": "mountOptions", "type": "str"},
     }
 
-    def __init__(self, *, source: str, relative_mount_path: str, mount_options: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, source: str, relative_mount_path: str, mount_options: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword source: The URI of the file system to mount. Required.
         :paramtype source: str
@@ -3447,7 +3591,9 @@ class NodePlacementConfiguration(_serialization.Model):
         "policy": {"key": "policy", "type": "str"},
     }
 
-    def __init__(self, *, policy: Optional[Union[str, "_models.NodePlacementPolicyType"]] = None, **kwargs):
+    def __init__(
+        self, *, policy: Optional[Union[str, "_models.NodePlacementPolicyType"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword policy: Allocation policy used by Batch Service to provision the nodes. If not
          specified, Batch will use the regional policy. Known values are: "Regional" and "Zonal".
@@ -3488,8 +3634,8 @@ class Operation(_serialization.Model):
         display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
         properties: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: This is of the format {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -3537,8 +3683,8 @@ class OperationDisplay(_serialization.Model):
         operation: Optional[str] = None,
         resource: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Friendly name of the resource provider.
         :paramtype provider: str
@@ -3557,7 +3703,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """Result of the request to list REST API operations. It contains a list of operations and a URL nextLink to get the next set of results.
+    """Result of the request to list REST API operations. It contains a list of operations and a URL
+    nextLink to get the next set of results.
 
     :ivar value: The list of operations supported by the resource provider.
     :vartype value: list[~azure.mgmt.batch.models.Operation]
@@ -3570,7 +3717,9 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of operations supported by the resource provider.
         :paramtype value: list[~azure.mgmt.batch.models.Operation]
@@ -3588,24 +3737,62 @@ class OSDisk(_serialization.Model):
     :ivar ephemeral_os_disk_settings: Specifies the ephemeral Disk Settings for the operating
      system disk used by the virtual machine.
     :vartype ephemeral_os_disk_settings: ~azure.mgmt.batch.models.DiffDiskSettings
+    :ivar caching: The type of caching to enable for the disk. Known values are: "None",
+     "ReadOnly", and "ReadWrite".
+    :vartype caching: str or ~azure.mgmt.batch.models.CachingType
+    :ivar managed_disk:
+    :vartype managed_disk: ~azure.mgmt.batch.models.ManagedDisk
+    :ivar disk_size_gb: The initial disk size in GB when creating new OS disk.
+    :vartype disk_size_gb: int
+    :ivar write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
+     disabled on the disk.
+    :vartype write_accelerator_enabled: bool
     """
 
     _attribute_map = {
         "ephemeral_os_disk_settings": {"key": "ephemeralOSDiskSettings", "type": "DiffDiskSettings"},
+        "caching": {"key": "caching", "type": "str"},
+        "managed_disk": {"key": "managedDisk", "type": "ManagedDisk"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "write_accelerator_enabled": {"key": "writeAcceleratorEnabled", "type": "bool"},
     }
 
-    def __init__(self, *, ephemeral_os_disk_settings: Optional["_models.DiffDiskSettings"] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        ephemeral_os_disk_settings: Optional["_models.DiffDiskSettings"] = None,
+        caching: Optional[Union[str, "_models.CachingType"]] = None,
+        managed_disk: Optional["_models.ManagedDisk"] = None,
+        disk_size_gb: Optional[int] = None,
+        write_accelerator_enabled: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword ephemeral_os_disk_settings: Specifies the ephemeral Disk Settings for the operating
          system disk used by the virtual machine.
         :paramtype ephemeral_os_disk_settings: ~azure.mgmt.batch.models.DiffDiskSettings
+        :keyword caching: The type of caching to enable for the disk. Known values are: "None",
+         "ReadOnly", and "ReadWrite".
+        :paramtype caching: str or ~azure.mgmt.batch.models.CachingType
+        :keyword managed_disk:
+        :paramtype managed_disk: ~azure.mgmt.batch.models.ManagedDisk
+        :keyword disk_size_gb: The initial disk size in GB when creating new OS disk.
+        :paramtype disk_size_gb: int
+        :keyword write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
+         disabled on the disk.
+        :paramtype write_accelerator_enabled: bool
         """
         super().__init__(**kwargs)
         self.ephemeral_os_disk_settings = ephemeral_os_disk_settings
+        self.caching = caching
+        self.managed_disk = managed_disk
+        self.disk_size_gb = disk_size_gb
+        self.write_accelerator_enabled = write_accelerator_enabled
 
 
 class OutboundEnvironmentEndpoint(_serialization.Model):
-    """A collection of related endpoints from the same service for which the Batch service requires outbound access.
+    """A collection of related endpoints from the same service for which the Batch service requires
+    outbound access.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3626,7 +3813,7 @@ class OutboundEnvironmentEndpoint(_serialization.Model):
         "endpoints": {"key": "endpoints", "type": "[EndpointDependency]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.category = None
@@ -3654,7 +3841,7 @@ class OutboundEnvironmentEndpointCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: The continuation token.
         :paramtype next_link: str
@@ -3780,6 +3967,13 @@ class Pool(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :ivar current_node_communication_mode: Determines how a pool communicates with the Batch
      service. Known values are: "Default", "Classic", and "Simplified".
     :vartype current_node_communication_mode: str or ~azure.mgmt.batch.models.NodeCommunicationMode
+    :ivar upgrade_policy: Describes an upgrade policy - automatic, manual, or rolling.
+    :vartype upgrade_policy: ~azure.mgmt.batch.models.UpgradePolicy
+    :ivar resource_tags: The user-defined tags to be associated with the Azure Batch Pool. When
+     specified, these tags are propagated to the backing Azure resources associated with the pool.
+     This property can only be specified when the Batch account was created with the
+     poolAllocationMode property set to 'UserSubscription'.
+    :vartype resource_tags: dict[str, str]
     """
 
     _validation = {
@@ -3833,6 +4027,8 @@ class Pool(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "mount_configuration": {"key": "properties.mountConfiguration", "type": "[MountConfiguration]"},
         "target_node_communication_mode": {"key": "properties.targetNodeCommunicationMode", "type": "str"},
         "current_node_communication_mode": {"key": "properties.currentNodeCommunicationMode", "type": "str"},
+        "upgrade_policy": {"key": "properties.upgradePolicy", "type": "UpgradePolicy"},
+        "resource_tags": {"key": "properties.resourceTags", "type": "{str}"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -3845,7 +4041,7 @@ class Pool(ProxyResource):  # pylint: disable=too-many-instance-attributes
         scale_settings: Optional["_models.ScaleSettings"] = None,
         inter_node_communication: Optional[Union[str, "_models.InterNodeCommunicationState"]] = None,
         network_configuration: Optional["_models.NetworkConfiguration"] = None,
-        task_slots_per_node: Optional[int] = None,
+        task_slots_per_node: int = 1,
         task_scheduling_policy: Optional["_models.TaskSchedulingPolicy"] = None,
         user_accounts: Optional[List["_models.UserAccount"]] = None,
         metadata: Optional[List["_models.MetadataItem"]] = None,
@@ -3855,8 +4051,10 @@ class Pool(ProxyResource):  # pylint: disable=too-many-instance-attributes
         application_licenses: Optional[List[str]] = None,
         mount_configuration: Optional[List["_models.MountConfiguration"]] = None,
         target_node_communication_mode: Optional[Union[str, "_models.NodeCommunicationMode"]] = None,
-        **kwargs
-    ):
+        upgrade_policy: Optional["_models.UpgradePolicy"] = None,
+        resource_tags: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: The type of identity used for the Batch Pool.
         :paramtype identity: ~azure.mgmt.batch.models.BatchPoolIdentity
@@ -3931,6 +4129,13 @@ class Pool(ProxyResource):  # pylint: disable=too-many-instance-attributes
          are: "Default", "Classic", and "Simplified".
         :paramtype target_node_communication_mode: str or
          ~azure.mgmt.batch.models.NodeCommunicationMode
+        :keyword upgrade_policy: Describes an upgrade policy - automatic, manual, or rolling.
+        :paramtype upgrade_policy: ~azure.mgmt.batch.models.UpgradePolicy
+        :keyword resource_tags: The user-defined tags to be associated with the Azure Batch Pool. When
+         specified, these tags are propagated to the backing Azure resources associated with the pool.
+         This property can only be specified when the Batch account was created with the
+         poolAllocationMode property set to 'UserSubscription'.
+        :paramtype resource_tags: dict[str, str]
         """
         super().__init__(**kwargs)
         self.identity = identity
@@ -3961,6 +4166,8 @@ class Pool(ProxyResource):  # pylint: disable=too-many-instance-attributes
         self.mount_configuration = mount_configuration
         self.target_node_communication_mode = target_node_communication_mode
         self.current_node_communication_mode = None
+        self.upgrade_policy = upgrade_policy
+        self.resource_tags = resource_tags
 
 
 class PoolEndpointConfiguration(_serialization.Model):
@@ -3982,7 +4189,7 @@ class PoolEndpointConfiguration(_serialization.Model):
         "inbound_nat_pools": {"key": "inboundNatPools", "type": "[InboundNatPool]"},
     }
 
-    def __init__(self, *, inbound_nat_pools: List["_models.InboundNatPool"], **kwargs):
+    def __init__(self, *, inbound_nat_pools: List["_models.InboundNatPool"], **kwargs: Any) -> None:
         """
         :keyword inbound_nat_pools: The maximum number of inbound NAT pools per Batch pool is 5. If the
          maximum number of inbound NAT pools is exceeded the request fails with HTTP status code 400.
@@ -4011,7 +4218,7 @@ class PrivateEndpoint(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -4072,8 +4279,8 @@ class PrivateEndpointConnection(ProxyResource):
         self,
         *,
         private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_link_service_connection_state: The private link service connection state of
          the private endpoint connection.
@@ -4129,7 +4336,7 @@ class PrivateLinkResource(ProxyResource):
         "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.group_id = None
@@ -4169,8 +4376,8 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         *,
         status: Union[str, "_models.PrivateLinkServiceConnectionStatus"],
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: The status of the Batch private endpoint connection. Required. Known values
          are: "Approved", "Pending", "Rejected", and "Disconnected".
@@ -4208,8 +4415,8 @@ class PublicIPAddressConfiguration(_serialization.Model):
         *,
         provision: Optional[Union[str, "_models.IPAddressProvisioningType"]] = None,
         ip_address_ids: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provision: The default value is BatchManaged. Known values are: "BatchManaged",
          "UserManaged", and "NoPublicIPAddresses".
@@ -4252,7 +4459,9 @@ class ResizeError(_serialization.Model):
         "details": {"key": "details", "type": "[ResizeError]"},
     }
 
-    def __init__(self, *, code: str, message: str, details: Optional[List["_models.ResizeError"]] = None, **kwargs):
+    def __init__(
+        self, *, code: str, message: str, details: Optional[List["_models.ResizeError"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically. Required.
@@ -4270,7 +4479,8 @@ class ResizeError(_serialization.Model):
 
 
 class ResizeOperationStatus(_serialization.Model):
-    """Describes either the current operation (if the pool AllocationState is Resizing) or the previously completed operation (if the AllocationState is Steady).
+    """Describes either the current operation (if the pool AllocationState is Resizing) or the
+    previously completed operation (if the AllocationState is Steady).
 
     :ivar target_dedicated_nodes: The desired number of dedicated compute nodes in the pool.
     :vartype target_dedicated_nodes: int
@@ -4310,8 +4520,8 @@ class ResizeOperationStatus(_serialization.Model):
         node_deallocation_option: Optional[Union[str, "_models.ComputeNodeDeallocationOption"]] = None,
         start_time: Optional[datetime.datetime] = None,
         errors: Optional[List["_models.ResizeError"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_dedicated_nodes: The desired number of dedicated compute nodes in the pool.
         :paramtype target_dedicated_nodes: int
@@ -4403,8 +4613,8 @@ class ResourceFile(_serialization.Model):
         file_path: Optional[str] = None,
         file_mode: Optional[str] = None,
         identity_reference: Optional["_models.ComputeNodeIdentityReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword auto_storage_container_name: The autoStorageContainerName, storageContainerUrl and
          httpUrl properties are mutually exclusive and one of them must be specified.
@@ -4454,8 +4664,132 @@ class ResourceFile(_serialization.Model):
         self.identity_reference = identity_reference
 
 
+class RollingUpgradePolicy(_serialization.Model):
+    """The configuration parameters used while performing a rolling upgrade.
+
+    :ivar enable_cross_zone_upgrade: Allow VMSS to ignore AZ boundaries when constructing upgrade
+     batches. Take into consideration the Update Domain and maxBatchInstancePercent to determine the
+     batch size. If this field is not set, Azure Azure Batch will not set its default value. The
+     value of enableCrossZoneUpgrade on the created VirtualMachineScaleSet will be decided by the
+     default configurations on VirtualMachineScaleSet. This field is able to be set to true or false
+     only when using NodePlacementConfiguration as Zonal.
+    :vartype enable_cross_zone_upgrade: bool
+    :ivar max_batch_instance_percent: The maximum percent of total virtual machine instances that
+     will be upgraded simultaneously by the rolling upgrade in one batch. As this is a maximum,
+     unhealthy instances in previous or future batches can cause the percentage of instances in a
+     batch to decrease to ensure higher reliability. The value of this field should be between 5 and
+     100, inclusive. If both maxBatchInstancePercent and maxUnhealthyInstancePercent are assigned
+     with value, the value of maxBatchInstancePercent should not be more than
+     maxUnhealthyInstancePercent.
+    :vartype max_batch_instance_percent: int
+    :ivar max_unhealthy_instance_percent: The maximum percentage of the total virtual machine
+     instances in the scale set that can be simultaneously unhealthy, either as a result of being
+     upgraded, or by being found in an unhealthy state by the virtual machine health checks before
+     the rolling upgrade aborts. This constraint will be checked prior to starting any batch. The
+     value of this field should be between 5 and 100, inclusive. If both maxBatchInstancePercent and
+     maxUnhealthyInstancePercent are assigned with value, the value of maxBatchInstancePercent
+     should not be more than maxUnhealthyInstancePercent.
+    :vartype max_unhealthy_instance_percent: int
+    :ivar max_unhealthy_upgraded_instance_percent: The maximum percentage of upgraded virtual
+     machine instances that can be found to be in an unhealthy state. This check will happen after
+     each batch is upgraded. If this percentage is ever exceeded, the rolling update aborts. The
+     value of this field should be between 0 and 100, inclusive.
+    :vartype max_unhealthy_upgraded_instance_percent: int
+    :ivar pause_time_between_batches: The wait time between completing the update for all virtual
+     machines in one batch and starting the next batch. The time duration should be specified in ISO
+     8601 format.
+    :vartype pause_time_between_batches: str
+    :ivar prioritize_unhealthy_instances: Upgrade all unhealthy instances in a scale set before any
+     healthy instances.
+    :vartype prioritize_unhealthy_instances: bool
+    :ivar rollback_failed_instances_on_policy_breach: Rollback failed instances to previous model
+     if the Rolling Upgrade policy is violated.
+    :vartype rollback_failed_instances_on_policy_breach: bool
+    """
+
+    _validation = {
+        "max_batch_instance_percent": {"maximum": 100, "minimum": 5},
+        "max_unhealthy_instance_percent": {"maximum": 100, "minimum": 5},
+        "max_unhealthy_upgraded_instance_percent": {"maximum": 100, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "enable_cross_zone_upgrade": {"key": "enableCrossZoneUpgrade", "type": "bool"},
+        "max_batch_instance_percent": {"key": "maxBatchInstancePercent", "type": "int"},
+        "max_unhealthy_instance_percent": {"key": "maxUnhealthyInstancePercent", "type": "int"},
+        "max_unhealthy_upgraded_instance_percent": {"key": "maxUnhealthyUpgradedInstancePercent", "type": "int"},
+        "pause_time_between_batches": {"key": "pauseTimeBetweenBatches", "type": "str"},
+        "prioritize_unhealthy_instances": {"key": "prioritizeUnhealthyInstances", "type": "bool"},
+        "rollback_failed_instances_on_policy_breach": {"key": "rollbackFailedInstancesOnPolicyBreach", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        enable_cross_zone_upgrade: Optional[bool] = None,
+        max_batch_instance_percent: Optional[int] = None,
+        max_unhealthy_instance_percent: Optional[int] = None,
+        max_unhealthy_upgraded_instance_percent: Optional[int] = None,
+        pause_time_between_batches: Optional[str] = None,
+        prioritize_unhealthy_instances: Optional[bool] = None,
+        rollback_failed_instances_on_policy_breach: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword enable_cross_zone_upgrade: Allow VMSS to ignore AZ boundaries when constructing
+         upgrade batches. Take into consideration the Update Domain and maxBatchInstancePercent to
+         determine the batch size. If this field is not set, Azure Azure Batch will not set its default
+         value. The value of enableCrossZoneUpgrade on the created VirtualMachineScaleSet will be
+         decided by the default configurations on VirtualMachineScaleSet. This field is able to be set
+         to true or false only when using NodePlacementConfiguration as Zonal.
+        :paramtype enable_cross_zone_upgrade: bool
+        :keyword max_batch_instance_percent: The maximum percent of total virtual machine instances
+         that will be upgraded simultaneously by the rolling upgrade in one batch. As this is a maximum,
+         unhealthy instances in previous or future batches can cause the percentage of instances in a
+         batch to decrease to ensure higher reliability. The value of this field should be between 5 and
+         100, inclusive. If both maxBatchInstancePercent and maxUnhealthyInstancePercent are assigned
+         with value, the value of maxBatchInstancePercent should not be more than
+         maxUnhealthyInstancePercent.
+        :paramtype max_batch_instance_percent: int
+        :keyword max_unhealthy_instance_percent: The maximum percentage of the total virtual machine
+         instances in the scale set that can be simultaneously unhealthy, either as a result of being
+         upgraded, or by being found in an unhealthy state by the virtual machine health checks before
+         the rolling upgrade aborts. This constraint will be checked prior to starting any batch. The
+         value of this field should be between 5 and 100, inclusive. If both maxBatchInstancePercent and
+         maxUnhealthyInstancePercent are assigned with value, the value of maxBatchInstancePercent
+         should not be more than maxUnhealthyInstancePercent.
+        :paramtype max_unhealthy_instance_percent: int
+        :keyword max_unhealthy_upgraded_instance_percent: The maximum percentage of upgraded virtual
+         machine instances that can be found to be in an unhealthy state. This check will happen after
+         each batch is upgraded. If this percentage is ever exceeded, the rolling update aborts. The
+         value of this field should be between 0 and 100, inclusive.
+        :paramtype max_unhealthy_upgraded_instance_percent: int
+        :keyword pause_time_between_batches: The wait time between completing the update for all
+         virtual machines in one batch and starting the next batch. The time duration should be
+         specified in ISO 8601 format.
+        :paramtype pause_time_between_batches: str
+        :keyword prioritize_unhealthy_instances: Upgrade all unhealthy instances in a scale set before
+         any healthy instances.
+        :paramtype prioritize_unhealthy_instances: bool
+        :keyword rollback_failed_instances_on_policy_breach: Rollback failed instances to previous
+         model if the Rolling Upgrade policy is violated.
+        :paramtype rollback_failed_instances_on_policy_breach: bool
+        """
+        super().__init__(**kwargs)
+        self.enable_cross_zone_upgrade = enable_cross_zone_upgrade
+        self.max_batch_instance_percent = max_batch_instance_percent
+        self.max_unhealthy_instance_percent = max_unhealthy_instance_percent
+        self.max_unhealthy_upgraded_instance_percent = max_unhealthy_upgraded_instance_percent
+        self.pause_time_between_batches = pause_time_between_batches
+        self.prioritize_unhealthy_instances = prioritize_unhealthy_instances
+        self.rollback_failed_instances_on_policy_breach = rollback_failed_instances_on_policy_breach
+
+
 class ScaleSettings(_serialization.Model):
-    """Defines the desired size of the pool. This can either be 'fixedScale' where the requested targetDedicatedNodes is specified, or 'autoScale' which defines a formula which is periodically reevaluated. If this property is not specified, the pool will have a fixed scale with 0 targetDedicatedNodes.
+    """Defines the desired size of the pool. This can either be 'fixedScale' where the requested
+    targetDedicatedNodes is specified, or 'autoScale' which defines a formula which is periodically
+    reevaluated. If this property is not specified, the pool will have a fixed scale with 0
+    targetDedicatedNodes.
 
     :ivar fixed_scale: This property and autoScale are mutually exclusive and one of the properties
      must be specified.
@@ -4475,8 +4809,8 @@ class ScaleSettings(_serialization.Model):
         *,
         fixed_scale: Optional["_models.FixedScaleSettings"] = None,
         auto_scale: Optional["_models.AutoScaleSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword fixed_scale: This property and autoScale are mutually exclusive and one of the
          properties must be specified.
@@ -4488,6 +4822,84 @@ class ScaleSettings(_serialization.Model):
         super().__init__(**kwargs)
         self.fixed_scale = fixed_scale
         self.auto_scale = auto_scale
+
+
+class SecurityProfile(_serialization.Model):
+    """Specifies the security profile settings for the virtual machine or virtual machine scale set.
+
+    :ivar security_type: Specifies the SecurityType of the virtual machine. It has to be set to any
+     specified value to enable UefiSettings. Default value is "trustedLaunch".
+    :vartype security_type: str
+    :ivar encryption_at_host: This property can be used by user in the request to enable or disable
+     the Host Encryption for the virtual machine or virtual machine scale set. This will enable the
+     encryption for all the disks including Resource/Temp disk at host itself.
+    :vartype encryption_at_host: bool
+    :ivar uefi_settings: Specifies the security settings like secure boot and vTPM used while
+     creating the virtual machine.
+    :vartype uefi_settings: ~azure.mgmt.batch.models.UefiSettings
+    """
+
+    _attribute_map = {
+        "security_type": {"key": "securityType", "type": "str"},
+        "encryption_at_host": {"key": "encryptionAtHost", "type": "bool"},
+        "uefi_settings": {"key": "uefiSettings", "type": "UefiSettings"},
+    }
+
+    def __init__(
+        self,
+        *,
+        security_type: Optional[Literal["trustedLaunch"]] = None,
+        encryption_at_host: Optional[bool] = None,
+        uefi_settings: Optional["_models.UefiSettings"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword security_type: Specifies the SecurityType of the virtual machine. It has to be set to
+         any specified value to enable UefiSettings. Default value is "trustedLaunch".
+        :paramtype security_type: str
+        :keyword encryption_at_host: This property can be used by user in the request to enable or
+         disable the Host Encryption for the virtual machine or virtual machine scale set. This will
+         enable the encryption for all the disks including Resource/Temp disk at host itself.
+        :paramtype encryption_at_host: bool
+        :keyword uefi_settings: Specifies the security settings like secure boot and vTPM used while
+         creating the virtual machine.
+        :paramtype uefi_settings: ~azure.mgmt.batch.models.UefiSettings
+        """
+        super().__init__(**kwargs)
+        self.security_type = security_type
+        self.encryption_at_host = encryption_at_host
+        self.uefi_settings = uefi_settings
+
+
+class ServiceArtifactReference(_serialization.Model):
+    """Specifies the service artifact reference id used to set same image version for all virtual
+    machines in the scale set when using 'latest' image version.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The service artifact reference id in the form of
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.
+     Required.
+    :vartype id: str
+    """
+
+    _validation = {
+        "id": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        """
+        :keyword id: The service artifact reference id in the form of
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.
+         Required.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
 
 
 class SkuCapability(_serialization.Model):
@@ -4511,7 +4923,7 @@ class SkuCapability(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -4519,7 +4931,11 @@ class SkuCapability(_serialization.Model):
 
 
 class StartTask(_serialization.Model):
-    """In some cases the start task may be re-run even though the node was not rebooted. Due to this, start tasks should be idempotent and exit gracefully if the setup they're performing has already been done. Special care should be taken to avoid start tasks which create breakaway process or install/launch services from the start task working directory, as this will block Batch from being able to re-run the start task.
+    """In some cases the start task may be re-run even though the node was not rebooted. Due to this,
+    start tasks should be idempotent and exit gracefully if the setup they're performing has
+    already been done. Special care should be taken to avoid start tasks which create breakaway
+    process or install/launch services from the start task working directory, as this will block
+    Batch from being able to re-run the start task.
 
     :ivar command_line: The command line does not run under a shell, and therefore cannot take
      advantage of shell features such as environment variable expansion. If you want to take
@@ -4539,7 +4955,7 @@ class StartTask(_serialization.Model):
      task once, and may then retry up to this limit. For example, if the maximum retry count is 3,
      Batch tries the task up to 4 times (one initial try and 3 retries). If the maximum retry count
      is 0, the Batch service does not retry the task. If the maximum retry count is -1, the Batch
-     service retries the task without limit.
+     service retries the task without limit. Default is 0.
     :vartype max_task_retry_count: int
     :ivar wait_for_success: If true and the start task fails on a compute node, the Batch service
      retries the start task up to its maximum retry count (maxTaskRetryCount). If the task has still
@@ -4574,11 +4990,11 @@ class StartTask(_serialization.Model):
         resource_files: Optional[List["_models.ResourceFile"]] = None,
         environment_settings: Optional[List["_models.EnvironmentSetting"]] = None,
         user_identity: Optional["_models.UserIdentity"] = None,
-        max_task_retry_count: Optional[int] = None,
+        max_task_retry_count: int = 0,
         wait_for_success: Optional[bool] = None,
         container_settings: Optional["_models.TaskContainerSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword command_line: The command line does not run under a shell, and therefore cannot take
          advantage of shell features such as environment variable expansion. If you want to take
@@ -4599,7 +5015,7 @@ class StartTask(_serialization.Model):
          the task once, and may then retry up to this limit. For example, if the maximum retry count is
          3, Batch tries the task up to 4 times (one initial try and 3 retries). If the maximum retry
          count is 0, the Batch service does not retry the task. If the maximum retry count is -1, the
-         Batch service retries the task without limit.
+         Batch service retries the task without limit. Default is 0.
         :paramtype max_task_retry_count: int
         :keyword wait_for_success: If true and the start task fails on a compute node, the Batch
          service retries the start task up to its maximum retry count (maxTaskRetryCount). If the task
@@ -4637,26 +5053,31 @@ class SupportedSku(_serialization.Model):
     :vartype family_name: str
     :ivar capabilities: A collection of capabilities which this SKU supports.
     :vartype capabilities: list[~azure.mgmt.batch.models.SkuCapability]
+    :ivar batch_support_end_of_life: The time when Azure Batch service will retire this SKU.
+    :vartype batch_support_end_of_life: ~datetime.datetime
     """
 
     _validation = {
         "name": {"readonly": True},
         "family_name": {"readonly": True},
         "capabilities": {"readonly": True},
+        "batch_support_end_of_life": {"readonly": True},
     }
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
         "family_name": {"key": "familyName", "type": "str"},
         "capabilities": {"key": "capabilities", "type": "[SkuCapability]"},
+        "batch_support_end_of_life": {"key": "batchSupportEndOfLife", "type": "iso-8601"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
         self.family_name = None
         self.capabilities = None
+        self.batch_support_end_of_life = None
 
 
 class SupportedSkusResult(_serialization.Model):
@@ -4682,7 +5103,7 @@ class SupportedSkusResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.SupportedSku"], **kwargs):
+    def __init__(self, *, value: List["_models.SupportedSku"], **kwargs: Any) -> None:
         """
         :keyword value: The list of SKUs available for the Batch service in the location. Required.
         :paramtype value: list[~azure.mgmt.batch.models.SupportedSku]
@@ -4729,8 +5150,8 @@ class TaskContainerSettings(_serialization.Model):
         container_run_options: Optional[str] = None,
         registry: Optional["_models.ContainerRegistry"] = None,
         working_directory: Optional[Union[str, "_models.ContainerWorkingDirectory"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword container_run_options: These additional options are supplied as arguments to the
          "docker create" command, in addition to those controlled by the Batch Service.
@@ -4758,8 +5179,8 @@ class TaskSchedulingPolicy(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar node_fill_type: How tasks should be distributed across compute nodes. Required. Known
-     values are: "Spread" and "Pack".
+    :ivar node_fill_type: How tasks should be distributed across compute nodes. Known values are:
+     "Spread" and "Pack".
     :vartype node_fill_type: str or ~azure.mgmt.batch.models.ComputeNodeFillType
     """
 
@@ -4771,14 +5192,106 @@ class TaskSchedulingPolicy(_serialization.Model):
         "node_fill_type": {"key": "nodeFillType", "type": "str"},
     }
 
-    def __init__(self, *, node_fill_type: Union[str, "_models.ComputeNodeFillType"], **kwargs):
+    def __init__(self, *, node_fill_type: Union[str, "_models.ComputeNodeFillType"] = "Spread", **kwargs: Any) -> None:
         """
-        :keyword node_fill_type: How tasks should be distributed across compute nodes. Required. Known
-         values are: "Spread" and "Pack".
+        :keyword node_fill_type: How tasks should be distributed across compute nodes. Known values
+         are: "Spread" and "Pack".
         :paramtype node_fill_type: str or ~azure.mgmt.batch.models.ComputeNodeFillType
         """
         super().__init__(**kwargs)
         self.node_fill_type = node_fill_type
+
+
+class UefiSettings(_serialization.Model):
+    """Specifies the security settings like secure boot and vTPM used while creating the virtual
+    machine.
+
+    :ivar secure_boot_enabled: Specifies whether secure boot should be enabled on the virtual
+     machine.
+    :vartype secure_boot_enabled: bool
+    :ivar v_tpm_enabled: Specifies whether vTPM should be enabled on the virtual machine.
+    :vartype v_tpm_enabled: bool
+    """
+
+    _attribute_map = {
+        "secure_boot_enabled": {"key": "secureBootEnabled", "type": "bool"},
+        "v_tpm_enabled": {"key": "vTpmEnabled", "type": "bool"},
+    }
+
+    def __init__(
+        self, *, secure_boot_enabled: Optional[bool] = None, v_tpm_enabled: Optional[bool] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword secure_boot_enabled: Specifies whether secure boot should be enabled on the virtual
+         machine.
+        :paramtype secure_boot_enabled: bool
+        :keyword v_tpm_enabled: Specifies whether vTPM should be enabled on the virtual machine.
+        :paramtype v_tpm_enabled: bool
+        """
+        super().__init__(**kwargs)
+        self.secure_boot_enabled = secure_boot_enabled
+        self.v_tpm_enabled = v_tpm_enabled
+
+
+class UpgradePolicy(_serialization.Model):
+    """Describes an upgrade policy - automatic, manual, or rolling.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar mode: Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br
+     />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control
+     the application of updates to virtual machines in the scale set. You do this by using the
+     manualUpgrade action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the
+     scale set are automatically updated at the same time.:code:`<br />`:code:`<br />` **Rolling** -
+     Scale set performs updates in batches with an optional pause time in between. Required. Known
+     values are: "automatic", "manual", and "rolling".
+    :vartype mode: str or ~azure.mgmt.batch.models.UpgradeMode
+    :ivar automatic_os_upgrade_policy: The configuration parameters used for performing automatic
+     OS upgrade.
+    :vartype automatic_os_upgrade_policy: ~azure.mgmt.batch.models.AutomaticOSUpgradePolicy
+    :ivar rolling_upgrade_policy: This property is only supported on Pools with the
+     virtualMachineConfiguration property.
+    :vartype rolling_upgrade_policy: ~azure.mgmt.batch.models.RollingUpgradePolicy
+    """
+
+    _validation = {
+        "mode": {"required": True},
+    }
+
+    _attribute_map = {
+        "mode": {"key": "mode", "type": "str"},
+        "automatic_os_upgrade_policy": {"key": "automaticOSUpgradePolicy", "type": "AutomaticOSUpgradePolicy"},
+        "rolling_upgrade_policy": {"key": "rollingUpgradePolicy", "type": "RollingUpgradePolicy"},
+    }
+
+    def __init__(
+        self,
+        *,
+        mode: Union[str, "_models.UpgradeMode"],
+        automatic_os_upgrade_policy: Optional["_models.AutomaticOSUpgradePolicy"] = None,
+        rolling_upgrade_policy: Optional["_models.RollingUpgradePolicy"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword mode: Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br
+         />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control
+         the application of updates to virtual machines in the scale set. You do this by using the
+         manualUpgrade action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the
+         scale set are automatically updated at the same time.:code:`<br />`:code:`<br />` **Rolling** -
+         Scale set performs updates in batches with an optional pause time in between. Required. Known
+         values are: "automatic", "manual", and "rolling".
+        :paramtype mode: str or ~azure.mgmt.batch.models.UpgradeMode
+        :keyword automatic_os_upgrade_policy: The configuration parameters used for performing
+         automatic OS upgrade.
+        :paramtype automatic_os_upgrade_policy: ~azure.mgmt.batch.models.AutomaticOSUpgradePolicy
+        :keyword rolling_upgrade_policy: This property is only supported on Pools with the
+         virtualMachineConfiguration property.
+        :paramtype rolling_upgrade_policy: ~azure.mgmt.batch.models.RollingUpgradePolicy
+        """
+        super().__init__(**kwargs)
+        self.mode = mode
+        self.automatic_os_upgrade_policy = automatic_os_upgrade_policy
+        self.rolling_upgrade_policy = rolling_upgrade_policy
 
 
 class UserAccount(_serialization.Model):
@@ -4825,8 +5338,8 @@ class UserAccount(_serialization.Model):
         elevation_level: Optional[Union[str, "_models.ElevationLevel"]] = None,
         linux_user_configuration: Optional["_models.LinuxUserConfiguration"] = None,
         windows_user_configuration: Optional["_models.WindowsUserConfiguration"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the user account. Names can contain any Unicode characters up to a
          maximum length of 20. Required.
@@ -4874,7 +5387,7 @@ class UserAssignedIdentities(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None
@@ -4898,8 +5411,12 @@ class UserIdentity(_serialization.Model):
     }
 
     def __init__(
-        self, *, user_name: Optional[str] = None, auto_user: Optional["_models.AutoUserSpecification"] = None, **kwargs
-    ):
+        self,
+        *,
+        user_name: Optional[str] = None,
+        auto_user: Optional["_models.AutoUserSpecification"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword user_name: The userName and autoUser properties are mutually exclusive; you must
          specify one but not both.
@@ -4913,8 +5430,9 @@ class UserIdentity(_serialization.Model):
         self.auto_user = auto_user
 
 
-class VirtualMachineConfiguration(_serialization.Model):
-    """The configuration for compute nodes in a pool based on the Azure Virtual Machines infrastructure.
+class VirtualMachineConfiguration(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """The configuration for compute nodes in a pool based on the Azure Virtual Machines
+    infrastructure.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -4957,6 +5475,12 @@ class VirtualMachineConfiguration(_serialization.Model):
     :vartype extensions: list[~azure.mgmt.batch.models.VMExtension]
     :ivar os_disk: Contains configuration for ephemeral OSDisk settings.
     :vartype os_disk: ~azure.mgmt.batch.models.OSDisk
+    :ivar security_profile: Specifies the security profile settings for the virtual machine or
+     virtual machine scale set.
+    :vartype security_profile: ~azure.mgmt.batch.models.SecurityProfile
+    :ivar service_artifact_reference: The service artifact reference id in the form of
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.
+    :vartype service_artifact_reference: ~azure.mgmt.batch.models.ServiceArtifactReference
     """
 
     _validation = {
@@ -4975,6 +5499,8 @@ class VirtualMachineConfiguration(_serialization.Model):
         "node_placement_configuration": {"key": "nodePlacementConfiguration", "type": "NodePlacementConfiguration"},
         "extensions": {"key": "extensions", "type": "[VMExtension]"},
         "os_disk": {"key": "osDisk", "type": "OSDisk"},
+        "security_profile": {"key": "securityProfile", "type": "SecurityProfile"},
+        "service_artifact_reference": {"key": "serviceArtifactReference", "type": "ServiceArtifactReference"},
     }
 
     def __init__(
@@ -4990,8 +5516,10 @@ class VirtualMachineConfiguration(_serialization.Model):
         node_placement_configuration: Optional["_models.NodePlacementConfiguration"] = None,
         extensions: Optional[List["_models.VMExtension"]] = None,
         os_disk: Optional["_models.OSDisk"] = None,
-        **kwargs
-    ):
+        security_profile: Optional["_models.SecurityProfile"] = None,
+        service_artifact_reference: Optional["_models.ServiceArtifactReference"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword image_reference: A reference to an Azure Virtual Machines Marketplace image or the
          Azure Image resource of a custom Virtual Machine. To get the list of all imageReferences
@@ -5032,6 +5560,12 @@ class VirtualMachineConfiguration(_serialization.Model):
         :paramtype extensions: list[~azure.mgmt.batch.models.VMExtension]
         :keyword os_disk: Contains configuration for ephemeral OSDisk settings.
         :paramtype os_disk: ~azure.mgmt.batch.models.OSDisk
+        :keyword security_profile: Specifies the security profile settings for the virtual machine or
+         virtual machine scale set.
+        :paramtype security_profile: ~azure.mgmt.batch.models.SecurityProfile
+        :keyword service_artifact_reference: The service artifact reference id in the form of
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.
+        :paramtype service_artifact_reference: ~azure.mgmt.batch.models.ServiceArtifactReference
         """
         super().__init__(**kwargs)
         self.image_reference = image_reference
@@ -5044,6 +5578,8 @@ class VirtualMachineConfiguration(_serialization.Model):
         self.node_placement_configuration = node_placement_configuration
         self.extensions = extensions
         self.os_disk = os_disk
+        self.security_profile = security_profile
+        self.service_artifact_reference = service_artifact_reference
 
 
 class VirtualMachineFamilyCoreQuota(_serialization.Model):
@@ -5067,7 +5603,7 @@ class VirtualMachineFamilyCoreQuota(_serialization.Model):
         "core_quota": {"key": "coreQuota", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -5091,6 +5627,9 @@ class VMExtension(_serialization.Model):
      version if one is available at deployment time. Once deployed, however, the extension will not
      upgrade minor versions unless redeployed, even with this property set to true.
     :vartype auto_upgrade_minor_version: bool
+    :ivar enable_automatic_upgrade: Indicates whether the extension should be automatically
+     upgraded by the platform if there is a newer version of the extension available.
+    :vartype enable_automatic_upgrade: bool
     :ivar settings: JSON formatted public settings for the extension.
     :vartype settings: JSON
     :ivar protected_settings: The extension can contain either protectedSettings or
@@ -5113,6 +5652,7 @@ class VMExtension(_serialization.Model):
         "type": {"key": "type", "type": "str"},
         "type_handler_version": {"key": "typeHandlerVersion", "type": "str"},
         "auto_upgrade_minor_version": {"key": "autoUpgradeMinorVersion", "type": "bool"},
+        "enable_automatic_upgrade": {"key": "enableAutomaticUpgrade", "type": "bool"},
         "settings": {"key": "settings", "type": "object"},
         "protected_settings": {"key": "protectedSettings", "type": "object"},
         "provision_after_extensions": {"key": "provisionAfterExtensions", "type": "[str]"},
@@ -5126,11 +5666,12 @@ class VMExtension(_serialization.Model):
         type: str,
         type_handler_version: Optional[str] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
+        enable_automatic_upgrade: Optional[bool] = None,
         settings: Optional[JSON] = None,
         protected_settings: Optional[JSON] = None,
         provision_after_extensions: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the virtual machine extension. Required.
         :paramtype name: str
@@ -5144,6 +5685,9 @@ class VMExtension(_serialization.Model):
          version if one is available at deployment time. Once deployed, however, the extension will not
          upgrade minor versions unless redeployed, even with this property set to true.
         :paramtype auto_upgrade_minor_version: bool
+        :keyword enable_automatic_upgrade: Indicates whether the extension should be automatically
+         upgraded by the platform if there is a newer version of the extension available.
+        :paramtype enable_automatic_upgrade: bool
         :keyword settings: JSON formatted public settings for the extension.
         :paramtype settings: JSON
         :keyword protected_settings: The extension can contain either protectedSettings or
@@ -5159,6 +5703,7 @@ class VMExtension(_serialization.Model):
         self.type = type
         self.type_handler_version = type_handler_version
         self.auto_upgrade_minor_version = auto_upgrade_minor_version
+        self.enable_automatic_upgrade = enable_automatic_upgrade
         self.settings = settings
         self.protected_settings = protected_settings
         self.provision_after_extensions = provision_after_extensions
@@ -5175,7 +5720,7 @@ class WindowsConfiguration(_serialization.Model):
         "enable_automatic_updates": {"key": "enableAutomaticUpdates", "type": "bool"},
     }
 
-    def __init__(self, *, enable_automatic_updates: Optional[bool] = None, **kwargs):
+    def __init__(self, *, enable_automatic_updates: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword enable_automatic_updates: If omitted, the default value is true.
         :paramtype enable_automatic_updates: bool
@@ -5197,7 +5742,7 @@ class WindowsUserConfiguration(_serialization.Model):
         "login_mode": {"key": "loginMode", "type": "str"},
     }
 
-    def __init__(self, *, login_mode: Optional[Union[str, "_models.LoginMode"]] = None, **kwargs):
+    def __init__(self, *, login_mode: Optional[Union[str, "_models.LoginMode"]] = None, **kwargs: Any) -> None:
         """
         :keyword login_mode: Specifies login mode for the user. The default value for
          VirtualMachineConfiguration pools is interactive mode and for CloudServiceConfiguration pools

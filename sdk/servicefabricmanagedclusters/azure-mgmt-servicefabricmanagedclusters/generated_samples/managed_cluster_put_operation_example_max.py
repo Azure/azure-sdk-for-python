@@ -52,13 +52,16 @@ def main():
                 "clientConnectionPort": 19000,
                 "clusterCodeVersion": "7.1.168.9494",
                 "clusterUpgradeMode": "Manual",
+                "ddosProtectionPlanId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resRg/providers/Microsoft.Network/ddosProtectionPlans/myDDoSProtectionPlan",
                 "dnsName": "myCluster",
                 "enableAutoOSUpgrade": True,
+                "enableHttpGatewayExclusiveAuthMode": True,
                 "enableIpv6": True,
                 "fabricSettings": [
                     {"name": "ManagedIdentityTokenService", "parameters": [{"name": "IsEnabled", "value": "true"}]}
                 ],
                 "httpGatewayConnectionPort": 19080,
+                "httpGatewayTokenAuthConnectionPort": 19081,
                 "ipTags": [{"ipTagType": "FirstPartyUsage", "tag": "SQL"}],
                 "loadBalancingRules": [
                     {
@@ -109,7 +112,25 @@ def main():
                         "sourcePortRange": "*",
                     },
                 ],
+                "publicIPPrefixId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/resRg/providers/Microsoft.Network/publicIPPrefixes/myPublicIPPrefix",
+                "publicIPv6PrefixId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/resRg/providers/Microsoft.Network/publicIPPrefixes/myPublicIPv6Prefix",
                 "serviceEndpoints": [{"locations": ["eastus2", "usnorth"], "service": "Microsoft.Storage"}],
+                "upgradeDescription": {
+                    "deltaHealthPolicy": {
+                        "maxPercentDeltaUnhealthyApplications": 40,
+                        "maxPercentDeltaUnhealthyNodes": 20,
+                        "maxPercentUpgradeDomainDeltaUnhealthyNodes": 40,
+                    },
+                    "forceRestart": False,
+                    "healthPolicy": {"maxPercentUnhealthyApplications": 30, "maxPercentUnhealthyNodes": 10},
+                    "monitoringPolicy": {
+                        "healthCheckRetryTimeout": "00:55:00",
+                        "healthCheckStableDuration": "00:45:00",
+                        "healthCheckWaitDuration": "00:05:00",
+                        "upgradeDomainTimeout": "03:00:00",
+                        "upgradeTimeout": "12:00:00",
+                    },
+                },
                 "useCustomVnet": True,
                 "zonalResiliency": True,
                 "zonalUpdateMode": "Fast",
@@ -121,6 +142,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/servicefabricmanagedclusters/resource-manager/Microsoft.ServiceFabric/preview/2023-02-01-preview/examples/ManagedClusterPutOperation_example_max.json
+# x-ms-original-file: specification/servicefabricmanagedclusters/resource-manager/Microsoft.ServiceFabric/preview/2023-12-01-preview/examples/ManagedClusterPutOperation_example_max.json
 if __name__ == "__main__":
     main()

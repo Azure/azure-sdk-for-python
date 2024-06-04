@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,17 +9,18 @@
 import sys
 from typing import Any, Callable, Dict, Optional, TypeVar
 
+from azure.core import MatchConditions
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
+    ResourceModifiedError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
@@ -97,7 +98,7 @@ class EntityOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_entity_get_request(
+        _request = build_entity_get_request(
             entity_name=entity_name,
             enrich=enrich,
             api_version=self._config.api_version,
@@ -107,16 +108,18 @@ class EntityOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ServiceBusManagementError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -124,12 +127,20 @@ class EntityOperations:
         deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def put(self, entity_name: str, request_body: JSON, *, if_match: Optional[str] = None, **kwargs: Any) -> JSON:
+    async def put(
+        self,
+        entity_name: str,
+        request_body: JSON,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> JSON:
         """Create or update a queue or topic at the provided entityName.
 
         :param entity_name: The name of the queue or topic relative to the Service Bus namespace.
@@ -137,12 +148,11 @@ class EntityOperations:
         :type entity_name: str
         :param request_body: Parameters required to make or edit a queue or topic. Required.
         :type request_body: JSON
-        :keyword if_match: Match condition for an entity to be updated. If specified and a matching
-         entity is not found, an error will be raised. To force an unconditional update, set to the
-         wildcard character (*). If not specified, an insert will be performed when no existing entity
-         is found to update and a replace will be performed if an existing entity is found. Default
-         value is None.
-        :paramtype if_match: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: JSON
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -153,6 +163,12 @@ class EntityOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -163,9 +179,10 @@ class EntityOperations:
 
         _content = self._serialize.body(request_body, "object")
 
-        request = build_entity_put_request(
+        _request = build_entity_put_request(
             entity_name=entity_name,
-            if_match=if_match,
+            etag=etag,
+            match_condition=match_condition,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -175,16 +192,18 @@ class EntityOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ServiceBusManagementError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -226,7 +245,7 @@ class EntityOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_entity_delete_request(
+        _request = build_entity_delete_request(
             entity_name=entity_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -235,16 +254,18 @@ class EntityOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ServiceBusManagementError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -252,12 +273,12 @@ class EntityOperations:
         deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
 
-class ServiceBusManagementClientOperationsMixin(ServiceBusManagementClientMixinABC):
+class ServiceBusManagementClientOperationsMixin(ServiceBusManagementClientMixinABC):  # pylint: disable=name-too-long
     @distributed_trace_async
     async def list_subscriptions(self, topic_name: str, *, skip: int = 0, top: int = 100, **kwargs: Any) -> JSON:
         """Get subscriptions.
@@ -287,7 +308,7 @@ class ServiceBusManagementClientOperationsMixin(ServiceBusManagementClientMixinA
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_service_bus_management_list_subscriptions_request(
+        _request = build_service_bus_management_list_subscriptions_request(
             topic_name=topic_name,
             skip=skip,
             top=top,
@@ -298,16 +319,18 @@ class ServiceBusManagementClientOperationsMixin(ServiceBusManagementClientMixinA
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ServiceBusManagementError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -315,9 +338,9 @@ class ServiceBusManagementClientOperationsMixin(ServiceBusManagementClientMixinA
         deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def list_rules(
@@ -352,7 +375,7 @@ class ServiceBusManagementClientOperationsMixin(ServiceBusManagementClientMixinA
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_service_bus_management_list_rules_request(
+        _request = build_service_bus_management_list_rules_request(
             topic_name=topic_name,
             subscription_name=subscription_name,
             skip=skip,
@@ -364,16 +387,18 @@ class ServiceBusManagementClientOperationsMixin(ServiceBusManagementClientMixinA
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ServiceBusManagementError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -381,9 +406,9 @@ class ServiceBusManagementClientOperationsMixin(ServiceBusManagementClientMixinA
         deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def list_entities(self, entity_type: str, *, skip: int = 0, top: int = 100, **kwargs: Any) -> JSON:
@@ -415,7 +440,7 @@ class ServiceBusManagementClientOperationsMixin(ServiceBusManagementClientMixinA
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_service_bus_management_list_entities_request(
+        _request = build_service_bus_management_list_entities_request(
             entity_type=entity_type,
             skip=skip,
             top=top,
@@ -426,16 +451,18 @@ class ServiceBusManagementClientOperationsMixin(ServiceBusManagementClientMixinA
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ServiceBusManagementError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -443,9 +470,9 @@ class ServiceBusManagementClientOperationsMixin(ServiceBusManagementClientMixinA
         deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
 
 class SubscriptionOperations:
@@ -496,7 +523,7 @@ class SubscriptionOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_subscription_get_request(
+        _request = build_subscription_get_request(
             topic_name=topic_name,
             subscription_name=subscription_name,
             enrich=enrich,
@@ -507,16 +534,18 @@ class SubscriptionOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ServiceBusManagementError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -524,9 +553,9 @@ class SubscriptionOperations:
         deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def put(
@@ -535,7 +564,8 @@ class SubscriptionOperations:
         subscription_name: str,
         request_body: JSON,
         *,
-        if_match: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> JSON:
         """Create or update a subscription.
@@ -546,12 +576,11 @@ class SubscriptionOperations:
         :type subscription_name: str
         :param request_body: Parameters required to make or edit a subscription. Required.
         :type request_body: JSON
-        :keyword if_match: Match condition for an entity to be updated. If specified and a matching
-         entity is not found, an error will be raised. To force an unconditional update, set to the
-         wildcard character (*). If not specified, an insert will be performed when no existing entity
-         is found to update and a replace will be performed if an existing entity is found. Default
-         value is None.
-        :paramtype if_match: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: JSON
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -562,6 +591,12 @@ class SubscriptionOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -572,10 +607,11 @@ class SubscriptionOperations:
 
         _content = self._serialize.body(request_body, "object")
 
-        request = build_subscription_put_request(
+        _request = build_subscription_put_request(
             topic_name=topic_name,
             subscription_name=subscription_name,
-            if_match=if_match,
+            etag=etag,
+            match_condition=match_condition,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -585,16 +621,18 @@ class SubscriptionOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ServiceBusManagementError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -637,7 +675,7 @@ class SubscriptionOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_subscription_delete_request(
+        _request = build_subscription_delete_request(
             topic_name=topic_name,
             subscription_name=subscription_name,
             api_version=self._config.api_version,
@@ -647,16 +685,18 @@ class SubscriptionOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ServiceBusManagementError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -664,9 +704,9 @@ class SubscriptionOperations:
         deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
 
 class RuleOperations:
@@ -721,7 +761,7 @@ class RuleOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_rule_get_request(
+        _request = build_rule_get_request(
             topic_name=topic_name,
             subscription_name=subscription_name,
             rule_name=rule_name,
@@ -733,16 +773,18 @@ class RuleOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ServiceBusManagementError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -750,9 +792,9 @@ class RuleOperations:
         deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def put(
@@ -762,7 +804,8 @@ class RuleOperations:
         rule_name: str,
         request_body: JSON,
         *,
-        if_match: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> JSON:
         """Create or update a rule.
@@ -775,12 +818,11 @@ class RuleOperations:
         :type rule_name: str
         :param request_body: Parameters required to make or edit a rule. Required.
         :type request_body: JSON
-        :keyword if_match: Match condition for an entity to be updated. If specified and a matching
-         entity is not found, an error will be raised. To force an unconditional update, set to the
-         wildcard character (*). If not specified, an insert will be performed when no existing entity
-         is found to update and a replace will be performed if an existing entity is found. Default
-         value is None.
-        :paramtype if_match: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: JSON
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -791,6 +833,12 @@ class RuleOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -801,11 +849,12 @@ class RuleOperations:
 
         _content = self._serialize.body(request_body, "object")
 
-        request = build_rule_put_request(
+        _request = build_rule_put_request(
             topic_name=topic_name,
             subscription_name=subscription_name,
             rule_name=rule_name,
-            if_match=if_match,
+            etag=etag,
+            match_condition=match_condition,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -815,16 +864,18 @@ class RuleOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ServiceBusManagementError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -869,7 +920,7 @@ class RuleOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_rule_delete_request(
+        _request = build_rule_delete_request(
             topic_name=topic_name,
             subscription_name=subscription_name,
             rule_name=rule_name,
@@ -880,16 +931,18 @@ class RuleOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ServiceBusManagementError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -897,9 +950,9 @@ class RuleOperations:
         deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
 
 class NamespaceOperations:
@@ -944,7 +997,7 @@ class NamespaceOperations:
 
         cls: ClsType[_models.NamespacePropertiesEntry] = kwargs.pop("cls", None)
 
-        request = build_namespace_get_request(
+        _request = build_namespace_get_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -952,16 +1005,18 @@ class NamespaceOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ServiceBusManagementError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -969,6 +1024,6 @@ class NamespaceOperations:
         deserialized = self._deserialize("NamespacePropertiesEntry", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore

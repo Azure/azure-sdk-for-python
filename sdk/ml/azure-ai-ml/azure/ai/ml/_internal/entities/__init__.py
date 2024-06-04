@@ -4,7 +4,7 @@
 from ._input_outputs import InternalInput
 from .command import Command, Distributed
 from .component import InternalComponent
-from .node import Ae365exepool, DataTransfer, HDInsight, Hemera, InternalBaseNode, Pipeline, Starlite
+from .node import Ae365exepool, AetherBridge, DataTransfer, HDInsight, Hemera, InternalBaseNode, Pipeline, Starlite
 from .parallel import Parallel
 from .runsettings import (
     AISuperComputerConfiguration,
@@ -23,6 +23,7 @@ __all__ = [
     "InternalBaseNode",
     "DataTransfer",
     "Ae365exepool",
+    "AetherBridge",
     "HDInsight",
     "Parallel",
     "Starlite",

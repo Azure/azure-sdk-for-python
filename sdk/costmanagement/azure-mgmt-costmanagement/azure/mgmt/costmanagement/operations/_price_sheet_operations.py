@@ -74,7 +74,7 @@ def build_download_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_download_by_billing_profile_request(  # pylint: disable=name-too-long
+def build_download_by_billing_profile_request(
     billing_account_name: str, billing_profile_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})

@@ -14,6 +14,7 @@ This library allows you to send data from virtually any source to supported buil
 
 |**File Name**|**Description**|
 |-------------|---------------|
+|[sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async]|Authenticate a client with the public cloud and a sovereign cloud.|
 |[sample_send_small_logs.py][sample_send_small_logs] and [sample_send_small_logs_async.py][sample_send_small_logs_async]|Send a small number of logs to a Log Analytics workspace.|
 |[sample_custom_error_callback.py][sample_custom_error_callback] and [sample_custom_error_callback_async.py][sample_custom_error_callback_async]|Use error callbacks to customize how errors are handled during upload. |
 |[sample_upload_file_contents.py][sample_upload_file_contents] and [sample_upload_file_contents_async.py][sample_upload_file_contents_async]|Upload the contents of a file to a Log Analytics workspace.|
@@ -72,6 +73,8 @@ To learn more about Azure Monitor, see the [Azure Monitor service documentation]
 
 
 <!-- Sample links -->
+[sample_authentication]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-ingestion/samples/sample_authentication.py
+[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-ingestion/samples/async_samples/sample_authentication_async.py
 [sample_send_small_logs]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-ingestion/samples/sample_send_small_logs.py
 [sample_send_small_logs_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-ingestion/samples/async_samples/sample_send_small_logs_async.py
 [sample_custom_error_callback]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-ingestion/samples/sample_custom_error_callback.py

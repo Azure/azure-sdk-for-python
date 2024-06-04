@@ -1,0 +1,6 @@
+{
+    "AssetsRepo": "Azure/azure-sdk-assets",
+    "AssetsRepoPrefixPath": "python",
+    "TagPrefix": "python/confluent/azure-mgmt-confluent",
+    "Tag": "python/confluent/azure-mgmt-confluent_4eb7f31513"
+}

@@ -38,7 +38,7 @@ USAGE:
     1) AZURE_TENANT_ID - The ID of the service principal's tenant. Also called its 'directory' ID.
     2) AZURE_CLIENT_ID - The service principal's client ID. Also called its 'application' ID.
     3) AZURE_CLIENT_SECRET - One of the service principal's client secrets.
-    4) SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
+    4) SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
      which should follow the format: `<your-namespace>.servicebus.windows.net`
     5) SCHEMAREGISTRY_GROUP - The name of the schema group.
 
@@ -58,7 +58,7 @@ TENANT_ID=os.environ['AZURE_TENANT_ID']
 CLIENT_ID=os.environ['AZURE_CLIENT_ID']
 CLIENT_SECRET=os.environ['AZURE_CLIENT_SECRET']
 
-SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE=os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
+SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE=os.environ['SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE']
 GROUP_NAME=os.environ['SCHEMAREGISTRY_GROUP']
 SCHEMA_STRING = """
 {"namespace": "example.avro",

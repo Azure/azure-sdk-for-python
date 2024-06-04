@@ -19,13 +19,7 @@ from .operations import (
     ClusterExtensionTypeOperations,
     ClusterExtensionTypesOperations,
     ExtensionTypeVersionsOperations,
-    ExtensionsOperations,
-    FluxConfigOperationStatusOperations,
-    FluxConfigurationsOperations,
     LocationExtensionTypesOperations,
-    OperationStatusOperations,
-    Operations,
-    SourceControlConfigurationsOperations,
 )
 
 if TYPE_CHECKING:
@@ -33,7 +27,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class SourceControlConfigurationClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class SourceControlConfigurationClient:  # pylint: disable=client-accepts-api-version-keyword
     """KubernetesConfiguration Client.
 
     :ivar cluster_extension_type: ClusterExtensionTypeOperations operations
@@ -48,32 +42,15 @@ class SourceControlConfigurationClient:  # pylint: disable=client-accepts-api-ve
     :ivar location_extension_types: LocationExtensionTypesOperations operations
     :vartype location_extension_types:
      azure.mgmt.kubernetesconfiguration.v2022_01_15_preview.operations.LocationExtensionTypesOperations
-    :ivar extensions: ExtensionsOperations operations
-    :vartype extensions:
-     azure.mgmt.kubernetesconfiguration.v2022_01_15_preview.operations.ExtensionsOperations
-    :ivar operation_status: OperationStatusOperations operations
-    :vartype operation_status:
-     azure.mgmt.kubernetesconfiguration.v2022_01_15_preview.operations.OperationStatusOperations
-    :ivar flux_configurations: FluxConfigurationsOperations operations
-    :vartype flux_configurations:
-     azure.mgmt.kubernetesconfiguration.v2022_01_15_preview.operations.FluxConfigurationsOperations
-    :ivar flux_config_operation_status: FluxConfigOperationStatusOperations operations
-    :vartype flux_config_operation_status:
-     azure.mgmt.kubernetesconfiguration.v2022_01_15_preview.operations.FluxConfigOperationStatusOperations
-    :ivar source_control_configurations: SourceControlConfigurationsOperations operations
-    :vartype source_control_configurations:
-     azure.mgmt.kubernetesconfiguration.v2022_01_15_preview.operations.SourceControlConfigurationsOperations
-    :ivar operations: Operations operations
-    :vartype operations:
-     azure.mgmt.kubernetesconfiguration.v2022_01_15_preview.operations.Operations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-     Retry-After header is present.
+    :keyword api_version: Api Version. Default value is "2022-01-15-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -93,31 +70,17 @@ class SourceControlConfigurationClient:  # pylint: disable=client-accepts-api-ve
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.cluster_extension_type = ClusterExtensionTypeOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-15-preview"
         )
         self.cluster_extension_types = ClusterExtensionTypesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-15-preview"
         )
         self.extension_type_versions = ExtensionTypeVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-15-preview"
         )
         self.location_extension_types = LocationExtensionTypesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-15-preview"
         )
-        self.extensions = ExtensionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operation_status = OperationStatusOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.flux_configurations = FluxConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.flux_config_operation_status = FluxConfigOperationStatusOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.source_control_configurations = SourceControlConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

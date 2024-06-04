@@ -3,18 +3,18 @@
 # ---------------------------------------------------------
 # pylint: disable=protected-access
 import copy
+from typing import Optional
 
 import yaml
-from marshmallow import INCLUDE, fields, ValidationError, post_load, pre_load
+from marshmallow import INCLUDE, ValidationError, fields, post_load, pre_load
 
-from azure.ai.ml._schema import AnonymousEnvironmentSchema, CommandJobSchema
+from azure.ai.ml._schema import CommandJobSchema
 from azure.ai.ml._schema.core.fields import (
     ArmStr,
-    ArmVersionedStr,
     ComputeField,
+    EnvironmentField,
     FileRefField,
     NestedField,
-    RegistryStr,
     StringTransformedEnum,
     UnionField,
 )
@@ -29,6 +29,7 @@ _SCHEDULED_JOB_UPDATES_KEY = "scheduled_job_updates"
 
 
 class CreateJobFileRefField(FileRefField):
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def _serialize(self, value, attr, obj, **kwargs):
         """FileRefField does not support serialize.
 
@@ -65,8 +66,15 @@ class BaseCreateJobSchema(BaseJobSchema):
         required=True,
     )
 
-    def _get_job_instance_for_remote_job(self, id, data, **kwargs):  # pylint: disable=redefined-builtin
-        """Get a job instance to store updates for remote job."""
+    # pylint: disable-next=docstring-missing-param
+    def _get_job_instance_for_remote_job(
+        self, id: Optional[str], data: Optional[dict], **kwargs
+    ) -> "Job":  # pylint: disable=redefined-builtin
+        """Get a job instance to store updates for remote job.
+
+        :return: The remote job
+        :rtype: Job
+        """
         from azure.ai.ml.entities import Job
 
         data = {} if data is None else data
@@ -129,23 +137,10 @@ class CommandCreateJobSchema(BaseCreateJobSchema, CommandJobSchema):
         # code and command can not be set during runtime
         exclude = ["code", "command"]
 
-    environment = UnionField(
-        [
-            NestedField(AnonymousEnvironmentSchema),
-            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
-        ],
-    )
+    environment = EnvironmentField()
 
 
 class SparkCreateJobSchema(BaseCreateJobSchema):
     type = StringTransformedEnum(allowed_values=[JobType.SPARK])
     conf = fields.Dict(keys=fields.Str(), values=fields.Raw())
-    environment = UnionField(
-        [
-            NestedField(AnonymousEnvironmentSchema),
-            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
-        ],
-        allow_none=True,
-    )
+    environment = EnvironmentField(allow_none=True)

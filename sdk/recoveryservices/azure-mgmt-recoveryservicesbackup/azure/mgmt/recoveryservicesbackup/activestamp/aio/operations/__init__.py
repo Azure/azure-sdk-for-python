@@ -58,6 +58,9 @@ from ._security_pins_operations import SecurityPINsOperations
 from ._recovery_points_recommended_for_move_operations import RecoveryPointsRecommendedForMoveOperations
 from ._resource_guard_proxies_operations import ResourceGuardProxiesOperations
 from ._resource_guard_proxy_operations import ResourceGuardProxyOperations
+from ._fetch_tiering_cost_operations import FetchTieringCostOperations
+from ._get_tiering_cost_operation_result_operations import GetTieringCostOperationResultOperations
+from ._tiering_cost_operation_status_operations import TieringCostOperationStatusOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -114,6 +117,9 @@ __all__ = [
     "RecoveryPointsRecommendedForMoveOperations",
     "ResourceGuardProxiesOperations",
     "ResourceGuardProxyOperations",
+    "FetchTieringCostOperations",
+    "GetTieringCostOperationResultOperations",
+    "TieringCostOperationStatusOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

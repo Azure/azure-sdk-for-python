@@ -18,7 +18,6 @@ from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.pipeline import Pipeline, PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
 from ._helpers import TransportWrapper
 from ._api_versions import FormRecognizerApiVersion
 from ._models import (
@@ -29,8 +28,6 @@ from ._models import (
 from ._polling import FormTrainingPolling, CopyPolling
 from ._form_recognizer_client import FormRecognizerClient
 from ._form_base_client import FormRecognizerClientBase
-
-PipelineResponseType = HttpResponse
 
 
 class FormTrainingClient(FormRecognizerClientBase):
@@ -163,7 +160,7 @@ class FormTrainingClient(FormRecognizerClientBase):
                 ),
                 cls=lambda pipeline_response, _, response_headers: pipeline_response,
                 **kwargs
-            )  # type: PipelineResponseType
+            )
 
             return LROPoller(
                 self._client._client,
@@ -436,7 +433,7 @@ class FormTrainingClient(FormRecognizerClientBase):
                 **kwargs
             )
         except ValueError:
-            raise ValueError("Method 'begin_create_composed_model' is only available for API version V2_1 and up")
+            raise ValueError("Method 'begin_create_composed_model' is only available for API version V2_1 and up")  # pylint: disable=raise-missing-from
 
     def get_form_recognizer_client(self, **kwargs: Any) -> FormRecognizerClient:
         """Get an instance of a FormRecognizerClient from FormTrainingClient.

@@ -11,11 +11,8 @@ from ._models import (
     OnGroupDataMessageArgs,
     OnRejoinGroupFailedArgs,
     SendMessageError,
-    StartStoppingClientError,
-    StartClientError,
-    OpenWebSocketError,
-    StartNotStoppedClientError,
-    DisconnectedError,
+    OpenClientError,
+    AckMessageError,
 )
 
 from ._enums import WebPubSubDataType, WebPubSubProtocolType, CallbackType
@@ -31,9 +28,6 @@ __all__ = [
     "OnRejoinGroupFailedArgs",
     "CallbackType",
     "SendMessageError",
-    "StartStoppingClientError",
-    "StartNotStoppedClientError",
-    "StartClientError",
-    "OpenWebSocketError",
-    "DisconnectedError",
+    "OpenClientError",
+    "AckMessageError",
 ]

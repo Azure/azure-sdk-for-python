@@ -2,13 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from ....entities._job.job_resource_configuration import BaseProperty
 
 
 class PascalCaseProperty(BaseProperty):
-    _KEY_MAPPING = {}
+    _KEY_MAPPING: Dict[str, Any] = {}
 
     def items(self):
         result = []
@@ -19,7 +19,7 @@ class PascalCaseProperty(BaseProperty):
         return result
 
 
-class AISuperComputerStorageReferenceConfiguration(PascalCaseProperty):
+class AISuperComputerStorageReferenceConfiguration(PascalCaseProperty):  # pylint: disable=name-too-long
     _KEY_MAPPING = {
         "container_name": "ContainerName",
         "relative_path": "RelativePath",

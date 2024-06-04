@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.clusters.begin_delete(
+    client.clusters.begin_delete(
         resource_group_name="group1",
         private_cloud_name="cloud1",
         cluster_name="cluster1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/vmware/resource-manager/Microsoft.AVS/stable/2022-05-01/examples/Clusters_Delete.json
+# x-ms-original-file: specification/vmware/resource-manager/Microsoft.AVS/stable/2023-03-01/examples/Clusters_Delete.json
 if __name__ == "__main__":
     main()

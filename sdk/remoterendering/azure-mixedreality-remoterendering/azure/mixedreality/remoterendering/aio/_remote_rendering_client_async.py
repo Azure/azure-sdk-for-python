@@ -1,19 +1,21 @@
-# -------------------------------------------------------------------------
+# coding=utf-8
+# --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
 
 
-from typing import TYPE_CHECKING, Any, Callable, Union
+from typing import Any, Callable, Union
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AccessToken, AzureKeyCredential
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.polling import AsyncLROPoller
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.credentials_async import AsyncTokenCredential
 
-from .._api_version import RemoteRenderingApiVersion, validate_api_version
+from .._api_version import validate_api_version, DEFAULT_VERSION
 from .._generated.aio import RemoteRenderingRestClient
 from .._generated.models import (AssetConversion, AssetConversionInputSettings,
                                  AssetConversionOutputSettings,
@@ -31,12 +33,6 @@ from .._shared.aio.static_access_token_credential import \
 from .._shared.authentication_endpoint import construct_endpoint_url
 from .._version import SDK_MONIKER
 from ._polling_async import ConversionPollingAsync, SessionPollingAsync
-
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
-
-# pylint: disable=unsubscriptable-object
-
 
 class RemoteRenderingClient(object):
     """A client for the Azure Remote Rendering Service.
@@ -57,26 +53,31 @@ class RemoteRenderingClient(object):
     :param credential: Authentication for the Azure Remote
         Rendering account. Can be of the form of an AzureKeyCredential, AsyncTokenCredential or an AccessToken acquired
         from the Mixed Reality Secure Token Service (STS).
-    :type credential: Union[AsyncTokenCredential, AzureKeyCredential, AccessToken]
+    :type credential: Union[AzureKeyCredential, AsyncTokenCredential, AccessToken]
     :keyword api_version:
         The API version of the service to use for requests. It defaults to the latest service version.
         Setting to an older version may result in reduced feature compatibility.
-    :paramtype api_version: str or ~azure.mixedreality.remoterenderings.RemoteRenderingApiVersion
+    :type api_version: str or ~azure.mixedreality.remoterenderings.RemoteRenderingApiVersion
+    :keyword polling_interval:
+        Seconds to wait between each check, whether the session is ready yet.
+    :type polling_interval: int
+    :keyword authentication_endpoint_url:
+        Overwrite for the authentication endpoint. Usually using account_domain for the authentication domain is enough.
+        If used, specify the whole authentication url including the schema.
+    :type authentication_endpoint_url: str
     """
 
     def __init__(self,
                  endpoint: str,
                  account_id: str,
                  account_domain: str,
-                 credential: Union["AsyncTokenCredential", AzureKeyCredential, AccessToken],
+                 credential: Union[AzureKeyCredential, 'AsyncTokenCredential', AccessToken],
                  **kwargs) -> None:
 
         self._api_version = kwargs.pop(
-            "api_version", RemoteRenderingApiVersion.V2021_01_01
+            "api_version", DEFAULT_VERSION
         )
         validate_api_version(self._api_version)
-
-        self._account_id = account_id
 
         if not endpoint:
             raise ValueError("endpoint cannot be None")
@@ -90,21 +91,26 @@ class RemoteRenderingClient(object):
         if not credential:
             raise ValueError("credential cannot be None")
 
-        endpoint_url = kwargs.pop(
-            'authentication_endpoint_url', construct_endpoint_url(account_domain))  # type: str
+        self.polling_interval = kwargs.pop("polling_interval", 5)
+        endpoint_url = kwargs.pop('authentication_endpoint_url', construct_endpoint_url(account_domain))
+
+        cred: Any
 
         if isinstance(credential, AccessToken):
-            cred = StaticAccessTokenCredential(credential)   # type: AsyncTokenCredential
+            cred = StaticAccessTokenCredential(credential)
         elif isinstance(credential, AzureKeyCredential):
-            cred = MixedRealityAccountKeyCredential(
-                account_id=account_id, account_key=credential)
+            cred = MixedRealityAccountKeyCredential(account_id=account_id, account_key=credential)
         else:
             cred = credential
-            # otherwise assume it is a TokenCredential and simply pass it through
-        pipeline_credential = get_mixedreality_credential(
-            account_id=account_id, account_domain=account_domain, credential=cred, endpoint_url=endpoint_url)
 
-        self.polling_interval = kwargs.pop("polling_interval", 5)
+        pipeline_credential = get_mixedreality_credential(
+                                account_id=account_id,
+                                account_domain=account_domain,
+                                credential=cred,
+                                endpoint_url=endpoint_url)
+
+        if pipeline_credential is None:
+            raise ValueError("credential is not of type TokenCredential, AzureKeyCredential or AccessToken")
 
         authentication_policy = AsyncBearerTokenCredentialPolicy(
             pipeline_credential, endpoint_url + '/.default')
@@ -131,7 +137,7 @@ class RemoteRenderingClient(object):
             contain any combination of alphanumeric characters including hyphens and underscores, and cannot contain
             more than 256 characters.
         :param ~azure.mixedreality.remoterendering.AssetConversionInputSettings input_settings: Options for the
-            input of the conversion
+            input of the conversion.
         :param ~azure.mixedreality.remoterendering.AssetConversionOutputSettings output_settings: Options for the
             output of the conversion.
         :return: A poller for the created asset conversion
@@ -145,9 +151,11 @@ class RemoteRenderingClient(object):
                                                                               body=CreateAssetConversionSettings(
                                                                                   settings=settings),
                                                                               **kwargs)
+        deserialization_method: Callable[[Any], Any] = lambda _: None
+
         return AsyncLROPoller(client=self._client,
                               initial_response=initial_state,
-                              deserialization_callback=lambda: None,
+                              deserialization_callback=deserialization_method,
                               polling_method=polling_method)
 
     @distributed_trace_async
@@ -163,22 +171,19 @@ class RemoteRenderingClient(object):
                                                                   conversion_id=conversion_id,
                                                                   **kwargs)
 
-    async def get_asset_conversion_poller(self, **kwargs):
-        # type: (Any) -> AsyncLROPoller[AssetConversion]
+    @distributed_trace_async
+    async def get_asset_conversion_poller(self, **kwargs) -> AsyncLROPoller[AssetConversion]: # pylint:disable=docstring-keyword-should-match-keyword-only
         """
         Returns a poller for an existing conversion by conversion id or a continuation token retrieved from a previous
         poller.
-        :keyword conversion_id: The conversion id of a previously created conversion.
-        :paramtype conversion_id: str
-        :keyword continuation_token:
-            A continuation token retrieved from a poller of a conversion.
-        :paramtype continuation_token: str
+        :keyword str conversion_id: The conversion id of a previously created conversion.
+        :keyword str continuation_token: A continuation token retrieved from a poller of a conversion.
         :return: A poller for the created asset conversion
         :rtype: ~azure.core.polling.AsyncLROPoller[AssetConversion]
         """
 
-        conversion_id = kwargs.pop("conversion_id", None)  # type: Union[str,None]
-        continuation_token = kwargs.pop("continuation_token", None)  # type: Union[str,None]
+        conversion_id: Union[str,None] = kwargs.pop("conversion_id", None)
+        continuation_token: Union[str,None] = kwargs.pop("continuation_token", None)
 
         if conversion_id is None and continuation_token is None:
             raise ValueError(
@@ -201,19 +206,21 @@ class RemoteRenderingClient(object):
                 conversion_id=conversion_id,
                 **kwargs)
 
+        deserialization_method: Callable[[Any], Any] = lambda _: None
+
         return AsyncLROPoller(client=self._client,
                               initial_response=initial_state,
-                              deserialization_callback=lambda: None,
+                              deserialization_callback=deserialization_method,
                               polling_method=polling_method)
 
     @distributed_trace_async
-    async def list_asset_conversions(self, **kwargs):
-        # type: (...) -> AsyncItemPaged[AssetConversion]
+    async def list_asset_conversions(self, **kwargs) -> AsyncItemPaged[AssetConversion]:
         """
-        Gets conversions for the remote rendering account.
+        Returns list of conversions for the remote rendering account.
         :rtype: AsyncItemPaged[AssetConversion]
+        :return: List of conversions for the remote rendering account.
         """
-        return self._client.remote_rendering.list_conversions(account_id=self._account_id, **kwargs)  # type: ignore
+        return self._client.remote_rendering.list_conversions(account_id=self._account_id, **kwargs) # type: ignore
 
     @distributed_trace_async
     async def begin_rendering_session(self,
@@ -243,9 +250,12 @@ class RemoteRenderingClient(object):
                                                                            session_id=session_id,
                                                                            body=settings,
                                                                            **kwargs)
+
+        deserialization_method: Callable[[Any], Any] = lambda _: None
+
         return AsyncLROPoller(client=self._client,
                               initial_response=initial_state,
-                              deserialization_callback=lambda: None,
+                              deserialization_callback=deserialization_method,
                               polling_method=polling_method)
 
     @distributed_trace_async
@@ -258,22 +268,19 @@ class RemoteRenderingClient(object):
         '''
         return await self._client.remote_rendering.get_session(self._account_id, session_id=session_id, **kwargs)
 
-    async def get_rendering_session_poller(self, **kwargs):
-        # type: (Any) -> AsyncLROPoller[RenderingSession]
+    @distributed_trace_async
+    async def get_rendering_session_poller(self, **kwargs) -> AsyncLROPoller[RenderingSession]: # pylint:disable=docstring-keyword-should-match-keyword-only
         """
         Returns a poller for an existing rendering session by session id or a continuation token retrieved from a
         previous poller.
-        :keyword session_id: The conversion id of a previously created conversion.
-        :paramtype session_id: str
-        :keyword continuation_token:
-            A continuation token retrieved from a poller of a session.
-        :paramtype continuation_token: str
+        :keyword str session_id: The conversion id of a previously created conversion.
+        :keyword str continuation_token: A continuation token retrieved from a poller of a session.
         :return: A poller for the created rendering session
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mixedreality.remoterendering.RenderingSession]
         """
 
-        session_id = kwargs.pop("session_id", None)  # type: Union[str,None]
-        continuation_token = kwargs.pop("continuation_token", None)  # type: Union[str,None]
+        session_id: Union[str,None] = kwargs.pop("session_id", None)
+        continuation_token: Union[str,None] = kwargs.pop("continuation_token", None)
 
         if session_id is None and continuation_token is None:
             raise ValueError(
@@ -295,25 +302,25 @@ class RemoteRenderingClient(object):
                 session_id=session_id,
                 **kwargs)
 
+        deserialization_method: Callable[[Any], Any] = lambda _: None
+
         return AsyncLROPoller(client=self._client,
                               initial_response=initial_state,
-                              deserialization_callback=lambda: None,
+                              deserialization_callback=deserialization_method,
                               polling_method=polling_method)
 
     @distributed_trace_async
-    async def update_rendering_session(self,
-                                       session_id: str,
-                                       **kwargs) -> RenderingSession:
+    async def update_rendering_session(self, session_id: str, **kwargs) -> RenderingSession: # pylint:disable=docstring-keyword-should-match-keyword-only
         """
         Updates an already existing rendering session.
         :param str session_id: The identifier of the session to be updated.
-        :keyword lease_time_minutes: The new lease time of the rendering session. Has to be strictly larger than
+        :keyword int lease_time_minutes: The new lease time of the rendering session. Has to be strictly larger than
             the previous lease time.
-        :paramtype lease_time_minutes: int
+        :return: The updated rendering session
         :rtype: ~azure.mixedreality.remoterendering.models.RenderingSession
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        lease_time_minutes = kwargs.pop("lease_time_minutes", None)  # type: Union[int,None]
+        lease_time_minutes: Union[int,None] = kwargs.pop("lease_time_minutes", None)
         if lease_time_minutes is not None:
             return await self._client.remote_rendering.update_session(account_id=self._account_id,
                                                                       session_id=session_id,
@@ -338,14 +345,14 @@ class RemoteRenderingClient(object):
     @distributed_trace_async
     async def list_rendering_sessions(
             self,
-            **kwargs):
-        # type: (...) -> AsyncItemPaged[RenderingSession]
+            **kwargs) -> AsyncItemPaged[RenderingSession]:
         """
-        List rendering sessions in the 'Ready' or 'Starting' state. Does not return stopped or failed rendering
-            sessions.
+        Returns list of rendering sessions in the 'Ready' or 'Starting' state.
+        Does not return stopped or failed rendering sessions.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mixedreality.remoterendering.RenderingSession]
+        :return: List of rendering sessions in the 'Ready' or 'Starting' state.
         """
-        return self._client.remote_rendering.list_sessions(account_id=self._account_id, **kwargs)  # type: ignore
+        return self._client.remote_rendering.list_sessions(account_id=self._account_id, **kwargs) # type: ignore
 
     async def close(self) -> None:
         await self._client.close()

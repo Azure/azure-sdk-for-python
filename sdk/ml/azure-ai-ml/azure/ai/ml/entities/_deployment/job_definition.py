@@ -33,14 +33,16 @@ class JobDefinition:
 
     def __init__(
         self,
-        type: str,  # pylint: disable=redefined-builtin
+        # pylint: disable=redefined-builtin
+        type: str,
         name: Optional[str] = None,
         job: Optional[Union[Job, str]] = None,
         component: Optional[Union[Component, str]] = None,
         settings: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, Any]] = None,
-        **kwargs,  # pylint: disable=unused-argument
+        # pylint: disable=unused-argument
+        **kwargs: Any,
     ):
         self.type = type
         self.name = name
@@ -52,4 +54,5 @@ class JobDefinition:
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return JobDefinitionSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = JobDefinitionSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res

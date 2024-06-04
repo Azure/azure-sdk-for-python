@@ -1,11 +1,12 @@
 trigger: none
 
-stages:
-  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+extends:
+    template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       BuildTargetingString: azure-containerregistry
       ServiceDirectory: containerregistry
       SupportedClouds: 'Public,UsGov,China'
+      TestTimeoutInMinutes: 240
       CloudConfig:
         Public:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)

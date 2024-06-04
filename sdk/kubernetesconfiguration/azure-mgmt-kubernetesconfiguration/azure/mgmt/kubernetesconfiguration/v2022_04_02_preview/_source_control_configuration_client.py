@@ -75,18 +75,20 @@ class SourceControlConfigurationClient:  # pylint: disable=client-accepts-api-ve
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.extensions = ExtensionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.extensions = ExtensionsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2022-04-02-preview"
+        )
         self.operation_status = OperationStatusOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-04-02-preview"
         )
         self.private_link_scopes = PrivateLinkScopesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-04-02-preview"
         )
         self.private_link_resources = PrivateLinkResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-04-02-preview"
         )
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-04-02-preview"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:

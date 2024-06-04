@@ -5,9 +5,9 @@
 # --------------------------------------------------------------------------
 import pytest
 import asyncio
-from datetime import datetime
+from datetime import datetime, timezone
 from devtools_testutils import AzureRecordedTestCase, is_live
-from msrest.serialization import TZ_UTC
+from devtools_testutils.aio import recorded_by_proxy_async
 from uuid import uuid4
 
 from azure.communication.identity import CommunicationIdentityClient
@@ -52,7 +52,7 @@ class TestChatClientAsync(AzureRecordedTestCase):
         # create chat thread
         topic = "test topic"
         share_history_time = datetime.utcnow()
-        share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
+        share_history_time = share_history_time.replace(tzinfo=timezone.utc)
         participants = [ChatParticipant(
             identifier=self.user,
             display_name='name',
@@ -62,9 +62,10 @@ class TestChatClientAsync(AzureRecordedTestCase):
                                                                               thread_participants=participants,
                                                                               idempotency_token=idempotency_token)
         self.thread_id = create_chat_thread_result.chat_thread.id
-
+    
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_create_chat_thread_async(self):
         async with self.chat_client:
             await self._create_thread()
@@ -76,6 +77,7 @@ class TestChatClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_create_chat_thread_w_no_participants_async(self):
         async with self.chat_client:
             # create chat thread
@@ -83,14 +85,15 @@ class TestChatClientAsync(AzureRecordedTestCase):
             create_chat_thread_result = await self.chat_client.create_chat_thread(topic)
 
             assert create_chat_thread_result.chat_thread is not None
-            assert create_chat_thread_result.errors is None
+            assert len(create_chat_thread_result.errors) == 0
 
             # delete created users and chat threads
             if not self.is_playback():
                 await self.chat_client.delete_chat_thread(create_chat_thread_result.chat_thread.id)
-
+    
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_create_chat_thread_w_repeatability_request_id_async(self):
         async with self.chat_client:
             idempotency_token = str(uuid4())
@@ -109,9 +112,9 @@ class TestChatClientAsync(AzureRecordedTestCase):
             if not self.is_playback():
                 await self.chat_client.delete_chat_thread(self.thread_id)
 
-
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_list_chat_threads(self):
         async with self.chat_client:
             await self._create_thread()
@@ -131,6 +134,7 @@ class TestChatClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_get_thread_client(self):
         async with self.chat_client:
             await self._create_thread()
@@ -143,6 +147,7 @@ class TestChatClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_delete_chat_thread(self):
         async with self.chat_client:
             await self._create_thread()

@@ -26,24 +26,24 @@ from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 def main():
     client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="1234ABCD-0A1B-1234-5678-123456ABCDEF",
     )
 
     response = client.network_devices.begin_update(
-        resource_group_name="resourceGroupName",
-        network_device_name="networkDeviceName",
+        resource_group_name="example-rg",
+        network_device_name="example-device",
         body={
             "properties": {
-                "annotation": "null",
-                "hostName": "networkDeviceName",
-                "serialNumber": "Arista;DCS-7280PR3-24;12.05;JPE21330382",
+                "annotation": "annotation",
+                "hostName": "NFA-Device",
+                "serialNumber": "Vendor;DCS-7280XXX-24;12.05;JPE2111XXXX",
             },
-            "tags": {"keyID": "keyValue"},
+            "tags": {"keyID": "KeyValue"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/NetworkDevices_Update_MaximumSet_Gen.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/stable/2023-06-15/examples/NetworkDevices_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

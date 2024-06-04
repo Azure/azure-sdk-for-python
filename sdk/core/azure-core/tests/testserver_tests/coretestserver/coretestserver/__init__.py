@@ -6,6 +6,7 @@
 # -------------------------------------------------------------------------
 
 from flask import Flask, Response
+import os
 from .test_routes import (
     basic_api,
     encoding_api,
@@ -36,4 +37,7 @@ def latin_1_charset_utf8():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    debugArg = True
+    if os.getenv("TF_BUILD", None):
+        debugArg = False
+    app.run(debug=debugArg)

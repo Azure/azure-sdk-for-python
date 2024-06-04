@@ -1,10 +1,19 @@
 trigger: none
 
-stages:
-  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+parameters:
+  - name: Services
+    type: object
+    default:
+      - azure-appconfiguration
+      - azure-appconfiguration-provider
+
+extends:
+    template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: appconfiguration
+      Packages: ${{ parameters.Services }}
       SupportedClouds: 'Public,UsGov,China'
+      TestTimeoutInMinutes: 240
       CloudConfig:
         Public:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)

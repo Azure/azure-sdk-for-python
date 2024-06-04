@@ -26,15 +26,15 @@ from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 def main():
     client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="xxxxxx",
+        subscription_id="1234ABCD-0A1B-1234-5678-123456ABCDEF",
     )
 
     client.ip_prefixes.begin_delete(
-        resource_group_name="rgIpPrefixLists",
+        resource_group_name="example-rg",
         ip_prefix_name="example-ipPrefix",
     ).result()
 
 
-# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/IpPrefixes_Delete_MaximumSet_Gen.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/stable/2023-06-15/examples/IpPrefixes_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -10,11 +10,34 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
+
+    INTERNAL = "Internal"
+
+
+class AsyncOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the operation."""
+
+    REQUESTING = "Requesting"
+    EXECUTING = "Executing"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+
+
 class AzureBareMetalHardwareTypeNamesEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Name of the hardware type (vendor and/or their product name)."""
 
     CISCO_UCS = "Cisco_UCS"
     HPE = "HPE"
+    SDFLEX = "SDFLEX"
+
+
+class AzureBareMetalInstanceForcePowerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether to force restart by shutting all processes."""
+
+    ACTIVE = "active"
+    INACTIVE = "inactive"
 
 
 class AzureBareMetalInstancePowerStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -29,7 +52,7 @@ class AzureBareMetalInstancePowerStateEnum(str, Enum, metaclass=CaseInsensitiveE
 
 
 class AzureBareMetalInstanceSizeNamesEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the AzureBareMetal instance SKU."""
+    """Specifies the Azure Bare Metal Instance SKU."""
 
     S72_M = "S72m"
     S144_M = "S144m"
@@ -56,6 +79,7 @@ class AzureBareMetalInstanceSizeNamesEnum(str, Enum, metaclass=CaseInsensitiveEn
     S448_OO = "S448oo"
     S448_OOM = "S448oom"
     S448_OOO = "S448ooo"
+    S448_SE = "S448se"
     S576_M = "S576m"
     S576_XM = "S576xm"
     S672 = "S672"
@@ -95,3 +119,26 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
+
+
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is "user,system".
+    """
+
+    USER = "user"
+    SYSTEM = "system"
+    USER_SYSTEM = "user,system"
+
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of provisioning of the AzureBareMetalStorageInstance."""
+
+    ACCEPTED = "Accepted"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+    DELETING = "Deleting"
+    CANCELED = "Canceled"
+    MIGRATING = "Migrating"

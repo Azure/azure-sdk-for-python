@@ -6,29 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ChatMessageType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The chat message type.
-    """
+class ChatAttachmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of attachment."""
+
+    IMAGE = "image"
+    FILE = "file"
+
+
+class ChatMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The chat message type."""
 
     TEXT = "text"
     HTML = "html"
@@ -36,10 +26,20 @@ class ChatMessageType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PARTICIPANT_ADDED = "participantAdded"
     PARTICIPANT_REMOVED = "participantRemoved"
 
-class CommunicationCloudEnvironmentModel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The cloud that the identifier belongs to.
-    """
+
+class CommunicationCloudEnvironmentModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The cloud that the identifier belongs to."""
 
     PUBLIC = "public"
     DOD = "dod"
     GCCH = "gcch"
+
+
+class CommunicationIdentifierModelKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The identifier kind, for example 'communicationUser' or 'phoneNumber'."""
+
+    UNKNOWN = "unknown"
+    COMMUNICATION_USER = "communicationUser"
+    PHONE_NUMBER = "phoneNumber"
+    MICROSOFT_TEAMS_USER = "microsoftTeamsUser"
+    MICROSOFT_TEAMS_APP = "microsoftTeamsApp"

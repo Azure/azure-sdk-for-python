@@ -28,6 +28,8 @@ class _SECRET_SCHEMA(ct.Structure):
         ("flags", ct.c_uint),
         ("attributes", _SECRET_SCHEMA_ATTRIBUTE * 2),
     ]
+
+
 _PSECRET_SCHEMA = ct.POINTER(_SECRET_SCHEMA)
 
 
@@ -60,8 +62,8 @@ def _get_refresh_token(service_name, account_name):
     pschema = _PSECRET_SCHEMA(schema)
     ct.memset(pschema, 0, ct.sizeof(schema))
     schema.name = _c_str("org.freedesktop.Secret.Generic")  # pylint: disable=attribute-defined-outside-init
-    schema.flags = 2    # pylint: disable=attribute-defined-outside-init
-    schema.attributes = pattributes # pylint: disable=attribute-defined-outside-init
+    schema.flags = 2  # pylint: disable=attribute-defined-outside-init
+    schema.attributes = pattributes  # pylint: disable=attribute-defined-outside-init
     p_str = _libsecret.secret_password_lookup_sync(
         pschema,
         None,

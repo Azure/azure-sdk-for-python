@@ -26,17 +26,16 @@ from azure.mgmt.storagemover import StorageMoverMgmtClient
 def main():
     client = StorageMoverMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="11111111-2222-3333-4444-555555555555",
+        subscription_id="60bcfc77-6589-4da2-b7fd-f9ec9322cf95",
     )
 
-    response = client.agents.begin_delete(
+    client.agents.begin_delete(
         resource_group_name="examples-rg",
         storage_mover_name="examples-storageMoverName",
         agent_name="examples-agentName",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/storagemover/resource-manager/Microsoft.StorageMover/stable/2023-03-01/examples/Agents_Delete.json
+# x-ms-original-file: specification/storagemover/resource-manager/Microsoft.StorageMover/stable/2023-10-01/examples/Agents_Delete.json
 if __name__ == "__main__":
     main()

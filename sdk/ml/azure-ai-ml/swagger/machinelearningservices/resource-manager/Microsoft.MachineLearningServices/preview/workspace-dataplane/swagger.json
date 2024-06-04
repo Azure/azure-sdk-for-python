@@ -1,0 +1,659 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Azure Machine Learning Service",
+      "version": "2023-06-01-preview"
+    },
+    "paths": {
+        "/rp/workspaces/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/join/{projectWorkspaceName}": {
+            "put": {
+                "tags": [
+                    "Workspaces"
+                ],
+                "summary": "Create project workspace under workspaceHub's default resource group",
+                "operationId": "Workspaces_HubJoin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+                    },
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+                    },
+                    {
+                        "$ref": "#/parameters/WorkspaceNameParameter"
+                    },
+                    {
+                        "in": "path",
+                        "name": "projectWorkspaceName",
+                        "description": "Name of the project workspace",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Workspace"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The request was successful; the request was well-formed and received properly.",
+                        "schema": {
+                            "$ref": "#/definitions/Workspace"
+                        }
+                    },
+                    "202": {
+                        "description": "Accepted",
+                        "headers": {
+                            "Location": {
+                                "description": "URI to poll for asynchronous operation result.",
+                                "type": "string"
+                            },
+                            "Retry-After": {
+                                "description": "Duration the client should wait between requests, in seconds.",
+                                "type": "integer",
+                                "format": "int32",
+                                "maximum": 600,
+                                "minimum": 10
+                            }
+                        }
+                    }
+                },
+                "x-ms-long-running-operation": true,
+                "x-ms-long-running-operation-options": {
+                    "final-state-via": "location"
+                }
+            }
+        }
+    },
+    "definitions": {
+        "ComputeRuntimeDto": {
+            "type": "object",
+            "properties": {
+                "sparkRuntimeVersion": {
+                    "type": "string"
+                }
+            }
+        },
+        "CosmosDbSettings": {
+            "type": "object",
+            "properties": {
+                "collectionsThroughput": {
+                    "format": "int32",
+                    "type": "integer"
+                }
+            }
+        },
+        "EncryptionProperty": {
+            "required": [
+                "keyVaultProperties",
+                "status"
+            ],
+            "type": "object",
+            "properties": {
+                "cosmosDbResourceId": {
+                    "description": "The byok cosmosdb account that customer brings to store customer's data\r\nwith encryption",
+                    "type": "string"
+                },
+                "identity": {
+                    "description": "Identity to be used with the keyVault",
+                    "$ref": "#/definitions/IdentityForCmk"
+                },
+                "keyVaultProperties": {
+                    "description": "KeyVault details to do the encryption",
+                    "$ref": "#/definitions/KeyVaultProperties"
+                },
+                "searchAccountResourceId": {
+                    "description": "The byok search account that customer brings to store customer's data\r\nwith encryption",
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/EncryptionStatus"
+                },
+                "storageAccountResourceId": {
+                    "description": "The byok storage account that customer brings to store customer's data\r\nwith encryption",
+                    "type": "string"
+                }
+            }
+        },
+        "EncryptionStatus": {
+            "enum": [
+                "Enabled",
+                "Disabled"
+            ],
+            "type": "string",
+            "x-ms-enum": {
+                "name": "EncryptionStatus",
+                "modelAsString": true
+            }
+        },
+        "FeatureStoreSettings": {
+            "type": "object",
+            "properties": {
+                "computeRuntime": {
+                    "$ref": "#/definitions/ComputeRuntimeDto"
+                },
+                "offlineStoreConnectionName": {
+                    "type": "string"
+                },
+                "onlineStoreConnectionName": {
+                    "type": "string"
+                }
+            }
+        },
+        "IdentityForCmk": {
+            "type": "object",
+            "properties": {
+                "userAssignedIdentity": {
+                    "description": "UserAssignedIdentity to be used to fetch the encryption key from keyVault",
+                    "type": "string"
+                }
+            }
+        },
+        "KeyVaultProperties": {
+            "required": [
+                "keyIdentifier",
+                "keyVaultArmId"
+            ],
+            "type": "object",
+            "properties": {
+                "identityClientId": {
+                    "description": "Currently, we support only SystemAssigned MSI.\r\nWe need this when we support UserAssignedIdentities",
+                    "type": "string"
+                },
+                "keyIdentifier": {
+                    "description": "KeyVault key identifier to encrypt the data",
+                    "minLength": 1,
+                    "pattern": "[a-zA-Z0-9_]",
+                    "type": "string"
+                },
+                "keyVaultArmId": {
+                    "description": "KeyVault Arm Id that contains the data encryption key",
+                    "minLength": 1,
+                    "pattern": "[a-zA-Z0-9_]",
+                    "type": "string"
+                }
+            }
+        },
+        "NotebookPreparationError": {
+            "type": "object",
+            "properties": {
+                "errorMessage": {
+                    "type": "string"
+                },
+                "statusCode": {
+                    "format": "int32",
+                    "type": "integer"
+                }
+            }
+        },
+        "NotebookResourceInfo": {
+            "type": "object",
+            "properties": {
+                "fqdn": {
+                    "type": "string"
+                },
+                "isPrivateLinkEnabled": {
+                    "type": "boolean"
+                },
+                "notebookPreparationError": {
+                    "description": "The error that occurs when preparing notebook.",
+                    "$ref": "#/definitions/NotebookPreparationError"
+                },
+                "resourceId": {
+                    "description": "the data plane resourceId that used to initialize notebook component",
+                    "type": "string"
+                }
+            }
+        },
+        "PrivateEndpointConnection": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/Resource"
+                }
+            ],
+            "properties": {
+                "identity": {
+                    "$ref": "../../../../../common-types/resource-management/v3/managedidentity.json#/definitions/ManagedServiceIdentity"
+                },
+                "location": {
+                    "description": "Same as workspace location.",
+                    "type": "string"
+                },
+                "properties": {
+                    "description": "Private endpoint connection properties.",
+                    "$ref": "#/definitions/PrivateEndpointConnectionProperties",
+                    "x-ms-client-flatten": true
+                },
+                "sku": {
+                    "description": "Optional. This field is required to be implemented by the RP because AML is supporting more than one tier",
+                    "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/Sku"
+                },
+                "tags": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "PrivateEndpointConnectionProperties": {
+            "description": "Private endpoint connection properties.",
+            "type": "object",
+            "properties": {
+                "privateEndpoint": {
+                    "$ref": "#/definitions/WorkspacePrivateEndpointResource"
+                },
+                "privateLinkServiceConnectionState": {
+                    "description": "The connection state.",
+                    "$ref": "#/definitions/PrivateLinkServiceConnectionState"
+                },
+                "provisioningState": {
+                    "$ref": "#/definitions/PrivateEndpointServiceConnectionStatus"
+                }
+            }
+        },
+        "PrivateEndpointServiceConnectionStatus": {
+            "description": "Connection status of the service consumer with the service provider\r\nPossible state transitions\r\nPending -> Approved (Service provider approves the connection request)\r\nPending -> Rejected (Service provider rejects the connection request)\r\nPending -> Disconnected (Service provider deletes the connection)\r\nApproved -> Rejected (Service provider rejects the approved connection)\r\nApproved -> Disconnected (Service provider deletes the connection)\r\nRejected -> Pending (Service consumer re-initiates the connection request that was rejected)\r\nRejected -> Disconnected (Service provider deletes the connection)",
+            "enum": [
+                "Approved",
+                "Pending",
+                "Rejected",
+                "Disconnected",
+                "Timeout"
+            ],
+            "type": "string",
+            "x-ms-enum": {
+                "name": "EndpointServiceConnectionStatus",
+                "modelAsString": true
+            }
+        },
+        "PrivateLinkServiceConnectionState": {
+            "type": "object",
+            "properties": {
+                "actionsRequired": {
+                    "description": "Some RP chose \"None\". Other RPs use this for region expansion.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "User-defined message that, per NRP doc, may be used for approval-related message.",
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/PrivateEndpointServiceConnectionStatus"
+                }
+            }
+        },
+        "ProvisioningState": {
+            "enum": [
+                "Unknown",
+                "Updating",
+                "Creating",
+                "Deleting",
+                "Succeeded",
+                "Failed",
+                "Canceled"
+            ],
+            "type": "string",
+            "x-ms-enum": {
+                "name": "ProvisioningState",
+                "modelAsString": true
+            }
+        },
+        "PublicNetworkAccessType": {
+            "enum": [
+                "Enabled",
+                "Disabled"
+            ],
+            "type": "string",
+            "x-ms-enum": {
+                "name": "PublicNetworkAccessType",
+                "modelAsString": true
+            }
+        },
+        "ServiceManagedResourcesSettings": {
+            "type": "object",
+            "properties": {
+                "cosmosDb": {
+                    "$ref": "#/definitions/CosmosDbSettings"
+                }
+            }
+        },
+        "SharedPrivateLinkResource": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "description": "Unique name of the private link",
+                    "type": "string"
+                },
+                "properties": {
+                    "$ref": "#/definitions/SharedPrivateLinkResourceProperty",
+                    "x-ms-client-flatten": true
+                }
+            }
+        },
+        "SharedPrivateLinkResourceProperty": {
+            "type": "object",
+            "properties": {
+                "groupId": {
+                    "description": "group id of the private link",
+                    "type": "string"
+                },
+                "privateLinkResourceId": {
+                    "description": "the resource id that private link links to",
+                    "type": "string"
+                },
+                "requestMessage": {
+                    "description": "Request message",
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/PrivateEndpointServiceConnectionStatus"
+                }
+            }
+        },
+        "Workspace": {
+            "required": [
+                "properties"
+            ],
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/Resource"
+                }
+            ],
+            "properties": {
+                "identity": {
+                    "$ref": "../../../../../common-types/resource-management/v3/managedidentity.json#/definitions/ManagedServiceIdentity"
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "properties": {
+                    "description": "Additional attributes of the entity.",
+                    "$ref": "#/definitions/WorkspaceProperties",
+                    "x-ms-client-flatten": true
+                },
+                "sku": {
+                    "description": "Optional. This field is required to be implemented by the RP because AML is supporting more than one tier",
+                    "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/Sku"
+                },
+                "tags": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "WorkspaceHubConfig": {
+            "type": "object",
+            "properties": {
+                "additionalWorkspaceStorageAccounts": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "defaultWorkspaceResourceGroup": {
+                    "type": "string"
+                }
+            }
+        },
+        "WorkspacePrivateEndpointResource": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "e.g. /subscriptions/{networkSubscriptionId}/resourceGroups/{rgName}/providers/Microsoft.Network/privateEndpoints/{privateEndpointName}",
+                    "type": "string",
+                    "readOnly": true,
+                    "x-ms-mutability": [
+                        "read"
+                    ]
+                },
+                "subnetArmId": {
+                    "description": "The subnetId that the private endpoint is connected to.",
+                    "type": "string",
+                    "readOnly": true,
+                    "x-ms-mutability": [
+                        "read"
+                    ]
+                }
+            }
+        },
+        "WorkspaceProperties": {
+            "description": "The properties of a machine learning workspace.",
+            "type": "object",
+            "properties": {
+                "allowPublicAccessWhenBehindVnet": {
+                    "description": "The flag to indicate whether to allow public access when behind VNet.",
+                    "type": "boolean"
+                },
+                "applicationInsights": {
+                    "description": "ARM id of the application insights associated with this workspace.",
+                    "type": "string"
+                },
+                "associatedWorkspaces": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "containerRegistries": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "containerRegistry": {
+                    "description": "ARM id of the container registry associated with this workspace.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "The description of this workspace.",
+                    "type": "string"
+                },
+                "discoveryUrl": {
+                    "description": "Url for the discovery service to identify regional endpoints for machine learning experimentation services",
+                    "type": "string"
+                },
+                "enableDataIsolation": {
+                    "type": "boolean"
+                },
+                "encryption": {
+                    "$ref": "#/definitions/EncryptionProperty"
+                },
+                "existingWorkspaces": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "featureStoreSettings": {
+                    "description": "Settings for feature store type workspace.",
+                    "$ref": "#/definitions/FeatureStoreSettings"
+                },
+                "friendlyName": {
+                    "description": "The friendly name for this workspace. This name in mutable",
+                    "type": "string"
+                },
+                "hbiWorkspace": {
+                    "description": "The flag to signal HBI data in the workspace and reduce diagnostic data collected by the service",
+                    "type": "boolean"
+                },
+                "hubResourceId": {
+                    "type": "string"
+                },
+                "imageBuildCompute": {
+                    "description": "The compute name for image build",
+                    "type": "string"
+                },
+                "keyVault": {
+                    "description": "ARM id of the key vault associated with this workspace. This cannot be changed once the workspace has been created",
+                    "type": "string"
+                },
+                "keyVaults": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "managedNetwork": {},
+                "mlFlowTrackingUri": {
+                    "description": "The URI associated with this workspace that machine learning flow must point at to set up tracking.",
+                    "type": "string",
+                    "readOnly": true,
+                    "x-ms-mutability": [
+                        "read"
+                    ]
+                },
+                "notebookInfo": {
+                    "description": "The notebook info of Azure ML workspace.",
+                    "$ref": "#/definitions/NotebookResourceInfo",
+                    "readOnly": true,
+                    "x-ms-mutability": [
+                        "read"
+                    ]
+                },
+                "primaryUserAssignedIdentity": {
+                    "description": "The user assigned identity resource id that represents the workspace identity.",
+                    "type": "string"
+                },
+                "privateEndpointConnections": {
+                    "description": "The list of private endpoint connections in the workspace.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/PrivateEndpointConnection"
+                    },
+                    "readOnly": true,
+                    "x-ms-mutability": [
+                        "read"
+                    ],
+                    "x-ms-identifiers": [
+                        "name"
+                    ]
+                },
+                "privateLinkCount": {
+                    "format": "int32",
+                    "description": "Count of private connections in the workspace",
+                    "type": "integer",
+                    "readOnly": true,
+                    "x-ms-mutability": [
+                        "read"
+                    ]
+                },
+                "provisioningState": {
+                    "description": "The current deployment state of workspace resource. The provisioningState is to indicate states for resource provisioning.",
+                    "$ref": "#/definitions/ProvisioningState",
+                    "readOnly": true,
+                    "x-ms-mutability": [
+                        "read"
+                    ]
+                },
+                "publicNetworkAccess": {
+                    "description": "Whether requests from Public Network are allowed.",
+                    "$ref": "#/definitions/PublicNetworkAccessType"
+                },
+                "serviceManagedResourcesSettings": {
+                    "description": "The service managed resource settings.",
+                    "$ref": "#/definitions/ServiceManagedResourcesSettings"
+                },
+                "serviceProvisionedResourceGroup": {
+                    "description": "The name of the managed resource group created by workspace RP in customer subscription if the workspace is CMK workspace",
+                    "type": "string",
+                    "readOnly": true,
+                    "x-ms-mutability": [
+                        "read"
+                    ]
+                },
+                "sharedPrivateLinkResources": {
+                    "description": "The list of shared private link resources in this workspace.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/SharedPrivateLinkResource"
+                    },
+                    "x-ms-identifiers": [
+                        "name"
+                    ]
+                },
+                "softDeleteRetentionInDays": {
+                    "format": "int32",
+                    "description": "Retention time in days after workspace get soft deleted.",
+                    "type": "integer"
+                },
+                "storageAccount": {
+                    "description": "ARM id of the storage account associated with this workspace. This cannot be changed once the workspace has been created",
+                    "type": "string"
+                },
+                "storageAccounts": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "storageHnsEnabled": {
+                    "description": "If the storage associated with the workspace has hierarchical namespace(HNS) enabled.",
+                    "type": "boolean",
+                    "readOnly": true,
+                    "x-ms-mutability": [
+                        "read"
+                    ]
+                },
+                "systemDatastoresAuthMode": {
+                    "description": "The auth mode used for accessing the system datastores of the workspace.",
+                    "type": "string"
+                },
+                "tenantId": {
+                    "description": "The tenant id associated with this workspace.",
+                    "type": "string",
+                    "readOnly": true,
+                    "x-ms-mutability": [
+                        "read"
+                    ]
+                },
+                "v1LegacyMode": {
+                    "description": "Enabling v1_legacy_mode may prevent you from using features provided by the v2 API.",
+                    "type": "boolean"
+                },
+                "workspaceHubConfig": {
+                    "$ref": "#/definitions/WorkspaceHubConfig"
+                },
+                "workspaceId": {
+                    "description": "The immutable id associated with this workspace.",
+                    "type": "string",
+                    "readOnly": true,
+                    "x-ms-mutability": [
+                        "read"
+                    ]
+                }
+            }
+        }
+    },
+    "parameters": {
+        "WorkspaceNameParameter": {
+            "in": "path",
+            "name": "workspaceName",
+            "description": "Azure Machine Learning Workspace Name",
+            "required": true,
+            "type": "string",
+            "x-ms-parameter-location": "method",
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$"
+        }
+    }
+  }

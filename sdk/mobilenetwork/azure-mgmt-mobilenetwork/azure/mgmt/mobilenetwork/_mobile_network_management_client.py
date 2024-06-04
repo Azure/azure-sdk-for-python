@@ -18,8 +18,11 @@ from ._serialization import Deserializer, Serializer
 from .operations import (
     AttachedDataNetworksOperations,
     DataNetworksOperations,
+    DiagnosticsPackagesOperations,
+    ExtendedUeInformationOperations,
     MobileNetworksOperations,
     Operations,
+    PacketCapturesOperations,
     PacketCoreControlPlaneVersionsOperations,
     PacketCoreControlPlanesOperations,
     PacketCoreDataPlanesOperations,
@@ -29,6 +32,7 @@ from .operations import (
     SimsOperations,
     SitesOperations,
     SlicesOperations,
+    UeInformationOperations,
 )
 
 if TYPE_CHECKING:
@@ -45,10 +49,15 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
      azure.mgmt.mobilenetwork.operations.AttachedDataNetworksOperations
     :ivar data_networks: DataNetworksOperations operations
     :vartype data_networks: azure.mgmt.mobilenetwork.operations.DataNetworksOperations
+    :ivar diagnostics_packages: DiagnosticsPackagesOperations operations
+    :vartype diagnostics_packages:
+     azure.mgmt.mobilenetwork.operations.DiagnosticsPackagesOperations
     :ivar mobile_networks: MobileNetworksOperations operations
     :vartype mobile_networks: azure.mgmt.mobilenetwork.operations.MobileNetworksOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.mobilenetwork.operations.Operations
+    :ivar packet_captures: PacketCapturesOperations operations
+    :vartype packet_captures: azure.mgmt.mobilenetwork.operations.PacketCapturesOperations
     :ivar packet_core_control_planes: PacketCoreControlPlanesOperations operations
     :vartype packet_core_control_planes:
      azure.mgmt.mobilenetwork.operations.PacketCoreControlPlanesOperations
@@ -70,13 +79,18 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
     :vartype sites: azure.mgmt.mobilenetwork.operations.SitesOperations
     :ivar slices: SlicesOperations operations
     :vartype slices: azure.mgmt.mobilenetwork.operations.SlicesOperations
+    :ivar extended_ue_information: ExtendedUeInformationOperations operations
+    :vartype extended_ue_information:
+     azure.mgmt.mobilenetwork.operations.ExtendedUeInformationOperations
+    :ivar ue_information: UeInformationOperations operations
+    :vartype ue_information: azure.mgmt.mobilenetwork.operations.UeInformationOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-11-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2024-02-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -93,7 +107,7 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
         self._config = MobileNetworkManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -103,8 +117,12 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
             self._client, self._config, self._serialize, self._deserialize
         )
         self.data_networks = DataNetworksOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.diagnostics_packages = DiagnosticsPackagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.mobile_networks = MobileNetworksOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.packet_captures = PacketCapturesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.packet_core_control_planes = PacketCoreControlPlanesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -120,6 +138,10 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
         self.sim_policies = SimPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.sites = SitesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.slices = SlicesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.extended_ue_information = ExtendedUeInformationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ue_information = UeInformationOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
@@ -150,5 +172,5 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details) -> None:
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

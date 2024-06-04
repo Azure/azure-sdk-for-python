@@ -221,14 +221,25 @@ async def test_urlencoded_content(send_request):
     )
 
 
-# @pytest.mark.asyncio
-# async def test_multipart_files_content(send_request):
-#     request = HttpRequest(
-#         "POST",
-#         "/multipart/basic",
-#         files={"fileContent": io.BytesIO(b"<file content>")},
-#     )
-#     await send_request(request)
+@pytest.mark.asyncio
+async def test_multipart_files_content(send_request):
+    request = HttpRequest(
+        "POST",
+        "/multipart/basic",
+        files={"fileContent": io.BytesIO(b"<file content>")},
+    )
+    await send_request(request)
+
+
+@pytest.mark.asyncio
+async def test_multipart_data_and_files_content(send_request):
+    request = HttpRequest(
+        "POST",
+        "/multipart/data-and-files",
+        data={"message": "Hello, world!"},
+        files={"fileContent": io.BytesIO(b"<file content>")},
+    )
+    await send_request(request)
 
 
 @pytest.mark.asyncio
@@ -260,32 +271,32 @@ async def test_text_and_encoding(send_request):
     assert response.encoding == "utf-16"
 
 
-# @pytest.mark.asyncio
-# async def test_multipart_encode_non_seekable_filelike(send_request):
-#     """
-#     Test that special readable but non-seekable filelike objects are supported,
-#     at the cost of reading them into memory at most once.
-#     """
+@pytest.mark.asyncio
+async def test_multipart_encode_non_seekable_filelike(send_request):
+    """
+    Test that special readable but non-seekable filelike objects are supported,
+    at the cost of reading them into memory at most once.
+    """
 
-#     class IteratorIO(io.IOBase):
-#         def __init__(self, iterator):
-#             self._iterator = iterator
+    class IteratorIO(io.IOBase):
+        def __init__(self, iterator):
+            self._iterator = iterator
 
-#         def read(self, *args):
-#             return b"".join(self._iterator)
+        def read(self, *args):
+            return b"".join(self._iterator)
 
-#     def data():
-#         yield b"Hello"
-#         yield b"World"
+    def data():
+        yield b"Hello"
+        yield b"World"
 
-#     fileobj = IteratorIO(data())
-#     files = {"file": fileobj}
-#     request = HttpRequest(
-#         "POST",
-#         "/multipart/non-seekable-filelike",
-#         files=files,
-#     )
-#     await send_request(request)
+    fileobj = IteratorIO(data())
+    files = {"file": fileobj}
+    request = HttpRequest(
+        "POST",
+        "/multipart/non-seekable-filelike",
+        files=files,
+    )
+    await send_request(request)
 
 
 def test_initialize_response_abc():

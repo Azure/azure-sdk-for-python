@@ -31,13 +31,13 @@ def main():
 
     response = client.encryption_scopes.put(
         resource_group_name="resource-group-name",
-        account_name="{storage-account-name}",
+        account_name="accountname",
         encryption_scope_name="{encryption-scope-name}",
         encryption_scope={"properties": {"requireInfrastructureEncryption": True}},
     )
     print(response)
 
 
-# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2022-09-01/examples/StorageAccountPutEncryptionScopeWithInfrastructureEncryption.json
+# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/examples/StorageAccountPutEncryptionScopeWithInfrastructureEncryption.json
 if __name__ == "__main__":
     main()

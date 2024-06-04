@@ -60,7 +60,7 @@ Note that a client can only receive messages from groups that it has joined and 
 
 # Registers a listener for the event 'group-message' early before joining a group to not miss messages
 group_name = "group1";
-client.on("group-message", lambda e: print(f"Received message: {e.data}"));
+client.subscribe(CallbackType.GROUP_MESSAGE, lambda e: print(f"Received message: {e.data}"));
 
 # A client needs to join the group it wishes to receive messages from
 client.join_group(groupName);
@@ -72,7 +72,7 @@ client.join_group(groupName);
 # ...continues the code snippet from above
 
 # Send a message to a joined group
-client.send_to_group(group_name, "hello world", "text");
+client.send_to_group(group_name, "hello world", WebPubSubDataType.TEXT);
 
 # In the Console tab of your developer tools found in your browser, you should see the message printed there.
 ```
@@ -84,19 +84,19 @@ client.send_to_group(group_name, "hello world", "text");
 1. When a client is successfully connected to your Web PubSub resource, the `connected` event is triggered.
 
 ```python
-client.on("connected", lambda e: print(f"Connection {e.connection_id} is connected"))
+client.subscribe(CallbackType.CONNECTED, lambda e: print(f"Connection {e.connection_id} is connected"))
 ```
 
 2. When a client is disconnected and fails to recover the connection, the `disconnected` event is triggered.
 
 ```python
-client.on("disconnected", lambda e: print(f"Connection disconnected: {e.message}"))
+client.subscribe(CallbackType.DISCONNECTED, lambda e: print(f"Connection disconnected: {e.message}"))
 ```
 
-3. The `stopped` event will be triggered when the client is disconnected *and* the client stops trying to reconnect. This usually happens after the `client.stop()` is called, or `auto_reconnect` is disabled or a specified limit to trying to reconnect has reached. If you want to restart the client, you can call `client.start()` in the stopped event.
+3. The `stopped` event will be triggered when the client is disconnected *and* the client stops trying to reconnect. This usually happens after the `client.close()` is called, or `auto_reconnect` is disabled or a specified limit to trying to reconnect has reached. If you want to restart the client, you can call `client.open()` in the stopped event.
 
 ```python
-client.on("stopped", lambda : print("Client has stopped"))
+client.subscribe(CallbackType.STOPPED, lambda : print("Client has stopped"))
 ```
 
 ---
@@ -106,10 +106,10 @@ A client can add callbacks to consume messages from your application server or g
 
 ```python
 # Registers a listener for the "server-message". The callback will be invoked when your application server sends message to the connectionID, to or broadcast to all connections.
-client.on("server-message", lambda e: print(f"Received message {e.data}"))
+client.subscribe(CallbackType.SERVER_MESSAGE, lambda e: print(f"Received message {e.data}"))
 
 # Registers a listener for the "group-message". The callback will be invoked when the client receives a message from the groups it has joined.
-client.on("group-message", lambda e: print(f"Received message from {e.group}: {e.data}"))
+client.subscribe(CallbackType.GROUP_MESSAGE, lambda e: print(f"Received message from {e.group}: {e.data}"))
 ```
 
 ---
@@ -125,7 +125,7 @@ However, you should be aware of `auto_rejoin_groups`'s limitations.
 client = WebPubSubClient("<client-access-url>", auto_rejoin_groups=True);
 
 # Registers a listener to handle "rejoin-group-failed" event
-client.on("rejoin-group-failed", lambda e: print(f"Rejoin group {e.group} failed: {e.error}"))
+client.subscribe(CallbackType.REJOIN_GROUP_FAILED, lambda e: print(f"Rejoin group {e.group} failed: {e.error}"))
 ```
 
 ---

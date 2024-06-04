@@ -29,14 +29,13 @@ def main():
         subscription_id="{subscription-id}",
     )
 
-    response = client.private_endpoint_connections.delete(
+    client.private_endpoint_connections.delete(
         resource_group_name="res6977",
         account_name="sto2527",
         private_endpoint_connection_name="{privateEndpointConnectionName}",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2022-09-01/examples/StorageAccountDeletePrivateEndpointConnection.json
+# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/examples/StorageAccountDeletePrivateEndpointConnection.json
 if __name__ == "__main__":
     main()

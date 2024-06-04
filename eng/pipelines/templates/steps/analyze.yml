@@ -29,7 +29,7 @@ steps:
     displayName: 'Set Tox Environment Skips'
     inputs:
       scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
-      arguments: '--team-project="$(System.TeamProject)" --service="${{ parameters.ServiceDirectory }}"'
+      arguments: '"$(TargetingString)" --team-project="$(System.TeamProject)" --service="${{ parameters.ServiceDirectory }}"'
 
   - ${{ each artifact in parameters.Artifacts }}:
     - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
@@ -70,39 +70,40 @@ steps:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       VerifyAutorest: ${{ parameters.VerifyAutorest }}
 
-  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-    # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR
-    # builds should be sufficient.
-    condition: and(succeededOrFailed(), ne(variables['Build.Reason'],'PullRequest'))
-    displayName: 'Component Detection'
-
+  - template: ../steps/set-dev-build.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      
   - task: PythonScript@0
     displayName: 'Verify sdist'
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifySdist'],'true'))
     inputs:
-     scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-     arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifysdist'
+     scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+     arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifysdist ${{ parameters.AdditionalTestArgs }}'
 
   - task: PythonScript@0
     displayName: 'Verify whl'
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifyWhl'],'true'))
     inputs:
-     scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-     arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl'
+     scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+     arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl ${{ parameters.AdditionalTestArgs }}'
 
   - template: run_mypy.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
+      AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
   - template: run_pyright.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
+      AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
   - template: run_pylint.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
   - ${{ if parameters.ValidateFormatting }}:
     - template: run_black.yml
@@ -110,30 +111,31 @@ steps:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
 
-  - task: DownloadPipelineArtifact@2
-    condition: succeededOrFailed()
+  - task: PythonScript@0
+    displayName: 'Run Keyword Validation Check'
     inputs:
-      artifactName: 'packages_extended'
-      targetPath: $(Build.ArtifactStagingDirectory)
+      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+      arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verify_keywords ${{ parameters.AdditionalTestArgs }}'
+    condition: and(succeededOrFailed(), ne(variables['Skip.KeywordCheck'],'true'))
 
   - template: ../steps/run_bandit.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
-      AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
+      AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
   - template: /eng/pipelines/templates/steps/update_snippet.yml
     parameters:
       ScanPath: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
-      AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
+      AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
   - template: ../steps/run_breaking_changes.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
-      AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
+      AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
-  - template: /eng/pipelines/templates/steps/create-apireview.yml
+  - template: /eng/common/pipelines/templates/steps/create-apireview.yml
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
       GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
@@ -144,9 +146,14 @@ steps:
       Artifacts: ${{ parameters.Artifacts }}
       ArtifactName: "packages_extended"
 
+  - template: /eng/common/pipelines/templates/steps/validate-all-packages.yml
+    parameters:
+      Artifacts: ${{ parameters.Artifacts }}
+      ArtifactName: "packages_extended"
+
   - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
 
-  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+  - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
     parameters:
       ArtifactPath: '$(Build.ArtifactStagingDirectory)/reports'
       ArtifactName: 'reports'

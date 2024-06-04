@@ -4,18 +4,10 @@
 # ------------------------------------
 import asyncio
 
-from azure_devtools.scenario_tests.patches import mock_in_unit_test
 from devtools_testutils import AzureRecordedTestCase
 
 from azure.keyvault.administration._internal import HttpChallengeCache
 from azure.keyvault.keys._shared import HttpChallengeCache as _HttpChallengeCache
-
-
-def skip_sleep(unit_test):
-    async def immediate_return(_):
-        return
-
-    return mock_in_unit_test(unit_test, "asyncio.sleep", immediate_return)
 
 
 class KeyVaultTestCase(AzureRecordedTestCase):

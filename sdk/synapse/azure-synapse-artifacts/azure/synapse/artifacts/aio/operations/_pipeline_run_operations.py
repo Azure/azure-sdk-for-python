@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -66,7 +66,6 @@ class PipelineRunOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PipelineRunsQueryResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.PipelineRunsQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -74,16 +73,15 @@ class PipelineRunOperations:
 
     @overload
     async def query_pipeline_runs_by_workspace(
-        self, filter_parameters: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, filter_parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.PipelineRunsQueryResponse:
         """Query pipeline runs in the workspace based on input filter conditions.
 
         :param filter_parameters: Parameters to filter the pipeline run. Required.
-        :type filter_parameters: IO
+        :type filter_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PipelineRunsQueryResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.PipelineRunsQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -91,17 +89,13 @@ class PipelineRunOperations:
 
     @distributed_trace_async
     async def query_pipeline_runs_by_workspace(
-        self, filter_parameters: Union[_models.RunFilterParameters, IO], **kwargs: Any
+        self, filter_parameters: Union[_models.RunFilterParameters, IO[bytes]], **kwargs: Any
     ) -> _models.PipelineRunsQueryResponse:
         """Query pipeline runs in the workspace based on input filter conditions.
 
         :param filter_parameters: Parameters to filter the pipeline run. Is either a
-         RunFilterParameters type or a IO type. Required.
-        :type filter_parameters: ~azure.synapse.artifacts.models.RunFilterParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         RunFilterParameters type or a IO[bytes] type. Required.
+        :type filter_parameters: ~azure.synapse.artifacts.models.RunFilterParameters or IO[bytes]
         :return: PipelineRunsQueryResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.PipelineRunsQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -129,24 +123,23 @@ class PipelineRunOperations:
         else:
             _json = self._serialize.body(filter_parameters, "RunFilterParameters")
 
-        request = build_query_pipeline_runs_by_workspace_request(
+        _request = build_query_pipeline_runs_by_workspace_request(
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.query_pipeline_runs_by_workspace.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -158,11 +151,9 @@ class PipelineRunOperations:
         deserialized = self._deserialize("PipelineRunsQueryResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    query_pipeline_runs_by_workspace.metadata = {"url": "/queryPipelineRuns"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_pipeline_run(self, run_id: str, **kwargs: Any) -> _models.PipelineRun:
@@ -170,7 +161,6 @@ class PipelineRunOperations:
 
         :param run_id: The pipeline run identifier. Required.
         :type run_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PipelineRun or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.PipelineRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -189,22 +179,21 @@ class PipelineRunOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[_models.PipelineRun] = kwargs.pop("cls", None)
 
-        request = build_get_pipeline_run_request(
+        _request = build_get_pipeline_run_request(
             run_id=run_id,
             api_version=api_version,
-            template_url=self.get_pipeline_run.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -216,11 +205,9 @@ class PipelineRunOperations:
         deserialized = self._deserialize("PipelineRun", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_pipeline_run.metadata = {"url": "/pipelineruns/{runId}"}
+        return deserialized  # type: ignore
 
     @overload
     async def query_activity_runs(
@@ -243,7 +230,6 @@ class PipelineRunOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActivityRunsQueryResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.ActivityRunsQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -254,7 +240,7 @@ class PipelineRunOperations:
         self,
         pipeline_name: str,
         run_id: str,
-        filter_parameters: IO,
+        filter_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -266,11 +252,10 @@ class PipelineRunOperations:
         :param run_id: The pipeline run identifier. Required.
         :type run_id: str
         :param filter_parameters: Parameters to filter the activity runs. Required.
-        :type filter_parameters: IO
+        :type filter_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActivityRunsQueryResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.ActivityRunsQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -278,7 +263,11 @@ class PipelineRunOperations:
 
     @distributed_trace_async
     async def query_activity_runs(
-        self, pipeline_name: str, run_id: str, filter_parameters: Union[_models.RunFilterParameters, IO], **kwargs: Any
+        self,
+        pipeline_name: str,
+        run_id: str,
+        filter_parameters: Union[_models.RunFilterParameters, IO[bytes]],
+        **kwargs: Any
     ) -> _models.ActivityRunsQueryResponse:
         """Query activity runs based on input filter conditions.
 
@@ -287,12 +276,8 @@ class PipelineRunOperations:
         :param run_id: The pipeline run identifier. Required.
         :type run_id: str
         :param filter_parameters: Parameters to filter the activity runs. Is either a
-         RunFilterParameters type or a IO type. Required.
-        :type filter_parameters: ~azure.synapse.artifacts.models.RunFilterParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         RunFilterParameters type or a IO[bytes] type. Required.
+        :type filter_parameters: ~azure.synapse.artifacts.models.RunFilterParameters or IO[bytes]
         :return: ActivityRunsQueryResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.ActivityRunsQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -320,26 +305,25 @@ class PipelineRunOperations:
         else:
             _json = self._serialize.body(filter_parameters, "RunFilterParameters")
 
-        request = build_query_activity_runs_request(
+        _request = build_query_activity_runs_request(
             pipeline_name=pipeline_name,
             run_id=run_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.query_activity_runs.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -351,11 +335,9 @@ class PipelineRunOperations:
         deserialized = self._deserialize("ActivityRunsQueryResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    query_activity_runs.metadata = {"url": "/pipelines/{pipelineName}/pipelineruns/{runId}/queryActivityruns"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def cancel_pipeline_run(  # pylint: disable=inconsistent-return-statements
@@ -368,7 +350,6 @@ class PipelineRunOperations:
         :param is_recursive: If true, cancel all the Child pipelines that are triggered by the current
          pipeline. Default value is None.
         :type is_recursive: bool
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -387,23 +368,22 @@ class PipelineRunOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_cancel_pipeline_run_request(
+        _request = build_cancel_pipeline_run_request(
             run_id=run_id,
             is_recursive=is_recursive,
             api_version=api_version,
-            template_url=self.cancel_pipeline_run.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -413,6 +393,4 @@ class PipelineRunOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    cancel_pipeline_run.metadata = {"url": "/pipelineruns/{runId}/cancel"}
+            return cls(pipeline_response, None, {})  # type: ignore

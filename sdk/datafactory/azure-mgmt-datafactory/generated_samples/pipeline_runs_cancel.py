@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.datafactory import DataFactoryManagementClient
 
 """
@@ -29,12 +30,11 @@ def main():
         subscription_id="12345678-1234-1234-1234-12345678abc",
     )
 
-    response = client.pipeline_runs.cancel(
+    client.pipeline_runs.cancel(
         resource_group_name="exampleResourceGroup",
         factory_name="exampleFactoryName",
         run_id="16ac5348-ff82-4f95-a80d-638c1d47b721",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/datafactory/resource-manager/Microsoft.DataFactory/stable/2018-06-01/examples/PipelineRuns_Cancel.json

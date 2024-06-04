@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -19,10 +19,9 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
@@ -44,6 +43,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinABC):  # pylint: disable=name-too-long
     @overload
     async def analyze_conversation(self, task: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Analyzes the input conversation utterance.
 
         See
@@ -162,7 +162,10 @@ class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinA
         """
 
     @overload
-    async def analyze_conversation(self, task: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    async def analyze_conversation(
+        self, task: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
+        # pylint: disable=line-too-long
         """Analyzes the input conversation utterance.
 
         See
@@ -170,7 +173,7 @@ class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinA
         for more information.
 
         :param task: A single conversational task to execute. Required.
-        :type task: IO
+        :type task: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -239,19 +242,17 @@ class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinA
         """
 
     @distributed_trace_async
-    async def analyze_conversation(self, task: Union[JSON, IO], **kwargs: Any) -> JSON:
+    async def analyze_conversation(self, task: Union[JSON, IO[bytes]], **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Analyzes the input conversation utterance.
 
         See
         https://learn.microsoft.com/rest/api/language/2023-04-01/conversation-analysis-runtime/analyze-conversation
         for more information.
 
-        :param task: A single conversational task to execute. Is either a JSON type or a IO type.
-         Required.
-        :type task: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+        :param task: A single conversational task to execute. Is either a JSON type or a IO[bytes]
+         type. Required.
+        :type task: JSON or IO[bytes]
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -379,7 +380,7 @@ class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinA
         else:
             _json = task
 
-        request = build_conversation_analysis_analyze_conversation_request(
+        _request = build_conversation_analysis_analyze_conversation_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -390,16 +391,18 @@ class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinA
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -409,11 +412,11 @@ class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinA
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
-    async def _conversation_analysis_initial(self, task: Union[JSON, IO], **kwargs: Any) -> Optional[JSON]:
+    async def _conversation_analysis_initial(self, task: Union[JSON, IO[bytes]], **kwargs: Any) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -436,7 +439,7 @@ class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinA
         else:
             _json = task
 
-        request = build_conversation_analysis_conversation_analysis_request(
+        _request = build_conversation_analysis_conversation_analysis_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -447,16 +450,18 @@ class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinA
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -474,14 +479,15 @@ class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinA
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     async def begin_conversation_analysis(
         self, task: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Submit analysis job for conversations.
 
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
@@ -495,13 +501,6 @@ class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinA
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -604,8 +603,9 @@ class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinA
 
     @overload
     async def begin_conversation_analysis(
-        self, task: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, task: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Submit analysis job for conversations.
 
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
@@ -615,17 +615,10 @@ class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinA
         for more information.
 
         :param task: Collection of conversations to analyze and one or more tasks to execute. Required.
-        :type task: IO
+        :type task: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -714,7 +707,8 @@ class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinA
         """
 
     @distributed_trace_async
-    async def begin_conversation_analysis(self, task: Union[JSON, IO], **kwargs: Any) -> AsyncLROPoller[JSON]:
+    async def begin_conversation_analysis(self, task: Union[JSON, IO[bytes]], **kwargs: Any) -> AsyncLROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Submit analysis job for conversations.
 
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
@@ -724,18 +718,8 @@ class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinA
         for more information.
 
         :param task: Collection of conversations to analyze and one or more tasks to execute. Is either
-         a JSON type or a IO type. Required.
-        :type task: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         a JSON type or a IO[bytes] type. Required.
+        :type task: JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -873,10 +857,10 @@ class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinA
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[JSON].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[JSON](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

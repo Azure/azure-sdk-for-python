@@ -2,21 +2,16 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
-from uuid import uuid4
+from typing import Any, List, Optional, Union
+from uuid import UUID, uuid4
 
 from azure.core.exceptions import ResourceNotFoundError
+from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
-from ._models import KeyVaultRoleAssignment, KeyVaultRoleDefinition
+from ._enums import KeyVaultRoleScope
+from ._models import KeyVaultPermission, KeyVaultRoleAssignment, KeyVaultRoleDefinition
 from ._internal import KeyVaultClientBase
-
-if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports
-    from typing import Union
-    from uuid import UUID
-    from azure.core.paging import ItemPaged
-    from ._enums import KeyVaultRoleScope
 
 
 class KeyVaultAccessControlClient(KeyVaultClientBase):
@@ -27,10 +22,10 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         See https://aka.ms/azsdk/blog/vault-uri for details.
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
-    :type credential: :class:`~azure.core.credentials.TokenCredential`
+    :type credential: ~azure.core.credentials.TokenCredential
 
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
-    :paramtype api_version: ~azure.keyvault.administration.ApiVersion
+    :paramtype api_version: ~azure.keyvault.administration.ApiVersion or str
     :keyword bool verify_challenge_resource: Whether to verify the authentication challenge resource matches the Key
         Vault or Managed HSM domain. Defaults to True.
     """
@@ -39,7 +34,13 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
     @distributed_trace
     def create_role_assignment(
-        self, scope: "Union[str, KeyVaultRoleScope]", definition_id: str, principal_id: str, **kwargs
+        self,
+        scope: Union[str, KeyVaultRoleScope],
+        definition_id: str,
+        principal_id: str,
+        *,
+        name: Optional[Union[str, UUID]] = None,
+        **kwargs: Any,
     ) -> KeyVaultRoleAssignment:
         """Create a role assignment.
 
@@ -56,7 +57,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :returns: The created role assignment.
         :rtype: ~azure.keyvault.administration.KeyVaultRoleAssignment
         """
-        name = kwargs.pop("name", None) or uuid4()
+        assignment_name = name or uuid4()
 
         create_parameters = self._client.role_assignments.models.RoleAssignmentCreateParameters(
             properties=self._client.role_assignments.models.RoleAssignmentProperties(
@@ -66,7 +67,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         assignment = self._client.role_assignments.create(
             vault_base_url=self._vault_url,
             scope=scope,
-            role_assignment_name=str(name),
+            role_assignment_name=str(assignment_name),
             parameters=create_parameters,
             **kwargs
         )
@@ -74,7 +75,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
     @distributed_trace
     def delete_role_assignment(
-        self, scope: "Union[str, KeyVaultRoleScope]", name: "Union[str, UUID]", **kwargs
+        self, scope: Union[str, KeyVaultRoleScope], name: Union[str, UUID], **kwargs: Any
     ) -> None:
         """Delete a role assignment.
 
@@ -96,7 +97,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_role_assignment(
-        self, scope: "Union[str, KeyVaultRoleScope]", name: "Union[str, UUID]", **kwargs
+        self, scope: Union[str, KeyVaultRoleScope], name: Union[str, UUID], **kwargs: Any
     ) -> KeyVaultRoleAssignment:
         """Get a role assignment.
 
@@ -116,8 +117,8 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_role_assignments(
-        self, scope: "Union[str, KeyVaultRoleScope]", **kwargs
-    ) -> "ItemPaged[KeyVaultRoleAssignment]":
+        self, scope: Union[str, KeyVaultRoleScope], **kwargs: Any
+    ) -> ItemPaged[KeyVaultRoleAssignment]:
         """List all role assignments for a scope.
 
         :param scope: scope of the role assignments. :class:`KeyVaultRoleScope` defines common broad scopes.
@@ -136,8 +137,16 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
     @distributed_trace
     def set_role_definition(
-        self, scope: "Union[str, KeyVaultRoleScope]", **kwargs
-    ) -> "KeyVaultRoleDefinition":
+        self,
+        scope: Union[str, KeyVaultRoleScope],
+        *,
+        name: Optional[Union[str, UUID]] = None,
+        role_name: Optional[str] = None,
+        description: Optional[str] = None,
+        permissions: Optional[List[KeyVaultPermission]] = None,
+        assignable_scopes: Optional[Union[List[str], List[KeyVaultRoleScope]]] = None,
+        **kwargs: Any,
+    ) -> KeyVaultRoleDefinition:
         """Creates or updates a custom role definition.
 
         To update a role definition, specify the definition's ``name``.
@@ -165,28 +174,28 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :returns: The created or updated role definition
         :rtype: ~azure.keyvault.administration.KeyVaultRoleDefinition
         """
-        permissions = [
+        role_permissions = [
             self._client.role_definitions.models.Permission(
                 actions=p.actions,
                 not_actions=p.not_actions,
                 data_actions=p.data_actions,
                 not_data_actions=p.not_data_actions,
             )
-            for p in kwargs.pop("permissions", None) or []
+            for p in permissions or []
         ]
 
         properties = self._client.role_definitions.models.RoleDefinitionProperties(
-            role_name=kwargs.pop("role_name", None),
-            description=kwargs.pop("description", None),
-            permissions=permissions,
-            assignable_scopes=kwargs.pop("assignable_scopes", None),
+            role_name=role_name,
+            description=description,
+            permissions=role_permissions,
+            assignable_scopes=assignable_scopes,
         )
         parameters = self._client.role_definitions.models.RoleDefinitionCreateParameters(properties=properties)
 
         definition = self._client.role_definitions.create_or_update(
             vault_base_url=self._vault_url,
             scope=scope,
-            role_definition_name=str(kwargs.pop("name", None) or uuid4()),
+            role_definition_name=str(name or uuid4()),
             parameters=parameters,
             **kwargs
         )
@@ -194,8 +203,8 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_role_definition(
-        self, scope: "Union[str, KeyVaultRoleScope]", name: "Union[str, UUID]", **kwargs
-    ) -> "KeyVaultRoleDefinition":
+        self, scope: Union[str, KeyVaultRoleScope], name: Union[str, UUID], **kwargs: Any
+    ) -> KeyVaultRoleDefinition:
         """Get the specified role definition.
 
         :param scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
@@ -214,7 +223,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
     @distributed_trace
     def delete_role_definition(
-        self, scope: "Union[str, KeyVaultRoleScope]", name: "Union[str, UUID]", **kwargs
+        self, scope: Union[str, KeyVaultRoleScope], name: Union[str, UUID], **kwargs: Any
     ) -> None:
         """Deletes a custom role definition.
 
@@ -236,8 +245,8 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_role_definitions(
-        self, scope: "Union[str, KeyVaultRoleScope]", **kwargs
-    ) -> "ItemPaged[KeyVaultRoleDefinition]":
+        self, scope: Union[str, KeyVaultRoleScope], **kwargs: Any
+    ) -> ItemPaged[KeyVaultRoleDefinition]:
         """List all role definitions applicable at and above a scope.
 
         :param scope: scope of the role definitions. :class:`KeyVaultRoleScope` defines common broad scopes.
@@ -253,3 +262,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
             cls=lambda result: [KeyVaultRoleDefinition._from_generated(d) for d in result],
             **kwargs
         )
+
+    def __enter__(self) -> "KeyVaultAccessControlClient":
+        self._client.__enter__()
+        return self

@@ -26,9 +26,9 @@ stages:
 
           - template: /eng/pipelines/templates/steps/analyze_dependency.yml
             parameters:
-              ScanPath: $(Build.SourcesDirectory)
+              ScanPath: $(Build.SourcesDirectory)/sdk
 
-          - task: AzureFileCopy@4
+          - task: AzureFileCopy@6
             displayName: 'Upload Dependency Report'
             condition: and(succeededOrFailed(), eq(variables['System.TeamProject'], 'internal'))
             inputs:
@@ -40,7 +40,7 @@ stages:
               blobPrefix: dependencies
               AdditionalArgumentsForBlobCopy: '--exclude-pattern=*data.js*'
 
-          - task: AzureFileCopy@4
+          - task: AzureFileCopy@6
             displayName: 'Upload Dependency Graph'
             condition: and(succeededOrFailed(), eq(variables['System.TeamProject'], 'internal'))
             inputs:

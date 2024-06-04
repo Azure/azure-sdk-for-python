@@ -24,15 +24,15 @@ class TestPurviewSharing(AzureRecordedTestCase):
                 "paths": [
                     {
                         "containerName": "container1",
-                        "receiverPath": "t1/dbtGen2Pqt.parquet",
-                        "senderPath": "t1/dbtGen2Pqt.parquet"
+                        "receiverPath": "folder1",
+                        "senderPath": "folder1"
                     }
                 ]
             },
             "storeKind": "AdlsGen2Account",
             "storeReference": {
                 # cspell:disable-next-line
-                "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/ftsharersan",
+                "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                 "type": "ArmResourceReference"
             }
         }

@@ -1,0 +1,40 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+description: 'submit a pipeline with spark job'
+
+inputs:
+  iris_data:
+    type: uri_file
+    path: ./dataset/iris.csv
+    mode: direct
+  instance_type: standard_e4s_v3
+
+outputs:
+  output:
+    type: uri_folder
+    mode: direct
+
+jobs:
+  add_greeting_column:
+    type: spark
+    component: ./add_greeting_column_component.yml
+    inputs:
+      file_input: ${{parent.inputs.iris_data}}
+
+    resources:
+      instance_type: standard_e4s_v3
+      runtime_version: 3.2.0
+
+  count_by_row:
+    type: spark
+    component: ./count_by_row_component.yml
+    inputs:
+      file_input: ${{parent.inputs.iris_data}}
+
+    outputs:
+      output: ${{parent.outputs.output}}
+
+    resources:
+      instance_type: ${{parent.inputs.instance_type}}
+      runtime_version: 3.2.0

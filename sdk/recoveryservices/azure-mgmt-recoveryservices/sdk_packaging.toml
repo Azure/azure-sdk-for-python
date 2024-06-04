@@ -2,6 +2,6 @@
 package_name = "azure-mgmt-recoveryservices"
 package_pprint_name = "Recovery Services"
 package_doc_id = ""
-is_stable = false
+is_stable = true
 sample_link = ""
 title = "RecoveryServicesClient"

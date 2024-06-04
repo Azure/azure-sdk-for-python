@@ -110,33 +110,43 @@ class WebSiteManagementClient(
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.app_service_certificate_orders = AppServiceCertificateOrdersOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-01"
         )
         self.certificate_registration_provider = CertificateRegistrationProviderOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-01"
         )
-        self.domains = DomainsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.domains = DomainsOperations(self._client, self._config, self._serialize, self._deserialize, "2020-09-01")
         self.top_level_domains = TopLevelDomainsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-01"
         )
         self.domain_registration_provider = DomainRegistrationProviderOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-01"
         )
-        self.certificates = CertificatesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.deleted_web_apps = DeletedWebAppsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.diagnostics = DiagnosticsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.provider = ProviderOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.recommendations = RecommendationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.web_apps = WebAppsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.static_sites = StaticSitesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.certificates = CertificatesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-01"
+        )
+        self.deleted_web_apps = DeletedWebAppsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-01"
+        )
+        self.diagnostics = DiagnosticsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-01"
+        )
+        self.provider = ProviderOperations(self._client, self._config, self._serialize, self._deserialize, "2020-09-01")
+        self.recommendations = RecommendationsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-01"
+        )
+        self.web_apps = WebAppsOperations(self._client, self._config, self._serialize, self._deserialize, "2020-09-01")
+        self.static_sites = StaticSitesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-01"
+        )
         self.app_service_environments = AppServiceEnvironmentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-01"
         )
         self.app_service_plans = AppServicePlansOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-01"
         )
         self.resource_health_metadata = ResourceHealthMetadataOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-01"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:

@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.sql import SqlManagementClient
 
 """
@@ -33,10 +34,10 @@ def main():
         location_name="japaneast",
         long_term_retention_server_name="testserver",
         long_term_retention_database_name="testDatabase",
-        backup_name="55555555-6666-7777-8888-999999999999;131637960820000000",
+        backup_name="55555555-6666-7777-8888-999999999999;131637960820000000;Hot",
     ).result()
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2021-05-01-preview/examples/LongTermRetentionBackupDelete.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2023-05-01-preview/examples/LongTermRetentionBackupDelete.json
 if __name__ == "__main__":
     main()

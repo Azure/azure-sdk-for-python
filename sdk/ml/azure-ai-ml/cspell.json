@@ -1,0 +1,17 @@
+{
+    "version": "0.2",
+    "ignoreWords": [
+        "kwoa",
+        "rslex",
+        "aadtoken",
+        "alds",
+        "entra",
+        "restclient",
+        "SERP",
+        "mpnet",
+        "FAISS",
+        "faiss",
+        "Faiss",
+        "LLMRAG"
+    ]
+}

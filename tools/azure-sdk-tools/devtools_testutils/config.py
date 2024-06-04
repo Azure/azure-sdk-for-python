@@ -3,11 +3,40 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import configargparse
 import os
 
 from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())
 
+
+ENV_LIVE_TEST = "AZURE_TEST_RUN_LIVE"
 PROXY_URL = os.getenv("PROXY_URL", "https://localhost:5001").rstrip("/")
 TEST_SETTING_FILENAME = "testsettings_local.cfg"
+
+
+class TestConfig(object):  # pylint: disable=too-few-public-methods
+    def __init__(self, parent_parsers=None, config_file=None):
+        parent_parsers = parent_parsers or []
+        self.parser = configargparse.ArgumentParser(parents=parent_parsers)
+        self.parser.add_argument(
+            "-c",
+            "--config",
+            is_config_file=True,
+            default=config_file,
+            help="Path to a configuration file in YAML format.",
+        )
+        self.parser.add_argument(
+            "-l",
+            "--live-mode",
+            action="store_true",
+            dest="live_mode",
+            env_var=ENV_LIVE_TEST,
+            help='Activate "live" recording mode for tests.',
+        )
+        self.args = self.parser.parse_args([])
+
+    @property
+    def record_mode(self):
+        return self.args.live_mode

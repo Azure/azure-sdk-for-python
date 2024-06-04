@@ -49,7 +49,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -59,7 +59,7 @@ def build_create_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -90,7 +90,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -99,7 +99,7 @@ def build_get_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -128,7 +128,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -138,7 +138,7 @@ def build_update_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -169,7 +169,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -178,7 +178,7 @@ def build_delete_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -197,13 +197,13 @@ def build_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_request(
+def build_list_by_l3_isolation_domain_request(
     resource_group_name: str, l3_isolation_domain_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -212,7 +212,7 @@ def build_list_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -240,7 +240,7 @@ def build_update_administrative_state_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -250,7 +250,7 @@ def build_update_administrative_state_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}/updateAdministrativeState",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -281,7 +281,7 @@ def build_update_bgp_administrative_state_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -291,7 +291,7 @@ def build_update_bgp_administrative_state_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}/updateBgpAdministrativeState",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -312,7 +312,7 @@ def build_update_bgp_administrative_state_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_update_bfd_for_bgp_administrative_state_request(
+def build_update_static_route_bfd_administrative_state_request(
     resource_group_name: str,
     l3_isolation_domain_name: str,
     internal_network_name: str,
@@ -322,140 +322,17 @@ def build_update_bfd_for_bgp_administrative_state_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}/updateBfdForBgpAdministrativeState",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}/updateStaticRouteBfdAdministrativeState",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "l3IsolationDomainName": _SERIALIZER.url("l3_isolation_domain_name", l3_isolation_domain_name, "str"),
-        "internalNetworkName": _SERIALIZER.url("internal_network_name", internal_network_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_clear_ipv6_neighbors_request(
-    resource_group_name: str,
-    l3_isolation_domain_name: str,
-    internal_network_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}/clearIpv6Neighbors",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "l3IsolationDomainName": _SERIALIZER.url("l3_isolation_domain_name", l3_isolation_domain_name, "str"),
-        "internalNetworkName": _SERIALIZER.url("internal_network_name", internal_network_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_clear_arp_entries_request(
-    resource_group_name: str,
-    l3_isolation_domain_name: str,
-    internal_network_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}/clearArpEntries",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "l3IsolationDomainName": _SERIALIZER.url("l3_isolation_domain_name", l3_isolation_domain_name, "str"),
-        "internalNetworkName": _SERIALIZER.url("internal_network_name", internal_network_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_update_bfd_for_static_route_administrative_state_request(
-    resource_group_name: str,
-    l3_isolation_domain_name: str,
-    internal_network_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}/updateBfdForStaticRouteAdministrativeState",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -588,9 +465,9 @@ class InternalNetworksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
+        :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
+        :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :param body: Request payload. Required.
         :type body: ~azure.mgmt.managednetworkfabric.models.InternalNetwork
@@ -630,9 +507,9 @@ class InternalNetworksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
+        :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
+        :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :param body: Request payload. Required.
         :type body: IO
@@ -670,9 +547,9 @@ class InternalNetworksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
+        :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
+        :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :param body: Request payload. Is either a InternalNetwork type or a IO type. Required.
         :type body: ~azure.mgmt.managednetworkfabric.models.InternalNetwork or IO
@@ -754,9 +631,9 @@ class InternalNetworksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
+        :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
+        :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: InternalNetwork or the result of cls(response)
@@ -820,7 +697,7 @@ class InternalNetworksOperations:
         internal_network_name: str,
         body: Union[_models.InternalNetworkPatch, IO],
         **kwargs: Any
-    ) -> _models.InternalNetwork:
+    ) -> Optional[_models.InternalNetwork]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -834,7 +711,7 @@ class InternalNetworksOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.InternalNetwork] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.InternalNetwork]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -872,16 +749,18 @@ class InternalNetworksOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = None
+        response_headers = {}
         if response.status_code == 200:
             deserialized = self._deserialize("InternalNetwork", pipeline_response)
 
         if response.status_code == 202:
-            deserialized = self._deserialize("InternalNetwork", pipeline_response)
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)
 
-        return deserialized  # type: ignore
+        return deserialized
 
     _update_initial.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}"
@@ -905,9 +784,9 @@ class InternalNetworksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
+        :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
+        :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :param body: InternalNetwork properties to update. Only annotations are supported. Required.
         :type body: ~azure.mgmt.managednetworkfabric.models.InternalNetworkPatch
@@ -946,9 +825,9 @@ class InternalNetworksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
+        :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
+        :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :param body: InternalNetwork properties to update. Only annotations are supported. Required.
         :type body: IO
@@ -985,9 +864,9 @@ class InternalNetworksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
+        :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
+        :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :param body: InternalNetwork properties to update. Only annotations are supported. Is either a
          InternalNetworkPatch type or a IO type. Required.
@@ -1040,7 +919,7 @@ class InternalNetworksOperations:
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs)
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -1096,7 +975,7 @@ class InternalNetworksOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -1119,9 +998,9 @@ class InternalNetworksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
+        :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
+        :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -1182,7 +1061,7 @@ class InternalNetworksOperations:
     }
 
     @distributed_trace
-    def list(
+    def list_by_l3_isolation_domain(
         self, resource_group_name: str, l3_isolation_domain_name: str, **kwargs: Any
     ) -> Iterable["_models.InternalNetwork"]:
         """Executes list operation to display list of all internal networks.
@@ -1192,7 +1071,7 @@ class InternalNetworksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
+        :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either InternalNetwork or the result of cls(response)
@@ -1216,12 +1095,12 @@ class InternalNetworksOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                request = build_list_by_l3_isolation_domain_request(
                     resource_group_name=resource_group_name,
                     l3_isolation_domain_name=l3_isolation_domain_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
+                    template_url=self.list_by_l3_isolation_domain.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -1271,18 +1150,18 @@ class InternalNetworksOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {
+    list_by_l3_isolation_domain.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks"
     }
 
-    def _update_administrative_state_initial(  # pylint: disable=inconsistent-return-statements
+    def _update_administrative_state_initial(
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
         body: Union[_models.UpdateAdministrativeState, IO],
         **kwargs: Any
-    ) -> None:
+    ) -> _models.CommonPostActionResponseForStateUpdate:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1296,7 +1175,7 @@ class InternalNetworksOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CommonPostActionResponseForStateUpdate] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1329,16 +1208,24 @@ class InternalNetworksOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        if response.status_code == 200:
+            deserialized = self._deserialize("CommonPostActionResponseForStateUpdate", pipeline_response)
+
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = self._deserialize("CommonPostActionResponseForStateUpdate", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     _update_administrative_state_initial.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}/updateAdministrativeState"
@@ -1354,7 +1241,7 @@ class InternalNetworksOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.CommonPostActionResponseForStateUpdate]:
         """Executes the operation to the underlying resources.
 
         Update Administrative state of  InternalNetworks on resources referred by their resource ids.
@@ -1362,9 +1249,9 @@ class InternalNetworksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
+        :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
+        :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :param body: Request payload. Required.
         :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState
@@ -1379,8 +1266,10 @@ class InternalNetworksOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either CommonPostActionResponseForStateUpdate or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.managednetworkfabric.models.CommonPostActionResponseForStateUpdate]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1394,7 +1283,7 @@ class InternalNetworksOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.CommonPostActionResponseForStateUpdate]:
         """Executes the operation to the underlying resources.
 
         Update Administrative state of  InternalNetworks on resources referred by their resource ids.
@@ -1402,9 +1291,9 @@ class InternalNetworksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
+        :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
+        :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :param body: Request payload. Required.
         :type body: IO
@@ -1419,8 +1308,10 @@ class InternalNetworksOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either CommonPostActionResponseForStateUpdate or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.managednetworkfabric.models.CommonPostActionResponseForStateUpdate]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1432,7 +1323,7 @@ class InternalNetworksOperations:
         internal_network_name: str,
         body: Union[_models.UpdateAdministrativeState, IO],
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.CommonPostActionResponseForStateUpdate]:
         """Executes the operation to the underlying resources.
 
         Update Administrative state of  InternalNetworks on resources referred by their resource ids.
@@ -1440,9 +1331,9 @@ class InternalNetworksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
+        :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
+        :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :param body: Request payload. Is either a UpdateAdministrativeState type or a IO type.
          Required.
@@ -1458,8 +1349,10 @@ class InternalNetworksOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either CommonPostActionResponseForStateUpdate or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.managednetworkfabric.models.CommonPostActionResponseForStateUpdate]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1467,12 +1360,12 @@ class InternalNetworksOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CommonPostActionResponseForStateUpdate] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._update_administrative_state_initial(  # type: ignore
+            raw_result = self._update_administrative_state_initial(
                 resource_group_name=resource_group_name,
                 l3_isolation_domain_name=l3_isolation_domain_name,
                 internal_network_name=internal_network_name,
@@ -1486,9 +1379,11 @@ class InternalNetworksOperations:
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("CommonPostActionResponseForStateUpdate", pipeline_response)
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -1511,14 +1406,14 @@ class InternalNetworksOperations:
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}/updateAdministrativeState"
     }
 
-    def _update_bgp_administrative_state_initial(  # pylint: disable=inconsistent-return-statements
+    def _update_bgp_administrative_state_initial(
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
         body: Union[_models.UpdateAdministrativeState, IO],
         **kwargs: Any
-    ) -> None:
+    ) -> _models.CommonPostActionResponseForStateUpdate:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1532,7 +1427,7 @@ class InternalNetworksOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CommonPostActionResponseForStateUpdate] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1565,16 +1460,24 @@ class InternalNetworksOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        if response.status_code == 200:
+            deserialized = self._deserialize("CommonPostActionResponseForStateUpdate", pipeline_response)
+
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = self._deserialize("CommonPostActionResponseForStateUpdate", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     _update_bgp_administrative_state_initial.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}/updateBgpAdministrativeState"
@@ -1590,7 +1493,7 @@ class InternalNetworksOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.CommonPostActionResponseForStateUpdate]:
         """Executes the operation to the underlying resources for updating BGP state on edge devices.
 
         Update BGP state for internalNetwork. Allowed only on edge devices.
@@ -1598,9 +1501,9 @@ class InternalNetworksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
+        :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
+        :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :param body: Request payload. Required.
         :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState
@@ -1615,8 +1518,10 @@ class InternalNetworksOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either CommonPostActionResponseForStateUpdate or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.managednetworkfabric.models.CommonPostActionResponseForStateUpdate]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1630,7 +1535,7 @@ class InternalNetworksOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.CommonPostActionResponseForStateUpdate]:
         """Executes the operation to the underlying resources for updating BGP state on edge devices.
 
         Update BGP state for internalNetwork. Allowed only on edge devices.
@@ -1638,9 +1543,9 @@ class InternalNetworksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
+        :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
+        :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :param body: Request payload. Required.
         :type body: IO
@@ -1655,8 +1560,10 @@ class InternalNetworksOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either CommonPostActionResponseForStateUpdate or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.managednetworkfabric.models.CommonPostActionResponseForStateUpdate]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1668,7 +1575,7 @@ class InternalNetworksOperations:
         internal_network_name: str,
         body: Union[_models.UpdateAdministrativeState, IO],
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.CommonPostActionResponseForStateUpdate]:
         """Executes the operation to the underlying resources for updating BGP state on edge devices.
 
         Update BGP state for internalNetwork. Allowed only on edge devices.
@@ -1676,9 +1583,9 @@ class InternalNetworksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
+        :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
+        :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :param body: Request payload. Is either a UpdateAdministrativeState type or a IO type.
          Required.
@@ -1694,8 +1601,10 @@ class InternalNetworksOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either CommonPostActionResponseForStateUpdate or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.managednetworkfabric.models.CommonPostActionResponseForStateUpdate]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1703,12 +1612,12 @@ class InternalNetworksOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CommonPostActionResponseForStateUpdate] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._update_bgp_administrative_state_initial(  # type: ignore
+            raw_result = self._update_bgp_administrative_state_initial(
                 resource_group_name=resource_group_name,
                 l3_isolation_domain_name=l3_isolation_domain_name,
                 internal_network_name=internal_network_name,
@@ -1722,9 +1631,11 @@ class InternalNetworksOperations:
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("CommonPostActionResponseForStateUpdate", pipeline_response)
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -1747,14 +1658,14 @@ class InternalNetworksOperations:
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}/updateBgpAdministrativeState"
     }
 
-    def _update_bfd_for_bgp_administrative_state_initial(  # pylint: disable=inconsistent-return-statements
+    def _update_static_route_bfd_administrative_state_initial(
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
         body: Union[_models.UpdateAdministrativeState, IO],
         **kwargs: Any
-    ) -> None:
+    ) -> _models.CommonPostActionResponseForStateUpdate:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1768,7 +1679,7 @@ class InternalNetworksOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CommonPostActionResponseForStateUpdate] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1778,7 +1689,7 @@ class InternalNetworksOperations:
         else:
             _json = self._serialize.body(body, "UpdateAdministrativeState")
 
-        request = build_update_bfd_for_bgp_administrative_state_request(
+        request = build_update_static_route_bfd_administrative_state_request(
             resource_group_name=resource_group_name,
             l3_isolation_domain_name=l3_isolation_domain_name,
             internal_network_name=internal_network_name,
@@ -1787,7 +1698,7 @@ class InternalNetworksOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_bfd_for_bgp_administrative_state_initial.metadata["url"],
+            template_url=self._update_static_route_bfd_administrative_state_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -1801,23 +1712,31 @@ class InternalNetworksOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        if response.status_code == 200:
+            deserialized = self._deserialize("CommonPostActionResponseForStateUpdate", pipeline_response)
+
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = self._deserialize("CommonPostActionResponseForStateUpdate", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-    _update_bfd_for_bgp_administrative_state_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}/updateBfdForBgpAdministrativeState"
+        return deserialized  # type: ignore
+
+    _update_static_route_bfd_administrative_state_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}/updateStaticRouteBfdAdministrativeState"
     }
 
     @overload
-    def begin_update_bfd_for_bgp_administrative_state(
+    def begin_update_static_route_bfd_administrative_state(
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
@@ -1826,17 +1745,17 @@ class InternalNetworksOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.CommonPostActionResponseForStateUpdate]:
         """Implements the operation to the underlying resources.
 
-        Update BfdForBgp for internalNetwork.
+        Update Static Route BFD administrative state for internalNetwork.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
+        :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
+        :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :param body: Request payload. Required.
         :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState
@@ -1851,13 +1770,15 @@ class InternalNetworksOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either CommonPostActionResponseForStateUpdate or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.managednetworkfabric.models.CommonPostActionResponseForStateUpdate]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def begin_update_bfd_for_bgp_administrative_state(
+    def begin_update_static_route_bfd_administrative_state(
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
@@ -1866,17 +1787,17 @@ class InternalNetworksOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.CommonPostActionResponseForStateUpdate]:
         """Implements the operation to the underlying resources.
 
-        Update BfdForBgp for internalNetwork.
+        Update Static Route BFD administrative state for internalNetwork.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
+        :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
+        :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :param body: Request payload. Required.
         :type body: IO
@@ -1891,30 +1812,32 @@ class InternalNetworksOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either CommonPostActionResponseForStateUpdate or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.managednetworkfabric.models.CommonPostActionResponseForStateUpdate]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def begin_update_bfd_for_bgp_administrative_state(
+    def begin_update_static_route_bfd_administrative_state(
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
         body: Union[_models.UpdateAdministrativeState, IO],
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.CommonPostActionResponseForStateUpdate]:
         """Implements the operation to the underlying resources.
 
-        Update BfdForBgp for internalNetwork.
+        Update Static Route BFD administrative state for internalNetwork.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
+        :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
+        :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :param body: Request payload. Is either a UpdateAdministrativeState type or a IO type.
          Required.
@@ -1930,8 +1853,10 @@ class InternalNetworksOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either CommonPostActionResponseForStateUpdate or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.managednetworkfabric.models.CommonPostActionResponseForStateUpdate]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1939,12 +1864,12 @@ class InternalNetworksOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CommonPostActionResponseForStateUpdate] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._update_bfd_for_bgp_administrative_state_initial(  # type: ignore
+            raw_result = self._update_static_route_bfd_administrative_state_initial(
                 resource_group_name=resource_group_name,
                 l3_isolation_domain_name=l3_isolation_domain_name,
                 internal_network_name=internal_network_name,
@@ -1958,9 +1883,11 @@ class InternalNetworksOperations:
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("CommonPostActionResponseForStateUpdate", pipeline_response)
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -1979,712 +1906,6 @@ class InternalNetworksOperations:
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_update_bfd_for_bgp_administrative_state.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}/updateBfdForBgpAdministrativeState"
-    }
-
-    def _clear_ipv6_neighbors_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        l3_isolation_domain_name: str,
-        internal_network_name: str,
-        body: Union[_models.EnableDisableOnResources, IO],
-        **kwargs: Any
-    ) -> None:
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _json = self._serialize.body(body, "EnableDisableOnResources")
-
-        request = build_clear_ipv6_neighbors_request(
-            resource_group_name=resource_group_name,
-            l3_isolation_domain_name=l3_isolation_domain_name,
-            internal_network_name=internal_network_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            template_url=self._clear_ipv6_neighbors_initial.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _clear_ipv6_neighbors_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}/clearIpv6Neighbors"
-    }
-
-    @overload
-    def begin_clear_ipv6_neighbors(
-        self,
-        resource_group_name: str,
-        l3_isolation_domain_name: str,
-        internal_network_name: str,
-        body: _models.EnableDisableOnResources,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Implements the operation to the underlying resources.
-
-        clearIpv6Neighbors for internalNetwork.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
-        :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
-        :type internal_network_name: str
-        :param body: Request payload. Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.EnableDisableOnResources
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_clear_ipv6_neighbors(
-        self,
-        resource_group_name: str,
-        l3_isolation_domain_name: str,
-        internal_network_name: str,
-        body: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Implements the operation to the underlying resources.
-
-        clearIpv6Neighbors for internalNetwork.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
-        :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
-        :type internal_network_name: str
-        :param body: Request payload. Required.
-        :type body: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_clear_ipv6_neighbors(
-        self,
-        resource_group_name: str,
-        l3_isolation_domain_name: str,
-        internal_network_name: str,
-        body: Union[_models.EnableDisableOnResources, IO],
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Implements the operation to the underlying resources.
-
-        clearIpv6Neighbors for internalNetwork.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
-        :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
-        :type internal_network_name: str
-        :param body: Request payload. Is either a EnableDisableOnResources type or a IO type. Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.EnableDisableOnResources or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._clear_ipv6_neighbors_initial(  # type: ignore
-                resource_group_name=resource_group_name,
-                l3_isolation_domain_name=l3_isolation_domain_name,
-                internal_network_name=internal_network_name,
-                body=body,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_clear_ipv6_neighbors.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}/clearIpv6Neighbors"
-    }
-
-    def _clear_arp_entries_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        l3_isolation_domain_name: str,
-        internal_network_name: str,
-        body: Union[_models.EnableDisableOnResources, IO],
-        **kwargs: Any
-    ) -> None:
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _json = self._serialize.body(body, "EnableDisableOnResources")
-
-        request = build_clear_arp_entries_request(
-            resource_group_name=resource_group_name,
-            l3_isolation_domain_name=l3_isolation_domain_name,
-            internal_network_name=internal_network_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            template_url=self._clear_arp_entries_initial.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _clear_arp_entries_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}/clearArpEntries"
-    }
-
-    @overload
-    def begin_clear_arp_entries(
-        self,
-        resource_group_name: str,
-        l3_isolation_domain_name: str,
-        internal_network_name: str,
-        body: _models.EnableDisableOnResources,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Executes clearArpEntries operation to the underlying resources.
-
-        clearArpEntries for internalNetwork.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
-        :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
-        :type internal_network_name: str
-        :param body: Request payload. Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.EnableDisableOnResources
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_clear_arp_entries(
-        self,
-        resource_group_name: str,
-        l3_isolation_domain_name: str,
-        internal_network_name: str,
-        body: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Executes clearArpEntries operation to the underlying resources.
-
-        clearArpEntries for internalNetwork.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
-        :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
-        :type internal_network_name: str
-        :param body: Request payload. Required.
-        :type body: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_clear_arp_entries(
-        self,
-        resource_group_name: str,
-        l3_isolation_domain_name: str,
-        internal_network_name: str,
-        body: Union[_models.EnableDisableOnResources, IO],
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Executes clearArpEntries operation to the underlying resources.
-
-        clearArpEntries for internalNetwork.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
-        :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
-        :type internal_network_name: str
-        :param body: Request payload. Is either a EnableDisableOnResources type or a IO type. Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.EnableDisableOnResources or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._clear_arp_entries_initial(  # type: ignore
-                resource_group_name=resource_group_name,
-                l3_isolation_domain_name=l3_isolation_domain_name,
-                internal_network_name=internal_network_name,
-                body=body,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_clear_arp_entries.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}/clearArpEntries"
-    }
-
-    def _update_bfd_for_static_route_administrative_state_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        l3_isolation_domain_name: str,
-        internal_network_name: str,
-        body: Union[_models.UpdateAdministrativeState, IO],
-        **kwargs: Any
-    ) -> None:
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _json = self._serialize.body(body, "UpdateAdministrativeState")
-
-        request = build_update_bfd_for_static_route_administrative_state_request(
-            resource_group_name=resource_group_name,
-            l3_isolation_domain_name=l3_isolation_domain_name,
-            internal_network_name=internal_network_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            template_url=self._update_bfd_for_static_route_administrative_state_initial.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _update_bfd_for_static_route_administrative_state_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}/updateBfdForStaticRouteAdministrativeState"
-    }
-
-    @overload
-    def begin_update_bfd_for_static_route_administrative_state(
-        self,
-        resource_group_name: str,
-        l3_isolation_domain_name: str,
-        internal_network_name: str,
-        body: _models.UpdateAdministrativeState,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Executes update BfdForStaticRoutes operation to the underlying resources.
-
-        Update BfdForStaticRoutes for internalNetwork.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
-        :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
-        :type internal_network_name: str
-        :param body: Request payload. Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_update_bfd_for_static_route_administrative_state(
-        self,
-        resource_group_name: str,
-        l3_isolation_domain_name: str,
-        internal_network_name: str,
-        body: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Executes update BfdForStaticRoutes operation to the underlying resources.
-
-        Update BfdForStaticRoutes for internalNetwork.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
-        :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
-        :type internal_network_name: str
-        :param body: Request payload. Required.
-        :type body: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_update_bfd_for_static_route_administrative_state(
-        self,
-        resource_group_name: str,
-        l3_isolation_domain_name: str,
-        internal_network_name: str,
-        body: Union[_models.UpdateAdministrativeState, IO],
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Executes update BfdForStaticRoutes operation to the underlying resources.
-
-        Update BfdForStaticRoutes for internalNetwork.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param l3_isolation_domain_name: Name of the L3IsolationDomain. Required.
-        :type l3_isolation_domain_name: str
-        :param internal_network_name: Name of the InternalNetwork. Required.
-        :type internal_network_name: str
-        :param body: Request payload. Is either a UpdateAdministrativeState type or a IO type.
-         Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._update_bfd_for_static_route_administrative_state_initial(  # type: ignore
-                resource_group_name=resource_group_name,
-                l3_isolation_domain_name=l3_isolation_domain_name,
-                internal_network_name=internal_network_name,
-                body=body,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update_bfd_for_static_route_administrative_state.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}/updateBfdForStaticRouteAdministrativeState"
+    begin_update_static_route_bfd_administrative_state.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/{l3IsolationDomainName}/internalNetworks/{internalNetworkName}/updateStaticRouteBfdAdministrativeState"
     }

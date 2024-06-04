@@ -3,6 +3,7 @@
 """
 An example showing how to add custom properties to logging telemetry.
 """
+# mypy: disable-error-code="attr-defined"
 import os
 import logging
 

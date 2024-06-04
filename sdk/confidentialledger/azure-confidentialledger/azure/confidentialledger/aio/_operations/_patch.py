@@ -53,13 +53,18 @@ class AsyncStatePollingMethod(BaseStatePollingMethod, AsyncPollingMethod):
                 try:
                     response = await self._operation()
                     self._evaluate_response(response)
-                except ResourceNotFoundError:
-                    # We'll allow one instance of resource not found to account for replication
-                    # delay.
-                    if not self._retry_not_found or self._received_not_found_exception:
-                        raise
+                except ResourceNotFoundError as not_found_exception:
+                    # We'll allow some instances of resource not found to account for replication
+                    # delay if session stickiness is lost.
+                    self._not_found_count += 1
 
-                    self._received_not_found_exception = True
+                    not_retryable = (
+                        not self._retry_not_found or
+                        self._give_up_not_found_error(not_found_exception)
+                    )
+
+                    if not_retryable or self._not_found_count >=3:
+                        raise
 
                 if not self.finished():
                     await asyncio.sleep(self._polling_interval_s)
@@ -102,7 +107,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         else:
             polling_method = polling
 
-        return AsyncLROPoller(self._client, initial_response, None, polling_method)
+        return AsyncLROPoller(self._client, initial_response, lambda x: x, polling_method)
 
     async def begin_get_receipt(self, transaction_id: str, **kwargs: Any) -> AsyncLROPoller[JSON]:
         """Returns a poller for getting a receipt certifying ledger contents at a particular
@@ -131,7 +136,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         else:
             polling_method = polling
 
-        return AsyncLROPoller(self._client, initial_response, None, polling_method)
+        return AsyncLROPoller(self._client, initial_response, lambda x: x, polling_method)
 
     async def begin_create_ledger_entry(
         self,
@@ -213,14 +218,22 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         # If this poller was called from begin_create_ledger_entry, we should return the
         # create_ledger_entry response, not the transaction status.
         post_result = kwargs.pop("_create_ledger_entry_response", None)
-        deserialization_callback = lambda x: x if post_result is None else post_result
+        deserialization_callback = lambda x: x if post_result is None else post_result # pylint: disable=unnecessary-lambda-assignment
 
         async def operation() -> JSON:
             return await super(ConfidentialLedgerClientOperationsMixin, self).get_transaction_status(
                 transaction_id=transaction_id, **kwargs
             )
 
-        initial_response = await operation()
+        try:
+            initial_response = await operation()
+        except ResourceNotFoundError:
+            if polling is False or polling is None:
+                raise
+
+            # This method allows for temporary resource not found errors, which may occur if session
+            # stickiness is lost and there is replication lag.
+            initial_response = {}
 
         if polling is True:
             polling_method = cast(

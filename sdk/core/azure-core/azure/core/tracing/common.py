@@ -38,7 +38,7 @@ __all__ = [
 ]
 
 
-def get_function_and_class_name(func: Callable, *args) -> str:
+def get_function_and_class_name(func: Callable, *args: object) -> str:
     """
     Given a function and its unamed arguments, returns class_name.function_name. It assumes the first argument
     is `self`. If there are no arguments then it only returns the function name.
@@ -72,7 +72,7 @@ def change_context(span: Optional[AbstractSpan]) -> Generator:
     :rtype: contextmanager
     :return: A context manager that will run the given span in the new context
     """
-    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
+    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
     if span_impl_type is None or span is None:
         yield
     else:
@@ -101,7 +101,7 @@ def with_current_context(func: Callable) -> Any:
     :return: The func wrapped with correct context
     :rtype: callable
     """
-    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
+    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
     if span_impl_type is None:
         return func
 

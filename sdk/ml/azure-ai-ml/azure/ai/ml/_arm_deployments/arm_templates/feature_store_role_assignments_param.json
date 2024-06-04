@@ -1,0 +1,41 @@
+{
+    "materialization_identity_resource_id": {
+        "value": null
+    },
+    "offline_store_target": {
+        "value": null
+    },
+    "offline_store_resource_group_name" : {
+        "value": null
+    },
+    "offline_store_subscription_id" : {
+        "value": null
+    },
+    "online_store_target": {
+        "value": null
+    },
+    "online_store_resource_group_name" : {
+        "value": null
+    },
+    "online_store_subscription_id" : {
+        "value": null
+    },
+    "workspace_name": {
+        "value": null
+    },
+    "resource_group_name": {
+        "value": null
+    },
+    "location": {
+        "value": ""
+    },
+    "update_offline_store_role_assignment": {
+        "value": "false"
+    },
+    "update_online_store_role_assignment": {
+        "value": "false"
+    },
+    "update_workspace_role_assignment": {
+        "value": "false"
+    }
+}

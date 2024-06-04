@@ -7,14 +7,17 @@ from __future__ import annotations
 import functools
 from typing import TYPE_CHECKING, Optional, Any, Callable, Union, AsyncIterator, cast
 import time
+import math
+import random
 
 from ..._pyamqp import constants
 from ..._pyamqp.message import BatchMessage
-from ..._pyamqp.utils import amqp_string_value
+from ..._pyamqp.utils import amqp_string_value, amqp_uint_value
 from ..._pyamqp.aio import SendClientAsync, ReceiveClientAsync
 from ..._pyamqp.aio._authentication_async import JWTTokenAuthAsync
 from ..._pyamqp.aio._connection_async import Connection as ConnectionAsync
 from ..._pyamqp.error import (
+    AMQPConnectionError,
     AMQPError,
     MessageException,
 )
@@ -34,6 +37,8 @@ from ..._common.constants import (
     MESSAGE_DEFER,
     MESSAGE_DEAD_LETTER,
     ServiceBusReceiveMode,
+    OPERATION_TIMEOUT,
+    NEXT_AVAILABLE_SESSION,
 )
 from ..._transport._pyamqp_transport import PyamqpTransport
 from ...exceptions import (
@@ -64,6 +69,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :param str host: The hostname used by pyamqp.
         :param JWTTokenAuth auth: The auth used by pyamqp.
         :param bool network_trace: Debug setting.
+        :return: An instance of an asynchronous pyamqp Connection.
+        :rtype: ~pyamqp.aio.ConnectionAsync
         """
         return ConnectionAsync(
             endpoint=host,
@@ -76,7 +83,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     async def close_connection_async(connection: "ConnectionAsync") -> None:
         """
         Closes existing connection.
-        :param connection: pyamqp Connection.
+        :param ~pyamqp.aio.ConnectionAsync connection: pyamqp Connection.
         """
         await connection.close()
 
@@ -97,6 +104,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword str client_name: Required.
         :keyword dict link_properties: Required.
         :keyword properties: Required.
+        :return: An instance of an asynchronous pyamqp SendClient.
+        :rtype: ~pyamqp.aio.SendClientAsync
         """
         target = kwargs.pop("target")
         return SendClientAsync(
@@ -122,10 +131,11 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     ) -> None:  # pylint: disable=unused-argument
         """
         Handles sending of service bus messages.
-        :param sender: The sender with handler to send messages.
+        :param ~azure.servicebus.ServiceBusSender sender: The sender with handler to send messages.
+        :param ~pyamqp.message.Message message: The message to send.
         :param int timeout: Timeout time.
-        :param last_exception: Exception to raise if message timed out. Only used by uamqp transport.
-        :param logger: Logger.
+        :param Exception last_exception: Exception to raise if message timed out. Only used by uamqp transport.
+        :param logging.Logger logger: Logger.
         """
         # pylint: disable=protected-access
         await sender._open()
@@ -137,8 +147,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     message._message,
                     timeout=timeout
                 )
-        except TimeoutError:
-            raise OperationTimeoutError(message="Send operation timed out")
+
+        except TimeoutError as exc:
+            raise OperationTimeoutError(message="Send operation timed out") from exc
         except MessageException as e:
             raise PyamqpTransportAsync.create_servicebus_exception(logger, e)
 
@@ -148,7 +159,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     ) -> "ReceiveClientAsync":  # pylint:disable=unused-argument
         """
         Creates and returns the receive client.
-        :param Configuration config: The configuration.
+        :param ~azure.servicebus.aio.ServiceBusReceiver receiver: The receiver.
 
         :keyword str source: Required. The source.
         :keyword str offset: Required.
@@ -165,10 +176,34 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword desired_capabilities: Required.
         :keyword streaming_receive: Required.
         :keyword timeout: Required.
+
+        :returns: A ReceiveClientAsync.
+        :rtype: ~pyamqp.aio.ReceiveClientAsync
         """
         config = receiver._config   # pylint: disable=protected-access
         source = kwargs.pop("source")
         receive_mode = kwargs.pop("receive_mode")
+        link_properties = kwargs.pop("link_properties")
+
+        # When NEXT_AVAILABLE_SESSION is set, the default time to wait to connect to a session is 65 seconds.
+        # If there are no messages in the topic/queue the client will wait for 65 seconds for an AttachFrame
+        # frame from the service before raising an OperationTimeoutError due to failure to connect.
+        # max_wait_time, if specified, will allow the user to wait for fewer or more than 65 seconds to
+        # connect to a session.
+        if receiver._session_id == NEXT_AVAILABLE_SESSION and receiver._max_wait_time: # pylint: disable=protected-access
+            timeout_in_ms = receiver._max_wait_time * 1000 # pylint: disable=protected-access
+            open_receive_link_base_jitter_in_ms = 100
+            open_recieve_link_buffer_in_ms = 20
+            open_receive_link_buffer_threshold_in_ms = 1000
+            jitter_base_in_ms = min(timeout_in_ms * 0.01, open_receive_link_base_jitter_in_ms)
+            timeout_in_ms = math.floor(timeout_in_ms - jitter_base_in_ms * random.random())
+            if timeout_in_ms >= open_receive_link_buffer_threshold_in_ms:
+                timeout_in_ms -= open_recieve_link_buffer_in_ms
+
+            # If we have specified a client-side timeout, assure that it is encoded as an uint
+            link_properties[OPERATION_TIMEOUT] = amqp_uint_value(timeout_in_ms)
+
+        kwargs["link_properties"] = link_properties
 
         return ReceiveClientAsync(
             config.hostname,
@@ -194,8 +229,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         receiver: "ServiceBusReceiver", max_wait_time: Optional[int] = None
     ) -> AsyncIterator["ServiceBusReceivedMessage"]:
         while True:
+            # pylint: disable=protected-access
             try:
-                # pylint: disable=protected-access
                 message = await receiver._inner_anext(wait_time=max_wait_time)
                 links = get_receive_links(message)
                 with receive_trace_context_manager(receiver, links=links):
@@ -231,6 +266,18 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         frame: "AttachFrame",
         message: "Message"
     ) -> None:
+        """Callback run on receipt of every message.
+
+        Releases messages from the internal buffer when there is no active receive call. In PEEKLOCK mode,
+        this helps avoid messages from expiring in the buffer and incrementing the delivery count of a message.
+
+        Should not be used with RECEIVE_AND_DELETE mode, since those messages are settled right away and removed
+        from the Service Bus entity.
+
+        :param ~azure.servicebus.aio.ServiceBusReceiver receiver: The receiver object.
+        :param ~pyamqp.performatives.AttachFrame frame: The attach frame.
+        :param ~pyamqp.message.Message message: The received message.
+        """
         # pylint: disable=protected-access
         receiver._handler._last_activity_timestamp = time.time()
         if receiver._receive_context.is_set():
@@ -268,35 +315,42 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         dead_letter_error_description: Optional[str] = None,
     ) -> None:
         # pylint: disable=protected-access
-        if settle_operation == MESSAGE_COMPLETE:
-            return await handler.settle_messages_async(message._delivery_id, 'accepted')
-        if settle_operation == MESSAGE_ABANDON:
-            return await handler.settle_messages_async(
-                message._delivery_id,
-                'modified',
-                delivery_failed=True,
-                undeliverable_here=False
-            )
-        if settle_operation == MESSAGE_DEAD_LETTER:
-            return await handler.settle_messages_async(
-                message._delivery_id,
-                'rejected',
-                error=AMQPError(
-                    condition=DEADLETTERNAME,
-                    description=dead_letter_error_description,
-                    info={
-                        RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
-                        RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
-                    }
+        try:
+            if settle_operation == MESSAGE_COMPLETE:
+                return await handler.settle_messages_async(message._delivery_id, 'accepted')
+            if settle_operation == MESSAGE_ABANDON:
+                return await handler.settle_messages_async(
+                    message._delivery_id,
+                    'modified',
+                    delivery_failed=True,
+                    undeliverable_here=False
                 )
-            )
-        if settle_operation == MESSAGE_DEFER:
-            return await handler.settle_messages_async(
-                message._delivery_id,
-                'modified',
-                delivery_failed=True,
-                undeliverable_here=True
-            )
+            if settle_operation == MESSAGE_DEAD_LETTER:
+                return await handler.settle_messages_async(
+                    message._delivery_id,
+                    'rejected',
+                    error=AMQPError(
+                        condition=DEADLETTERNAME,
+                        description=dead_letter_error_description,
+                        info={
+                            RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
+                            RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
+                        }
+                    )
+                )
+            if settle_operation == MESSAGE_DEFER:
+                return await handler.settle_messages_async(
+                    message._delivery_id,
+                    'modified',
+                    delivery_failed=True,
+                    undeliverable_here=True
+                )
+        except AttributeError as ae:
+            raise RuntimeError("handler is not initialized and cannot complete the message") from ae
+
+        except AMQPConnectionError as e:
+            raise RuntimeError("Connection lost during settle operation.") from e
+
         raise ValueError(
             f"Unsupported settle operation type: {settle_operation}"
         )
@@ -330,13 +384,15 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
-        :param get_token: The callback function used for getting and refreshing
+        :param callable get_token: The callback function used for getting and refreshing
         tokens. It should return a valid jwt token each time it is called.
         :param bytes token_type: Token type.
         :param Configuration config: EH config.
 
         :keyword bool update_token: Required. Whether to update token. If not updating token,
         then pass 300 to refresh_window.
+        :return: An instance of JWTTokenAuth.
+        :rtype: ~pyamqp.aio._authentication_async.JWTTokenAuthAsync
         """
         # TODO: figure out why we're passing all these args to pyamqp JWTTokenAuth, which aren't being used
         update_token = kwargs.pop("update_token")  # pylint: disable=unused-variable
@@ -362,19 +418,21 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         *,
         operation: bytes,
         operation_type: bytes,
-        node: bytes,
+        node: str,
         timeout: int,
         callback: Callable
     ) -> "ServiceBusReceivedMessage":
         """
         Send mgmt request.
-        :param AMQPClient mgmt_client: Client to send request with.
-        :param Message mgmt_msg: Message.
+        :param ~pyamqp.aio.AMQPClientAsync mgmt_client: Client to send request with.
+        :param ~pyamqp.message.Message mgmt_msg: Message.
         :keyword bytes operation: Operation.
         :keyword bytes operation_type: Op type.
-        :keyword bytes node: Mgmt target.
+        :keyword str node: Mgmt target.
         :keyword int timeout: Timeout.
-        :keyword Callable callback: Callback to process request response.
+        :keyword callable callback: Callback to process request response.
+        :return: The result returned by the mgmt request.
+        :rtype: ~azure.servicebus.ServiceBusReceivedMessage
         """
         status, description, response = await mgmt_client.mgmt_request_async(
             mgmt_msg,

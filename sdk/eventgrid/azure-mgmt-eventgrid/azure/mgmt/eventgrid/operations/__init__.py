@@ -27,6 +27,7 @@ from ._partner_destinations_operations import PartnerDestinationsOperations
 from ._partner_namespaces_operations import PartnerNamespacesOperations
 from ._partner_registrations_operations import PartnerRegistrationsOperations
 from ._partner_topics_operations import PartnerTopicsOperations
+from ._network_security_perimeter_configurations_operations import NetworkSecurityPerimeterConfigurationsOperations
 from ._permission_bindings_operations import PermissionBindingsOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
@@ -63,6 +64,7 @@ __all__ = [
     "PartnerNamespacesOperations",
     "PartnerRegistrationsOperations",
     "PartnerTopicsOperations",
+    "NetworkSecurityPerimeterConfigurationsOperations",
     "PermissionBindingsOperations",
     "PrivateEndpointConnectionsOperations",
     "PrivateLinkResourcesOperations",

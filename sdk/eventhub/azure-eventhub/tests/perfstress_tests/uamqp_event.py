@@ -7,7 +7,7 @@ from uamqp.client import ReceiveClient
 from uamqp.async_ops.client_async import ReceiveClientAsync
 from uamqp import authentication
 
-from azure_devtools.perfstress_tests import EventPerfTest
+from devtools_testutils.perfstress_tests import EventPerfTest
 
 
 class UamqpReceiveEventTest(EventPerfTest):

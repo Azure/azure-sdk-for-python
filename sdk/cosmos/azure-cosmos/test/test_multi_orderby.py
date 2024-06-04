@@ -1,44 +1,21 @@
 # The MIT License (MIT)
-# Copyright (c) 2014 Microsoft Corporation
+# Copyright (c) Microsoft Corporation. All rights reserved.
 
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-
+import random
 import unittest
 import uuid
+import os
+
 import pytest
-import random
+
 import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos.partition_key import PartitionKey
 import test_config
+from azure.cosmos import DatabaseProxy
+from azure.cosmos.partition_key import PartitionKey
 
-pytestmark = pytest.mark.cosmosEmulator
 
-# IMPORTANT NOTES:
-
-#      Most test cases in this file create collections in your Azure Cosmos account.
-#      Collections are billing entities.  By running these test cases, you may incur monetary costs on your account.
-
-#      To Run the test, replace the two member fields (masterKey and host) with values
-#   associated with your Azure Cosmos account.
-
-@pytest.mark.usefixtures("teardown")
-class MultiOrderbyTests(unittest.TestCase):
+@pytest.mark.cosmosEmulator
+class TestMultiOrderBy(unittest.TestCase):
     """Multi Orderby and Composite Indexes Tests.
     """
 
@@ -55,30 +32,30 @@ class MultiOrderbyTests(unittest.TestCase):
     LONG_STRING_FIELD = "longStringField"
     PARTITION_KEY = "pk"
     items = []
-    host = test_config._test_config.host
-    masterKey = test_config._test_config.masterKey
-    connectionPolicy = test_config._test_config.connectionPolicy
+    host = test_config.TestConfig.host
+    masterKey = test_config.TestConfig.masterKey
+    connectionPolicy = test_config.TestConfig.connectionPolicy
+    configs = test_config.TestConfig
+
+    client: cosmos_client.CosmosClient = None
+    database: DatabaseProxy = None
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session", connection_policy=cls.connectionPolicy)
-        cls.database = test_config._test_config.create_database_if_not_exist(cls.client)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
+        if cls.host == "https://localhost:8081/":
+            os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
 
     def generate_multi_orderby_item(self):
-        item = {}
-        item['id'] = str(uuid.uuid4())
-        item[self.NUMBER_FIELD] = random.randint(0, 5)
-        item[self.NUMBER_FIELD_2] = random.randint(0, 5)
-        item[self.BOOL_FIELD] = random.randint(0, 2) % 2 == 0
-        item[self.STRING_FIELD] = str(random.randint(0, 5))
-        item[self.STRING_FIELD_2] = str(random.randint(0, 5))
-        item[self.NULL_FIELD] = None
-        item[self.OBJECT_FIELD] = ""
-        item[self.ARRAY_FIELD] = []
-        item[self.SHORT_STRING_FIELD] = "a" + str(random.randint(0, 100))
-        item[self.MEDIUM_STRING_FIELD] = "a" + str(random.randint(0, 128) + 100)
-        item[self.LONG_STRING_FIELD] = "a" + str(random.randint(0, 255) + 128)
-        item[self.PARTITION_KEY] = random.randint(0, 5)
+        item = {'id': str(uuid.uuid4()), self.NUMBER_FIELD: random.randint(0, 5),
+                self.NUMBER_FIELD_2: random.randint(0, 5), self.BOOL_FIELD: random.randint(0, 2) % 2 == 0,
+                self.STRING_FIELD: str(random.randint(0, 5)), self.STRING_FIELD_2: str(random.randint(0, 5)),
+                self.NULL_FIELD: None, self.OBJECT_FIELD: "", self.ARRAY_FIELD: [],
+                self.SHORT_STRING_FIELD: "a" + str(random.randint(0, 100)),
+                self.MEDIUM_STRING_FIELD: "a" + str(random.randint(0, 128) + 100),
+                self.LONG_STRING_FIELD: "a" + str(random.randint(0, 255) + 128),
+                self.PARTITION_KEY: random.randint(0, 5)}
         return item
 
     def create_random_items(self, container, number_of_items, number_of_duplicates):
@@ -253,11 +230,15 @@ class MultiOrderbyTests(unittest.TestCase):
                                 "FROM root " + where_string + " " + \
                                 "ORDER BY " + orderby_item_builder  # nosec
 
-                        expected_ordered_list = self.top(self.sort(self.filter(self.items, has_filter), composite_index, invert), has_top, top_count)
+                        expected_ordered_list = self.top(
+                            self.sort(self.filter(self.items, has_filter), composite_index, invert), has_top, top_count)
 
-                        result_ordered_list = list(created_container.query_items(query=query, enable_cross_partition_query=True))
+                        result_ordered_list = list(
+                            created_container.query_items(query=query, enable_cross_partition_query=True))
 
                         self.validate_results(expected_ordered_list, result_ordered_list, composite_index)
+
+        self.database.delete_container(created_container.id)
 
     def top(self, items, has_top, top_count):
         return items[0:top_count] if has_top else items
@@ -270,7 +251,8 @@ class MultiOrderbyTests(unittest.TestCase):
                 order = "ascending" if order == "descending" else "descending"
             path = composite_path['path'].replace("/", "")
             if self.NULL_FIELD not in path:
-                current_docs = sorted(current_docs, key=lambda x: x[path], reverse=True if order == "descending" else False)
+                current_docs = sorted(current_docs, key=lambda x: x[path],
+                                      reverse=True if order == "descending" else False)
         return current_docs
 
     def filter(self, items, has_filter):
@@ -290,3 +272,7 @@ class MultiOrderbyTests(unittest.TestCase):
                     self.assertIsNone(result_values[j])
                 else:
                     self.assertEqual(expected_ordered_list[i][path], result_values[j])
+
+
+if __name__ == '__main__':
+    unittest.main()

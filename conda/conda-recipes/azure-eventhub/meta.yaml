@@ -1,0 +1,58 @@
+{% set name = "azure-eventhub" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('EVENTHUB_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - cryptography
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - pip
+    - python
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+  run:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - cryptography
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - python
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+
+test:
+  imports:
+    - azure.eventhub
+    - azure.eventhub.aio
+    - azure.eventhub.extensions
+    - azure.eventhub.extensions.checkpointstoreblob
+    - azure.eventhub.extensions.checkpointstoreblobaio
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Event Hubs Client Library for Python"
+  description: |
+    Azure Event Hubs is a highly scalable publish-subscribe service that can ingest millions 
+    of events per second and stream them to multiple consumers. This lets you process and 
+    analyze the massive amounts of data produced by your connected devices and applications. 
+    Once Event Hubs has collected the data, you can retrieve, transform, and store it by using 
+    any real-time analytics provider or with batching/storage adapters.
+    Please see https://aka.ms/azsdk/conda/releases/eventhub for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

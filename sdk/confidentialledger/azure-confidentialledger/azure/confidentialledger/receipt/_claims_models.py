@@ -33,7 +33,12 @@ class LedgerEntryClaim:
 
     @classmethod
     def from_dict(cls, ledger_entry_claim_dict: Dict[str, Any]):
-        """Create a new instance of this class from a dictionary."""
+        """Create a new instance of this class from a dictionary.
+
+        :param dict[str, any] ledger_entry_claim_dict: The dictionary representation of the ledger entry claim.
+        :return: A new instance of this class corresponding to the provided dictionary.
+        :rtype: LedgerEntryClaim
+        """
 
         return cls(**ledger_entry_claim_dict)
 
@@ -55,7 +60,12 @@ class ClaimDigest:
 
     @classmethod
     def from_dict(cls, ledger_entry_claim_dict: Dict[str, Any]):
-        """Create a new instance of this class from a dictionary."""
+        """Create a new instance of this class from a dictionary.
+
+        :param dict[str, any] ledger_entry_claim_dict: The dictionary representation of the claim digest.
+        :return: A new instance of this class corresponding to the provided dictionary.
+        :rtype: ClaimDigest
+        """
 
         return cls(**ledger_entry_claim_dict)
 
@@ -118,6 +128,11 @@ class ApplicationClaim:
 
     @classmethod
     def from_dict(cls, claim_dict: Dict[str, Any]):
-        """Create a new instance of this class from a dictionary."""
+        """Create a new instance of this class from a dictionary.
+
+        :param dict[str, any] claim_dict: The dictionary representation of the application claim.
+        :return: A new instance of this class corresponding to the provided dictionary.
+        :rtype: ApplicationClaim
+        """
 
         return cls(**claim_dict)

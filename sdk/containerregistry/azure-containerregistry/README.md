@@ -16,11 +16,6 @@ Use the client library for Azure Container Registry to:
 | [REST API documentation][rest_docs]
 | [Product documentation][product_docs]
 
-## _Disclaimer_
-
-_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
-_Python 3.7 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)._
-
 ## Getting started
 
 ### Install the package
@@ -33,7 +28,7 @@ pip install --pre azure-containerregistry
 
 ### Prerequisites
 
-* Python 3.7 or later is required to use this package.
+* Python 3.8 or later is required to use this package.
 * You need an [Azure subscription][azure_sub] and a [Container Registry account][container_registry_docs] to use this package.
 
 To create a new Container Registry, you can use the [Azure Portal][container_registry_create_portal],
@@ -106,10 +101,11 @@ Iterate through the collection of tags in the repository with anonymous access.
 ```python
 with ContainerRegistryClient(endpoint) as anon_client:
     manifest = anon_client.get_manifest_properties("library/hello-world", "latest")
-    print(f"Tags of {manifest.repository_name}: ")
-    # Iterate through all the tags
-    for tag in manifest.tags:
-        print(tag)
+    if manifest.tags:
+        print(f"Tags of {manifest.repository_name}: ")
+        # Iterate through all the tags
+        for tag in manifest.tags:
+            print(tag)
 ```
 
 <!-- END SNIPPET -->
@@ -123,12 +119,7 @@ Set properties of an artifact.
 ```python
 with ContainerRegistryClient(self.endpoint, self.credential) as client:
     # Set permissions on image "library/hello-world:v1"
-    client.update_manifest_properties(
-        "library/hello-world",
-        "v1",
-        can_write=False,
-        can_delete=False
-    )
+    client.update_manifest_properties("library/hello-world", "v1", can_write=False, can_delete=False)
 ```
 
 <!-- END SNIPPET -->
@@ -150,12 +141,7 @@ with ContainerRegistryClient(self.endpoint, self.credential) as client:
             manifest_count += 1
             if manifest_count > 3:
                 # Make sure will have the permission to delete the manifest later
-                client.update_manifest_properties(
-                    repository,
-                    manifest.digest,
-                    can_write=True,
-                    can_delete=True
-                )
+                client.update_manifest_properties(repository, manifest.digest, can_write=True, can_delete=True)
                 print(f"Deleting {repository}:{manifest.digest}")
                 client.delete_manifest(repository, manifest.digest)
 ```
@@ -171,10 +157,13 @@ To upload a full image, we need to upload individual layers and configuration. A
 ```python
 self.repository_name = "sample-oci-image"
 layer = BytesIO(b"Sample layer")
-config = BytesIO(json.dumps(
-    {
-        "sample config": "content",
-    }).encode())
+config = BytesIO(
+    json.dumps(
+        {
+            "sample config": "content",
+        }
+    ).encode()
+)
 with ContainerRegistryClient(self.endpoint, self.credential) as client:
     # Upload a layer
     layer_digest, layer_size = client.upload_blob(self.repository_name, layer)
@@ -220,7 +209,7 @@ with ContainerRegistryClient(self.endpoint, self.credential) as client:
     get_manifest_result = client.get_manifest(self.repository_name, "latest")
     received_manifest = get_manifest_result.manifest
     print(f"Got manifest:\n{received_manifest}")
-    
+
     # Download and write out the layers
     for layer in received_manifest["layers"]:
         # Remove the "sha256:" prefix from digest

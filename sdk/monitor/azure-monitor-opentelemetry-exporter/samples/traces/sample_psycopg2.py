@@ -8,6 +8,7 @@ application insights with the AzureMonitorTraceExporter.
 See more info on the psycopg2 instrumentation here:
 https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation/opentelemetry-instrumentation-psycopg2
 """
+# mypy: disable-error-code="attr-defined"
 import os
 import psycopg2
 

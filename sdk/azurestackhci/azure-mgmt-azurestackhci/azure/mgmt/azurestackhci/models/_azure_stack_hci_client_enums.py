@@ -16,28 +16,8 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTERNAL = "Internal"
 
 
-class ArcSettingAggregateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Aggregate state of Arc agent across the nodes in this HCI cluster."""
-
-    NOT_SPECIFIED = "NotSpecified"
-    ERROR = "Error"
-    SUCCEEDED = "Succeeded"
-    CANCELED = "Canceled"
-    FAILED = "Failed"
-    CONNECTED = "Connected"
-    DISCONNECTED = "Disconnected"
-    DELETED = "Deleted"
-    CREATING = "Creating"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
-    MOVING = "Moving"
-    PARTIALLY_SUCCEEDED = "PartiallySucceeded"
-    PARTIALLY_CONNECTED = "PartiallyConnected"
-    IN_PROGRESS = "InProgress"
-
-
 class CloudInitDataSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Datasource for the gallery image when provisioning with cloud-init (Azure or NoCloud)."""
+    """Datasource for the gallery image when provisioning with cloud-init [NoCloud, Azure]."""
 
     NO_CLOUD = "NoCloud"
     AZURE = "Azure"
@@ -50,14 +30,6 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
-
-
-class DiagnosticLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Desired level of diagnostic data emitted by the cluster."""
-
-    OFF = "Off"
-    BASIC = "Basic"
-    ENHANCED = "Enhanced"
 
 
 class DiskFileFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -73,38 +45,11 @@ class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CUSTOM_LOCATION = "CustomLocation"
 
 
-class ExtensionAggregateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Aggregate state of Arc Extensions across the nodes in this HCI cluster."""
-
-    NOT_SPECIFIED = "NotSpecified"
-    ERROR = "Error"
-    SUCCEEDED = "Succeeded"
-    CANCELED = "Canceled"
-    FAILED = "Failed"
-    CONNECTED = "Connected"
-    DISCONNECTED = "Disconnected"
-    DELETED = "Deleted"
-    CREATING = "Creating"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
-    MOVING = "Moving"
-    PARTIALLY_SUCCEEDED = "PartiallySucceeded"
-    PARTIALLY_CONNECTED = "PartiallyConnected"
-    IN_PROGRESS = "InProgress"
-
-
 class HyperVGeneration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The hypervisor generation of the Virtual Machine [V1, V2]."""
 
     V1 = "V1"
     V2 = "V2"
-
-
-class ImdsAttestation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """IMDS attestation status of the cluster."""
-
-    DISABLED = "Disabled"
-    ENABLED = "Enabled"
 
 
 class IpAllocationMethodEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -117,62 +62,14 @@ class IpAllocationMethodEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class IPPoolTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ip pool type."""
+    """Type of the IP Pool [vm, vippool]."""
 
     VM = "vm"
     VIPPOOL = "vippool"
 
 
-class NetworkTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of the network."""
-
-    NAT = "NAT"
-    TRANSPARENT = "Transparent"
-    L2_BRIDGE = "L2Bridge"
-    L2_TUNNEL = "L2Tunnel"
-    ICS = "ICS"
-    PRIVATE = "Private"
-    OVERLAY = "Overlay"
-    INTERNAL = "Internal"
-    MIRRORED = "Mirrored"
-
-
-class NodeArcState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """State of Arc agent in this node."""
-
-    NOT_SPECIFIED = "NotSpecified"
-    ERROR = "Error"
-    SUCCEEDED = "Succeeded"
-    CANCELED = "Canceled"
-    FAILED = "Failed"
-    CONNECTED = "Connected"
-    DISCONNECTED = "Disconnected"
-    DELETED = "Deleted"
-    CREATING = "Creating"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
-    MOVING = "Moving"
-
-
-class NodeExtensionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """State of Arc Extension in this node."""
-
-    NOT_SPECIFIED = "NotSpecified"
-    ERROR = "Error"
-    SUCCEEDED = "Succeeded"
-    CANCELED = "Canceled"
-    FAILED = "Failed"
-    CONNECTED = "Connected"
-    DISCONNECTED = "Disconnected"
-    DELETED = "Deleted"
-    CREATING = "Creating"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
-    MOVING = "Moving"
-
-
 class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """operating system type that the gallery image uses. Expected to be linux or windows."""
+    """Operating system type that the gallery image uses [Windows, Linux]."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
@@ -188,15 +85,8 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER_SYSTEM = "user,system"
 
 
-class OsTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """OsType - string specifying whether the OS is Linux or Windows."""
-
-    LINUX = "Linux"
-    WINDOWS = "Windows"
-
-
 class PowerStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The power state of the virtual machine."""
+    """The power state of the virtual machine instance."""
 
     DEALLOCATED = "Deallocated"
     DEALLOCATING = "Deallocating"
@@ -207,31 +97,12 @@ class PowerStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNKNOWN = "Unknown"
 
 
-class PrivateIPAllocationMethodEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """PrivateIPAllocationMethod - The private IP address allocation method. Possible values include:
-    'Static', 'Dynamic'.
-    """
-
-    DYNAMIC = "Dynamic"
-    STATIC = "Static"
-
-
 class ProvisioningAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the different types of operations for guest agent."""
 
     INSTALL = "install"
     UNINSTALL = "uninstall"
     REPAIR = "repair"
-
-
-class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning state of the ArcSetting proxy resource."""
-
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-    ACCEPTED = "Accepted"
-    PROVISIONING = "Provisioning"
 
 
 class ProvisioningStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -245,22 +116,21 @@ class ProvisioningStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
 
 
-class ProvisioningStatusEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class SecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the SecurityType of the virtual machine. EnableTPM and SecureBootEnabled must be set
+    to true for SecurityType to function.
+    """
+
+    TRUSTED_LAUNCH = "TrustedLaunch"
+    CONFIDENTIAL_VM = "ConfidentialVM"
+
+
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the operation performed on the gallery image [Succeeded, Failed, InProgress]."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     IN_PROGRESS = "InProgress"
-
-
-class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of the cluster agent."""
-
-    NOT_YET_REGISTERED = "NotYetRegistered"
-    CONNECTED_RECENTLY = "ConnectedRecently"
-    NOT_CONNECTED_RECENTLY = "NotConnectedRecently"
-    DISCONNECTED = "Disconnected"
-    ERROR = "Error"
 
 
 class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -272,11 +142,11 @@ class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class StatusTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the hybrid machine agent."""
+    """The installation status of the hybrid machine agent installation."""
 
-    CONNECTED = "Connected"
-    DISCONNECTED = "Disconnected"
-    ERROR = "Error"
+    SUCCEEDED = "Succeeded"
+    IN_PROGRESS = "InProgress"
+    FAILED = "Failed"
 
 
 class VmSizeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -305,10 +175,3 @@ class VmSizeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STANDARD_NV12 = "Standard_NV12"
     STANDARD_K8_S5_V1 = "Standard_K8S5_v1"
     CUSTOM = "Custom"
-
-
-class WindowsServerSubscription(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Desired state of Windows Server Subscription."""
-
-    DISABLED = "Disabled"
-    ENABLED = "Enabled"

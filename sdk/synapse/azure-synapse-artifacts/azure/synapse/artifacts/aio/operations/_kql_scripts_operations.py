@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -54,7 +54,6 @@ class KqlScriptsOperations:
     def get_all(self, **kwargs: Any) -> AsyncIterable["_models.KqlScriptResource"]:
         """Get all KQL scripts.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KqlScriptResource or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.synapse.artifacts.models.KqlScriptResource]
@@ -77,31 +76,30 @@ class KqlScriptsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_all_request(
+                _request = build_get_all_request(
                     api_version=api_version,
-                    template_url=self.get_all.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("KqlScriptsResourceCollectionResponse", pipeline_response)
@@ -111,11 +109,11 @@ class KqlScriptsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -127,5 +125,3 @@ class KqlScriptsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    get_all.metadata = {"url": "/kqlScripts"}

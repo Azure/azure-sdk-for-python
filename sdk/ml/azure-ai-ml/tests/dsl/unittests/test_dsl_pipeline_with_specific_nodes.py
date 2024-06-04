@@ -5,6 +5,7 @@ import pytest
 from test_utilities.utils import omit_with_wildcard, parse_local_path
 
 from azure.ai.ml import Input, Output, command, dsl, load_component, spark
+from azure.ai.ml import UserIdentityConfiguration
 from azure.ai.ml.automl import classification, regression
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
 from azure.ai.ml.constants._component import DataCopyMode
@@ -211,8 +212,7 @@ class TestDSLPipelineWithSpecificNodes:
                 goal="maximize",
                 sampling_algorithm="random",
             )
-            # Todo: this is a workaround method, a long term task will track
-            sweep_job.resources.instance_type = "cpularge"
+            sweep_job.set_resources(instance_type="cpularge")
             sweep_job.compute = "test-aks-large"
             sweep_job.set_limits(max_total_trials=10)
 
@@ -255,6 +255,7 @@ class TestDSLPipelineWithSpecificNodes:
                 ),
             )
             node1.resources = {"instance_count": 2}
+            node1.identity = UserIdentityConfiguration()
 
         dsl_pipeline: PipelineJob = train_with_parallel_in_pipeline()
         dsl_pipeline.jobs["node1"].outputs.job_output_path = Output(
@@ -1838,6 +1839,7 @@ class TestDSLPipelineWithSpecificNodes:
             task=task,
             input_data=input_data,
             logging_level=logging_level,
+            identity=UserIdentityConfiguration(),
             max_concurrency_per_instance=max_concurrency_per_instance,
             error_threshold=error_threshold,
             mini_batch_error_threshold=mini_batch_error_threshold,
@@ -1845,13 +1847,13 @@ class TestDSLPipelineWithSpecificNodes:
             outputs=outputs,
             environment_variables=expected_environment_variables,
         )
-
         parallel_job_func = to_component(job=parallel_job)
         data = Input(type=AssetTypes.MLTABLE, path="/a/path/on/ds", mode="eval_mount")
 
         @dsl.pipeline(experiment_name="test_pipeline_with_parallel_function")
         def pipeline(job_data_path):
             parallel_node = parallel_job_func(job_data_path=job_data_path)
+            parallel_node.identity = UserIdentityConfiguration()
             return {
                 "pipeline_job_out": parallel_node.outputs.job_output_path,
             }
@@ -1910,6 +1912,7 @@ class TestDSLPipelineWithSpecificNodes:
                                 "value": "${{parent.outputs.pipeline_job_out}}",
                             }
                         },
+                        "identity": {"identity_type": "UserIdentity"},
                         "resources": {"instance_count": 2},
                         "task": {
                             "code": parse_local_path(
@@ -1966,6 +1969,7 @@ class TestDSLPipelineWithSpecificNodes:
                 mini_batch_size=mini_batch_size,
                 task=task,
                 logging_level=logging_level,
+                identity=UserIdentityConfiguration(),
                 max_concurrency_per_instance=max_concurrency_per_instance,
                 error_threshold=error_threshold,
                 mini_batch_error_threshold=mini_batch_error_threshold,
@@ -2012,6 +2016,7 @@ class TestDSLPipelineWithSpecificNodes:
                         "display_name": "my-evaluate-job",
                         "environment_variables": {"key": "val"},
                         "error_threshold": 1,
+                        "identity": {"identity_type": "UserIdentity"},
                         "input_data": "${{inputs.job_data_path}}",
                         "inputs": {
                             "job_data_path": {
@@ -2047,6 +2052,7 @@ class TestDSLPipelineWithSpecificNodes:
                         "display_name": "my-evaluate-job",
                         "environment_variables": {"key": "val"},
                         "error_threshold": 1,
+                        "identity": {"identity_type": "UserIdentity"},
                         "input_data": "${{inputs.job_data_path}}",
                         "inputs": {
                             "job_data_path": {

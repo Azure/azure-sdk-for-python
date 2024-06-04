@@ -1,15 +1,24 @@
 # Blob Performance Tests
 
-In order to run the performance tests, the `azure-devtools` package must be installed. This is done as part of the `dev_requirements`.
+In order to run the performance tests, the `devtools_testutils` package must be installed. This is done as part of the `dev_requirements`.
 Start be creating a new virtual environment for your perf tests. This will need to be a Python 3 environment, preferably >=3.7.
 Note that tests for T1 and T2 SDKs cannot be run from the same environment, and will need to be setup separately.
 
 ### Setup for test resources
 
-These tests will run against a pre-configured Storage account. The following environment variable will need to be set for the tests to access the live resources:
+These tests will run against a pre-configured Storage account. The following environment variable will need to be set for the tests to access the live resources using the connection string for authentication:
 ```
 AZURE_STORAGE_CONNECTION_STRING=<live storage account connection string>
 ```
+
+The following environment variables will need to be set for the tests to access the live resources using Microsoft Entra ID for authentication:
+```
+AZURE-STORAGE-BLOB_TENANT_ID=<Microsoft Entra ID tenant ID>
+AZURE-STORAGE-BLOB_CLIENT_ID=<Microsoft Entra ID client ID>
+AZURE-STORAGE-BLOB_CLIENT_SECRET=<Microsoft Entra ID client secret>
+AZURE_STORAGE_ACCOUNT_NAME=<live storage account name>
+```
+
 
 ### Setup for T2 perf test runs
 
@@ -27,7 +36,7 @@ AZURE_STORAGE_CONNECTION_STRING=<live storage account connection string>
 
 ## Test commands
 
-When `azure-devtools` is installed, you will have access to the `perfstress` command line tool, which will scan the current module for runable perf tests. Only a specific test can be run at a time (i.e. there is no "run all" feature).
+When `devtools_testutils` is installed, you will have access to the `perfstress` command line tool, which will scan the current module for runable perf tests. Only a specific test can be run at a time (i.e. there is no "run all" feature).
 
 ```cmd
 (env) ~/azure-storage-blob> cd tests
@@ -46,6 +55,7 @@ These options are available for all perf tests:
 - `--no-cleanup` Whether to keep newly created resources after test run. Default is False (resources will be deleted).
 - `-x --test-proxies` Whether to run the tests against the test proxy server. Specfiy the URL(s) for the proxy endpoint(s) (e.g. "https://localhost:5001"). WARNING: When using with Legacy tests - only HTTPS is supported.
 - `--profile` Whether to run the perftest with cProfile. If enabled (default is False), the output file of the **last completed single iteration** will be written to the current working directory in the format `"cProfile-<TestClassName>-<TestID>-<sync/async>.pstats"`.
+- `--use-entra-id` - Flag to pass in to use Microsoft Entra ID as the authentication. By default, set to False.
 
 ### Common Blob command line options
 The options are available for all Blob perf tests:

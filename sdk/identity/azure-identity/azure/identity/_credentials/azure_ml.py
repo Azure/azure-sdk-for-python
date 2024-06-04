@@ -50,6 +50,7 @@ def _get_request(url: str, scope: str, identity_config: Dict) -> HttpRequest:
     request.format_parameters(dict({"api-version": "2017-09-01", "resource": scope}, **identity_config))
     return request
 
+
 def _parse_expires_on(content: Dict) -> None:
     """Parse an App Service MSI version 2017-09-01 expires_on value to epoch seconds.
 

@@ -146,7 +146,11 @@ def test_claims_challenge():
     assert response.http_response.status_code == 200
     assert transport.send.call_count == 2
     assert credential.get_token.call_count == 2
-    credential.get_token.assert_called_with(expected_scope, claims=expected_claims)
+
+    args, kwargs = credential.get_token.call_args
+    assert expected_scope in args
+    assert kwargs["claims"] == expected_claims
+
     with pytest.raises(StopIteration):
         next(tokens)
     with pytest.raises(StopIteration):

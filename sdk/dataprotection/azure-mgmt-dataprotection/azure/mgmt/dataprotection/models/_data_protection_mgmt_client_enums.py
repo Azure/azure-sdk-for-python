@@ -36,6 +36,13 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
+class CrossRegionRestoreState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """CrossRegionRestore state."""
+
+    DISABLED = "Disabled"
+    ENABLED = "Enabled"
+
+
 class CrossSubscriptionRestoreState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CrossSubscriptionRestore state."""
 
@@ -158,6 +165,15 @@ class RecoveryOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAIL_IF_EXISTS = "FailIfExists"
 
 
+class RecoveryPointCompletionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies recovery point completeness. Partial (i.e., only some of the intended items were
+    backed up), or Completed (i.e., ALL intended items were backed up).
+    """
+
+    COMPLETED = "Completed"
+    PARTIAL = "Partial"
+
+
 class RehydrationPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Priority to be used for rehydration. Values High or Standard."""
 
@@ -191,6 +207,12 @@ class ResourceMoveState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MOVE_SUCCEEDED = "MoveSucceeded"
 
 
+class ResourcePropertiesObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the specific object - used for deserializing."""
+
+    DEFAULT_RESOURCE_PROPERTIES = "DefaultResourceProperties"
+
+
 class RestoreSourceDataStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets the type of the source data store."""
 
@@ -215,6 +237,16 @@ class SecretStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     INVALID = "Invalid"
     AZURE_KEY_VAULT = "AzureKeyVault"
+
+
+class SecureScoreLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Secure Score of Backup Vault."""
+
+    NONE = "None"
+    MINIMUM = "Minimum"
+    ADEQUATE = "Adequate"
+    MAXIMUM = "Maximum"
+    NOT_SUPPORTED = "NotSupported"
 
 
 class SoftDeleteState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

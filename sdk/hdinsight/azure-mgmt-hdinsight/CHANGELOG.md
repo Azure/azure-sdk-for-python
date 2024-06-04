@@ -1,5 +1,12 @@
 # Release History
 
+## 9.0.0b2 (2023-07-21)
+
+### Features Added
+
+  - Model StorageAccount has a new parameter enable_secure_channel
+  - Added feature to support selecting use secure channel during creation. The paramter would force to true if the cluster created based on a stroage account that secure transfer enabled, no matter it use 'blob' or 'dfs' type.
+
 ## 9.0.0b1 (2022-11-18)
 
 ### Other Changes

@@ -3,6 +3,7 @@
 """
 An example showing how to export exception telemetry using the AzureMonitorLogExporter.
 """
+# mypy: disable-error-code="attr-defined"
 import os
 import logging
 

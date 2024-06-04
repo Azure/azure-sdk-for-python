@@ -48,6 +48,12 @@ def extract_rule_data_template(feed_class, convert, feed_element):
     doesn't work for this special part.
     After autorest is enhanced, this method can be removed.
     Refer to autorest issue https://github.com/Azure/autorest/issues/3535
+
+    :param any feed_class: The class of the feed.
+    :param any convert: The function to convert the XML entry element and the rule instance.
+    :param any feed_element: The XML entry element.
+    :return: The next link and the iterator of the entities.
+    :rtype: tuple[str, iterator[RuleProperties]]
     """
     deserialized = feed_class.deserialize(feed_element)
     next_link = None
@@ -79,6 +85,11 @@ def get_next_template(list_func, *args, **kwargs):
 
     azure.core.async_paging.AsyncItemPaged will call `extract_data_template` and use the returned
     XML ElementTree to call a partial function created from `extrat_data_template`.
+
+    :param callable list_func: The function to list entities.
+    :param any args: The arguments.
+    :return: The XML ElementTree.
+    :rtype: ElementTree
 
     """
     start_index = kwargs.pop("start_index", 0)
@@ -174,6 +185,9 @@ def deserialize_rule_key_values(entry_ele, rule_description):
 
     After autorest is enhanced, this method can be removed.
     Refer to autorest issue https://github.com/Azure/autorest/issues/3535
+
+    :param any entry_ele: The xml Element that contains the rule's filter and action.
+    :param any rule_description: The rule_description that contains the rule's filter and action.
     """
     content = entry_ele.find(constants.ATOM_CONTENT_TAG)
     if content:
@@ -259,6 +273,9 @@ def serialize_rule_key_values(entry_ele, rule_descripiton):
 
     After autorest is enhanced, this method can be removed.
     Refer to autorest issue https://github.com/Azure/autorest/issues/3535
+
+    :param any entry_ele: The xml Element that contains the rule's filter and action.
+    :param any rule_descripiton: The rule_description that contains the rule's filter and action.
     """
     content = entry_ele.find(constants.ATOM_CONTENT_TAG)
     if content:
@@ -349,6 +366,7 @@ def create_properties_from_dict_if_needed(properties, sb_resource_type):
     :param properties: A properties object or its dict representation.
     :type properties: Mapping or PropertiesType
     :param type sb_resource_type: The type of properties object.
+    :return: A properties object.
     :rtype: PropertiesType
     """
     if isinstance(properties, sb_resource_type):
@@ -362,4 +380,4 @@ def create_properties_from_dict_if_needed(properties, sb_resource_type):
             "Update input must be an instance of {}, or a mapping representing one.".format(
                 sb_resource_type.__name__
             )
-        )
+        ) from None

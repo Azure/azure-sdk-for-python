@@ -13,23 +13,28 @@ description: Samples for the Azure.Purview.Sharing client library.
 
 The following are code samples that show common scenario operations with the Azure Purview client library.
 
-* [sent_shares_examples.py](https://github.com/yamanwahsheh/azure-sdk-for-python/blob/yaman/share-v2-python-tests-and-samples/sdk/purview/azure-purview-sharing/samples/sent_shares_examples.py) - Examples of Sent Shares:
+* [sent_shares_examples.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/purview/azure-purview-sharing/samples/sent_shares_examples.py) - Examples of Sent Shares:
     * Create a share client
     * Create a sent share
-    * Get a sent share
-    * Delete a sent share
-    * Get all sent shares
     * Send a user invitation
     * Send a service invitation
+    * Get a sent share
+    * Get all sent shares
+    * Delete a sent share
+    * Get a sent share invitation
     * View sent invitations
+    * Delete a sent share invitation
 
-* [received_shares_examples.py](https://github.com/yamanwahsheh/azure-sdk-for-python/blob/yaman/share-v2-python-tests-and-samples/sdk/purview/azure-purview-sharing/samples/received_shares_examples.py) - Examples of Received Shares:
+* [received_shares_examples.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/purview/azure-purview-sharing/samples/received_shares_examples.py) - Examples of Received Shares:
     * Create a share client
     * Get all detached received shares
     * Attach a received share
     * Get a received share
     * List attached received shares
     * Delete a received share
+
+* [share_resources_examples.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/purview/azure-purview-sharing/samples/share_resources_examples.py) - Examples of Share Resources:
+    * List Share Resources
 
 ## Prerequisites
 * Python 3.6+

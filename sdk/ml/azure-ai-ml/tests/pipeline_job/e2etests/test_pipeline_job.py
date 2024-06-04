@@ -4,28 +4,20 @@ from typing import Any, Callable, Dict
 
 import pydash
 import pytest
-from azure.core.exceptions import HttpResponseError
 from devtools_testutils import AzureRecordedTestCase, is_live
-from test_utilities.utils import (
-    _PYTEST_TIMEOUT_METHOD,
-    assert_job_cancel,
-    sleep_if_live,
-    wait_until_done,
-)
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, sleep_if_live, wait_until_done
 
 from azure.ai.ml import Input, MLClient, load_component, load_data, load_job
-from azure.ai.ml._utils._arm_id_utils import (
-    AMLVersionedArmId,
-    is_singularity_id_for_resource,
-)
+from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId, is_singularity_id_for_resource
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants import InputOutputModes
+from azure.ai.ml.constants import AssetTypes, InputOutputModes
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.entities import Component, Job, PipelineJob
 from azure.ai.ml.entities._builders import Command, Pipeline
 from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.spark import Spark
 from azure.ai.ml.exceptions import JobException
+from azure.core.exceptions import HttpResponseError
 
 from .._util import (
     _PIPELINE_JOB_LONG_RUNNING_TIMEOUT_SECOND,
@@ -36,12 +28,7 @@ from .._util import (
 
 
 def assert_job_input_output_types(job: PipelineJob):
-    from azure.ai.ml.entities._job.pipeline._io import (
-        NodeInput,
-        NodeOutput,
-        PipelineInput,
-        PipelineOutput,
-    )
+    from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput, PipelineInput, PipelineOutput
 
     for _, input in job.inputs.items():
         assert isinstance(input, PipelineInput)
@@ -398,12 +385,12 @@ class TestPipelineJob(AzureRecordedTestCase):
                                 },
                                 "literal_input": {"job_input_type": "literal", "value": "2"},
                             },
-                            "_source": "REMOTE.WORKSPACE.COMPONENT",
+                            "_source": "YAML.JOB",
                         },
                         "hello_world_inline_commandjob_2": {
                             "type": "command",
                             "name": "hello_world_inline_commandjob_2",
-                            "_source": "REMOTE.WORKSPACE.COMPONENT",
+                            "_source": "YAML.JOB",
                         },
                     },
                     "outputs": {"job_out_path_1": {"mode": "ReadWriteMount", "job_output_type": "uri_folder"}},
@@ -487,7 +474,7 @@ class TestPipelineJob(AzureRecordedTestCase):
                                     "value": "${{parent.inputs.pipeline_job_test_input}}",
                                 },
                             },
-                            "_source": "REMOTE.WORKSPACE.COMPONENT",
+                            "_source": "YAML.JOB",
                         },
                     },
                     "outputs": {
@@ -537,6 +524,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             "tabular_input_e2e.yml",
         ],
     )
+    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_pipeline_job_with_parallel_job(
         self, client: MLClient, randstr: Callable[[str], str], pipeline_job_path: str
     ) -> None:
@@ -561,6 +549,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             "file_component_literal_input_e2e.yml",
         ],
     )
+    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_pipeline_job_with_parallel_component_job_bind_to_literal_input(
         self, client: MLClient, randstr: Callable[[str], str], pipeline_job_path: str
     ) -> None:
@@ -578,6 +567,18 @@ class TestPipelineJob(AzureRecordedTestCase):
 
         # assert on the number of converted jobs to make sure we didn't drop the parallel job
         assert len(created_job.jobs.items()) == 1
+
+    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
+    def test_pipeline_job_with_parallel_job_with_input_bindings(self, client: MLClient, randstr: Callable[[str], str]):
+        yaml_path = "tests/test_configs/pipeline_jobs/pipeline_job_with_parallel_job_with_input_bindings.yml"
+
+        params_override = [{"name": randstr("name")}]
+        pipeline_job = load_job(
+            source=yaml_path,
+            params_override=params_override,
+        )
+        created_job = client.jobs.create_or_update(pipeline_job)
+        assert created_job.jobs["hello_world"].resources.instance_count == "${{parent.inputs.instance_count}}"
 
     @pytest.mark.skip(
         reason="The task for fixing this is tracked by "
@@ -618,6 +619,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert on the number of converted jobs to make sure we didn't drop the parallel job
         assert len(created_job.jobs.items()) == 3
 
+    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_pipeline_job_with_command_job_with_dataset_short_uri(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
@@ -1506,7 +1508,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["copy_files"], fields_to_omit)
 
         assert actual_dict == {
-            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "_source": "YAML.COMPONENT",
             "data_copy_mode": "merge_with_overwrite",
             "inputs": {"folder1": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"}},
             "outputs": {"output_folder": {"type": "literal", "value": "${{parent.outputs.merged_blob}}"}},
@@ -1524,7 +1526,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["copy_files"], fields_to_omit)
 
         assert actual_dict == {
-            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "_source": "YAML.COMPONENT",
             "data_copy_mode": "fail_if_conflict",
             "inputs": {"folder1": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"}},
             "outputs": {"output_folder": {"type": "literal", "value": "${{parent.outputs.merged_blob}}"}},
@@ -1542,7 +1544,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["merge_files"], fields_to_omit)
 
         assert actual_dict == {
-            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "_source": "YAML.COMPONENT",
             "data_copy_mode": "merge_with_overwrite",
             "inputs": {
                 "folder1": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"},
@@ -1565,7 +1567,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["merge_files_job"], fields_to_omit)
 
         assert actual_dict == {
-            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "_source": "YAML.JOB",
             "data_copy_mode": "merge_with_overwrite",
             "inputs": {
                 "folder1": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"},
@@ -1588,7 +1590,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["merge_files"], fields_to_omit)
 
         assert actual_dict == {
-            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "_source": "YAML.COMPONENT",
             "data_copy_mode": "merge_with_overwrite",
             "inputs": {
                 "input1": {"job_input_type": "literal", "value": "${{parent.inputs.input1}}"},
@@ -1612,7 +1614,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         # load from rest will get source from component, which will be REMOTE.REGISTRY since component now is
         # registry component
         assert actual_dict == {
-            "_source": "REMOTE.REGISTRY",
+            "_source": "BUILTIN",
             "outputs": {
                 "sink": {
                     "job_output_type": "uri_folder",
@@ -1670,7 +1672,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["snowflake_blob"], fields_to_omit)
 
         assert actual_dict == {
-            "_source": "REMOTE.REGISTRY",
+            "_source": "BUILTIN",
             "computeId": "serverless",
             "outputs": {"sink": {"job_output_type": "mltable"}},
             "source": {
@@ -1694,7 +1696,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["snowflake_blob"], fields_to_omit)
 
         assert actual_dict == {
-            "_source": "REMOTE.REGISTRY",
+            "_source": "BUILTIN",
             "computeId": "serverless",
             "outputs": {
                 "sink": {
@@ -1721,7 +1723,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["blob_azuresql"], fields_to_omit)
 
         assert actual_dict == {
-            "_source": "REMOTE.REGISTRY",
+            "_source": "BUILTIN",
             "inputs": {"source": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"}},
             "sink": {
                 "connection": "${{parent.inputs.connection_target_azuresql}}",
@@ -1945,6 +1947,128 @@ jobs:
         assert rest_obj.properties.jobs["full_name"]["computeId"].endswith(singularity_vc.name)
         assert is_singularity_id_for_resource(rest_obj.properties.jobs["short_name"]["computeId"])
         assert rest_obj.properties.jobs["short_name"]["computeId"].endswith(singularity_vc.name)
+
+    def test_pipeline_with_param_group_in_command_component(
+        self,
+        client,
+        randstr: Callable[[str], str],
+    ):
+        pipeline_job = load_job("./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_group_input_for_node.yml")
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        assert created_pipeline_job.jobs["dot_input_name"]._to_dict()["inputs"] == {
+            "component_in_group.number": "10.99",
+            "component_in_group.sub1.integer": "10",
+            "component_in_group.sub1.number": "10.99",
+            "component_in_group.sub2.number": "10.99",
+            "component_in_path": {"path": "${{parent.inputs.job_in_path}}"},
+        }
+
+    def test_flow_node_skip_input_filtering(self, client: MLClient, randstr: Callable[[str], str]):
+        flow_dag_path = "./tests/test_configs/flows/web_classification_with_additional_includes/flow.dag.yaml"
+        anonymous_component = load_component(flow_dag_path)
+        created_component = client.components.create_or_update(
+            load_component(flow_dag_path, params_override=[{"name": randstr("component_name")}])
+        )
+
+        from azure.ai.ml.dsl._group_decorator import group
+
+        @group
+        class Connection:
+            connection: str
+            deployment_name: str
+
+        init_args = {
+            "inputs": {
+                "data": Input(
+                    type=AssetTypes.URI_FOLDER, path="./tests/test_configs/flows/data/web_classification.jsonl"
+                ),
+                "url": "${data.url}",
+                "connections": {
+                    "summarize_text_content": {
+                        "connection": "azure_open_ai_connection",
+                        "deployment_name": "text-davinci-003",
+                    },
+                    "classify_with_llm": Connection(
+                        connection="azure_open_ai_connection",
+                        deployment_name="llm-davinci-003",
+                    ),
+                },
+            },
+        }
+        node_registered = Parallel(component=created_component, **init_args)
+        node_anonymous = Parallel(component=anonymous_component, **init_args)
+
+        registered_inputs = node_registered._to_rest_object()["inputs"]
+        assert registered_inputs == {
+            "connections.classify_with_llm.connection": {
+                "job_input_type": "literal",
+                "value": "azure_open_ai_connection",
+            },
+            "connections.classify_with_llm.deployment_name": {"job_input_type": "literal", "value": "llm-davinci-003"},
+            "connections.summarize_text_content.connection": {
+                "job_input_type": "literal",
+                "value": "azure_open_ai_connection",
+            },
+            "connections.summarize_text_content.deployment_name": {
+                "job_input_type": "literal",
+                "value": "text-davinci-003",
+            },
+            "data": {"job_input_type": "uri_folder", "uri": "./tests/test_configs/flows/data/web_classification.jsonl"},
+            "url": {"job_input_type": "literal", "value": "${data.url}"},
+        }
+
+        assert node_anonymous._to_rest_object()["inputs"] == registered_inputs
+
+    @pytest.mark.parametrize(
+        "test_path,expected_node_dict",
+        [
+            pytest.param(
+                "./tests/test_configs/pipeline_jobs/pipeline_job_with_flow_from_dag.yml",
+                {
+                    "inputs": {
+                        "connections.summarize_text_content.connection": "azure_open_ai_connection",
+                        "connections.summarize_text_content.deployment_name": "text-davinci-003",
+                        "data": {"path": "${{parent.inputs.data}}"},
+                        "url": "${data.url}",
+                    },
+                    "outputs": {"flow_outputs": "${{parent.outputs.output_data}}"},
+                    "type": "parallel",
+                },
+                id="dag",
+            ),
+            pytest.param(
+                "./tests/test_configs/pipeline_jobs/pipeline_job_with_flow_from_run.yml",
+                {
+                    "inputs": {"data": {"path": "${{parent.inputs.data}}"}, "text": "${data.text}"},
+                    "outputs": {"flow_outputs": "${{parent.outputs.output_data}}"},
+                    "type": "parallel",
+                },
+                id="run",
+            ),
+        ],
+    )
+    def test_pipeline_job_with_flow(
+        self,
+        client: MLClient,
+        randstr: Callable[[str], str],
+        test_path: str,
+        expected_node_dict: Dict[str, Any],
+    ) -> None:
+        # for some unclear reason, there will be unstable failure in playback mode when there are multiple
+        # anonymous flow components in the same pipeline job. This is a workaround to avoid that.
+        # the probable cause is that flow component creation request contains flow definition uri, which is
+        # constructed based on response of code pending upload requests, and those requests have been normalized
+        # in playback mode and mixed up.
+        pipeline_job = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        validation_result = client.jobs.validate(pipeline_job)
+        assert validation_result.passed, validation_result
+
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+
+        pipeline_job_dict = created_pipeline_job._to_dict()
+        pipeline_job_dict["jobs"]["anonymous_node"].pop("component", None)
+
+        assert pipeline_job_dict["jobs"]["anonymous_node"] == expected_node_dict
 
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")

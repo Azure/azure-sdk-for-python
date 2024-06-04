@@ -6,7 +6,7 @@ import logging
 import asyncio
 import datetime
 import warnings
-from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast
+from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast, Iterable
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
@@ -53,7 +53,9 @@ MessageTypes = Union[
     Mapping[str, Any],
     ServiceBusMessage,
     AmqpAnnotatedMessage,
-    List[Union[Mapping[str, Any], ServiceBusMessage, AmqpAnnotatedMessage]],
+    Iterable[Mapping[str, Any]],
+    Iterable[ServiceBusMessage],
+    Iterable[AmqpAnnotatedMessage],
 ]
 MessageObjTypes = Union[
     ServiceBusMessage,
@@ -149,6 +151,15 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._connection = kwargs.get("connection")
         self._handler: Union["pyamqp_SendClientAsync", "uamqp_SendClientAsync"]
 
+    async def __aenter__(self) -> "ServiceBusSender":
+        if self._shutdown.is_set():
+            raise ValueError(
+                "The handler has already been shutdown. Please use ServiceBusClient to "
+                "create a new instance."
+            )
+        await self._open_with_retry()
+        return self
+
     @classmethod
     def _from_connection_string(
         cls, conn_str: str, **kwargs: Any
@@ -166,6 +177,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
+        :returns: The ServiceBusSender
         :rtype: ~azure.servicebus.aio.ServiceBusSender
 
         :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
@@ -246,6 +258,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :type schedule_time_utc: ~datetime.datetime
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.
+        :return: The sequence numbers of the enqueued messages.
         :rtype: list[int]
 
         .. admonition:: Example:
@@ -445,8 +458,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         """Create a ServiceBusMessageBatch object with the max size of all content being constrained by
         max_size_in_bytes. The max_size should be no greater than the max allowed message size defined by the service.
 
-        :param Optional[int] max_size_in_bytes: The maximum size of bytes data that a ServiceBusMessageBatch object can
+        :param int or None max_size_in_bytes: The maximum size of bytes data that a ServiceBusMessageBatch object can
          hold. By default, the value is determined by your Service Bus tier.
+        :return: ServiceBusMessageBatch object
         :rtype: ~azure.servicebus.ServiceBusMessageBatch
 
         .. admonition:: Example:

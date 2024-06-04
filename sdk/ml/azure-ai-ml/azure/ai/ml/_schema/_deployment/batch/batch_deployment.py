@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use,no-else-return
+# pylint: disable=unused-argument,no-else-return
 
 import logging
 from typing import Any
@@ -80,18 +80,13 @@ class BatchDeploymentSchema(DeploymentSchema):
     def make(self, data: Any, **kwargs: Any) -> Any:
         from azure.ai.ml.entities import BatchDeployment, ModelBatchDeployment, PipelineComponentBatchDeployment
 
-        try:
-            if data["type"]:
-                if data["type"] == BatchDeploymentType.PIPELINE:
-                    return PipelineComponentBatchDeployment(**data)
-                elif data["type"] == BatchDeploymentType.MODEL:
-                    return ModelBatchDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
-                else:
-                    raise ValidationError(
-                        f"Deployment type must be of type {BatchDeploymentType.PIPELINE} or {BatchDeploymentType.MODEL}."  # pylint: disable=line-too-long
-                    )
-        except Exception as ex:  # pylint: disable=broad-except
-            if isinstance(ex, KeyError):
-                return BatchDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
-            else:
-                raise ex
+        if "type" not in data:
+            return BatchDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
+        elif data["type"] == BatchDeploymentType.PIPELINE:
+            return PipelineComponentBatchDeployment(**data)
+        elif data["type"] == BatchDeploymentType.MODEL:
+            return ModelBatchDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
+        else:
+            raise ValidationError(
+                "Deployment type must be of type " + f"{BatchDeploymentType.PIPELINE} or {BatchDeploymentType.MODEL}."
+            )

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use,protected-access,no-member
+# pylint: disable=unused-argument,protected-access,no-member
 
 from copy import deepcopy
 
@@ -157,6 +157,7 @@ class AnonymousDataTransferCopyComponentSchema(AnonymousAssetSchema, DataTransfe
         )
 
 
+# pylint: disable-next=name-too-long
 class AnonymousDataTransferImportComponentSchema(AnonymousAssetSchema, DataTransferImportComponentSchema):
     """Anonymous data transfer import component schema.
 
@@ -179,6 +180,7 @@ class AnonymousDataTransferImportComponentSchema(AnonymousAssetSchema, DataTrans
         )
 
 
+# pylint: disable-next=name-too-long
 class AnonymousDataTransferExportComponentSchema(AnonymousAssetSchema, DataTransferExportComponentSchema):
     """Anonymous data transfer export component schema.
 

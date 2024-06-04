@@ -2,36 +2,35 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MaterializationSettings as RestMaterializationSettings
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MaterializationStoreType
-from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._restclient.v2023_10_01.models import MaterializationSettings as RestMaterializationSettings
+from azure.ai.ml._restclient.v2023_10_01.models import MaterializationStoreType
 from azure.ai.ml.entities._feature_set.materialization_compute_resource import MaterializationComputeResource
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._notification.notification import Notification
 from azure.ai.ml.entities._schedule.trigger import RecurrenceTrigger
 
 
-@experimental
 class MaterializationSettings(RestTranslatableMixin):
     """Defines materialization settings.
 
-    :param schedule: The schedule details.
-    :type schedule: ~azure.ai.ml.entities.RecurrenceTrigger
-    :param offline_enabled: Specifies if offline store is enabled.
-    :type offline_enabled: bool
-    :param online_enabled: Specifies if online store is enabled.
-    :type online_enabled: bool
-    :param notification: The notification details.
-    :type notification: ~azure.ai.ml.entities.Notification
-    :param resource: The compute resource settings.
-    :type resource: ~azure.ai.ml.entities.MaterializationComputeResource
-    :param spark_configuration: The spark compute settings.
-    :type spark_configuration: Dict[str, str]
+    :keyword schedule: The schedule details. Defaults to None.
+    :paramtype schedule: Optional[~azure.ai.ml.entities.RecurrenceTrigger]
+    :keyword offline_enabled: Boolean that specifies if offline store is enabled. Defaults to None.
+    :paramtype offline_enabled: Optional[bool]
+    :keyword online_enabled: Boolean that specifies if online store is enabled. Defaults to None.
+    :paramtype online_enabled: Optional[bool]
+    :keyword notification: The notification details. Defaults to None.
+    :paramtype notification: Optional[~azure.ai.ml.entities.Notification]
+    :keyword resource: The compute resource settings. Defaults to None.
+    :paramtype resource: Optional[~azure.ai.ml.entities.MaterializationComputeResource]
+    :keyword spark_configuration: The spark compute settings. Defaults to None.
+    :paramtype spark_configuration: Optional[dict[str, str]]
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
 
     .. admonition:: Example:
-        :class: tip
 
         .. literalinclude:: ../samples/ml_samples_spark_configurations.py
             :start-after: [START materialization_setting_configuration]
@@ -50,7 +49,8 @@ class MaterializationSettings(RestTranslatableMixin):
         notification: Optional[Notification] = None,
         resource: Optional[MaterializationComputeResource] = None,
         spark_configuration: Optional[Dict[str, str]] = None,
-        **kwargs  # pylint: disable=unused-argument
+        # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         self.schedule = schedule
         self.offline_enabled = offline_enabled
@@ -72,27 +72,29 @@ class MaterializationSettings(RestTranslatableMixin):
 
         return RestMaterializationSettings(
             schedule=self.schedule._to_rest_object() if self.schedule else None,  # pylint: disable=protected-access
-            notification=self.notification._to_rest_object()  # pylint: disable=protected-access
-            if self.notification
-            else None,
+            notification=(
+                self.notification._to_rest_object() if self.notification else None  # pylint: disable=protected-access
+            ),
             resource=self.resource._to_rest_object() if self.resource else None,  # pylint: disable=protected-access
             spark_configuration=self.spark_configuration,
             store_type=store_type,
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: RestMaterializationSettings) -> "MaterializationSettings":
+    def _from_rest_object(cls, obj: RestMaterializationSettings) -> Optional["MaterializationSettings"]:
         if not obj:
             return None
         return MaterializationSettings(
-            schedule=RecurrenceTrigger._from_rest_object(obj.schedule)  # pylint: disable=protected-access
-            if obj.schedule
-            else None,
+            schedule=(
+                RecurrenceTrigger._from_rest_object(obj.schedule)  # pylint: disable=protected-access
+                if obj.schedule
+                else None
+            ),
             notification=Notification._from_rest_object(obj.notification),  # pylint: disable=protected-access
             resource=MaterializationComputeResource._from_rest_object(obj.resource),  # pylint: disable=protected-access
             spark_configuration=obj.spark_configuration,
-            offline_enabled=obj.store_type == MaterializationStoreType.OFFLINE
-            or obj.store_type == MaterializationStoreType.ONLINE_AND_OFFLINE,
-            online_enabled=obj.store_type == MaterializationStoreType.ONLINE
-            or obj.store_type == MaterializationStoreType.ONLINE_AND_OFFLINE,
+            offline_enabled=obj.store_type
+            in {MaterializationStoreType.OFFLINE, MaterializationStoreType.ONLINE_AND_OFFLINE},
+            online_enabled=obj.store_type
+            in {MaterializationStoreType.ONLINE, MaterializationStoreType.ONLINE_AND_OFFLINE},
         )

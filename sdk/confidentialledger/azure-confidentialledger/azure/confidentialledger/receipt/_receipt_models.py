@@ -33,7 +33,12 @@ class ProofElement:
 
     @classmethod
     def from_dict(cls, proof_dict: Dict[str, Any]):
-        """Create a new instance of this class from a dictionary."""
+        """Create a new instance of this class from a dictionary.
+
+        :param dict[str, any] proof_dict: The dictionary representation of the proof element.
+        :return: A new instance of this class corresponding to the provided dictionary.
+        :rtype: ProofElement
+        """
         return cls(**proof_dict)
 
 
@@ -65,7 +70,12 @@ class LeafComponents:
 
     @classmethod
     def from_dict(cls, leaf_components_dict: Dict[str, Any]):
-        """Create a new instance of this class from a dictionary."""
+        """Create a new instance of this class from a dictionary.
+
+        :param dict[str, any] leaf_components_dict: The dictionary representation of the leaf components.
+        :return: A new instance of this class corresponding to the provided dictionary.
+        :rtype: LeafComponents
+        """
         return cls(**leaf_components_dict)
 
 
@@ -165,6 +175,11 @@ class Receipt:
 
     @classmethod
     def from_dict(cls, receipt_dict: Dict[str, Any]):
-        """Create a new instance of this class from a dictionary."""
+        """Create a new instance of this class from a dictionary.
+
+        :param dict[str, any] receipt_dict: The dictionary representation of the receipt.
+        :return: A new instance of this class corresponding to the provided dictionary.
+        :rtype: Receipt
+        """
 
         return cls(**receipt_dict)

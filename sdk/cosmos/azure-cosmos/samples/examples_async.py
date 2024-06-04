@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import asyncio
-from azure.cosmos import exceptions, CosmosClient, PartitionKey
+from azure.cosmos import exceptions, PartitionKey
 from azure.cosmos.aio import CosmosClient
 
 import os
@@ -101,8 +101,7 @@ async def examples_async():
         import json
 
         async for item in container.query_items(
-                query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"',
-                enable_cross_partition_query=True,
+                query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"'
         ):
             print(json.dumps(item, indent=True))
         # [END query_items]
@@ -117,6 +116,19 @@ async def examples_async():
         async for item in discontinued_items:
             print(json.dumps(item, indent=True))
         # [END query_items_param]
+
+        # [START priority_level option]
+        # Priority-based execution is a capability which allows users to specify priority
+        # for the request sent to Azure Cosmos DB. Based on the priority specified by the user,
+        # if there are more requests than the configured RU/s in a second,
+        # then Azure Cosmos DB will throttle low priority requests to allow high priority requests to execute.
+        # Can be used for Read, Write, and Query operations. This is specified with the priority_level keyword.
+        # the value can either be low or high.
+        async for item in container.query_items(
+                query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"', priority_level="High"
+        ):
+            print(json.dumps(item, indent=True))
+        # [END priority_level option]
 
         # Delete items from the container.
         # The Cosmos DB SQL API does not support 'DELETE' queries,
@@ -134,6 +146,35 @@ async def examples_async():
         properties = await database.read()
         print(json.dumps(properties, indent=True))
         # [END get_database_properties]
+
+        # Retrieve the properties of a container
+        # [START get_container_properties]
+        # Get properties will return a cache of two container properties: RID and the Partition Key Definition (This will not consume RUs)
+        properties = await container._get_properties()
+
+        # Print _rid and partitionKey
+        print("Resource ID: ", properties.get('_rid'))
+        print("Partition Key: ", properties.get('partitionKey'))
+
+        # Read the container to get the latests of all the Container Properties. (This will make a backend requests and will consume RUs)
+        container_properties = await container.read()
+
+        # Print each property one by one if they are currently in the container properties
+        print("indexingPolicy: ", container_properties.get("indexingPolicy"))
+        print("etag: ", container_properties.get('_etag'))
+        print("lastModified: ", container_properties.get('lastModified'))
+        print("defaultTtl: ", container_properties.get('defaultTtl'))
+        print("uniqueKeyPolicy: ", container_properties.get('uniqueKeyPolicy'))
+        print("conflictResolutionPolicy: ", container_properties.get('conflictResolutionPolicy'))
+        print("changeFeedPolicy: ", container_properties.get('changeFeedPolicy'))
+        print("geospatialConfig: ", container_properties.get('geospatialConfig'))
+
+        # Print remaining properties if they are in the current container properties
+        for key, value in container_properties.items():
+            if key not in ['_rid', 'partitionKey', 'indexingPolicy', '_etag', 'lastModified', 'defaultTtl', 'uniqueKeyPolicy',
+                           'conflictResolutionPolicy', 'changeFeedPolicy', 'geospatialConfig']:
+                print(f"{key}: {value}")
+        # [END get_container_properties]
 
         # Modify the properties of an existing container
         # This example sets the default time to live (TTL) for items in the
@@ -176,6 +217,51 @@ async def examples_async():
         async for item in items:
             print(json.dumps(item, indent=True))
         # [END delete_all_items_by_partition_key]
+
+        # insert items in a subpartitioned container
+        # [START create_container]
+        location_container_name = "locations"
+        try:
+            container = await database.create_container(
+                id=location_container_name,
+                partition_key=PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash")
+            )
+        except exceptions.CosmosResourceExistsError:
+            container = database.get_container_client(location_container_name)
+        # [END create_container]
+        # [START upsert_items]
+        for i in range(1, 10):
+            await container.upsert_item(
+                dict(id="item{}".format(i), state="WA", city="Redmond", zipcode=98052)
+            )
+        # [END upsert_items]
+
+        # Modify an existing item in the container
+        # [START update_item]
+        item = await container.read_item("item2", partition_key=["WA", "Redmond", 98052])
+        item["state"] = "GA"
+        item["city"] = "Atlanta"
+        item["zipcode"] = 30363
+        updated_item = await container.upsert_item(item)
+        # [END update_item]
+
+        # Query the items in a container using SQL-like syntax. This example
+        # gets all items whose product model hasn't been discontinued.
+        # [START query_items]
+        import json
+
+        async for item in container.query_items(
+                query='SELECT * FROM location l WHERE l.state = "WA"'
+        ):
+            print(json.dumps(item, indent=True))
+        # [END query_items]
+
+         # [START delete_items]
+        async for item in container.query_items(
+                query='SELECT * FROM location p WHERE p.state = "GA"'
+        ):
+            await container.delete_item(item, partition_key=["GA", "Atlanta", 30363])
+        # [END delete_items]
 
         await client.delete_database(database_name)
         print("Sample done running!")

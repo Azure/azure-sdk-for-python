@@ -10,10 +10,10 @@ from azure.eventhub import (
     EventHubConnectionStringProperties,
     parse_connection_string,
 )
+from azure.eventhub._client_base import _parse_conn_str
 
-from devtools_testutils import AzureMgmtTestCase
 
-class EventHubConnectionStringParserTests(AzureMgmtTestCase):
+class TestEventHubConnectionStringParser:
 
     def test_eh_conn_str_parse_cs(self, **kwargs):
         conn_str = 'Endpoint=sb://eh-namespace.servicebus.windows.net/;SharedAccessKeyName=test-policy;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
@@ -37,13 +37,13 @@ class EventHubConnectionStringParserTests(AzureMgmtTestCase):
         with pytest.raises(ValueError) as e:
             parse_result = parse_connection_string(conn_str)
         assert str(e.value) == 'Only one of the SharedAccessKey or SharedAccessSignature must be present.'
-    
+
     def test_eh_parse_malformed_conn_str_no_endpoint(self, **kwargs):
         conn_str = 'SharedAccessKeyName=test-policy;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
         with pytest.raises(ValueError) as e:
             parse_result = parse_connection_string(conn_str)
         assert str(e.value) == 'Connection string is either blank or malformed.'
-    
+
     def test_eh_parse_malformed_conn_str_no_endpoint_value(self, **kwargs):
         conn_str = 'Endpoint=;SharedAccessKeyName=test;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
         with pytest.raises(ValueError) as e:
@@ -63,7 +63,7 @@ class EventHubConnectionStringParserTests(AzureMgmtTestCase):
         assert parse_result.fully_qualified_namespace == 'eh-namespace.servicebus.windows.net'
         assert parse_result.shared_access_signature == 'THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
         assert parse_result.shared_access_key_name == None
-    
+
     def test_eh_parse_conn_str_whitespace_trailing_semicolon(self, **kwargs):
         conn_str = '    Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;    '
         parse_result = parse_connection_string(conn_str)
@@ -115,3 +115,20 @@ class EventHubConnectionStringParserTests(AzureMgmtTestCase):
         with pytest.raises(ValueError) as e:
             parse_result = parse_connection_string(conn_str)
         assert "Invalid connection string" in str(e.value)
+
+    def test_eh_emulator_slug_parse_localhost(self, **kwargs):
+        conn_str = 'Endpoint=sb://localhost:6065;SharedAccessKeyName=test-policy;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;UseDevelopmentEmulator=true'
+        fully_qualified_namespace, policy, key, entity, signature, expiry, emulator = _parse_conn_str(
+            conn_str
+        )
+        assert fully_qualified_namespace == 'localhost:6065'
+        assert emulator == True
+
+
+    def test_eh_emulator_slug_parse_ipv6(self, **kwargs):
+        conn_str = 'Endpoint=sb://::1;SharedAccessKeyName=test-policy;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;UseDevelopmentEmulator=true'
+        fully_qualified_namespace, policy, key, entity, signature, expiry, emulator = _parse_conn_str(
+            conn_str
+        )
+        assert fully_qualified_namespace == '::1'
+        assert emulator == True

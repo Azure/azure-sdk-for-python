@@ -31,14 +31,14 @@ class ManagementOperation(object):
         self._network_trace_params = {
             "amqpConnection": self._session._connection._container_id,
             "amqpSession": self._session.name,
-            "amqpLink": None
+            "amqpLink": ""
         }
-        self._mgmt_link = self._session.create_request_response_link_pair(
+        self._mgmt_link: ManagementLink = self._session.create_request_response_link_pair(
             endpoint=endpoint,
             on_amqp_management_open_complete=self._on_amqp_management_open_complete,
             on_amqp_management_error=self._on_amqp_management_error,
             **kwargs
-        )  # type: ManagementLink
+        )
         self._responses = {}
         self._mgmt_error = None
 

@@ -6,7 +6,7 @@
 # Reference: https://code.visualstudio.com/docs/remote/devcontainerjson-reference
 
 
-from typing import Optional
+from typing import Dict, Optional
 
 from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 
@@ -37,7 +37,7 @@ class Build(object):
         self._target = target
 
     def to_dict(self) -> dict:
-        build = {
+        build: Dict = {
             "build": {
                 "dockerfile": self._dockerfile_path,
             }
@@ -118,7 +118,6 @@ class OverrideCommand(object):
     def __init__(self):
         pass
 
-    # pylint: disable=no-self-use
     def to_dict(self) -> dict:
         return {"overrideCommand": True}
 
@@ -127,7 +126,6 @@ class Extensions(object):
     def __init__(self):
         pass
 
-    # pylint: disable=no-self-use
     def to_dict(self) -> dict:
         return {"extensions": ["ms-python.python", "ms-toolsai.vscode-ai-inference"]}
 
@@ -136,7 +134,6 @@ class Settings(object):
     def __init__(self):
         pass
 
-    # pylint: disable=no-self-use
     def to_dict(self) -> dict:
         return {
             "settings": {

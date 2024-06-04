@@ -18,13 +18,13 @@ class DeploymentCollectionSchema(metaclass=PatchedSchemaMeta):
     enabled = StringTransformedEnum(required=True, allowed_values=[Boolean.TRUE, Boolean.FALSE])
     data = UnionField(
         [
-            fields.Str(),
             NestedField(DataAssetSchema),
+            fields.Str(),
         ]
     )
     client_id = fields.Str()
 
-    # pylint: disable=unused-argument,no-self-use
+    # pylint: disable=unused-argument
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
         from azure.ai.ml.entities._deployment.deployment_collection import DeploymentCollection

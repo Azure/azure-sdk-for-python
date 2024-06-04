@@ -42,6 +42,7 @@ setup(
     author="Microsoft Corporation",
     author_email="azure-digitaltwins-core@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/digitaltwins/azure-digitaltwins-core",
+    keywords="azure, azure sdk",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",

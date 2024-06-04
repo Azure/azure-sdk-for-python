@@ -2,40 +2,21 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from datetime import datetime
 
+from typing import Any, Dict, Optional
+
+from ._generated import models as _models
 from ._shared import parse_key_vault_id
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import
-    from typing import Dict, Optional
-    from datetime import datetime
-    from . import _generated_models as _models
 
 
 class SecretProperties(object):
-    """A secret's ID and attributes.
+    """A secret's ID and attributes."""
 
-    :param attributes: The secret's attributes.
-    :type attributes: ~azure.keyvault.secrets._generated_models.SecretAttributes
-    :param secret_id: The secret's ID.
-    :type secret_id: str or None
-
-    :keyword str content_type: The content type of the secret.
-    :keyword str key_id: If this is a secret backing a KV certificate, then this field specifies the corresponding key
-        backing the certificate.
-    :keyword bool managed: True if the secret's lifetime is managed by Key Vault. If this secret is backing a
-        certificate, this will be True.
-    :keyword tags: Application specific metadata in the form of key-value pairs.
-    :paramtype tags: dict[str, str]
-    """
-
-    def __init__(
-        self, attributes: "Optional[_models.SecretAttributes]", secret_id: "Optional[str]", **kwargs
-    ) -> None:
-        self._attributes = attributes
-        self._id = secret_id
-        self._vault_id = KeyVaultSecretIdentifier(secret_id) if secret_id else None
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        self._attributes: Optional[_models.SecretAttributes] = args[0] if args else kwargs.get("attributes", None)
+        self._id: Optional[str] = args[1] if len(args) > 1 else kwargs.get("vault_id", None)
+        self._vault_id = KeyVaultSecretIdentifier(self._id) if self._id else None
         self._content_type = kwargs.get("content_type", None)
         self._key_id = kwargs.get("key_id", None)
         self._managed = kwargs.get("managed", None)
@@ -45,7 +26,7 @@ class SecretProperties(object):
         return f"<SecretProperties [{self.id}]>"[:1024]
 
     @classmethod
-    def _from_secret_bundle(cls, secret_bundle: "_models.SecretBundle") -> "SecretProperties":
+    def _from_secret_bundle(cls, secret_bundle: _models.SecretBundle) -> "SecretProperties":
         return cls(
             secret_bundle.attributes,
             secret_bundle.id,
@@ -56,7 +37,7 @@ class SecretProperties(object):
         )
 
     @classmethod
-    def _from_secret_item(cls, secret_item: "_models.SecretItem") -> "SecretProperties":
+    def _from_secret_item(cls, secret_item: _models.SecretItem) -> "SecretProperties":
         return cls(
             secret_item.attributes,
             secret_item.id,
@@ -66,7 +47,7 @@ class SecretProperties(object):
         )
 
     @property
-    def content_type(self) -> "Optional[str]":
+    def content_type(self) -> Optional[str]:
         """An arbitrary string indicating the type of the secret.
 
         :returns: The content type of the secret.
@@ -75,7 +56,7 @@ class SecretProperties(object):
         return self._content_type
 
     @property
-    def id(self) -> "Optional[str]":
+    def id(self) -> Optional[str]:
         """The secret's ID.
 
         :returns: The secret's ID.
@@ -84,7 +65,7 @@ class SecretProperties(object):
         return self._id
 
     @property
-    def key_id(self) -> "Optional[str]":
+    def key_id(self) -> Optional[str]:
         """If this secret backs a certificate, this property is the identifier of the corresponding key.
 
         :returns: The ID of the key backing the certificate that's backed by this secret. If the secret isn't backing a
@@ -94,7 +75,7 @@ class SecretProperties(object):
         return self._key_id
 
     @property
-    def enabled(self) -> "Optional[bool]":
+    def enabled(self) -> Optional[bool]:
         """Whether the secret is enabled for use.
 
         :returns: True if the secret is enabled for use; False otherwise.
@@ -103,7 +84,7 @@ class SecretProperties(object):
         return self._attributes.enabled if self._attributes else None
 
     @property
-    def not_before(self) -> "Optional[datetime]":
+    def not_before(self) -> Optional[datetime]:
         """The time before which the secret cannot be used, in UTC.
 
         :returns: The time before which the secret cannot be used, in UTC.
@@ -112,7 +93,7 @@ class SecretProperties(object):
         return self._attributes.not_before if self._attributes else None
 
     @property
-    def expires_on(self) -> "Optional[datetime]":
+    def expires_on(self) -> Optional[datetime]:
         """When the secret expires, in UTC.
 
         :returns: When the secret expires, in UTC.
@@ -121,7 +102,7 @@ class SecretProperties(object):
         return self._attributes.expires if self._attributes else None
 
     @property
-    def created_on(self) -> "Optional[datetime]":
+    def created_on(self) -> Optional[datetime]:
         """When the secret was created, in UTC.
 
         :returns: When the secret was created, in UTC.
@@ -130,7 +111,7 @@ class SecretProperties(object):
         return self._attributes.created if self._attributes else None
 
     @property
-    def updated_on(self) -> "Optional[datetime]":
+    def updated_on(self) -> Optional[datetime]:
         """When the secret was last updated, in UTC.
 
         :returns: When the secret was last updated, in UTC.
@@ -139,7 +120,7 @@ class SecretProperties(object):
         return self._attributes.updated if self._attributes else None
 
     @property
-    def recoverable_days(self) -> "Optional[int]":
+    def recoverable_days(self) -> Optional[int]:
         """The number of days the key is retained before being deleted from a soft-delete enabled Key Vault.
 
         :returns: The number of days the key is retained before being deleted from a soft-delete enabled Key Vault.
@@ -151,7 +132,7 @@ class SecretProperties(object):
         return None
 
     @property
-    def recovery_level(self) -> "Optional[str]":
+    def recovery_level(self) -> Optional[str]:
         """The vault's deletion recovery level for secrets.
 
         :returns: The vault's deletion recovery level for secrets.
@@ -160,7 +141,7 @@ class SecretProperties(object):
         return self._attributes.recovery_level if self._attributes else None
 
     @property
-    def vault_url(self) -> "Optional[str]":
+    def vault_url(self) -> Optional[str]:
         """URL of the vault containing the secret.
 
         :returns: URL of the vault containing the secret.
@@ -169,7 +150,7 @@ class SecretProperties(object):
         return self._vault_id.vault_url if self._vault_id else None
 
     @property
-    def name(self) -> "Optional[str]":
+    def name(self) -> Optional[str]:
         """The secret's name.
 
         :returns: The secret's name.
@@ -178,7 +159,7 @@ class SecretProperties(object):
         return self._vault_id.name if self._vault_id else None
 
     @property
-    def version(self) -> "Optional[str]":
+    def version(self) -> Optional[str]:
         """The secret's version.
 
         :returns: The secret's version.
@@ -187,7 +168,7 @@ class SecretProperties(object):
         return self._vault_id.version if self._vault_id else None
 
     @property
-    def tags(self) -> "Optional[Dict[str, str]]":
+    def tags(self) -> Optional[Dict[str, str]]:
         """Application specific metadata in the form of key-value pairs.
 
         :returns: A dictionary of tags attached to this secret.
@@ -196,7 +177,7 @@ class SecretProperties(object):
         return self._tags
 
     @property
-    def managed(self) -> "Optional[bool]":
+    def managed(self) -> Optional[bool]:
         """Whether the secret's lifetime is managed by Key Vault. If the secret backs a certificate, this will be true.
 
         :returns: True if the secret's lifetime is managed by Key Vault; False otherwise.
@@ -214,7 +195,7 @@ class KeyVaultSecret(object):
     :type value: str or None
     """
 
-    def __init__(self, properties: SecretProperties, value: "Optional[str]") -> None:
+    def __init__(self, properties: SecretProperties, value: Optional[str]) -> None:
         self._properties = properties
         self._value = value
 
@@ -222,14 +203,14 @@ class KeyVaultSecret(object):
         return f"<KeyVaultSecret [{self.id}]>"[:1024]
 
     @classmethod
-    def _from_secret_bundle(cls, secret_bundle: "_models.SecretBundle") -> "KeyVaultSecret":
+    def _from_secret_bundle(cls, secret_bundle: _models.SecretBundle) -> "KeyVaultSecret":
         return cls(
             properties=SecretProperties._from_secret_bundle(secret_bundle),  # pylint: disable=protected-access
             value=secret_bundle.value,
         )
 
     @property
-    def name(self) -> "Optional[str]":
+    def name(self) -> Optional[str]:
         """The secret's name.
 
         :returns: The secret's name.
@@ -238,7 +219,7 @@ class KeyVaultSecret(object):
         return self._properties.name
 
     @property
-    def id(self) -> "Optional[str]":
+    def id(self) -> Optional[str]:
         """The secret's ID.
 
         :returns: The secret's ID.
@@ -256,7 +237,7 @@ class KeyVaultSecret(object):
         return self._properties
 
     @property
-    def value(self) -> "Optional[str]":
+    def value(self) -> Optional[str]:
         """The secret's value.
 
         :returns: The secret's value.
@@ -297,7 +278,7 @@ class KeyVaultSecretIdentifier(object):
         return self._resource_id.name
 
     @property
-    def version(self) -> "Optional[str]":
+    def version(self) -> Optional[str]:
         return self._resource_id.version
 
 
@@ -319,9 +300,9 @@ class DeletedSecret(object):
     def __init__(
         self,
         properties: SecretProperties,
-        deleted_date: "Optional[datetime]" = None,
-        recovery_id: "Optional[str]" = None,
-        scheduled_purge_date: "Optional[datetime]" = None,
+        deleted_date: Optional[datetime] = None,
+        recovery_id: Optional[str] = None,
+        scheduled_purge_date: Optional[datetime] = None,
     ) -> None:
         self._properties = properties
         self._deleted_date = deleted_date
@@ -332,7 +313,7 @@ class DeletedSecret(object):
         return f"<DeletedSecret [{self.id}]>"[:1024]
 
     @classmethod
-    def _from_deleted_secret_bundle(cls, deleted_secret_bundle: "_models.DeletedSecretBundle") -> "DeletedSecret":
+    def _from_deleted_secret_bundle(cls, deleted_secret_bundle: _models.DeletedSecretBundle) -> "DeletedSecret":
         return cls(
             properties=SecretProperties._from_secret_bundle(deleted_secret_bundle),  # pylint: disable=protected-access
             deleted_date=deleted_secret_bundle.deleted_date,
@@ -341,7 +322,7 @@ class DeletedSecret(object):
         )
 
     @classmethod
-    def _from_deleted_secret_item(cls, deleted_secret_item: "_models.DeletedSecretItem") -> "DeletedSecret":
+    def _from_deleted_secret_item(cls, deleted_secret_item: _models.DeletedSecretItem) -> "DeletedSecret":
         return cls(
             properties=SecretProperties._from_secret_item(deleted_secret_item),  # pylint: disable=protected-access
             deleted_date=deleted_secret_item.deleted_date,
@@ -350,7 +331,7 @@ class DeletedSecret(object):
         )
 
     @property
-    def name(self) -> "Optional[str]":
+    def name(self) -> Optional[str]:
         """The secret's name.
 
         :returns: The secret's name.
@@ -359,7 +340,7 @@ class DeletedSecret(object):
         return self._properties.name
 
     @property
-    def id(self) -> "Optional[str]":
+    def id(self) -> Optional[str]:
         """The secret's ID.
 
         :returns: The secret's ID.
@@ -377,7 +358,7 @@ class DeletedSecret(object):
         return self._properties
 
     @property
-    def deleted_date(self) -> "Optional[datetime]":
+    def deleted_date(self) -> Optional[datetime]:
         """When the secret was deleted, in UTC.
 
         :returns: When the secret was deleted, in UTC.
@@ -386,7 +367,7 @@ class DeletedSecret(object):
         return self._deleted_date
 
     @property
-    def recovery_id(self) -> "Optional[str]":
+    def recovery_id(self) -> Optional[str]:
         """An identifier used to recover the deleted secret.
 
         :returns: An identifier used to recover the deleted secret.
@@ -395,7 +376,7 @@ class DeletedSecret(object):
         return self._recovery_id
 
     @property
-    def scheduled_purge_date(self) -> "Optional[datetime]":
+    def scheduled_purge_date(self) -> Optional[datetime]:
         """When the secret is scheduled to be purged by Key Vault, in UTC.
 
         :returns: When the secret is scheduled to be purged by Key Vault, in UTC.

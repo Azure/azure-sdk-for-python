@@ -5,7 +5,7 @@
 1. A non-Azure Windows or Linux VM.
 2. Administrator privileges on the VM.
 3. An Azure Key Vault.
-4. Python 3.7+
+4. Python 3.8+
 
 ### Install Azure Arc on the VM
 

@@ -5,21 +5,21 @@
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
 from .command_component import AnonymousCommandComponentSchema, CommandComponentSchema, ComponentFileRefField
-from .component import ComponentSchema
+from .component import ComponentSchema, ComponentYamlRefField
+from .data_transfer_component import (
+    AnonymousDataTransferCopyComponentSchema,
+    AnonymousDataTransferExportComponentSchema,
+    AnonymousDataTransferImportComponentSchema,
+    DataTransferCopyComponentFileRefField,
+    DataTransferCopyComponentSchema,
+    DataTransferExportComponentFileRefField,
+    DataTransferExportComponentSchema,
+    DataTransferImportComponentFileRefField,
+    DataTransferImportComponentSchema,
+)
 from .import_component import AnonymousImportComponentSchema, ImportComponentFileRefField, ImportComponentSchema
 from .parallel_component import AnonymousParallelComponentSchema, ParallelComponentFileRefField, ParallelComponentSchema
 from .spark_component import AnonymousSparkComponentSchema, SparkComponentFileRefField, SparkComponentSchema
-from .data_transfer_component import (
-    AnonymousDataTransferCopyComponentSchema,
-    DataTransferCopyComponentFileRefField,
-    DataTransferCopyComponentSchema,
-    AnonymousDataTransferImportComponentSchema,
-    DataTransferImportComponentFileRefField,
-    DataTransferImportComponentSchema,
-    AnonymousDataTransferExportComponentSchema,
-    DataTransferExportComponentFileRefField,
-    DataTransferExportComponentSchema,
-)
 
 __all__ = [
     "ComponentSchema",
@@ -44,4 +44,5 @@ __all__ = [
     "AnonymousDataTransferExportComponentSchema",
     "DataTransferExportComponentFileRefField",
     "DataTransferExportComponentSchema",
+    "ComponentYamlRefField",
 ]

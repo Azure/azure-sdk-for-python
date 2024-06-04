@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AllocationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AllocationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allocation state of the compute. Possible values are: steady - Indicates that the compute is
     not resizing. There are no changes to the number of compute nodes in the compute in progress. A
     compute enters this state when it is created and when no operations are being performed on the
@@ -23,7 +22,7 @@ class AllocationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     RESIZING = "Resizing"
 
 
-class ApplicationSharingPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ApplicationSharingPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Policy for sharing applications on this compute instance among users of parent workspace. If
     Personal, only the creator can access applications on this compute instance. When Shared, any
     workspace user can access applications on this instance depending on his/her assigned role.
@@ -33,7 +32,7 @@ class ApplicationSharingPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     SHARED = "Shared"
 
 
-class AssetProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AssetProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of registry asset."""
 
     SUCCEEDED = "Succeeded"
@@ -44,14 +43,14 @@ class AssetProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum))
     DELETING = "Deleting"
 
 
-class AutoRebuildSetting(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AutoRebuildSetting(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AutoRebuild setting for the derived image"""
 
     DISABLED = "Disabled"
     ON_BASE_IMAGE_UPDATE = "OnBaseImageUpdate"
 
 
-class Autosave(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Autosave(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Auto save settings."""
 
     NONE = "None"
@@ -59,20 +58,20 @@ class Autosave(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     REMOTE = "Remote"
 
 
-class BaseEnvironmentSourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class BaseEnvironmentSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Base environment type."""
 
     ENVIRONMENT_ASSET = "EnvironmentAsset"
 
 
-class BatchDeploymentPropertyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class BatchDeploymentPropertyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The enumerated property types for batch deployments."""
 
     MODEL = "Model"
     PIPELINE_COMPONENT = "PipelineComponent"
 
 
-class BatchLoggingLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class BatchLoggingLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Log verbosity for batch inferencing.
     Increasing verbosity order for logging is : Warning, Info and Debug.
     The default value is Info.
@@ -83,20 +82,20 @@ class BatchLoggingLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DEBUG = "Debug"
 
 
-class BatchOutputAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class BatchOutputAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine how batch inferencing will handle output"""
 
     SUMMARY_ONLY = "SummaryOnly"
     APPEND_ROW = "AppendRow"
 
 
-class BillingCurrency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class BillingCurrency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Three lettered code specifying the currency of the VM price. Example: USD"""
 
     USD = "USD"
 
 
-class BlockedTransformers(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class BlockedTransformers(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum for all classification models supported by AutoML."""
 
     #: Target encoding for text data.
@@ -125,7 +124,7 @@ class BlockedTransformers(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     HASH_ONE_HOT_ENCODER = "HashOneHotEncoder"
 
 
-class Caching(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Caching(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Caching type of Data Disk."""
 
     NONE = "None"
@@ -133,7 +132,7 @@ class Caching(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     READ_WRITE = "ReadWrite"
 
 
-class ClassificationModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ClassificationModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum for all classification models supported by AutoML."""
 
     #: Logistic regression is a fundamental classification technique.
@@ -197,7 +196,7 @@ class ClassificationModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     XG_BOOST_CLASSIFIER = "XGBoostClassifier"
 
 
-class ClassificationMultilabelPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ClassificationMultilabelPrimaryMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Primary metrics for classification multilabel tasks."""
 
     #: AUC is the Area under the curve.
@@ -219,7 +218,7 @@ class ClassificationMultilabelPrimaryMetrics(with_metaclass(CaseInsensitiveEnumM
     IOU = "IOU"
 
 
-class ClassificationPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ClassificationPrimaryMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Primary metrics for classification tasks."""
 
     #: AUC is the Area under the curve.
@@ -239,7 +238,7 @@ class ClassificationPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta, str, 
     PRECISION_SCORE_WEIGHTED = "PrecisionScoreWeighted"
 
 
-class ClusterPurpose(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ClusterPurpose(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Intended usage of the cluster"""
 
     FAST_PROD = "FastProd"
@@ -247,13 +246,13 @@ class ClusterPurpose(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DEV_TEST = "DevTest"
 
 
-class ComputeInstanceAuthorizationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ComputeInstanceAuthorizationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Compute Instance Authorization type. Available values are personal (default)."""
 
     PERSONAL = "personal"
 
 
-class ComputeInstanceState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ComputeInstanceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Current state of an ComputeInstance."""
 
     CREATING = "Creating"
@@ -273,14 +272,14 @@ class ComputeInstanceState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UNUSABLE = "Unusable"
 
 
-class ComputePowerAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ComputePowerAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """[Required] The compute power action."""
 
     START = "Start"
     STOP = "Stop"
 
 
-class ComputeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ComputeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of compute"""
 
     AKS = "AKS"
@@ -295,7 +294,7 @@ class ComputeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SYNAPSE_SPARK = "SynapseSpark"
 
 
-class ConnectionAuthType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ConnectionAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Authentication type of the connection target"""
 
     PAT = "PAT"
@@ -307,7 +306,7 @@ class ConnectionAuthType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ACCESS_KEY = "AccessKey"
 
 
-class ConnectionCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ConnectionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Category of the connection"""
 
     PYTHON_FEED = "PythonFeed"
@@ -320,7 +319,7 @@ class ConnectionCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AZURE_SYNAPSE_ANALYTICS = "AzureSynapseAnalytics"
 
 
-class ContainerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ContainerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of container to retrieve logs from."""
 
     #: The container used to download models and score script.
@@ -331,7 +330,7 @@ class ContainerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MODEL_DATA_COLLECTOR = "ModelDataCollector"
 
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
     USER = "User"
@@ -340,7 +339,7 @@ class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     KEY = "Key"
 
 
-class CredentialsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CredentialsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the datastore credentials type."""
 
     ACCOUNT_KEY = "AccountKey"
@@ -352,7 +351,7 @@ class CredentialsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     KERBEROS_PASSWORD = "KerberosPassword"
 
 
-class DatastoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DatastoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the datastore contents type."""
 
     AZURE_BLOB = "AzureBlob"
@@ -362,7 +361,7 @@ class DatastoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     HDFS = "Hdfs"
 
 
-class DataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the type of data."""
 
     URI_FILE = "uri_file"
@@ -370,7 +369,7 @@ class DataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MLTABLE = "mltable"
 
 
-class DeploymentProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DeploymentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Possible values for DeploymentProvisioningState."""
 
     CREATING = "Creating"
@@ -382,7 +381,7 @@ class DeploymentProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, E
     CANCELED = "Canceled"
 
 
-class DiagnoseResultLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DiagnoseResultLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Level of workspace setup error"""
 
     WARNING = "Warning"
@@ -390,7 +389,7 @@ class DiagnoseResultLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     INFORMATION = "Information"
 
 
-class DistributionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DistributionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the job distribution type."""
 
     PY_TORCH = "PyTorch"
@@ -398,14 +397,14 @@ class DistributionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MPI = "Mpi"
 
 
-class EarlyTerminationPolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EarlyTerminationPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     BANDIT = "Bandit"
     MEDIAN_STOPPING = "MedianStopping"
     TRUNCATION_SELECTION = "TruncationSelection"
 
 
-class EgressPublicNetworkAccessType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EgressPublicNetworkAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine whether PublicNetworkAccess is Enabled or Disabled for egress of a
     deployment.
     """
@@ -414,7 +413,7 @@ class EgressPublicNetworkAccessType(with_metaclass(CaseInsensitiveEnumMeta, str,
     DISABLED = "Disabled"
 
 
-class EmailNotificationEnableType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EmailNotificationEnableType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the email notification type."""
 
     JOB_COMPLETED = "JobCompleted"
@@ -422,14 +421,14 @@ class EmailNotificationEnableType(with_metaclass(CaseInsensitiveEnumMeta, str, E
     JOB_CANCELLED = "JobCancelled"
 
 
-class EncryptionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EncryptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates whether or not the encryption is enabled for the workspace."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
 
-class EndpointAuthMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EndpointAuthMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine endpoint authentication mode."""
 
     AML_TOKEN = "AMLToken"
@@ -437,7 +436,7 @@ class EndpointAuthMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AAD_TOKEN = "AADToken"
 
 
-class EndpointComputeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EndpointComputeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine endpoint compute type."""
 
     MANAGED = "Managed"
@@ -445,7 +444,7 @@ class EndpointComputeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AZURE_ML_COMPUTE = "AzureMLCompute"
 
 
-class EndpointProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EndpointProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of endpoint provisioning."""
 
     CREATING = "Creating"
@@ -456,20 +455,20 @@ class EndpointProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     CANCELED = "Canceled"
 
 
-class EnvironmentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EnvironmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Environment type is either user created or curated by Azure ML service"""
 
     CURATED = "Curated"
     USER_CREATED = "UserCreated"
 
 
-class EnvironmentVariableType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EnvironmentVariableType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of the Environment Variable. Possible values are: local - For local variable"""
 
     LOCAL = "local"
 
 
-class ExportFormatType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ExportFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The format of exported labels."""
 
     DATASET = "Dataset"
@@ -477,7 +476,7 @@ class ExportFormatType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CSV = "CSV"
 
 
-class FeatureDataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class FeatureDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     STRING = "String"
     INTEGER = "Integer"
@@ -489,7 +488,7 @@ class FeatureDataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     BOOLEAN = "Boolean"
 
 
-class FeatureLags(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class FeatureLags(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Flag for generating lags for the numeric features."""
 
     #: No feature lags generated.
@@ -498,13 +497,13 @@ class FeatureLags(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AUTO = "Auto"
 
 
-class FeaturestoreJobType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class FeaturestoreJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     RECURRENT_MATERIALIZATION = "RecurrentMaterialization"
     BACKFILL_MATERIALIZATION = "BackfillMaterialization"
 
 
-class FeaturizationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class FeaturizationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Featurization mode - determines data featurization mode."""
 
     #: Auto mode, system performs featurization without any custom featurization inputs.
@@ -515,7 +514,7 @@ class FeaturizationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     OFF = "Off"
 
 
-class ForecastHorizonMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ForecastHorizonMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine forecast horizon selection mode."""
 
     #: Forecast horizon to be determined automatically.
@@ -524,7 +523,7 @@ class ForecastHorizonMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CUSTOM = "Custom"
 
 
-class ForecastingModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ForecastingModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum for all forecasting models supported by AutoML."""
 
     #: Auto-Autoregressive Integrated Moving Average (ARIMA) model uses time-series data and
@@ -603,7 +602,7 @@ class ForecastingModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     XG_BOOST_REGRESSOR = "XGBoostRegressor"
 
 
-class ForecastingPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ForecastingPrimaryMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Primary metrics for Forecasting task."""
 
     #: The Spearman's rank coefficient of correlation is a non-parametric measure of rank correlation.
@@ -619,14 +618,14 @@ class ForecastingPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     NORMALIZED_MEAN_ABSOLUTE_ERROR = "NormalizedMeanAbsoluteError"
 
 
-class Goal(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Goal(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines supported metric goals for hyperparameter tuning"""
 
     MINIMIZE = "Minimize"
     MAXIMIZE = "Maximize"
 
 
-class IdentityConfigurationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class IdentityConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine identity framework."""
 
     MANAGED = "Managed"
@@ -634,7 +633,7 @@ class IdentityConfigurationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     USER_IDENTITY = "UserIdentity"
 
 
-class ImageAnnotationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ImageAnnotationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Annotation type of image data."""
 
     CLASSIFICATION = "Classification"
@@ -642,7 +641,7 @@ class ImageAnnotationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     INSTANCE_SEGMENTATION = "InstanceSegmentation"
 
 
-class ImageType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ImageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of the image. Possible values are: docker - For docker images. azureml - For AzureML
     images
     """
@@ -651,14 +650,14 @@ class ImageType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AZUREML = "azureml"
 
 
-class IncrementalDataRefresh(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class IncrementalDataRefresh(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether IncrementalDataRefresh is enabled"""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
 
-class InferencingServerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class InferencingServerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Inferencing server type for various targets."""
 
     AZURE_ML_ONLINE = "AzureMLOnline"
@@ -667,7 +666,7 @@ class InferencingServerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CUSTOM = "Custom"
 
 
-class InputDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class InputDeliveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the input data delivery mode."""
 
     READ_ONLY_MOUNT = "ReadOnlyMount"
@@ -678,7 +677,7 @@ class InputDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     EVAL_DOWNLOAD = "EvalDownload"
 
 
-class InputPathType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class InputPathType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Input path type for package inputs."""
 
     URL = "Url"
@@ -686,7 +685,7 @@ class InputPathType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PATH_VERSION = "PathVersion"
 
 
-class InstanceSegmentationPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class InstanceSegmentationPrimaryMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Primary metrics for InstanceSegmentation tasks."""
 
     #: Mean Average Precision (MAP) is the average of AP (Average Precision).
@@ -694,7 +693,7 @@ class InstanceSegmentationPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta,
     MEAN_AVERAGE_PRECISION = "MeanAveragePrecision"
 
 
-class JobInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class JobInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the Job Input Type."""
 
     LITERAL = "literal"
@@ -706,13 +705,13 @@ class JobInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     TRITON_MODEL = "triton_model"
 
 
-class JobLimitsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class JobLimitsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     COMMAND = "Command"
     SWEEP = "Sweep"
 
 
-class JobOutputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class JobOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the Job Output Type."""
 
     URI_FILE = "uri_file"
@@ -723,7 +722,7 @@ class JobOutputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     TRITON_MODEL = "triton_model"
 
 
-class JobProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class JobProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the job provisioning state."""
 
     SUCCEEDED = "Succeeded"
@@ -732,7 +731,7 @@ class JobProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     IN_PROGRESS = "InProgress"
 
 
-class JobStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of a job."""
 
     #: Run hasn't started yet.
@@ -772,7 +771,7 @@ class JobStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SCHEDULED = "Scheduled"
 
 
-class JobTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class JobTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the job tier."""
 
     SPOT = "Spot"
@@ -781,7 +780,7 @@ class JobTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PREMIUM = "Premium"
 
 
-class JobType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the type of job."""
 
     AUTO_ML = "AutoML"
@@ -792,13 +791,13 @@ class JobType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SPARK = "Spark"
 
 
-class KeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     PRIMARY = "Primary"
     SECONDARY = "Secondary"
 
 
-class LearningRateScheduler(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class LearningRateScheduler(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Learning rate scheduler enum."""
 
     #: No learning rate scheduler selected.
@@ -809,21 +808,21 @@ class LearningRateScheduler(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     STEP = "Step"
 
 
-class ListViewType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ListViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ACTIVE_ONLY = "ActiveOnly"
     ARCHIVED_ONLY = "ArchivedOnly"
     ALL = "All"
 
 
-class LoadBalancerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class LoadBalancerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Load Balancer Type"""
 
     PUBLIC_IP = "PublicIp"
     INTERNAL_LOAD_BALANCER = "InternalLoadBalancer"
 
 
-class LogVerbosity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class LogVerbosity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum for setting log verbosity."""
 
     #: No logs emitted.
@@ -840,7 +839,7 @@ class LogVerbosity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CRITICAL = "Critical"
 
 
-class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of managed service identity (where both SystemAssigned and UserAssigned types are
     allowed).
     """
@@ -851,7 +850,7 @@ class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, En
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
 
-class MaterializationStoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class MaterializationStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NONE = "None"
     ONLINE = "Online"
@@ -859,34 +858,34 @@ class MaterializationStoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     ONLINE_AND_OFFLINE = "OnlineAndOffline"
 
 
-class MediaType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class MediaType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Media type of data asset."""
 
     IMAGE = "Image"
     TEXT = "Text"
 
 
-class MLAssistConfigurationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class MLAssistConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
 
-class MlflowAutologger(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class MlflowAutologger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates whether mlflow autologger is enabled for notebooks."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
 
-class MLFlowAutologgerState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class MLFlowAutologgerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the state of mlflow autologger."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
 
-class ModelSize(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ModelSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Image model size."""
 
     #: No value selected.
@@ -901,14 +900,14 @@ class ModelSize(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     EXTRA_LARGE = "ExtraLarge"
 
 
-class MountAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class MountAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Mount Action."""
 
     MOUNT = "Mount"
     UNMOUNT = "Unmount"
 
 
-class MountState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class MountState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Mount state."""
 
     MOUNT_REQUESTED = "MountRequested"
@@ -919,14 +918,14 @@ class MountState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UNMOUNTED = "Unmounted"
 
 
-class MultiSelect(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class MultiSelect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether multiSelect is enabled"""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
 
-class NCrossValidationsMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class NCrossValidationsMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Determines how N-Cross validations value is determined."""
 
     #: Determine N-Cross validations value automatically. Supported only for 'Forecasting' AutoML
@@ -936,14 +935,14 @@ class NCrossValidationsMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CUSTOM = "Custom"
 
 
-class Network(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Network(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """network of this container."""
 
     BRIDGE = "Bridge"
     HOST = "Host"
 
 
-class NlpLearningRateScheduler(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class NlpLearningRateScheduler(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum of learning rate schedulers that aligns with those supported by HF"""
 
     #: No learning rate schedule.
@@ -962,7 +961,7 @@ class NlpLearningRateScheduler(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     CONSTANT_WITH_WARMUP = "ConstantWithWarmup"
 
 
-class NodeState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class NodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of the compute node. Values are idle, running, preparing, unusable, leaving and
     preempted.
     """
@@ -975,14 +974,14 @@ class NodeState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PREEMPTED = "preempted"
 
 
-class NodesValueType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class NodesValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The enumerated types for the nodes value"""
 
     ALL = "All"
     CUSTOM = "Custom"
 
 
-class ObjectDetectionPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ObjectDetectionPrimaryMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Primary metrics for Image ObjectDetection task."""
 
     #: Mean Average Precision (MAP) is the average of AP (Average Precision).
@@ -990,14 +989,14 @@ class ObjectDetectionPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta, str,
     MEAN_AVERAGE_PRECISION = "MeanAveragePrecision"
 
 
-class OperatingSystemType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OperatingSystemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of operating system."""
 
     LINUX = "Linux"
     WINDOWS = "Windows"
 
 
-class OperationName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OperationName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Name of the last operation."""
 
     CREATE = "Create"
@@ -1008,7 +1007,7 @@ class OperationName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DELETE = "Delete"
 
 
-class OperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Operation status."""
 
     IN_PROGRESS = "InProgress"
@@ -1021,7 +1020,7 @@ class OperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DELETE_FAILED = "DeleteFailed"
 
 
-class OperationTrigger(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OperationTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Trigger of operation."""
 
     USER = "User"
@@ -1029,7 +1028,7 @@ class OperationTrigger(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     IDLE_SHUTDOWN = "IdleShutdown"
 
 
-class OrderString(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OrderString(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CREATED_AT_DESC = "CreatedAtDesc"
     CREATED_AT_ASC = "CreatedAtAsc"
@@ -1037,14 +1036,14 @@ class OrderString(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UPDATED_AT_ASC = "UpdatedAtAsc"
 
 
-class OsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Compute OS Type"""
 
     LINUX = "Linux"
     WINDOWS = "Windows"
 
 
-class OutputDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OutputDeliveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Output data delivery mode enums."""
 
     READ_WRITE_MOUNT = "ReadWriteMount"
@@ -1052,7 +1051,7 @@ class OutputDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DIRECT = "Direct"
 
 
-class PackageBuildState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PackageBuildState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Package build state returned in package response."""
 
     NOT_STARTED = "NotStarted"
@@ -1061,21 +1060,21 @@ class PackageBuildState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
 
 
-class PackageInputDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PackageInputDeliveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Mounting type of the model or the inputs"""
 
     READ_ONLY_MOUNT = "ReadOnlyMount"
     DOWNLOAD = "Download"
 
 
-class PackageInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PackageInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of the inputs."""
 
     URI_FILE = "UriFile"
     URI_FOLDER = "UriFolder"
 
 
-class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
@@ -1084,7 +1083,7 @@ class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveE
     FAILED = "Failed"
 
 
-class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The private endpoint connection status."""
 
     PENDING = "Pending"
@@ -1094,7 +1093,7 @@ class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumM
     TIMEOUT = "Timeout"
 
 
-class Protocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Protocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Protocol over which communication will happen over this endpoint"""
 
     TCP = "tcp"
@@ -1102,7 +1101,7 @@ class Protocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     HTTP = "http"
 
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current deployment state of workspace resource. The provisioningState is to indicate states
     for resource provisioning.
     """
@@ -1117,7 +1116,7 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SOFT_DELETED = "SoftDeleted"
 
 
-class ProvisioningStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current deployment state of schedule."""
 
     COMPLETED = "Completed"
@@ -1125,34 +1124,34 @@ class ProvisioningStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
 
 
-class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether requests from Public Network are allowed."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
 
-class PublicNetworkAccessType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PublicNetworkAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine whether PublicNetworkAccess is Enabled or Disabled."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
 
-class QuotaUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class QuotaUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """An enum describing the unit of quota measurement."""
 
     COUNT = "Count"
 
 
-class RandomSamplingAlgorithmRule(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RandomSamplingAlgorithmRule(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The specific type of random algorithm"""
 
     RANDOM = "Random"
     SOBOL = "Sobol"
 
 
-class RecurrenceFrequency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RecurrenceFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to describe the frequency of a recurrence schedule"""
 
     #: Minute frequency.
@@ -1167,7 +1166,7 @@ class RecurrenceFrequency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MONTH = "Month"
 
 
-class ReferenceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine which reference method to use for an asset."""
 
     ID = "Id"
@@ -1175,7 +1174,7 @@ class ReferenceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     OUTPUT_PATH = "OutputPath"
 
 
-class RegressionModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RegressionModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum for all Regression models supported by AutoML."""
 
     #: Elastic net is a popular type of regularized linear regression that combines two popular
@@ -1219,7 +1218,7 @@ class RegressionModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     XG_BOOST_REGRESSOR = "XGBoostRegressor"
 
 
-class RegressionPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RegressionPrimaryMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Primary metrics for Regression task."""
 
     #: The Spearman's rank coefficient of correlation is a nonparametric measure of rank correlation.
@@ -1235,7 +1234,7 @@ class RegressionPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     NORMALIZED_MEAN_ABSOLUTE_ERROR = "NormalizedMeanAbsoluteError"
 
 
-class RemoteLoginPortPublicAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RemoteLoginPortPublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of the public SSH port. Possible values are: Disabled - Indicates that the public ssh
     port is closed on all nodes of the cluster. Enabled - Indicates that the public ssh port is
     open on all nodes of the cluster. NotSpecified - Indicates that the public ssh port is closed
@@ -1249,33 +1248,33 @@ class RemoteLoginPortPublicAccess(with_metaclass(CaseInsensitiveEnumMeta, str, E
     NOT_SPECIFIED = "NotSpecified"
 
 
-class SamplingAlgorithmType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SamplingAlgorithmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     GRID = "Grid"
     RANDOM = "Random"
     BAYESIAN = "Bayesian"
 
 
-class ScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DEFAULT = "Default"
     TARGET_UTILIZATION = "TargetUtilization"
 
 
-class ScheduleActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ScheduleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CREATE_JOB = "CreateJob"
     INVOKE_BATCH_ENDPOINT = "InvokeBatchEndpoint"
 
 
-class ScheduleListViewType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ScheduleListViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENABLED_ONLY = "EnabledOnly"
     DISABLED_ONLY = "DisabledOnly"
     ALL = "All"
 
 
-class ScheduleProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ScheduleProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current deployment state of schedule."""
 
     COMPLETED = "Completed"
@@ -1283,7 +1282,7 @@ class ScheduleProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     FAILED = "Failed"
 
 
-class ScheduleProvisioningStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ScheduleProvisioningStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -1293,14 +1292,14 @@ class ScheduleProvisioningStatus(with_metaclass(CaseInsensitiveEnumMeta, str, En
     CANCELED = "Canceled"
 
 
-class ScheduleStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ScheduleStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Is the schedule enabled or disabled?"""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
 
-class SeasonalityMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SeasonalityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Forecasting seasonality mode."""
 
     #: Seasonality to be determined automatically.
@@ -1309,7 +1308,7 @@ class SeasonalityMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CUSTOM = "Custom"
 
 
-class SecretsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SecretsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the datastore secrets type."""
 
     ACCOUNT_KEY = "AccountKey"
@@ -1320,7 +1319,7 @@ class SecretsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     KERBEROS_KEYTAB = "KerberosKeytab"
 
 
-class ServiceDataAccessAuthIdentity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ServiceDataAccessAuthIdentity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     #: Do not use any identity for service data access.
     NONE = "None"
@@ -1330,7 +1329,7 @@ class ServiceDataAccessAuthIdentity(with_metaclass(CaseInsensitiveEnumMeta, str,
     WORKSPACE_USER_ASSIGNED_IDENTITY = "WorkspaceUserAssignedIdentity"
 
 
-class ShortSeriesHandlingConfiguration(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ShortSeriesHandlingConfiguration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The parameter defining how if AutoML should handle short time series."""
 
     #: Represents no/null value.
@@ -1344,7 +1343,7 @@ class ShortSeriesHandlingConfiguration(with_metaclass(CaseInsensitiveEnumMeta, s
     DROP = "Drop"
 
 
-class SkuScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SkuScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Node scaling setting for the compute sku."""
 
     #: Automatically scales node count.
@@ -1355,7 +1354,7 @@ class SkuScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     NONE = "None"
 
 
-class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This field is required to be implemented by the Resource Provider if the service has more than
     one tier, but is not required on a PUT.
     """
@@ -1366,7 +1365,7 @@ class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PREMIUM = "Premium"
 
 
-class SourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Data source type."""
 
     DATASET = "Dataset"
@@ -1374,13 +1373,13 @@ class SourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     URI = "URI"
 
 
-class SparkJobEntryType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SparkJobEntryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SPARK_JOB_PYTHON_ENTRY = "SparkJobPythonEntry"
     SPARK_JOB_SCALA_ENTRY = "SparkJobScalaEntry"
 
 
-class SshPublicAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SshPublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of the public SSH port. Possible values are: Disabled - Indicates that the public ssh
     port is closed on this instance. Enabled - Indicates that the public ssh port is open and
     accessible according to the VNet/subnet policy if applicable.
@@ -1390,7 +1389,7 @@ class SshPublicAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DISABLED = "Disabled"
 
 
-class SslConfigStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SslConfigStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enable or disable ssl for scoring"""
 
     DISABLED = "Disabled"
@@ -1398,7 +1397,7 @@ class SslConfigStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AUTO = "Auto"
 
 
-class StackMetaLearnerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class StackMetaLearnerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The meta-learner is a model trained on the output of the individual heterogeneous models.
     Default meta-learners are LogisticRegression for classification tasks (or LogisticRegressionCV
     if cross-validation is enabled) and ElasticNet for regression/forecasting tasks (or
@@ -1421,7 +1420,7 @@ class StackMetaLearnerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     LINEAR_REGRESSION = "LinearRegression"
 
 
-class Status(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of update workspace quota."""
 
     UNDEFINED = "Undefined"
@@ -1434,14 +1433,14 @@ class Status(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     OPERATION_NOT_ENABLED_FOR_REGION = "OperationNotEnabledForRegion"
 
 
-class StatusMessageLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class StatusMessageLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ERROR = "Error"
     INFORMATION = "Information"
     WARNING = "Warning"
 
 
-class StochasticOptimizer(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class StochasticOptimizer(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Stochastic optimizer for image models."""
 
     #: No optimizer selected.
@@ -1455,14 +1454,14 @@ class StochasticOptimizer(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ADAMW = "Adamw"
 
 
-class StorageAccountType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """type of this storage account."""
 
     STANDARD_LRS = "Standard_LRS"
     PREMIUM_LRS = "Premium_LRS"
 
 
-class TargetAggregationFunction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TargetAggregationFunction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Target aggregate function."""
 
     #: Represent no value set.
@@ -1473,7 +1472,7 @@ class TargetAggregationFunction(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     MEAN = "Mean"
 
 
-class TargetLagsMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TargetLagsMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Target lags selection modes."""
 
     #: Target lags to be determined automatically.
@@ -1482,7 +1481,7 @@ class TargetLagsMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CUSTOM = "Custom"
 
 
-class TargetRollingWindowSizeMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TargetRollingWindowSizeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Target rolling windows size mode."""
 
     #: Determine rolling windows size automatically.
@@ -1491,7 +1490,7 @@ class TargetRollingWindowSizeMode(with_metaclass(CaseInsensitiveEnumMeta, str, E
     CUSTOM = "Custom"
 
 
-class TaskType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TaskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AutoMLJob Task type."""
 
     #: Classification in machine learning and statistics is a supervised learning approach in which
@@ -1534,14 +1533,14 @@ class TaskType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     TEXT_NER = "TextNER"
 
 
-class TextAnnotationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TextAnnotationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Annotation type of text data."""
 
     CLASSIFICATION = "Classification"
     NAMED_ENTITY_RECOGNITION = "NamedEntityRecognition"
 
 
-class TrainingMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TrainingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Training mode dictates whether to use distributed training or not"""
 
     #: Auto mode.
@@ -1552,31 +1551,31 @@ class TrainingMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     NON_DISTRIBUTED = "NonDistributed"
 
 
-class TriggerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     RECURRENCE = "Recurrence"
     CRON = "Cron"
 
 
-class UnderlyingResourceAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class UnderlyingResourceAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DELETE = "Delete"
     DETACH = "Detach"
 
 
-class UnitOfMeasure(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class UnitOfMeasure(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The unit of time measurement for the specified VM price. Example: OneHour"""
 
     ONE_HOUR = "OneHour"
 
 
-class UsageUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class UsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """An enum describing the unit of usage measurement."""
 
     COUNT = "Count"
 
 
-class UseStl(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class UseStl(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Configure STL Decomposition of the time-series target column."""
 
     #: No stl decomposition.
@@ -1585,7 +1584,7 @@ class UseStl(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SEASON_TREND = "SeasonTrend"
 
 
-class ValidationMetricType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ValidationMetricType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Metric computation method to use for validation metrics in image tasks."""
 
     #: No metric.
@@ -1598,27 +1597,27 @@ class ValidationMetricType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     COCO_VOC = "CocoVoc"
 
 
-class ValueFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ValueFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """format for the workspace connection value"""
 
     JSON = "JSON"
 
 
-class VMPriceOSType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class VMPriceOSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Operating system type used by the VM."""
 
     LINUX = "Linux"
     WINDOWS = "Windows"
 
 
-class VmPriority(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class VmPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Virtual Machine priority"""
 
     DEDICATED = "Dedicated"
     LOW_PRIORITY = "LowPriority"
 
 
-class VMTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class VMTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the VM."""
 
     STANDARD = "Standard"
@@ -1626,7 +1625,7 @@ class VMTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SPOT = "Spot"
 
 
-class VolumeDefinitionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class VolumeDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of Volume Definition. Possible Values: bind,volume,tmpfs,npipe"""
 
     BIND = "bind"
@@ -1635,7 +1634,7 @@ class VolumeDefinitionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     NPIPE = "npipe"
 
 
-class WeekDay(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class WeekDay(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum of weekday"""
 
     #: Monday weekday.

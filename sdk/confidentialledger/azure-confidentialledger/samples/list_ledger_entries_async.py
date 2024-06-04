@@ -49,7 +49,7 @@ async def main():
     # i.e. https://<ledger id>.confidential-ledger.azure.com
     ledger_id = ledger_endpoint.replace("https://", "").split(".")[0]
 
-    identity_service_client = ConfidentialLedgerCertificateClient()
+    identity_service_client = ConfidentialLedgerCertificateClient()  # type: ignore[call-arg]
     async with identity_service_client:
         ledger_certificate = await identity_service_client.get_ledger_identity(
             ledger_id
@@ -79,7 +79,7 @@ async def main():
         # Using the async objects as a context manager ensures they are properly closed after use.
         async with credential:
             async with ledger_client:
-                post_poller = await ledger_client.begin_create_ledger_entry(
+                post_poller = await ledger_client.begin_create_ledger_entry(  # type: ignore[attr-defined]
                     {"contents": "First message"}
                 )
                 poller_result = await post_poller.result()
@@ -97,7 +97,7 @@ async def main():
                     )
                     await ledger_client.create_ledger_entry({"contents": entry_contents})
 
-                post_poller = await ledger_client.begin_create_ledger_entry(
+                post_poller = await ledger_client.begin_create_ledger_entry(  # type: ignore[attr-defined]
                     {"contents": "Last message"}
                 )
                 poller_result = await post_poller.result()

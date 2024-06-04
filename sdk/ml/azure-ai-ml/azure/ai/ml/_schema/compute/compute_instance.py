@@ -5,7 +5,7 @@
 from marshmallow import fields
 from marshmallow.decorators import post_load
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml.constants._compute import ComputeType, ComputeSizeTier
 
@@ -46,9 +46,9 @@ class OsImageMetadataSchema(PathAwareSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import OsImageMetadata
+        from azure.ai.ml.entities import ImageMetadata
 
-        return OsImageMetadata(**data)
+        return ImageMetadata(**data)
 
 
 class ComputeInstanceSchema(ComputeSchema):
@@ -70,4 +70,14 @@ class ComputeInstanceSchema(ComputeSchema):
     os_image_metadata = NestedField(OsImageMetadataSchema, dump_only=True)
     enable_node_public_ip = fields.Bool(
         metadata={"description": "Enable or disable node public IP address provisioning."}
+    )
+    enable_sso = fields.Bool(metadata={"description": "Enable or disable single sign-on for the compute instance."})
+    enable_root_access = fields.Bool(
+        metadata={"description": "Enable or disable root access for the compute instance."}
+    )
+    release_quota_on_stop = fields.Bool(
+        metadata={"description": "Release quota on stop for the compute instance. Defaults to False."}
+    )
+    enable_os_patching = fields.Bool(
+        metadata={"description": "Enable or disable OS patching for the compute instance. Defaults to False."}
     )

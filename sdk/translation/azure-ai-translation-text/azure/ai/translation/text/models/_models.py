@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, overload
+from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .. import _model_base
 from .._model_base import rest_field
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 class BackTranslation(_model_base.Model):
     """Back Translation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar normalized_text: A string giving the normalized form of the source term that is a
      back-translation of the target.
@@ -49,22 +49,26 @@ class BackTranslation(_model_base.Model):
     """
 
     normalized_text: str = rest_field(name="normalizedText")
-    """A string giving the normalized form of the source term that is a back-translation of the target.
-This value should be used as input to lookup examples. Required. """
+    """A string giving the normalized form of the source term that is a back-translation of the
+     target.
+     This value should be used as input to lookup examples. Required."""
     display_text: str = rest_field(name="displayText")
     """A string giving the source term that is a back-translation of the target in a form best
-suited for end-user display. Required. """
+     suited for end-user display. Required."""
     num_examples: int = rest_field(name="numExamples")
     """An integer representing the number of examples that are available for this translation pair.
-Actual examples must be retrieved with a separate call to lookup examples. The number is mostly
-intended to facilitate display in a UX. For example, a user interface may add a hyperlink
-to the back-translation if the number of examples is greater than zero and show the back-translation
-as plain text if there are no examples. Note that the actual number of examples returned
-by a call to lookup examples may be less than numExamples, because additional filtering may be
-applied on the fly to remove \"bad\" examples. Required. """
+     Actual examples must be retrieved with a separate call to lookup examples. The number is mostly
+     intended to facilitate display in a UX. For example, a user interface may add a hyperlink
+     to the back-translation if the number of examples is greater than zero and show the
+     back-translation
+     as plain text if there are no examples. Note that the actual number of examples returned
+     by a call to lookup examples may be less than numExamples, because additional filtering may be
+     applied on the fly to remove \"bad\" examples. Required."""
     frequency_count: int = rest_field(name="frequencyCount")
-    """An integer representing the frequency of this translation pair in the data. The main purpose of this
-field is to provide a user interface with a means to sort back-translations so the most frequent terms are first. Required. """
+    """An integer representing the frequency of this translation pair in the data. The main purpose of
+     this
+     field is to provide a user interface with a means to sort back-translations so the most
+     frequent terms are first. Required."""
 
     @overload
     def __init__(
@@ -74,8 +78,7 @@ field is to provide a user interface with a means to sort back-translations so t
         display_text: str,
         num_examples: int,
         frequency_count: int,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -91,7 +94,7 @@ field is to provide a user interface with a means to sort back-translations so t
 class BreakSentenceItem(_model_base.Model):
     """Item containing break sentence result.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar detected_language: The detectedLanguage property is only present in the result object
      when language auto-detection is requested.
@@ -103,10 +106,12 @@ class BreakSentenceItem(_model_base.Model):
     """
 
     detected_language: Optional["_models.DetectedLanguage"] = rest_field(name="detectedLanguage")
-    """The detectedLanguage property is only present in the result object when language auto-detection is requested. """
+    """The detectedLanguage property is only present in the result object when language auto-detection
+     is requested."""
     sent_len: List[int] = rest_field(name="sentLen")
     """An integer array representing the lengths of the sentences in the input text.
-The length of the array is the number of sentences, and the values are the length of each sentence. Required. """
+     The length of the array is the number of sentences, and the values are the length of each
+     sentence. Required."""
 
     @overload
     def __init__(
@@ -114,57 +119,7 @@ The length of the array is the number of sentences, and the values are the lengt
         *,
         sent_len: List[int],
         detected_language: Optional["_models.DetectedLanguage"] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class CommonScriptModel(_model_base.Model):
-    """Common properties of language script.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar code: Code identifying the script. Required.
-    :vartype code: str
-    :ivar name: Display name of the script in the locale requested via Accept-Language header.
-     Required.
-    :vartype name: str
-    :ivar native_name: Display name of the language in the locale native for the language.
-     Required.
-    :vartype native_name: str
-    :ivar dir: Directionality, which is rtl for right-to-left languages or ltr for left-to-right
-     languages. Required.
-    :vartype dir: str
-    """
-
-    code: str = rest_field()
-    """Code identifying the script. Required. """
-    name: str = rest_field()
-    """Display name of the script in the locale requested via Accept-Language header. Required. """
-    native_name: str = rest_field(name="nativeName")
-    """Display name of the language in the locale native for the language. Required. """
-    dir: str = rest_field()
-    """Directionality, which is rtl for right-to-left languages or ltr for left-to-right languages. Required. """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: str,
-        name: str,
-        native_name: str,
-        dir: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -180,7 +135,7 @@ class CommonScriptModel(_model_base.Model):
 class DetectedLanguage(_model_base.Model):
     """An object describing the detected language.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar language: A string representing the code of the detected language. Required.
     :vartype language: str
@@ -190,10 +145,10 @@ class DetectedLanguage(_model_base.Model):
     """
 
     language: str = rest_field()
-    """A string representing the code of the detected language. Required. """
+    """A string representing the code of the detected language. Required."""
     score: float = rest_field()
     """A float value indicating the confidence in the result.
-The score is between zero and one and a low score indicates a low confidence. Required. """
+     The score is between zero and one and a low score indicates a low confidence. Required."""
 
     @overload
     def __init__(
@@ -201,8 +156,7 @@ The score is between zero and one and a low score indicates a low confidence. Re
         *,
         language: str,
         score: float,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -218,7 +172,7 @@ The score is between zero and one and a low score indicates a low confidence. Re
 class DictionaryExample(_model_base.Model):
     """Dictionary Example.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source_prefix: The string to concatenate before the value of sourceTerm to form a
      complete example.
@@ -245,22 +199,22 @@ class DictionaryExample(_model_base.Model):
 
     source_prefix: str = rest_field(name="sourcePrefix")
     """The string to concatenate before the value of sourceTerm to form a complete example.
-Do not add a space character, since it is already there when it should be.
-This value may be an empty string. Required. """
+     Do not add a space character, since it is already there when it should be.
+     This value may be an empty string. Required."""
     source_term: str = rest_field(name="sourceTerm")
     """A string equal to the actual term looked up. The string is added with sourcePrefix
-and sourceSuffix to form the complete example. Its value is separated so it can be
-marked in a user interface, e.g., by bolding it. Required. """
+     and sourceSuffix to form the complete example. Its value is separated so it can be
+     marked in a user interface, e.g., by bolding it. Required."""
     source_suffix: str = rest_field(name="sourceSuffix")
     """The string to concatenate after the value of sourceTerm to form a complete example.
-Do not add a space character, since it is already there when it should be.
-This value may be an empty string. Required. """
+     Do not add a space character, since it is already there when it should be.
+     This value may be an empty string. Required."""
     target_prefix: str = rest_field(name="targetPrefix")
-    """A string similar to sourcePrefix but for the target. Required. """
+    """A string similar to sourcePrefix but for the target. Required."""
     target_term: str = rest_field(name="targetTerm")
-    """A string similar to sourceTerm but for the target. Required. """
+    """A string similar to sourceTerm but for the target. Required."""
     target_suffix: str = rest_field(name="targetSuffix")
-    """A string similar to sourceSuffix but for the target. Required. """
+    """A string similar to sourceSuffix but for the target. Required."""
 
     @overload
     def __init__(
@@ -272,8 +226,7 @@ This value may be an empty string. Required. """
         target_prefix: str,
         target_term: str,
         target_suffix: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -289,7 +242,7 @@ This value may be an empty string. Required. """
 class DictionaryExampleItem(_model_base.Model):
     """Dictionary Example element.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar normalized_source: A string giving the normalized form of the source term. Generally,
      this should be identical
@@ -307,12 +260,13 @@ class DictionaryExampleItem(_model_base.Model):
 
     normalized_source: str = rest_field(name="normalizedSource")
     """A string giving the normalized form of the source term. Generally, this should be identical
-to the value of the Text field at the matching list index in the body of the request. Required. """
+     to the value of the Text field at the matching list index in the body of the request. Required."""
     normalized_target: str = rest_field(name="normalizedTarget")
     """A string giving the normalized form of the target term. Generally, this should be identical
-to the value of the Translation field at the matching list index in the body of the request. Required. """
+     to the value of the Translation field at the matching list index in the body of the request.
+     Required."""
     examples: List["_models.DictionaryExample"] = rest_field()
-    """A list of examples for the (source term, target term) pair. Required. """
+    """A list of examples for the (source term, target term) pair. Required."""
 
     @overload
     def __init__(
@@ -321,8 +275,7 @@ to the value of the Translation field at the matching list index in the body of 
         normalized_source: str,
         normalized_target: str,
         examples: List["_models.DictionaryExample"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -338,22 +291,21 @@ to the value of the Translation field at the matching list index in the body of 
 class InputTextItem(_model_base.Model):
     """Element containing the text for translation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar text: Text to translate. Required.
     :vartype text: str
     """
 
     text: str = rest_field()
-    """Text to translate. Required. """
+    """Text to translate. Required."""
 
     @overload
     def __init__(
         self,
         *,
         text: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -369,7 +321,7 @@ class InputTextItem(_model_base.Model):
 class DictionaryExampleTextItem(InputTextItem):
     """Element containing the text with translation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar text: Text to translate. Required.
     :vartype text: str
@@ -383,9 +335,11 @@ class DictionaryExampleTextItem(InputTextItem):
     """
 
     translation: str = rest_field()
-    """A string specifying the translated text previously returned by the Dictionary lookup operation. 
-This should be the value from the normalizedTarget field in the translations list of the Dictionary 
-lookup response. The service will return examples for the specific source-target word-pair. Required. """
+    """A string specifying the translated text previously returned by the Dictionary lookup operation.
+     This should be the value from the normalizedTarget field in the translations list of the
+     Dictionary
+     lookup response. The service will return examples for the specific source-target word-pair.
+     Required."""
 
     @overload
     def __init__(
@@ -393,8 +347,7 @@ lookup response. The service will return examples for the specific source-target
         *,
         text: str,
         translation: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -410,7 +363,7 @@ lookup response. The service will return examples for the specific source-target
 class DictionaryLookupItem(_model_base.Model):
     """Dictionary Lookup Element.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar normalized_source: A string giving the normalized form of the source term.
      For example, if the request is "JOHN", the normalized form will be "john".
@@ -427,14 +380,14 @@ class DictionaryLookupItem(_model_base.Model):
 
     normalized_source: str = rest_field(name="normalizedSource")
     """A string giving the normalized form of the source term.
-For example, if the request is \"JOHN\", the normalized form will be \"john\".
-The content of this field becomes the input to lookup examples. Required. """
+     For example, if the request is \"JOHN\", the normalized form will be \"john\".
+     The content of this field becomes the input to lookup examples. Required."""
     display_source: str = rest_field(name="displaySource")
     """A string giving the source term in a form best suited for end-user display.
-For example, if the input is \"JOHN\", the display form will reflect the usual
-spelling of the name: \"John\". Required. """
+     For example, if the input is \"JOHN\", the display form will reflect the usual
+     spelling of the name: \"John\". Required."""
     translations: List["_models.DictionaryTranslation"] = rest_field()
-    """A list of translations for the source term. Required. """
+    """A list of translations for the source term. Required."""
 
     @overload
     def __init__(
@@ -443,8 +396,7 @@ spelling of the name: \"John\". Required. """
         normalized_source: str,
         display_source: str,
         translations: List["_models.DictionaryTranslation"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -460,7 +412,7 @@ spelling of the name: \"John\". Required. """
 class DictionaryTranslation(_model_base.Model):
     """Translation source term.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar normalized_target: A string giving the normalized form of this term in the target
      language.
@@ -496,29 +448,32 @@ class DictionaryTranslation(_model_base.Model):
 
     normalized_target: str = rest_field(name="normalizedTarget")
     """A string giving the normalized form of this term in the target language.
-This value should be used as input to lookup examples. Required. """
+     This value should be used as input to lookup examples. Required."""
     display_target: str = rest_field(name="displayTarget")
     """A string giving the term in the target language and in a form best suited
-for end-user display. Generally, this will only differ from the normalizedTarget
-in terms of capitalization. For example, a proper noun like \"Juan\" will have
-normalizedTarget = \"juan\" and displayTarget = \"Juan\". Required. """
+     for end-user display. Generally, this will only differ from the normalizedTarget
+     in terms of capitalization. For example, a proper noun like \"Juan\" will have
+     normalizedTarget = \"juan\" and displayTarget = \"Juan\". Required."""
     pos_tag: str = rest_field(name="posTag")
-    """A string associating this term with a part-of-speech tag. Required. """
+    """A string associating this term with a part-of-speech tag. Required."""
     confidence: float = rest_field()
-    """A value between 0.0 and 1.0 which represents the \"confidence\" 
-(or perhaps more accurately, \"probability in the training data\") of that translation pair. 
-The sum of confidence scores for one source word may or may not sum to 1.0. Required. """
+    """A value between 0.0 and 1.0 which represents the \"confidence\"
+     (or perhaps more accurately, \"probability in the training data\") of that translation pair.
+     The sum of confidence scores for one source word may or may not sum to 1.0. Required."""
     prefix_word: str = rest_field(name="prefixWord")
     """A string giving the word to display as a prefix of the translation. Currently,
-this is the gendered determiner of nouns, in languages that have gendered determiners.
-For example, the prefix of the Spanish word \"mosca\" is \"la\", since \"mosca\" is a feminine noun in Spanish. 
-This is only dependent on the translation, and not on the source. 
-If there is no prefix, it will be the empty string. Required. """
+     this is the gendered determiner of nouns, in languages that have gendered determiners.
+     For example, the prefix of the Spanish word \"mosca\" is \"la\", since \"mosca\" is a feminine
+     noun in Spanish.
+     This is only dependent on the translation, and not on the source.
+     If there is no prefix, it will be the empty string. Required."""
     back_translations: List["_models.BackTranslation"] = rest_field(name="backTranslations")
-    """A list of \"back translations\" of the target. For example, source words that the target can translate to.
-The list is guaranteed to contain the source word that was requested (e.g., if the source word being
-looked up is \"fly\", then it is guaranteed that \"fly\" will be in the backTranslations list).
-However, it is not guaranteed to be in the first position, and often will not be. Required. """
+    """A list of \"back translations\" of the target. For example, source words that the target can
+     translate to.
+     The list is guaranteed to contain the source word that was requested (e.g., if the source word
+     being
+     looked up is \"fly\", then it is guaranteed that \"fly\" will be in the backTranslations list).
+     However, it is not guaranteed to be in the first position, and often will not be. Required."""
 
     @overload
     def __init__(
@@ -530,8 +485,7 @@ However, it is not guaranteed to be in the first position, and often will not be
         confidence: float,
         prefix_word: str,
         back_translations: List["_models.BackTranslation"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -547,7 +501,7 @@ However, it is not guaranteed to be in the first position, and often will not be
 class ErrorDetails(_model_base.Model):
     """Error details as returned by Translator Service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: Number identifier of the error. Required.
     :vartype code: int
@@ -556,9 +510,9 @@ class ErrorDetails(_model_base.Model):
     """
 
     code: int = rest_field()
-    """Number identifier of the error. Required. """
+    """Number identifier of the error. Required."""
     message: str = rest_field()
-    """Human readable error description. Required. """
+    """Human readable error description. Required."""
 
     @overload
     def __init__(
@@ -566,8 +520,7 @@ class ErrorDetails(_model_base.Model):
         *,
         code: int,
         message: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -583,22 +536,21 @@ class ErrorDetails(_model_base.Model):
 class ErrorResponse(_model_base.Model):
     """Representation of the Error Response from Translator Service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar error: Error details. Required.
     :vartype error: ~azure.ai.translation.text.models.ErrorDetails
     """
 
     error: "_models.ErrorDetails" = rest_field()
-    """Error details. Required. """
+    """Error details. Required."""
 
     @overload
     def __init__(
         self,
         *,
         error: "_models.ErrorDetails",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -611,7 +563,7 @@ class ErrorResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class GetLanguagesResult(_model_base.Model):
+class GetSupportedLanguagesResult(_model_base.Model):
     """Response for the languages API.
 
     :ivar translation: Languages that support translate API.
@@ -623,11 +575,11 @@ class GetLanguagesResult(_model_base.Model):
     """
 
     translation: Optional[Dict[str, "_models.TranslationLanguage"]] = rest_field()
-    """Languages that support translate API. """
+    """Languages that support translate API."""
     transliteration: Optional[Dict[str, "_models.TransliterationLanguage"]] = rest_field()
-    """Languages that support transliteration API. """
+    """Languages that support transliteration API."""
     dictionary: Optional[Dict[str, "_models.SourceDictionaryLanguage"]] = rest_field()
-    """Languages that support dictionary API. """
+    """Languages that support dictionary API."""
 
     @overload
     def __init__(
@@ -636,8 +588,7 @@ class GetLanguagesResult(_model_base.Model):
         translation: Optional[Dict[str, "_models.TranslationLanguage"]] = None,
         transliteration: Optional[Dict[str, "_models.TransliterationLanguage"]] = None,
         dictionary: Optional[Dict[str, "_models.SourceDictionaryLanguage"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -650,10 +601,59 @@ class GetLanguagesResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SentenceLength(_model_base.Model):
+class LanguageScript(_model_base.Model):
+    """Common properties of language script.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar code: Code identifying the script. Required.
+    :vartype code: str
+    :ivar name: Display name of the script in the locale requested via Accept-Language header.
+     Required.
+    :vartype name: str
+    :ivar native_name: Display name of the language in the locale native for the language.
+     Required.
+    :vartype native_name: str
+    :ivar dir: Directionality, which is rtl for right-to-left languages or ltr for left-to-right
+     languages. Required. Known values are: "ltr" and "rtl".
+    :vartype dir: str or ~azure.ai.translation.text.models.LanguageDirectionality
+    """
+
+    code: str = rest_field()
+    """Code identifying the script. Required."""
+    name: str = rest_field()
+    """Display name of the script in the locale requested via Accept-Language header. Required."""
+    native_name: str = rest_field(name="nativeName")
+    """Display name of the language in the locale native for the language. Required."""
+    dir: Union[str, "_models.LanguageDirectionality"] = rest_field()
+    """Directionality, which is rtl for right-to-left languages or ltr for left-to-right languages.
+     Required. Known values are: \"ltr\" and \"rtl\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: str,
+        name: str,
+        native_name: str,
+        dir: Union[str, "_models.LanguageDirectionality"],
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class SentenceBoundaries(_model_base.Model):
     """An object returning sentence boundaries in the input and output texts.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar src_sent_len: An integer array representing the lengths of the sentences in the input
      text.
@@ -668,11 +668,13 @@ class SentenceLength(_model_base.Model):
     """
 
     src_sent_len: List[int] = rest_field(name="srcSentLen")
-    """An integer array representing the lengths of the sentences in the input text. 
-The length of the array is the number of sentences, and the values are the length of each sentence. Required. """
+    """An integer array representing the lengths of the sentences in the input text.
+     The length of the array is the number of sentences, and the values are the length of each
+     sentence. Required."""
     trans_sent_len: List[int] = rest_field(name="transSentLen")
-    """An integer array representing the lengths of the sentences in the translated text. 
-The length of the array is the number of sentences, and the values are the length of each sentence. Required. """
+    """An integer array representing the lengths of the sentences in the translated text.
+     The length of the array is the number of sentences, and the values are the length of each
+     sentence. Required."""
 
     @overload
     def __init__(
@@ -680,8 +682,7 @@ The length of the array is the number of sentences, and the values are the lengt
         *,
         src_sent_len: List[int],
         trans_sent_len: List[int],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -697,7 +698,7 @@ The length of the array is the number of sentences, and the values are the lengt
 class SourceDictionaryLanguage(_model_base.Model):
     """Properties ot the source dictionary language.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Display name of the language in the locale requested via Accept-Language header.
      Required.
@@ -706,21 +707,23 @@ class SourceDictionaryLanguage(_model_base.Model):
      Required.
     :vartype native_name: str
     :ivar dir: Directionality, which is rtl for right-to-left languages or ltr for left-to-right
-     languages. Required.
-    :vartype dir: str
+     languages. Required. Known values are: "ltr" and "rtl".
+    :vartype dir: str or ~azure.ai.translation.text.models.LanguageDirectionality
     :ivar translations: List of languages with alterative translations and examples for the query
      expressed in the source language. Required.
     :vartype translations: list[~azure.ai.translation.text.models.TargetDictionaryLanguage]
     """
 
     name: str = rest_field()
-    """Display name of the language in the locale requested via Accept-Language header. Required. """
+    """Display name of the language in the locale requested via Accept-Language header. Required."""
     native_name: str = rest_field(name="nativeName")
-    """Display name of the language in the locale native for this language. Required. """
-    dir: str = rest_field()
-    """Directionality, which is rtl for right-to-left languages or ltr for left-to-right languages. Required. """
+    """Display name of the language in the locale native for this language. Required."""
+    dir: Union[str, "_models.LanguageDirectionality"] = rest_field()
+    """Directionality, which is rtl for right-to-left languages or ltr for left-to-right languages.
+     Required. Known values are: \"ltr\" and \"rtl\"."""
     translations: List["_models.TargetDictionaryLanguage"] = rest_field()
-    """List of languages with alterative translations and examples for the query expressed in the source language. Required. """
+    """List of languages with alterative translations and examples for the query expressed in the
+     source language. Required."""
 
     @overload
     def __init__(
@@ -728,10 +731,9 @@ class SourceDictionaryLanguage(_model_base.Model):
         *,
         name: str,
         native_name: str,
-        dir: str,
+        dir: Union[str, "_models.LanguageDirectionality"],
         translations: List["_models.TargetDictionaryLanguage"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -747,22 +749,21 @@ class SourceDictionaryLanguage(_model_base.Model):
 class SourceText(_model_base.Model):
     """Input text in the default script of the source language.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar text: Input text in the default script of the source language. Required.
     :vartype text: str
     """
 
     text: str = rest_field()
-    """Input text in the default script of the source language. Required. """
+    """Input text in the default script of the source language. Required."""
 
     @overload
     def __init__(
         self,
         *,
         text: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -778,7 +779,7 @@ class SourceText(_model_base.Model):
 class TargetDictionaryLanguage(_model_base.Model):
     """Properties of the target dictionary language.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Display name of the language in the locale requested via Accept-Language header.
      Required.
@@ -787,20 +788,21 @@ class TargetDictionaryLanguage(_model_base.Model):
      Required.
     :vartype native_name: str
     :ivar dir: Directionality, which is rtl for right-to-left languages or ltr for left-to-right
-     languages. Required.
-    :vartype dir: str
+     languages. Required. Known values are: "ltr" and "rtl".
+    :vartype dir: str or ~azure.ai.translation.text.models.LanguageDirectionality
     :ivar code: Language code identifying the target language. Required.
     :vartype code: str
     """
 
     name: str = rest_field()
-    """Display name of the language in the locale requested via Accept-Language header. Required. """
+    """Display name of the language in the locale requested via Accept-Language header. Required."""
     native_name: str = rest_field(name="nativeName")
-    """Display name of the language in the locale native for this language. Required. """
-    dir: str = rest_field()
-    """Directionality, which is rtl for right-to-left languages or ltr for left-to-right languages. Required. """
+    """Display name of the language in the locale native for this language. Required."""
+    dir: Union[str, "_models.LanguageDirectionality"] = rest_field()
+    """Directionality, which is rtl for right-to-left languages or ltr for left-to-right languages.
+     Required. Known values are: \"ltr\" and \"rtl\"."""
     code: str = rest_field()
-    """Language code identifying the target language. Required. """
+    """Language code identifying the target language. Required."""
 
     @overload
     def __init__(
@@ -808,10 +810,9 @@ class TargetDictionaryLanguage(_model_base.Model):
         *,
         name: str,
         native_name: str,
-        dir: str,
+        dir: Union[str, "_models.LanguageDirectionality"],
         code: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -827,7 +828,7 @@ class TargetDictionaryLanguage(_model_base.Model):
 class TranslatedTextAlignment(_model_base.Model):
     """Alignment information object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar proj: Maps input text to translated text. The alignment information is only provided when
      the request
@@ -843,20 +844,22 @@ class TranslatedTextAlignment(_model_base.Model):
     """
 
     proj: str = rest_field()
-    """Maps input text to translated text. The alignment information is only provided when the request 
-parameter includeAlignment is true. Alignment is returned as a string value of the following 
-format: [[SourceTextStartIndex]:[SourceTextEndIndex]–[TgtTextStartIndex]:[TgtTextEndIndex]]. 
-The colon separates start and end index, the dash separates the languages, and space separates the words. 
-One word may align with zero, one, or multiple words in the other language, and the aligned words may 
-be non-contiguous. When no alignment information is available, the alignment element will be empty. Required. """
+    """Maps input text to translated text. The alignment information is only provided when the request
+     parameter includeAlignment is true. Alignment is returned as a string value of the following
+     format: [[SourceTextStartIndex]:[SourceTextEndIndex]–[TgtTextStartIndex]:[TgtTextEndIndex]].
+     The colon separates start and end index, the dash separates the languages, and space separates
+     the words.
+     One word may align with zero, one, or multiple words in the other language, and the aligned
+     words may
+     be non-contiguous. When no alignment information is available, the alignment element will be
+     empty. Required."""
 
     @overload
     def __init__(
         self,
         *,
         proj: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -872,7 +875,7 @@ be non-contiguous. When no alignment information is available, the alignment ele
 class TranslatedTextItem(_model_base.Model):
     """Element containing the translated text.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar detected_language: The detectedLanguage property is only present in the result object
      when language auto-detection is requested.
@@ -880,7 +883,7 @@ class TranslatedTextItem(_model_base.Model):
     :ivar translations: An array of translation results. The size of the array matches the number
      of target
      languages specified through the to query parameter. Required.
-    :vartype translations: list[~azure.ai.translation.text.models.Translation]
+    :vartype translations: list[~azure.ai.translation.text.models.TranslationText]
     :ivar source_text: Input text in the default script of the source language. sourceText property
      is present only when
      the input is expressed in a script that's not the usual script for the language. For example,
@@ -891,77 +894,27 @@ class TranslatedTextItem(_model_base.Model):
     """
 
     detected_language: Optional["_models.DetectedLanguage"] = rest_field(name="detectedLanguage")
-    """The detectedLanguage property is only present in the result object when language auto-detection is requested. """
-    translations: List["_models.Translation"] = rest_field()
-    """An array of translation results. The size of the array matches the number of target 
-languages specified through the to query parameter. Required. """
+    """The detectedLanguage property is only present in the result object when language auto-detection
+     is requested."""
+    translations: List["_models.TranslationText"] = rest_field()
+    """An array of translation results. The size of the array matches the number of target
+     languages specified through the to query parameter. Required."""
     source_text: Optional["_models.SourceText"] = rest_field(name="sourceText")
-    """Input text in the default script of the source language. sourceText property is present only when 
-the input is expressed in a script that's not the usual script for the language. For example, 
-if the input were Arabic written in Latin script, then sourceText.text would be the same Arabic text 
-converted into Arab script. """
+    """Input text in the default script of the source language. sourceText property is present only
+     when
+     the input is expressed in a script that's not the usual script for the language. For example,
+     if the input were Arabic written in Latin script, then sourceText.text would be the same Arabic
+     text
+     converted into Arab script."""
 
     @overload
     def __init__(
         self,
         *,
-        translations: List["_models.Translation"],
+        translations: List["_models.TranslationText"],
         detected_language: Optional["_models.DetectedLanguage"] = None,
         source_text: Optional["_models.SourceText"] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class Translation(_model_base.Model):
-    """Translation result.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar to: A string representing the language code of the target language. Required.
-    :vartype to: str
-    :ivar text: A string giving the translated text. Required.
-    :vartype text: str
-    :ivar transliteration: An object giving the translated text in the script specified by the
-     toScript parameter.
-    :vartype transliteration: ~azure.ai.translation.text.models.Transliteration
-    :ivar alignment: Alignment information.
-    :vartype alignment: ~azure.ai.translation.text.models.TranslatedTextAlignment
-    :ivar sent_len: Sentence boundaries in the input and output texts.
-    :vartype sent_len: ~azure.ai.translation.text.models.SentenceLength
-    """
-
-    to: str = rest_field()
-    """A string representing the language code of the target language. Required. """
-    text: str = rest_field()
-    """A string giving the translated text. Required. """
-    transliteration: Optional["_models.Transliteration"] = rest_field()
-    """An object giving the translated text in the script specified by the toScript parameter. """
-    alignment: Optional["_models.TranslatedTextAlignment"] = rest_field()
-    """Alignment information. """
-    sent_len: Optional["_models.SentenceLength"] = rest_field(name="sentLen")
-    """Sentence boundaries in the input and output texts. """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        to: str,
-        text: str,
-        transliteration: Optional["_models.Transliteration"] = None,
-        alignment: Optional["_models.TranslatedTextAlignment"] = None,
-        sent_len: Optional["_models.SentenceLength"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -979,7 +932,7 @@ class TranslationLanguage(_model_base.Model):
     47 language tag.
     A key identifies a language for which text can be translated to or translated from.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Display name of the language in the locale requested via Accept-Language header.
      Required.
@@ -988,16 +941,17 @@ class TranslationLanguage(_model_base.Model):
      Required.
     :vartype native_name: str
     :ivar dir: Directionality, which is rtl for right-to-left languages or ltr for left-to-right
-     languages. Required.
-    :vartype dir: str
+     languages. Required. Known values are: "ltr" and "rtl".
+    :vartype dir: str or ~azure.ai.translation.text.models.LanguageDirectionality
     """
 
     name: str = rest_field()
-    """Display name of the language in the locale requested via Accept-Language header. Required. """
+    """Display name of the language in the locale requested via Accept-Language header. Required."""
     native_name: str = rest_field(name="nativeName")
-    """Display name of the language in the locale native for this language. Required. """
-    dir: str = rest_field()
-    """Directionality, which is rtl for right-to-left languages or ltr for left-to-right languages. Required. """
+    """Display name of the language in the locale native for this language. Required."""
+    dir: Union[str, "_models.LanguageDirectionality"] = rest_field()
+    """Directionality, which is rtl for right-to-left languages or ltr for left-to-right languages.
+     Required. Known values are: \"ltr\" and \"rtl\"."""
 
     @overload
     def __init__(
@@ -1005,9 +959,8 @@ class TranslationLanguage(_model_base.Model):
         *,
         name: str,
         native_name: str,
-        dir: str,
-    ):
-        ...
+        dir: Union[str, "_models.LanguageDirectionality"],
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1020,10 +973,61 @@ class TranslationLanguage(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TransliterableScript(CommonScriptModel):
+class TranslationText(_model_base.Model):
+    """Translation result.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar to: A string representing the language code of the target language. Required.
+    :vartype to: str
+    :ivar text: A string giving the translated text. Required.
+    :vartype text: str
+    :ivar transliteration: An object giving the translated text in the script specified by the
+     toScript parameter.
+    :vartype transliteration: ~azure.ai.translation.text.models.TransliteratedText
+    :ivar alignment: Alignment information.
+    :vartype alignment: ~azure.ai.translation.text.models.TranslatedTextAlignment
+    :ivar sent_len: Sentence boundaries in the input and output texts.
+    :vartype sent_len: ~azure.ai.translation.text.models.SentenceBoundaries
+    """
+
+    to: str = rest_field()
+    """A string representing the language code of the target language. Required."""
+    text: str = rest_field()
+    """A string giving the translated text. Required."""
+    transliteration: Optional["_models.TransliteratedText"] = rest_field()
+    """An object giving the translated text in the script specified by the toScript parameter."""
+    alignment: Optional["_models.TranslatedTextAlignment"] = rest_field()
+    """Alignment information."""
+    sent_len: Optional["_models.SentenceBoundaries"] = rest_field(name="sentLen")
+    """Sentence boundaries in the input and output texts."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        to: str,
+        text: str,
+        transliteration: Optional["_models.TransliteratedText"] = None,
+        alignment: Optional["_models.TranslatedTextAlignment"] = None,
+        sent_len: Optional["_models.SentenceBoundaries"] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class TransliterableScript(LanguageScript):
     """Script definition with list of script into which given script can be translitered.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: Code identifying the script. Required.
     :vartype code: str
@@ -1034,14 +1038,14 @@ class TransliterableScript(CommonScriptModel):
      Required.
     :vartype native_name: str
     :ivar dir: Directionality, which is rtl for right-to-left languages or ltr for left-to-right
-     languages. Required.
-    :vartype dir: str
+     languages. Required. Known values are: "ltr" and "rtl".
+    :vartype dir: str or ~azure.ai.translation.text.models.LanguageDirectionality
     :ivar to_scripts: List of scripts available to convert text to. Required.
-    :vartype to_scripts: list[~azure.ai.translation.text.models.CommonScriptModel]
+    :vartype to_scripts: list[~azure.ai.translation.text.models.LanguageScript]
     """
 
-    to_scripts: List["_models.CommonScriptModel"] = rest_field(name="toScripts")
-    """List of scripts available to convert text to. Required. """
+    to_scripts: List["_models.LanguageScript"] = rest_field(name="toScripts")
+    """List of scripts available to convert text to. Required."""
 
     @overload
     def __init__(
@@ -1050,10 +1054,9 @@ class TransliterableScript(CommonScriptModel):
         code: str,
         name: str,
         native_name: str,
-        dir: str,
-        to_scripts: List["_models.CommonScriptModel"],
-    ):
-        ...
+        dir: Union[str, "_models.LanguageDirectionality"],
+        to_scripts: List["_models.LanguageScript"],
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1069,7 +1072,7 @@ class TransliterableScript(CommonScriptModel):
 class TransliteratedText(_model_base.Model):
     """Transliterated text element.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar text: A string which is the result of converting the input string to the output script.
      Required.
@@ -1079,9 +1082,9 @@ class TransliteratedText(_model_base.Model):
     """
 
     text: str = rest_field()
-    """A string which is the result of converting the input string to the output script. Required. """
+    """A string which is the result of converting the input string to the output script. Required."""
     script: str = rest_field()
-    """A string specifying the script used in the output. Required. """
+    """A string specifying the script used in the output. Required."""
 
     @overload
     def __init__(
@@ -1089,44 +1092,7 @@ class TransliteratedText(_model_base.Model):
         *,
         text: str,
         script: str,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class Transliteration(_model_base.Model):
-    """An object giving the translated text in the script specified by the toScript parameter.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar script: A string specifying the target script. Required.
-    :vartype script: str
-    :ivar text: A string giving the translated text in the target script. Required.
-    :vartype text: str
-    """
-
-    script: str = rest_field()
-    """A string specifying the target script. Required. """
-    text: str = rest_field()
-    """A string giving the translated text in the target script. Required. """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        script: str,
-        text: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1145,7 +1111,7 @@ class TransliterationLanguage(_model_base.Model):
     from one script
     to another script.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Display name of the language in the locale requested via Accept-Language header.
      Required.
@@ -1158,11 +1124,11 @@ class TransliterationLanguage(_model_base.Model):
     """
 
     name: str = rest_field()
-    """Display name of the language in the locale requested via Accept-Language header. Required. """
+    """Display name of the language in the locale requested via Accept-Language header. Required."""
     native_name: str = rest_field(name="nativeName")
-    """Display name of the language in the locale native for this language. Required. """
+    """Display name of the language in the locale native for this language. Required."""
     scripts: List["_models.TransliterableScript"] = rest_field()
-    """List of scripts to convert from. Required. """
+    """List of scripts to convert from. Required."""
 
     @overload
     def __init__(
@@ -1171,8 +1137,7 @@ class TransliterationLanguage(_model_base.Model):
         name: str,
         native_name: str,
         scripts: List["_models.TransliterableScript"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):

@@ -18,11 +18,13 @@
 
 # The perfstress framework
 
-The perfstress framework has been added to azure-devtools module. The code can be found [here](https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-devtools/src/azure_devtools/perfstress_tests).
-The framework provides a baseclass to inherit from when writing tests, as well as some tools and utilities to facilitate running
-the tests. To start using the framework, make sure that `azure-devtools` is included in the `dev_requirements.txt` for the SDK:
+The perfstress framework has been added to the `devtools_testutils` package. The code can be found
+[here](https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-sdk-tools/devtools_testutils/perfstress_tests).
+The framework provides a baseclass to inherit from when writing tests, as well as some tools and utilities to
+facilitate running the tests. To start using the framework, make sure that `azure-sdk-tools` (which contains
+`devtools_testutils`) is included in the `dev_requirements.txt` for the SDK:
 ```
--e ../../../tools/azure-devtools
+-e ../../../tools/azure-sdk-tools
 ```
 The perfstress framework offers the following:
 - The `perfstress` commandline tool.
@@ -208,7 +210,7 @@ This `perfstress_tests` directory is a module, and so must contain an `__init__.
 To add a test, import and inherit from one of the provided baseclasses and populate the functions as needed.
 The name of the class will be the name of the perf test, and is what will be passed into the command line to execute that test.
 ```python
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 
 from azure.storage.blob import BlobServiceClient as SyncBlobServiceClient
 from azure.storage.blob.aio import BlobServiceClient as AsyncBlobServiceClient
@@ -281,7 +283,7 @@ class ListContainersTest(PerfStressTest):
 If you're writing a suite of tests for an SDK, that all make use of common arguments or logic, adding one or more of your own test base can be helpful. These can also be used to navigate different layers of a client hierarchy.
 Here is an example Storage test base class, to be used for the Blob upload and download tests described below:
 ```python
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 
 from azure.storage.blob import BlobServiceClient as SyncBlobServiceClient
 from azure.storage.blob.aio import BlobServiceClient as AsyncBlobServiceClient
@@ -329,8 +331,8 @@ class _StorageStreamTestBase(PerfStressTest):
 If you need to test any kind of streaming behaviour (e.g. upload or download) then use the provided read and write file-like implementations. These will generate random data, while not storing more than the current chunk in memory. This prevents memory errors when running with large payloads at high parallelism.
 #### Example upload stream test:
 ```python
-from azure_devtools.perfstress_tests import RandomStream, get_random_bytes
-from azure_devtools.perfstress_tests import AsyncRandomStream
+from devtools_testutils.perfstress_tests import RandomStream, get_random_bytes
+from devtools_testutils.perfstress_tests import AsyncRandomStream
 
 from ._test_base import _StorageStreamTestBase
 
@@ -374,7 +376,7 @@ class UploadTest(_StorageStreamTestBase):
 ```
 #### Example download stream test:
 ```python
-from azure_devtools.perfstress_tests import get_random_bytes, WriteStream
+from devtools_testutils.perfstress_tests import get_random_bytes, WriteStream
 
 from ._test_base import _StorageStreamTestBase
 
@@ -418,7 +420,7 @@ class DownloadTest(_StorageStreamTestBase):
 ## Writing a batch test
 #### Example messaging receive test
 ```python
-from azure_devtools.perfstress_tests import BatchPerfTest
+from devtools_testutils.perfstress_tests import BatchPerfTest
 
 from azure.messaging.foo import MockReceiver
 from azure.messaging.foo.aio import MockReceiver as AsyncMockReceiver
@@ -472,7 +474,7 @@ perfstress_tests
 ```
 
 # Running the tests
-In order to run the performance tests, the `azure-devtools` package must be installed. This is done as part of the `dev_requirements`.
+In order to run the performance tests, the `devtools_testutils` package must be installed. This is done as part of the `dev_requirements`.
 Start be creating a new virtual environment for your perf tests. This will need to be a Python 3 environment, preferably >=3.7.
 Note that tests for T1 and T2 SDKs usually cannot be run from the same environment, and will need to be setup separately.
 
@@ -496,7 +498,7 @@ AZURE_STORAGE_CONNECTION_STRING=<live storage account connection string>
 ```
 ### Test commands
 
-When `azure-devtools` is installed, you will have access to the `perfstress` command line tool, which will scan the current module for runable perf tests. Only a specific test can be run at a time (i.e. there is no "run all" feature).
+When `devtools_testutils` is installed, you will have access to the `perfstress` command line tool, which will scan the current module for runable perf tests. Only a specific test can be run at a time (i.e. there is no "run all" feature).
 
 ```cmd
 (env) ~/azure-storage-file-share> perfstress
@@ -510,9 +512,9 @@ If your tests are not being discovered, run the `perfstressdebug` command instea
 ```
 ## Running the system tests
 The system tests are used to test the performance of the Python HTTP layers exclusive of the Azure SDK in order to set a performance benchmark.
-In order to run these, you will need a Python environment with `systemperf` flavour of `azure-devtools` installed. Installing to a fresh Python environment is recommended.
+In order to run these, you will need a Python environment with `systemperf` flavour of `devtools_testutils` installed. Installing to a fresh Python environment is recommended.
 ```cmd
-(env) ~/> pip install -e azure-sdk-for-python/tools/azure-devtools[systemperf]
+(env) ~/> pip install -e azure-sdk-for-python/tools/devtools_testutils[systemperf]
 ```
 Once these dependencies are installed, the `systemperf` command can be run directly to list the available tests:
 ```cmd

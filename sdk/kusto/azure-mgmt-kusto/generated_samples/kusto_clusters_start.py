@@ -29,13 +29,12 @@ def main():
         subscription_id="12345678-1234-1234-1234-123456789098",
     )
 
-    response = client.clusters.begin_start(
+    client.clusters.begin_start(
         resource_group_name="kustorptest",
         cluster_name="kustoCluster2",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2022-12-29/examples/KustoClustersStart.json
+# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2023-08-15/examples/KustoClustersStart.json
 if __name__ == "__main__":
     main()

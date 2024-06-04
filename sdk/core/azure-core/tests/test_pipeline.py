@@ -50,7 +50,7 @@ from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     SensitiveHeaderCleanupPolicy,
 )
-from azure.core.pipeline.transport._base import PipelineClientBase
+from azure.core.pipeline.transport._base import PipelineClientBase, _format_url_section
 from azure.core.pipeline.transport import (
     HttpTransport,
     RequestsTransport,
@@ -58,6 +58,7 @@ from azure.core.pipeline.transport import (
 from utils import HTTP_REQUESTS, is_rest
 
 from azure.core.exceptions import AzureError
+from azure.core.pipeline._base import cleanup_kwargs_for_transport
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -201,6 +202,18 @@ def test_format_url_double_query():
     client = PipelineClientBase("https://bing.com/path?query=testvalue&x=2ndvalue")
     formatted = client.format_url("/subpath?a=X&c=Y")
     assert formatted == "https://bing.com/path/subpath?query=testvalue&x=2ndvalue&a=X&c=Y"
+
+
+def test_format_url_braces_with_dot():
+    base_url = "https://bing.com/{aaa.bbb}"
+    with pytest.raises(ValueError):
+        url = _format_url_section(base_url)
+
+
+def test_format_url_single_brace():
+    base_url = "https://bing.com/{aaa.bbb"
+    with pytest.raises(ValueError):
+        url = _format_url_section(base_url)
 
 
 def test_format_incorrect_endpoint():
@@ -483,3 +496,10 @@ def test_request_text(port, http_request):
 
     # We want a direct string
     assert request.data == "foo"
+
+
+def test_cleanup_kwargs():
+    kwargs = {"insecure_domain_change": True, "enable_cae": True}
+    cleanup_kwargs_for_transport(kwargs)
+    assert "insecure_domain_change" not in kwargs
+    assert "enable_cae" not in kwargs

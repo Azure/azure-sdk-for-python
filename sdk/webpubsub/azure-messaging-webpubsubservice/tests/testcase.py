@@ -5,14 +5,11 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
 
 
-class WebpubsubTest(AzureTestCase):
-    def __init__(self, method_name, **kwargs):
-        super(WebpubsubTest, self).__init__(method_name, **kwargs)
-
+class WebpubsubTest(AzureRecordedTestCase):
     def create_client(self, endpoint=None, hub=None, reverse_proxy_endpoint=None, **kwargs):
         if kwargs.get("connection_string"):
             return WebPubSubServiceClient.from_connection_string(kwargs.pop("connection_string"), hub, **kwargs)

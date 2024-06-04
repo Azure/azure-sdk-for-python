@@ -3,12 +3,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
-from typing import cast, Any, Optional
+from typing import cast, Any, Optional, TypeVar
 
 from azure.core.credentials import AccessToken
 from .. import CredentialUnavailableError
 from .._internal.managed_identity_client import ManagedIdentityClient
 from .._internal.get_token_mixin import GetTokenMixin
+
+T = TypeVar("T", bound="ManagedIdentityBase")
 
 
 class ManagedIdentityBase(GetTokenMixin):
@@ -27,7 +29,7 @@ class ManagedIdentityBase(GetTokenMixin):
         # type: () -> str
         pass
 
-    def __enter__(self):
+    def __enter__(self: T) -> T:
         if self._client:
             self._client.__enter__()
         return self
@@ -39,14 +41,14 @@ class ManagedIdentityBase(GetTokenMixin):
     def close(self) -> None:
         self.__exit__()
 
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         if not self._client:
             raise CredentialUnavailableError(message=self.get_unavailable_message())
-        return super(ManagedIdentityBase, self).get_token(*scopes, **kwargs)
+        return super(ManagedIdentityBase, self).get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
 
-    def _acquire_token_silently(
-        self, *scopes: str, **kwargs: Any
-    ) -> Optional[AccessToken]:
+    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         # casting because mypy can't determine that these methods are called
         # only by get_token, which raises when self._client is None
         return cast(ManagedIdentityClient, self._client).get_cached_token(*scopes)

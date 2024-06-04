@@ -24,6 +24,64 @@ if TYPE_CHECKING:
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
+class AdditionalNetworkInterfaceConfiguration(_serialization.Model):
+    """Specifies the settings for a network interface to attach to the node type.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Name of the network interface. Required.
+    :vartype name: str
+    :ivar enable_accelerated_networking: Specifies whether the network interface is accelerated
+     networking-enabled.
+    :vartype enable_accelerated_networking: bool
+    :ivar dscp_configuration: Specifies the DSCP configuration to apply to the network interface.
+    :vartype dscp_configuration: ~azure.mgmt.servicefabricmanagedclusters.models.SubResource
+    :ivar ip_configurations: Specifies the IP configurations of the network interface. Required.
+    :vartype ip_configurations:
+     list[~azure.mgmt.servicefabricmanagedclusters.models.IpConfiguration]
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "ip_configurations": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "enable_accelerated_networking": {"key": "enableAcceleratedNetworking", "type": "bool"},
+        "dscp_configuration": {"key": "dscpConfiguration", "type": "SubResource"},
+        "ip_configurations": {"key": "ipConfigurations", "type": "[IpConfiguration]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        ip_configurations: List["_models.IpConfiguration"],
+        enable_accelerated_networking: Optional[bool] = None,
+        dscp_configuration: Optional["_models.SubResource"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Name of the network interface. Required.
+        :paramtype name: str
+        :keyword enable_accelerated_networking: Specifies whether the network interface is accelerated
+         networking-enabled.
+        :paramtype enable_accelerated_networking: bool
+        :keyword dscp_configuration: Specifies the DSCP configuration to apply to the network
+         interface.
+        :paramtype dscp_configuration: ~azure.mgmt.servicefabricmanagedclusters.models.SubResource
+        :keyword ip_configurations: Specifies the IP configurations of the network interface. Required.
+        :paramtype ip_configurations:
+         list[~azure.mgmt.servicefabricmanagedclusters.models.IpConfiguration]
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.enable_accelerated_networking = enable_accelerated_networking
+        self.dscp_configuration = dscp_configuration
+        self.ip_configurations = ip_configurations
+
+
 class ScalingMechanism(_serialization.Model):
     """Describes the mechanism for performing a scaling operation.
 
@@ -1104,6 +1162,332 @@ class ClientCertificate(_serialization.Model):
         self.issuer_thumbprint = issuer_thumbprint
 
 
+class ClusterHealthPolicy(_serialization.Model):
+    """Defines a health policy used to evaluate the health of the cluster or of a cluster node.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar max_percent_unhealthy_nodes: The maximum allowed percentage of unhealthy nodes before
+     reporting an error. For example, to allow 10% of nodes to be unhealthy, this value would be 10.
+
+     The percentage represents the maximum tolerated percentage of nodes that can be unhealthy
+     before the cluster is considered in error.
+     If the percentage is respected but there is at least one unhealthy node, the health is
+     evaluated as Warning.
+     The percentage is calculated by dividing the number of unhealthy nodes over the total number
+     of nodes in the cluster.
+     The computation rounds up to tolerate one failure on small numbers of nodes. Default
+     percentage is zero.
+
+     In large clusters, some nodes will always be down or out for repairs, so this percentage
+     should be configured to tolerate that. Required.
+    :vartype max_percent_unhealthy_nodes: int
+    :ivar max_percent_unhealthy_applications: The maximum allowed percentage of unhealthy
+     applications before reporting an error. For example, to allow 10% of applications to be
+     unhealthy, this value would be 10.
+
+     The percentage represents the maximum tolerated percentage of applications that can be
+     unhealthy before the cluster is considered in error.
+     If the percentage is respected but there is at least one unhealthy application, the health is
+     evaluated as Warning.
+     This is calculated by dividing the number of unhealthy applications over the total number of
+     application instances in the cluster, excluding applications of application types that are
+     included in the ApplicationTypeHealthPolicyMap.
+     The computation rounds up to tolerate one failure on small numbers of applications. Default
+     percentage is zero. Required.
+    :vartype max_percent_unhealthy_applications: int
+    """
+
+    _validation = {
+        "max_percent_unhealthy_nodes": {"required": True, "maximum": 100, "minimum": 0},
+        "max_percent_unhealthy_applications": {"required": True, "maximum": 100, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "max_percent_unhealthy_nodes": {"key": "maxPercentUnhealthyNodes", "type": "int"},
+        "max_percent_unhealthy_applications": {"key": "maxPercentUnhealthyApplications", "type": "int"},
+    }
+
+    def __init__(
+        self, *, max_percent_unhealthy_nodes: int = 0, max_percent_unhealthy_applications: int = 0, **kwargs: Any
+    ) -> None:
+        """
+        :keyword max_percent_unhealthy_nodes: The maximum allowed percentage of unhealthy nodes before
+         reporting an error. For example, to allow 10% of nodes to be unhealthy, this value would be 10.
+
+         The percentage represents the maximum tolerated percentage of nodes that can be unhealthy
+         before the cluster is considered in error.
+         If the percentage is respected but there is at least one unhealthy node, the health is
+         evaluated as Warning.
+         The percentage is calculated by dividing the number of unhealthy nodes over the total number
+         of nodes in the cluster.
+         The computation rounds up to tolerate one failure on small numbers of nodes. Default
+         percentage is zero.
+
+         In large clusters, some nodes will always be down or out for repairs, so this percentage
+         should be configured to tolerate that. Required.
+        :paramtype max_percent_unhealthy_nodes: int
+        :keyword max_percent_unhealthy_applications: The maximum allowed percentage of unhealthy
+         applications before reporting an error. For example, to allow 10% of applications to be
+         unhealthy, this value would be 10.
+
+         The percentage represents the maximum tolerated percentage of applications that can be
+         unhealthy before the cluster is considered in error.
+         If the percentage is respected but there is at least one unhealthy application, the health is
+         evaluated as Warning.
+         This is calculated by dividing the number of unhealthy applications over the total number of
+         application instances in the cluster, excluding applications of application types that are
+         included in the ApplicationTypeHealthPolicyMap.
+         The computation rounds up to tolerate one failure on small numbers of applications. Default
+         percentage is zero. Required.
+        :paramtype max_percent_unhealthy_applications: int
+        """
+        super().__init__(**kwargs)
+        self.max_percent_unhealthy_nodes = max_percent_unhealthy_nodes
+        self.max_percent_unhealthy_applications = max_percent_unhealthy_applications
+
+
+class ClusterMonitoringPolicy(_serialization.Model):
+    """Describes the monitoring policies for the cluster upgrade.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar health_check_wait_duration: The length of time to wait after completing an upgrade domain
+     before performing health checks. The duration can be in either hh:mm:ss or in d.hh:mm:ss.ms
+     format. Required.
+    :vartype health_check_wait_duration: str
+    :ivar health_check_stable_duration: The amount of time that the application or cluster must
+     remain healthy before the upgrade proceeds to the next upgrade domain. The duration can be in
+     either hh:mm:ss or in d.hh:mm:ss.ms format. Required.
+    :vartype health_check_stable_duration: str
+    :ivar health_check_retry_timeout: The amount of time to retry health evaluation when the
+     application or cluster is unhealthy before the upgrade rolls back. The timeout can be in either
+     hh:mm:ss or in d.hh:mm:ss.ms format. Required.
+    :vartype health_check_retry_timeout: str
+    :ivar upgrade_timeout: The amount of time the overall upgrade has to complete before the
+     upgrade rolls back. The timeout can be in either hh:mm:ss or in d.hh:mm:ss.ms format. Required.
+    :vartype upgrade_timeout: str
+    :ivar upgrade_domain_timeout: The amount of time each upgrade domain has to complete before the
+     upgrade rolls back. The timeout can be in either hh:mm:ss or in d.hh:mm:ss.ms format. Required.
+    :vartype upgrade_domain_timeout: str
+    """
+
+    _validation = {
+        "health_check_wait_duration": {"required": True},
+        "health_check_stable_duration": {"required": True},
+        "health_check_retry_timeout": {"required": True},
+        "upgrade_timeout": {"required": True},
+        "upgrade_domain_timeout": {"required": True},
+    }
+
+    _attribute_map = {
+        "health_check_wait_duration": {"key": "healthCheckWaitDuration", "type": "str"},
+        "health_check_stable_duration": {"key": "healthCheckStableDuration", "type": "str"},
+        "health_check_retry_timeout": {"key": "healthCheckRetryTimeout", "type": "str"},
+        "upgrade_timeout": {"key": "upgradeTimeout", "type": "str"},
+        "upgrade_domain_timeout": {"key": "upgradeDomainTimeout", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        health_check_wait_duration: str,
+        health_check_stable_duration: str,
+        health_check_retry_timeout: str,
+        upgrade_timeout: str,
+        upgrade_domain_timeout: str,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword health_check_wait_duration: The length of time to wait after completing an upgrade
+         domain before performing health checks. The duration can be in either hh:mm:ss or in
+         d.hh:mm:ss.ms format. Required.
+        :paramtype health_check_wait_duration: str
+        :keyword health_check_stable_duration: The amount of time that the application or cluster must
+         remain healthy before the upgrade proceeds to the next upgrade domain. The duration can be in
+         either hh:mm:ss or in d.hh:mm:ss.ms format. Required.
+        :paramtype health_check_stable_duration: str
+        :keyword health_check_retry_timeout: The amount of time to retry health evaluation when the
+         application or cluster is unhealthy before the upgrade rolls back. The timeout can be in either
+         hh:mm:ss or in d.hh:mm:ss.ms format. Required.
+        :paramtype health_check_retry_timeout: str
+        :keyword upgrade_timeout: The amount of time the overall upgrade has to complete before the
+         upgrade rolls back. The timeout can be in either hh:mm:ss or in d.hh:mm:ss.ms format. Required.
+        :paramtype upgrade_timeout: str
+        :keyword upgrade_domain_timeout: The amount of time each upgrade domain has to complete before
+         the upgrade rolls back. The timeout can be in either hh:mm:ss or in d.hh:mm:ss.ms format.
+         Required.
+        :paramtype upgrade_domain_timeout: str
+        """
+        super().__init__(**kwargs)
+        self.health_check_wait_duration = health_check_wait_duration
+        self.health_check_stable_duration = health_check_stable_duration
+        self.health_check_retry_timeout = health_check_retry_timeout
+        self.upgrade_timeout = upgrade_timeout
+        self.upgrade_domain_timeout = upgrade_domain_timeout
+
+
+class ClusterUpgradeDeltaHealthPolicy(_serialization.Model):
+    """Describes the delta health policies for the cluster upgrade.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar max_percent_delta_unhealthy_nodes: The maximum allowed percentage of nodes health
+     degradation allowed during cluster upgrades.
+     The delta is measured between the state of the nodes at the beginning of upgrade and the state
+     of the nodes at the time of the health evaluation.
+     The check is performed after every upgrade domain upgrade completion to make sure the global
+     state of the cluster is within tolerated limits. Required.
+    :vartype max_percent_delta_unhealthy_nodes: int
+    :ivar max_percent_upgrade_domain_delta_unhealthy_nodes: The maximum allowed percentage of
+     upgrade domain nodes health degradation allowed during cluster upgrades.
+     The delta is measured between the state of the upgrade domain nodes at the beginning of
+     upgrade and the state of the upgrade domain nodes at the time of the health evaluation.
+     The check is performed after every upgrade domain upgrade completion for all completed upgrade
+     domains to make sure the state of the upgrade domains is within tolerated limits.
+    :vartype max_percent_upgrade_domain_delta_unhealthy_nodes: int
+    :ivar max_percent_delta_unhealthy_applications: The maximum allowed percentage of applications
+     health degradation allowed during cluster upgrades.
+     The delta is measured between the state of the applications at the beginning of upgrade and
+     the state of the applications at the time of the health evaluation.
+     The check is performed after every upgrade domain upgrade completion to make sure the global
+     state of the cluster is within tolerated limits. System services are not included in this.
+     NOTE: This value will overwrite the value specified in
+     properties.UpgradeDescription.HealthPolicy.MaxPercentUnhealthyApplications.
+    :vartype max_percent_delta_unhealthy_applications: int
+    """
+
+    _validation = {
+        "max_percent_delta_unhealthy_nodes": {"required": True, "maximum": 100, "minimum": 0},
+        "max_percent_upgrade_domain_delta_unhealthy_nodes": {"maximum": 100, "minimum": 0},
+        "max_percent_delta_unhealthy_applications": {"maximum": 100, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "max_percent_delta_unhealthy_nodes": {"key": "maxPercentDeltaUnhealthyNodes", "type": "int"},
+        "max_percent_upgrade_domain_delta_unhealthy_nodes": {
+            "key": "maxPercentUpgradeDomainDeltaUnhealthyNodes",
+            "type": "int",
+        },
+        "max_percent_delta_unhealthy_applications": {"key": "maxPercentDeltaUnhealthyApplications", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        max_percent_delta_unhealthy_nodes: int,
+        max_percent_upgrade_domain_delta_unhealthy_nodes: Optional[int] = None,
+        max_percent_delta_unhealthy_applications: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword max_percent_delta_unhealthy_nodes: The maximum allowed percentage of nodes health
+         degradation allowed during cluster upgrades.
+         The delta is measured between the state of the nodes at the beginning of upgrade and the state
+         of the nodes at the time of the health evaluation.
+         The check is performed after every upgrade domain upgrade completion to make sure the global
+         state of the cluster is within tolerated limits. Required.
+        :paramtype max_percent_delta_unhealthy_nodes: int
+        :keyword max_percent_upgrade_domain_delta_unhealthy_nodes: The maximum allowed percentage of
+         upgrade domain nodes health degradation allowed during cluster upgrades.
+         The delta is measured between the state of the upgrade domain nodes at the beginning of
+         upgrade and the state of the upgrade domain nodes at the time of the health evaluation.
+         The check is performed after every upgrade domain upgrade completion for all completed upgrade
+         domains to make sure the state of the upgrade domains is within tolerated limits.
+        :paramtype max_percent_upgrade_domain_delta_unhealthy_nodes: int
+        :keyword max_percent_delta_unhealthy_applications: The maximum allowed percentage of
+         applications health degradation allowed during cluster upgrades.
+         The delta is measured between the state of the applications at the beginning of upgrade and
+         the state of the applications at the time of the health evaluation.
+         The check is performed after every upgrade domain upgrade completion to make sure the global
+         state of the cluster is within tolerated limits. System services are not included in this.
+         NOTE: This value will overwrite the value specified in
+         properties.UpgradeDescription.HealthPolicy.MaxPercentUnhealthyApplications.
+        :paramtype max_percent_delta_unhealthy_applications: int
+        """
+        super().__init__(**kwargs)
+        self.max_percent_delta_unhealthy_nodes = max_percent_delta_unhealthy_nodes
+        self.max_percent_upgrade_domain_delta_unhealthy_nodes = max_percent_upgrade_domain_delta_unhealthy_nodes
+        self.max_percent_delta_unhealthy_applications = max_percent_delta_unhealthy_applications
+
+
+class ClusterUpgradePolicy(_serialization.Model):
+    """Describes the policy used when upgrading the cluster.
+
+    :ivar force_restart: If true, then processes are forcefully restarted during upgrade even when
+     the code version has not changed (the upgrade only changes configuration or data).
+    :vartype force_restart: bool
+    :ivar health_policy: The cluster health policy defines a health policy used to evaluate the
+     health of the cluster during a cluster upgrade.
+    :vartype health_policy: ~azure.mgmt.servicefabricmanagedclusters.models.ClusterHealthPolicy
+    :ivar delta_health_policy: The cluster delta health policy defines a health policy used to
+     evaluate the health of the cluster during a cluster upgrade.
+    :vartype delta_health_policy:
+     ~azure.mgmt.servicefabricmanagedclusters.models.ClusterUpgradeDeltaHealthPolicy
+    :ivar monitoring_policy: The cluster monitoring policy describes the parameters for monitoring
+     an upgrade in Monitored mode.
+    :vartype monitoring_policy:
+     ~azure.mgmt.servicefabricmanagedclusters.models.ClusterMonitoringPolicy
+    :ivar upgrade_replica_set_check_timeout: The maximum amount of time to block processing of an
+     upgrade domain and prevent loss of availability when there are unexpected issues.
+     When this timeout expires, processing of the upgrade domain will proceed regardless of
+     availability loss issues.
+     The timeout is reset at the start of each upgrade domain. The timeout can be in either
+     hh:mm:ss or in d.hh:mm:ss.ms format.
+     This value must be between 00:00:00 and 49710.06:28:15 (unsigned 32 bit integer for seconds).
+    :vartype upgrade_replica_set_check_timeout: str
+    """
+
+    _attribute_map = {
+        "force_restart": {"key": "forceRestart", "type": "bool"},
+        "health_policy": {"key": "healthPolicy", "type": "ClusterHealthPolicy"},
+        "delta_health_policy": {"key": "deltaHealthPolicy", "type": "ClusterUpgradeDeltaHealthPolicy"},
+        "monitoring_policy": {"key": "monitoringPolicy", "type": "ClusterMonitoringPolicy"},
+        "upgrade_replica_set_check_timeout": {"key": "upgradeReplicaSetCheckTimeout", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        force_restart: Optional[bool] = None,
+        health_policy: Optional["_models.ClusterHealthPolicy"] = None,
+        delta_health_policy: Optional["_models.ClusterUpgradeDeltaHealthPolicy"] = None,
+        monitoring_policy: Optional["_models.ClusterMonitoringPolicy"] = None,
+        upgrade_replica_set_check_timeout: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword force_restart: If true, then processes are forcefully restarted during upgrade even
+         when the code version has not changed (the upgrade only changes configuration or data).
+        :paramtype force_restart: bool
+        :keyword health_policy: The cluster health policy defines a health policy used to evaluate the
+         health of the cluster during a cluster upgrade.
+        :paramtype health_policy: ~azure.mgmt.servicefabricmanagedclusters.models.ClusterHealthPolicy
+        :keyword delta_health_policy: The cluster delta health policy defines a health policy used to
+         evaluate the health of the cluster during a cluster upgrade.
+        :paramtype delta_health_policy:
+         ~azure.mgmt.servicefabricmanagedclusters.models.ClusterUpgradeDeltaHealthPolicy
+        :keyword monitoring_policy: The cluster monitoring policy describes the parameters for
+         monitoring an upgrade in Monitored mode.
+        :paramtype monitoring_policy:
+         ~azure.mgmt.servicefabricmanagedclusters.models.ClusterMonitoringPolicy
+        :keyword upgrade_replica_set_check_timeout: The maximum amount of time to block processing of
+         an upgrade domain and prevent loss of availability when there are unexpected issues.
+         When this timeout expires, processing of the upgrade domain will proceed regardless of
+         availability loss issues.
+         The timeout is reset at the start of each upgrade domain. The timeout can be in either
+         hh:mm:ss or in d.hh:mm:ss.ms format.
+         This value must be between 00:00:00 and 49710.06:28:15 (unsigned 32 bit integer for seconds).
+        :paramtype upgrade_replica_set_check_timeout: str
+        """
+        super().__init__(**kwargs)
+        self.force_restart = force_restart
+        self.health_policy = health_policy
+        self.delta_health_policy = delta_health_policy
+        self.monitoring_policy = monitoring_policy
+        self.upgrade_replica_set_check_timeout = upgrade_replica_set_check_timeout
+
+
 class EndpointRangeDescription(_serialization.Model):
     """Port range details.
 
@@ -1247,6 +1631,161 @@ class FrontendConfiguration(_serialization.Model):
         self.application_gateway_backend_address_pool_id = application_gateway_backend_address_pool_id
 
 
+class IpConfiguration(_serialization.Model):
+    """Specifies an IP configuration of the network interface.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Name of the network interface. Required.
+    :vartype name: str
+    :ivar application_gateway_backend_address_pools: Specifies an array of references to backend
+     address pools of application gateways. A node type can reference backend address pools of
+     multiple application gateways. Multiple node types cannot use the same application gateway.
+    :vartype application_gateway_backend_address_pools:
+     list[~azure.mgmt.servicefabricmanagedclusters.models.SubResource]
+    :ivar load_balancer_backend_address_pools: Specifies an array of references to backend address
+     pools of load balancers. A node type can reference backend address pools of one public and one
+     internal load balancer. Multiple node types cannot use the same basic sku load balancer.
+    :vartype load_balancer_backend_address_pools:
+     list[~azure.mgmt.servicefabricmanagedclusters.models.SubResource]
+    :ivar load_balancer_inbound_nat_pools: Specifies an array of references to inbound Nat pools of
+     the load balancers. A node type can reference inbound nat pools of one public and one internal
+     load balancer. Multiple node types cannot use the same basic sku load balancer.
+    :vartype load_balancer_inbound_nat_pools:
+     list[~azure.mgmt.servicefabricmanagedclusters.models.SubResource]
+    :ivar subnet: Specifies the subnet of the network interface.
+    :vartype subnet: ~azure.mgmt.servicefabricmanagedclusters.models.SubResource
+    :ivar private_ip_address_version: Specifies whether the IP configuration's private IP is IPv4
+     or IPv6. Default is IPv4. Known values are: "IPv4" and "IPv6".
+    :vartype private_ip_address_version: str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.PrivateIPAddressVersion
+    :ivar public_ip_address_configuration: The public IP address configuration of the network
+     interface.
+    :vartype public_ip_address_configuration:
+     ~azure.mgmt.servicefabricmanagedclusters.models.IpConfigurationPublicIPAddressConfiguration
+    """
+
+    _validation = {
+        "name": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "application_gateway_backend_address_pools": {
+            "key": "applicationGatewayBackendAddressPools",
+            "type": "[SubResource]",
+        },
+        "load_balancer_backend_address_pools": {"key": "loadBalancerBackendAddressPools", "type": "[SubResource]"},
+        "load_balancer_inbound_nat_pools": {"key": "loadBalancerInboundNatPools", "type": "[SubResource]"},
+        "subnet": {"key": "subnet", "type": "SubResource"},
+        "private_ip_address_version": {"key": "privateIPAddressVersion", "type": "str"},
+        "public_ip_address_configuration": {
+            "key": "publicIPAddressConfiguration",
+            "type": "IpConfigurationPublicIPAddressConfiguration",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        application_gateway_backend_address_pools: Optional[List["_models.SubResource"]] = None,
+        load_balancer_backend_address_pools: Optional[List["_models.SubResource"]] = None,
+        load_balancer_inbound_nat_pools: Optional[List["_models.SubResource"]] = None,
+        subnet: Optional["_models.SubResource"] = None,
+        private_ip_address_version: Union[str, "_models.PrivateIPAddressVersion"] = "IPv4",
+        public_ip_address_configuration: Optional["_models.IpConfigurationPublicIPAddressConfiguration"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Name of the network interface. Required.
+        :paramtype name: str
+        :keyword application_gateway_backend_address_pools: Specifies an array of references to backend
+         address pools of application gateways. A node type can reference backend address pools of
+         multiple application gateways. Multiple node types cannot use the same application gateway.
+        :paramtype application_gateway_backend_address_pools:
+         list[~azure.mgmt.servicefabricmanagedclusters.models.SubResource]
+        :keyword load_balancer_backend_address_pools: Specifies an array of references to backend
+         address pools of load balancers. A node type can reference backend address pools of one public
+         and one internal load balancer. Multiple node types cannot use the same basic sku load
+         balancer.
+        :paramtype load_balancer_backend_address_pools:
+         list[~azure.mgmt.servicefabricmanagedclusters.models.SubResource]
+        :keyword load_balancer_inbound_nat_pools: Specifies an array of references to inbound Nat pools
+         of the load balancers. A node type can reference inbound nat pools of one public and one
+         internal load balancer. Multiple node types cannot use the same basic sku load balancer.
+        :paramtype load_balancer_inbound_nat_pools:
+         list[~azure.mgmt.servicefabricmanagedclusters.models.SubResource]
+        :keyword subnet: Specifies the subnet of the network interface.
+        :paramtype subnet: ~azure.mgmt.servicefabricmanagedclusters.models.SubResource
+        :keyword private_ip_address_version: Specifies whether the IP configuration's private IP is
+         IPv4 or IPv6. Default is IPv4. Known values are: "IPv4" and "IPv6".
+        :paramtype private_ip_address_version: str or
+         ~azure.mgmt.servicefabricmanagedclusters.models.PrivateIPAddressVersion
+        :keyword public_ip_address_configuration: The public IP address configuration of the network
+         interface.
+        :paramtype public_ip_address_configuration:
+         ~azure.mgmt.servicefabricmanagedclusters.models.IpConfigurationPublicIPAddressConfiguration
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.application_gateway_backend_address_pools = application_gateway_backend_address_pools
+        self.load_balancer_backend_address_pools = load_balancer_backend_address_pools
+        self.load_balancer_inbound_nat_pools = load_balancer_inbound_nat_pools
+        self.subnet = subnet
+        self.private_ip_address_version = private_ip_address_version
+        self.public_ip_address_configuration = public_ip_address_configuration
+
+
+class IpConfigurationPublicIPAddressConfiguration(_serialization.Model):
+    """The public IP address configuration of the network interface.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Name of the network interface. Required.
+    :vartype name: str
+    :ivar ip_tags: Specifies the list of IP tags associated with the public IP address.
+    :vartype ip_tags: list[~azure.mgmt.servicefabricmanagedclusters.models.IpTag]
+    :ivar public_ip_address_version: Specifies whether the IP configuration's public IP is IPv4 or
+     IPv6. Default is IPv4. Known values are: "IPv4" and "IPv6".
+    :vartype public_ip_address_version: str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.PublicIPAddressVersion
+    """
+
+    _validation = {
+        "name": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "ip_tags": {"key": "ipTags", "type": "[IpTag]"},
+        "public_ip_address_version": {"key": "publicIPAddressVersion", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        ip_tags: Optional[List["_models.IpTag"]] = None,
+        public_ip_address_version: Union[str, "_models.PublicIPAddressVersion"] = "IPv4",
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Name of the network interface. Required.
+        :paramtype name: str
+        :keyword ip_tags: Specifies the list of IP tags associated with the public IP address.
+        :paramtype ip_tags: list[~azure.mgmt.servicefabricmanagedclusters.models.IpTag]
+        :keyword public_ip_address_version: Specifies whether the IP configuration's public IP is IPv4
+         or IPv6. Default is IPv4. Known values are: "IPv4" and "IPv6".
+        :paramtype public_ip_address_version: str or
+         ~azure.mgmt.servicefabricmanagedclusters.models.PublicIPAddressVersion
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.ip_tags = ip_tags
+        self.public_ip_address_version = public_ip_address_version
+
+
 class IPTag(_serialization.Model):
     """IPTag associated with the object.
 
@@ -1273,6 +1812,39 @@ class IPTag(_serialization.Model):
         :keyword ip_tag_type: The IP tag type. Required.
         :paramtype ip_tag_type: str
         :keyword tag: The value of the IP tag. Required.
+        :paramtype tag: str
+        """
+        super().__init__(**kwargs)
+        self.ip_tag_type = ip_tag_type
+        self.tag = tag
+
+
+class IpTag(_serialization.Model):
+    """The IP tag associated with the public IP address.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar ip_tag_type: IP tag type. Example: FirstPartyUsage. Required.
+    :vartype ip_tag_type: str
+    :ivar tag: IP tag associated with the public IP. Example: SQL, Storage etc. Required.
+    :vartype tag: str
+    """
+
+    _validation = {
+        "ip_tag_type": {"required": True},
+        "tag": {"required": True},
+    }
+
+    _attribute_map = {
+        "ip_tag_type": {"key": "ipTagType", "type": "str"},
+        "tag": {"key": "tag", "type": "str"},
+    }
+
+    def __init__(self, *, ip_tag_type: str, tag: str, **kwargs: Any) -> None:
+        """
+        :keyword ip_tag_type: IP tag type. Example: FirstPartyUsage. Required.
+        :paramtype ip_tag_type: str
+        :keyword tag: IP tag associated with the public IP. Example: SQL, Storage etc. Required.
         :paramtype tag: str
         """
         super().__init__(**kwargs)
@@ -1647,6 +2219,27 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
      VNet, but the subnet is specified at node type level; and for such clusters, the subnetId
      property is required for node types.
     :vartype use_custom_vnet: bool
+    :ivar public_ip_prefix_id: Specify the resource id of a public IPv4 prefix that the load
+     balancer will allocate a public IPv4 address from. This setting cannot be changed once the
+     cluster is created.
+    :vartype public_ip_prefix_id: str
+    :ivar public_i_pv6_prefix_id: Specify the resource id of a public IPv6 prefix that the load
+     balancer will allocate a public IPv6 address from. This setting cannot be changed once the
+     cluster is created.
+    :vartype public_i_pv6_prefix_id: str
+    :ivar ddos_protection_plan_id: Specify the resource id of a DDoS network protection plan that
+     will be associated with the virtual network of the cluster.
+    :vartype ddos_protection_plan_id: str
+    :ivar upgrade_description: The policy to use when upgrading the cluster.
+    :vartype upgrade_description:
+     ~azure.mgmt.servicefabricmanagedclusters.models.ClusterUpgradePolicy
+    :ivar http_gateway_token_auth_connection_port: The port used for token-auth based HTTPS
+     connections to the cluster. Cannot be set to the same port as HttpGatewayEndpoint.
+    :vartype http_gateway_token_auth_connection_port: int
+    :ivar enable_http_gateway_exclusive_auth_mode: If true, token-based authentication is not
+     allowed on the HttpGatewayEndpoint. This is required to support TLS versions 1.3 and above. If
+     token-based authentication is used, HttpGatewayTokenAuthConnectionPort must be defined.
+    :vartype enable_http_gateway_exclusive_auth_mode: bool
     """
 
     _validation = {
@@ -1711,6 +2304,18 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
         "service_endpoints": {"key": "properties.serviceEndpoints", "type": "[ServiceEndpoint]"},
         "zonal_update_mode": {"key": "properties.zonalUpdateMode", "type": "str"},
         "use_custom_vnet": {"key": "properties.useCustomVnet", "type": "bool"},
+        "public_ip_prefix_id": {"key": "properties.publicIPPrefixId", "type": "str"},
+        "public_i_pv6_prefix_id": {"key": "properties.publicIPv6PrefixId", "type": "str"},
+        "ddos_protection_plan_id": {"key": "properties.ddosProtectionPlanId", "type": "str"},
+        "upgrade_description": {"key": "properties.upgradeDescription", "type": "ClusterUpgradePolicy"},
+        "http_gateway_token_auth_connection_port": {
+            "key": "properties.httpGatewayTokenAuthConnectionPort",
+            "type": "int",
+        },
+        "enable_http_gateway_exclusive_auth_mode": {
+            "key": "properties.enableHttpGatewayExclusiveAuthMode",
+            "type": "bool",
+        },
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -1745,6 +2350,12 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
         service_endpoints: Optional[List["_models.ServiceEndpoint"]] = None,
         zonal_update_mode: Optional[Union[str, "_models.ZonalUpdateMode"]] = None,
         use_custom_vnet: Optional[bool] = None,
+        public_ip_prefix_id: Optional[str] = None,
+        public_i_pv6_prefix_id: Optional[str] = None,
+        ddos_protection_plan_id: Optional[str] = None,
+        upgrade_description: Optional["_models.ClusterUpgradePolicy"] = None,
+        http_gateway_token_auth_connection_port: Optional[int] = None,
+        enable_http_gateway_exclusive_auth_mode: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1838,6 +2449,27 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
          own VNet, but the subnet is specified at node type level; and for such clusters, the subnetId
          property is required for node types.
         :paramtype use_custom_vnet: bool
+        :keyword public_ip_prefix_id: Specify the resource id of a public IPv4 prefix that the load
+         balancer will allocate a public IPv4 address from. This setting cannot be changed once the
+         cluster is created.
+        :paramtype public_ip_prefix_id: str
+        :keyword public_i_pv6_prefix_id: Specify the resource id of a public IPv6 prefix that the load
+         balancer will allocate a public IPv6 address from. This setting cannot be changed once the
+         cluster is created.
+        :paramtype public_i_pv6_prefix_id: str
+        :keyword ddos_protection_plan_id: Specify the resource id of a DDoS network protection plan
+         that will be associated with the virtual network of the cluster.
+        :paramtype ddos_protection_plan_id: str
+        :keyword upgrade_description: The policy to use when upgrading the cluster.
+        :paramtype upgrade_description:
+         ~azure.mgmt.servicefabricmanagedclusters.models.ClusterUpgradePolicy
+        :keyword http_gateway_token_auth_connection_port: The port used for token-auth based HTTPS
+         connections to the cluster. Cannot be set to the same port as HttpGatewayEndpoint.
+        :paramtype http_gateway_token_auth_connection_port: int
+        :keyword enable_http_gateway_exclusive_auth_mode: If true, token-based authentication is not
+         allowed on the HttpGatewayEndpoint. This is required to support TLS versions 1.3 and above. If
+         token-based authentication is used, HttpGatewayTokenAuthConnectionPort must be defined.
+        :paramtype enable_http_gateway_exclusive_auth_mode: bool
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
@@ -1874,6 +2506,12 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
         self.service_endpoints = service_endpoints
         self.zonal_update_mode = zonal_update_mode
         self.use_custom_vnet = use_custom_vnet
+        self.public_ip_prefix_id = public_ip_prefix_id
+        self.public_i_pv6_prefix_id = public_i_pv6_prefix_id
+        self.ddos_protection_plan_id = ddos_protection_plan_id
+        self.upgrade_description = upgrade_description
+        self.http_gateway_token_auth_connection_port = http_gateway_token_auth_connection_port
+        self.enable_http_gateway_exclusive_auth_mode = enable_http_gateway_exclusive_auth_mode
 
 
 class ManagedClusterCodeVersionResult(_serialization.Model):
@@ -2039,6 +2677,59 @@ class ManagedIdentity(_serialization.Model):
         self.tenant_id = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
+
+
+class ManagedMaintenanceWindowStatus(_serialization.Model):
+    """Describes the maintenance window status of the Service Fabric Managed Cluster.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar is_window_enabled: If maintenance window is enabled on this cluster.
+    :vartype is_window_enabled: bool
+    :ivar is_region_ready: Indicates if the region is ready to configure maintenance windows.
+    :vartype is_region_ready: bool
+    :ivar is_window_active: If maintenance window is active.
+    :vartype is_window_active: bool
+    :ivar can_apply_updates: If updates can be applied.
+    :vartype can_apply_updates: bool
+    :ivar last_window_status_update_at_utc: Last window update time in UTC.
+    :vartype last_window_status_update_at_utc: ~datetime.datetime
+    :ivar last_window_start_time_utc: Last window start time in UTC.
+    :vartype last_window_start_time_utc: ~datetime.datetime
+    :ivar last_window_end_time_utc: Last window end time in UTC.
+    :vartype last_window_end_time_utc: ~datetime.datetime
+    """
+
+    _validation = {
+        "is_window_enabled": {"readonly": True},
+        "is_region_ready": {"readonly": True},
+        "is_window_active": {"readonly": True},
+        "can_apply_updates": {"readonly": True},
+        "last_window_status_update_at_utc": {"readonly": True},
+        "last_window_start_time_utc": {"readonly": True},
+        "last_window_end_time_utc": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "is_window_enabled": {"key": "isWindowEnabled", "type": "bool"},
+        "is_region_ready": {"key": "isRegionReady", "type": "bool"},
+        "is_window_active": {"key": "isWindowActive", "type": "bool"},
+        "can_apply_updates": {"key": "canApplyUpdates", "type": "bool"},
+        "last_window_status_update_at_utc": {"key": "lastWindowStatusUpdateAtUTC", "type": "iso-8601"},
+        "last_window_start_time_utc": {"key": "lastWindowStartTimeUTC", "type": "iso-8601"},
+        "last_window_end_time_utc": {"key": "lastWindowEndTimeUTC", "type": "iso-8601"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.is_window_enabled = None
+        self.is_region_ready = None
+        self.is_window_active = None
+        self.can_apply_updates = None
+        self.last_window_status_update_at_utc = None
+        self.last_window_start_time_utc = None
+        self.last_window_end_time_utc = None
 
 
 class ManagedProxyResource(_serialization.Model):
@@ -2526,12 +3217,34 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
     :ivar secure_boot_enabled: Specifies whether secure boot should be enabled on the nodeType. Can
      only be used with TrustedLaunch SecurityType.
     :vartype secure_boot_enabled: bool
-    :ivar enable_node_public_ip: Specifies whether each node is allocated its own public IP
+    :ivar enable_node_public_ip: Specifies whether each node is allocated its own public IPv4
      address. This is only supported on secondary node types with custom Load Balancers.
     :vartype enable_node_public_ip: bool
+    :ivar enable_node_public_i_pv6: Specifies whether each node is allocated its own public IPv6
+     address. This is only supported on secondary node types with custom Load Balancers.
+    :vartype enable_node_public_i_pv6: bool
     :ivar vm_shared_gallery_image_id: Indicates the resource id of the vm shared galleries image.
      This parameter is used for custom vm image.
     :vartype vm_shared_gallery_image_id: str
+    :ivar nat_gateway_id: Specifies the resource id of a NAT Gateway to attach to the subnet of
+     this node type. Node type must use custom load balancer.
+    :vartype nat_gateway_id: str
+    :ivar vm_image_plan: Specifies information about the marketplace image used to create the
+     virtual machine. This element is only used for marketplace images. Before you can use a
+     marketplace image from an API, you must enable the image for programmatic use. In the Azure
+     portal, find the marketplace image that you want to use and then click Want to deploy
+     programmatically, Get Started ->. Enter any required information and then click Save.
+    :vartype vm_image_plan: ~azure.mgmt.servicefabricmanagedclusters.models.VmImagePlan
+    :ivar service_artifact_reference_id: Specifies the service artifact reference id used to set
+     same image version for all virtual machines in the scale set when using 'latest' image version.
+    :vartype service_artifact_reference_id: str
+    :ivar dscp_configuration_id: Specifies the resource id of the DSCP configuration to apply to
+     the node type network interface.
+    :vartype dscp_configuration_id: str
+    :ivar additional_network_interface_configurations: Specifies the settings for any additional
+     secondary network interfaces to attach to the node type.
+    :vartype additional_network_interface_configurations:
+     list[~azure.mgmt.servicefabricmanagedclusters.models.AdditionalNetworkInterfaceConfiguration]
     """
 
     _validation = {
@@ -2591,7 +3304,16 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
         "security_type": {"key": "properties.securityType", "type": "str"},
         "secure_boot_enabled": {"key": "properties.secureBootEnabled", "type": "bool"},
         "enable_node_public_ip": {"key": "properties.enableNodePublicIP", "type": "bool"},
-        "vm_shared_gallery_image_id": {"key": "properties.VmSharedGalleryImageId", "type": "str"},
+        "enable_node_public_i_pv6": {"key": "properties.enableNodePublicIPv6", "type": "bool"},
+        "vm_shared_gallery_image_id": {"key": "properties.vmSharedGalleryImageId", "type": "str"},
+        "nat_gateway_id": {"key": "properties.natGatewayId", "type": "str"},
+        "vm_image_plan": {"key": "properties.vmImagePlan", "type": "VmImagePlan"},
+        "service_artifact_reference_id": {"key": "properties.serviceArtifactReferenceId", "type": "str"},
+        "dscp_configuration_id": {"key": "properties.dscpConfigurationId", "type": "str"},
+        "additional_network_interface_configurations": {
+            "key": "properties.additionalNetworkInterfaceConfigurations",
+            "type": "[AdditionalNetworkInterfaceConfiguration]",
+        },
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -2631,14 +3353,22 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
         host_group_id: Optional[str] = None,
         use_ephemeral_os_disk: Optional[bool] = None,
         spot_restore_timeout: Optional[str] = None,
-        eviction_policy: Union[str, "_models.EvictionPolicyType"] = "Delete",
+        eviction_policy: Optional[Union[str, "_models.EvictionPolicyType"]] = None,
         vm_image_resource_id: Optional[str] = None,
         subnet_id: Optional[str] = None,
         vm_setup_actions: Optional[List[Union[str, "_models.VmSetupAction"]]] = None,
         security_type: Optional[Union[str, "_models.SecurityType"]] = None,
         secure_boot_enabled: Optional[bool] = None,
         enable_node_public_ip: Optional[bool] = None,
+        enable_node_public_i_pv6: Optional[bool] = None,
         vm_shared_gallery_image_id: Optional[str] = None,
+        nat_gateway_id: Optional[str] = None,
+        vm_image_plan: Optional["_models.VmImagePlan"] = None,
+        service_artifact_reference_id: Optional[str] = None,
+        dscp_configuration_id: Optional[str] = None,
+        additional_network_interface_configurations: Optional[
+            List["_models.AdditionalNetworkInterfaceConfiguration"]
+        ] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2774,12 +3504,34 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
         :keyword secure_boot_enabled: Specifies whether secure boot should be enabled on the nodeType.
          Can only be used with TrustedLaunch SecurityType.
         :paramtype secure_boot_enabled: bool
-        :keyword enable_node_public_ip: Specifies whether each node is allocated its own public IP
+        :keyword enable_node_public_ip: Specifies whether each node is allocated its own public IPv4
          address. This is only supported on secondary node types with custom Load Balancers.
         :paramtype enable_node_public_ip: bool
+        :keyword enable_node_public_i_pv6: Specifies whether each node is allocated its own public IPv6
+         address. This is only supported on secondary node types with custom Load Balancers.
+        :paramtype enable_node_public_i_pv6: bool
         :keyword vm_shared_gallery_image_id: Indicates the resource id of the vm shared galleries
          image. This parameter is used for custom vm image.
         :paramtype vm_shared_gallery_image_id: str
+        :keyword nat_gateway_id: Specifies the resource id of a NAT Gateway to attach to the subnet of
+         this node type. Node type must use custom load balancer.
+        :paramtype nat_gateway_id: str
+        :keyword vm_image_plan: Specifies information about the marketplace image used to create the
+         virtual machine. This element is only used for marketplace images. Before you can use a
+         marketplace image from an API, you must enable the image for programmatic use. In the Azure
+         portal, find the marketplace image that you want to use and then click Want to deploy
+         programmatically, Get Started ->. Enter any required information and then click Save.
+        :paramtype vm_image_plan: ~azure.mgmt.servicefabricmanagedclusters.models.VmImagePlan
+        :keyword service_artifact_reference_id: Specifies the service artifact reference id used to set
+         same image version for all virtual machines in the scale set when using 'latest' image version.
+        :paramtype service_artifact_reference_id: str
+        :keyword dscp_configuration_id: Specifies the resource id of the DSCP configuration to apply to
+         the node type network interface.
+        :paramtype dscp_configuration_id: str
+        :keyword additional_network_interface_configurations: Specifies the settings for any additional
+         secondary network interfaces to attach to the node type.
+        :paramtype additional_network_interface_configurations:
+         list[~azure.mgmt.servicefabricmanagedclusters.models.AdditionalNetworkInterfaceConfiguration]
         """
         super().__init__(tags=tags, **kwargs)
         self.sku = sku
@@ -2823,7 +3575,13 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
         self.security_type = security_type
         self.secure_boot_enabled = secure_boot_enabled
         self.enable_node_public_ip = enable_node_public_ip
+        self.enable_node_public_i_pv6 = enable_node_public_i_pv6
         self.vm_shared_gallery_image_id = vm_shared_gallery_image_id
+        self.nat_gateway_id = nat_gateway_id
+        self.vm_image_plan = vm_image_plan
+        self.service_artifact_reference_id = service_artifact_reference_id
+        self.dscp_configuration_id = dscp_configuration_id
+        self.additional_network_interface_configurations = additional_network_interface_configurations
 
 
 class NodeTypeActionParameters(_serialization.Model):
@@ -3369,6 +4127,28 @@ class RollingUpgradeMonitoringPolicy(_serialization.Model):
         self.health_check_retry_timeout = health_check_retry_timeout
         self.upgrade_timeout = upgrade_timeout
         self.upgrade_domain_timeout = upgrade_domain_timeout
+
+
+class RuntimeResumeApplicationUpgradeParameters(_serialization.Model):
+    """Parameters for Resume Upgrade action. The upgrade domain name must be specified.
+
+    :ivar upgrade_domain_name: The upgrade domain name. Expected to be the next upgrade domain if
+     the application is upgrading.
+    :vartype upgrade_domain_name: str
+    """
+
+    _attribute_map = {
+        "upgrade_domain_name": {"key": "upgradeDomainName", "type": "str"},
+    }
+
+    def __init__(self, *, upgrade_domain_name: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword upgrade_domain_name: The upgrade domain name. Expected to be the next upgrade domain
+         if the application is upgrading.
+        :paramtype upgrade_domain_name: str
+        """
+        super().__init__(**kwargs)
+        self.upgrade_domain_name = upgrade_domain_name
 
 
 class ScalingPolicy(_serialization.Model):
@@ -5087,6 +5867,58 @@ class VaultSecretGroup(_serialization.Model):
         self.vault_certificates = vault_certificates
 
 
+class VmImagePlan(_serialization.Model):
+    """Specifies information about the marketplace image used to create the virtual machine. This
+    element is only used for marketplace images. Before you can use a marketplace image from an
+    API, you must enable the image for programmatic use. In the Azure portal, find the marketplace
+    image that you want to use and then click Want to deploy programmatically, Get Started ->.
+    Enter any required information and then click Save.
+
+    :ivar name: The plan ID.
+    :vartype name: str
+    :ivar product: Specifies the product of the image from the marketplace. This is the same value
+     as Offer under the imageReference element.
+    :vartype product: str
+    :ivar promotion_code: The promotion code.
+    :vartype promotion_code: str
+    :ivar publisher: The publisher ID.
+    :vartype publisher: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "product": {"key": "product", "type": "str"},
+        "promotion_code": {"key": "promotionCode", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        product: Optional[str] = None,
+        promotion_code: Optional[str] = None,
+        publisher: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The plan ID.
+        :paramtype name: str
+        :keyword product: Specifies the product of the image from the marketplace. This is the same
+         value as Offer under the imageReference element.
+        :paramtype product: str
+        :keyword promotion_code: The promotion code.
+        :paramtype promotion_code: str
+        :keyword publisher: The publisher ID.
+        :paramtype publisher: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.product = product
+        self.promotion_code = promotion_code
+        self.publisher = publisher
+
+
 class VmManagedIdentity(_serialization.Model):
     """Identities for the virtual machine scale set under the node type.
 
@@ -5233,6 +6065,9 @@ class VMSSExtension(_serialization.Model):  # pylint: disable=too-many-instance-
     :ivar enable_automatic_upgrade: Indicates whether the extension should be automatically
      upgraded by the platform if there is a newer version of the extension available.
     :vartype enable_automatic_upgrade: bool
+    :ivar setup_order: Indicates the setup order for the extension.
+    :vartype setup_order: list[str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.VmssExtensionSetupOrder]
     """
 
     _validation = {
@@ -5255,6 +6090,7 @@ class VMSSExtension(_serialization.Model):  # pylint: disable=too-many-instance-
         "provision_after_extensions": {"key": "properties.provisionAfterExtensions", "type": "[str]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "enable_automatic_upgrade": {"key": "properties.enableAutomaticUpgrade", "type": "bool"},
+        "setup_order": {"key": "properties.setupOrder", "type": "[str]"},
     }
 
     def __init__(
@@ -5270,6 +6106,7 @@ class VMSSExtension(_serialization.Model):  # pylint: disable=too-many-instance-
         force_update_tag: Optional[str] = None,
         provision_after_extensions: Optional[List[str]] = None,
         enable_automatic_upgrade: Optional[bool] = None,
+        setup_order: Optional[List[Union[str, "_models.VmssExtensionSetupOrder"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5300,6 +6137,9 @@ class VMSSExtension(_serialization.Model):  # pylint: disable=too-many-instance-
         :keyword enable_automatic_upgrade: Indicates whether the extension should be automatically
          upgraded by the platform if there is a newer version of the extension available.
         :paramtype enable_automatic_upgrade: bool
+        :keyword setup_order: Indicates the setup order for the extension.
+        :paramtype setup_order: list[str or
+         ~azure.mgmt.servicefabricmanagedclusters.models.VmssExtensionSetupOrder]
         """
         super().__init__(**kwargs)
         self.name = name
@@ -5313,3 +6153,4 @@ class VMSSExtension(_serialization.Model):  # pylint: disable=too-many-instance-
         self.provision_after_extensions = provision_after_extensions
         self.provisioning_state = None
         self.enable_automatic_upgrade = enable_automatic_upgrade
+        self.setup_order = setup_order

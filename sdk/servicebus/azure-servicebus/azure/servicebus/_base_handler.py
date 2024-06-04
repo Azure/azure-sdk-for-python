@@ -141,6 +141,10 @@ def _generate_sas_token(
     uri: str, policy: str, key: str, expiry: Optional[timedelta] = None
 ) -> AccessToken:
     """Create a shared access signiture token as a string literal.
+    :param str uri: The resource URI.
+    :param str policy: The name of the shared access policy.
+    :param str key: The shared access key.
+    :param ~datetime.timedelta or None expiry: The time period that the token is valid for.
     :returns: SAS token as string literal.
     :rtype: str
     """
@@ -176,6 +180,9 @@ class ServiceBusSASTokenCredential(object):
     def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         This method is automatically called when token is about to expire.
+        :param str scopes: The list of scopes for which the token has access.
+        :return: AccessToken object
+        :rtype: ~azure.core.credentials.AccessToken
         """
         return AccessToken(self.token, self.expiry)
 
@@ -228,6 +235,9 @@ class ServiceBusAzureSasTokenCredential(object):
     def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         This method is automatically called when token is about to expire.
+        :param str scopes: The list of scopes for which the token has access.
+        :return: AccessToken object
+        :rtype: ~azure.core.credentials.AccessToken
         """
         signature, expiry = parse_sas_credential(self._credential)
         return AccessToken(signature, expiry)
@@ -244,7 +254,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
 
         # If the user provided http:// or sb://, let's be polite and strip that.
-        self.fully_qualified_namespace = strip_protocol_from_uri(
+        self.fully_qualified_namespace: str = strip_protocol_from_uri(
             fully_qualified_namespace.strip()
         )
         self._entity_name = entity_name
@@ -320,17 +330,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
         return kwargs
 
-    def __enter__(self):
-        if self._shutdown.is_set():
-            raise ValueError(
-                "The handler has already been shutdown. Please use ServiceBusClient to "
-                "create a new instance."
-            )
-
-        self._open_with_retry()
-        return self
-
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self.close()
 
     def _handle_exception(self, exception: BaseException) -> "ServiceBusError":
@@ -385,7 +385,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         except AttributeError:
             pass
 
-    def _do_retryable_operation(
+    def _do_retryable_operation( # pylint: disable=inconsistent-return-statements
         self,
         operation: Callable,
         timeout: Optional[float] = None,
@@ -425,7 +425,15 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                         self._container_id,
                         last_exception,
                     )
-                    raise last_exception
+                    if isinstance(last_exception, OperationTimeoutError):
+                        description = "If trying to receive from NEXT_AVAILABLE_SESSION, "\
+                            "use max_wait_time on the ServiceBusReceiver to control the"\
+                                " timeout."
+                        error = OperationTimeoutError(
+                            message=description,
+                        )
+                        raise error from last_exception
+                    raise last_exception from None
                 self._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,
@@ -461,6 +469,15 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 entity_name,
                 last_exception,
             )
+            if isinstance(last_exception, OperationTimeoutError):
+                description = "If trying to receive from NEXT_AVAILABLE_SESSION, "\
+                    "use max_wait_time on the ServiceBusReceiver to control the"\
+                        " timeout."
+                error = OperationTimeoutError(
+                    message=description,
+                )
+
+                raise error from last_exception
             raise last_exception
 
     def _mgmt_request_response(
@@ -479,13 +496,15 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
          be service-specific, but common values include READ, CREATE and UPDATE.
          This value will be added as an application property on the message.
         :param message: The message to send in the management request.
-        :paramtype message: Any
+        :type message: Any
         :param callback: The callback which is used to parse the returning message.
-        :paramtype callback: Callable[int, Union[~uamqp.message.Message, Message], str]
-        :param keep_alive_associated_link: A boolean flag for keeping associated amqp sender/receiver link alive when
+        :type callback: Callable[int, Union[~uamqp.message.Message, Message], str]
+        :param bool keep_alive_associated_link: A boolean flag for keeping
+         associated amqp sender/receiver link alive when
          executing operation on mgmt links.
-        :param timeout: timeout in seconds executing the mgmt operation.
-        :rtype: Tuple
+        :param float or None timeout: timeout in seconds executing the mgmt operation.
+        :return: The message response.
+        :rtype: Message
         """
         self._open()
         application_properties = {}
@@ -519,7 +538,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             )
         except Exception as exp:  # pylint: disable=broad-except
             if isinstance(exp, self._amqp_transport.TIMEOUT_ERROR):
-                raise OperationTimeoutError(error=exp)
+                raise OperationTimeoutError(error=exp) from exp
             raise
 
     def _mgmt_request_response_with_retry(
@@ -540,7 +559,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             **kwargs
         )
 
-    def _open(self):  # pylint: disable=no-self-use
+    def _open(self):
         raise ValueError("Subclass should override the method.")
 
     def _open_with_retry(self):

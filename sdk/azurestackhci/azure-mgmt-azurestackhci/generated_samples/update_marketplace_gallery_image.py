@@ -29,14 +29,14 @@ def main():
         subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
     )
 
-    response = client.marketplacegalleryimages.update(
+    response = client.marketplace_gallery_images.begin_update(
         resource_group_name="test-rg",
-        marketplacegalleryimages_name="test-marketplce-gallery-image",
-        marketplacegalleryimages={"tags": {"additionalProperties": "sample"}},
-    )
+        marketplace_gallery_image_name="test-marketplce-gallery-image",
+        marketplace_gallery_images={"tags": {"additionalProperties": "sample"}},
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2021-09-01-preview/examples/UpdateMarketplaceGalleryImage.json
+# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2023-09-01-preview/examples/UpdateMarketplaceGalleryImage.json
 if __name__ == "__main__":
     main()

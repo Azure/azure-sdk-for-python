@@ -8,3 +8,4 @@ need_msrestazure = false
 need_azuremgmtcore = true
 sample_link = ""
 title = "NetworkManagementClient"
+exclude_folders = "azure.mgmt.network.v20*"

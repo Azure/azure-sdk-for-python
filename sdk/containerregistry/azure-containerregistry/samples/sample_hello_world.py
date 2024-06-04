@@ -35,7 +35,7 @@ from utilities import load_registry, get_authority, get_credential
 class HelloWorld(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
+        self.endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         self.authority = get_authority(self.endpoint)
         self.credential = get_credential(self.authority)
 
@@ -44,7 +44,7 @@ class HelloWorld(object):
         # Instantiate an instance of ContainerRegistryClient
         # [START create_registry_client]
         with ContainerRegistryClient(self.endpoint, self.credential) as client:
-        # [END create_registry_client]
+            # [END create_registry_client]
             # Iterate through all the repositories
             for repository_name in client.list_repository_names():
                 print(repository_name)
@@ -52,14 +52,9 @@ class HelloWorld(object):
                     print("Tags of repository library/hello-world:")
                     for tag in client.list_tag_properties(repository_name):
                         print(tag.name)
-                        
+
                         # Make sure will have the permission to delete the repository later
-                        client.update_manifest_properties(
-                            repository_name,
-                            tag.name,
-                            can_write=True,
-                            can_delete=True
-                        )
+                        client.update_manifest_properties(repository_name, tag.name, can_write=True, can_delete=True)
 
                     print("Deleting " + repository_name)
                     # [START delete_repository]

@@ -26,7 +26,7 @@ from azure.mgmt.mobilenetwork import MobileNetworkManagementClient
 def main():
     client = MobileNetworkManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.mobile_networks.begin_create_or_update(
@@ -34,12 +34,32 @@ def main():
         mobile_network_name="testMobileNetwork",
         parameters={
             "location": "eastus",
-            "properties": {"publicLandMobileNetworkIdentifier": {"mcc": "001", "mnc": "01"}},
+            "properties": {
+                "publicLandMobileNetworkIdentifier": {"mcc": "001", "mnc": "01"},
+                "publicLandMobileNetworks": [
+                    {
+                        "homeNetworkPublicKeys": {
+                            "profileA": [
+                                {"id": 1, "url": "https://contosovault.vault.azure.net/secrets/exampleHnpk"},
+                                {
+                                    "id": 2,
+                                    "url": "https://contosovault.vault.azure.net/secrets/exampleHnpk2/5e4876e9140e4e16bfe6e2cf92e0cbd2",
+                                },
+                            ],
+                            "profileB": [
+                                {"id": 1, "url": "https://contosovault.vault.azure.net/secrets/exampleHnpkProfileB"}
+                            ],
+                        },
+                        "mcc": "001",
+                        "mnc": "01",
+                    }
+                ],
+            },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/mobilenetwork/resource-manager/Microsoft.MobileNetwork/stable/2022-11-01/examples/MobileNetworkCreate.json
+# x-ms-original-file: specification/mobilenetwork/resource-manager/Microsoft.MobileNetwork/stable/2024-02-01/examples/MobileNetworkCreate.json
 if __name__ == "__main__":
     main()

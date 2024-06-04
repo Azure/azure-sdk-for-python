@@ -7,7 +7,7 @@ import unittest
 from datetime import datetime, timedelta
 
 import pytest
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.exceptions import ClientAuthenticationError, ResourceExistsError, ResourceNotFoundError
 from azure.storage.fileshare import (
     ContentSettings,
     generate_share_sas,
@@ -209,6 +209,28 @@ class TestStorageDirectory(StorageRecordedTestCase):
         assert created.directory_path == 'dir1/dir2'
         sub_metadata = created.get_directory_properties().metadata
         assert sub_metadata == metadata
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_create_subdirectory_in_root(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        share_client.create_directory('dir1')
+
+        # Act
+        rooted_directory = share_client.get_directory_client()
+        sub_dir_client = rooted_directory.get_subdirectory_client('dir2')
+        sub_dir_client.create_directory()
+
+        list_dir = list(share_client.list_directories_and_files())
+
+        # Assert
+        assert len(list_dir) == 2
+        assert list_dir[0]['name'] == 'dir1'
+        assert list_dir[1]['name'] == 'dir2'
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -1314,6 +1336,66 @@ class TestStorageDirectory(StorageRecordedTestCase):
 
         # Assert
         assert new_directory_client.directory_path == dest_dir_name
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_storage_account_audience_directory_client(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory_client = ShareDirectoryClient(
+            self.account_url(storage_account_name, 'file'),
+            share_client.share_name, 'dir1.',
+            credential=storage_account_key
+        )
+        directory_client.exists()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        directory_client = ShareDirectoryClient(
+            self.account_url(storage_account_name, 'file'),
+            share_client.share_name, 'dir1.',
+            credential=token_credential,
+            token_intent=TEST_INTENT,
+            audience=f'https://{storage_account_name}.file.core.windows.net'
+        )
+
+        # Assert
+        response = directory_client.exists()
+        assert response is not None
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_bad_audience_directory_client(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory_client = ShareDirectoryClient(
+            self.account_url(storage_account_name, 'file'),
+            share_client.share_name, 'dir1.',
+            credential=storage_account_key
+        )
+        directory_client.exists()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        directory_client = ShareDirectoryClient(
+            self.account_url(storage_account_name, 'file'),
+            share_client.share_name, 'dir1.',
+            credential=token_credential,
+            token_intent=TEST_INTENT,
+            audience=f'https://badaudience.file.core.windows.net'
+        )
+
+        # Assert
+        with pytest.raises(ClientAuthenticationError):
+            directory_client.exists()
 
 
 # ------------------------------------------------------------------------------

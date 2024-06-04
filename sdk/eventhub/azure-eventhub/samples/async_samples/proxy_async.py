@@ -8,6 +8,7 @@
 """
 An example to show async sending and receiving events behind a proxy.
 """
+from typing import Union, Dict
 import os
 import asyncio
 from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient
@@ -16,7 +17,7 @@ from azure.eventhub import EventData
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
-HTTP_PROXY = {
+HTTP_PROXY: Dict[str, Union[str, int]] = {
     'proxy_hostname': '127.0.0.1',  # proxy hostname.
     'proxy_port': 3128,  # proxy port.
     'username': 'admin',  # username used for proxy authentication if needed.

@@ -1,0 +1,6 @@
+{
+    "AssetsRepo": "Azure/azure-sdk-assets",
+    "AssetsRepoPrefixPath": "python",
+    "TagPrefix": "python/paloaltonetworks/azure-mgmt-paloaltonetworksngfw",
+    "Tag": "python/paloaltonetworks/azure-mgmt-paloaltonetworksngfw_caa84d64a6"
+}

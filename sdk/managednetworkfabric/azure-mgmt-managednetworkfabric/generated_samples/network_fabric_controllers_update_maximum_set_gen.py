@@ -26,26 +26,32 @@ from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 def main():
     client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="1234ABCD-0A1B-1234-5678-123456ABCDEF",
     )
 
     response = client.network_fabric_controllers.begin_update(
-        resource_group_name="resourceGroupName",
-        network_fabric_controller_name="networkFabricControllerName",
+        resource_group_name="example-rg",
+        network_fabric_controller_name="example-networkController",
         body={
             "properties": {
+                "infrastructureExpressRouteConnections": [
+                    {
+                        "expressRouteAuthorizationKey": "xxxxxxx",
+                        "expressRouteCircuitId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.Network/expressRouteCircuits/expressRouteCircuitName",
+                    }
+                ],
                 "workloadExpressRouteConnections": [
                     {
                         "expressRouteAuthorizationKey": "xxxxxxx",
-                        "expressRouteCircuitId": "/subscriptions/xxxxx/resourceGroups/resourceGroupName/providers/Microsoft.Network/expressRouteCircuits/expressRouteCircuitName",
+                        "expressRouteCircuitId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.Network/expressRouteCircuits/expressRouteCircuitName",
                     }
-                ]
+                ],
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/NetworkFabricControllers_Update_MaximumSet_Gen.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/stable/2023-06-15/examples/NetworkFabricControllers_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

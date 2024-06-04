@@ -23,7 +23,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
-MINIMUM_TESTED_PYTHON_VERSION = ">=3.7.0"
+MINIMUM_TESTED_PYTHON_VERSION = ">=3.8.0"
 
 """
 Some samples may "run forever" or need to be timed out after a period of time. Add them here in the following format:
@@ -79,6 +79,11 @@ TIMEOUT_SAMPLES = {
 
 # Add your library + sample file if you do not want a particular sample to be run
 IGNORED_SAMPLES = {
+    "azure-appconfiguration-provider": [
+        "key_vault_reference_customized_clients_sample.py",
+        "aad_sample.py",
+        "key_vault_reference_sample.py"
+    ],
     "azure-ai-ml": [
         "ml_samples_authentication_sovereign_cloud.py"
     ],

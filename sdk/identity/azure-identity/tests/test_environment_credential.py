@@ -34,19 +34,19 @@ def test_incomplete_configuration():
 
 
 @pytest.mark.parametrize(
-    "credential_name,environment_variables",
+    "credential_name,envvars",
     (
         ("ClientSecretCredential", EnvironmentVariables.CLIENT_SECRET_VARS),
         ("CertificateCredential", EnvironmentVariables.CERT_VARS),
         ("UsernamePasswordCredential", EnvironmentVariables.USERNAME_PASSWORD_VARS),
     ),
 )
-def test_passes_authority_argument(credential_name, environment_variables):
+def test_passes_authority_argument(credential_name, envvars):
     """the credential pass the 'authority' keyword argument to its inner credential"""
 
     authority = "authority"
 
-    with mock.patch.dict("os.environ", {variable: "foo" for variable in environment_variables}, clear=True):
+    with mock.patch.dict("os.environ", {variable: "foo" for variable in envvars}, clear=True):
         with mock.patch(EnvironmentCredential.__module__ + "." + credential_name) as mock_credential:
             EnvironmentCredential(authority=authority)
 
@@ -87,11 +87,13 @@ def test_certificate_configuration():
     certificate_path = "..."
     tenant_id = "tenant_id"
     bar = "bar"
+    send_certificate_chain = "True"
 
     environment = {
         EnvironmentVariables.AZURE_CLIENT_ID: client_id,
         EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH: certificate_path,
         EnvironmentVariables.AZURE_TENANT_ID: tenant_id,
+        EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN: send_certificate_chain,
     }
     with mock.patch(EnvironmentCredential.__module__ + ".CertificateCredential") as mock_credential:
         with mock.patch.dict("os.environ", environment, clear=True):
@@ -102,6 +104,7 @@ def test_certificate_configuration():
     assert kwargs["client_id"] == client_id
     assert kwargs["certificate_path"] == certificate_path
     assert kwargs["tenant_id"] == tenant_id
+    assert kwargs["send_certificate_chain"] is True
     assert kwargs["foo"] == bar
 
 

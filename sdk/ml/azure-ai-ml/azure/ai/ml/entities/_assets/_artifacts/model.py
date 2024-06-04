@@ -22,9 +22,9 @@ from azure.ai.ml.constants._common import (
     AssetTypes,
 )
 from azure.ai.ml.entities._assets import Artifact
+from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import get_md5_string, load_from_dict
-from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
 
 from .artifact import ArtifactStorageInfo
 
@@ -32,32 +32,40 @@ from .artifact import ArtifactStorageInfo
 class Model(Artifact):  # pylint: disable=too-many-instance-attributes
     """Model for training and scoring.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param version: Version of the resource.
-    :type version: str
-    :param type: The storage format for this entity. Used for NCD. Possible values include:
-     "custom_model", "mlflow_model", "triton_model".
-    :type type: str
-    :param utc_time_created: Date and time when the model was created, in
-        UTC ISO 8601 format. (e.g. '2020-10-19 17:44:02.096572')
-    :type utc_time_created: str
-    :param flavors: The flavors in which the model can be interpreted.
-        e.g. {sklearn: {sklearn_version: 0.23.2}, python_function: {loader_module: office.plrmodel, python_version: 3.6}
-    :type flavors: Dict[str, Any]
-    :param path: A remote uri or a local path pointing at a model.
-        Example: "azureml://subscriptions/{}/resourcegroups/{}/workspaces/{}/datastores/{}/paths/path_on_datastore/"
-    :type path: str
-    :param description: Description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param stage: The stage of the resource.
-    :type stage: str
+    :param name: The name of the model. Defaults to a random GUID.
+    :type name: Optional[str]
+    :param version: The version of the model. Defaults to "1" if either no name or an unregistered name is provided.
+        Otherwise, defaults to autoincrement from the last registered version of the model with that name.
+    :type version: Optional[str]
+    :param type: The storage format for this entity, used for NCD (Novel Class Discovery). Accepted values are
+        "custom_model", "mlflow_model", or "triton_model". Defaults to "custom_model".
+    :type type: Optional[str]
+    :param utc_time_created: The date and time when the model was created, in
+        UTC ISO 8601 format. (e.g. '2020-10-19 17:44:02.096572').
+    :type utc_time_created: Optional[str]
+    :param flavors: The flavors in which the model can be interpreted. Defaults to None.
+    :type flavors: Optional[dict[str, Any]]
+    :param path: A remote uri or a local path pointing to a model. Defaults to None.
+    :type path: Optional[str]
+    :param description: The description of the resource. Defaults to None
+    :type description: Optional[str]
+    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :type tags: Optional[dict[str, str]]
+    :param properties: The asset property dictionary. Defaults to None.
+    :type properties: Optional[dict[str, str]]
+    :param stage: The stage of the resource. Defaults to None.
+    :type stage: Optional[str]
     :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :type kwargs: Optional[dict]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_misc.py
+            :start-after: [START model_entity_create]
+            :end-before: [END model_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Creating a Model object.
     """
 
     def __init__(
@@ -73,8 +81,8 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         stage: Optional[str] = None,
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         self.job_name = kwargs.pop("job_name", None)
         self._intellectual_property = kwargs.pop("intellectual_property", None)
         super().__init__(
@@ -102,7 +110,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "Model":
         params_override = params_override or []
         data = data or {}
@@ -110,10 +118,11 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        return load_from_dict(ModelSchema, data, context, **kwargs)
+        res: Model = load_from_dict(ModelSchema, data, context, **kwargs)
+        return res
 
     def _to_dict(self) -> Dict:
-        return ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        return dict(ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))  # pylint: disable=no-member
 
     @classmethod
     def _from_rest_object(cls, model_rest_object: ModelVersion) -> "Model":
@@ -136,9 +145,11 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             creation_context=SystemData._from_rest_object(model_rest_object.system_data),
             type=rest_model_version.model_type,
             job_name=rest_model_version.job_name,
-            intellectual_property=IntellectualProperty._from_rest_object(rest_model_version.intellectual_property)
-            if rest_model_version.intellectual_property
-            else None,
+            intellectual_property=(
+                IntellectualProperty._from_rest_object(rest_model_version.intellectual_property)
+                if rest_model_version.intellectual_property
+                else None
+            ),
         )
         return model
 
@@ -163,9 +174,9 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             description=self.description,
             tags=self.tags,
             properties=self.properties,
-            flavors={key: FlavorData(data=dict(value)) for key, value in self.flavors.items()}
-            if self.flavors
-            else None,  # flatten OrderedDict to dict
+            flavors=(
+                {key: FlavorData(data=dict(value)) for key, value in self.flavors.items()} if self.flavors else None
+            ),  # flatten OrderedDict to dict
             model_type=self.type,
             model_uri=self.path,
             stage=self.stage,
@@ -189,7 +200,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
                 asset_artifact.relative_path,
             )
 
-    def _to_arm_resource_param(self, **kwargs):  # pylint: disable=unused-argument
+    def _to_arm_resource_param(self, **kwargs: Any) -> Dict:  # pylint: disable=unused-argument
         properties = self._to_rest_object().properties
 
         return {

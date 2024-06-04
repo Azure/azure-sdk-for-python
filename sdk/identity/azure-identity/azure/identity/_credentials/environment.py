@@ -29,7 +29,7 @@ class EnvironmentCredential:
       - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
       - **AZURE_CLIENT_ID**: the service principal's client ID
       - **AZURE_CLIENT_SECRET**: one of the service principal's client secrets
-      - **AZURE_AUTHORITY_HOST**: authority of an Azure Active Directory endpoint, for example
+      - **AZURE_AUTHORITY_HOST**: authority of a Microsoft Entra endpoint, for example
         "login.microsoftonline.com", the authority for Azure Public Cloud, which is the default
         when no value is given.
 
@@ -38,7 +38,10 @@ class EnvironmentCredential:
       - **AZURE_CLIENT_ID**: the service principal's client ID
       - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM or PKCS12 certificate file including the private key.
       - **AZURE_CLIENT_CERTIFICATE_PASSWORD**: (optional) password of the certificate file, if any.
-      - **AZURE_AUTHORITY_HOST**: authority of an Azure Active Directory endpoint, for example
+      - **AZURE_CLIENT_SEND_CERTIFICATE_CHAIN**: (optional) If True, the credential will send the public certificate
+        chain in the x5c header of each token request's JWT. This is required for Subject Name/Issuer (SNI)
+        authentication. Defaults to False.
+      - **AZURE_AUTHORITY_HOST**: authority of a Microsoft Entra endpoint, for example
         "login.microsoftonline.com", the authority for Azure Public Cloud, which is the default
         when no value is given.
 
@@ -47,9 +50,9 @@ class EnvironmentCredential:
       - **AZURE_USERNAME**: a username (usually an email address)
       - **AZURE_PASSWORD**: that user's password
       - **AZURE_TENANT_ID**: (optional) ID of the service principal's tenant. Also called its 'directory' ID.
-        If not provided, defaults to the 'organizations' tenant, which supports only Azure Active Directory work or
+        If not provided, defaults to the 'organizations' tenant, which supports only Microsoft Entra work or
         school accounts.
-      - **AZURE_AUTHORITY_HOST**: authority of an Azure Active Directory endpoint, for example
+      - **AZURE_AUTHORITY_HOST**: authority of a Microsoft Entra endpoint, for example
         "login.microsoftonline.com", the authority for Azure Public Cloud, which is the default
         when no value is given.
 
@@ -79,6 +82,9 @@ class EnvironmentCredential:
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 certificate_path=os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH],
                 password=os.environ.get(EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PASSWORD),
+                send_certificate_chain=bool(
+                    os.environ.get(EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN, False)
+                ),
                 **kwargs
             )
         elif all(os.environ.get(v) is not None for v in EnvironmentVariables.USERNAME_PASSWORD_VARS):
@@ -100,18 +106,20 @@ class EnvironmentCredential:
             )
             set_variables = [v for v in expected_variables if v in os.environ]
             if set_variables:
-                _LOGGER.warning(
-                    "Incomplete environment configuration. These variables are set: %s", ", ".join(set_variables)
+                _LOGGER.log(
+                    logging.INFO if kwargs.get("_within_dac") else logging.WARNING,
+                    "Incomplete environment configuration for EnvironmentCredential. These variables are set: %s",
+                    ", ".join(set_variables),
                 )
             else:
                 _LOGGER.info("No environment configuration found.")
 
-    def __enter__(self):
+    def __enter__(self) -> "EnvironmentCredential":
         if self._credential:
             self._credential.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         if self._credential:
             self._credential.__exit__(*args)
 
@@ -120,14 +128,18 @@ class EnvironmentCredential:
         self.__exit__()
 
     @log_get_token("EnvironmentCredential")
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
-            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+            https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+            claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
@@ -142,4 +154,4 @@ class EnvironmentCredential:
                 "this issue."
             )
             raise CredentialUnavailableError(message=message)
-        return self._credential.get_token(*scopes, **kwargs)
+        return self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)

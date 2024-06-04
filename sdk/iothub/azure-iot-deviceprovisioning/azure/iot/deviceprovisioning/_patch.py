@@ -165,7 +165,7 @@ class DeviceProvisioningClient(
                 endpoint=base_url, key=key, policy_name=name
             )
         elif credential is not None:
-            raise TypeError(f"Unsupported credential: {credential}")
+            raise TypeError(f"Unsupported credential: {type(credential)}")
 
         policies = [
             user_agent_policy,

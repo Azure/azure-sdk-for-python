@@ -8,3 +8,5 @@ extends:
       Public:
         SubscriptionConfiguration: $(python-ml-experiences-sub-scope)
         Location: eastus
+        MatrixReplace:
+          - TestSamples=.*/true

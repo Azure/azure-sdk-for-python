@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 
 import logging
 from collections import OrderedDict
@@ -25,6 +25,7 @@ class PatchedBaseSchema(Schema):
         ordered = True
 
     @post_dump
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def remove_none(self, data, **kwargs):
         """Prevents from dumping attributes that are None, thus making the dump more compact."""
         return OrderedDict((key, value) for key, value in data.items() if value is not None)
@@ -36,7 +37,7 @@ class PatchedSchemaMeta(SchemaMeta):
     We use a metaclass to inject a Meta class into all our Schema classes.
     """
 
-    def __new__(cls, name, bases, dct):
+    def __new__(mcs, name, bases, dct):
         meta = dct.get("Meta")
         if meta is None:
             dct["Meta"] = PatchedMeta
@@ -48,5 +49,5 @@ class PatchedSchemaMeta(SchemaMeta):
 
         if PatchedBaseSchema not in bases:
             bases = bases + (PatchedBaseSchema,)
-        klass = super().__new__(cls, name, bases, dct)
+        klass = super().__new__(mcs, name, bases, dct)
         return klass

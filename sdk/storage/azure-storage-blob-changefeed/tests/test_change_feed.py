@@ -10,18 +10,18 @@ from datetime import datetime, timedelta
 from math import ceil
 from time import sleep
 
-from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
-
-try:
-    # Hack to run ChangeFeed tests locally due to conflicting namespace and dependency with blob.
-    # To run locally, set each library folder in ChangeFeed package as "Sources Root" in PyCharm
-    # (i.e. azure, storage, blob, changefeed).
-    from changefeed import ChangeFeedClient
-except ImportError:
-    from azure.storage.blob.changefeed import ChangeFeedClient
-
+from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import ChangeFeedPreparer
+
+# To run these tests locally in PyCharm, ensure the following directories are set a "Sources Root":
+#    azure-storage-blob
+#    azure-storage-blob-changefeed
+#    azure-storage-blob-changefeed/azure/storage/blob
+#    azure-storage-blob-changefeed/azure/storage/blob/changefeed
+# Then uncomment this import and comment out the other.
+# from changefeed import ChangeFeedClient
+from azure.storage.blob.changefeed import ChangeFeedClient
 
 @pytest.mark.playback_test_only
 class TestStorageChangeFeed(StorageRecordedTestCase):

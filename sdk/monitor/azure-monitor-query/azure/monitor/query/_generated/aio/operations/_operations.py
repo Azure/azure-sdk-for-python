@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,8 +7,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -19,8 +20,7 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
@@ -66,12 +66,13 @@ class QueryOperations:
     async def get(
         self, workspace_id: str, *, query: str, timespan: Optional[datetime.timedelta] = None, **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
 
-        :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
-         Azure portal. Required.
+        :param workspace_id: Primary Workspace ID of the query. This is the Workspace ID from the
+         Properties blade in the Azure portal. Required.
         :type workspace_id: str
         :keyword query: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
@@ -135,7 +136,7 @@ class QueryOperations:
                     "statistics": {}  # Optional. Statistics represented in JSON format.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -148,23 +149,25 @@ class QueryOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_query_get_request(
+        _request = build_query_get_request(
             workspace_id=workspace_id,
             query=query,
             timespan=timespan,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -174,9 +177,9 @@ class QueryOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @overload
     async def execute(
@@ -188,14 +191,15 @@ class QueryOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query.
 
         Executes an Analytics query for data. `Here
-        <https://dev.loganalytics.io/documentation/Using-the-API>`_ is an example for using POST with
-        an Analytics query.
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/request-format>`_ is an example for
+        using POST with an Analytics query.
 
-        :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
-         Azure portal. Required.
+        :param workspace_id: Primary Workspace ID of the query. This is the Workspace ID from the
+         Properties blade in the Azure portal. Required.
         :type workspace_id: str
         :param body: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
@@ -221,8 +225,8 @@ class QueryOperations:
                       data. This is an ISO8601 time period value.  This timespan is applied in addition
                       to any that are specified in the query expression.
                     "workspaces": [
-                        "str"  # Optional. A list of workspaces that are included in the
-                          query.
+                        "str"  # Optional. A list of workspaces to query in addition to the
+                          primary workspace.
                     ]
                 }
 
@@ -278,25 +282,26 @@ class QueryOperations:
     async def execute(
         self,
         workspace_id: str,
-        body: IO,
+        body: IO[bytes],
         *,
         prefer: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query.
 
         Executes an Analytics query for data. `Here
-        <https://dev.loganalytics.io/documentation/Using-the-API>`_ is an example for using POST with
-        an Analytics query.
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/request-format>`_ is an example for
+        using POST with an Analytics query.
 
-        :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
-         Azure portal. Required.
+        :param workspace_id: Primary Workspace ID of the query. This is the Workspace ID from the
+         Properties blade in the Azure portal. Required.
         :type workspace_id: str
         :param body: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
          Required.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
          visualization information. Default value is None.
         :paramtype prefer: str
@@ -360,27 +365,25 @@ class QueryOperations:
 
     @distributed_trace_async
     async def execute(
-        self, workspace_id: str, body: Union[JSON, IO], *, prefer: Optional[str] = None, **kwargs: Any
+        self, workspace_id: str, body: Union[JSON, IO[bytes]], *, prefer: Optional[str] = None, **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query.
 
         Executes an Analytics query for data. `Here
-        <https://dev.loganalytics.io/documentation/Using-the-API>`_ is an example for using POST with
-        an Analytics query.
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/request-format>`_ is an example for
+        using POST with an Analytics query.
 
-        :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
-         Azure portal. Required.
+        :param workspace_id: Primary Workspace ID of the query. This is the Workspace ID from the
+         Properties blade in the Azure portal. Required.
         :type workspace_id: str
         :param body: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_. Is
-         either a JSON type or a IO type. Required.
-        :type body: JSON or IO
+         either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
         :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
          visualization information. Default value is None.
         :paramtype prefer: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -395,8 +398,8 @@ class QueryOperations:
                       data. This is an ISO8601 time period value.  This timespan is applied in addition
                       to any that are specified in the query expression.
                     "workspaces": [
-                        "str"  # Optional. A list of workspaces that are included in the
-                          query.
+                        "str"  # Optional. A list of workspaces to query in addition to the
+                          primary workspace.
                     ]
                 }
 
@@ -447,7 +450,7 @@ class QueryOperations:
                     "statistics": {}  # Optional. Statistics represented in JSON format.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -464,12 +467,12 @@ class QueryOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(body, (IO, bytes)):
+        if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
             _json = body
 
-        request = build_query_execute_request(
+        _request = build_query_execute_request(
             workspace_id=workspace_id,
             prefer=prefer,
             content_type=content_type,
@@ -478,16 +481,18 @@ class QueryOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -497,18 +502,19 @@ class QueryOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace_async
     async def resource_get(
         self, resource_id: str, *, query: str, timespan: Optional[datetime.timedelta] = None, **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query using resource URI.
 
         Executes an Analytics query for data in the context of a resource. `Here
-        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
         example for using POST with an Analytics query.
 
         :param resource_id: The identifier of the resource. Required.
@@ -575,7 +581,7 @@ class QueryOperations:
                     "statistics": {}  # Optional. Statistics represented in JSON format.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -588,23 +594,25 @@ class QueryOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_query_resource_get_request(
+        _request = build_query_resource_get_request(
             resource_id=resource_id,
             query=query,
             timespan=timespan,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -614,9 +622,9 @@ class QueryOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @overload
     async def resource_execute(
@@ -628,10 +636,11 @@ class QueryOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
-        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
         example for using POST with an Analytics query.
 
         :param resource_id: The identifier of the resource. Required.
@@ -660,8 +669,8 @@ class QueryOperations:
                       data. This is an ISO8601 time period value.  This timespan is applied in addition
                       to any that are specified in the query expression.
                     "workspaces": [
-                        "str"  # Optional. A list of workspaces that are included in the
-                          query.
+                        "str"  # Optional. A list of workspaces to query in addition to the
+                          primary workspace.
                     ]
                 }
 
@@ -717,16 +726,17 @@ class QueryOperations:
     async def resource_execute(
         self,
         resource_id: str,
-        body: IO,
+        body: IO[bytes],
         *,
         prefer: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
-        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
         example for using POST with an Analytics query.
 
         :param resource_id: The identifier of the resource. Required.
@@ -734,7 +744,7 @@ class QueryOperations:
         :param body: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
          Required.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
          visualization information. Default value is None.
         :paramtype prefer: str
@@ -798,26 +808,24 @@ class QueryOperations:
 
     @distributed_trace_async
     async def resource_execute(
-        self, resource_id: str, body: Union[JSON, IO], *, prefer: Optional[str] = None, **kwargs: Any
+        self, resource_id: str, body: Union[JSON, IO[bytes]], *, prefer: Optional[str] = None, **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
-        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
         example for using POST with an Analytics query.
 
         :param resource_id: The identifier of the resource. Required.
         :type resource_id: str
         :param body: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_. Is
-         either a JSON type or a IO type. Required.
-        :type body: JSON or IO
+         either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
         :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
          visualization information. Default value is None.
         :paramtype prefer: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -832,8 +840,8 @@ class QueryOperations:
                       data. This is an ISO8601 time period value.  This timespan is applied in addition
                       to any that are specified in the query expression.
                     "workspaces": [
-                        "str"  # Optional. A list of workspaces that are included in the
-                          query.
+                        "str"  # Optional. A list of workspaces to query in addition to the
+                          primary workspace.
                     ]
                 }
 
@@ -884,7 +892,7 @@ class QueryOperations:
                     "statistics": {}  # Optional. Statistics represented in JSON format.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -901,12 +909,12 @@ class QueryOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(body, (IO, bytes)):
+        if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
             _json = body
 
-        request = build_query_resource_execute_request(
+        _request = build_query_resource_execute_request(
             resource_id=resource_id,
             prefer=prefer,
             content_type=content_type,
@@ -915,16 +923,18 @@ class QueryOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -934,17 +944,18 @@ class QueryOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @overload
     async def batch(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Execute a batch of Analytics queries.
 
         Executes a batch of Analytics queries for data. `Here
-        <https://dev.loganalytics.io/documentation/Using-the-API>`_ is an example for using POST with
-        an Analytics query.
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/batch-queries>`_ is an example for
+        using POST with an Analytics query.
 
         :param body: The batch request body. Required.
         :type body: JSON
@@ -969,21 +980,24 @@ class QueryOperations:
                                   value.  This timespan is applied in addition to any that are
                                   specified in the query expression.
                                 "workspaces": [
-                                    "str"  # Optional. A list of workspaces that
-                                      are included in the query.
+                                    "str"  # Optional. A list of workspaces to
+                                      query in addition to the primary workspace.
                                 ]
                             },
-                            "id": "str",  # The error details. Required.
-                            "workspace": "str",  # Workspace Id to be included in the
-                              query. Required.
+                            "id": "str",  # Unique ID corresponding to each request in
+                              the batch. Required.
+                            "workspace": "str",  # Primary Workspace ID of the query.
+                              This is the Workspace ID from the Properties blade in the Azure portal.
+                              Required.
                             "headers": {
-                                "str": "str"  # Optional. Dictionary of
-                                  :code:`<string>`.
+                                "str": "str"  # Optional. Headers of the request. Can
+                                  use prefer header to set server timeout and to query statistics and
+                                  visualization information.
                             },
-                            "method": "POST",  # Optional. Default value is "POST". An
-                              single request in a batch. Required.
-                            "path": "/query"  # Optional. Default value is "/query". An
-                              single request in a batch. Required.
+                            "method": "POST",  # Optional. Default value is "POST". The
+                              method of a single request in a batch, defaults to POST.
+                            "path": "/query"  # Optional. Default value is "/query". The
+                              query path of a single request in a batch, defaults to /query.
                         }
                     ]
                 }
@@ -1060,15 +1074,16 @@ class QueryOperations:
         """
 
     @overload
-    async def batch(self, body: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    async def batch(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Execute a batch of Analytics queries.
 
         Executes a batch of Analytics queries for data. `Here
-        <https://dev.loganalytics.io/documentation/Using-the-API>`_ is an example for using POST with
-        an Analytics query.
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/batch-queries>`_ is an example for
+        using POST with an Analytics query.
 
         :param body: The batch request body. Required.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1151,18 +1166,16 @@ class QueryOperations:
         """
 
     @distributed_trace_async
-    async def batch(self, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    async def batch(self, body: Union[JSON, IO[bytes]], **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Execute a batch of Analytics queries.
 
         Executes a batch of Analytics queries for data. `Here
-        <https://dev.loganalytics.io/documentation/Using-the-API>`_ is an example for using POST with
-        an Analytics query.
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/batch-queries>`_ is an example for
+        using POST with an Analytics query.
 
-        :param body: The batch request body. Is either a JSON type or a IO type. Required.
-        :type body: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+        :param body: The batch request body. Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1181,21 +1194,24 @@ class QueryOperations:
                                   value.  This timespan is applied in addition to any that are
                                   specified in the query expression.
                                 "workspaces": [
-                                    "str"  # Optional. A list of workspaces that
-                                      are included in the query.
+                                    "str"  # Optional. A list of workspaces to
+                                      query in addition to the primary workspace.
                                 ]
                             },
-                            "id": "str",  # The error details. Required.
-                            "workspace": "str",  # Workspace Id to be included in the
-                              query. Required.
+                            "id": "str",  # Unique ID corresponding to each request in
+                              the batch. Required.
+                            "workspace": "str",  # Primary Workspace ID of the query.
+                              This is the Workspace ID from the Properties blade in the Azure portal.
+                              Required.
                             "headers": {
-                                "str": "str"  # Optional. Dictionary of
-                                  :code:`<string>`.
+                                "str": "str"  # Optional. Headers of the request. Can
+                                  use prefer header to set server timeout and to query statistics and
+                                  visualization information.
                             },
-                            "method": "POST",  # Optional. Default value is "POST". An
-                              single request in a batch. Required.
-                            "path": "/query"  # Optional. Default value is "/query". An
-                              single request in a batch. Required.
+                            "method": "POST",  # Optional. Default value is "POST". The
+                              method of a single request in a batch, defaults to POST.
+                            "path": "/query"  # Optional. Default value is "/query". The
+                              query path of a single request in a batch, defaults to /query.
                         }
                     ]
                 }
@@ -1270,7 +1286,7 @@ class QueryOperations:
                     ]
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1287,28 +1303,30 @@ class QueryOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(body, (IO, bytes)):
+        if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
             _json = body
 
-        request = build_query_batch_request(
+        _request = build_query_batch_request(
             content_type=content_type,
             json=_json,
             content=_content,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1318,18 +1336,19 @@ class QueryOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace_async
     async def resource_get_xms(
         self, resource_id: str, *, query: str, timespan: Optional[datetime.timedelta] = None, **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query using resource URI.
 
         Executes an Analytics query for data in the context of a resource. `Here
-        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
         example for using POST with an Analytics query.
 
         :param resource_id: The identifier of the resource. Required.
@@ -1396,7 +1415,7 @@ class QueryOperations:
                     "statistics": {}  # Optional. Statistics represented in JSON format.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1409,23 +1428,25 @@ class QueryOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_query_resource_get_xms_request(
+        _request = build_query_resource_get_xms_request(
             resource_id=resource_id,
             query=query,
             timespan=timespan,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1435,9 +1456,9 @@ class QueryOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @overload
     async def resource_execute_xms(
@@ -1449,10 +1470,11 @@ class QueryOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
-        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
         example for using POST with an Analytics query.
 
         :param resource_id: The identifier of the resource. Required.
@@ -1481,8 +1503,8 @@ class QueryOperations:
                       data. This is an ISO8601 time period value.  This timespan is applied in addition
                       to any that are specified in the query expression.
                     "workspaces": [
-                        "str"  # Optional. A list of workspaces that are included in the
-                          query.
+                        "str"  # Optional. A list of workspaces to query in addition to the
+                          primary workspace.
                     ]
                 }
 
@@ -1538,16 +1560,17 @@ class QueryOperations:
     async def resource_execute_xms(
         self,
         resource_id: str,
-        body: IO,
+        body: IO[bytes],
         *,
         prefer: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
-        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
         example for using POST with an Analytics query.
 
         :param resource_id: The identifier of the resource. Required.
@@ -1555,7 +1578,7 @@ class QueryOperations:
         :param body: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
          Required.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
          visualization information. Default value is None.
         :paramtype prefer: str
@@ -1619,26 +1642,24 @@ class QueryOperations:
 
     @distributed_trace_async
     async def resource_execute_xms(
-        self, resource_id: str, body: Union[JSON, IO], *, prefer: Optional[str] = None, **kwargs: Any
+        self, resource_id: str, body: Union[JSON, IO[bytes]], *, prefer: Optional[str] = None, **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
-        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
         example for using POST with an Analytics query.
 
         :param resource_id: The identifier of the resource. Required.
         :type resource_id: str
         :param body: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_. Is
-         either a JSON type or a IO type. Required.
-        :type body: JSON or IO
+         either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
         :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
          visualization information. Default value is None.
         :paramtype prefer: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1653,8 +1674,8 @@ class QueryOperations:
                       data. This is an ISO8601 time period value.  This timespan is applied in addition
                       to any that are specified in the query expression.
                     "workspaces": [
-                        "str"  # Optional. A list of workspaces that are included in the
-                          query.
+                        "str"  # Optional. A list of workspaces to query in addition to the
+                          primary workspace.
                     ]
                 }
 
@@ -1705,7 +1726,7 @@ class QueryOperations:
                     "statistics": {}  # Optional. Statistics represented in JSON format.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1722,12 +1743,12 @@ class QueryOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(body, (IO, bytes)):
+        if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
             _json = body
 
-        request = build_query_resource_execute_xms_request(
+        _request = build_query_resource_execute_xms_request(
             resource_id=resource_id,
             prefer=prefer,
             content_type=content_type,
@@ -1736,16 +1757,18 @@ class QueryOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1755,9 +1778,9 @@ class QueryOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
 
 class MetadataOperations:
@@ -1779,13 +1802,14 @@ class MetadataOperations:
 
     @distributed_trace_async
     async def get(self, workspace_id: str, **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Gets metadata information.
 
         Retrieve the metadata information for the workspace, including its schema, functions, workspace
         info, categories etc.
 
-        :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
-         Azure portal. Required.
+        :param workspace_id: Primary Workspace ID of the query. This is the Workspace ID from the
+         Properties blade in the Azure portal. Required.
         :type workspace_id: str
         :return: JSON object
         :rtype: JSON
@@ -2135,7 +2159,7 @@ class MetadataOperations:
                     ]
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2148,21 +2172,23 @@ class MetadataOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_metadata_get_request(
+        _request = build_metadata_get_request(
             workspace_id=workspace_id,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -2172,19 +2198,20 @@ class MetadataOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace_async
     async def post(self, workspace_id: str, **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Gets metadata information.
 
         Retrieve the metadata information for the workspace, including its schema, functions, workspace
         info, categories etc.
 
-        :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
-         Azure portal. Required.
+        :param workspace_id: Primary Workspace ID of the query. This is the Workspace ID from the
+         Properties blade in the Azure portal. Required.
         :type workspace_id: str
         :return: JSON object
         :rtype: JSON
@@ -2534,7 +2561,7 @@ class MetadataOperations:
                     ]
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2547,21 +2574,23 @@ class MetadataOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_metadata_post_request(
+        _request = build_metadata_post_request(
             workspace_id=workspace_id,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -2571,6 +2600,6 @@ class MetadataOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore

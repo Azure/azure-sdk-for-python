@@ -1,6 +1,6 @@
 # azure-keyvault-administration Performance Tests
 
-In order to run the performance tests, the `azure-devtools` package must be installed. This is done as part of the
+In order to run the performance tests, the `devtools_testutils` package must be installed. This is done as part of the
 `dev_requirements` install. Start by creating a new virtual environment for your perf tests. This will need to be a
 Python 3 environment, preferably >=3.7.
 
@@ -24,7 +24,7 @@ AZURE_MANAGEDHSM_URL=<URL of the testing key vault>
 
 ## Test commands
 
-Once `azure-devtools` is installed, you will have access to the `perfstress` command line tool, which will scan the
+Once `devtools_testutils` is installed, you will have access to the `perfstress` command line tool, which will scan the
 current module for runnable perf tests. Only a specific test can be run at a time (i.e. there is no "run all" feature).
 
 ```cmd

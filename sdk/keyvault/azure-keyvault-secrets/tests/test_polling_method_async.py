@@ -4,14 +4,18 @@
 # ------------------------------------
 import pytest
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.pipeline import PipelineContext, PipelineResponse
+from azure.core.pipeline.transport import AioHttpTransport, AsyncHttpTransport
 from azure.keyvault.secrets._shared._polling_async import AsyncDeleteRecoverPollingMethod
 
 from _shared.helpers import mock, mock_response
 from _shared.helpers_async import get_completed_future
 
-SLEEP = AsyncDeleteRecoverPollingMethod.__module__ + ".asyncio.sleep"
+SLEEP = AsyncHttpTransport.__module__ + ".asyncio.sleep"
 
 raise_exception = lambda message: mock.Mock(side_effect=Exception(message))
+
+mock_pipeline_response = PipelineResponse(mock.Mock(), mock.Mock(), PipelineContext(AioHttpTransport()))
 
 
 @pytest.mark.asyncio
@@ -19,7 +23,9 @@ async def test_initialized_finished():
     """When the polling method is initialized as finished, it shouldn't invoke the command or sleep"""
 
     command = raise_exception("polling method shouldn't invoke the command")
-    polling_method = AsyncDeleteRecoverPollingMethod(command, final_resource=None, finished=True)
+    polling_method = AsyncDeleteRecoverPollingMethod(
+        mock_pipeline_response, command, final_resource=None, finished=True
+    )
 
     assert polling_method.finished()
 
@@ -44,7 +50,9 @@ async def test_continues_polling_when_resource_not_found():
 
         _command.operation_complete = True
 
-    polling_method = AsyncDeleteRecoverPollingMethod(command, final_resource=None, finished=False)
+    polling_method = AsyncDeleteRecoverPollingMethod(
+        mock_pipeline_response, command, final_resource=None, finished=False
+    )
 
     sleep = mock.Mock(return_value=get_completed_future())
     with mock.patch(SLEEP, sleep):
@@ -75,7 +83,9 @@ async def test_run_idempotence():
         _command.operation_complete = True
 
     resource = object()
-    polling_method = AsyncDeleteRecoverPollingMethod(command, final_resource=resource, finished=False)
+    polling_method = AsyncDeleteRecoverPollingMethod(
+        mock_pipeline_response, command, final_resource=resource, finished=False
+    )
     assert not polling_method.finished()
 
     sleep = mock.Mock(return_value=get_completed_future())
@@ -98,12 +108,16 @@ async def test_final_resource():
     """The polling method should always expose the final resource"""
 
     resource = object()
-
-    assert AsyncDeleteRecoverPollingMethod(command=None, final_resource=resource, finished=True).resource() is resource
+    final_resource = AsyncDeleteRecoverPollingMethod(
+        mock_pipeline_response, command=None, final_resource=resource, finished=True
+    ).resource()
+    assert final_resource is resource
 
     response = mock.Mock(status_code=403)
     command = mock.Mock(side_effect=HttpResponseError(response=response))
-    polling_method = AsyncDeleteRecoverPollingMethod(command, final_resource=resource, finished=False)
+    polling_method = AsyncDeleteRecoverPollingMethod(
+        mock_pipeline_response, command, final_resource=resource, finished=False
+    )
 
     assert polling_method.resource() is resource
     await polling_method.run()
@@ -115,7 +129,9 @@ async def test_terminal_first_response():
     """The polling method shouldn't sleep when Key Vault's first response indicates the operation is complete"""
 
     command = mock.Mock(return_value=get_completed_future())
-    polling_method = AsyncDeleteRecoverPollingMethod(command, final_resource=None, finished=False)
+    polling_method = AsyncDeleteRecoverPollingMethod(
+        mock_pipeline_response, command, final_resource=None, finished=False
+    )
 
     with mock.patch(SLEEP, raise_exception("polling method shouldn't sleep after the operation completes")):
         await polling_method.run()
@@ -131,7 +147,9 @@ async def test_propagates_unexpected_error():
     response = mock_response(status_code=418, json_payload={"error": {"code": 418, "message": "I'm a teapot."}})
     error = HttpResponseError(response=response)
     command = mock.Mock(side_effect=error)
-    polling_method = AsyncDeleteRecoverPollingMethod(command, final_resource=None, finished=False)
+    polling_method = AsyncDeleteRecoverPollingMethod(
+        mock_pipeline_response, command, final_resource=None, finished=False
+    )
 
     with mock.patch(SLEEP, raise_exception("polling method shouldn't sleep after an unexpected error")):
         with pytest.raises(HttpResponseError):

@@ -8,7 +8,7 @@ import pytest
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import HttpResponseError
-from azure.ai.formrecognizer._generated.v2023_02_28_preview.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2023_07_31.models import AnalyzeResultOperation
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 from azure.ai.formrecognizer import AnalysisFeature, AnalyzeResult
 from preparers import FormRecognizerPreparer
@@ -34,7 +34,7 @@ class TestDACAnalyzeLayoutAsync(AsyncFormRecognizerTest):
                 poller = await client.begin_analyze_document(
                     "prebuilt-layout",
                     document,
-                    features=AnalysisFeature.OCR_FONT
+                    features=AnalysisFeature.STYLE_FONT
                 )
 
     @skip_flaky_test
@@ -57,7 +57,7 @@ class TestDACAnalyzeLayoutAsync(AsyncFormRecognizerTest):
             poller = await client.begin_analyze_document(
                 "prebuilt-layout",
                 document,
-                features=[AnalysisFeature.OCR_FONT],
+                features=[AnalysisFeature.STYLE_FONT],
                 cls=callback
             )
             result = await poller.result()
@@ -174,24 +174,9 @@ class TestDACAnalyzeLayoutAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_layout_url_annotations(self, client):
-        async with client:
-            poller = await client.begin_analyze_document_from_url("prebuilt-layout", self.annotations_url_jpg)
-            layout = await poller.result()
-        assert len(layout.pages) > 0
-        assert len(layout.pages[0].annotations) > 0
-        assert layout.pages[0].annotations[0].kind == "check"
-        assert layout.pages[0].annotations[0].polygon
-        assert layout.pages[0].annotations[0].confidence > 0.5
-
-    @pytest.mark.live_test_only
-    @skip_flaky_test
-    @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
-    @recorded_by_proxy_async
     async def test_layout_url_barcodes(self, client):
         async with client:
-            poller = await client.begin_analyze_document_from_url("prebuilt-layout", self.barcode_url_tif)
+            poller = await client.begin_analyze_document_from_url("prebuilt-layout", self.barcode_url_tif, features=[AnalysisFeature.BARCODES])
             layout = await poller.result()
         assert len(layout.pages) > 0
         assert len(layout.pages[0].barcodes) == 2

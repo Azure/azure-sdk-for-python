@@ -48,7 +48,7 @@ class SystemCreatedAcrAccount:
     # Class method instead of normal function to accept possible
     # string input.
     @classmethod
-    def _to_rest_object(cls, acr) -> RestAcrDetails:
+    def _to_rest_object(cls, acr: Union[str, "SystemCreatedAcrAccount"]) -> RestAcrDetails:
         if hasattr(acr, "acr_account_sku") and acr.acr_account_sku is not None:
             # SKU enum requires input to be a capitalized word,
             # so we format the input to be acceptable as long as spelling is
@@ -69,7 +69,7 @@ class SystemCreatedAcrAccount:
             )
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestAcrDetails) -> "Union[str, SystemCreatedAcrAccount]":
+    def _from_rest_object(cls, rest_obj: RestAcrDetails) -> Optional["Union[str, SystemCreatedAcrAccount]"]:
         if not rest_obj:
             return None
         if hasattr(rest_obj, "system_created_acr_account") and rest_obj.system_created_acr_account is not None:
@@ -81,7 +81,8 @@ class SystemCreatedAcrAccount:
                 arm_resource_id=resource_id,
             )
         elif hasattr(rest_obj, "user_created_acr_account") and rest_obj.user_created_acr_account is not None:
-            return rest_obj.user_created_acr_account.arm_resource_id.resource_id
+            res: Optional[str] = rest_obj.user_created_acr_account.arm_resource_id.resource_id
+            return res
         else:
             return None
 
@@ -91,10 +92,10 @@ class SystemCreatedStorageAccount:
         self,
         *,
         storage_account_hns: bool,
-        storage_account_type: StorageAccountType,
+        storage_account_type: Optional[StorageAccountType],
         arm_resource_id: Optional[str] = None,
         replicated_ids: Optional[List[str]] = None,
-        replication_count=1,
+        replication_count: int = 1,
     ):
         """
         :param arm_resource_id: Resource ID of the storage account.
@@ -149,18 +150,20 @@ class RegistryRegionDetails:
         self.storage_config = storage_config
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestRegistryRegionArmDetails) -> "RegistryRegionDetails":
+    def _from_rest_object(cls, rest_obj: RestRegistryRegionArmDetails) -> Optional["RegistryRegionDetails"]:
         if not rest_obj:
             return None
         converted_acr_details = []
         if rest_obj.acr_details:
             converted_acr_details = [SystemCreatedAcrAccount._from_rest_object(acr) for acr in rest_obj.acr_details]
-        storages = []
+        storages: Optional[Union[List[str], SystemCreatedStorageAccount]] = []
         if rest_obj.storage_account_details:
             storages = cls._storage_config_from_rest_object(rest_obj.storage_account_details)
 
         return RegistryRegionDetails(
-            acr_config=converted_acr_details, location=rest_obj.location, storage_config=storages
+            acr_config=converted_acr_details,  # type: ignore[arg-type]
+            location=rest_obj.location,
+            storage_config=storages,
         )
 
     def _to_rest_object(self) -> RestRegistryRegionArmDetails:
@@ -182,6 +185,7 @@ class RegistryRegionDetails:
         # or list of user-inputted id's.
         if (
             storage is not None
+            and not isinstance(storage, list)
             and hasattr(storage, "storage_account_type")
             and storage.storage_account_type is not None
         ):
@@ -202,22 +206,23 @@ class RegistryRegionDetails:
             if count < 1:
                 raise ValueError(f"Replication count cannot be less than 1. Value was: {count}.")
             return [deepcopy(account) for _ in range(0, count)]
-        elif storage is not None and len(storage) > 0:
+        elif storage is not None and not isinstance(storage, SystemCreatedStorageAccount) and len(storage) > 0:
             return [_make_rest_user_storage_from_id(user_id=user_id) for user_id in storage]
         else:
             return []
 
     @classmethod
     def _storage_config_from_rest_object(
-        cls, rest_configs: List[RestStorageAccountDetails]
-    ) -> Union[List[str], SystemCreatedStorageAccount]:
+        cls, rest_configs: Optional[List]
+    ) -> Optional[Union[List[str], SystemCreatedStorageAccount]]:
         if not rest_configs:
             return None
         num_configs = len(rest_configs)
         if num_configs == 0:
             return None
         system_created_count = reduce(
-            lambda x, y: int(x) + int(y),
+            # TODO: Bug Item number: 2883323
+            lambda x, y: int(x) + int(y),  # type: ignore
             [
                 hasattr(config, "system_created_storage_account") and config.system_created_storage_account is not None
                 for config in rest_configs
@@ -243,9 +248,11 @@ class RegistryRegionDetails:
                 ]
             return SystemCreatedStorageAccount(
                 storage_account_hns=first_config.storage_account_hns_enabled,
-                storage_account_type=(StorageAccountType(first_config.storage_account_type.lower()))
-                if first_config.storage_account_type
-                else None,
+                storage_account_type=(
+                    (StorageAccountType(first_config.storage_account_type.lower()))
+                    if first_config.storage_account_type
+                    else None
+                ),
                 arm_resource_id=resource_id,
                 replication_count=num_configs,
                 replicated_ids=replicated_ids,
@@ -263,3 +270,4 @@ class RegistryRegionDetails:
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
             log_and_raise_error(err)
+            return None

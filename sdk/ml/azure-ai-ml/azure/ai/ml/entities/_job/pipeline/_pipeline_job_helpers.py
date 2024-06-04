@@ -2,12 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import re
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Tuple, Type, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import InputDeliveryMode
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Mpi, PyTorch, TensorFlow, Ray
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Mpi, PyTorch, Ray, TensorFlow
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
@@ -21,21 +21,23 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 
 def process_sdk_component_job_io(
-    io: Dict[str, Union[str, float, bool, Input]],
+    io: Dict,
     io_binding_regex_list: List[str],
-) -> Tuple[Dict[str, str], Dict[str, Union[str, float, bool, Input]]]:
+) -> Tuple:
     """Separates SDK ComponentJob inputs that are data bindings (i.e. string inputs prefixed with 'inputs.' or
     'outputs.') and dataset and literal inputs/outputs.
 
     :param io: Input or output dictionary of an SDK ComponentJob
     :type io:  Dict[str, Union[str, float, bool, Input]]
-    :return: A tuple of dictionaries: \
-            One mapping inputs to REST formatted ComponentJobInput/ComponentJobOutput for data binding io.
-            The other dictionary contains any IO that is not a databinding that is yet to be turned into REST form
+    :param io_binding_regex_list: A list of regexes for io bindings
+    :type io_binding_regex_list: List[str]
+    :return: A tuple of dictionaries:
+      * One mapping inputs to REST formatted ComponentJobInput/ComponentJobOutput for data binding io.
+      * The other dictionary contains any IO that is not a databinding that is yet to be turned into REST form
     :rtype: Tuple[Dict[str, str], Dict[str, Union[str, float, bool, Input]]]
     """
-    io_bindings = {}
-    dataset_literal_io = {}
+    io_bindings: Dict = {}
+    dataset_literal_io: Dict = {}
     legacy_io_binding_regex_list = [
         ComponentJobConstants.LEGACY_INPUT_PATTERN,
         ComponentJobConstants.LEGACY_OUTPUT_PATTERN,
@@ -85,16 +87,21 @@ def process_sdk_component_job_io(
 
 def from_dict_to_rest_io(
     io: Dict[str, Union[str, dict]],
-    rest_object_class,
+    rest_object_class: Union[Type[RestJobInput], Type[RestJobOutput]],
     io_binding_regex_list: List[str],
 ) -> Tuple[Dict[str, str], Dict[str, Union[RestJobInput, RestJobOutput]]]:
     """Translate rest JObject dictionary to rest inputs/outputs and bindings.
 
     :param io: Input or output dictionary.
+    :type io: Dict[str, Union[str, dict]]
     :param rest_object_class: RestJobInput or RestJobOutput
+    :type rest_object_class: Union[Type[RestJobInput], Type[RestJobOutput]]
+    :param io_binding_regex_list: A list of regexes for io bindings
+    :type io_binding_regex_list: List[str]
     :return: Map from IO name to IO bindings and Map from IO name to IO objects.
+    :rtype: Tuple[Dict[str, str], Dict[str, Union[RestJobInput, RestJobOutput]]]
     """
-    io_bindings = {}
+    io_bindings: dict = {}
     rest_io_objects = {}
     DIRTY_MODE_MAPPING = {
         "Mount": InputDeliveryMode.READ_ONLY_MOUNT,
@@ -156,9 +163,7 @@ def from_dict_to_rest_io(
     return io_bindings, rest_io_objects
 
 
-def from_dict_to_rest_distribution(
-    distribution_dict: Dict[str, Union[str, int]]
-) -> Union[PyTorch, Mpi, TensorFlow, Ray]:
+def from_dict_to_rest_distribution(distribution_dict: Dict) -> Union[PyTorch, Mpi, TensorFlow, Ray]:
     target_type = distribution_dict["distribution_type"].lower()
     if target_type == "pytorch":
         return PyTorch(**distribution_dict)

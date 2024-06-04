@@ -4,3 +4,4 @@ psutil
 azure-servicebus
 python-dotenv
 websocket-client
+memray

@@ -5,6 +5,7 @@ An example to show an application using the ApplicationInsightsSampler to enable
 Specify a sampling rate for the sampler to limit the amount of telemetry records you receive. Custom dependencies
  are tracked via spans and telemetry is exported to application insights with the AzureMonitorTraceExporter.
 """
+# mypy: disable-error-code="attr-defined"
 import os
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider

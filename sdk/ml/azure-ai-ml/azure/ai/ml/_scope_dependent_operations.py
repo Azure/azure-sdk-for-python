@@ -50,11 +50,15 @@ class OperationScope(object):
         resource_group_name: str,
         workspace_name: Optional[str],
         registry_name: Optional[str] = None,
+        workspace_id: Optional[str] = None,
+        workspace_location: Optional[str] = None,
     ):
         self._subscription_id = subscription_id
         self._resource_group_name = resource_group_name
         self._workspace_name = workspace_name
         self._registry_name = registry_name
+        self._workspace_id = workspace_id
+        self._workspace_location = workspace_location
 
     @property
     def subscription_id(self) -> str:
@@ -68,13 +72,13 @@ class OperationScope(object):
     def workspace_name(self) -> Optional[str]:
         return self._workspace_name
 
-    @property
-    def registry_name(self) -> Optional[str]:
-        return self._registry_name
-
     @workspace_name.setter
     def workspace_name(self, value: str) -> None:
         self._workspace_name = value
+
+    @property
+    def registry_name(self) -> Optional[str]:
+        return self._registry_name
 
     @registry_name.setter
     def registry_name(self, value: str) -> None:
@@ -85,7 +89,7 @@ class _ScopeDependentOperations(object):
     def __init__(self, operation_scope: OperationScope, operation_config: OperationConfig):
         self._operation_scope = operation_scope
         self._operation_config = operation_config
-        self._scope_kwargs = {
+        self._scope_kwargs: Dict = {
             "resource_group_name": self._operation_scope.resource_group_name,
         }
 
@@ -119,7 +123,7 @@ class OperationsContainer(object):
         self._all_operations = {}
 
     @property
-    def all_operations(self) -> Dict[str, _ScopeDependentOperations]:
+    def all_operations(self) -> Dict:
         return self._all_operations
 
     def add(self, name: str, operation: _ScopeDependentOperations) -> None:

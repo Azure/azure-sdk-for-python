@@ -36,7 +36,7 @@ from utilities import load_registry, get_authority, get_credential
 class HelloWorldAsync(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
+        self.endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         self.authority = get_authority(self.endpoint)
         self.credential = get_credential(self.authority, is_async=True)
 
@@ -45,7 +45,7 @@ class HelloWorldAsync(object):
         # Instantiate an instance of ContainerRegistryClient
         # [START create_registry_client]
         async with ContainerRegistryClient(self.endpoint, self.credential) as client:
-        # [END create_registry_client]
+            # [END create_registry_client]
             # Iterate through all the repositories
             async for repository_name in client.list_repository_names():
                 print(repository_name)
@@ -53,13 +53,10 @@ class HelloWorldAsync(object):
                     print("Tags of repository library/hello-world:")
                     async for tag in client.list_tag_properties(repository_name):
                         print(tag.name)
-                        
+
                         # Make sure will have the permission to delete the repository later
                         await client.update_manifest_properties(
-                            repository_name,
-                            tag.name,
-                            can_write=True,
-                            can_delete=True
+                            repository_name, tag.name, can_write=True, can_delete=True
                         )
 
                     print("Deleting " + repository_name)

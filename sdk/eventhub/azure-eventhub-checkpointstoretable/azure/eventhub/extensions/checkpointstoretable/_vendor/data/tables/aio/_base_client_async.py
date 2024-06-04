@@ -83,7 +83,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         elif isinstance(credential, AzureNamedKeyCredential):
             self._credential_policy = SharedKeyCredentialPolicy(credential)  # type: ignore
         elif credential is not None:
-            raise TypeError("Unsupported credential: {}".format(credential))
+            raise TypeError("Unsupported credential: {}".format(type(credential)))
 
     def _configure_policies(self, **kwargs):
         return [

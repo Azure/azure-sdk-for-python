@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
+import pytest_asyncio
 
 from azure.core.credentials import AzureKeyCredential
 from azure.mixedreality.remoterendering import RemoteRenderingClient
@@ -12,7 +13,8 @@ from devtools_testutils.sanitizers import (
     add_body_key_sanitizer,
     add_general_regex_sanitizer,
     add_remove_header_sanitizer,
-    is_live
+    is_live,
+    remove_batch_sanitizers,
 )
 
 # Environment variable keys
@@ -57,6 +59,10 @@ def add_sanitizers(test_proxy, environment_variables):
         value=TEST_ID_PLACEHOLDER
     )
 
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3430: $..id
+    remove_batch_sanitizers(["AZSDK3430"])
+
 
 @pytest.fixture(scope="session")
 def account_info(environment_variables):
@@ -91,7 +97,7 @@ def arr_client(account_info):
     client.close()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def async_arr_client(account_info):
     polling_interval = 10 if is_live() else 0
     client = RemoteRenderingClientAsync(

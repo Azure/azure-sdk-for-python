@@ -11,7 +11,7 @@ TYPE = 'TYPE'
 VALUE = 'VALUE'
 
 
-class AMQPTypes(object):  # pylint: disable=no-init
+class AMQPTypes(object):
     null = 'NULL'
     boolean = 'BOOL'
     ubyte = 'UBYTE'
@@ -51,7 +51,7 @@ class ObjDefinition(Enum):
     error = "error"
 
 
-class ConstructorBytes(object):  # pylint: disable=no-init
+class ConstructorBytes(object):
     null = b'\x40'
     bool = b'\x56'
     bool_true = b'\x41'

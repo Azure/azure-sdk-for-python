@@ -26,26 +26,31 @@ from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 def main():
     client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="1234ABCD-0A1B-1234-5678-123456ABCDEF",
     )
 
     response = client.ip_communities.begin_create(
-        resource_group_name="rgIpCommunityLists",
-        ip_community_name="example-ipCommunity",
+        resource_group_name="example-rg",
+        ip_community_name="example-ipcommunity",
         body={
-            "location": "EastUS",
+            "location": "eastus",
             "properties": {
-                "action": "Permit",
-                "annotation": "annotationValue",
-                "communityMembers": ["1234:5678"],
-                "wellKnownCommunities": ["Internet", "LocalAS", "NoExport", "GShut"],
+                "annotation": "annotation",
+                "ipCommunityRules": [
+                    {
+                        "action": "Permit",
+                        "communityMembers": ["1:1"],
+                        "sequenceNumber": 4155123341,
+                        "wellKnownCommunities": ["Internet"],
+                    }
+                ],
             },
-            "tags": {"key2814": ""},
+            "tags": {"keyId": "KeyValue"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/IpCommunities_Create_MaximumSet_Gen.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/stable/2023-06-15/examples/IpCommunities_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

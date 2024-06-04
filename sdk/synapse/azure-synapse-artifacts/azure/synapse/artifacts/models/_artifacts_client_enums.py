@@ -10,6 +10,36 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ActionOnExistingTargetTable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Action on existing target table. If not specified, 'FailOnNonEmptyTable' action is used."""
+
+    FAIL_ON_NON_EMPTY_TABLE = "FailOnNonEmptyTable"
+    """Same existing tables on target database will be Failed."""
+    DROP_AND_RECREATE_TABLE = "DropAndRecreateTable"
+    """Same existing tables on target database will be dropped and recreated."""
+    MERGE_WITH_EXISTING_DATA = "MergeWithExistingData"
+    """Same existing tables on target database will be Merged together."""
+
+
+class ActivityOnInactiveMarkAs(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status result of the activity when the state is set to Inactive. This is an optional property
+    and if not provided when the activity is inactive, the status will be Succeeded by default.
+    """
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    SKIPPED = "Skipped"
+
+
+class ActivityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Activity state. This is an optional property and if not provided, the state will be Active by
+    default.
+    """
+
+    ACTIVE = "Active"
+    INACTIVE = "Inactive"
+
+
 class AmazonRdsForOraclePartitionOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AmazonRdsForOraclePartitionOption."""
 
@@ -152,6 +182,12 @@ class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESTORE = "Restore"
 
 
+class CredentialReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Credential reference type."""
+
+    CREDENTIAL_REFERENCE = "CredentialReference"
+
+
 class DataFlowComputeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Compute type of the cluster which will execute data flow job."""
 
@@ -247,8 +283,8 @@ class DynamicsSinkWriteBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UPSERT = "Upsert"
 
 
-class Enum9(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum9."""
+class Enum13(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum13."""
 
     APPENDBLOCK = "appendblock"
 
@@ -267,6 +303,15 @@ class ExpressionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Expression type."""
 
     EXPRESSION = "Expression"
+
+
+class ExpressionV2Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of expressions supported by the system. Type: string."""
+
+    CONSTANT = "Constant"
+    FIELD = "Field"
+    UNARY = "Unary"
+    BINARY = "Binary"
 
 
 class FtpAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -289,6 +334,13 @@ class GoogleBigQueryAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumM
     """The OAuth 2.0 authentication mechanism used for authentication. ServiceAuthentication can only
     be used on self-hosted IR.
     """
+
+    SERVICE_AUTHENTICATION = "ServiceAuthentication"
+    USER_AUTHENTICATION = "UserAuthentication"
+
+
+class GoogleBigQueryV2AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The OAuth 2.0 authentication mechanism used for authentication."""
 
     SERVICE_AUTHENTICATION = "ServiceAuthentication"
     USER_AUTHENTICATION = "UserAuthentication"
@@ -497,6 +549,7 @@ class NotebookParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INT = "int"
     FLOAT = "float"
     BOOL = "bool"
+    INT_ENUM = "int"
 
 
 class NotebookReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -549,6 +602,7 @@ class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BOOL = "Bool"
     ARRAY = "Array"
     SECURE_STRING = "SecureString"
+    INT_ENUM = "Int"
 
 
 class ParquetCompressionCodecEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -709,10 +763,17 @@ class SalesforceSinkWriteBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SalesforceSourceReadBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The read behavior for the operation. Default is Query."""
+    """The Salesforce read behavior for the operation."""
 
     QUERY = "Query"
     QUERY_ALL = "QueryAll"
+
+
+class SalesforceV2SinkWriteBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The write behavior for the operation. Default is Insert."""
+
+    INSERT = "Insert"
+    UPSERT = "Upsert"
 
 
 class SapCloudForCustomerSinkWriteBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -789,7 +850,7 @@ class ScriptActivityParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ScriptType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the query. Type: string."""
+    """The type of the ScriptActivityScriptBlock."""
 
     QUERY = "Query"
     NON_QUERY = "NonQuery"
@@ -802,11 +863,26 @@ class ServiceNowAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     O_AUTH2 = "OAuth2"
 
 
+class ServiceNowV2AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication type to use."""
+
+    BASIC = "Basic"
+    O_AUTH2 = "OAuth2"
+
+
 class SftpAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The authentication type to be used to connect to the FTP server."""
 
     BASIC = "Basic"
     SSH_PUBLIC_KEY = "SshPublicKey"
+
+
+class SnowflakeAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    BASIC = "Basic"
+    KEY_PAIR = "KeyPair"
+    AAD_SERVICE_PRINCIPAL = "AADServicePrincipal"
 
 
 class SparkAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -871,6 +947,14 @@ class SparkThriftTransportProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     HTTP = "HTTP "
 
 
+class SqlAlwaysEncryptedAkvAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sql always encrypted AKV authentication type. Type: string."""
+
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
+
+
 class SqlConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the connection."""
 
@@ -923,6 +1007,7 @@ class StoredProcedureParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     GUID = "Guid"
     BOOLEAN = "Boolean"
     DATE = "Date"
+    INT_ENUM = "Int"
 
 
 class SybaseAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -254,7 +254,7 @@ class TablesBaseClient(AccountHostsMixin):
         elif isinstance(credential, AzureNamedKeyCredential):
             self._credential_policy = SharedKeyCredentialPolicy(credential)  # type: ignore
         elif credential is not None:
-            raise TypeError("Unsupported credential: {}".format(credential))
+            raise TypeError("Unsupported credential: {}".format(type(credential)))
 
     def _batch_send(self, *reqs, **kwargs):
         # type: (List[HttpRequest], Any) -> List[Mapping[str, Any]]

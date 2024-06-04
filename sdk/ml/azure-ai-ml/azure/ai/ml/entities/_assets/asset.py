@@ -5,7 +5,7 @@
 import uuid
 from abc import abstractmethod
 from os import PathLike
-from typing import IO, AnyStr, Dict, Optional, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._utils.utils import dump_yaml_to_file
@@ -14,20 +14,24 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 
 
 class Asset(Resource):
-    """Base class for asset, can't be instantiated directly.
+    """Base class for asset.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param version: Version of the asset.
-    :type version: str
-    :param description: Description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    This class should not be instantiated directly. Instead, use one of its subclasses.
+
+    :param name: The name of the asset. Defaults to a random GUID.
+    :type name: Optional[str]]
+    :param version: The version of the asset. Defaults to "1" if no name is provided, otherwise defaults to
+        autoincrement from the last registered version of the asset with that name. For a model name that has
+        never been registered, a default version will be assigned.
+    :type version: Optional[str]
+    :param description: The description of the resource. Defaults to None.
+    :type description: Optional[str]
+    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :type tags: Optional[dict[str, str]]
+    :param properties: The asset property dictionary. Defaults to None.
+    :type properties: Optional[dict[str, str]]
+    :keyword kwargs: A dictionary of additional configuration parameters.
+    :paramtype kwargs: Optional[dict]
     """
 
     def __init__(
@@ -37,8 +41,8 @@ class Asset(Resource):
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         self._is_anonymous = kwargs.pop("is_anonymous", False)
         self._auto_increment_version = kwargs.pop("auto_increment_version", False)
         self.auto_delete_setting = kwargs.pop("auto_delete_setting", None)
@@ -74,11 +78,22 @@ class Asset(Resource):
         """Dump the artifact content into a pure dict object."""
 
     @property
-    def version(self) -> str:
+    def version(self) -> Optional[str]:
+        """The asset version.
+
+        :return: The asset version.
+        :rtype: str
+        """
         return self._version
 
     @version.setter
     def version(self, value: str) -> None:
+        """Sets the asset version.
+
+        :param value: The asset version.
+        :type value: str
+        :raises ValidationException: Raised if value is not a string.
+        """
         if value:
             if not isinstance(value, str):
                 msg = f"Asset version must be a string, not type {type(value)}."
@@ -94,23 +109,22 @@ class Asset(Resource):
         self._version = value
         self._auto_increment_version = self.name and not self._version
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
-        """Dump the asset content into a file in yaml format.
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
+        """Dump the asset content into a file in YAML format.
 
-        :param dest: The destination to receive this asset's content.
-            Must be either a path to a local file, or an already-open file stream.
-            If dest is a file path, a new file will be created,
-            and an exception is raised if the file exists.
-            If dest is an open file, the file will be written to directly,
-            and an exception will be raised if the file is not writable.
+        :param dest: The local path or file stream to write the YAML content to.
+            If dest is a file path, a new file will be created.
+            If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
+        :raises FileExistsError: Raised if dest is a file path and the file already exists.
+        :raises IOError: Raised if dest is an open file and the file is not writable.
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
-    def __eq__(self, other) -> bool:
-        return (
+    def __eq__(self, other: Any) -> bool:
+        return bool(
             self.name == other.name
             and self.id == other.id
             and self.version == other.version
@@ -123,7 +137,7 @@ class Asset(Resource):
             and self.auto_delete_setting == other.auto_delete_setting
         )
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
 

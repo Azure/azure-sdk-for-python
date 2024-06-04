@@ -4,6 +4,8 @@
 # ------------------------------------
 import os
 
+from azure.keyvault.administration import KeyVaultBackupResult
+
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
 # 1. A managed HSM (https://docs.microsoft.com/azure/key-vault/managed-hsm/quick-create-cli)
@@ -50,16 +52,20 @@ print("\n.. Back up the vault")
 CONTAINER_URL = os.environ["CONTAINER_URL"]
 SAS_TOKEN = os.environ["SAS_TOKEN"]
 
-backup_result = client.begin_backup(CONTAINER_URL, SAS_TOKEN).result()
+backup_result: KeyVaultBackupResult = client.begin_backup(CONTAINER_URL, sas_token=SAS_TOKEN).result()
 print(f"Azure Storage Blob URL of the backup: {backup_result.folder_url}")
 # [END begin_backup]
 print("Vault backed up successfully.")
+assert backup_result.folder_url
 
 # Now let's the vault by calling begin_restore, which also returns a poller. Calling result() on the poller will
 # return None after the operation completes. Calling wait() on the poller will wait until the operation is complete.
 # To restore a single key from the backed up vault instead, pass the key_name keyword argument.
 print("\n.. Restore the full vault")
 # [START begin_restore]
-client.begin_restore(backup_result.folder_url, SAS_TOKEN).wait()
-# [END begin_restore]
+SAS_TOKEN = os.environ["SAS_TOKEN"]
+
+# `backup_result` is the KeyVaultBackupResult returned by `begin_backup`
+client.begin_restore(backup_result.folder_url, sas_token=SAS_TOKEN).wait()
 print("Vault restored successfully.")
+# [END begin_restore]

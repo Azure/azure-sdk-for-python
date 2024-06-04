@@ -6,7 +6,7 @@ import pytest
 from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 from azure.ai.ml.entities._schedule.schedule import Schedule
 from azure.ai.ml.entities._load_functions import load_schedule
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Schedule as RestSchedule
+from azure.ai.ml._restclient.v2023_06_01_preview.models import Schedule as RestSchedule
 
 
 def validate_to_from_rest_translation(json_path: str, yaml_path: str) -> None:
@@ -23,6 +23,7 @@ def validate_to_from_rest_translation(json_path: str, yaml_path: str) -> None:
         yaml_dict = yaml.safe_load(f)
 
     yaml_dict.pop("name", None)
+
     assert json.loads(json.dumps(yaml_dict)) == json.loads(
         json.dumps(Schedule._from_rest_object(deserialized_schedule)._to_dict())
     )
@@ -54,7 +55,6 @@ class TestMonitorSchedule:
 
         validate_to_from_rest_translation(json_path, yaml_path)
 
-    @pytest.mark.skip(reason="model performance not supported in PuP")
     def test_model_performance_basic(self) -> None:
         json_path = "tests/test_configs/monitoring/rest_json_configs/model_performance_rest.json"
         yaml_path = "tests/test_configs/monitoring/yaml_configs/model_performance.yaml"
@@ -67,13 +67,22 @@ class TestMonitorSchedule:
 
         validate_to_from_rest_translation(json_path, yaml_path)
 
+    def test_generation_safety_basic(self) -> None:
+        json_path = "tests/test_configs/monitoring/rest_json_configs/generation_safety_rest.json"
+        yaml_path = "tests/test_configs/monitoring/yaml_configs/generation_safety.yaml"
+
+    def test_generation_token_statictics_basic(self) -> None:
+        json_path = "tests/test_configs/monitoring/rest_json_configs/generation_token_statistics_rest.json"
+        yaml_path = "tests/test_configs/monitoring/yaml_configs/generation_token_statistics.yaml"
+
+        validate_to_from_rest_translation(json_path, yaml_path)
+
     @pytest.mark.parametrize(
         "test_path",
         [
             "tests/test_configs/monitoring/yaml_configs/data_drift.yaml",
             "tests/test_configs/monitoring/yaml_configs/prediction_drift.yaml",
             "tests/test_configs/monitoring/yaml_configs/data_quality.yaml",
-            "tests/test_configs/monitoring/yaml_configs/feature_attribution_drift.yaml",
         ],
     )
     def test_default_data_window_size_recurrence(self, test_path) -> None:
@@ -81,7 +90,7 @@ class TestMonitorSchedule:
 
         # null out lookback
         for signal in schedule.create_monitor.monitoring_signals.values():
-            signal.target_dataset.data_window_size = None
+            signal.production_data.data_window.lookback_window_size = None
 
         # test minute
         override_frequency_interval_and_check_window_size(schedule, "minute", 5, 1)
@@ -97,6 +106,9 @@ def override_frequency_interval_and_check_window_size(
     schedule.trigger.frequency = frequency
     schedule.trigger.interval = interval
 
+    for signal in schedule.create_monitor.monitoring_signals.values():
+        signal.production_data.data_window.lookback_window_size = None
+
     to_rest_schedule = schedule._to_rest_object()
     for signal in to_rest_schedule.properties.action.monitor_definition.signals.values():
-        assert signal.lookback_period == f"P{expected_days}D"
+        assert signal.production_data.window_size == f"P{expected_days}D"

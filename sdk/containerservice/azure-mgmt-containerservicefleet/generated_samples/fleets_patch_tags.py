@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.containerservicefleet import ContainerServiceFleetMgmtClient
 
 """
@@ -29,14 +32,14 @@ def main():
         subscription_id="subid1",
     )
 
-    response = client.fleets.update(
+    response = client.fleets.begin_update(
         resource_group_name="rg1",
         fleet_name="fleet1",
         properties={"tags": {"env": "prod", "tier": "secure"}},
-    )
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/fleet/preview/2023-03-15-preview/examples/Fleets_PatchTags.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/fleet/stable/2024-04-01/examples/Fleets_PatchTags.json
 if __name__ == "__main__":
     main()

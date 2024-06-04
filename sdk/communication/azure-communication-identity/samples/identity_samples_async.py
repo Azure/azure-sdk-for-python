@@ -15,7 +15,7 @@ USAGE:
     python identity_samples_async.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
-    2) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your Communication Services resource
+    2) COMMUNICATION_AUTH_SAMPLES_CONNECTION_STRING - the connection string in your Communication Services resource
     3) AZURE_CLIENT_ID - the client ID of your active directory application
     4) AZURE_CLIENT_SECRET - the secret of your active directory application
     5) AZURE_TENANT_ID - the tenant ID of your active directory application
@@ -34,12 +34,12 @@ import os
 
 class CommunicationIdentityClientSamples(object):
     def __init__(self):
-        self.connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
+        self.connection_string = os.getenv("COMMUNICATION_AUTH_SAMPLES_CONNECTION_STRING", "")
         self.endpoint = os.getenv("AZURE_COMMUNICATION_SERVICE_ENDPOINT")
         self.client_id = os.getenv("AZURE_CLIENT_ID")
         self.client_secret = os.getenv("AZURE_CLIENT_SECRET")
         self.tenant_id = os.getenv("AZURE_TENANT_ID")
-        self.m365_client_id = os.getenv("COMMUNICATION_M365_APP_ID")
+        self.m365_client_id = os.getenv("COMMUNICATION_M365_APP_ID", "")
         self.m365_aad_authority = os.getenv("COMMUNICATION_M365_AAD_AUTHORITY")
         self.m365_aad_tenant = os.getenv("COMMUNICATION_M365_AAD_TENANT")
         self.msal_username = os.getenv("COMMUNICATION_MSAL_USERNAME")
@@ -67,11 +67,11 @@ class CommunicationIdentityClientSamples(object):
 
         async with identity_client:
             user = await identity_client.create_user()
-            print("Issuing token for: " + user.properties.get("id"))
+            print(f"Issuing token for: {user.properties.get('id')}")
             tokenresponse = await identity_client.get_token(
                 user, scopes=[CommunicationTokenScope.CHAT]
             )
-            print("Token issued with value: " + tokenresponse.token)
+            print(f"Token issued with value: {tokenresponse.token}")
 
     async def get_token_with_custom_expiration(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
@@ -95,14 +95,14 @@ class CommunicationIdentityClientSamples(object):
 
         async with identity_client:
             user = await identity_client.create_user()
-            print("Issuing token for: " + user.properties.get("id"))
+            print(f"Issuing token for: {user.properties.get('id')}")
             token_expires_in = timedelta(hours=1)
             tokenresponse = await identity_client.get_token(
                 user,
                 scopes=[CommunicationTokenScope.CHAT],
                 token_expires_in=token_expires_in,
             )
-            print("Issued token with custom expiration: " + tokenresponse.token)
+            print(f"Issued token with custom expiration: {tokenresponse.token}")
 
     async def revoke_tokens(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
@@ -129,9 +129,9 @@ class CommunicationIdentityClientSamples(object):
             tokenresponse = await identity_client.get_token(
                 user, scopes=[CommunicationTokenScope.CHAT]
             )
-            print("Revoking token: " + tokenresponse.token)
+            print(f"Revoking token: {tokenresponse.token}")
             await identity_client.revoke_tokens(user)
-            print(tokenresponse.token + " revoked successfully")
+            print(f"{tokenresponse.token} revoked successfully")
 
     async def create_user(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
@@ -155,7 +155,7 @@ class CommunicationIdentityClientSamples(object):
         async with identity_client:
             print("Creating new user")
             user = await identity_client.create_user()
-            print("User created with id:" + user.properties.get("id"))
+            print(f"User created with id: {user.properties.get('id')}")
 
     async def create_user_and_token(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
@@ -182,8 +182,8 @@ class CommunicationIdentityClientSamples(object):
             user, tokenresponse = await identity_client.create_user_and_token(
                 scopes=[CommunicationTokenScope.CHAT]
             )
-            print("User created with id:" + user.properties.get("id"))
-            print("Token issued with value: " + tokenresponse.token)
+            print(f"User created with id: {user.properties.get('id')}")
+            print(f"Token issued with value: {tokenresponse.token}")
 
     async def create_user_and_token_with_custom_expiration(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
@@ -211,8 +211,8 @@ class CommunicationIdentityClientSamples(object):
             user, tokenresponse = await identity_client.create_user_and_token(
                 scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in
             )
-            print("User created with id:" + user.properties.get("id"))
-            print("Issued token with custom expiration: " + tokenresponse.token)
+            print(f"User created with id: {user.properties.get('id')}")
+            print(f"Issued token with custom expiration: {tokenresponse.token}")
 
     async def delete_user(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
@@ -235,9 +235,9 @@ class CommunicationIdentityClientSamples(object):
 
         async with identity_client:
             user = await identity_client.create_user()
-            print("Deleting user: " + user.properties.get("id"))
+            print(f"Deleting user: {user.properties.get('id')}")
             await identity_client.delete_user(user)
-            print(user.properties.get("id") + " deleted")
+            print(f"{user.properties.get('id')} deleted")
 
     async def get_token_for_teams_user(self):
         if os.getenv("SKIP_INT_IDENTITY_EXCHANGE_TOKEN_TEST") == "true":
@@ -275,12 +275,12 @@ class CommunicationIdentityClientSamples(object):
             )
             aad_token = result["access_token"]
             teams_user_oid = result["id_token_claims"]["oid"]
-            print("AAD access token of a Teams User: " + aad_token)
+            print(f"AAD access token of a Teams User: {aad_token}")
 
             tokenresponse = await identity_client.get_token_for_teams_user(
                 aad_token, self.m365_client_id, teams_user_oid
             )
-            print("Token issued with value: " + tokenresponse.token)
+            print(f"Token issued with value: {tokenresponse.token}")
 
 
 async def main():

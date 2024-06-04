@@ -3,14 +3,12 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import certifi
+
 import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
-import requests
-import traceback
-import urllib3
-from requests.utils import DEFAULT_CA_BUNDLE_PATH as CaCertPath
 
 import config
 
@@ -36,19 +34,15 @@ PARTITION_KEY = PartitionKey(path='/id', kind='Hash')
 # To run this Demo, please provide your own CA certs file or download one from
 #     http://curl.haxx.se/docs/caextract.html
 # Setup the certificate file in .pem format.
-# If you still get an SSLError, try disabling certificate verification and suppress warnings
+CA_CERT_FILE = certifi.where()
 
 def obtain_client():
-    connection_policy = documents.ConnectionPolicy()
-    connection_policy.SSLConfiguration = documents.SSLConfiguration()
-    # Try to setup the cacert.pem
-    # connection_policy.SSLConfiguration.SSLCaCerts = CaCertPath
-    # Else, disable verification
-    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-    connection_policy.SSLConfiguration.SSLCaCerts = False
-
-    return cosmos_client.CosmosClient(HOST, MASTER_KEY, "Session", connection_policy=connection_policy)
-
+    return cosmos_client.CosmosClient(
+        HOST,
+        MASTER_KEY,
+        "Session",
+        connection_verify=CA_CERT_FILE
+    )
 
 # Query for Entity / Entities
 def query_entities(parent, entity_type, id = None):
@@ -65,18 +59,18 @@ def query_entities(parent, entity_type, id = None):
                 entities = list(parent.list_databases())
             else:
                 entities = list(parent.query_databases(find_entity_by_id_query))
-
         elif entity_type == 'container':
             if id == None:
                 entities = list(parent.list_containers())
             else:
                 entities = list(parent.query_containers(find_entity_by_id_query))
-
         elif entity_type == 'document':
             if id == None:
                 entities = list(parent.read_all_items())
             else:
                 entities = list(parent.query_items(find_entity_by_id_query))
+        else:
+            raise ValueError(f"Unexpected entity type: {entity_type}")
     except exceptions.AzureError as e:
         print("The following error occurred while querying for the entity / entities ", entity_type, id if id != None else "")
         print(e)
@@ -639,6 +633,71 @@ def perform_multi_orderby_query(db):
         print("Entity doesn't exist")
 
 
+def use_vector_embedding_policy(db):
+    try:
+        delete_container_if_exists(db, CONTAINER_ID)
+
+        # Create a container with vector embedding policy and vector indexes
+        indexing_policy = {
+            "vectorIndexes": [
+                {"path": "/embeddings", "type": "quantizedFlat"},
+            ]
+        }
+        vector_embedding_policy = {
+            "vectorEmbeddings": [
+                {
+                    "path": "/embeddings",
+                    "dataType": "float32",
+                    "dimensions": 1000,
+                    "distanceFunction": "cosine"
+                }
+            ]
+        }
+
+        created_container = db.create_container(
+            id=CONTAINER_ID,
+            partition_key=PARTITION_KEY,
+            indexing_policy=indexing_policy,
+            vector_embedding_policy=vector_embedding_policy
+        )
+        properties = created_container.read()
+        print(created_container)
+
+        print("\n" + "-" * 25 + "\n9. Container created with vector embedding policy and vector indexes")
+        print_dictionary_items(properties["indexingPolicy"])
+        print_dictionary_items(properties["vectorEmbeddingPolicy"])
+
+        # We define our own get_embeddings() function for the sake of the sample, but you should be using a third
+        # party service to generate these properly
+        def get_embeddings(num):
+            return f"{str(num)}, {str(num)}, {str(num)}"
+
+        # Create some items with vector embeddings
+        for i in range(10):
+            created_container.create_item({"id": "vector_item" + str(i), "embeddings": get_embeddings(i)})
+
+        # Run vector similarity search queries using VectorDistance
+        query = "SELECT TOP 5 c.id,VectorDistance(c.embeddings, [{}]) AS " \
+                "SimilarityScore FROM c ORDER BY VectorDistance(c.embeddings, [{}])".format(get_embeddings(1),
+                                                                                            get_embeddings(1))
+        query_documents_with_custom_query(created_container, query)
+
+        # Run vector similarity search queries using VectorDistance with specifications
+        query = "SELECT TOP 5 c.id,VectorDistance(c.embeddings, [{}], true, {{'dataType': 'float32' ," \
+                " 'distanceFunction': 'cosine'}}) AS SimilarityScore FROM c ORDER BY VectorDistance(c.embeddings," \
+                " [{}], true, {{'dataType': 'float32', 'distanceFunction': 'cosine'}})".format(get_embeddings(1),
+                                                                                               get_embeddings(1))
+        query_documents_with_custom_query(created_container, query)
+
+        # Cleanup
+        db.delete_container(created_container)
+        print("\n")
+    except exceptions.CosmosResourceExistsError:
+        print("Entity already exists")
+    except exceptions.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
+
+
 def run_sample():
     try:
         client = obtain_client()
@@ -668,6 +727,9 @@ def run_sample():
 
         # 8. Perform Multi Orderby queries using composite indexes
         perform_multi_orderby_query(created_db)
+
+        # 9. Create and use a vector embedding policy
+        use_vector_embedding_policy(created_db)
 
     except exceptions.AzureError as e:
         raise e

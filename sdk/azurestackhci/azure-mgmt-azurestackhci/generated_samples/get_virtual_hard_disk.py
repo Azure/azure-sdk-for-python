@@ -29,13 +29,13 @@ def main():
         subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
     )
 
-    response = client.virtualharddisks.retrieve(
+    response = client.virtual_hard_disks.get(
         resource_group_name="test-rg",
-        virtualharddisks_name="test-vhd",
+        virtual_hard_disk_name="test-vhd",
     )
     print(response)
 
 
-# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2021-09-01-preview/examples/GetVirtualHardDisk.json
+# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2023-09-01-preview/examples/GetVirtualHardDisk.json
 if __name__ == "__main__":
     main()

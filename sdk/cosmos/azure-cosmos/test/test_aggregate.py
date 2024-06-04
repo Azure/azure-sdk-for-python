@@ -1,28 +1,12 @@
 # The MIT License (MIT)
-# Copyright (c) 2017 Microsoft Corporation
-
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# Copyright (c) Microsoft Corporation. All rights reserved.
 
 from __future__ import print_function
 
+import os
 import unittest
 import uuid
+
 import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
@@ -31,12 +15,11 @@ import test_config
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 
-pytestmark = pytest.mark.cosmosEmulator
 
 class _config:
-    host = test_config._test_config.host
-    master_key = test_config._test_config.masterKey
-    connection_policy = test_config._test_config.connectionPolicy
+    host = test_config.TestConfig.host
+    master_key = test_config.TestConfig.masterKey
+    connection_policy = test_config.TestConfig.connectionPolicy
     PARTITION_KEY = 'key'
     UNIQUE_PARTITION_KEY = 'uniquePartitionKey'
     FIELD = 'field'
@@ -46,8 +29,10 @@ class _config:
     sum = 0
 
 
-@pytest.mark.usefixtures("teardown")
-class AggregationQueryTest(unittest.TestCase):
+@pytest.mark.cosmosEmulator
+class TestAggregateQuery(unittest.TestCase):
+    client: cosmos_client.CosmosClient = None
+
     @classmethod
     def setUpClass(cls):
         cls._all_tests = []
@@ -55,17 +40,25 @@ class AggregationQueryTest(unittest.TestCase):
         cls._generate_test_configs()
 
     @classmethod
+    def tearDownClass(cls) -> None:
+        try:
+            cls.created_db.delete_container(cls.created_collection.id)
+        except CosmosHttpResponseError:
+            pass
+
+    @classmethod
     def _setup(cls):
-        if (not _config.master_key or not _config.host):
+        if not _config.master_key or not _config.host:
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(
-            _config.host, {'masterKey': _config.master_key}, "Session", connection_policy=_config.connection_policy)
-        created_db = test_config._test_config.create_database_if_not_exist(cls.client)
-        cls.created_collection = cls._create_collection(created_db)
+        cls.client = cosmos_client.CosmosClient(_config.host, _config.master_key)
+        cls.created_db = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
+        cls.created_collection = cls._create_collection(cls.created_db)
+        if _config.host == "https://localhost:8081/":
+            os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
 
         # test documents
         document_definitions = []

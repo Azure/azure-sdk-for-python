@@ -6,7 +6,7 @@
 from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.core.rest import HttpRequest
 from azure.core.rest._requests_asyncio import RestAsyncioRequestsTransportResponse
-from rest_client_async import AsyncTestRestClient
+from rest_client_async import AsyncMockRestClient
 
 import pytest
 import pytest_asyncio
@@ -16,7 +16,7 @@ from utils import readonly_checks
 @pytest_asyncio.fixture
 async def client(port):
     async with AsyncioRequestsTransport() as transport:
-        async with AsyncTestRestClient(port, transport=transport) as client:
+        async with AsyncMockRestClient(port, transport=transport) as client:
             yield client
 
 

@@ -9,8 +9,10 @@
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
+from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
+from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
 
 from .. import models as _models
 from .._serialization import Deserializer, Serializer
@@ -63,6 +65,7 @@ from .operations import (
     JobAgentsOperations,
     JobCredentialsOperations,
     JobExecutionsOperations,
+    JobPrivateEndpointsOperations,
     JobStepExecutionsOperations,
     JobStepsOperations,
     JobTargetExecutionsOperations,
@@ -238,14 +241,14 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype encryption_protectors: azure.mgmt.sql.aio.operations.EncryptionProtectorsOperations
     :ivar firewall_rules: FirewallRulesOperations operations
     :vartype firewall_rules: azure.mgmt.sql.aio.operations.FirewallRulesOperations
-    :ivar instance_pools: InstancePoolsOperations operations
-    :vartype instance_pools: azure.mgmt.sql.aio.operations.InstancePoolsOperations
     :ivar job_agents: JobAgentsOperations operations
     :vartype job_agents: azure.mgmt.sql.aio.operations.JobAgentsOperations
     :ivar job_credentials: JobCredentialsOperations operations
     :vartype job_credentials: azure.mgmt.sql.aio.operations.JobCredentialsOperations
     :ivar job_executions: JobExecutionsOperations operations
     :vartype job_executions: azure.mgmt.sql.aio.operations.JobExecutionsOperations
+    :ivar job_private_endpoints: JobPrivateEndpointsOperations operations
+    :vartype job_private_endpoints: azure.mgmt.sql.aio.operations.JobPrivateEndpointsOperations
     :ivar jobs: JobsOperations operations
     :vartype jobs: azure.mgmt.sql.aio.operations.JobsOperations
     :ivar job_step_executions: JobStepExecutionsOperations operations
@@ -260,9 +263,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype job_versions: azure.mgmt.sql.aio.operations.JobVersionsOperations
     :ivar capabilities: CapabilitiesOperations operations
     :vartype capabilities: azure.mgmt.sql.aio.operations.CapabilitiesOperations
-    :ivar long_term_retention_policies: LongTermRetentionPoliciesOperations operations
-    :vartype long_term_retention_policies:
-     azure.mgmt.sql.aio.operations.LongTermRetentionPoliciesOperations
     :ivar maintenance_window_options: MaintenanceWindowOptionsOperations operations
     :vartype maintenance_window_options:
      azure.mgmt.sql.aio.operations.MaintenanceWindowOptionsOperations
@@ -415,8 +415,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
      azure.mgmt.sql.aio.operations.BackupShortTermRetentionPoliciesOperations
     :ivar database_extensions: DatabaseExtensionsOperations operations
     :vartype database_extensions: azure.mgmt.sql.aio.operations.DatabaseExtensionsOperations
-    :ivar database_operations: DatabaseOperationsOperations operations
-    :vartype database_operations: azure.mgmt.sql.aio.operations.DatabaseOperationsOperations
     :ivar database_usages: DatabaseUsagesOperations operations
     :vartype database_usages: azure.mgmt.sql.aio.operations.DatabaseUsagesOperations
     :ivar ledger_digest_uploads: LedgerDigestUploadsOperations operations
@@ -425,9 +423,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype outbound_firewall_rules: azure.mgmt.sql.aio.operations.OutboundFirewallRulesOperations
     :ivar usages: UsagesOperations operations
     :vartype usages: azure.mgmt.sql.aio.operations.UsagesOperations
-    :ivar long_term_retention_backups: LongTermRetentionBackupsOperations operations
-    :vartype long_term_retention_backups:
-     azure.mgmt.sql.aio.operations.LongTermRetentionBackupsOperations
     :ivar long_term_retention_managed_instance_backups:
      LongTermRetentionManagedInstanceBackupsOperations operations
     :vartype long_term_retention_managed_instance_backups:
@@ -515,8 +510,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
      azure.mgmt.sql.aio.operations.DatabaseEncryptionProtectorsOperations
     :ivar managed_databases: ManagedDatabasesOperations operations
     :vartype managed_databases: azure.mgmt.sql.aio.operations.ManagedDatabasesOperations
-    :ivar managed_instances: ManagedInstancesOperations operations
-    :vartype managed_instances: azure.mgmt.sql.aio.operations.ManagedInstancesOperations
     :ivar managed_ledger_digest_uploads: ManagedLedgerDigestUploadsOperations operations
     :vartype managed_ledger_digest_uploads:
      azure.mgmt.sql.aio.operations.ManagedLedgerDigestUploadsOperations
@@ -528,8 +521,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :ivar server_configuration_options: ServerConfigurationOptionsOperations operations
     :vartype server_configuration_options:
      azure.mgmt.sql.aio.operations.ServerConfigurationOptionsOperations
-    :ivar servers: ServersOperations operations
-    :vartype servers: azure.mgmt.sql.aio.operations.ServersOperations
     :ivar start_stop_managed_instance_schedules: StartStopManagedInstanceSchedulesOperations
      operations
     :vartype start_stop_managed_instance_schedules:
@@ -537,8 +528,8 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :ivar transparent_data_encryptions: TransparentDataEncryptionsOperations operations
     :vartype transparent_data_encryptions:
      azure.mgmt.sql.aio.operations.TransparentDataEncryptionsOperations
-    :ivar failover_groups: FailoverGroupsOperations operations
-    :vartype failover_groups: azure.mgmt.sql.aio.operations.FailoverGroupsOperations
+    :ivar database_operations: DatabaseOperationsOperations operations
+    :vartype database_operations: azure.mgmt.sql.aio.operations.DatabaseOperationsOperations
     :ivar ipv6_firewall_rules: IPv6FirewallRulesOperations operations
     :vartype ipv6_firewall_rules: azure.mgmt.sql.aio.operations.IPv6FirewallRulesOperations
     :ivar sql_vulnerability_assessment_baseline: SqlVulnerabilityAssessmentBaselineOperations
@@ -599,6 +590,20 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
      DatabaseSqlVulnerabilityAssessmentsSettingsOperations operations
     :vartype database_sql_vulnerability_assessments_settings:
      azure.mgmt.sql.aio.operations.DatabaseSqlVulnerabilityAssessmentsSettingsOperations
+    :ivar failover_groups: FailoverGroupsOperations operations
+    :vartype failover_groups: azure.mgmt.sql.aio.operations.FailoverGroupsOperations
+    :ivar instance_pools: InstancePoolsOperations operations
+    :vartype instance_pools: azure.mgmt.sql.aio.operations.InstancePoolsOperations
+    :ivar long_term_retention_backups: LongTermRetentionBackupsOperations operations
+    :vartype long_term_retention_backups:
+     azure.mgmt.sql.aio.operations.LongTermRetentionBackupsOperations
+    :ivar long_term_retention_policies: LongTermRetentionPoliciesOperations operations
+    :vartype long_term_retention_policies:
+     azure.mgmt.sql.aio.operations.LongTermRetentionPoliciesOperations
+    :ivar managed_instances: ManagedInstancesOperations operations
+    :vartype managed_instances: azure.mgmt.sql.aio.operations.ManagedInstancesOperations
+    :ivar servers: ServersOperations operations
+    :vartype servers: azure.mgmt.sql.aio.operations.ServersOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription ID that identifies an Azure subscription. Required.
@@ -619,7 +624,25 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self._config = SqlManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                AsyncARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -688,10 +711,12 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
             self._client, self._config, self._serialize, self._deserialize
         )
         self.firewall_rules = FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.instance_pools = InstancePoolsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.job_agents = JobAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.job_credentials = JobCredentialsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.job_executions = JobExecutionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.job_private_endpoints = JobPrivateEndpointsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.job_step_executions = JobStepExecutionsOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -705,9 +730,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         )
         self.job_versions = JobVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.capabilities = CapabilitiesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.long_term_retention_policies = LongTermRetentionPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.maintenance_window_options = MaintenanceWindowOptionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -851,9 +873,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self.database_extensions = DatabaseExtensionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.database_operations = DatabaseOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.database_usages = DatabaseUsagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.ledger_digest_uploads = LedgerDigestUploadsOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -862,9 +881,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
             self._client, self._config, self._serialize, self._deserialize
         )
         self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.long_term_retention_backups = LongTermRetentionBackupsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.long_term_retention_managed_instance_backups = LongTermRetentionManagedInstanceBackupsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -953,9 +969,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self.managed_databases = ManagedDatabasesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.managed_instances = ManagedInstancesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.managed_ledger_digest_uploads = ManagedLedgerDigestUploadsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -968,14 +981,15 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self.server_configuration_options = ServerConfigurationOptionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.start_stop_managed_instance_schedules = StartStopManagedInstanceSchedulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.transparent_data_encryptions = TransparentDataEncryptionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.failover_groups = FailoverGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.database_operations = DatabaseOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.ipv6_firewall_rules = IPv6FirewallRulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -1028,8 +1042,22 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self.database_sql_vulnerability_assessments_settings = DatabaseSqlVulnerabilityAssessmentsSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.failover_groups = FailoverGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.instance_pools = InstancePoolsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.long_term_retention_backups = LongTermRetentionBackupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.long_term_retention_policies = LongTermRetentionPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_instances = ManagedInstancesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -1049,7 +1077,7 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
         await self._client.close()

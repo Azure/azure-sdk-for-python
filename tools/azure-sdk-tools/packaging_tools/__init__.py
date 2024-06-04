@@ -38,6 +38,8 @@ def build_config(config: Dict[str, Any]) -> Dict[str, str]:
     package_parts = result["package_nspkg"][: -len("-nspkg")].split("-")
     result["nspkg_names"] = [".".join(package_parts[: i + 1]) for i in range(len(package_parts))]
     result["init_names"] = ["/".join(package_parts[: i + 1]) + "/__init__.py" for i in range(len(package_parts))]
+    exclude_folders = result.pop("exclude_folders", "")
+    result["exclude_folders"] = [item.strip() for item in exclude_folders.split(",") if item.strip()]
 
     # Return result
     return result

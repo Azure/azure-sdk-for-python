@@ -48,7 +48,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_clinical_matching_match_trials_request(
+def build_clinical_matching_match_trials_request(  # pylint: disable=name-too-long
     *,
     repeatability_request_id: Optional[str] = None,
     repeatability_first_sent: Optional[datetime.datetime] = None,

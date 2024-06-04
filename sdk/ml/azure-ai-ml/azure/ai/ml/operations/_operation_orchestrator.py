@@ -9,8 +9,15 @@ import re
 from os import PathLike
 from typing import Any, Optional, Tuple, Union
 
+from typing_extensions import Protocol
+
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context, _check_and_upload_path
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 from azure.ai.ml._utils._arm_id_utils import (
     AMLLabelledArmId,
     AMLNamedArmId,
@@ -77,31 +84,31 @@ class OperationOrchestrator(object):
         self._operation_config = operation_config
 
     @property
-    def _datastore_operation(self):
+    def _datastore_operation(self) -> _ScopeDependentOperations:
         return self._operation_container.all_operations[AzureMLResourceType.DATASTORE]
 
     @property
-    def _code_assets(self):
+    def _code_assets(self) -> _ScopeDependentOperations:
         return self._operation_container.all_operations[AzureMLResourceType.CODE]
 
     @property
-    def _model(self):
+    def _model(self) -> _ScopeDependentOperations:
         return self._operation_container.all_operations[AzureMLResourceType.MODEL]
 
     @property
-    def _environments(self):
+    def _environments(self) -> _ScopeDependentOperations:
         return self._operation_container.all_operations[AzureMLResourceType.ENVIRONMENT]
 
     @property
-    def _data(self):
+    def _data(self) -> _ScopeDependentOperations:
         return self._operation_container.all_operations[AzureMLResourceType.DATA]
 
     @property
-    def _component(self):
+    def _component(self) -> _ScopeDependentOperations:
         return self._operation_container.all_operations[AzureMLResourceType.COMPONENT]
 
     @property
-    def _virtual_cluster(self):
+    def _virtual_cluster(self) -> _ScopeDependentOperations:
         return self._operation_container.all_operations[AzureMLResourceType.VIRTUALCLUSTER]
 
     def get_asset_arm_id(
@@ -122,8 +129,6 @@ class OperationOrchestrator(object):
         :type register_asset: Optional[bool]
         :param sub_workspace_resource:
         :type sub_workspace_resource: Optional[bool]
-        :param arm_id_cache_dict: A dict to cache the ARM id of input asset.
-        :type arm_id_cache_dict: Optional[Dict[str, str]]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if asset's ID cannot be converted
             or asset cannot be successfully registered.
         :return: The ARM Id or entity object
@@ -138,9 +143,9 @@ class OperationOrchestrator(object):
         ):
             return asset
         if is_singularity_full_name_for_resource(asset):
-            return self._get_singularity_arm_id_from_full_name(asset)
+            return self._get_singularity_arm_id_from_full_name(str(asset))
         if is_singularity_short_name_for_resource(asset):
-            return self._get_singularity_arm_id_from_short_name(asset)
+            return self._get_singularity_arm_id_from_short_name(str(asset))
         if isinstance(asset, str):
             if azureml_type in AzureMLResourceType.NAMED_TYPES:
                 return NAMED_RESOURCE_ID_FORMAT.format(
@@ -227,6 +232,7 @@ class OperationOrchestrator(object):
             )
         if isinstance(asset, Asset):
             try:
+                result: Any = None
                 # TODO: once the asset redesign is finished, this logic can be replaced with unified API
                 if azureml_type == AzureMLResourceType.CODE and isinstance(asset, Code):
                     result = self._get_code_asset_arm_id(asset, register_asset=register_asset)
@@ -270,10 +276,10 @@ class OperationOrchestrator(object):
         try:
             self._validate_datastore_name(code_asset.path)
             if register_asset:
-                code_asset = self._code_assets.create_or_update(code_asset)
-                return code_asset.id
+                code_asset = self._code_assets.create_or_update(code_asset)  # type: ignore[attr-defined]
+                return str(code_asset.id)
             sas_info = get_storage_info_for_non_registry_asset(
-                service_client=self._code_assets._service_client,
+                service_client=self._code_assets._service_client,  # type: ignore[attr-defined]
                 workspace_name=self._operation_scope.workspace_name,
                 name=code_asset.name,
                 version=code_asset.version,
@@ -281,7 +287,7 @@ class OperationOrchestrator(object):
             )
             uploaded_code_asset, _ = _check_and_upload_path(
                 artifact=code_asset,
-                asset_operations=self._code_assets,
+                asset_operations=self._code_assets,  # type: ignore[arg-type]
                 artifact_type=ErrorTarget.CODE,
                 show_progress=self._operation_config.show_progress,
                 sas_uri=sas_info["sas_uri"],
@@ -309,10 +315,12 @@ class OperationOrchestrator(object):
         if register_asset:
             if environment.id:
                 return environment.id
-            env_response = self._environments.create_or_update(environment)
+            env_response = self._environments.create_or_update(environment)  # type: ignore[attr-defined]
             return env_response.id
         environment = _check_and_upload_env_build_context(
-            environment=environment, operations=self._environments, show_progress=self._operation_config.show_progress
+            environment=environment,
+            operations=self._environments,  # type: ignore[arg-type]
+            show_progress=self._operation_config.show_progress,
         )
         environment._id = get_arm_id_with_version(
             self._operation_scope,
@@ -329,10 +337,10 @@ class OperationOrchestrator(object):
             if register_asset:
                 if model.id:
                     return model.id
-                return self._model.create_or_update(model).id
+                return self._model.create_or_update(model).id  # type: ignore[attr-defined]
             uploaded_model, _ = _check_and_upload_path(
                 artifact=model,
-                asset_operations=self._model,
+                asset_operations=self._model,  # type: ignore[arg-type]
                 artifact_type=ErrorTarget.MODEL,
                 show_progress=self._operation_config.show_progress,
             )
@@ -358,38 +366,46 @@ class OperationOrchestrator(object):
         self._validate_datastore_name(data_asset.path)
 
         if register_asset:
-            return self._data.create_or_update(data_asset).id
+            return self._data.create_or_update(data_asset).id  # type: ignore[attr-defined]
         data_asset, _ = _check_and_upload_path(
             artifact=data_asset,
-            asset_operations=self._data,
+            asset_operations=self._data,  # type: ignore[arg-type]
             artifact_type=ErrorTarget.DATA,
             show_progress=self._operation_config.show_progress,
         )
         return data_asset
 
     def _get_component_arm_id(self, component: Component) -> str:
-        """If component arm id is already resolved, return the id Or get arm id via remote call, register the component
-        if necessary, and FILL BACK the arm id to component to reduce remote call."""
+        """Gets the component ARM ID.
+
+        :param component: The component
+        :type component: Component
+        :return: The component id
+        :rtype: str
+        """
+
+        # If component arm id is already resolved, return the id otherwise get arm id via remote call.
+        # Register the component if necessary, and FILL BACK the arm id to component to reduce remote call.
         if not component.id:
-            component._id = self._component.create_or_update(
+            component._id = self._component.create_or_update(  # type: ignore[attr-defined]
                 component, is_anonymous=True, show_progress=self._operation_config.show_progress
             ).id
-        return component.id
+        return str(component.id)
 
     def _get_singularity_arm_id_from_full_name(self, singularity: str) -> str:
         match = re.match(SINGULARITY_FULL_NAME_REGEX_FORMAT, singularity)
-        subscription_id = match.group("subscription_id")
-        resource_group_name = match.group("resource_group_name")
-        vc_name = match.group("name")
+        subscription_id = match.group("subscription_id") if match is not None else ""
+        resource_group_name = match.group("resource_group_name") if match is not None else ""
+        vc_name = match.group("name") if match is not None else ""
         arm_id = SINGULARITY_ID_FORMAT.format(subscription_id, resource_group_name, vc_name)
-        vc = self._virtual_cluster.get(arm_id)
-        return vc["id"]
+        vc = self._virtual_cluster.get(arm_id)  # type: ignore[attr-defined]
+        return str(vc["id"])
 
     def _get_singularity_arm_id_from_short_name(self, singularity: str) -> str:
         match = re.match(SINGULARITY_SHORT_NAME_REGEX_FORMAT, singularity)
-        vc_name = match.group("name")
+        vc_name = match.group("name") if match is not None else ""
         # below list operation can be time-consuming, may need an optimization on this
-        match_vcs = [vc for vc in self._virtual_cluster.list() if vc["name"] == vc_name]
+        match_vcs = [vc for vc in self._virtual_cluster.list() if vc["name"] == vc_name]  # type: ignore[attr-defined]
         num_match_vc = len(match_vcs)
         if num_match_vc != 1:
             if num_match_vc == 0:
@@ -402,7 +418,7 @@ class OperationOrchestrator(object):
                 target=ErrorTarget.COMPUTE,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
-        return match_vcs[0]["id"]
+        return str(match_vcs[0]["id"])
 
     def _resolve_name_version_from_name_label(self, aml_id: str, azureml_type: str) -> Tuple[str, Optional[str]]:
         """Given an AzureML id of the form name@label, resolves the label to the actual ID.
@@ -411,7 +427,8 @@ class OperationOrchestrator(object):
         :type aml_id: str
         :param azureml_type: The AzureML resource type. Defined in AzureMLResourceType.
         :type azureml_type: str
-        :returns: Returns tuple (name, version) on success, (name@label, None) if resolution fails
+        :return: Returns tuple (name, version) on success, (name@label, None) if resolution fails
+        :rtype: Tuple[str, Optional[str]]
         """
         name, label = parse_name_label(aml_id)
         if (
@@ -431,21 +448,21 @@ class OperationOrchestrator(object):
         )
 
     # pylint: disable=unused-argument
-    def resolve_azureml_id(self, arm_id: Optional[str] = None, **kwargs) -> str:
+    def resolve_azureml_id(self, arm_id: Optional[str] = None, **kwargs: Any) -> Optional[str]:
         """This function converts ARM id to name or name:version AzureML id. It parses the ARM id and matches the
         subscription Id, resource group name and workspace_name.
 
         TODO: It is debatable whether this method should be in operation_orchestrator.
 
         :param arm_id: entity's ARM id, defaults to None
-        :type arm_id: str, optional
+        :type arm_id: str
         :return: AzureML id
         :rtype: str
         """
 
         if arm_id:
             if not isinstance(arm_id, str):
-                msg = "arm_id cannot be resolved: str expected but got {}".format(type(arm_id))
+                msg = "arm_id cannot be resolved: str expected but got {}".format(type(arm_id))  # type: ignore
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,
@@ -457,28 +474,30 @@ class OperationOrchestrator(object):
                 if arm_id_obj.is_registry_id:
                     return arm_id
                 if self._match(arm_id_obj):
-                    return VERSIONED_RESOURCE_NAME.format(arm_id_obj.asset_name, arm_id_obj.asset_version)
+                    return str(VERSIONED_RESOURCE_NAME.format(arm_id_obj.asset_name, arm_id_obj.asset_version))
             except ValidationException:
                 pass  # fall back to named arm id
             try:
                 arm_id_obj = AMLLabelledArmId(arm_id)
                 if self._match(arm_id_obj):
-                    return LABELLED_RESOURCE_NAME.format(arm_id_obj.asset_name, arm_id_obj.asset_label)
+                    return str(LABELLED_RESOURCE_NAME.format(arm_id_obj.asset_name, arm_id_obj.asset_label))
             except ValidationException:
                 pass  # fall back to named arm id
             try:
                 arm_id_obj = AMLNamedArmId(arm_id)
                 if self._match(arm_id_obj):
-                    return arm_id_obj.asset_name
+                    return str(arm_id_obj.asset_name)
             except ValidationException:
                 pass  # fall back to be not a ARM_id
         return arm_id
 
     def _match(self, id_: Any) -> bool:
-        return (
-            id_.subscription_id == self._operation_scope.subscription_id
-            and id_.resource_group_name == self._operation_scope.resource_group_name
-            and id_.workspace_name == self._operation_scope.workspace_name
+        return bool(
+            (
+                id_.subscription_id == self._operation_scope.subscription_id
+                and id_.resource_group_name == self._operation_scope.resource_group_name
+                and id_.workspace_name == self._operation_scope.workspace_name
+            )
         )
 
     def _validate_datastore_name(self, datastore_uri: Optional[Union[str, PathLike]]) -> None:
@@ -507,7 +526,7 @@ class OperationOrchestrator(object):
                 if datastore_name.startswith(ARM_ID_PREFIX):
                     datastore_name = datastore_name[len(ARM_ID_PREFIX) :]
 
-                self._datastore_operation.get(datastore_name)
+                self._datastore_operation.get(datastore_name)  # type: ignore[attr-defined]
             except ResourceNotFoundError as e:
                 msg = "The datastore {} could not be found in this workspace."
                 raise ValidationException(
@@ -517,3 +536,36 @@ class OperationOrchestrator(object):
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
                 ) from e
+
+
+class _AssetResolver(Protocol):
+    """Describes the type of a function used by operation classes like :py:class:`JobOperations` and
+    :py:class:`ComponentOperations` to resolve Assets
+
+    .. see-also:: methods :py:method:`OperationOrchestrator.get_asset_arm_id`,
+            :py:method:`OperationOrchestrator.resolve_azureml_id`
+
+    """
+
+    def __call__(
+        self,
+        asset: Optional[Union[str, Asset]],
+        azureml_type: str,
+        register_asset: bool = True,
+        sub_workspace_resource: bool = True,
+    ) -> Optional[Union[str, Asset]]:
+        """Resolver function
+
+        :param asset: The asset to resolve/register. It can be a ARM id or a entity's object.
+        :type asset: Optional[Union[str, Asset]]
+        :param azureml_type: The AzureML resource type. Defined in AzureMLResourceType.
+        :type azureml_type: str
+        :param register_asset: Indicates if the asset should be registered, defaults to True.
+        :type register_asset: Optional[bool]
+        :param sub_workspace_resource:
+        :type sub_workspace_resource: Optional[bool]
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if asset's ID cannot be converted
+            or asset cannot be successfully registered.
+        :return: The ARM Id or entity object
+        :rtype: Optional[Union[str, ~azure.ai.ml.entities.Asset]]
+        """

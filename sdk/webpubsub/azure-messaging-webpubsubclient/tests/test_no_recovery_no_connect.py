@@ -7,8 +7,17 @@
 import pytest
 import time
 from devtools_testutils import recorded_by_proxy
-from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer, TEST_RESULT, on_group_message, SafeThread
-from azure.messaging.webpubsubclient.models import WebPubSubProtocolType, DisconnectedError
+from testcase import (
+    WebpubsubClientTest,
+    WebpubsubClientPowerShellPreparer,
+    TEST_RESULT,
+    on_group_message,
+    SafeThread,
+)
+from azure.messaging.webpubsubclient.models import (
+    WebPubSubProtocolType,
+    SendMessageError,
+)
 
 
 @pytest.mark.live_test_only
@@ -25,10 +34,10 @@ class TestWebpubsubClientNoRecoveryNoReconnect(WebpubsubClientTest):
         name = "test_disable_recovery_and_autoconnect"
         with client:
             group_name = name
-            client.on("group-message", on_group_message)
+            client.subscribe("group-message", on_group_message)
             client.join_group(group_name)
             client._ws.sock.close(1001)  # close connection
-            with pytest.raises(DisconnectedError):
+            with pytest.raises(SendMessageError):
                 client.send_to_group(group_name, name, "text")
             time.sleep(1)  # wait for on_group_message to be called
 
@@ -37,7 +46,9 @@ class TestWebpubsubClientNoRecoveryNoReconnect(WebpubsubClientTest):
     # disable recovery and auto reconnect, then send message concurrently
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
-    def test_disable_recovery_and_autoconnect_send_concurrently(self, webpubsubclient_connection_string):
+    def test_disable_recovery_and_autoconnect_send_concurrently(
+        self, webpubsubclient_connection_string
+    ):
         client = self.create_client(
             connection_string=webpubsubclient_connection_string,
             reconnect_retry_total=0,
@@ -46,7 +57,7 @@ class TestWebpubsubClientNoRecoveryNoReconnect(WebpubsubClientTest):
         )
 
         with client:
-            group_name = "test"
+            group_name = "test_disable_recovery_and_autoconnect_send_concurrently"
             client.join_group(group_name)
 
             def send(idx):

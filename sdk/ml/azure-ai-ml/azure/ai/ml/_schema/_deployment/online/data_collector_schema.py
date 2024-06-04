@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=no-self-use
 
 import logging
 from typing import Any
@@ -27,7 +26,7 @@ class DataCollectorSchema(metaclass=PatchedSchemaMeta):
     sampling_rate = fields.Float()  # Should be copied to each of the collections
     request_logging = NestedField(RequestLoggingSchema)
 
-    # pylint: disable=unused-argument,no-self-use
+    # pylint: disable=unused-argument
     @validates("sampling_rate")
     def validate_sampling_rate(self, value, **kwargs):
         if value > 1.0 or value < 0.0:

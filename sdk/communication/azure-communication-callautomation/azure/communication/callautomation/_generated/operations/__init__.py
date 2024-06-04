@@ -9,6 +9,7 @@
 from ._operations import AzureCommunicationCallAutomationServiceOperationsMixin
 from ._operations import CallConnectionOperations
 from ._operations import CallMediaOperations
+from ._operations import CallDialogOperations
 from ._operations import CallRecordingOperations
 
 from ._patch import __all__ as _patch_all
@@ -19,6 +20,7 @@ __all__ = [
     "AzureCommunicationCallAutomationServiceOperationsMixin",
     "CallConnectionOperations",
     "CallMediaOperations",
+    "CallDialogOperations",
     "CallRecordingOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

@@ -1,0 +1,8 @@
+-e ../../../tools/azure-sdk-tools
+../../core/azure-core
+../../identity/azure-identity
+-e ../../ml/azure-ai-ml
+-e ../azure-ai-resources
+-e ../azure-ai-generative[faiss,hugging_face,index,qa_generation,simulator,evaluate,promptflow]
+pytest
+pytest-xdist

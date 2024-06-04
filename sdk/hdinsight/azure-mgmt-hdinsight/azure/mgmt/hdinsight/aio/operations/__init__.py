@@ -6,34 +6,34 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._clusters_operations import ClustersOperations
 from ._applications_operations import ApplicationsOperations
-from ._locations_operations import LocationsOperations
+from ._clusters_operations import ClustersOperations
 from ._configurations_operations import ConfigurationsOperations
 from ._extensions_operations import ExtensionsOperations
-from ._script_actions_operations import ScriptActionsOperations
-from ._script_execution_history_operations import ScriptExecutionHistoryOperations
+from ._locations_operations import LocationsOperations
 from ._operations import Operations
-from ._virtual_machines_operations import VirtualMachinesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._script_actions_operations import ScriptActionsOperations
+from ._script_execution_history_operations import ScriptExecutionHistoryOperations
+from ._virtual_machines_operations import VirtualMachinesOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "ClustersOperations",
     "ApplicationsOperations",
-    "LocationsOperations",
+    "ClustersOperations",
     "ConfigurationsOperations",
     "ExtensionsOperations",
-    "ScriptActionsOperations",
-    "ScriptExecutionHistoryOperations",
+    "LocationsOperations",
     "Operations",
-    "VirtualMachinesOperations",
     "PrivateEndpointConnectionsOperations",
     "PrivateLinkResourcesOperations",
+    "ScriptActionsOperations",
+    "ScriptExecutionHistoryOperations",
+    "VirtualMachinesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

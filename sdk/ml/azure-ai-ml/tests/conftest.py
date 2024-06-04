@@ -16,9 +16,6 @@ from unittest.mock import Mock, patch
 
 import pytest
 from _pytest.fixtures import FixtureRequest
-from azure.core.exceptions import ResourceNotFoundError
-from azure.core.pipeline.transport import HttpTransport
-from azure.identity import AzureCliCredential, ClientSecretCredential, DefaultAzureCredential
 from devtools_testutils import (
     add_body_key_sanitizer,
     add_general_regex_sanitizer,
@@ -27,6 +24,7 @@ from devtools_testutils import (
     is_live,
     set_bodiless_matcher,
     set_custom_default_matcher,
+    remove_batch_sanitizers,
 )
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import is_live_and_not_recording
@@ -52,6 +50,9 @@ from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.operations._workspace_operations_base import get_deployment_name, get_name_for_dependent_resource
+from azure.core.exceptions import ResourceNotFoundError
+from azure.core.pipeline.transport import HttpTransport
+from azure.identity import AzureCliCredential, ClientSecretCredential, DefaultAzureCredential
 
 E2E_TEST_LOGGING_ENABLED = "E2E_TEST_LOGGING_ENABLED"
 test_folder = Path(os.path.abspath(__file__)).parent.absolute()
@@ -87,7 +88,7 @@ def _query_param_regex(name, *, only_value=True) -> str:
     return rf'{name_regex}{value_regex}(?=[{QUERY_STRING_DELIMETER}"\s]|$)'
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy, fake_datastore_key):
     add_remove_header_sanitizer(headers="x-azureml-token,Log-URL,Authorization")
     set_custom_default_matcher(
@@ -95,6 +96,10 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
         ignored_query_parameters="api-version",
     )
+
+    subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=subscription_id, value="00000000-0000-0000-0000-000000000000")
+
     add_body_key_sanitizer(json_path="$.key", value=fake_datastore_key)
     add_body_key_sanitizer(json_path="$....key", value=fake_datastore_key)
     add_body_key_sanitizer(json_path="$.properties.properties.['mlflow.source.git.repoURL']", value="fake_git_url")
@@ -126,9 +131,20 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     # masks signature in SAS uri
     add_general_regex_sanitizer(value="000000000000000000000000000000000000", regex=_query_param_regex("sig"))
 
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3430: $..id
+    #  - AZSDK3493: $..name
+    #  - AZSDK2003: Location
+    remove_batch_sanitizers(["AZSDK3430", "AZSDK3493", "AZSDK2003"])
+
 
 def pytest_addoption(parser):
     parser.addoption("--location", action="store", default="eastus2euap")
+    parser.addoption("--online-store-target", action="store", default=None)
+    parser.addoption("--offline-store-target", action="store", default=None)
+    parser.addoption("--materialization-identity-resource-id", action="store", default=None)
+    parser.addoption("--materialization-identity-client-id", action="store", default=None)
+    parser.addoption("--default-storage-account", action="store", default=None)
 
 
 @pytest.fixture
@@ -232,6 +248,11 @@ def mock_aml_services_2020_09_01_dataplanepreview(mocker: MockFixture) -> Mock:
 
 
 @pytest.fixture
+def mock_aml_services_workspace_dataplane(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.workspace_dataplane")
+
+
+@pytest.fixture
 def mock_aml_services_2022_02_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_02_01_preview")
 
@@ -259,6 +280,26 @@ def mock_aml_services_2023_02_01_preview(mocker: MockFixture) -> Mock:
 @pytest.fixture
 def mock_aml_services_2023_04_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2023_04_01_preview")
+
+
+@pytest.fixture
+def mock_aml_services_2023_06_01_preview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2023_06_01_preview")
+
+
+@pytest.fixture
+def mock_aml_services_2023_08_01_preview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2023_08_01_preview")
+
+
+@pytest.fixture
+def mock_aml_services_2023_10_01(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2023_10_01")
+
+
+@pytest.fixture
+def mock_aml_services_2024_01_01_preview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2024_01_01_preview")
 
 
 @pytest.fixture
@@ -737,27 +778,29 @@ def mock_component_hash(mocker: MockFixture, request: FixtureRequest):
 
 
 @pytest.fixture
-def mock_workspace_arm_template_deployment_name(mocker: MockFixture, variable_recorder: VariableRecorder):
+def mock_workspace_arm_template_deployment_name(request, mocker: MockFixture, variable_recorder: VariableRecorder):
     def generate_mock_workspace_deployment_name(name: str):
         deployment_name = get_deployment_name(name)
         return variable_recorder.get_or_record("deployment_name", deployment_name)
 
-    mocker.patch(
-        "azure.ai.ml.operations._workspace_operations_base.get_deployment_name",
-        side_effect=generate_mock_workspace_deployment_name,
-    )
+    if "nofixdeploymentname" not in request.keywords:
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_deployment_name",
+            side_effect=generate_mock_workspace_deployment_name,
+        )
 
 
 @pytest.fixture
-def mock_workspace_dependent_resource_name_generator(mocker: MockFixture, variable_recorder: VariableRecorder):
+def mock_workspace_dependent_resource_name_generator(request, mocker: MockFixture, variable_recorder: VariableRecorder):
     def generate_mock_workspace_dependent_resource_name(workspace_name: str, resource_type: str):
         deployment_name = get_name_for_dependent_resource(workspace_name, resource_type)
         return variable_recorder.get_or_record(f"{resource_type}_name", deployment_name)
 
-    mocker.patch(
-        "azure.ai.ml.operations._workspace_operations_base.get_name_for_dependent_resource",
-        side_effect=generate_mock_workspace_dependent_resource_name,
-    )
+    if "nofixresourcename" not in request.keywords:
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_name_for_dependent_resource",
+            side_effect=generate_mock_workspace_dependent_resource_name,
+        )
 
 
 @pytest.fixture(autouse=True)
@@ -968,6 +1011,7 @@ def disable_internal_components():
     """
     from azure.ai.ml._internal._schema.component import NodeType
     from azure.ai.ml._internal._setup import _set_registered
+    from azure.ai.ml.entities._builders.control_flow_node import LoopNode
     from azure.ai.ml.entities._component.component_factory import component_factory
     from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
 
@@ -977,6 +1021,7 @@ def disable_internal_components():
         component_factory._create_instance_funcs.pop(_type, None)  # pylint: disable=protected-access
         component_factory._create_schema_funcs.pop(_type, None)  # pylint: disable=protected-access
 
+    LoopNode._extra_body_types = None
     _set_registered(False)
 
     with reload_schema_for_nodes_in_pipeline_job(revert_after_yield=False):
@@ -1037,3 +1082,81 @@ def use_python_amlignore_during_upload(mocker: MockFixture) -> None:
     py_ignore = IGNORE_FILE_DIR / "Python.amlignore"
     # Meant to influence azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore when an ignore file isn't provided
     mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_ignore_file", return_value=IgnoreFile(py_ignore))
+
+
+@pytest.fixture(scope="session")
+def online_store_target(request):
+    value = request.config.option.online_store_target
+    return value
+
+
+@pytest.fixture(scope="session")
+def offline_store_target(request):
+    value = request.config.option.offline_store_target
+    return value
+
+
+@pytest.fixture(scope="session")
+def materialization_identity_resource_id(request):
+    value = request.config.option.materialization_identity_resource_id
+    return value
+
+
+@pytest.fixture(scope="session")
+def materialization_identity_client_id(request):
+    value = request.config.option.materialization_identity_client_id
+    return value
+
+
+@pytest.fixture(scope="session")
+def default_storage_account(request):
+    value = request.config.option.default_storage_account
+    return value
+
+
+# Datastore fixtures
+
+
+@pytest.fixture
+def blob_store_file() -> str:
+    return "./tests/test_configs/datastore/blob_store.yml"
+
+
+@pytest.fixture
+def blob_store_credential_less_file() -> str:
+    return "./tests/test_configs/datastore/credential_less_blob_store.yml"
+
+
+@pytest.fixture
+def file_store_file() -> str:
+    return "./tests/test_configs/datastore/file_store.yml"
+
+
+@pytest.fixture
+def adls_gen1_file() -> str:
+    return "./tests/test_configs/datastore/adls_gen1.yml"
+
+
+@pytest.fixture
+def adls_gen1_credential_less_file() -> str:
+    return "./tests/test_configs/datastore/credential_less_adls_gen1.yml"
+
+
+@pytest.fixture
+def adls_gen2_file() -> str:
+    return "./tests/test_configs/datastore/adls_gen2.yml"
+
+
+@pytest.fixture
+def adls_gen2_credential_less_file() -> str:
+    return "./tests/test_configs/datastore/credential_less_adls_gen2.yml"
+
+
+@pytest.fixture
+def hdfs_keytab_file() -> str:
+    return "./tests/test_configs/datastore/hdfs_kerberos_keytab.yml"
+
+
+@pytest.fixture
+def hdfs_pw_file() -> str:
+    return "./tests/test_configs/datastore/hdfs_kerberos_pw.yml"

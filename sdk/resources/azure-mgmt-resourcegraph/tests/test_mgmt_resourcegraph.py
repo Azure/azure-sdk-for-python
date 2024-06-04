@@ -5,18 +5,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
+import pytest
 import unittest
 
 from azure.mgmt.resourcegraph import ResourceGraphClient
 from azure.mgmt.resourcegraph.models import *
-from devtools_testutils import AzureMgmtTestCase
-import six
+from devtools_testutils import AzureMgmtRecordedTestCase
 
-@unittest.skip("The test doesn't work.")
-class MgmtResourceGraphTest(AzureMgmtTestCase):
+@pytest.mark.skip("The test doesn't work.")
+class TestMgmtResourceGraph(AzureMgmtRecordedTestCase):
 
     def setUp(self):
-        super(MgmtResourceGraphTest, self).setUp()
+        super(TestMgmtResourceGraph, self).setUp()
         self.resourcegraph_client = self.create_basic_client(
             ResourceGraphClient
         )
@@ -52,7 +52,7 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
         self.assertIsNotNone(query_response.data["rows"])
         self.assertEqual(len(query_response.data["rows"]), 2)
         self.assertEqual(len(query_response.data["rows"][0]), 3)
-        self.assertIsInstance(query_response.data["rows"][0][0], six.string_types)
+        self.assertIsInstance(query_response.data["rows"][0][0], str)
         # self.assertIsInstance(query_response.data["rows"][0][1], dict)
         # self.assertIsInstance(query_response.data["rows"][0][2], dict)
 
@@ -80,7 +80,7 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
         self.assertIsNotNone(query_response.data)
         self.assertEqual(len(query_response.data), 2)
         self.assertEqual(len(query_response.data[0]), 3)
-        self.assertIsInstance(query_response.data[0]['id'], six.string_types)
+        self.assertIsInstance(query_response.data[0]['id'], str)
         if query_response.data[0]['tags']:
             self.assertIsInstance(query_response.data[0]['tags'], dict)
         self.assertIsInstance(query_response.data[0]['properties'], dict)
@@ -118,7 +118,7 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
         self.assertIsNotNone(query_response.data["rows"])
         self.assertEqual(len(query_response.data["rows"]), 4)
         self.assertEqual(len(query_response.data["rows"][0]), 1)
-        self.assertIsInstance(query_response.data["rows"][0][0], six.string_types)
+        self.assertIsInstance(query_response.data["rows"][0][0], str)
 
     def test_resources_facet_query(self):
         facet_expression0 = 'location'
@@ -174,8 +174,8 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
         self.assertIsNotNone(query_response.facets[0].data["rows"])
         self.assertEqual(len(query_response.facets[0].data["rows"]), 1)
         self.assertEqual(len(query_response.facets[0].data["rows"][0]), 2)
-        self.assertIsInstance(query_response.facets[0].data["rows"][0][0], six.string_types)
-        self.assertIsInstance(query_response.facets[0].data["rows"][0][1], six.integer_types)
+        self.assertIsInstance(query_response.facets[0].data["rows"][0][0], str)
+        self.assertIsInstance(query_response.facets[0].data["rows"][0][1], int)
 
         # Failed facet
         self.assertIsInstance(query_response.facets[1], FacetError)

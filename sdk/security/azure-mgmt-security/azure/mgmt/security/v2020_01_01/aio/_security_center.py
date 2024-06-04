@@ -9,8 +9,10 @@
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
+from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
+from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
 
 from .. import models as _models
 from ..._serialization import Deserializer, Serializer
@@ -41,37 +43,29 @@ if TYPE_CHECKING:
 class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """API spec for Microsoft.Security (Azure Security Center) resource provider.
 
-    :ivar server_vulnerability_assessment: ServerVulnerabilityAssessmentOperations operations
-    :vartype server_vulnerability_assessment:
-     azure.mgmt.security.v2020_01_01.aio.operations.ServerVulnerabilityAssessmentOperations
-    :ivar assessments_metadata: AssessmentsMetadataOperations operations
-    :vartype assessments_metadata:
-     azure.mgmt.security.v2020_01_01.aio.operations.AssessmentsMetadataOperations
-    :ivar assessments: AssessmentsOperations operations
-    :vartype assessments: azure.mgmt.security.v2020_01_01.aio.operations.AssessmentsOperations
-    :ivar adaptive_application_controls: AdaptiveApplicationControlsOperations operations
-    :vartype adaptive_application_controls:
-     azure.mgmt.security.v2020_01_01.aio.operations.AdaptiveApplicationControlsOperations
     :ivar adaptive_network_hardenings: AdaptiveNetworkHardeningsOperations operations
     :vartype adaptive_network_hardenings:
      azure.mgmt.security.v2020_01_01.aio.operations.AdaptiveNetworkHardeningsOperations
     :ivar allowed_connections: AllowedConnectionsOperations operations
     :vartype allowed_connections:
      azure.mgmt.security.v2020_01_01.aio.operations.AllowedConnectionsOperations
-    :ivar topology: TopologyOperations operations
-    :vartype topology: azure.mgmt.security.v2020_01_01.aio.operations.TopologyOperations
-    :ivar jit_network_access_policies: JitNetworkAccessPoliciesOperations operations
-    :vartype jit_network_access_policies:
-     azure.mgmt.security.v2020_01_01.aio.operations.JitNetworkAccessPoliciesOperations
+    :ivar adaptive_application_controls: AdaptiveApplicationControlsOperations operations
+    :vartype adaptive_application_controls:
+     azure.mgmt.security.v2020_01_01.aio.operations.AdaptiveApplicationControlsOperations
+    :ivar assessments_metadata: AssessmentsMetadataOperations operations
+    :vartype assessments_metadata:
+     azure.mgmt.security.v2020_01_01.aio.operations.AssessmentsMetadataOperations
+    :ivar assessments: AssessmentsOperations operations
+    :vartype assessments: azure.mgmt.security.v2020_01_01.aio.operations.AssessmentsOperations
     :ivar discovered_security_solutions: DiscoveredSecuritySolutionsOperations operations
     :vartype discovered_security_solutions:
      azure.mgmt.security.v2020_01_01.aio.operations.DiscoveredSecuritySolutionsOperations
-    :ivar security_solutions_reference_data: SecuritySolutionsReferenceDataOperations operations
-    :vartype security_solutions_reference_data:
-     azure.mgmt.security.v2020_01_01.aio.operations.SecuritySolutionsReferenceDataOperations
     :ivar external_security_solutions: ExternalSecuritySolutionsOperations operations
     :vartype external_security_solutions:
      azure.mgmt.security.v2020_01_01.aio.operations.ExternalSecuritySolutionsOperations
+    :ivar jit_network_access_policies: JitNetworkAccessPoliciesOperations operations
+    :vartype jit_network_access_policies:
+     azure.mgmt.security.v2020_01_01.aio.operations.JitNetworkAccessPoliciesOperations
     :ivar secure_scores: SecureScoresOperations operations
     :vartype secure_scores: azure.mgmt.security.v2020_01_01.aio.operations.SecureScoresOperations
     :ivar secure_score_controls: SecureScoreControlsOperations operations
@@ -83,6 +77,14 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword,too-
     :ivar security_solutions: SecuritySolutionsOperations operations
     :vartype security_solutions:
      azure.mgmt.security.v2020_01_01.aio.operations.SecuritySolutionsOperations
+    :ivar security_solutions_reference_data: SecuritySolutionsReferenceDataOperations operations
+    :vartype security_solutions_reference_data:
+     azure.mgmt.security.v2020_01_01.aio.operations.SecuritySolutionsReferenceDataOperations
+    :ivar server_vulnerability_assessment: ServerVulnerabilityAssessmentOperations operations
+    :vartype server_vulnerability_assessment:
+     azure.mgmt.security.v2020_01_01.aio.operations.ServerVulnerabilityAssessmentOperations
+    :ivar topology: TopologyOperations operations
+    :vartype topology: azure.mgmt.security.v2020_01_01.aio.operations.TopologyOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Azure subscription ID. Required.
@@ -104,53 +106,77 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword,too-
         **kwargs: Any
     ) -> None:
         self._config = SecurityCenterConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                AsyncARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.server_vulnerability_assessment = ServerVulnerabilityAssessmentOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.assessments_metadata = AssessmentsMetadataOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.assessments = AssessmentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.adaptive_application_controls = AdaptiveApplicationControlsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.adaptive_network_hardenings = AdaptiveNetworkHardeningsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-01-01"
         )
         self.allowed_connections = AllowedConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-01-01"
         )
-        self.topology = TopologyOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.jit_network_access_policies = JitNetworkAccessPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+        self.adaptive_application_controls = AdaptiveApplicationControlsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-01-01"
+        )
+        self.assessments_metadata = AssessmentsMetadataOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-01-01"
+        )
+        self.assessments = AssessmentsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-01-01"
         )
         self.discovered_security_solutions = DiscoveredSecuritySolutionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.security_solutions_reference_data = SecuritySolutionsReferenceDataOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-01-01"
         )
         self.external_security_solutions = ExternalSecuritySolutionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-01-01"
         )
-        self.secure_scores = SecureScoresOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.jit_network_access_policies = JitNetworkAccessPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-01-01"
+        )
+        self.secure_scores = SecureScoresOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-01-01"
+        )
         self.secure_score_controls = SecureScoreControlsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-01-01"
         )
         self.secure_score_control_definitions = SecureScoreControlDefinitionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-01-01"
         )
         self.security_solutions = SecuritySolutionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-01-01"
         )
+        self.security_solutions_reference_data = SecuritySolutionsReferenceDataOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-01-01"
+        )
+        self.server_vulnerability_assessment = ServerVulnerabilityAssessmentOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-01-01"
+        )
+        self.topology = TopologyOperations(self._client, self._config, self._serialize, self._deserialize, "2020-01-01")
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -170,7 +196,7 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword,too-
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
         await self._client.close()

@@ -4,13 +4,13 @@ We are excited to introduce the GA of Azure Machine Learning Python SDK v2. The 
 
 [Source code][source_code]
 | [Package (PyPI)][ml_pypi]
-| [Package (Conda)](https://anaconda.org/microsoft/azure-ai-ml/)
+| [Package (Conda)][ml_conda]
 | [API reference documentation][ml_ref_docs]
 | [Product documentation][product_documentation]
 | [Samples][ml_samples]
 
 
-This package has been tested with Python 3.7, 3.8, 3.9 and 3.10.
+This package has been tested with Python 3.8, 3.9, 3.10, 3.11 and 3.12.
 
 For a more complete set of Azure libraries, see https://aka.ms/azsdk/python/all
 
@@ -122,7 +122,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml
 [ml_pypi]: https://pypi.org/project/azure-ai-ml/
-[ml_ref_docs]: https://learn.microsoft.com/python/api/overview/azure/ai-ml-readme?view=azure-python
+[ml_conda]: https://anaconda.org/microsoft/azure-ai-ml/
+[ml_ref_docs]: https://learn.microsoft.com/python/api/azure-ai-ml/?view=azure-python
 [ml_samples]: https://github.com/Azure/azureml-examples/tree/main/sdk/python
 [product_documentation]: https://docs.microsoft.com/azure/machine-learning/
 [azure_subscription]: https://azure.microsoft.com/free/
@@ -134,7 +135,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_core_ref_docs]: https://aka.ms/azsdk-python-core-policies
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
-[python_logging]: https://docs.python.org/3/library/logging.html
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/

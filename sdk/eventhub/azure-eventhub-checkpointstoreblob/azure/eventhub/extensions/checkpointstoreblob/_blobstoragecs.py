@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Dict, Optional, Any, Iterable, Union
+from typing import Dict, Optional, Any, Iterable, Union, TYPE_CHECKING
 import logging
 import time
 import calendar
@@ -15,6 +15,9 @@ from azure.eventhub.exceptions import OwnershipLostError  # type: ignore
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, ResourceNotFoundError  # type: ignore
 from ._vendor.storage.blob import BlobClient, ContainerClient
 from ._vendor.storage.blob._shared.base_client import parse_connection_str
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential, AzureSasCredential, AzureNamedKeyCredential
 
 logger = logging.getLogger(__name__)
 UPLOAD_DATA = ""
@@ -45,25 +48,32 @@ class BlobCheckpointStore(CheckpointStore):
     defined in class azure.eventhub.aio.CheckpointStore of package azure-eventhub.
 
     :param str account_url:
-        The URI to the storage account. In order to create a client given the full URI to the container,
-        use the :func:`from_container_url` classmethod.
+     The URI to the storage account. In order to create a client given the full URI to the container,
+     use the :func:`from_container_url` classmethod.
     :param container_name:
-        The name of the container for the blob.
+     The name of the container for the blob.
     :type container_name: str
     :param credential:
-        The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+     The credentials with which to authenticate. This is optional if the
+     account URL already has a SAS token. The value can be a AzureSasCredential, an AzureNamedKeyCredential,
+     or a TokenCredential.If the URL already has a SAS token, specifying an explicit credential will take priority.
+    :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureSasCredential
+     or ~azure.core.credentials.AzureNamedKeyCredential or None
     :keyword str api_version:
-            The Storage API version to use for requests. Default value is '2019-07-07'.
+     The Storage API version to use for requests. Default value is '2019-07-07'.
     :keyword str secondary_hostname:
-        The hostname of the secondary endpoint.
+     The hostname of the secondary endpoint.
 
     """
 
-    def __init__(self, blob_account_url, container_name, credential=None, **kwargs):
-        # type(str, str, Optional[Any], Any) -> None
+    def __init__(
+            self,
+            blob_account_url: str,
+            container_name: str,
+            credential: Optional[Union["AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,
+            api_version: str = '2019-07-07',
+            **kwargs: Any
+    ) -> None:
         self._container_client = kwargs.pop("container_client", None)
         if not self._container_client:
             api_version = kwargs.pop("api_version", None)
@@ -80,26 +90,29 @@ class BlobCheckpointStore(CheckpointStore):
 
     @classmethod
     def from_connection_string(
-        cls, conn_str, container_name, credential=None, **kwargs
-    ):
-        # type: (str, str, Optional[Any], Any) -> BlobCheckpointStore
+        cls,
+        conn_str: str,
+        container_name: str,
+        credential: Optional[Union["AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,
+        **kwargs: Any
+    ) -> "BlobCheckpointStore":
         """Create BlobCheckpointStore from a storage connection string.
 
         :param str conn_str:
-            A connection string to an Azure Storage account.
+         A connection string to an Azure Storage account.
         :param container_name:
-            The container name for the blob.
+         The container name for the blob.
         :type container_name: str
         :param credential:
-            The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, an account
-            shared access key, or an instance of a TokenCredentials class from azure.identity.
-            Credentials provided here will take precedence over those in the connection string.
+         The credentials with which to authenticate. This is optional if the
+         account URL already has a SAS token. The value can be a AzureSasCredential, an AzureNamedKeyCredential,
+         or a TokenCredential.If the URL already has a SAS token, specifying an explicit credential will take priority.
+        :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureSasCredential
+         or ~azure.core.credentials.AzureNamedKeyCredential or None
         :keyword str api_version:
-            The Storage API version to use for requests. Default value is '2019-07-07'.
+         The Storage API version to use for requests. Default value is '2019-07-07'.
         :keyword str secondary_hostname:
-            The hostname of the secondary endpoint.
+         The hostname of the secondary endpoint.
         :returns: A blob checkpoint store.
         :rtype: ~azure.eventhub.extensions.checkpointstoreblob.BlobCheckpointStore
         """
@@ -110,11 +123,11 @@ class BlobCheckpointStore(CheckpointStore):
 
         return cls(account_url, container_name, credential=credential, **kwargs)
 
-    def __enter__(self):
+    def __enter__(self) -> "BlobCheckpointStore":
         self._container_client.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self._container_client.__exit__(*args)
 
     def _get_blob_client(self, blob_name):
@@ -156,7 +169,7 @@ class BlobCheckpointStore(CheckpointStore):
         try:
             self._upload_ownership(updated_ownership, **kwargs)
             return updated_ownership
-        except (ResourceModifiedError, ResourceExistsError):
+        except (ResourceModifiedError, ResourceExistsError) as exc:
             logger.info(
                 "EventProcessor instance %r of namespace %r eventhub %r consumer group %r "
                 "lost ownership to partition %r",
@@ -166,7 +179,7 @@ class BlobCheckpointStore(CheckpointStore):
                 updated_ownership["consumer_group"],
                 updated_ownership["partition_id"],
             )
-            raise OwnershipLostError()
+            raise OwnershipLostError() from exc
         except Exception as error:  # pylint:disable=broad-except
             logger.warning(
                 "An exception occurred when EventProcessor instance %r claim_ownership for "
@@ -182,8 +195,13 @@ class BlobCheckpointStore(CheckpointStore):
             )
             return updated_ownership  # Keep the ownership if an unexpected error happens
 
-    def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
-        # type: (str, str, str, Any) -> Iterable[Dict[str, Any]]
+    def list_ownership(
+        self,
+        fully_qualified_namespace: str,
+        eventhub_name: str,
+        consumer_group: str,
+        **kwargs: Any
+    ) -> Iterable[Dict[str, Any]]:
         """Retrieves a complete ownership list from the storage blob.
 
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
@@ -191,7 +209,7 @@ class BlobCheckpointStore(CheckpointStore):
         :param str eventhub_name: The name of the specific Event Hub the partition ownerships are associated with,
          relative to the Event Hubs namespace that contains it.
         :param str consumer_group: The name of the consumer group the ownerships are associated with.
-        :rtype: Iterable[Dict[str, Any]], Iterable of dictionaries containing partition ownership information:
+        :return: Iterable of dictionaries containing partition ownership information:
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
                   The format is like "<namespace>.servicebus.windows.net".
@@ -203,6 +221,7 @@ class BlobCheckpointStore(CheckpointStore):
                 - `last_modified_time` (float): The last time this ownership was claimed as a timestamp.
                 - `etag` (str): The Etag value for the last time this ownership was modified. Optional depending
                   on storage implementation.
+        :rtype: iterable[dict[str, any]]
         """
         try:
             blob_prefix = "{}/{}/{}/ownership/".format(
@@ -236,12 +255,15 @@ class BlobCheckpointStore(CheckpointStore):
             )
             raise
 
-    def claim_ownership(self, ownership_list, **kwargs):
-        # type: (Iterable[Dict[str, Any]], Any) -> Iterable[Dict[str, Any]]
+    def claim_ownership(
+        self,
+        ownership_list: Iterable[Dict[str, Any]],
+        **kwargs: Any
+    ) -> Iterable[Dict[str, Any]]:
         """Tries to claim ownership for a list of specified partitions.
 
-        :param Iterable[Dict[str,Any]] ownership_list: Iterable of dictionaries containing all the ownerships to claim.
-        :rtype: Iterable[Dict[str,Any]], Iterable of dictionaries containing partition ownership information:
+        :param iterable[dict[str, any]] ownership_list: Iterable of dictionaries containing all the ownerships to claim.
+        :return: Iterable of dictionaries containing partition ownership information:
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
                   The format is like "<namespace>.servicebus.windows.net".
@@ -253,6 +275,7 @@ class BlobCheckpointStore(CheckpointStore):
                 - `last_modified_time` (float): The last time this ownership was claimed as a timestamp.
                 - `etag` (str): The Etag value for the last time this ownership was modified. Optional depending
                   on storage implementation.
+        :rtype: iterable[dict[str, any]]
         """
         gathered_results = []
         for x in ownership_list:
@@ -262,15 +285,14 @@ class BlobCheckpointStore(CheckpointStore):
                 pass
         return gathered_results
 
-    def update_checkpoint(self, checkpoint, **kwargs):
-        # type: (Dict[str, Optional[Union[str, int]]], Any) -> None
+    def update_checkpoint(self, checkpoint: Dict[str, Union[str, int]], **kwargs: Any) -> None:
         """Updates the checkpoint using the given information for the offset, associated partition and
         consumer group in the storage blob.
 
         Note: If you plan to implement a custom checkpoint store with the intention of running between
         cross-language EventHubs SDKs, it is recommended to persist the offset value as an integer.
 
-        :param Dict[str,Any] checkpoint: A dict containing checkpoint information:
+        :param dict[str,any] checkpoint: A dict containing checkpoint information:
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
                   The format is like "<namespace>.servicebus.windows.net".
@@ -306,9 +328,8 @@ class BlobCheckpointStore(CheckpointStore):
             )
 
     def list_checkpoints(
-        self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs
-    ):
-        # type: (str, str, str, Any) -> Iterable[Dict[str, Any]]
+        self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str, **kwargs: Any
+    ) -> Iterable[Dict[str, Any]]:
         """List the updated checkpoints from the storage blob.
 
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
@@ -316,7 +337,7 @@ class BlobCheckpointStore(CheckpointStore):
         :param str eventhub_name: The name of the specific Event Hub the checkpoints are associated with, relative to
          the Event Hubs namespace that contains it.
         :param str consumer_group: The name of the consumer group the checkpoints are associated with.
-        :rtype: Iterable[Dict[str,Any]], Iterable of dictionaries containing partition checkpoint information:
+        :return: Iterable of dictionaries containing partition checkpoint information:
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
                   The format is like "<namespace>.servicebus.windows.net".
@@ -326,6 +347,7 @@ class BlobCheckpointStore(CheckpointStore):
                 - `partition_id` (str): The partition ID which the checkpoint is created for.
                 - `sequence_number` (int): The sequence number of the :class:`EventData<azure.eventhub.EventData>`.
                 - `offset` (str): The offset of the :class:`EventData<azure.eventhub.EventData>`.
+        :rtype: iterable[dict[str,any]]
         """
         blob_prefix = "{}/{}/{}/checkpoint/".format(
             fully_qualified_namespace, eventhub_name, consumer_group
@@ -347,5 +369,5 @@ class BlobCheckpointStore(CheckpointStore):
             result.append(checkpoint)
         return result
 
-    def close(self):
+    def close(self) -> None:
         self._container_client.__exit__()

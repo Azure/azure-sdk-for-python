@@ -4,10 +4,10 @@
 
 import logging
 from abc import ABC
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SweepJobLimits as RestSweepJobLimits
+from azure.ai.ml._restclient.v2023_08_01_preview.models import SweepJobLimits as RestSweepJobLimits
 from azure.ai.ml._utils.utils import from_iso_duration_format, is_data_binding_expression, to_iso_duration_format
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -19,30 +19,27 @@ class JobLimits(RestTranslatableMixin, ABC):
     """Base class for Job limits.
 
     This class should not be instantiated directly. Instead, one of its child classes should be used.
-
-    :param type: The job type.
-    :type type: ~azure.ai.ml.constants.JobType
     """
 
     def __init__(
         self,
     ) -> None:
-        self.type = None
+        self.type: Any = None
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if not isinstance(other, JobLimits):
             return NotImplemented
-        return self._to_rest_object() == other._to_rest_object()
+        res: bool = self._to_rest_object() == other._to_rest_object()
+        return res
 
 
 class CommandJobLimits(JobLimits):
     """Limits for Command Jobs.
 
-    :param timeout: The maximum run duration, in seconds, after which the job will be cancelled.
-    :type timeout: int
+    :keyword timeout: The maximum run duration, in seconds, after which the job will be cancelled.
+    :paramtype timeout: Optional[Union[int, str]]
 
     .. admonition:: Example:
-        :class: tip
 
         .. literalinclude:: ../samples/ml_samples_command_configurations.py
             :start-after: [START command_job_definition]
@@ -52,7 +49,7 @@ class CommandJobLimits(JobLimits):
             :caption: Configuring a CommandJob with CommandJobLimits.
     """
 
-    def __init__(self, *, timeout: Union[int, str, None] = None) -> None:
+    def __init__(self, *, timeout: Optional[Union[int, str]] = None) -> None:
         super().__init__()
         self.type = JobType.COMMAND
         self.timeout = timeout
@@ -79,17 +76,16 @@ class CommandJobLimits(JobLimits):
 class SweepJobLimits(JobLimits):
     """Limits for Sweep Jobs.
 
-    :param max_concurrent_trials: The maximum number of concurrent trials for the Sweep Job.
-    :type max_concurrent_trials: int
-    :param max_total_trials: The maximum number of total trials for the Sweep Job.
-    :type max_total_trials: int
-    :param timeout: The maximum run duration, in seconds, after which the job will be cancelled.
-    :type timeout: int
-    :param trial_timeout: The timeout value, in seconds, for each Sweep Job trial.
-    :type trial_timeout: int
+    :keyword max_concurrent_trials: The maximum number of concurrent trials for the Sweep Job.
+    :paramtype max_concurrent_trials: Optional[int]
+    :keyword max_total_trials: The maximum number of total trials for the Sweep Job.
+    :paramtype max_total_trials: Optional[int]
+    :keyword timeout: The maximum run duration, in seconds, after which the job will be cancelled.
+    :paramtype timeout: Optional[int]
+    :keyword trial_timeout: The timeout value, in seconds, for each Sweep Job trial.
+    :paramtype trial_timeout: Optional[int]
 
     .. admonition:: Example:
-        :class: tip
 
         .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]
@@ -105,7 +101,7 @@ class SweepJobLimits(JobLimits):
         max_concurrent_trials: Optional[int] = None,
         max_total_trials: Optional[int] = None,
         timeout: Optional[int] = None,
-        trial_timeout: Optional[int] = None,
+        trial_timeout: Optional[Union[int, str]] = None,
     ) -> None:
         super().__init__()
         self.type = JobType.SWEEP
@@ -115,9 +111,10 @@ class SweepJobLimits(JobLimits):
         self._trial_timeout = _get_floored_timeout(trial_timeout)
 
     @property
-    def timeout(self) -> int:
+    def timeout(self) -> Optional[Union[int, str]]:
         """The maximum run duration, in seconds, after which the job will be cancelled.
 
+        :return: The maximum run duration, in seconds, after which the job will be cancelled.
         :rtype: int
         """
         return self._timeout
@@ -132,9 +129,10 @@ class SweepJobLimits(JobLimits):
         self._timeout = _get_floored_timeout(value)
 
     @property
-    def trial_timeout(self) -> int:
+    def trial_timeout(self) -> Optional[Union[int, str]]:
         """The timeout value, in seconds, for each Sweep Job trial.
 
+        :return: The timeout value, in seconds, for each Sweep Job trial.
         :rtype: int
         """
         return self._trial_timeout
@@ -157,7 +155,7 @@ class SweepJobLimits(JobLimits):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: RestSweepJobLimits) -> "SweepJobLimits":
+    def _from_rest_object(cls, obj: RestSweepJobLimits) -> Optional["SweepJobLimits"]:
         if not obj:
             return None
 
@@ -169,28 +167,35 @@ class SweepJobLimits(JobLimits):
         )
 
 
-def _get_floored_timeout(value: int) -> int:
+def _get_floored_timeout(value: Optional[Union[int, str]]) -> Optional[Union[int, str]]:
     # Bug 1335978:  Service rounds durations less than 60 seconds to 60 days.
     # If duration is non-0 and less than 60, set to 60.
-    return value if not value or value > 60 else 60
+    if isinstance(value, int):
+        return value if not value or value > 60 else 60
+
+    return None
 
 
 class DoWhileJobLimits(JobLimits):
     """DoWhile Job limit class.
 
-    :param max_iteration_count:
-    :type max_iteration_count: int
+    :keyword max_iteration_count: The maximum number of iterations for the DoWhile Job.
+    :paramtype max_iteration_count: Optional[int]
     """
 
     def __init__(
-        self,
+        self,  # pylint: disable=unused-argument
         *,
         max_iteration_count: Optional[int] = None,
-        **kwargs,  # pylint: disable=unused-argument
-    ):
+        **kwargs: Any,
+    ) -> None:
         super().__init__()
         self._max_iteration_count = max_iteration_count
 
     @property
-    def max_iteration_count(self) -> int:
+    def max_iteration_count(self) -> Optional[int]:
+        """The maximum number of iterations for the DoWhile Job.
+
+        :rtype: int
+        """
         return self._max_iteration_count

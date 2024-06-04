@@ -3,33 +3,20 @@
 # ---------------------------------------------------------
 # pylint: disable=protected-access
 
-from typing import Optional, Dict, Union, Callable, Tuple
+from typing import Any, Callable, Dict, Optional, Tuple, Union
 
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.entities._component.datatransfer_component import (
-    DataTransferCopyComponent,
-)
 from azure.ai.ml.constants._common import AssetTypes, LegacyAssetTypes
-from azure.ai.ml.constants._component import (
-    ComponentSource,
-    ExternalDataType,
-    DataTransferBuiltinComponentUri,
-)
-from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
-from azure.ai.ml.entities._inputs_outputs import Output, Input
-from azure.ai.ml.entities._job.pipeline._io import PipelineInput, NodeOutput
+from azure.ai.ml.constants._component import ComponentSource, DataTransferBuiltinComponentUri, ExternalDataType
 from azure.ai.ml.entities._builders.base_node import pipeline_node_decorator
-from azure.ai.ml.entities._job.pipeline._component_translatable import (
-    ComponentTranslatableMixin,
-)
+from azure.ai.ml.entities._component.datatransfer_component import DataTransferCopyComponent
+from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
+from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
+from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
-from .data_transfer import (
-    DataTransferCopy,
-    DataTransferImport,
-    DataTransferExport,
-    _build_source_sink,
-)
 
+from .data_transfer import DataTransferCopy, DataTransferExport, DataTransferImport, _build_source_sink
 
 SUPPORTED_INPUTS = [
     LegacyAssetTypes.PATH,
@@ -42,8 +29,10 @@ SUPPORTED_INPUTS = [
 ]
 
 
-def _parse_input(input_value):
-    component_input, job_input = None, None
+def _parse_input(input_value: Union[Input, dict, str, PipelineInput, NodeOutput]) -> Tuple:
+    component_input = None
+    job_input: Union[Input, dict, str, PipelineInput, NodeOutput] = ""
+
     if isinstance(input_value, Input):
         component_input = Input(**input_value._to_dict())
         input_type = input_value.type
@@ -61,6 +50,7 @@ def _parse_input(input_value):
         component_input = ComponentTranslatableMixin._to_input_builder_function(input_value)
         job_input = input_value
     elif isinstance(input_value, (PipelineInput, NodeOutput)):
+        data: Any = None
         # datatransfer node can accept PipelineInput/NodeOutput for export task.
         if input_value._data is None or isinstance(input_value._data, Output):
             data = Input(type=input_value.type, mode=input_value.mode)
@@ -82,8 +72,10 @@ def _parse_input(input_value):
     return component_input, job_input
 
 
-def _parse_output(output_value):
-    component_output, job_output = None, None
+def _parse_output(output_value: Union[Output, Dict]) -> Tuple:
+    component_output = None
+    job_output: Union[Output, Dict] = {}
+
     if isinstance(output_value, Output):
         component_output = Output(**output_value._to_dict())
         job_output = Output(**output_value._to_dict())
@@ -108,7 +100,7 @@ def _parse_output(output_value):
     return component_output, job_output
 
 
-def _parse_inputs_outputs(io_dict: Dict, parse_func: Callable) -> Tuple[Dict, Dict]:
+def _parse_inputs_outputs(io_dict: Optional[Dict], parse_func: Callable) -> Tuple[Dict, Dict]:
     component_io_dict, job_io_dict = {}, {}
     if io_dict:
         for key, val in io_dict.items():
@@ -131,34 +123,36 @@ def copy_data(
     outputs: Optional[Dict] = None,
     is_deterministic: bool = True,
     data_copy_mode: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> DataTransferCopy:
     """Create a DataTransferCopy object which can be used inside dsl.pipeline as a function.
 
-    :param name: The name of the job.
-    :type name: str
-    :param description: Description of the job.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param display_name: Display name of the job.
-    :type display_name: str
-    :param experiment_name:  Name of the experiment the job will be created under.
-    :type experiment_name: str
-    :param compute: The compute resource the job runs on.
-    :type compute: str
-    :param inputs: Mapping of inputs data bindings used in the job.
-    :type inputs: dict
-    :param outputs: Mapping of outputs data bindings used in the job.
-    :type outputs: dict
-    :param is_deterministic: Specify whether the command will return same output given same input.
+    :keyword name: The name of the job.
+    :paramtype name: str
+    :keyword description: Description of the job.
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict[str, str]
+    :keyword display_name: Display name of the job.
+    :paramtype display_name: str
+    :keyword experiment_name:  Name of the experiment the job will be created under.
+    :paramtype experiment_name: str
+    :keyword compute: The compute resource the job runs on.
+    :paramtype compute: str
+    :keyword inputs: Mapping of inputs data bindings used in the job.
+    :paramtype inputs: dict
+    :keyword outputs: Mapping of outputs data bindings used in the job.
+    :paramtype outputs: dict
+    :keyword is_deterministic: Specify whether the command will return same output given same input.
         If a command (component) is deterministic, when use it as a node/step in a pipeline,
         it will reuse results from a previous submitted job in current workspace which has same inputs and settings.
         In this case, this step will not use any compute resource.
         Default to be True, specify is_deterministic=False if you would like to avoid such reuse behavior.
-    :type is_deterministic: bool
-    :param data_copy_mode: data copy mode in copy task, possible value is "merge_with_overwrite", "fail_if_conflict".
-    :type data_copy_mode: str
+    :paramtype is_deterministic: bool
+    :keyword data_copy_mode: data copy mode in copy task, possible value is "merge_with_overwrite", "fail_if_conflict".
+    :paramtype data_copy_mode: str
+    :return: A DataTransferCopy object.
+    :rtype: ~azure.ai.ml.entities._component.datatransfer_component.DataTransferCopyComponent
     """
     inputs = inputs or {}
     outputs = outputs or {}
@@ -208,27 +202,30 @@ def import_data(
     compute: Optional[str] = None,
     source: Optional[Union[Dict, Database, FileSystem]] = None,
     outputs: Optional[Dict] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> DataTransferImport:
     """Create a DataTransferImport object which can be used inside dsl.pipeline.
 
-    :param name: The name of the job.
-    :type name: str
-    :param description: Description of the job.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param display_name: Display name of the job.
-    :type display_name: str
-    :param experiment_name:  Name of the experiment the job will be created under.
-    :type experiment_name: str
-    :param compute: The compute resource the job runs on.
-    :type compute: str
-    :param source: The data source of file system or database
-    :type source: Union[Dict, Database, FileSystem]
-    :param outputs: Mapping of outputs data bindings used in the job, default will be an output port with key "sink"
-    and type "mltable".
-    :type outputs: dict
+    :keyword name: The name of the job.
+    :paramtype name: str
+    :keyword description: Description of the job.
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict[str, str]
+    :keyword display_name: Display name of the job.
+    :paramtype display_name: str
+    :keyword experiment_name: Name of the experiment the job will be created under.
+    :paramtype experiment_name: str
+    :keyword compute: The compute resource the job runs on.
+    :paramtype compute: str
+    :keyword source: The data source of file system or database.
+    :paramtype source: Union[Dict, ~azure.ai.ml.entities._inputs_outputs.external_data.Database,
+        ~azure.ai.ml.entities._inputs_outputs.external_data.FileSystem]
+    :keyword outputs: Mapping of outputs data bindings used in the job.
+        The default will be an output port with the key "sink" and type "mltable".
+    :paramtype outputs: dict
+    :return: A DataTransferImport object.
+    :rtype: ~azure.ai.ml.entities._job.pipeline._component_translatable.DataTransferImport
     """
     source = _build_source_sink(source)
     outputs = outputs or {"sink": Output(type=AssetTypes.MLTABLE)}
@@ -274,26 +271,32 @@ def export_data(
     compute: Optional[str] = None,
     sink: Optional[Union[Dict, Database, FileSystem]] = None,
     inputs: Optional[Dict] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> DataTransferExport:
     """Create a DataTransferExport object which can be used inside dsl.pipeline.
 
-    :param name: The name of the job.
-    :type name: str
-    :param description: Description of the job.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param display_name: Display name of the job.
-    :type display_name: str
-    :param experiment_name:  Name of the experiment the job will be created under.
-    :type experiment_name: str
-    :param compute: The compute resource the job runs on.
-    :type compute: str
-    :param sink: The sink of external data and databases.
-    :type sink: Union[Dict, Database, FileSystem]
-    :param inputs: Mapping of inputs data bindings used in the job.
-    :type inputs: dict
+    :keyword name: The name of the job.
+    :paramtype name: str
+    :keyword description: Description of the job.
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict[str, str]
+    :keyword display_name: Display name of the job.
+    :paramtype display_name: str
+    :keyword experiment_name: Name of the experiment the job will be created under.
+    :paramtype experiment_name: str
+    :keyword compute: The compute resource the job runs on.
+    :paramtype compute: str
+    :keyword sink: The sink of external data and databases.
+    :paramtype sink: Union[
+        Dict,
+        ~azure.ai.ml.entities._inputs_outputs.external_data.Database,
+        ~azure.ai.ml.entities._inputs_outputs.external_data.FileSystem]
+    :keyword inputs: Mapping of inputs data bindings used in the job.
+    :paramtype inputs: dict
+    :return: A DataTransferExport object.
+    :rtype: ~azure.ai.ml.entities._job.pipeline._component_translatable.DataTransferExport
+    :raises ValidationException: If sink is not provided or exporting file system is not supported.
     """
     sink = _build_source_sink(sink)
     _, job_inputs = _parse_inputs_outputs(inputs, parse_func=_parse_input)

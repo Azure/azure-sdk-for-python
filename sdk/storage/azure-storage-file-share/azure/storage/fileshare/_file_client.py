@@ -3,7 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines, too-many-public-methods
+# pylint: disable=too-many-lines, too-many-public-methods, docstring-keyword-should-match-keyword-only
+
 import functools
 import sys
 import time
@@ -17,8 +18,8 @@ from urllib.parse import urlparse, quote, unquote
 
 from typing_extensions import Self
 
-from azure.core.exceptions import HttpResponseError
-from azure.core.paging import ItemPaged  # pylint: disable=ungrouped-imports
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from ._generated import AzureFileStorage
 from ._generated.models import FileHTTPHeaders
@@ -108,7 +109,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     For more optional configuration, please click
     `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-    #optional-configuration>`_.
+    #optional-configuration>`__.
 
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the
@@ -131,6 +132,11 @@ class ShareFileClient(StorageAccountHostsMixin):
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.TokenCredential or
+        str or dict[str, str] or None
     :keyword token_intent:
         Required when using `TokenCredential` for authentication and ignored for other forms of authentication.
         Specifies the intent for all requests when using `TokenCredential` authentication. Possible values are:
@@ -150,6 +156,9 @@ class ShareFileClient(StorageAccountHostsMixin):
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
     """
     def __init__(
             self, account_url: str,
@@ -166,8 +175,8 @@ class ShareFileClient(StorageAccountHostsMixin):
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Account URL must be a string.") from exc
         parsed_url = urlparse(account_url.rstrip('/'))
         if not (share_name and file_path):
             raise ValueError("Please specify a share name and file name.")
@@ -194,7 +203,8 @@ class ShareFileClient(StorageAccountHostsMixin):
 
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
-        super(ShareFileClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
+        super(ShareFileClient, self).__init__(
+            parsed_url, service='file-share', credential=credential, **kwargs)
         self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
         self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
         self.file_request_intent = token_intent
@@ -226,14 +236,22 @@ class ShareFileClient(StorageAccountHostsMixin):
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials.TokenCredential or
+            str or dict[str, str] or None
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
         :returns: A File client.
         :rtype: ~azure.storage.fileshare.ShareFileClient
         """
         try:
             if not file_url.lower().startswith('http'):
                 file_url = "https://" + file_url
-        except AttributeError:
-            raise ValueError("File URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("File URL must be a string.") from exc
         parsed_url = urlparse(file_url.rstrip('/'))
 
         if not (parsed_url.netloc and parsed_url.path):
@@ -248,9 +266,6 @@ class ShareFileClient(StorageAccountHostsMixin):
         return cls(account_url, share_name, file_path, snapshot, credential, **kwargs)
 
     def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
         share_name = self.share_name
         if isinstance(share_name, str):
             share_name = share_name.encode('UTF-8')
@@ -286,6 +301,14 @@ class ShareFileClient(StorageAccountHostsMixin):
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials.TokenCredential or
+            str or dict[str, str] or None
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
         :returns: A File client.
         :rtype: ~azure.storage.fileshare.ShareFileClient
 
@@ -321,7 +344,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: A ShareLeaseClient object.
         :rtype: ~azure.storage.fileshare.ShareLeaseClient
 
@@ -338,6 +361,29 @@ class ShareFileClient(StorageAccountHostsMixin):
         lease = ShareLeaseClient(self, lease_id=lease_id)  # type: ignore
         lease.acquire(**kwargs)
         return lease
+
+    @distributed_trace
+    def exists(self, **kwargs: Any) -> bool:
+        """
+        Returns True if the file exists and returns False otherwise.
+
+        :keyword int timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`__.
+        :returns: True if the file exists, False otherwise.
+        :rtype: bool
+        """
+        try:
+            self._client.file.get_properties(**kwargs)
+            return True
+        except HttpResponseError as error:
+            try:
+                process_storage_error(error)
+            except ResourceNotFoundError:
+                return False
 
     @distributed_trace
     def create_file(  # type: ignore
@@ -361,7 +407,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             If not set, the default value would be "None" and the attributes will be set to "Archive".
             Here is an example for when the var type is str: 'Temporary|Archive'.
             file_attributes value is not case sensitive.
-        :type file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
+        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes
         :param file_creation_time: Creation time for the file
             Default value: Now.
         :type file_creation_time: str or ~datetime.datetime
@@ -383,14 +429,16 @@ class ShareFileClient(StorageAccountHostsMixin):
             Change time for the file. If not specified, change time will be set to the current date/time.
 
             .. versionadded:: 12.8.0
+
                 This parameter was introduced in API version '2021-06-08'.
 
         :paramtype file_change_time: str or ~datetime.datetime
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
-        :keyword dict(str,str) metadata:
+        :keyword metadata:
             Name-value pairs associated with the file as metadata.
+        :paramtype metadata: Optional[dict[str, str]]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -403,9 +451,9 @@ class ShareFileClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: File-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: dict[str, Any]
 
         .. admonition:: Example:
 
@@ -468,6 +516,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
         :param data:
             Content of the file.
+        :type data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
         :param int length:
             Length of the file in bytes. Specify its maximum size, up to 1 TiB.
         :param file_attributes:
@@ -493,15 +542,17 @@ class ShareFileClient(StorageAccountHostsMixin):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
-       :keyword file_change_time:
+        :keyword file_change_time:
             Change time for the file. If not specified, change time will be set to the current date/time.
 
             .. versionadded:: 12.8.0
+
                 This parameter was introduced in API version '2021-06-08'.
 
         :paramtype file_change_time: str or ~datetime.datetime
-        :keyword dict(str,str) metadata:
+        :keyword metadata:
             Name-value pairs associated with the file as metadata.
+        :paramtype metadata: Optional[dict[str, str]]
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
@@ -531,11 +582,11 @@ class ShareFileClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :keyword str encoding:
             Defaults to UTF-8.
         :returns: File-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: dict[str, Any]
 
         .. admonition:: Example:
 
@@ -589,7 +640,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def start_copy_from_url(self, source_url, **kwargs):
-        # type: (str, Any) -> Any
+        # type: (str, Any) -> Dict[str, Any]
         """Initiates the copying of data from a source URL into the file
         referenced by the client.
 
@@ -608,6 +659,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             Note: Only one of the file_permission or permission_key should be specified.
 
             .. versionadded:: 12.1.0
+
                 This parameter was introduced in API version '2019-07-07'.
 
         :keyword str permission_key:
@@ -618,6 +670,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             Note: Only one of the file_permission or permission_key should be specified.
 
             .. versionadded:: 12.1.0
+
                 This parameter was introduced in API version '2019-07-07'.
 
         :keyword file_attributes:
@@ -626,6 +679,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             to set on the target file. If this is not set, the default value is "Archive".
 
             .. versionadded:: 12.1.0
+
                 This parameter was introduced in API version '2019-07-07'.
 
         :paramtype file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
@@ -636,6 +690,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             (or when it was overwritten) of the target file by copy engine.
 
             .. versionadded:: 12.1.0
+
                 This parameter was introduced in API version '2019-07-07'.
 
         :paramtype file_creation_time: str or ~datetime.datetime
@@ -645,6 +700,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             If this is not set, value will be the last write time to the file by the copy engine.
 
             .. versionadded:: 12.1.0
+
                 This parameter was introduced in API version '2019-07-07'.
 
         :paramtype file_last_write_time: str or ~datetime.datetime
@@ -652,6 +708,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             Change time for the file. If not specified, change time will be set to the current date/time.
 
             .. versionadded:: 12.9.0
+
                 This parameter was introduced in API version '2021-06-08'.
 
         :paramtype file_change_time: str or ~datetime.datetime
@@ -659,6 +716,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             Specifies the option to overwrite the target file if it already exists and has read-only attribute set.
 
             .. versionadded:: 12.1.0
+
                 This parameter was introduced in API version '2019-07-07'.
 
         :keyword bool set_archive_attribute:
@@ -667,11 +725,12 @@ class ShareFileClient(StorageAccountHostsMixin):
             overrides or the source file state.
 
             .. versionadded:: 12.1.0
+
                 This parameter was introduced in API version '2019-07-07'.
 
         :keyword metadata:
             Name-value pairs associated with the file as metadata.
-        :type metadata: dict(str, str)
+        :paramtype metadata: Optional[dict[str, str]]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -684,8 +743,9 @@ class ShareFileClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
-        :rtype: dict(str, Any)
+            #other-client--per-operation-configuration>`__.
+        :returns: Response after data copying operation has been initiated.
+        :rtype: dict[str, Any]
 
         .. admonition:: Example:
 
@@ -714,6 +774,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         except HttpResponseError as error:
             process_storage_error(error)
 
+    @distributed_trace
     def abort_copy(self, copy_id, **kwargs):
         # type: (Union[str, FileProperties], Any) -> None
         """Abort an ongoing copy operation.
@@ -737,7 +798,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :rtype: None
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -758,10 +819,10 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def download_file(
-            self, offset=None,  # type: Optional[int]
-            length=None,  # type: Optional[int]
-            **kwargs  # type: Any
-        ):
+        self, offset=None,  # type: Optional[int]
+        length=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
         # type: (...) -> StorageStreamDownloader
         """Downloads a file to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the file into
@@ -801,7 +862,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: A streaming object (StorageStreamDownloader)
         :rtype: ~azure.storage.fileshare.StorageStreamDownloader
 
@@ -853,7 +914,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :rtype: None
 
         .. admonition:: Example:
@@ -874,9 +935,9 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def rename_file(
-            self, new_name, # type: str
-            **kwargs # type: Any
-        ):
+        self, new_name, # type: str
+        **kwargs # type: Any
+    ):
         # type: (...) -> ShareFileClient
         """
         Rename the source file.
@@ -888,7 +949,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :keyword bool overwrite:
             A boolean value for if the destination file already exists, whether this request will
             overwrite the file or not. If true, the rename will succeed and will overwrite the
@@ -910,17 +971,18 @@ class ShareFileClient(StorageAccountHostsMixin):
             Note: Only one of the file-permission or file-permission-key should be specified.
         :keyword file_attributes:
             The file system attributes for the file.
-        :paramtype file_attributes:~azure.storage.fileshare.NTFSAttributes or str
+        :paramtype file_attributes: ~azure.storage.fileshare.NTFSAttributes or str
         :keyword file_creation_time:
             Creation time for the file.
-        :paramtype file_creation_time:~datetime.datetime or str
+        :paramtype file_creation_time: ~datetime.datetime or str
         :keyword file_last_write_time:
             Last write time for the file.
-        :paramtype file_last_write_time:~datetime.datetime or str
+        :paramtype file_last_write_time: ~datetime.datetime or str
         :keyword file_change_time:
             Change time for the file. If not specified, change time will be set to the current date/time.
 
             .. versionadded:: 12.8.0
+
                 This parameter was introduced in API version '2021-06-08'.
 
         :paramtype file_change_time: str or ~datetime.datetime
@@ -928,6 +990,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             The Content Type of the new file.
 
             .. versionadded:: 12.8.0
+
                 This parameter was introduced in API version '2021-06-08'.
 
         :keyword Dict[str,str] metadata:
@@ -1013,7 +1076,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: FileProperties
         :rtype: ~azure.storage.fileshare.FileProperties
         """
@@ -1053,7 +1116,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
             Here is an example for when the var type is str: 'Temporary|Archive'
-        :type file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
+        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes
         :param file_creation_time: Creation time for the file
             Default value: Preserve.
         :type file_creation_time: str or ~datetime.datetime
@@ -1075,6 +1138,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             Change time for the file. If not specified, change time will be set to the current date/time.
 
             .. versionadded:: 12.8.0
+
                 This parameter was introduced in API version '2021-06-08'.
 
         :paramtype file_change_time: str or ~datetime.datetime
@@ -1090,9 +1154,9 @@ class ShareFileClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: File-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: dict[str, Any]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
@@ -1136,7 +1200,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
         :param metadata:
             Name-value pairs associated with the file as metadata.
-        :type metadata: dict(str, str)
+        :type metadata: dict[str, str]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -1149,9 +1213,9 @@ class ShareFileClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: File-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: dict[str, Any]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
@@ -1199,6 +1263,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             the current date/time.
 
             .. versionadded:: 12.8.0
+
                 This parameter was introduced in API version '2021-06-08'.
 
         :paramtype file_last_write_mode: Literal["preserve", "now"]
@@ -1214,7 +1279,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :keyword str encoding:
             Defaults to UTF-8.
         :returns: File-updated property dict (Etag and last modified).
@@ -1335,6 +1400,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             the current date/time.
 
             .. versionadded:: 12.8.0
+
                 This parameter was introduced in API version '2021-06-08'.
 
         :paramtype file_last_write_mode: Literal["preserve", "now"]
@@ -1350,10 +1416,12 @@ class ShareFileClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :keyword str source_authorization:
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
+        :returns: Result after writing to the specified range of the destination Azure File endpoint.
+        :rtype: dict[str, Any]
         """
         options = self._upload_range_from_url_options(
             source_url=source_url,
@@ -1425,7 +1493,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns:
             A list of valid ranges.
         :rtype: List[dict[str, int]]
@@ -1440,14 +1508,16 @@ class ShareFileClient(StorageAccountHostsMixin):
             process_storage_error(error)
         return [{'start': file_range.start, 'end': file_range.end} for file_range in ranges.ranges]
 
-    def get_ranges_diff(  # type: ignore
-            self,
-            previous_sharesnapshot,  # type: Union[str, Dict[str, Any]]
-            offset=None,  # type: Optional[int]
-            length=None,  # type: Optional[int]
-            **kwargs  # type: Any
-            ):
-        # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
+    @distributed_trace
+    def get_ranges_diff(
+        self,
+        previous_sharesnapshot: Union[str, Dict[str, Any]],
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        *,
+        include_renames: Optional[bool] = None,
+        **kwargs: Any
+    ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:
         """Returns the list of valid page ranges for a file or snapshot
         of a file.
 
@@ -1461,6 +1531,11 @@ class ShareFileClient(StorageAccountHostsMixin):
             The snapshot diff parameter that contains an opaque DateTime value that
             specifies a previous file snapshot to be compared
             against a more recent snapshot or the current file.
+        :keyword Optional[bool] include_renames:
+            Only valid if previous_sharesnapshot parameter is provided. Specifies whether the changed ranges for
+            a file that has been renamed or moved between the target snapshot (or live file) and the previous
+            snapshot should be listed. If set to True, the valid changed ranges for the file will be returned.
+            If set to False, the operation will result in a 409 (Conflict) response.
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -1470,16 +1545,17 @@ class ShareFileClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns:
             A tuple of two lists of file ranges as dictionaries with 'start' and 'end' keys.
             The first element are filled file ranges, the 2nd element is cleared file ranges.
-        :rtype: tuple(list(dict(str, str), list(dict(str, str))
+        :rtype: tuple[list[dict[str, str], list[dict[str, str]]
         """
         options = self._get_ranges_options(
             offset=offset,
             length=length,
             previous_sharesnapshot=previous_sharesnapshot,
+            support_rename=include_renames,
             **kwargs)
         try:
             ranges = self._client.file.get_range_list(**options)
@@ -1515,7 +1591,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
@@ -1560,7 +1636,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
@@ -1590,7 +1666,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: An auto-paging iterable of Handle
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.fileshare.Handle]
         """
@@ -1618,7 +1694,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns:
             The number of handles closed (this may be 0 if the specified handle was not found)
             and the number of handles failed to close in a dict.
@@ -1657,7 +1733,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: The number of handles closed (this may be 0 if the specified handle was not found)
             and the number of handles failed to close in a dict.
         :rtype: dict[str, int]

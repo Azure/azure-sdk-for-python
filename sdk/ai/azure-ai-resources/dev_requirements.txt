@@ -1,0 +1,7 @@
+-e ../../../tools/azure-sdk-tools
+../../core/azure-core
+../../identity/azure-identity
+-e ../../ml/azure-ai-ml
+pytest
+pytest-xdist
+openai

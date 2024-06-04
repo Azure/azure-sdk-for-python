@@ -26,18 +26,17 @@ from azure.mgmt.storagemover import StorageMoverMgmtClient
 def main():
     client = StorageMoverMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="11111111-2222-3333-4444-555555555555",
+        subscription_id="60bcfc77-6589-4da2-b7fd-f9ec9322cf95",
     )
 
-    response = client.job_definitions.begin_delete(
+    client.job_definitions.begin_delete(
         resource_group_name="examples-rg",
         storage_mover_name="examples-storageMoverName",
         project_name="examples-projectName",
         job_definition_name="examples-jobDefinitionName",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/storagemover/resource-manager/Microsoft.StorageMover/stable/2023-03-01/examples/JobDefinitions_Delete.json
+# x-ms-original-file: specification/storagemover/resource-manager/Microsoft.StorageMover/stable/2023-10-01/examples/JobDefinitions_Delete.json
 if __name__ == "__main__":
     main()

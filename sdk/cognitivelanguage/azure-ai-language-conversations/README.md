@@ -271,18 +271,21 @@ with client:
                                 "text": "Hello, how can I help you?",
                                 "modality": "text",
                                 "id": "1",
+                                "role": "Agent",
                                 "participantId": "Agent"
                             },
                             {
                                 "text": "How to upgrade Office? I am getting error messages the whole day.",
                                 "modality": "text",
                                 "id": "2",
+                                "role": "Customer",
                                 "participantId": "Customer"
                             },
                             {
                                 "text": "Press the upgrade button please. Then sign in and follow the instructions.",
                                 "modality": "text",
                                 "id": "3",
+                                "role": "Agent",
                                 "participantId": "Agent"
                             }
                         ],
@@ -384,6 +387,7 @@ poller = client.begin_import_project(
             "language": "en-us",
         },
         "projectFileVersion": "2022-05-01",
+        "stringIndexType": "Utf16CodeUnit",
     },
 )
 response = poller.result()

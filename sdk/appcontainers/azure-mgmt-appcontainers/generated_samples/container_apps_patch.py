@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.appcontainers import ContainerAppsAPIClient
 
 """
@@ -78,6 +81,7 @@ def main():
                         "traffic": [{"label": "production", "revisionName": "testcontainerApp0-ab1234", "weight": 100}],
                     },
                     "maxInactiveRevisions": 10,
+                    "service": {"type": "redis"},
                 },
                 "template": {
                     "containers": [
@@ -115,6 +119,14 @@ def main():
                             }
                         ],
                     },
+                    "serviceBinds": [
+                        {
+                            "clientType": "dotnet",
+                            "customizedKeys": {"DesiredKey": "defaultKey"},
+                            "name": "service",
+                            "serviceId": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/rg/providers/Microsoft.App/containerApps/service",
+                        }
+                    ],
                 },
             },
             "tags": {"tag1": "value1", "tag2": "value2"},
@@ -123,6 +135,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2022-11-01-preview/examples/ContainerApps_Patch.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2023-11-02-preview/examples/ContainerApps_Patch.json
 if __name__ == "__main__":
     main()

@@ -26,17 +26,16 @@ from azure.mgmt.hybridcontainerservice import HybridContainerServiceMgmtClient
 def main():
     client = HybridContainerServiceMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
     response = client.hybrid_identity_metadata.list_by_cluster(
-        resource_group_name="testrg",
-        resource_name="ContosoTargetCluster",
+        connected_cluster_resource_uri="subscriptions/fd3c3665-1729-4b7b-9a38-238e83b0f98b/resourceGroups/testrg/providers/Microsoft.Kubernetes/connectedClusters/test-hybridakscluster",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/preview/2022-09-01-preview/examples/HybridIdentityMetadataListByCluster.json
+# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/stable/2024-01-01/examples/HybridIdentityMetadataListByCluster.json
 if __name__ == "__main__":
     main()

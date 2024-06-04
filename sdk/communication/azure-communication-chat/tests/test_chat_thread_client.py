@@ -7,8 +7,7 @@ import unittest
 import time
 
 import calendar
-from datetime import datetime
-from msrest.serialization import TZ_UTC
+from datetime import datetime, timezone
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
 from azure.communication.chat import (
@@ -31,7 +30,7 @@ class TestChatThreadClient(unittest.TestCase):
     @patch('azure.communication.identity._shared.user_credential.CommunicationTokenCredential')
     def setUpClass(cls, credential):
         credential.get_token = Mock(return_value=AccessToken(
-            "some_token", _convert_datetime_to_utc_int(datetime.now().replace(tzinfo=TZ_UTC))
+            "some_token", _convert_datetime_to_utc_int(datetime.now().replace(tzinfo=timezone.utc))
         ))
         TestChatThreadClient.credential = credential
 
@@ -184,7 +183,22 @@ class TestChatThreadClient(unittest.TestCase):
                                 }
                             ],
                             "initiatorCommunicationIdentifier": {"rawId": "string", "communicationUser": {
-                            "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}}
+                            "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}},
+                            "attachments": [
+                                {
+                                    "id": "id",
+                                    "attachmentType": "image",
+                                    "name": "name.png",
+                                    "url": "https://endpoint/threads/chatThreadId/images/imageId/views/original",
+                                    "previewUrl": "https://endpoint/threads/chatThreadId/images/imageId/views/preview",
+                                },
+                                {
+                                    "id": "id",
+                                    "attachmentType": "file",
+                                    "name": "name.pdf",
+                                    "previewUrl": "https://contoso.sharepoint.com/teams/TeamName/DocumentLibrary/FileName",
+                                }
+                            ]
                         },
                         "senderDisplayName": "Bob",
                         "createdOn": "2021-01-27T01:37:33Z",
@@ -210,6 +224,9 @@ class TestChatThreadClient(unittest.TestCase):
         assert message.type == ChatMessageType.TEXT
         assert message.metadata["tags"] == "tag"
         assert len(message.content.participants) > 0
+        assert len(message.content.attachments) == 2
+        assert message.content.attachments[0].attachment_type == "image"
+        assert message.content.attachments[1].attachment_type == "file"
 
     def test_list_messages(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"

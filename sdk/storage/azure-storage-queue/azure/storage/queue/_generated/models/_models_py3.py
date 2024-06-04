@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -35,8 +35,13 @@ class AccessPolicy(_serialization.Model):
     }
 
     def __init__(
-        self, *, start: Optional[str] = None, expiry: Optional[str] = None, permission: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        start: Optional[str] = None,
+        expiry: Optional[str] = None,
+        permission: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword start: the date-time the policy is active.
         :paramtype start: str
@@ -52,9 +57,12 @@ class AccessPolicy(_serialization.Model):
 
 
 class CorsRule(_serialization.Model):
-    """CORS is an HTTP feature that enables a web application running under one domain to access resources in another domain. Web browsers implement a security restriction known as same-origin policy that prevents a web page from calling APIs in a different domain; CORS provides a secure way to allow one domain (the origin domain) to call APIs in another domain.
+    """CORS is an HTTP feature that enables a web application running under one domain to access
+    resources in another domain. Web browsers implement a security restriction known as same-origin
+    policy that prevents a web page from calling APIs in a different domain; CORS provides a secure
+    way to allow one domain (the origin domain) to call APIs in another domain.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar allowed_origins: The origin domains that are permitted to make a request against the
      storage service via CORS. The origin domain is the domain from which the request originates.
@@ -100,8 +108,8 @@ class CorsRule(_serialization.Model):
         allowed_headers: str,
         exposed_headers: str,
         max_age_in_seconds: int,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword allowed_origins: The origin domains that are permitted to make a request against the
          storage service via CORS. The origin domain is the domain from which the request originates.
@@ -133,7 +141,7 @@ class CorsRule(_serialization.Model):
 class DequeuedMessageItem(_serialization.Model):
     """The object returned in the QueueMessageList array when calling Get Messages on a Queue.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar message_id: The Id of the Message. Required.
     :vartype message_id: str
@@ -185,8 +193,8 @@ class DequeuedMessageItem(_serialization.Model):
         time_next_visible: datetime.datetime,
         dequeue_count: int,
         message_text: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword message_id: The Id of the Message. Required.
         :paramtype message_id: str
@@ -219,7 +227,7 @@ class DequeuedMessageItem(_serialization.Model):
 class EnqueuedMessage(_serialization.Model):
     """The object returned in the QueueMessageList array when calling Put Message on a Queue.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar message_id: The Id of the Message. Required.
     :vartype message_id: str
@@ -261,8 +269,8 @@ class EnqueuedMessage(_serialization.Model):
         expiration_time: datetime.datetime,
         pop_receipt: str,
         time_next_visible: datetime.datetime,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword message_id: The Id of the Message. Required.
         :paramtype message_id: str
@@ -289,7 +297,7 @@ class EnqueuedMessage(_serialization.Model):
 class GeoReplication(_serialization.Model):
     """GeoReplication.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar status: The status of the secondary location. Required. Known values are: "live",
      "bootstrap", and "unavailable".
@@ -311,8 +319,12 @@ class GeoReplication(_serialization.Model):
     }
 
     def __init__(
-        self, *, status: Union[str, "_models.GeoReplicationStatusType"], last_sync_time: datetime.datetime, **kwargs
-    ):
+        self,
+        *,
+        status: Union[str, "_models.GeoReplicationStatusType"],
+        last_sync_time: datetime.datetime,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: The status of the secondary location. Required. Known values are: "live",
          "bootstrap", and "unavailable".
@@ -330,7 +342,7 @@ class GeoReplication(_serialization.Model):
 class ListQueuesSegmentResponse(_serialization.Model):
     """The object returned when calling List Queues on a Queue Service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar service_endpoint: Required.
     :vartype service_endpoint: str
@@ -376,8 +388,8 @@ class ListQueuesSegmentResponse(_serialization.Model):
         next_marker: str,
         marker: Optional[str] = None,
         queue_items: Optional[List["_models.QueueItem"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_endpoint: Required.
         :paramtype service_endpoint: str
@@ -404,7 +416,7 @@ class ListQueuesSegmentResponse(_serialization.Model):
 class Logging(_serialization.Model):
     """Azure Analytics Logging settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar version: The version of Storage Analytics to configure. Required.
     :vartype version: str
@@ -442,8 +454,8 @@ class Logging(_serialization.Model):
         read: bool,
         write: bool,
         retention_policy: "_models.RetentionPolicy",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword version: The version of Storage Analytics to configure. Required.
         :paramtype version: str
@@ -467,7 +479,7 @@ class Logging(_serialization.Model):
 class Metrics(_serialization.Model):
     """a summary of request statistics grouped by API in hour or minute aggregates for queues.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar version: The version of Storage Analytics to configure.
     :vartype version: str
@@ -498,8 +510,8 @@ class Metrics(_serialization.Model):
         version: Optional[str] = None,
         include_apis: Optional[bool] = None,
         retention_policy: Optional["_models.RetentionPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword version: The version of Storage Analytics to configure.
         :paramtype version: str
@@ -521,7 +533,7 @@ class Metrics(_serialization.Model):
 class PeekedMessageItem(_serialization.Model):
     """The object returned in the QueueMessageList array when calling Peek Messages on a Queue.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar message_id: The Id of the Message. Required.
     :vartype message_id: str
@@ -561,8 +573,8 @@ class PeekedMessageItem(_serialization.Model):
         expiration_time: datetime.datetime,
         dequeue_count: int,
         message_text: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword message_id: The Id of the Message. Required.
         :paramtype message_id: str
@@ -587,7 +599,7 @@ class PeekedMessageItem(_serialization.Model):
 class QueueItem(_serialization.Model):
     """An Azure Storage Queue.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the Queue. Required.
     :vartype name: str
@@ -605,7 +617,7 @@ class QueueItem(_serialization.Model):
     }
     _xml_map = {"name": "Queue"}
 
-    def __init__(self, *, name: str, metadata: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, name: str, metadata: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the Queue. Required.
         :paramtype name: str
@@ -620,7 +632,7 @@ class QueueItem(_serialization.Model):
 class QueueMessage(_serialization.Model):
     """A Message object which can be stored in a Queue.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar message_text: The content of the message. Required.
     :vartype message_text: str
@@ -634,7 +646,7 @@ class QueueMessage(_serialization.Model):
         "message_text": {"key": "MessageText", "type": "str"},
     }
 
-    def __init__(self, *, message_text: str, **kwargs):
+    def __init__(self, *, message_text: str, **kwargs: Any) -> None:
         """
         :keyword message_text: The content of the message. Required.
         :paramtype message_text: str
@@ -646,7 +658,7 @@ class QueueMessage(_serialization.Model):
 class RetentionPolicy(_serialization.Model):
     """the retention policy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enabled: Indicates whether a retention policy is enabled for the storage service.
      Required.
@@ -666,7 +678,7 @@ class RetentionPolicy(_serialization.Model):
         "days": {"key": "Days", "type": "int"},
     }
 
-    def __init__(self, *, enabled: bool, days: Optional[int] = None, **kwargs):
+    def __init__(self, *, enabled: bool, days: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: Indicates whether a retention policy is enabled for the storage service.
          Required.
@@ -683,7 +695,7 @@ class RetentionPolicy(_serialization.Model):
 class SignedIdentifier(_serialization.Model):
     """signed identifier.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: a unique id. Required.
     :vartype id: str
@@ -705,8 +717,8 @@ class SignedIdentifier(_serialization.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         access_policy: Optional["_models.AccessPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: a unique id. Required.
         :paramtype id: str
@@ -729,7 +741,7 @@ class StorageError(_serialization.Model):
         "message": {"key": "Message", "type": "str"},
     }
 
-    def __init__(self, *, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword message:
         :paramtype message: str
@@ -767,8 +779,8 @@ class StorageServiceProperties(_serialization.Model):
         hour_metrics: Optional["_models.Metrics"] = None,
         minute_metrics: Optional["_models.Metrics"] = None,
         cors: Optional[List["_models.CorsRule"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword logging: Azure Analytics Logging settings.
         :paramtype logging: ~azure.storage.queue.models.Logging
@@ -799,7 +811,7 @@ class StorageServiceStats(_serialization.Model):
         "geo_replication": {"key": "GeoReplication", "type": "GeoReplication"},
     }
 
-    def __init__(self, *, geo_replication: Optional["_models.GeoReplication"] = None, **kwargs):
+    def __init__(self, *, geo_replication: Optional["_models.GeoReplication"] = None, **kwargs: Any) -> None:
         """
         :keyword geo_replication: Geo-Replication information for the Secondary Storage Service.
         :paramtype geo_replication: ~azure.storage.queue.models.GeoReplication

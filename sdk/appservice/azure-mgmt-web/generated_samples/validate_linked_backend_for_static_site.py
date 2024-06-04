@@ -29,7 +29,7 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.static_sites.begin_validate_backend(
+    client.static_sites.begin_validate_backend(
         resource_group_name="rg",
         name="testStaticSite0",
         linked_backend_name="testBackend",
@@ -40,9 +40,8 @@ def main():
             }
         },
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2022-09-01/examples/ValidateLinkedBackendForStaticSite.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-01-01/examples/ValidateLinkedBackendForStaticSite.json
 if __name__ == "__main__":
     main()

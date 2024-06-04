@@ -23,8 +23,8 @@ from azure.core.credentials import AzureKeyCredential
 topic_key = os.environ["EVENTGRID_TOPIC_KEY"]
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
-credential = AzureKeyCredential(topic_key)
-client = EventGridPublisherClient(endpoint, credential)
+credential_key = AzureKeyCredential(topic_key)
+client = EventGridPublisherClient(endpoint, credential_key)
 # [END client_auth_with_key_cred_async]
 
 # [START client_auth_with_sas_cred_async]
@@ -35,8 +35,8 @@ from azure.core.credentials import AzureSasCredential
 signature = os.environ["EVENTGRID_SAS"]
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
-credential = AzureSasCredential(signature)
-client = EventGridPublisherClient(endpoint, credential)
+credential_sas = AzureSasCredential(signature)
+client = EventGridPublisherClient(endpoint, credential_sas)
 # [END client_auth_with_sas_cred_async]
 
 # [START client_auth_with_token_cred_async]
@@ -51,7 +51,7 @@ event = EventGridEvent(
     data_version="2.0"
 )
 
-credential = DefaultAzureCredential()
+default_az_credential = DefaultAzureCredential()
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
-client = EventGridPublisherClient(endpoint, credential)
+client = EventGridPublisherClient(endpoint, default_az_credential)
 # [END client_auth_with_token_cred_async]

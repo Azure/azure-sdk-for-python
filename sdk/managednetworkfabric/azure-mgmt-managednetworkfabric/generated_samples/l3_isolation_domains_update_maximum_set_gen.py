@@ -26,11 +26,11 @@ from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 def main():
     client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="1234ABCD-0A1B-1234-5678-123456ABCDEF",
     )
 
     response = client.l3_isolation_domains.begin_update(
-        resource_group_name="resourceGroupName",
+        resource_group_name="example-rg",
         l3_isolation_domain_name="example-l3domain",
         body={
             "properties": {
@@ -38,18 +38,23 @@ def main():
                     "ipv4Routes": [{"prefix": "10.0.0.0/24"}],
                     "ipv6Routes": [{"prefix": "3FFE:FFFF:0:CD30::a0/29"}],
                 },
+                "annotation": "annotation1",
                 "connectedSubnetRoutePolicy": {
-                    "exportRoutePolicyId": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName"
+                    "exportRoutePolicy": {
+                        "exportIpv4RoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/example-routePolicy1",
+                        "exportIpv6RoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/example-routePolicy1",
+                    },
+                    "exportRoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName",
                 },
-                "description": "creating L3 isolation domain",
                 "redistributeConnectedSubnets": "True",
                 "redistributeStaticRoutes": "False",
-            }
+            },
+            "tags": {"key4953": "1234"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/L3IsolationDomains_Update_MaximumSet_Gen.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/stable/2023-06-15/examples/L3IsolationDomains_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

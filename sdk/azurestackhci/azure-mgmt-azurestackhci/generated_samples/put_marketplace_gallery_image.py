@@ -29,10 +29,10 @@ def main():
         subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
     )
 
-    response = client.marketplacegalleryimages.begin_create_or_update(
+    response = client.marketplace_gallery_images.begin_create_or_update(
         resource_group_name="test-rg",
-        marketplacegalleryimages_name="test-marketplace-gallery-image",
-        marketplacegalleryimages={
+        marketplace_gallery_image_name="test-marketplace-gallery-image",
+        marketplace_gallery_images={
             "extendedLocation": {
                 "name": "/subscriptions/a95612cb-f1fa-4daa-a4fd-272844fa512c/resourceGroups/dogfoodarc/providers/Microsoft.ExtendedLocation/customLocations/dogfood-location",
                 "type": "CustomLocation",
@@ -40,7 +40,7 @@ def main():
             "location": "West US2",
             "properties": {
                 "cloudInitDataSource": "Azure",
-                "containerName": "Default_Container",
+                "containerId": "/subscriptions/a95612cb-f1fa-4daa-a4fd-272844fa512c/resourceGroups/dogfoodarc/providers/Microsoft.AzureStackHCI/storageContainers/test-storage-container",
                 "hyperVGeneration": "V1",
                 "identifier": {"offer": "myOfferName", "publisher": "myPublisherName", "sku": "mySkuName"},
                 "osType": "Windows",
@@ -51,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2021-09-01-preview/examples/PutMarketplaceGalleryImage.json
+# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2023-09-01-preview/examples/PutMarketplaceGalleryImage.json
 if __name__ == "__main__":
     main()

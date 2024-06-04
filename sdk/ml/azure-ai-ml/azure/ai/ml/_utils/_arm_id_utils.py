@@ -16,13 +16,13 @@ from azure.ai.ml.constants._common import (
     DATASTORE_SHORT_URI,
     LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT,
     NAMED_RESOURCE_ID_FORMAT,
+    NAMED_RESOURCE_ID_FORMAT_WITH_PARENT,
     PROVIDER_RESOURCE_ID_WITH_VERSION,
     REGISTRY_URI_REGEX_FORMAT,
     REGISTRY_VERSION_PATTERN,
     SINGULARITY_FULL_NAME_REGEX_FORMAT,
     SINGULARITY_ID_REGEX_FORMAT,
     SINGULARITY_SHORT_NAME_REGEX_FORMAT,
-    NAMED_RESOURCE_ID_FORMAT_WITH_PARENT,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -243,6 +243,38 @@ class AzureResourceId:
                 )
 
 
+class AzureStorageContainerResourceId:
+    """Parser for a Azure Storage Container ARM id.
+
+    :param arm_id: The Azure Storage Container ARM id.
+    :type arm_id: str
+    :raises ~azure.ai.ml.exceptions.ValidationException~: Raised if the ARM id is incorrectly formatted.
+    """
+
+    REGEX_PATTERN = (
+        "^/?subscriptions/([^/]+)/resourceGroups/([^/]+)/providers/Microsoft.Storage"
+        "/storageAccounts/([^/]+)/blobServices/default/containers/([^/]+)"
+    )
+
+    def __init__(self, arm_id=None):
+        if arm_id:
+            match = re.match(AzureStorageContainerResourceId.REGEX_PATTERN, arm_id)
+            if match:
+                self.subscription_id = match.group(1)
+                self.resource_group_name = match.group(2)
+                self.storage_account = match.group(3)
+                self.container = match.group(4)
+            else:
+                msg = "Invalid Azure Storage Container Resource Id {}"
+                raise ValidationException(
+                    message=msg.format(arm_id),
+                    no_personal_data_message=msg.format("[arm_id]"),
+                    error_type=ValidationErrorType.INVALID_VALUE,
+                    error_category=ErrorCategory.USER_ERROR,
+                    target=ErrorTarget.ARM_RESOURCE,
+                )
+
+
 def _parse_endpoint_name_from_deployment_id(deployment_id: str) -> str:
     REGEX_PATTERN = (
         "^/?subscriptions/([^/]+)/resourceGroups/(["
@@ -298,8 +330,8 @@ def parse_name_version(name: str) -> Tuple[str, Optional[str]]:
     return name, ":".join(version)
 
 
-def parse_name_label(name: str) -> Tuple[str, Optional[str]]:
-    if name.find("/") != -1 and name[0] != "/":
+def parse_name_label(name: Optional[str]) -> Tuple[str, Optional[str]]:
+    if not name or (name.find("/") != -1 and name[0] != "/"):
         raise ValidationException(
             f"Could not parse {name}. If providing an ARM id, it should start with a '/'.",
             no_personal_data_message=f"Could not parse {name}.",
@@ -401,10 +433,15 @@ def get_resource_name_from_arm_id(resource_id: str) -> str:
     return AMLNamedArmId(resource_id).asset_name
 
 
-def get_resource_name_from_arm_id_safe(resource_id: str) -> Optional[str]:
+def get_resource_name_from_arm_id_safe(resource_id: str) -> str:
     """Get the resource name from an ARM id.
 
-    return input string if it is not an ARM id.
+    :param resource_id: The resource's ARM ID
+    :type resource_id: str
+    :return:
+      * Resource Name if input string is ARM id
+      * Original input otherwise
+    :rtype: str
     """
     try:
         return get_resource_name_from_arm_id(resource_id)
@@ -414,7 +451,7 @@ def get_resource_name_from_arm_id_safe(resource_id: str) -> Optional[str]:
     except AttributeError:
         # None or empty string
         return resource_id
-    except Exception:  # pylint: disable=broad-except
+    except Exception:  # pylint: disable=W0718
         # unexpected error
         module_logger.warning("Failed to parse resource id: %s", resource_id)
         return resource_id
@@ -428,7 +465,7 @@ def get_arm_id_object_from_id(
     non-AzureML ARM id is passed in, an AzureResourceId will be returned.
 
     :param resource_id: the ARM Id to parse
-    :type arm_id: str
+    :type resource_id: str
     :raises ~azure.ai.ml.exceptions.ValidationException~: Raised if the ARM id is incorrectly formatted.
     :return: The parser for the given ARM Id
     :rtype: Union[AMLVersionedArmId, AMLNamedArmId, AzureResourceId]

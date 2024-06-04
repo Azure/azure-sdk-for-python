@@ -10,7 +10,8 @@ import json
 import os
 import os.path
 import time
-import vcr
+# We don't vcrpy anymore, if this code is loaded, fail
+# import vcr
 import re
 from vcr.filters import decode_response
 import zlib

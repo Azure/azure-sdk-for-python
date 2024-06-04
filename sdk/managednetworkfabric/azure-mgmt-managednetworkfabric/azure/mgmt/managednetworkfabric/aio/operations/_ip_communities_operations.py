@@ -418,9 +418,7 @@ class IpCommunitiesOperations:
             deserialized = self._deserialize("IpCommunity", pipeline_response)
 
         if response.status_code == 202:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -625,7 +623,7 @@ class IpCommunitiesOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -715,9 +713,9 @@ class IpCommunitiesOperations:
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.IpCommunity"]:
-        """List IpCommunities by resource group.
+        """List IP Communities by resource group.
 
-        Implements IpCommunities list by resource group GET method.
+        Implements IP Communities list by resource group GET method.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -805,9 +803,9 @@ class IpCommunitiesOperations:
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.IpCommunity"]:
-        """List IpCommunities by subscription.
+        """List IP Communities by subscription.
 
-        Implements IpCommunities list by subscription GET method.
+        Implements IP Communities list by subscription GET method.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IpCommunity or the result of cls(response)

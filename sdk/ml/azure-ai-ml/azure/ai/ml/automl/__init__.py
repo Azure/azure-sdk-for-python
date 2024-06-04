@@ -8,6 +8,8 @@ Main areas include managing AutoML tasks.
 """
 from azure.ai.ml.entities._job.automl import TrainingSettings
 from azure.ai.ml.entities._job.automl.image import (
+    LogTrainingMetrics,
+    LogValidationLoss,
     ImageClassificationJob,
     ImageClassificationMultilabelJob,
     ImageClassificationSearchSpace,
@@ -103,6 +105,8 @@ __all__ = [
     "NlpLimitSettings",
     "NlpSweepSettings",
     "NlpSearchSpace",
+    "LogTrainingMetrics",
+    "LogValidationLoss",
     "ImageLimitSettings",
     "ImageModelSettingsClassification",
     "ImageModelSettingsObjectDetection",

@@ -30,7 +30,14 @@ import sys
 
 from dotenv import load_dotenv
 
-from devtools_testutils import test_proxy, add_general_regex_sanitizer, add_body_key_sanitizer, add_header_regex_sanitizer
+from devtools_testutils import (
+    test_proxy,
+    add_general_regex_sanitizer,
+    add_body_key_sanitizer,
+    add_header_regex_sanitizer,
+    remove_batch_sanitizers,
+)
+
 
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []
@@ -45,13 +52,22 @@ def add_sanitizers(test_proxy):
     tenant_id = os.environ.get("PURVIEWSHARING_TENANT_ID", "00000000-0000-0000-0000-000000000000")
     client_id = os.environ.get("PURVIEWSHARING_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
     client_secret = os.environ.get("PURVIEWSHARING_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000")
+    resource_group_name = os.environ.get("PURVIEWSHARING_RESOURCEGROUP", "fakeResourceGroup")
+    storage_account_provider = os.environ.get("PURVIEWSHARING_STORAGEACCOUNT_PROVIDER", "fakeStorageAccount")
+    storage_account_receiver = os.environ.get("PURVIEWSHARING_STORAGEACCOUNT_RECEIVER", "fakeStorageAccountR")
     add_general_regex_sanitizer(regex=subscription_id, value="00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=tenant_id, value="00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=client_id, value="00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=client_secret, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=resource_group_name, value="fakeResourceGroup")
+    add_general_regex_sanitizer(regex=storage_account_provider, value="fakeStorageAccount")
+    add_general_regex_sanitizer(regex=storage_account_receiver, value="fakeStorageAccountR")
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
     add_body_key_sanitizer(json_path="$..atlasKafkaPrimaryEndpoint", value="000")
     add_body_key_sanitizer(json_path="$..atlasKafkaSecondaryEndpoint", value="000")
     add_body_key_sanitizer(json_path="$..systemData.createdBy", value="000")
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3430: $..id
+    remove_batch_sanitizers(["AZSDK3430"])

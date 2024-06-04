@@ -21,9 +21,10 @@ USAGE:
 
 import os
 import asyncio
+from typing import List
 
-service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
-key = os.getenv("AZURE_SEARCH_API_KEY")
+service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
+key = os.environ["AZURE_SEARCH_API_KEY"]
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.indexes.aio import SearchIndexClient
@@ -37,11 +38,10 @@ from azure.search.documents.indexes.models import (
     SearchableField,
 )
 
-client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
-
 
 async def create_index():
     # [START create_index_async]
+    client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
@@ -58,22 +58,26 @@ async def create_index():
     ]
 
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
-    scoring_profiles = []
+    scoring_profiles: List[ScoringProfile] = []
     index = SearchIndex(name=name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options)
 
     result = await client.create_index(index)
+    await client.close()
     # [END create_index_async]
 
 
 async def get_index():
     # [START get_index_async]
+    client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     result = await client.get_index(name)
+    await client.close()
     # [END get_index_async]
 
 
 async def update_index():
     # [START update_index_async]
+    client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
@@ -98,13 +102,16 @@ async def update_index():
     index = SearchIndex(name=name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options)
 
     result = await client.create_or_update_index(index=index)
+    await client.close()
     # [END update_index_async]
 
 
 async def delete_index():
     # [START delete_index_async]
+    client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     await client.delete_index(name)
+    await client.close()
     # [END delete_index_async]
 
 
@@ -113,7 +120,6 @@ async def main():
     await get_index()
     await update_index()
     await delete_index()
-    await client.close()
 
 
 if __name__ == "__main__":

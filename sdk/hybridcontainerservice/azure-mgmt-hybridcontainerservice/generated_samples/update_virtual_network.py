@@ -31,12 +31,12 @@ def main():
 
     response = client.virtual_networks.begin_update(
         resource_group_name="test-arcappliance-resgrp",
-        virtual_networks_name="test-vnet-static",
+        virtual_network_name="test-vnet-static",
         virtual_networks={"tags": {"additionalProperties": "sample"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/preview/2022-09-01-preview/examples/UpdateVirtualNetwork.json
+# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/stable/2024-01-01/examples/UpdateVirtualNetwork.json
 if __name__ == "__main__":
     main()

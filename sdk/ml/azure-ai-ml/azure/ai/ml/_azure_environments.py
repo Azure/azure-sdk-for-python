@@ -6,14 +6,13 @@
 
 import logging
 import os
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from azure.ai.ml._utils.utils import _get_mfe_url_override
-from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
-from azure.ai.ml.constants._common import ArmConstants
+from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME, ArmConstants
+from azure.ai.ml.exceptions import MlException
 from azure.core.rest import HttpRequest
 from azure.mgmt.core import ARMPipelineClient
-
 
 module_logger = logging.getLogger(__name__)
 
@@ -24,7 +23,7 @@ class AzureEnvironments:
     ENV_CHINA = "AzureChinaCloud"
 
 
-class EndpointURLS:  # pylint: disable=too-few-public-methods,no-init
+class EndpointURLS:  # pylint: disable=too-few-public-methods
     AZURE_PORTAL_ENDPOINT = "azure_portal"
     RESOURCE_MANAGER_ENDPOINT = "resource_manager"
     ACTIVE_DIRECTORY_ENDPOINT = "active_directory"
@@ -65,29 +64,35 @@ _environments = {
 }
 
 
-def _get_cloud(cloud: str):
+def _get_cloud(cloud: str) -> Dict[str, str]:
     if cloud in _environments:
         return _environments[cloud]
     arm_url = os.environ.get(ArmConstants.METADATA_URL_ENV_NAME, ArmConstants.DEFAULT_URL)
     arm_clouds = _get_clouds_by_metadata_url(arm_url)
     try:
         new_cloud = arm_clouds[cloud]
-        _environments.update(new_cloud)
+        _environments.update(new_cloud)  # type: ignore[arg-type]
         return new_cloud
     except KeyError as e:
-        raise Exception('Unknown cloud environment "{0}".'.format(cloud)) from e
+        msg = 'Unknown cloud environment "{0}".'.format(cloud)
+        raise MlException(message=msg, no_personal_data_message=msg) from e
 
 
-def _get_default_cloud_name():
-    """Return AzureCloud as the default cloud."""
+def _get_default_cloud_name() -> str:
+    """
+    :return: Configured cloud, defaults to 'AzureCloud'
+    :rtype: str
+    """
     return os.getenv(AZUREML_CLOUD_ENV_NAME, AzureEnvironments.ENV_DEFAULT)
 
 
-def _get_cloud_details(cloud: str = AzureEnvironments.ENV_DEFAULT):
+def _get_cloud_details(cloud: Optional[str] = AzureEnvironments.ENV_DEFAULT) -> Dict[str, str]:
     """Returns a Cloud endpoints object for the specified Azure Cloud.
 
     :param cloud: cloud name
+    :type cloud: str
     :return: azure environment endpoint.
+    :rtype: Dict[str, str]
     """
     if cloud is None:
         module_logger.debug(
@@ -102,128 +107,153 @@ def _set_cloud(cloud: str = AzureEnvironments.ENV_DEFAULT):
     """Sets the current cloud.
 
     :param cloud: cloud name
+    :type cloud: str
     """
     if cloud is not None:
         try:
             _get_cloud(cloud)
         except Exception as e:
-            raise Exception('Unknown cloud environment supplied: "{0}".'.format(cloud)) from e
+            msg = 'Unknown cloud environment supplied: "{0}".'.format(cloud)
+            raise MlException(message=msg, no_personal_data_message=msg) from e
     else:
         cloud = _get_default_cloud_name()
     os.environ[AZUREML_CLOUD_ENV_NAME] = cloud
 
 
-def _get_base_url_from_metadata(cloud_name: Optional[str] = None, is_local_mfe: bool = False):
+def _get_base_url_from_metadata(cloud_name: Optional[str] = None, is_local_mfe: bool = False) -> str:
     """Retrieve the base url for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
+    :type cloud_name: Optional[str]
+    :param is_local_mfe: Whether is local Management Front End. Defaults to False.
+    :type is_local_mfe: bool
     :return: base url for a cloud
+    :rtype: str
     """
     base_url = None
     if is_local_mfe:
         base_url = _get_mfe_url_override()
     if base_url is None:
         cloud_details = _get_cloud_details(cloud_name)
-        base_url = cloud_details.get(EndpointURLS.RESOURCE_MANAGER_ENDPOINT).strip("/")
+        base_url = str(cloud_details.get(EndpointURLS.RESOURCE_MANAGER_ENDPOINT)).strip("/")
     return base_url
 
 
-def _get_aml_resource_id_from_metadata(cloud_name: Optional[str] = None):
+def _get_aml_resource_id_from_metadata(cloud_name: Optional[str] = None) -> str:
     """Retrieve the aml_resource_id for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
+    :type cloud_name: str
     :return: aml_resource_id for a cloud
+    :rtype: str
     """
     cloud_details = _get_cloud_details(cloud_name)
-    aml_resource_id = cloud_details.get(EndpointURLS.AML_RESOURCE_ID).strip("/")
+    aml_resource_id = str(cloud_details.get(EndpointURLS.AML_RESOURCE_ID)).strip("/")
     return aml_resource_id
 
 
-def _get_active_directory_url_from_metadata(cloud_name: Optional[str] = None):
+def _get_active_directory_url_from_metadata(cloud_name: Optional[str] = None) -> str:
     """Retrieve the active_directory_url for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
+    :type cloud_name: str
     :return: active_directory for a cloud
+    :rtype: str
     """
     cloud_details = _get_cloud_details(cloud_name)
-    active_directory_url = cloud_details.get(EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT).strip("/")
+    active_directory_url = str(cloud_details.get(EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT)).strip("/")
     return active_directory_url
 
 
-def _get_storage_endpoint_from_metadata(cloud_name: Optional[str] = None):
+def _get_storage_endpoint_from_metadata(cloud_name: Optional[str] = None) -> str:
     """Retrieve the storage_endpoint for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
+    :type cloud_name: str
     :return: storage_endpoint for a cloud
+    :rtype: str
     """
     cloud_details = _get_cloud_details(cloud_name)
     storage_endpoint = cloud_details.get(EndpointURLS.STORAGE_ENDPOINT)
-    return storage_endpoint
+    return str(storage_endpoint)
 
 
-def _get_azure_portal_id_from_metadata(cloud_name: Optional[str] = None):
+def _get_azure_portal_id_from_metadata(cloud_name: Optional[str] = None) -> str:
     """Retrieve the azure_portal_id for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
+    :type cloud_name: str
     :return: azure_portal_id for a cloud
+    :rtype: str
     """
     cloud_details = _get_cloud_details(cloud_name)
     azure_portal_id = cloud_details.get(EndpointURLS.AZURE_PORTAL_ENDPOINT)
-    return azure_portal_id
+    return str(azure_portal_id)
 
 
 def _get_cloud_information_from_metadata(cloud_name: Optional[str] = None, **kwargs) -> Dict:
     """Retrieve the cloud information from the metadata in SDK.
 
     :param cloud_name: cloud name
+    :type cloud_name: str
     :return: A dictionary of additional configuration parameters required for passing in cloud information.
+    :rtype: Dict
     """
     cloud_details = _get_cloud_details(cloud_name)
-    credential_scopes = _resource_to_scopes(cloud_details.get(EndpointURLS.RESOURCE_MANAGER_ENDPOINT).strip("/"))
+    credential_scopes = _resource_to_scopes(
+        cloud_details.get(EndpointURLS.RESOURCE_MANAGER_ENDPOINT).strip("/")  # type: ignore[union-attr]
+    )
 
     # Update the kwargs with the cloud information
-    client_kwargs = {"cloud": cloud_name}
+    client_kwargs: Dict = {"cloud": cloud_name}
     if credential_scopes is not None:
         client_kwargs["credential_scopes"] = credential_scopes
     kwargs.update(client_kwargs)
     return kwargs
 
 
-def _get_registry_discovery_endpoint_from_metadata(cloud_name: Optional[str] = None):
+def _get_registry_discovery_endpoint_from_metadata(cloud_name: Optional[str] = None) -> str:
     """Retrieve the registry_discovery_endpoint for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
+    :type cloud_name: str
     :return: registry_discovery_endpoint for a cloud
+    :rtype: str
     """
     cloud_details = _get_cloud_details(cloud_name)
     registry_discovery_endpoint = cloud_details.get(EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT)
-    return registry_discovery_endpoint
+    return str(registry_discovery_endpoint)
 
 
-def _resource_to_scopes(resource):
+def _resource_to_scopes(resource: str) -> List[str]:
     """Convert the resource ID to scopes by appending the /.default suffix and return a list. For example:
     'https://management.core.windows.net/' ->
 
     ['https://management.core.windows.net//.default']
 
     :param resource: The resource ID
+    :type resource: str
     :return: A list of scopes
+    :rtype: List[str]
     """
     scope = resource + "/.default"
     return [scope]
 
 
-def _get_registry_discovery_url(cloud, cloud_suffix=""):
+def _get_registry_discovery_url(cloud: dict, cloud_suffix: str = "") -> str:
     """Get or generate the registry discovery url.
 
     :param cloud: configuration of the cloud to get the registry_discovery_url from
+    :type cloud: dict
     :param cloud_suffix: the suffix to use for the cloud, in the case that the registry_discovery_url
         must be generated
+    :type cloud_suffix: str
     :return: string of discovery url
+    :rtype: str
     """
     cloud_name = cloud["name"]
     if cloud_name in _environments:
-        return _environments[cloud_name].registry_url
+        return _environments[cloud_name].registry_url  # type: ignore[attr-defined]
 
     registry_discovery_region = os.environ.get(
         ArmConstants.REGISTRY_DISCOVERY_REGION_ENV_NAME,
@@ -235,10 +265,13 @@ def _get_registry_discovery_url(cloud, cloud_suffix=""):
     return os.environ.get(ArmConstants.REGISTRY_ENV_URL, registry_discovery_region_default)
 
 
-def _get_clouds_by_metadata_url(metadata_url):
+def _get_clouds_by_metadata_url(metadata_url: str) -> Dict[str, Dict[str, str]]:
     """Get all the clouds by the specified metadata url.
 
-    :return: list of the clouds
+    :param metadata_url: The metadata url
+    :type metadata_url: str
+    :return: A dictionary of cloud name to various relevant endpoints/uris
+    :rtype: Dict[str, Dict[str, str]]
     """
     try:
         module_logger.debug("Start : Loading cloud metadata from the url specified by %s", metadata_url)
@@ -266,7 +299,7 @@ def _get_clouds_by_metadata_url(metadata_url):
         return {}
 
 
-def _convert_arm_to_cli(arm_cloud_metadata):
+def _convert_arm_to_cli(arm_cloud_metadata) -> Dict[str, Dict[str, str]]:
     cli_cloud_metadata_dict = {}
     if isinstance(arm_cloud_metadata, dict):
         arm_cloud_metadata = [arm_cloud_metadata]

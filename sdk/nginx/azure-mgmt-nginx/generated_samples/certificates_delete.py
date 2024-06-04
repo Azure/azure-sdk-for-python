@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.certificates.begin_delete(
+    client.certificates.begin_delete(
         resource_group_name="myResourceGroup",
         deployment_name="myDeployment",
         certificate_name="default",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/nginx/resource-manager/NGINX.NGINXPLUS/stable/2022-08-01/examples/Certificates_Delete.json
+# x-ms-original-file: specification/nginx/resource-manager/NGINX.NGINXPLUS/preview/2024-01-01-preview/examples/Certificates_Delete.json
 if __name__ == "__main__":
     main()

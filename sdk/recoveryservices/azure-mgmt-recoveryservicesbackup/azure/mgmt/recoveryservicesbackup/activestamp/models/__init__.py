@@ -159,6 +159,11 @@ from ._models_py3 import ExportJobsOperationResultInfo
 from ._models_py3 import ExtendedLocation
 from ._models_py3 import ExtendedProperties
 from ._models_py3 import FeatureSupportRequest
+from ._models_py3 import FetchTieringCostInfoForRehydrationRequest
+from ._models_py3 import FetchTieringCostInfoRequest
+from ._models_py3 import FetchTieringCostSavingsInfoForPolicyRequest
+from ._models_py3 import FetchTieringCostSavingsInfoForProtectedItemRequest
+from ._models_py3 import FetchTieringCostSavingsInfoForVaultRequest
 from ._models_py3 import GenericContainer
 from ._models_py3 import GenericContainerExtendedInfo
 from ._models_py3 import GenericProtectedItem
@@ -276,23 +281,32 @@ from ._models_py3 import Settings
 from ._models_py3 import SimpleRetentionPolicy
 from ._models_py3 import SimpleSchedulePolicy
 from ._models_py3 import SimpleSchedulePolicyV2
+from ._models_py3 import SnapshotBackupAdditionalDetails
+from ._models_py3 import SnapshotRestoreParameters
 from ._models_py3 import SubProtectionPolicy
 from ._models_py3 import TargetAFSRestoreInfo
 from ._models_py3 import TargetDiskNetworkAccessSettings
 from ._models_py3 import TargetRestoreInfo
+from ._models_py3 import TieringCostInfo
+from ._models_py3 import TieringCostRehydrationInfo
+from ._models_py3 import TieringCostSavingInfo
 from ._models_py3 import TieringPolicy
 from ._models_py3 import TokenInformation
 from ._models_py3 import TriggerDataMoveRequest
 from ._models_py3 import UnlockDeleteRequest
 from ._models_py3 import UnlockDeleteResponse
+from ._models_py3 import UserAssignedIdentityProperties
+from ._models_py3 import UserAssignedManagedIdentityDetails
 from ._models_py3 import ValidateIaasVMRestoreOperationRequest
 from ._models_py3 import ValidateOperationRequest
+from ._models_py3 import ValidateOperationRequestResource
 from ._models_py3 import ValidateOperationResponse
 from ._models_py3 import ValidateOperationsResponse
 from ._models_py3 import ValidateRestoreOperationRequest
 from ._models_py3 import VaultJob
 from ._models_py3 import VaultJobErrorInfo
 from ._models_py3 import VaultJobExtendedInfo
+from ._models_py3 import VaultRetentionPolicy
 from ._models_py3 import VaultStorageConfigOperationResultResponse
 from ._models_py3 import WeeklyRetentionFormat
 from ._models_py3 import WeeklyRetentionSchedule
@@ -326,6 +340,7 @@ from ._recovery_services_backup_client_enums import HealthState
 from ._recovery_services_backup_client_enums import HealthStatus
 from ._recovery_services_backup_client_enums import HttpStatusCode
 from ._recovery_services_backup_client_enums import IAASVMPolicyType
+from ._recovery_services_backup_client_enums import IaasVMSnapshotConsistencyType
 from ._recovery_services_backup_client_enums import InfrastructureEncryptionState
 from ._recovery_services_backup_client_enums import InquiryStatus
 from ._recovery_services_backup_client_enums import IntentItemType
@@ -533,6 +548,11 @@ __all__ = [
     "ExtendedLocation",
     "ExtendedProperties",
     "FeatureSupportRequest",
+    "FetchTieringCostInfoForRehydrationRequest",
+    "FetchTieringCostInfoRequest",
+    "FetchTieringCostSavingsInfoForPolicyRequest",
+    "FetchTieringCostSavingsInfoForProtectedItemRequest",
+    "FetchTieringCostSavingsInfoForVaultRequest",
     "GenericContainer",
     "GenericContainerExtendedInfo",
     "GenericProtectedItem",
@@ -650,23 +670,32 @@ __all__ = [
     "SimpleRetentionPolicy",
     "SimpleSchedulePolicy",
     "SimpleSchedulePolicyV2",
+    "SnapshotBackupAdditionalDetails",
+    "SnapshotRestoreParameters",
     "SubProtectionPolicy",
     "TargetAFSRestoreInfo",
     "TargetDiskNetworkAccessSettings",
     "TargetRestoreInfo",
+    "TieringCostInfo",
+    "TieringCostRehydrationInfo",
+    "TieringCostSavingInfo",
     "TieringPolicy",
     "TokenInformation",
     "TriggerDataMoveRequest",
     "UnlockDeleteRequest",
     "UnlockDeleteResponse",
+    "UserAssignedIdentityProperties",
+    "UserAssignedManagedIdentityDetails",
     "ValidateIaasVMRestoreOperationRequest",
     "ValidateOperationRequest",
+    "ValidateOperationRequestResource",
     "ValidateOperationResponse",
     "ValidateOperationsResponse",
     "ValidateRestoreOperationRequest",
     "VaultJob",
     "VaultJobErrorInfo",
     "VaultJobExtendedInfo",
+    "VaultRetentionPolicy",
     "VaultStorageConfigOperationResultResponse",
     "WeeklyRetentionFormat",
     "WeeklyRetentionSchedule",
@@ -699,6 +728,7 @@ __all__ = [
     "HealthStatus",
     "HttpStatusCode",
     "IAASVMPolicyType",
+    "IaasVMSnapshotConsistencyType",
     "InfrastructureEncryptionState",
     "InquiryStatus",
     "IntentItemType",

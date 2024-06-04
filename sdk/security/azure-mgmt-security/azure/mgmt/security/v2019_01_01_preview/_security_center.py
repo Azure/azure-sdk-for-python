@@ -9,8 +9,10 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
+from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 
 from . import models as _models
 from .._serialization import Deserializer, Serializer
@@ -32,6 +34,11 @@ if TYPE_CHECKING:
 class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
     """API spec for Microsoft.Security (Azure Security Center) resource provider.
 
+    :ivar alerts_suppression_rules: AlertsSuppressionRulesOperations operations
+    :vartype alerts_suppression_rules:
+     azure.mgmt.security.v2019_01_01_preview.operations.AlertsSuppressionRulesOperations
+    :ivar automations: AutomationsOperations operations
+    :vartype automations: azure.mgmt.security.v2019_01_01_preview.operations.AutomationsOperations
     :ivar regulatory_compliance_standards: RegulatoryComplianceStandardsOperations operations
     :vartype regulatory_compliance_standards:
      azure.mgmt.security.v2019_01_01_preview.operations.RegulatoryComplianceStandardsOperations
@@ -44,11 +51,6 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
     :ivar sub_assessments: SubAssessmentsOperations operations
     :vartype sub_assessments:
      azure.mgmt.security.v2019_01_01_preview.operations.SubAssessmentsOperations
-    :ivar automations: AutomationsOperations operations
-    :vartype automations: azure.mgmt.security.v2019_01_01_preview.operations.AutomationsOperations
-    :ivar alerts_suppression_rules: AlertsSuppressionRulesOperations operations
-    :vartype alerts_suppression_rules:
-     azure.mgmt.security.v2019_01_01_preview.operations.AlertsSuppressionRulesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Azure subscription ID. Required.
@@ -68,28 +70,50 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
         **kwargs: Any
     ) -> None:
         self._config = SecurityCenterConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                ARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self.alerts_suppression_rules = AlertsSuppressionRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2019-01-01-preview"
+        )
+        self.automations = AutomationsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2019-01-01-preview"
+        )
         self.regulatory_compliance_standards = RegulatoryComplianceStandardsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2019-01-01-preview"
         )
         self.regulatory_compliance_controls = RegulatoryComplianceControlsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2019-01-01-preview"
         )
         self.regulatory_compliance_assessments = RegulatoryComplianceAssessmentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2019-01-01-preview"
         )
-        self.sub_assessments = SubAssessmentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.automations = AutomationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.alerts_suppression_rules = AlertsSuppressionRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+        self.sub_assessments = SubAssessmentsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2019-01-01-preview"
         )
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -109,7 +133,7 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
         self._client.close()

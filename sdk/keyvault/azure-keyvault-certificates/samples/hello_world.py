@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.certificates import CertificateClient, CertificatePolicy, CertificateContentType, WellKnownIssuerNames
 
@@ -75,6 +76,7 @@ print("\n.. Get a certificate by name")
 # [START get_certificate]
 certificate = client.get_certificate(cert_name)
 # [END get_certificate]
+assert certificate.name
 print(f"Certificate with name '{certificate.name}' was found'.")
 
 # After one year, the account is still active, and we have decided to update the tags.
@@ -85,6 +87,7 @@ updated_certificate = client.update_certificate_properties(
     certificate_name=certificate.name, tags=tags
 )
 # [END update_certificate]
+assert updated_certificate.properties
 print(
     f"Certificate with name '{certificate.name}' was updated on date '{updated_certificate.properties.updated_on}'"
 )

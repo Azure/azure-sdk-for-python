@@ -24,7 +24,7 @@ async def process_content(data):
     try:
         return data.response.body()
     except Exception as error:
-        raise HttpResponseError(message="Download stream interrupted.", response=data.response, error=error)
+        raise HttpResponseError(message="Download stream interrupted.", response=data.response, error=error) from error
 
 
 class _AsyncChunkDownloader(_ChunkDownloader):
@@ -96,7 +96,7 @@ class _AsyncChunkIterator(object):
         self._current_content = content
         self._iter_downloader = downloader
         self._iter_chunks = None
-        self._complete = (size == 0)
+        self._complete = size == 0
 
     def __len__(self):
         return self.size
@@ -108,7 +108,6 @@ class _AsyncChunkIterator(object):
         return self
 
     async def __anext__(self):
-        """Iterate through responses."""
         if self._complete:
             raise StopAsyncIteration("Download complete")
         if not self._iter_downloader:
@@ -128,12 +127,12 @@ class _AsyncChunkIterator(object):
         try:
             chunk = next(self._iter_chunks)
             self._current_content += await self._iter_downloader.yield_chunk(chunk)
-        except StopIteration:
+        except StopIteration as exc:
             self._complete = True
             # it's likely that there some data left in self._current_content
             if self._current_content:
                 return self._current_content
-            raise StopAsyncIteration("Download complete")
+            raise StopAsyncIteration("Download complete") from exc
 
         return self._get_chunk_data()
 
@@ -300,8 +299,10 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
     def chunks(self):
         # type: () -> AsyncIterator[bytes]
-        """Iterate over chunks in the download stream.
+        """
+        Iterate over chunks in the download stream.
 
+        :return: An iterator of the chunks in the download stream.
         :rtype: AsyncIterator[bytes]
         """
         if self.size == 0 or self._download_complete:
@@ -336,6 +337,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         """Download the contents of this file.
 
         This operation is blocking until all data is downloaded.
+        :return: The entire blob content as bytes
         :rtype: bytes
         """
         stream = BytesIO()
@@ -352,8 +354,9 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         This method is deprecated, use func:`readall` instead.
 
-        :keyword int max_concurrency:
+        :param int max_concurrency:
             The number of parallel connections with which to download.
+        :return: The contents of the file as bytes.
         :rtype: bytes
         """
         warnings.warn(
@@ -370,10 +373,11 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         This method is deprecated, use func:`readall` instead.
 
-        :keyword int max_concurrency:
+        :param int max_concurrency:
             The number of parallel connections with which to download.
         :param str encoding:
             Test encoding to decode the downloaded bytes. Default is UTF-8.
+        :return: The contents of the file as a str.
         :rtype: str
         """
         warnings.warn(
@@ -387,7 +391,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
     async def readinto(self, stream):
         """Download the contents of this file to a stream.
 
-        :param stream:
+        :param IO stream:
             The stream to download to. This can be an open file-handle,
             or any writable stream. The stream must be seekable if the download
             uses more than one parallel connection.
@@ -403,8 +407,8 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
             try:
                 stream.seek(stream.tell())
-            except (NotImplementedError, AttributeError):
-                raise ValueError(error_message)
+            except (NotImplementedError, AttributeError) as exc:
+                raise ValueError(error_message) from exc
 
         # Write the content to the user stream
         stream.write(self._current_content)
@@ -441,18 +445,28 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         ]
         while running_futures:
             # Wait for some download to finish before adding a new one
-            _done, running_futures = await asyncio.wait(
+            done, running_futures = await asyncio.wait(
                 running_futures, return_when=asyncio.FIRST_COMPLETED)
             try:
-                next_chunk = next(dl_tasks)
+                for task in done:
+                    task.result()
+            except HttpResponseError as error:
+                process_storage_error(error)
+            try:
+                for _ in range(0, len(done)):
+                    next_chunk = next(dl_tasks)
+                    running_futures.add(asyncio.ensure_future(downloader.process_chunk(next_chunk)))
             except StopIteration:
                 break
-            else:
-                running_futures.add(asyncio.ensure_future(downloader.process_chunk(next_chunk)))
 
         if running_futures:
             # Wait for the remaining downloads to finish
-            await asyncio.wait(running_futures)
+            done, _running_futures = await asyncio.wait(running_futures)
+            try:
+                for task in done:
+                    task.result()
+            except HttpResponseError as error:
+                process_storage_error(error)
         return self.size
 
     async def download_to_stream(self, stream, max_concurrency=1):
@@ -460,10 +474,12 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         This method is deprecated, use func:`readinto` instead.
 
-        :param stream:
+        :param IO stream:
             The stream to download to. This can be an open file-handle,
             or any writable stream. The stream must be seekable if the download
             uses more than one parallel connection.
+        :param int max_concurrency:
+            The number of parallel connections with which to download.
         :returns: The properties of the downloaded file.
         :rtype: Any
         """

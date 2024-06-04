@@ -1,0 +1,62 @@
+{% set name = "azure-data-tables" %}
+{% set version = "2023.06.01" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('TABLES_SOURCE_DISTRIBUTION', '') }}
+  
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - pip
+    - python
+    - six
+    - typing_extensions
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+  run:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - python
+    - six
+    - typing_extensions
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.data.tables
+    - azure.data.tables.aio
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Azure Data Tables Client Library for Python"
+  description: |
+    Azure Data Tables is a NoSQL data storage service that can be accessed from anywhere in the world 
+    via authenticated calls using HTTP or HTTPS. Tables scales as needed to support the amount of data 
+    inserted, and allow for the storing of data with non-complex accessing. The Azure Data Tables client 
+    can be used to access Azure Storage or Cosmos accounts. This document covers azure-data-tables. 
+    If you're using azure-cosmosdb-tables, we recommend that you upgrade your code. See the migration guide 
+    for more details.
+    Please see https://aka.ms/azsdk/conda/releases/tables for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

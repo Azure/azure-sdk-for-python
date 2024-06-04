@@ -1,5 +1,109 @@
 # Release History
 
+## 25.4.0 (2024-05-27)
+
+### Features Added
+
+  - Added operation NetworkVirtualAppliancesOperations.begin_restart
+  - Added operation group FirewallPolicyDeploymentsOperations
+  - Added operation group FirewallPolicyDraftsOperations
+  - Added operation group FirewallPolicyRuleCollectionGroupDraftsOperations
+  - Model ApplicationGatewayHeaderConfiguration has a new parameter header_value_matcher
+  - Model ApplicationGatewaySku has a new parameter family
+  - Model ConnectionMonitorEndpoint has a new parameter location_details
+  - Model ConnectionMonitorEndpoint has a new parameter subscription_id
+  - Model ExpressRouteCircuit has a new parameter enable_direct_port_rate_limit
+  - Model InboundSecurityRule has a new parameter rule_type
+  - Model InboundSecurityRules has a new parameter applies_on
+  - Model InboundSecurityRules has a new parameter destination_port_ranges
+  - Model InboundSecurityRules has a new parameter name
+  - Model NetworkInterfaceIPConfiguration has a new parameter private_ip_address_prefix_length
+  - Model NetworkVirtualAppliance has a new parameter network_profile
+  - Model PacketCapture has a new parameter capture_settings
+  - Model PacketCapture has a new parameter continuous_capture
+  - Model PacketCaptureParameters has a new parameter capture_settings
+  - Model PacketCaptureParameters has a new parameter continuous_capture
+  - Model PacketCaptureResult has a new parameter capture_settings
+  - Model PacketCaptureResult has a new parameter continuous_capture
+  - Model PacketCaptureResultProperties has a new parameter capture_settings
+  - Model PacketCaptureResultProperties has a new parameter continuous_capture
+  - Model PacketCaptureStorageLocation has a new parameter local_path
+  - Model PolicySettings has a new parameter js_challenge_cookie_expiration_in_mins
+  - Model Subnet has a new parameter sharing_scope
+  - Model VirtualApplianceNicProperties has a new parameter nic_type
+  - Model VirtualNetworkPeering has a new parameter enable_only_i_pv6_peering
+  - Model VirtualNetworkPeering has a new parameter local_address_space
+  - Model VirtualNetworkPeering has a new parameter local_subnet_names
+  - Model VirtualNetworkPeering has a new parameter local_virtual_network_address_space
+  - Model VirtualNetworkPeering has a new parameter peer_complete_vnets
+  - Model VirtualNetworkPeering has a new parameter remote_subnet_names
+  - Model VpnSiteLinkConnection has a new parameter dpd_timeout_seconds
+
+## 25.3.0 (2024-02-22)
+
+### Features Added
+
+  - Model BastionHost has a new parameter zones
+
+## 25.2.0 (2023-12-18)
+
+### Features Added
+
+  - Added operation NetworkManagementClientOperationsMixin.begin_delete_bastion_shareable_link_by_token
+  - Added operation NetworkSecurityPerimetersOperations.patch
+  - Model ApplicationGatewayListener has a new parameter host_names
+  - Model FirewallPolicyIntrusionDetection has a new parameter profile
+  - Model NetworkVirtualAppliance has a new parameter internet_ingress_public_ips
+
+## 25.1.0 (2023-09-15)
+
+### Features Added
+
+  - Model BastionHost has a new parameter network_acls
+  - Model BastionHost has a new parameter virtual_network
+  - Model FirewallPolicy has a new parameter size
+  - Model FirewallPolicyRuleCollectionGroup has a new parameter size
+  - Model Subnet has a new parameter default_outbound_access
+  - Model VirtualNetworkGateway has a new parameter auto_scale_configuration
+
+## 25.0.0 (2023-08-18)
+
+### Features Added
+
+  - Added operation LoadBalancersOperations.migrate_to_ip_based
+  - Model BackendAddressPool has a new parameter sync_mode
+
+### Breaking Changes
+
+  - Removed operation group NspLinkReconcileOperations
+  - Removed operation group NspLinkReferenceReconcileOperations
+
+## 24.0.0 (2023-07-21)
+
+### Breaking Changes
+
+  - Removed `HTTP_STATUS499` from enum `ApplicationGatewayCustomErrorStatusCode`
+
+### Features Added
+
+  - Added enum `AdminState`
+  - Model ActiveConnectivityConfiguration has a new parameter resource_guid
+  - Model ActiveDefaultSecurityAdminRule has a new parameter resource_guid
+  - Model ActiveSecurityAdminRule has a new parameter resource_guid
+  - Model AdminRule has a new parameter resource_guid
+  - Model AdminRuleCollection has a new parameter resource_guid
+  - Model ApplicationGateway has a new parameter default_predefined_ssl_policy
+  - Model ConfigurationGroup has a new parameter resource_guid
+  - Model ConnectivityConfiguration has a new parameter resource_guid
+  - Model DefaultAdminRule has a new parameter resource_guid
+  - Model EffectiveConnectivityConfiguration has a new parameter resource_guid
+  - Model EffectiveDefaultSecurityAdminRule has a new parameter resource_guid
+  - Model EffectiveSecurityAdminRule has a new parameter resource_guid
+  - Model NetworkGroup has a new parameter resource_guid
+  - Model NetworkManager has a new parameter resource_guid
+  - Model SecurityAdminConfiguration has a new parameter resource_guid
+  - Model VirtualNetworkGateway has a new parameter admin_state
+
 ## 23.1.0 (2023-05-20)
 
 ### Features Added

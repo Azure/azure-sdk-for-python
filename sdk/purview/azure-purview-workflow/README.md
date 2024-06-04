@@ -59,7 +59,7 @@ tenant_id = os.getenv("AZURE_TENANT_ID")
 credential = UsernamePasswordCredential(client_id=client_id, username=username, password=password, tenant_id=tenant_id)
 client = PurviewWorkflowClient(endpoint='<endpoint>', credential=credential)
 try:
-    response = client.list_workflows()
+    response = client.workflows.list()
     for item in response:
     print(item)
 except HttpResponseError as e:

@@ -30,12 +30,10 @@ from dotenv import find_dotenv, load_dotenv
 class CreateDeleteTable(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
-        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name, self.access_key, self.endpoint_suffix
-        )
+        self.access_key = os.environ["TABLES_PRIMARY_STORAGE_ACCOUNT_KEY"]
+        self.endpoint_suffix = os.environ["TABLES_STORAGE_ENDPOINT_SUFFIX"]
+        self.account_name = os.environ["TABLES_STORAGE_ACCOUNT_NAME"]
+        self.connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
         self.table_name = "myTableAsync"
 
     async def create_table(self):
@@ -46,7 +44,7 @@ class CreateDeleteTable(object):
         async with TableServiceClient.from_connection_string(self.connection_string) as table_service_client:
             try:
                 table_client = await table_service_client.create_table(table_name=self.table_name)
-                print("Created table {}!".format(table_client.table_name))
+                print(f"Created table {table_client.table_name}!")
             except ResourceExistsError:
                 print("Table already exists")
         # [END create_table_from_tsc]
@@ -57,7 +55,7 @@ class CreateDeleteTable(object):
         # [START create_table_if_not_exists]
         async with TableServiceClient.from_connection_string(self.connection_string) as table_service_client:
             table_client = await table_service_client.create_table_if_not_exists(table_name=self.table_name)
-            print("Table name: {}".format(table_client.table_name))
+            print(f"Table name: {table_client.table_name}")
         # [END create_table_if_not_exists]
 
     async def delete_table(self):
@@ -66,7 +64,7 @@ class CreateDeleteTable(object):
         # [START delete_table_from_tc]
         async with TableServiceClient.from_connection_string(self.connection_string) as table_service_client:
             await table_service_client.delete_table(table_name=self.table_name)
-            print("Deleted table {}!".format(self.table_name))
+            print(f"Deleted table {self.table_name}!")
         # [END delete_table_from_tc]
 
     async def create_from_table_client(self):
@@ -79,7 +77,7 @@ class CreateDeleteTable(object):
         ) as table_client:
             try:
                 table_item = await table_client.create_table()
-                print("Created table {}!".format(table_item.name))
+                print(f"Created table {table_item.name}!")
             except ResourceExistsError:
                 print("Table already exists")
         # [END create_table_from_table_client]
@@ -87,13 +85,13 @@ class CreateDeleteTable(object):
     async def delete_from_table_client(self):
         from azure.data.tables.aio import TableClient
 
-        # [START delete_from_table_client]
+        # [START delete_table_from_table_client]
         async with TableClient.from_connection_string(
             conn_str=self.connection_string, table_name=self.table_name
         ) as table_client:
             await table_client.delete_table()
-            print("Deleted table {}!".format(table_client.table_name))
-        # [END delete_from_table_client]
+            print(f"Deleted table {table_client.table_name}!")
+        # [END delete_table_from_table_client]
 
 
 async def main():

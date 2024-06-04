@@ -3,13 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines,no-self-use
+# pylint: disable=too-many-lines, docstring-keyword-should-match-keyword-only
+
 from typing import (
     Any, Dict, Optional, Union,
     TYPE_CHECKING
 )
 
 from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
 from azure.storage.blob import BlobServiceClient  # pylint: disable=no-name-in-module
 from azure.storage.blob._shared.base_client import parse_connection_str
 from ._models import ChangeFeedPaged
@@ -32,6 +34,11 @@ class ChangeFeedClient(object):
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.TokenCredential or
+        str or dict[str, str] or None
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_single_get_size:
@@ -78,6 +85,11 @@ class ChangeFeedClient(object):
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials.TokenCredential or
+            str or dict[str, str] or None
         :returns: A change feed client.
         :rtype: ~azure.storage.blob.changefeed.ChangeFeedClient
 
@@ -95,6 +107,7 @@ class ChangeFeedClient(object):
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, credential=credential, **kwargs)
 
+    @distributed_trace
     def list_changes(self, **kwargs: Any) -> ItemPaged[Dict]:
         """Returns a generator to list the change feed events.
         The generator will lazily follow the continuation tokens returned by

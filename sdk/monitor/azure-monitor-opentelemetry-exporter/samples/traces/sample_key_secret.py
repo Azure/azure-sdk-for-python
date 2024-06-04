@@ -7,7 +7,7 @@ This example traces calls for setting a secret using the
 KeyVault Secrets SDK. The telemetry will be collected automatically
 and sent to Application Insights via the AzureMonitorTraceExporter
 """
-
+# mypy: disable-error-code="attr-defined"
 import os
 
 # Declare OpenTelemetry as enabled tracing plugin for Azure SDKs

@@ -14,7 +14,29 @@ module_logger = logging.getLogger(__name__)
 
 
 class ResourceSettings(RestTranslatableMixin):
-    def __init__(self, cpu: Optional[str] = None, memory: Optional[str] = None, gpu: Optional[str] = None):
+    """Resource settings for a container.
+
+    This class uses Kubernetes Resource unit formats. For more information, see
+    https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/.
+
+    :param cpu: The CPU resource settings for a container.
+    :type cpu: Optional[str]
+    :param memory: The memory resource settings for a container.
+    :type memory: Optional[str]
+    :param gpu: The GPU resource settings for a container.
+    :type gpu: Optional[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_misc.py
+            :start-after: [START resource_requirements_configuration]
+            :end-before: [END resource_requirements_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring ResourceSettings for a Kubernetes deployment.
+    """
+
+    def __init__(self, cpu: Optional[str] = None, memory: Optional[str] = None, gpu: Optional[str] = None) -> None:
         self.cpu = cpu
         self.memory = memory
         self.gpu = gpu
@@ -23,7 +45,7 @@ class ResourceSettings(RestTranslatableMixin):
         return ContainerResourceSettings(cpu=self.cpu, memory=self.memory, gpu=self.gpu)
 
     @classmethod
-    def _from_rest_object(cls, settings: ContainerResourceSettings) -> "ResourceSettings":
+    def _from_rest_object(cls, settings: ContainerResourceSettings) -> Optional["ResourceSettings"]:
         return (
             ResourceSettings(
                 cpu=settings.cpu,
@@ -34,7 +56,7 @@ class ResourceSettings(RestTranslatableMixin):
             else None
         )
 
-    def _merge_with(self, other: "ResourceSettings") -> None:
+    def _merge_with(self, other: Optional["ResourceSettings"]) -> None:
         if other:
             self.cpu = other.cpu or self.cpu
             self.memory = other.memory or self.memory

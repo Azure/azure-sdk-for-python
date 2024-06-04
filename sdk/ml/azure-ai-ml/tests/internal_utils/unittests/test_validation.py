@@ -2,7 +2,7 @@ import pytest
 from marshmallow import ValidationError
 
 from azure.ai.ml.entities import PipelineJobSettings
-from azure.ai.ml.entities._validation import _ValidationResultBuilder
+from azure.ai.ml.entities._validation import ValidationResultBuilder
 
 
 @pytest.mark.unittest
@@ -19,7 +19,7 @@ class TestValidation:
                 }
             },
         )
-        result = _ValidationResultBuilder.from_validation_error(validation_error)
+        result = ValidationResultBuilder.from_validation_error(validation_error)
         assert result._to_dict() == {
             "errors": [
                 {
@@ -44,7 +44,7 @@ class TestValidation:
                 }
             },
         )
-        result = _ValidationResultBuilder.from_validation_error(validation_error, error_on_unknown_field=True)
+        result = ValidationResultBuilder.from_validation_error(validation_error, error_on_unknown_field=True)
         assert result._to_dict() == {
             "errors": [
                 {
@@ -56,7 +56,7 @@ class TestValidation:
             "result": "Failed",
         }
 
-        result = _ValidationResultBuilder.from_validation_error(validation_error)
+        result = ValidationResultBuilder.from_validation_error(validation_error)
         assert result._to_dict() == {
             "warnings": [
                 {
@@ -79,7 +79,7 @@ class TestValidation:
                 ]
             },
         )
-        result = _ValidationResultBuilder.from_validation_error(validation_error)
+        result = ValidationResultBuilder.from_validation_error(validation_error)
         assert result._to_dict() == {
             "errors": [
                 {"message": "Not a valid string.; Not a valid URL.; Not a valid string.", "path": "code", "value": None}
@@ -92,7 +92,7 @@ class TestValidation:
             field="_schema",
             message={"jeff_special_option": ["Unknown field."]},
         )
-        result = _ValidationResultBuilder.from_validation_error(validation_error)
+        result = ValidationResultBuilder.from_validation_error(validation_error)
         assert result._to_dict() == {
             "warnings": [{"message": "Unknown field.", "path": "jeff_special_option", "value": None}],
             "result": "Succeeded",

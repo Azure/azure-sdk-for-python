@@ -15,8 +15,8 @@ class JobIOMixin:
         return self._inputs
 
     @inputs.setter
-    def inputs(self, value: Dict[str, Union[Input, str, bool, int, float]]):
-        self._inputs = {}
+    def inputs(self, value: Dict[str, Union[Input, str, bool, int, float]]) -> None:
+        self._inputs: Dict = {}
         if not value:
             return
 
@@ -28,8 +28,8 @@ class JobIOMixin:
         return self._outputs
 
     @outputs.setter
-    def outputs(self, value: Dict[str, Output]):
-        self._outputs = {}
+    def outputs(self, value: Dict[str, Output]) -> None:
+        self._outputs: Dict = {}
         if not value:
             return
 

@@ -26,17 +26,14 @@ from azure.mgmt.azurestackhci import AzureStackHCIClient
 def main():
     client = AzureStackHCIClient(
         credential=DefaultAzureCredential(),
-        subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.guest_agent.begin_delete(
-        resource_group_name="testrg",
-        virtual_machine_name="ContosoVm",
-        name="default",
+    client.guest_agent.begin_delete(
+        resource_uri="subscriptions/fd3c3665-1729-4b7b-9a38-238e83b0f98b/resourceGroups/testrg/Microsoft.HybridCompute/machines/DemoVM",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2021-09-01-preview/examples/DeleteGuestAgent.json
+# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2023-09-01-preview/examples/DeleteGuestAgent.json
 if __name__ == "__main__":
     main()

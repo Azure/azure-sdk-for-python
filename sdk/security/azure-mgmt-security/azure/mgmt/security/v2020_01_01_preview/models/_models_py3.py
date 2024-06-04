@@ -25,7 +25,7 @@ class AuthenticationDetailsProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar authentication_provisioning_state: State of the multi-cloud connector. Known values are:
      "Valid", "Invalid", "Expired", and "IncorrectPolicy".
@@ -69,7 +69,7 @@ class AuthenticationDetailsProperties(_serialization.Model):
         self.authentication_type: Optional[str] = None
 
 
-class AwAssumeRoleAuthenticationDetailsProperties(AuthenticationDetailsProperties):
+class AwAssumeRoleAuthenticationDetailsProperties(AuthenticationDetailsProperties):  # pylint: disable=name-too-long
     """AWS cloud account connector based assume role, the role enables delegating access to your AWS
     resources. The role is composed of role Amazon Resource Name (ARN) and external ID. For more
     details, refer to :code:`<a
@@ -78,7 +78,7 @@ class AwAssumeRoleAuthenticationDetailsProperties(AuthenticationDetailsPropertie
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar authentication_provisioning_state: State of the multi-cloud connector. Known values are:
      "Valid", "Invalid", "Expired", and "IncorrectPolicy".
@@ -144,7 +144,7 @@ class AwsCredsAuthenticationDetailsProperties(AuthenticationDetailsProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar authentication_provisioning_state: State of the multi-cloud connector. Known values are:
      "Valid", "Invalid", "Expired", and "IncorrectPolicy".
@@ -406,7 +406,7 @@ class GcpCredentialsDetailsProperties(AuthenticationDetailsProperties):  # pylin
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar authentication_provisioning_state: State of the multi-cloud connector. Known values are:
      "Valid", "Invalid", "Expired", and "IncorrectPolicy".
@@ -542,7 +542,7 @@ class HybridComputeSettingsProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar hybrid_compute_provisioning_state: State of the service principal and its secret. Known
      values are: "Valid", "Invalid", and "Expired".
@@ -639,6 +639,188 @@ class ProxyServerProperties(_serialization.Model):
         super().__init__(**kwargs)
         self.ip = ip
         self.port = port
+
+
+class SecurityContact(Resource):
+    """Contact details and configurations for notifications coming from Microsoft Defender for Cloud.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar emails: List of email addresses which will get notifications from Microsoft Defender for
+     Cloud by the configurations defined in this security contact.
+    :vartype emails: str
+    :ivar phone: The security contact's phone number.
+    :vartype phone: str
+    :ivar alert_notifications: Defines whether to send email notifications about new security
+     alerts.
+    :vartype alert_notifications:
+     ~azure.mgmt.security.v2020_01_01_preview.models.SecurityContactPropertiesAlertNotifications
+    :ivar notifications_by_role: Defines whether to send email notifications from Microsoft
+     Defender for Cloud to persons with specific RBAC roles on the subscription.
+    :vartype notifications_by_role:
+     ~azure.mgmt.security.v2020_01_01_preview.models.SecurityContactPropertiesNotificationsByRole
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "emails": {"key": "properties.emails", "type": "str"},
+        "phone": {"key": "properties.phone", "type": "str"},
+        "alert_notifications": {
+            "key": "properties.alertNotifications",
+            "type": "SecurityContactPropertiesAlertNotifications",
+        },
+        "notifications_by_role": {
+            "key": "properties.notificationsByRole",
+            "type": "SecurityContactPropertiesNotificationsByRole",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        emails: Optional[str] = None,
+        phone: Optional[str] = None,
+        alert_notifications: Optional["_models.SecurityContactPropertiesAlertNotifications"] = None,
+        notifications_by_role: Optional["_models.SecurityContactPropertiesNotificationsByRole"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword emails: List of email addresses which will get notifications from Microsoft Defender
+         for Cloud by the configurations defined in this security contact.
+        :paramtype emails: str
+        :keyword phone: The security contact's phone number.
+        :paramtype phone: str
+        :keyword alert_notifications: Defines whether to send email notifications about new security
+         alerts.
+        :paramtype alert_notifications:
+         ~azure.mgmt.security.v2020_01_01_preview.models.SecurityContactPropertiesAlertNotifications
+        :keyword notifications_by_role: Defines whether to send email notifications from Microsoft
+         Defender for Cloud to persons with specific RBAC roles on the subscription.
+        :paramtype notifications_by_role:
+         ~azure.mgmt.security.v2020_01_01_preview.models.SecurityContactPropertiesNotificationsByRole
+        """
+        super().__init__(**kwargs)
+        self.emails = emails
+        self.phone = phone
+        self.alert_notifications = alert_notifications
+        self.notifications_by_role = notifications_by_role
+
+
+class SecurityContactList(_serialization.Model):
+    """List of security contacts response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of security contacts.
+    :vartype value: list[~azure.mgmt.security.v2020_01_01_preview.models.SecurityContact]
+    :ivar next_link: The URI to fetch the next page.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[SecurityContact]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class SecurityContactPropertiesAlertNotifications(_serialization.Model):  # pylint: disable=name-too-long
+    """Defines whether to send email notifications about new security alerts.
+
+    :ivar state: Defines if email notifications will be sent about new security alerts. Known
+     values are: "On" and "Off".
+    :vartype state: str or ~azure.mgmt.security.v2020_01_01_preview.models.State
+    :ivar minimal_severity: Defines the minimal alert severity which will be sent as email
+     notifications. Known values are: "High", "Medium", and "Low".
+    :vartype minimal_severity: str or
+     ~azure.mgmt.security.v2020_01_01_preview.models.MinimalSeverity
+    """
+
+    _attribute_map = {
+        "state": {"key": "state", "type": "str"},
+        "minimal_severity": {"key": "minimalSeverity", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.State"]] = None,
+        minimal_severity: Optional[Union[str, "_models.MinimalSeverity"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword state: Defines if email notifications will be sent about new security alerts. Known
+         values are: "On" and "Off".
+        :paramtype state: str or ~azure.mgmt.security.v2020_01_01_preview.models.State
+        :keyword minimal_severity: Defines the minimal alert severity which will be sent as email
+         notifications. Known values are: "High", "Medium", and "Low".
+        :paramtype minimal_severity: str or
+         ~azure.mgmt.security.v2020_01_01_preview.models.MinimalSeverity
+        """
+        super().__init__(**kwargs)
+        self.state = state
+        self.minimal_severity = minimal_severity
+
+
+class SecurityContactPropertiesNotificationsByRole(_serialization.Model):  # pylint: disable=name-too-long
+    """Defines whether to send email notifications from Microsoft Defender for Cloud to persons with
+    specific RBAC roles on the subscription.
+
+    :ivar state: Defines whether to send email notifications from AMicrosoft Defender for Cloud to
+     persons with specific RBAC roles on the subscription. Known values are: "On" and "Off".
+    :vartype state: str or ~azure.mgmt.security.v2020_01_01_preview.models.State
+    :ivar roles: Defines which RBAC roles will get email notifications from Microsoft Defender for
+     Cloud. List of allowed RBAC roles:.
+    :vartype roles: list[str or ~azure.mgmt.security.v2020_01_01_preview.models.Roles]
+    """
+
+    _attribute_map = {
+        "state": {"key": "state", "type": "str"},
+        "roles": {"key": "roles", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.State"]] = None,
+        roles: Optional[List[Union[str, "_models.Roles"]]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword state: Defines whether to send email notifications from AMicrosoft Defender for Cloud
+         to persons with specific RBAC roles on the subscription. Known values are: "On" and "Off".
+        :paramtype state: str or ~azure.mgmt.security.v2020_01_01_preview.models.State
+        :keyword roles: Defines which RBAC roles will get email notifications from Microsoft Defender
+         for Cloud. List of allowed RBAC roles:.
+        :paramtype roles: list[str or ~azure.mgmt.security.v2020_01_01_preview.models.Roles]
+        """
+        super().__init__(**kwargs)
+        self.state = state
+        self.roles = roles
 
 
 class ServicePrincipalProperties(_serialization.Model):

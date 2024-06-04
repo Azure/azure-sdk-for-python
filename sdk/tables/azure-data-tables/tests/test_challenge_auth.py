@@ -21,6 +21,7 @@ from _shared.testcase import TableTestCase
 # Try to use azure.core.rest request if azure-core version supports it -- fall back to basic request
 try:
     from azure.core.rest import HttpRequest as RestHttpRequest
+
     HTTP_REQUESTS = [PipelineTransportHttpRequest, RestHttpRequest]
 except ModuleNotFoundError:
     HTTP_REQUESTS = [PipelineTransportHttpRequest]
@@ -135,14 +136,14 @@ def test_challenge_policy_uses_scopes_and_tenant(http_request):
     # this challenge separates the authorization server and resource with only spaces in the WWW-Authenticate header
     challenge_without_commas = Mock(
         status_code=401,
-        headers={"WWW-Authenticate": f'Bearer authorization={endpoint} resource={resource}'},
+        headers={"WWW-Authenticate": f"Bearer authorization={endpoint} resource={resource}"},
     )
     test_with_challenge(challenge_without_commas, scope, tenant)
 
     # this challenge gives an AADv2 scope, ending with "/.default", instead of an AADv1 resource
     challenge_with_scope = Mock(
         status_code=401,
-        headers={"WWW-Authenticate": f'Bearer authorization={endpoint} scope={scope}'},
+        headers={"WWW-Authenticate": f"Bearer authorization={endpoint} scope={scope}"},
     )
     test_with_challenge(challenge_with_scope, scope, tenant)
 
@@ -299,9 +300,7 @@ def test_challenge_policy_disable_any_discovery(http_request):
             raise ValueError("unexpected token request")
 
         credential = Mock(get_token=Mock(wraps=get_token))
-        policy = BearerTokenChallengePolicy(
-            credential, "scope", discover_tenant=False, discover_scopes=False
-        )
+        policy = BearerTokenChallengePolicy(credential, "scope", discover_tenant=False, discover_scopes=False)
         pipeline = Pipeline(policies=[policy], transport=Mock(send=send))
         pipeline.run(http_request("GET", "https://localhost"))
 

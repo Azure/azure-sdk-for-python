@@ -1,5 +1,90 @@
 # Release History
 
+## 3.1.0b1 (2024-03-18)
+
+### Features Added
+
+  - Added operation ContainerAppsAPIClientOperationsMixin.get_custom_domain_verification_id
+  - Added operation JobsOperations.get_detector
+  - Added operation JobsOperations.list_detectors
+  - Added operation JobsOperations.proxy_get
+  - Added operation group AppResiliencyOperations
+  - Added operation group BuildAuthTokenOperations
+  - Added operation group BuildersOperations
+  - Added operation group BuildsByBuilderResourceOperations
+  - Added operation group BuildsOperations
+  - Added operation group DaprComponentResiliencyPoliciesOperations
+  - Added operation group DaprSubscriptionsOperations
+  - Added operation group DotNetComponentsOperations
+  - Added operation group JavaComponentsOperations
+  - Added operation group ManagedEnvironmentUsagesOperations
+  - Added operation group UsagesOperations
+  - Model AuthConfig has a new parameter encryption_settings
+  - Model AvailableWorkloadProfileProperties has a new parameter gpus
+  - Model CertificateProperties has a new parameter certificate_key_vault_properties
+  - Model CertificateProperties has a new parameter certificate_type
+  - Model CustomDomainConfiguration has a new parameter certificate_key_vault_properties
+  - Model DaprComponent has a new parameter service_component_bind
+  - Model GithubActionConfiguration has a new parameter build_environment_variables
+  - Model Ingress has a new parameter additional_port_mappings
+  - Model Ingress has a new parameter target_port_http_scheme
+  - Model Job has a new parameter extended_location
+  - Model JobPatchProperties has a new parameter extended_location
+  - Model LogAnalyticsConfiguration has a new parameter dynamic_json_columns
+  - Model Login has a new parameter token_store
+  - Model ManagedEnvironment has a new parameter app_insights_configuration
+  - Model ManagedEnvironment has a new parameter identity
+  - Model ManagedEnvironment has a new parameter open_telemetry_configuration
+  - Model ManagedEnvironmentStorageProperties has a new parameter nfs_azure_file
+  - Model ServiceBind has a new parameter client_type
+  - Model ServiceBind has a new parameter customized_keys
+
+## 3.0.0 (2023-08-18)
+
+### Features Added
+
+  - Added operation ContainerAppsOperations.begin_start
+  - Added operation ContainerAppsOperations.begin_stop
+  - Added operation group ContainerAppsAPIClientOperationsMixin
+  - Added operation group JobsExecutionsOperations
+  - Added operation group JobsOperations
+  - Added operation group ManagedCertificatesOperations
+  - Model AvailableWorkloadProfileProperties has a new parameter category
+  - Model AzureCredentials has a new parameter kind
+  - Model Configuration has a new parameter service
+  - Model ContainerApp has a new parameter managed_by
+  - Model ContainerApp has a new parameter workload_profile_name
+  - Model ContainerAppSecret has a new parameter identity
+  - Model ContainerAppSecret has a new parameter key_vault_url
+  - Model GithubActionConfiguration has a new parameter github_personal_access_token
+  - Model Ingress has a new parameter sticky_sessions
+  - Model ManagedEnvironment has a new parameter dapr_configuration
+  - Model ManagedEnvironment has a new parameter infrastructure_resource_group
+  - Model ManagedEnvironment has a new parameter keda_configuration
+  - Model ManagedEnvironment has a new parameter peer_authentication
+  - Model Replica has a new parameter init_containers
+  - Model Replica has a new parameter running_state
+  - Model Replica has a new parameter running_state_details
+  - Model ReplicaContainer has a new parameter running_state
+  - Model ReplicaContainer has a new parameter running_state_details
+  - Model Revision has a new parameter running_state
+  - Model Secret has a new parameter identity
+  - Model Secret has a new parameter key_vault_url
+  - Model Template has a new parameter service_binds
+  - Model Template has a new parameter termination_grace_period_seconds
+  - Model Volume has a new parameter mount_options
+  - Model Volume has a new parameter secrets
+  - Model VolumeMount has a new parameter sub_path
+
+### Breaking Changes
+
+  - Model AvailableWorkloadProfileProperties no longer has parameter billing_meter_category
+  - Model ContainerApp no longer has parameter workload_profile_type
+  - Model ManagedEnvironment no longer has parameter sku
+  - Model VnetConfiguration no longer has parameter outbound_settings
+  - Model VnetConfiguration no longer has parameter runtime_subnet_id
+  - Model WorkloadProfile has a new required parameter name
+
 ## 3.0.0b1 (2023-05-20)
 
 ### Features Added

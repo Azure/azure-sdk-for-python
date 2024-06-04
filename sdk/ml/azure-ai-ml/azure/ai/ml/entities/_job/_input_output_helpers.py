@@ -4,7 +4,7 @@
 
 import collections.abc
 import re
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CustomModelJobInput as RestCustomModelJobInput
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CustomModelJobOutput as RestCustomModelJobOutput
@@ -66,8 +66,12 @@ OUTPUT_MOUNT_MAPPING_TO_REST = {
 
 
 # TODO: Remove this as both rest type and sdk type are snake case now.
-def get_output_type_mapping_from_rest():
-    """Get output type mapping."""
+def get_output_type_mapping_from_rest() -> Dict[str, str]:
+    """Gets the mapping of JobOutputType to AssetType
+
+    :return: Mapping of JobOutputType to AssetType
+    :rtype: Dict[str, str]
+    """
     return {
         JobOutputType.URI_FILE: AssetTypes.URI_FILE,
         JobOutputType.URI_FOLDER: AssetTypes.URI_FOLDER,
@@ -78,8 +82,12 @@ def get_output_type_mapping_from_rest():
     }
 
 
-def get_input_rest_cls_dict():
-    """Get input rest init func dict."""
+def get_input_rest_cls_dict() -> Dict[str, RestJobInput]:
+    """Gets the mapping of AssetType to RestJobInput
+
+    :return: Map of AssetType to RestJobInput
+    :rtype: Dict[str, RestJobInput]
+    """
     return {
         AssetTypes.URI_FILE: RestUriFileJobInput,
         AssetTypes.URI_FOLDER: RestUriFolderJobInput,
@@ -90,9 +98,12 @@ def get_input_rest_cls_dict():
     }
 
 
-def get_output_rest_cls_dict():
-    """Get output rest init cls dict."""
+def get_output_rest_cls_dict() -> Dict[str, RestJobOutput]:
+    """Get output rest init cls dict.
 
+    :return: Map of AssetType to RestJobOutput
+    :rtype: Dict[str, RestJobOutput]
+    """
     return {
         AssetTypes.URI_FILE: RestUriFileJobOutput,
         AssetTypes.URI_FOLDER: RestUriFolderJobOutput,
@@ -120,12 +131,12 @@ def build_input_output(
     return item
 
 
-def _validate_inputs_for(input_consumer_name: str, input_consumer: str, inputs: Dict[str, Any]) -> None:
+def _validate_inputs_for(input_consumer_name: str, input_consumer: str, inputs: Optional[Dict]) -> None:
     implicit_inputs = re.findall(r"\${{inputs\.([\w\.-]+)}}", input_consumer)
     # optional inputs no need to validate whether they're in inputs
     optional_inputs = re.findall(r"\[[\w\.\s-]*\${{inputs\.([\w\.-]+)}}]", input_consumer)
     for key in implicit_inputs:
-        if inputs.get(key, None) is None and key not in optional_inputs:
+        if inputs is not None and inputs.get(key, None) is None and key not in optional_inputs:
             msg = "Inputs to job does not contain '{}' referenced in " + input_consumer_name
             raise ValidationException(
                 message=msg.format(key),
@@ -136,11 +147,12 @@ def _validate_inputs_for(input_consumer_name: str, input_consumer: str, inputs: 
             )
 
 
-def validate_inputs_for_command(command: str, inputs: Dict[str, Any]) -> None:
-    _validate_inputs_for("command", command, inputs)
+def validate_inputs_for_command(command: Optional[str], inputs: Optional[Dict]) -> None:
+    if command is not None:
+        _validate_inputs_for("command", command, inputs)
 
 
-def validate_inputs_for_args(args: str, inputs: Dict[str, Any]) -> None:
+def validate_inputs_for_args(args: str, inputs: Optional[Dict[str, Any]]) -> None:
     _validate_inputs_for("args", args, inputs)
 
 
@@ -156,7 +168,7 @@ def validate_key_contains_allowed_characters(key: str) -> None:
         )
 
 
-def validate_pipeline_input_key_contains_allowed_characters(key: str) -> None:
+def validate_pipeline_input_key_characters(key: str) -> None:
     # Pipeline input allow '.' to support parameter group in key.
     # Note: ([a-zA-Z_]+[a-zA-Z0-9_]*) is a valid single key,
     # so a valid pipeline key is: ^{single_key}([.]{single_key})*$
@@ -173,9 +185,9 @@ def validate_pipeline_input_key_contains_allowed_characters(key: str) -> None:
 
 
 def to_rest_dataset_literal_inputs(
-    inputs: Dict[str, Union[int, str, float, bool, Input]],
+    inputs: Optional[Dict],
     *,
-    job_type,
+    job_type: Optional[str],
 ) -> Dict[str, RestJobInput]:
     """Turns dataset and literal inputs into dictionary of REST JobInput.
 
@@ -183,64 +195,70 @@ def to_rest_dataset_literal_inputs(
     :type inputs: Dict[str, Union[int, str, float, bool, JobInput]]
     :return: A dictionary mapping input name to a ComponentJobInput or PipelineInput
     :rtype: Dict[str, Union[ComponentJobInput, PipelineInput]]
-    :param job_type: When job_type is pipeline, enable dot('.') in parameter keys to support parameter group.
+    :keyword job_type: When job_type is pipeline, enable dot('.') in parameter keys to support parameter group.
         TODO: Remove this after move name validation to Job's customized validate.
-    :type job_type: str
+    :paramtype job_type: str
     """
     rest_inputs = {}
-    # Pack up the inputs into REST format
-    for input_name, input_value in inputs.items():
-        if job_type == JobType.PIPELINE:
-            validate_pipeline_input_key_contains_allowed_characters(input_name)
-        elif job_type:
-            # We pass job_type=None for pipeline node, and want skip this check for nodes.
-            validate_key_contains_allowed_characters(input_name)
-        if isinstance(input_value, Input):
-            if input_value.path and isinstance(input_value.path, str) and is_data_binding_expression(input_value.path):
-                input_data = LiteralJobInput(value=input_value.path)
-                # set mode attribute manually for binding job input
-                if input_value.mode:
-                    input_data.mode = INPUT_MOUNT_MAPPING_TO_REST[input_value.mode]
-                input_data.job_input_type = JobInputType.LITERAL
-            else:
-                target_cls_dict = get_input_rest_cls_dict()
 
-                if input_value.type in target_cls_dict:
-                    input_data = target_cls_dict[input_value.type](
-                        uri=input_value.path,
-                        mode=INPUT_MOUNT_MAPPING_TO_REST[input_value.mode.lower()] if input_value.mode else None,
-                    )
-
+    if inputs is not None:
+        # Pack up the inputs into REST format
+        for input_name, input_value in inputs.items():
+            if job_type == JobType.PIPELINE:
+                validate_pipeline_input_key_characters(input_name)
+            elif job_type:
+                # We pass job_type=None for pipeline node, and want skip this check for nodes.
+                validate_key_contains_allowed_characters(input_name)
+            if isinstance(input_value, Input):
+                if (
+                    input_value.path
+                    and isinstance(input_value.path, str)
+                    and is_data_binding_expression(input_value.path)
+                ):
+                    input_data = LiteralJobInput(value=input_value.path)
+                    # set mode attribute manually for binding job input
+                    if input_value.mode:
+                        input_data.mode = INPUT_MOUNT_MAPPING_TO_REST[input_value.mode]
+                    if getattr(input_value, "path_on_compute", None) is not None:
+                        input_data.pathOnCompute = input_value.path_on_compute
+                    input_data.job_input_type = JobInputType.LITERAL
                 else:
-                    msg = f"Job input type {input_value.type} is not supported as job input."
-                    raise ValidationException(
-                        message=msg,
-                        no_personal_data_message=msg,
-                        target=ErrorTarget.JOB,
-                        error_category=ErrorCategory.USER_ERROR,
-                        error_type=ValidationErrorType.INVALID_VALUE,
-                    )
-        elif input_value is None:
-            # If the input is None, we need to pass the origin None to the REST API
-            input_data = LiteralJobInput(value=None)
-        else:
-            # otherwise, the input is a literal input
-            if isinstance(input_value, dict):
-                input_data = LiteralJobInput(value=str(input_value["value"]))
-                # set mode attribute manually for binding job input
-                if "mode" in input_value:
-                    input_data.mode = input_value["mode"]
+                    target_cls_dict = get_input_rest_cls_dict()
+
+                    if input_value.type in target_cls_dict:
+                        input_data = target_cls_dict[input_value.type](
+                            uri=input_value.path,
+                            mode=INPUT_MOUNT_MAPPING_TO_REST[input_value.mode.lower()] if input_value.mode else None,
+                        )
+
+                    else:
+                        msg = f"Job input type {input_value.type} is not supported as job input."
+                        raise ValidationException(
+                            message=msg,
+                            no_personal_data_message=msg,
+                            target=ErrorTarget.JOB,
+                            error_category=ErrorCategory.USER_ERROR,
+                            error_type=ValidationErrorType.INVALID_VALUE,
+                        )
+            elif input_value is None:
+                # If the input is None, we need to pass the origin None to the REST API
+                input_data = LiteralJobInput(value=None)
             else:
-                input_data = LiteralJobInput(value=str(input_value))
-            input_data.job_input_type = JobInputType.LITERAL
-        # Pack up inputs into PipelineInputs or ComponentJobInputs depending on caller
-        rest_inputs[input_name] = input_data
+                # otherwise, the input is a literal input
+                if isinstance(input_value, dict):
+                    input_data = LiteralJobInput(value=str(input_value["value"]))
+                    # set mode attribute manually for binding job input
+                    if "mode" in input_value:
+                        input_data.mode = input_value["mode"]
+                else:
+                    input_data = LiteralJobInput(value=str(input_value))
+                input_data.job_input_type = JobInputType.LITERAL
+            # Pack up inputs into PipelineInputs or ComponentJobInputs depending on caller
+            rest_inputs[input_name] = input_data
     return rest_inputs
 
 
-def from_rest_inputs_to_dataset_literal(
-    inputs: Dict[str, RestJobInput]
-) -> Dict[str, Union[int, str, float, bool, Input]]:
+def from_rest_inputs_to_dataset_literal(inputs: Dict[str, RestJobInput]) -> Dict:
     """Turns REST dataset and literal inputs into the SDK format.
 
     :param inputs: Dictionary mapping input name to ComponentJobInput or PipelineInput
@@ -266,11 +284,15 @@ def from_rest_inputs_to_dataset_literal(
         if input_value.job_input_type in type_transfer_dict:
             if input_value.uri:
                 path = input_value.uri
-
+                if getattr(input_value, "pathOnCompute", None) is not None:
+                    sourcePathOnCompute = input_value.pathOnCompute
+                else:
+                    sourcePathOnCompute = None
                 input_data = Input(
                     type=type_transfer_dict[input_value.job_input_type],
                     path=path,
                     mode=INPUT_MOUNT_MAPPING_FROM_REST[input_value.mode] if input_value.mode else None,
+                    path_on_compute=sourcePathOnCompute,
                 )
         elif input_value.job_input_type in (JobInputType.LITERAL, JobInputType.LITERAL):
             # otherwise, the input is a literal, so just unpack the InputData value field
@@ -289,7 +311,7 @@ def from_rest_inputs_to_dataset_literal(
     return from_rest_inputs
 
 
-def to_rest_data_outputs(outputs: Dict[str, Output]) -> Dict[str, RestJobOutput]:
+def to_rest_data_outputs(outputs: Optional[Dict]) -> Dict[str, RestJobOutput]:
     """Turns job outputs into REST format.
 
     :param outputs: Dictionary of dataset outputs from job
@@ -298,34 +320,36 @@ def to_rest_data_outputs(outputs: Dict[str, Output]) -> Dict[str, RestJobOutput]
     :rtype: Dict[str, RestJobOutput]
     """
     rest_outputs = {}
-    for output_name, output_value in outputs.items():
-        validate_key_contains_allowed_characters(output_name)
-        if output_value is None:
-            # pipeline output could be none, default to URI folder with None mode
-            output_cls = RestUriFolderJobOutput
-            rest_outputs[output_name] = output_cls(mode=None)
-        else:
-            target_cls_dict = get_output_rest_cls_dict()
-
-            output_value_type = output_value.type if output_value.type else AssetTypes.URI_FOLDER
-            if output_value_type in target_cls_dict:
-                output = target_cls_dict[output_value_type](
-                    asset_name=output_value.name,
-                    asset_version=output_value.version,
-                    uri=output_value.path,
-                    mode=OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None,
-                    description=output_value.description,
-                )
+    if outputs is not None:
+        for output_name, output_value in outputs.items():
+            validate_key_contains_allowed_characters(output_name)
+            if output_value is None:
+                # pipeline output could be none, default to URI folder with None mode
+                output_cls = RestUriFolderJobOutput
+                rest_outputs[output_name] = output_cls(mode=None)
             else:
-                msg = "unsupported JobOutput type: {}".format(output_value.type)
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    target=ErrorTarget.JOB,
-                    error_category=ErrorCategory.USER_ERROR,
-                    error_type=ValidationErrorType.INVALID_VALUE,
-                )
-            rest_outputs[output_name] = output
+                target_cls_dict = get_output_rest_cls_dict()
+
+                output_value_type = output_value.type if output_value.type else AssetTypes.URI_FOLDER
+                if output_value_type in target_cls_dict:
+                    output = target_cls_dict[output_value_type](
+                        asset_name=output_value.name,
+                        asset_version=output_value.version,
+                        uri=output_value.path,
+                        mode=OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None,
+                        pathOnCompute=getattr(output_value, "path_on_compute", None),
+                        description=output_value.description,
+                    )
+                else:
+                    msg = "unsupported JobOutput type: {}".format(output_value.type)
+                    raise ValidationException(
+                        message=msg,
+                        no_personal_data_message=msg,
+                        target=ErrorTarget.JOB,
+                        error_category=ErrorCategory.USER_ERROR,
+                        error_type=ValidationErrorType.INVALID_VALUE,
+                    )
+                rest_outputs[output_name] = output
     return rest_outputs
 
 
@@ -347,12 +371,16 @@ def from_rest_data_outputs(outputs: Dict[str, RestJobOutput]) -> Dict[str, Outpu
         # deal with invalid output type submitted by feb api
         # todo: backend help convert node level input/output type
         normalize_job_input_output_type(output_value)
-
+        if getattr(output_value, "pathOnCompute", None) is not None:
+            sourcePathOnCompute = output_value.pathOnCompute
+        else:
+            sourcePathOnCompute = None
         if output_value.job_output_type in output_type_mapping:
             from_rest_outputs[output_name] = Output(
                 type=output_type_mapping[output_value.job_output_type],
                 path=output_value.uri,
                 mode=OUTPUT_MOUNT_MAPPING_FROM_REST[output_value.mode] if output_value.mode else None,
+                path_on_compute=sourcePathOnCompute,
                 description=output_value.description,
                 name=output_value.asset_name,
                 version=output_value.asset_version,

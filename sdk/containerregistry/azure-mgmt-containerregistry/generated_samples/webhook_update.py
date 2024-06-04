@@ -36,7 +36,7 @@ def main():
         webhook_update_parameters={
             "properties": {
                 "actions": ["push"],
-                "customHeaders": {"Authorization": "Basic 000000000000000000000000000000000000000000000000000"},
+                "customHeaders": {"Authorization": "******"},
                 "scope": "myRepository",
                 "serviceUri": "http://myservice.com",
                 "status": "enabled",
@@ -47,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/stable/2022-12-01/examples/WebhookUpdate.json
+# x-ms-original-file: specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/stable/2023-07-01/examples/WebhookUpdate.json
 if __name__ == "__main__":
     main()

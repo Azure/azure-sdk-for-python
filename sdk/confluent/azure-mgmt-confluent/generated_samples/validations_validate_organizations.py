@@ -39,10 +39,18 @@ def main():
                     "id": "string",
                     "planId": "string",
                     "planName": "string",
+                    "privateOfferId": "string",
+                    "privateOfferIds": ["string"],
                     "publisherId": "string",
                     "termUnit": "string",
                 },
-                "userDetail": {"emailAddress": "abc@microsoft.com", "firstName": "string", "lastName": "string"},
+                "userDetail": {
+                    "aadEmail": "abc@microsoft.com",
+                    "emailAddress": "abc@microsoft.com",
+                    "firstName": "string",
+                    "lastName": "string",
+                    "userPrincipalName": "abc@microsoft.com",
+                },
             },
             "tags": {"Environment": "Dev"},
         },
@@ -50,6 +58,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/confluent/resource-manager/Microsoft.Confluent/stable/2021-12-01/examples/Validations_ValidateOrganizations.json
+# x-ms-original-file: specification/confluent/resource-manager/Microsoft.Confluent/stable/2024-02-13/examples/Validations_ValidateOrganizations.json
 if __name__ == "__main__":
     main()

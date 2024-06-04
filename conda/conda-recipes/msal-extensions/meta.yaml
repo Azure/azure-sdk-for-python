@@ -1,0 +1,49 @@
+{% set name = "msal-extensions" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('MSALEXTENSIONS_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - msal >=2023.06.01
+    - pip
+    - portalocker
+    - python
+  run:
+    - msal >=2023.06.01
+    - portalocker
+    - pyjwt
+    - python
+
+test:
+  imports:
+    - msal_extensions
+  requires:
+    - pytest
+
+about:
+  home: "https://github.com/AzureAD/microsoft-authentication-library-for-python"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Authentication Extensions for Python"
+  description: |
+    The Microsoft Authentication Extensions for Python offers secure mechanisms for 
+    client applications to perform cross-platform token cache serialization and persistence. 
+    It gives additional support to the Microsoft Authentication Library for Python (MSAL).
+    Please see https://aka.ms/azsdk/conda/releases/msal-extensions for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

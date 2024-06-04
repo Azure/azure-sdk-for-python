@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.datafactory import DataFactoryManagementClient
 
 """
@@ -29,13 +30,12 @@ def main():
         subscription_id="12345678-1234-1234-1234-12345678abc",
     )
 
-    response = client.integration_runtime_nodes.delete(
+    client.integration_runtime_nodes.delete(
         resource_group_name="exampleResourceGroup",
         factory_name="exampleFactoryName",
         integration_runtime_name="exampleIntegrationRuntime",
         node_name="Node_1",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/datafactory/resource-manager/Microsoft.DataFactory/stable/2018-06-01/examples/IntegrationRuntimeNodes_Delete.json

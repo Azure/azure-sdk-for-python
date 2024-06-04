@@ -6,10 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models_py3 import CloudErrorBody
 from ._models_py3 import DistributeVersioner
 from ._models_py3 import DistributeVersionerLatest
 from ._models_py3 import DistributeVersionerSource
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
 from ._models_py3 import ImageTemplate
 from ._models_py3 import ImageTemplateCustomizer
 from ._models_py3 import ImageTemplateDistributor
@@ -24,6 +26,7 @@ from ._models_py3 import ImageTemplateManagedImageSource
 from ._models_py3 import ImageTemplatePlatformImageSource
 from ._models_py3 import ImageTemplatePowerShellCustomizer
 from ._models_py3 import ImageTemplatePowerShellValidator
+from ._models_py3 import ImageTemplatePropertiesErrorHandling
 from ._models_py3 import ImageTemplatePropertiesOptimize
 from ._models_py3 import ImageTemplatePropertiesOptimizeVmBoot
 from ._models_py3 import ImageTemplatePropertiesValidate
@@ -34,6 +37,7 @@ from ._models_py3 import ImageTemplateShellCustomizer
 from ._models_py3 import ImageTemplateShellValidator
 from ._models_py3 import ImageTemplateSource
 from ._models_py3 import ImageTemplateUpdateParameters
+from ._models_py3 import ImageTemplateUpdateParametersProperties
 from ._models_py3 import ImageTemplateVhdDistributor
 from ._models_py3 import ImageTemplateVmProfile
 from ._models_py3 import ImageTemplateWindowsUpdateCustomizer
@@ -58,6 +62,7 @@ from ._models_py3 import UserAssignedIdentity
 from ._models_py3 import VirtualNetworkConfig
 
 from ._image_builder_client_enums import CreatedByType
+from ._image_builder_client_enums import OnBuildError
 from ._image_builder_client_enums import ProvisioningErrorCode
 from ._image_builder_client_enums import ProvisioningState
 from ._image_builder_client_enums import ResourceIdentityType
@@ -70,10 +75,12 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "CloudErrorBody",
     "DistributeVersioner",
     "DistributeVersionerLatest",
     "DistributeVersionerSource",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
     "ImageTemplate",
     "ImageTemplateCustomizer",
     "ImageTemplateDistributor",
@@ -88,6 +95,7 @@ __all__ = [
     "ImageTemplatePlatformImageSource",
     "ImageTemplatePowerShellCustomizer",
     "ImageTemplatePowerShellValidator",
+    "ImageTemplatePropertiesErrorHandling",
     "ImageTemplatePropertiesOptimize",
     "ImageTemplatePropertiesOptimizeVmBoot",
     "ImageTemplatePropertiesValidate",
@@ -98,6 +106,7 @@ __all__ = [
     "ImageTemplateShellValidator",
     "ImageTemplateSource",
     "ImageTemplateUpdateParameters",
+    "ImageTemplateUpdateParametersProperties",
     "ImageTemplateVhdDistributor",
     "ImageTemplateVmProfile",
     "ImageTemplateWindowsUpdateCustomizer",
@@ -121,6 +130,7 @@ __all__ = [
     "UserAssignedIdentity",
     "VirtualNetworkConfig",
     "CreatedByType",
+    "OnBuildError",
     "ProvisioningErrorCode",
     "ProvisioningState",
     "ResourceIdentityType",

@@ -1,5 +1,29 @@
 # Release History
 
+## 9.2.0b1 (2024-03-18)
+
+### Features Added
+
+  - Added operation group NetworkSecurityPerimeterConfigurationsOperations
+  - Model Identity has a new parameter user_assigned_identities
+  - Model NetworkRuleSet has a new parameter bypass
+  - Model Operation has a new parameter is_data_action
+  - Model Operation has a new parameter origin
+  - Model Operation has a new parameter properties
+  - Model SearchService has a new parameter disabled_data_exfiltration_options
+  - Model SearchService has a new parameter e_tag
+  - Model SearchServiceUpdate has a new parameter disabled_data_exfiltration_options
+  - Model SearchServiceUpdate has a new parameter e_tag
+
+## 9.1.0 (2023-10-23)
+
+### Features Added
+
+  - Added operation group SearchManagementClientOperationsMixin
+  - Added operation group UsagesOperations
+  - Model SearchService has a new parameter semantic_search
+  - Model SearchServiceUpdate has a new parameter semantic_search
+
 ## 9.0.0 (2023-02-15)
 
 ### Features Added

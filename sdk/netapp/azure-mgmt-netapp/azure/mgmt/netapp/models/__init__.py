@@ -13,11 +13,14 @@ from ._models_py3 import Backup
 from ._models_py3 import BackupPatch
 from ._models_py3 import BackupPoliciesList
 from ._models_py3 import BackupPolicy
-from ._models_py3 import BackupPolicyDetails
 from ._models_py3 import BackupPolicyPatch
 from ._models_py3 import BackupRestoreFiles
 from ._models_py3 import BackupStatus
+from ._models_py3 import BackupVault
+from ._models_py3 import BackupVaultPatch
+from ._models_py3 import BackupVaultsList
 from ._models_py3 import BackupsList
+from ._models_py3 import BackupsMigrationRequest
 from ._models_py3 import BreakFileLocksRequest
 from ._models_py3 import BreakReplicationRequest
 from ._models_py3 import CapacityPool
@@ -28,8 +31,13 @@ from ._models_py3 import CloudErrorBody
 from ._models_py3 import DailySchedule
 from ._models_py3 import Dimension
 from ._models_py3 import EncryptionIdentity
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
 from ._models_py3 import ExportPolicyRule
 from ._models_py3 import FilePathAvailabilityRequest
+from ._models_py3 import GetGroupIdListForLDAPUserRequest
+from ._models_py3 import GetGroupIdListForLDAPUserResponse
 from ._models_py3 import HourlySchedule
 from ._models_py3 import KeyVaultProperties
 from ._models_py3 import LdapSearchScopeOpt
@@ -43,16 +51,21 @@ from ._models_py3 import MountTargetProperties
 from ._models_py3 import NetAppAccount
 from ._models_py3 import NetAppAccountList
 from ._models_py3 import NetAppAccountPatch
+from ._models_py3 import NetworkSiblingSet
+from ._models_py3 import NicInfo
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
 from ._models_py3 import PlacementKeyValuePairs
 from ._models_py3 import PoolChangeRequest
 from ._models_py3 import ProxyResource
+from ._models_py3 import QueryNetworkSiblingSetRequest
 from ._models_py3 import QuotaAvailabilityRequest
 from ._models_py3 import ReestablishReplicationRequest
 from ._models_py3 import RegionInfo
 from ._models_py3 import RegionInfoAvailabilityZoneMappingsItem
+from ._models_py3 import RegionInfoResource
+from ._models_py3 import RegionInfosList
 from ._models_py3 import RelocateVolumeRequest
 from ._models_py3 import Replication
 from ._models_py3 import ReplicationObject
@@ -78,6 +91,7 @@ from ._models_py3 import SubvolumePatchRequest
 from ._models_py3 import SubvolumesList
 from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
+from ._models_py3 import UpdateNetworkSiblingSetRequest
 from ._models_py3 import UserAssignedIdentity
 from ._models_py3 import Volume
 from ._models_py3 import VolumeBackupProperties
@@ -108,6 +122,7 @@ from ._net_app_management_client_enums import BackupType
 from ._net_app_management_client_enums import CheckNameResourceTypes
 from ._net_app_management_client_enums import CheckQuotaNameResourceTypes
 from ._net_app_management_client_enums import ChownMode
+from ._net_app_management_client_enums import CoolAccessRetrievalPolicy
 from ._net_app_management_client_enums import CreatedByType
 from ._net_app_management_client_enums import EnableSubvolumes
 from ._net_app_management_client_enums import EncryptionKeySource
@@ -121,6 +136,7 @@ from ._net_app_management_client_enums import ManagedServiceIdentityType
 from ._net_app_management_client_enums import MetricAggregationType
 from ._net_app_management_client_enums import MirrorState
 from ._net_app_management_client_enums import NetworkFeatures
+from ._net_app_management_client_enums import NetworkSiblingSetProvisioningState
 from ._net_app_management_client_enums import ProvisioningState
 from ._net_app_management_client_enums import QosType
 from ._net_app_management_client_enums import RegionStorageToNetworkProximity
@@ -144,11 +160,14 @@ __all__ = [
     "BackupPatch",
     "BackupPoliciesList",
     "BackupPolicy",
-    "BackupPolicyDetails",
     "BackupPolicyPatch",
     "BackupRestoreFiles",
     "BackupStatus",
+    "BackupVault",
+    "BackupVaultPatch",
+    "BackupVaultsList",
     "BackupsList",
+    "BackupsMigrationRequest",
     "BreakFileLocksRequest",
     "BreakReplicationRequest",
     "CapacityPool",
@@ -159,8 +178,13 @@ __all__ = [
     "DailySchedule",
     "Dimension",
     "EncryptionIdentity",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
     "ExportPolicyRule",
     "FilePathAvailabilityRequest",
+    "GetGroupIdListForLDAPUserRequest",
+    "GetGroupIdListForLDAPUserResponse",
     "HourlySchedule",
     "KeyVaultProperties",
     "LdapSearchScopeOpt",
@@ -174,16 +198,21 @@ __all__ = [
     "NetAppAccount",
     "NetAppAccountList",
     "NetAppAccountPatch",
+    "NetworkSiblingSet",
+    "NicInfo",
     "Operation",
     "OperationDisplay",
     "OperationListResult",
     "PlacementKeyValuePairs",
     "PoolChangeRequest",
     "ProxyResource",
+    "QueryNetworkSiblingSetRequest",
     "QuotaAvailabilityRequest",
     "ReestablishReplicationRequest",
     "RegionInfo",
     "RegionInfoAvailabilityZoneMappingsItem",
+    "RegionInfoResource",
+    "RegionInfosList",
     "RelocateVolumeRequest",
     "Replication",
     "ReplicationObject",
@@ -209,6 +238,7 @@ __all__ = [
     "SubvolumesList",
     "SystemData",
     "TrackedResource",
+    "UpdateNetworkSiblingSetRequest",
     "UserAssignedIdentity",
     "Volume",
     "VolumeBackupProperties",
@@ -238,6 +268,7 @@ __all__ = [
     "CheckNameResourceTypes",
     "CheckQuotaNameResourceTypes",
     "ChownMode",
+    "CoolAccessRetrievalPolicy",
     "CreatedByType",
     "EnableSubvolumes",
     "EncryptionKeySource",
@@ -251,6 +282,7 @@ __all__ = [
     "MetricAggregationType",
     "MirrorState",
     "NetworkFeatures",
+    "NetworkSiblingSetProvisioningState",
     "ProvisioningState",
     "QosType",
     "RegionStorageToNetworkProximity",

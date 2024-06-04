@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.tag_rules.begin_delete(
+    client.tag_rules.begin_delete(
         resource_group_name="myResourceGroup",
         monitor_name="myMonitor",
         rule_set_name="default",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/dynatrace/resource-manager/Dynatrace.Observability/stable/2021-09-01/examples/TagRules_Delete_MinimumSet_Gen.json
+# x-ms-original-file: specification/dynatrace/resource-manager/Dynatrace.Observability/stable/2023-04-27/examples/TagRules_Delete_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

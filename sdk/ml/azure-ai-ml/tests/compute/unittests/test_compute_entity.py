@@ -8,7 +8,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import DataFactory
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_compute
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource, ImageMetadata
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ComputeResource, ImageMetadata
 from azure.ai.ml.constants._compute import CustomApplicationDefaults
 from azure.ai.ml.entities import (
     AmlCompute,
@@ -142,6 +142,18 @@ class TestComputeEntity:
         assert compute_instance2.tags["test1"] == "test"
         assert compute_instance2.tags["test2"] == "true"
         assert compute_instance2.tags["test3"] == "0"
+        assert compute_instance2.enable_sso is False
+        assert compute_instance2.enable_root_access is False
+        assert compute_instance2.enable_os_patching is True
+        assert compute_instance2.release_quota_on_stop is True
+
+        compute_instance3: ComputeInstance = load_compute(
+            source="tests/test_configs/compute/compute-ci-defaults-unit.yaml",
+        )._to_rest_object()
+        assert compute_instance3.properties.properties.enable_sso is True
+        assert compute_instance3.properties.properties.enable_root_access is True
+        assert compute_instance3.properties.properties.enable_os_patching is False
+        assert compute_instance3.properties.properties.release_quota_on_stop is False
 
     def test_compute_instance_with_image_metadata(self):
         os_image_metadata = ImageMetadata(

@@ -3,6 +3,7 @@ This file covers all sample pipeline in https://github.com/Azure/azureml-preview
 in dsl.pipeline.
 The samples are copied to test_configs/dsl_pipeline_samples
 """
+
 import json
 import sys
 from pathlib import Path
@@ -263,6 +264,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
+    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_parallel_components_with_tabular_input_pipeline_output(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.parallel_component_with_tabular_input.pipeline import (
             generate_dsl_pipeline as pipeline_with_parallel_components,
@@ -272,6 +274,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
+    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_parallel_components(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.parallel_component.pipeline import (
             generate_dsl_pipeline as pipeline_with_parallel_components,
