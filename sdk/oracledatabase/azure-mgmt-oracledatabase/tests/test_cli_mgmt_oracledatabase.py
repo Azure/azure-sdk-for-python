@@ -1,12 +1,10 @@
 # coding: utf-8
-
 #-------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-
-import unittest
+import pytest
 from azure.mgmt.oracledatabase import OracleDatabaseMgmtClient
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -32,7 +30,7 @@ class TestMgmtOracleDatabase(AzureMgmtRecordedTestCase):
     def test_list_autonomous_databases_by_resource_group(self, resource_group):
         assert list(self.client.autonomous_databases.list_by_resource_group(resource_group.name)) == []
 
-    @unittest.skip("Lack of permission")
+    @pytest.mark.skip("Lack of permission")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_list_db_system_shapes_by_resource_group(self, resource_group):
