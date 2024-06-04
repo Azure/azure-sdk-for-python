@@ -10,6 +10,8 @@
 
 ### Bugs Fixed
 
+- Raise correct exception if transport is used while already closed  #35559
+
 ### Other Changes
 
 - HTTP tracing spans will now include an `error.type` attribute if an error status code is returned.  #34619
