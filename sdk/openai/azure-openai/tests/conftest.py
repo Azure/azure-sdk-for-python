@@ -153,12 +153,12 @@ def build_kwargs(args, api_type):
         elif api_type == "gpt_4_openai":
             return {"model": ENV_OPENAI_CHAT_COMPLETIONS_GPT4_MODEL}
     if test_feature.startswith("test_completions"):
-        if api_type in ["azure", "azure_key"]:
+        if api_type == "azure":
             return {"model": ENV_AZURE_OPENAI_COMPLETIONS_NAME}
         elif api_type == "openai":
             return {"model": ENV_OPENAI_COMPLETIONS_MODEL}
     if test_feature.startswith("test_embeddings"):
-        if api_type in ["azure", "azure_key"]:
+        if api_type == "azure":
             return {"model": ENV_AZURE_OPENAI_EMBEDDINGS_NAME}
         elif api_type == "openai":
             return {"model": ENV_OPENAI_EMBEDDINGS_MODEL}
