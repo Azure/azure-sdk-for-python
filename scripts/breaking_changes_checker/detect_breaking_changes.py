@@ -274,9 +274,9 @@ def test_compare_reports(pkg_dir: str, version: str) -> None:
     bc = BreakingChangesTracker(stable, current, diff, package_name)
     bc.run_checks()
 
-    remove_json_files(pkg_dir)
+    # remove_json_files(pkg_dir)
 
-    if bc.breaking_changes:
+    if bc.features_added or bc.breaking_changes:
         print(bc)
         exit(1)
 
@@ -344,7 +344,7 @@ def main(package_name: str, target_module: str, version: str, in_venv: Union[boo
 
     except Exception as err:  # catch any issues with capturing the public API and building the report
         print("\n*****See aka.ms/azsdk/breaking-changes-tool to resolve any build issues*****\n")
-        remove_json_files(pkg_dir)
+        # remove_json_files(pkg_dir)
         raise err
 
 
@@ -391,10 +391,10 @@ if __name__ == "__main__":
     pkg_dir = os.path.abspath(args.target_package)
     package_name = os.path.basename(pkg_dir)
     logging.basicConfig(level=logging.INFO)
-    if package_name not in RUN_BREAKING_CHANGES_PACKAGES:
-        _LOGGER.info(f"{package_name} opted out of breaking changes checks. "
-                     f"See http://aka.ms/azsdk/breaking-changes-tool to opt-in.")
-        exit(0)
+    # if package_name not in RUN_BREAKING_CHANGES_PACKAGES:
+    #     _LOGGER.info(f"{package_name} opted out of breaking changes checks. "
+    #                  f"See http://aka.ms/azsdk/breaking-changes-tool to opt-in.")
+    #     exit(0)
 
     if not target_module:
         from ci_tools.parsing import ParsedSetup
