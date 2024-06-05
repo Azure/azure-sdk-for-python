@@ -165,7 +165,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
 
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG] # type: ignore
-    views: List[View] = configurations[VIEWS_ARG]
+    views: List[View] = configurations[VIEWS_ARG] # type: ignore
     metric_exporter = AzureMonitorMetricExporter(**configurations)
     reader = PeriodicExportingMetricReader(metric_exporter)
     meter_provider = MeterProvider(

@@ -5,7 +5,7 @@
 ### Features Added
 
 - Enable views configuration
-    ([#35566](https://github.com/Azure/azure-sdk-for-python/pull/35566))
+    ([#35932](https://github.com/Azure/azure-sdk-for-python/pull/35932))
 
 ### Breaking Changes
 
