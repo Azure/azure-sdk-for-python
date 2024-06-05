@@ -70,7 +70,7 @@ def sample_chat_completions_with_tools():
     flight_info = ChatCompletionsFunctionToolDefinition(
         function=FunctionDefinition(
             name="get_flight_info",
-            description="Returns information about the next flight between two cities. This inclues the name of the airline, flight number and the date and time of the next flight",
+            description="Returns information about the next flight between two cities. This includes the name of the airline, flight number and the date and time of the next flight",
             parameters={
                 "type": "object",
                 "properties": {

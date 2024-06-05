@@ -78,7 +78,7 @@ See [Prerequisites](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/
 
 * Clone or download this sample repository
 * Open a command prompt / terminal window in this samples folder
-* Install the Image Analysis client library for Python with pip:
+* Install the client library for Python with pip:
   ```bash
   pip install azure-ai-inference
   ```

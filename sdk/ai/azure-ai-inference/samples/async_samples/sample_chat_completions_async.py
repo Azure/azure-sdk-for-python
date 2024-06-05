@@ -17,7 +17,7 @@ USAGE:
         `your-azure-region` is the Azure region where your model is deployed.
     2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
-# mypy: disable-error-code="union-attr"
+# mypy: disable-error-code="union-attr,attr-defined"
 # pyright: reportAttributeAccessIssue=false
 
 import asyncio
@@ -38,21 +38,19 @@ async def sample_chat_completions_async():
         print("Set them before running this sample.")
         exit()
 
-    # Create a Model Client for synchronous operations
-    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    # Create a chat completion client for synchronous operations
+    async with ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as client: 
 
-    # Do a single chat completion operation
-    response = await client.complete(
-        messages=[
-            SystemMessage(content="You are a helpful assistant."),
-            UserMessage(content="How many feet are in a mile?"),
-        ]
-    )
+        # Do a single chat completion operation
+        response = await client.complete(
+            messages=[
+                SystemMessage(content="You are a helpful assistant."),
+                UserMessage(content="How many feet are in a mile?"),
+            ]
+        )
 
-    # Print response the the console
-    print(response.choices[0].message.content)
-
-    await client.close()
+        # Print response the the console
+        print(response.choices[0].message.content)
 
 
 async def main():

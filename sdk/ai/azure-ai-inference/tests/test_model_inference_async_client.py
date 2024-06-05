@@ -26,6 +26,8 @@ class TestModelAsyncClient(ModelClientTestBase):
 
         client = await self._load_async_embeddings_client(**kwargs)
         assert isinstance(client, async_sdk.EmbeddingsClient)
+        assert hasattr(client, "_model_info")
+
         response1 = await client.get_model_info()
         self._print_model_info_result(response1)
         self._validate_model_info_result(response1, "embedding") # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
@@ -36,7 +38,10 @@ class TestModelAsyncClient(ModelClientTestBase):
     @recorded_by_proxy_async
     async def test_async_get_model_info_on_embeddings_client(self, **kwargs):
         client = self._create_async_embeddings_client(**kwargs)
+        assert not hasattr(client, "_model_info")
+
         response1 = await client.get_model_info()
+        assert hasattr(client, "_model_info")
         self._print_model_info_result(response1)
         self._validate_model_info_result(
             response1, "embedding"
@@ -71,6 +76,8 @@ class TestModelAsyncClient(ModelClientTestBase):
 
         client = await self._load_async_chat_client(**kwargs)
         assert isinstance(client, async_sdk.ChatCompletionsClient)
+        assert hasattr(client, "_model_info")
+
         response1 = await client.get_model_info()
         self._print_model_info_result(response1)
         self._validate_model_info_result(
@@ -82,7 +89,9 @@ class TestModelAsyncClient(ModelClientTestBase):
     @recorded_by_proxy_async
     async def test_async_get_model_info_on_chat_client(self, **kwargs):
         client = self._create_async_chat_client(**kwargs)
+        assert not hasattr(client, "_model_info")
         response1 = await client.get_model_info()
+        assert hasattr(client, "_model_info")
         self._print_model_info_result(response1)
         self._validate_model_info_result(
             response1, "completion"

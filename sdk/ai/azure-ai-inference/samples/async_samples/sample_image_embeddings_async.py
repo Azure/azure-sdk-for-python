@@ -17,6 +17,9 @@ USAGE:
         `your-azure-region` is the Azure region where your model is deployed.
     2) IMAGE_EMBEDDINGS_KEY - Your model key (a 32-character string). Keep it secret.
 """
+# mypy: disable-error-code="attr-defined"
+# pyright: reportAttributeAccessIssue=false
+
 import asyncio
 
 
@@ -41,20 +44,18 @@ async def sample_image_embeddings_async():
     with open("sample2.png", "rb") as f:
         image2: str = base64.b64encode(f.read()).decode("utf-8")
 
-    client = ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    async with ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as client:
 
-    # Do a single image embeddings operation. Start the operation and get a Future object.
-    response = await client.embed(input=[EmbeddingInput(image=image1), EmbeddingInput(image=image2)])
+        # Do a single image embeddings operation. Start the operation and get a Future object.
+        response = await client.embed(input=[EmbeddingInput(image=image1), EmbeddingInput(image=image2)])
 
-    print("Embeddings response:")
-    for item in response.data:
-        length = len(item.embedding)
-        print(
-            f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
-            f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
-        )
-
-    await client.close()
+        print("Embeddings response:")
+        for item in response.data:
+            length = len(item.embedding)
+            print(
+                f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
+                f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+            )
 
 
 async def main():

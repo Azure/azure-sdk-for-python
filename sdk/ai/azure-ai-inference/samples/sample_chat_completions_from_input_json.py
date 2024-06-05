@@ -61,8 +61,6 @@ def sample_chat_completions_from_input_json():
 
     print(response.choices[0].message.content)
 
-    client.close()
-
 
 if __name__ == "__main__":
     sample_chat_completions_from_input_json()

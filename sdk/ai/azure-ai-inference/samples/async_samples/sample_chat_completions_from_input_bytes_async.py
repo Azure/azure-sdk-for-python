@@ -18,7 +18,7 @@ USAGE:
         `your-azure-region` is the Azure region where your model is deployed.
     2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
-# mypy: disable-error-code="union-attr"
+# mypy: disable-error-code="union-attr,attr-defined"
 # pyright: reportAttributeAccessIssue=false
 
 import asyncio
@@ -39,15 +39,13 @@ async def sample_chat_completions_from_input_bytes_async():
     from azure.ai.inference.aio import ChatCompletionsClient
     from azure.core.credentials import AzureKeyCredential
 
-    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    async with ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as client:
 
-    # Make a chat completion call, by directly providing the
-    # HTTP request body as IO[bytes], containing chat messages.
-    response = await client.complete(read_text_file("example_chat.json"))
+        # Make a chat completion call, by directly providing the
+        # HTTP request body as IO[bytes], containing chat messages.
+        response = await client.complete(read_text_file("example_chat.json"))
 
-    print(response.choices[0].message.content)
-
-    await client.close()
+        print(response.choices[0].message.content)
 
 
 def read_text_file(file_name: str) -> io.BytesIO:

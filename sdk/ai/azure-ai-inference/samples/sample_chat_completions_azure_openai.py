@@ -72,7 +72,7 @@ def sample_chat_completions_azure_openai():
 
         client = ChatCompletionsClient(
             endpoint=endpoint,
-            credential=DefaultAzureCredential(),
+            credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
             credential_scopes=["https://cognitiveservices.azure.com/.default"],
             api_version="2024-02-15-preview",  # AOAI api-version. Update as needed.
         )

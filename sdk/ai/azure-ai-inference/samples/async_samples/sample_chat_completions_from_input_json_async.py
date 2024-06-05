@@ -18,7 +18,7 @@ USAGE:
         `your-azure-region` is the Azure region where your model is deployed.
     2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
-# mypy: disable-error-code="union-attr"
+# mypy: disable-error-code="union-attr,attr-defined"
 # pyright: reportAttributeAccessIssue=false
 
 import asyncio
@@ -37,28 +37,26 @@ async def sample_chat_completions_from_input_json_async():
         print("Set them before running this sample.")
         exit()
 
-    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    async with ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as client:
 
-    request_body = {
-        "messages": [
-            {
-                "role": "system",
-                "content": "You are an AI assistant that helps people find information. Your replies are short, no more than two sentences.",
-            },
-            {"role": "user", "content": "What year was construction of the International Space Station mostly done?"},
-            {
-                "role": "assistant",
-                "content": "The main construction of the International Space Station (ISS) was completed between 1998 and 2011. During this period, more than 30 flights by US space shuttles and 40 by Russian rockets were conducted to transport components and modules to the station.",
-            },
-            {"role": "user", "content": "And what was the estimated cost to build it?"},
-        ]
-    }
+        request_body = {
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "You are an AI assistant that helps people find information. Your replies are short, no more than two sentences.",
+                },
+                {"role": "user", "content": "What year was construction of the International Space Station mostly done?"},
+                {
+                    "role": "assistant",
+                    "content": "The main construction of the International Space Station (ISS) was completed between 1998 and 2011. During this period, more than 30 flights by US space shuttles and 40 by Russian rockets were conducted to transport components and modules to the station.",
+                },
+                {"role": "user", "content": "And what was the estimated cost to build it?"},
+            ]
+        }
 
-    response = await client.complete(request_body)
+        response = await client.complete(request_body)
 
-    print(response.choices[0].message.content)
-
-    await client.close()
+        print(response.choices[0].message.content)
 
 
 async def main():

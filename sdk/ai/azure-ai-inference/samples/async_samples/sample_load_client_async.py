@@ -35,22 +35,20 @@ async def sample_load_client_async():
     from azure.ai.inference.aio import load_client, EmbeddingsClient
     from azure.core.credentials import AzureKeyCredential
 
-    client = await load_client(endpoint=endpoint, credential=AzureKeyCredential(key))
+    async with await load_client(endpoint=endpoint, credential=AzureKeyCredential(key)) as client:
 
-    # This should create a client of type `EmbeddingsClient`
-    print(f"Created client of type `{type(client).__name__}`.")
+        # This should create a client of type `EmbeddingsClient`
+        print(f"Created client of type `{type(client).__name__}`.")
 
-    if isinstance(client, EmbeddingsClient):
-        response = await client.embed(input=["first phrase", "second phrase", "third phrase"])
+        if isinstance(client, EmbeddingsClient):
+            response = await client.embed(input=["first phrase", "second phrase", "third phrase"])
 
-        print("Embeddings response:")
-        for item in response.data:
-            length = len(item.embedding)
-            print(
-                f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, ..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
-            )
-
-    await client.close()
+            print("Embeddings response:")
+            for item in response.data:
+                length = len(item.embedding)
+                print(
+                    f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, ..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+                )
 
 
 async def main():

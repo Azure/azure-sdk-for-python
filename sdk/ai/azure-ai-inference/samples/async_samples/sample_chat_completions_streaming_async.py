@@ -17,7 +17,7 @@ USAGE:
         `your-azure-region` is the Azure region where your model is deployed.
     2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
-# mypy: disable-error-code="union-attr"
+# mypy: disable-error-code="union-attr,attr-defined"
 # pyright: reportAttributeAccessIssue=false, reportGeneralTypeIssues=false
 
 import asyncio
@@ -39,23 +39,20 @@ async def sample_chat_completions_streaming_async():
         exit()
 
     # Create chat completions client for synchronous operations
-    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    async with ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as client:
 
-    # Do a single streaming chat completion operation. Start the operation and get a Future object.
-    response = await client.complete(
-        stream=True,
-        messages=[
-            SystemMessage(content="You are a helpful assistant."),
-            UserMessage(content="Give me 5 good reasons why I should exercise every day."),
-        ],
-    )
+        # Do a single streaming chat completion operation. Start the operation and get a Future object.
+        response = await client.complete(
+            stream=True,
+            messages=[
+                SystemMessage(content="You are a helpful assistant."),
+                UserMessage(content="Give me 5 good reasons why I should exercise every day."),
+            ],
+        )
 
-    # Iterate on the response to get chat completion updates, as they arrive from the service
-    async for update in response:
-        print(update.choices[0].delta.content or "", end="")
-
-    # Remember to always close the asynchronous client when you are done with it
-    await client.close()
+        # Iterate on the response to get chat completion updates, as they arrive from the service
+        async for update in response:
+            print(update.choices[0].delta.content or "", end="")
 
 
 async def main():

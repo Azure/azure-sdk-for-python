@@ -52,6 +52,7 @@ _LOGGER = logging.getLogger(__name__)
 async def load_client(
     endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
 ) -> Union[ChatCompletionsClientGenerated, EmbeddingsClientGenerated, ImageEmbeddingsClientGenerated]:
+    # pylint: disable=line-too-long
     """
     Load a client from a given endpoint URL. The method makes a REST API call to the `/info` route
     on the given endpoint, to determine the model type and therefore which client to instantiate.
@@ -72,12 +73,11 @@ async def load_client(
     :raises ~azure.core.exceptions.HttpResponseError
     """
 
-    client = ChatCompletionsClient(endpoint, credential, **kwargs)  # Pick any of the clients, it does not matter...
-    model_info = await client.get_model_info()
-    await client.close()
+    async with ChatCompletionsClient(endpoint, credential, **kwargs) as client: # Pick any of the clients, it does not matter.
+        model_info = await client.get_model_info() # mypy: disable-attr-defined # pyright: ignore
 
     _LOGGER.info("model_info=%s", model_info)
-    if model_info.model_type in (None, ""):
+    if not model_info.model_type:
         raise ValueError(
             "The AI model information is missing a value for `model type`. Cannot create an appropriate client."
         )
@@ -85,17 +85,17 @@ async def load_client(
     # TODO: Remove "completions" and "embedding" once Mistral Large and Cohere fixes their model type
     if model_info.model_type in (_models.ModelType.CHAT, "completion"):
         chat_completion_client = ChatCompletionsClient(endpoint, credential, **kwargs)
-        chat_completion_client._model_info = model_info  # pylint: disable=protected-access
+        chat_completion_client._model_info = model_info  # pylint: disable=protected-access,attribute-defined-outside-init
         return chat_completion_client
 
     if model_info.model_type in (_models.ModelType.EMBEDDINGS, "embedding"):
         embedding_client = EmbeddingsClient(endpoint, credential, **kwargs)
-        embedding_client._model_info = model_info  # pylint: disable=protected-access
+        embedding_client._model_info = model_info  # pylint: disable=protected-access,attribute-defined-outside-init
         return embedding_client
 
     if model_info.model_type == _models.ModelType.IMAGE_EMBEDDINGS:
         image_embedding_client = ImageEmbeddingsClient(endpoint, credential, **kwargs)
-        image_embedding_client._model_info = model_info  # pylint: disable=protected-access
+        image_embedding_client._model_info = model_info  # pylint: disable=protected-access,attribute-defined-outside-init
         return image_embedding_client
 
     raise ValueError(f"No client available to support AI model type `{model_info.model_type}`")
@@ -461,8 +461,6 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
         return _deserialize(_models.ChatCompletions, response.json())  # pylint: disable=protected-access
 
-    # Cache here the results of get_model_info call
-    _model_info: Optional[_models.ModelInfo] = None
 
     @distributed_trace_async
     async def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
@@ -473,13 +471,13 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :rtype: ~azure.ai.inference.models.ModelInfo
         :raises ~azure.core.exceptions.HttpResponseError
         """
-        if self._model_info is None:
-            self._model_info = await self._get_model_info(**kwargs)
+        if not hasattr(self, "_model_info"):
+            self._model_info = await self._get_model_info(**kwargs) # pylint: disable=attribute-defined-outside-init
         return self._model_info
 
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
-        return super().__str__() + f"\n{self._model_info}"
+        return super().__str__() + f"\n{self._model_info}" if hasattr(self, "_model_info") else super().__str__()
 
 
 class EmbeddingsClient(EmbeddingsClientGenerated):
@@ -693,8 +691,6 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
 
         return deserialized  # type: ignore
 
-    # Cache here the results of get_model_info call
-    _model_info: Optional[_models.ModelInfo] = None
 
     @distributed_trace_async
     async def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
@@ -705,13 +701,13 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :rtype: ~azure.ai.inference.models.ModelInfo
         :raises ~azure.core.exceptions.HttpResponseError
         """
-        if self._model_info is None:
-            self._model_info = await self._get_model_info(**kwargs)
+        if not hasattr(self, "_model_info"):
+            self._model_info = await self._get_model_info(**kwargs) # pylint: disable=attribute-defined-outside-init
         return self._model_info
 
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
-        return super().__str__() + f"\n{self._model_info}"
+        return super().__str__() + f"\n{self._model_info}" if hasattr(self, "_model_info") else super().__str__()
 
 
 class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
@@ -925,8 +921,6 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
 
         return deserialized  # type: ignore
 
-    # Cache here the results of get_model_info call
-    _model_info: Optional[_models.ModelInfo] = None
 
     @distributed_trace_async
     async def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
@@ -937,13 +931,13 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :rtype: ~azure.ai.inference.models.ModelInfo
         :raises ~azure.core.exceptions.HttpResponseError
         """
-        if self._model_info is None:
-            self._model_info = await self._get_model_info(**kwargs)
+        if not hasattr(self, "_model_info"):
+            self._model_info = await self._get_model_info(**kwargs) # pylint: disable=attribute-defined-outside-init
         return self._model_info
 
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
-        return super().__str__() + f"\n{self._model_info}"
+        return super().__str__() + f"\n{self._model_info}" if hasattr(self, "_model_info") else super().__str__()
 
 
 __all__: List[str] = [

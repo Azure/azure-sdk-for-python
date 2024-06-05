@@ -26,7 +26,7 @@ Note that for inference using OpenAI models hosted on Azure, you should be using
 * [Python 3.8](https://www.python.org/) or later installed, including [pip](https://pip.pypa.io/en/stable/).
 * An [Azure subscription](https://azure.microsoft.com/free).
 * An [AI Model from the catalog](https://ai.azure.com/explore/models) deployed through Azure AI Studio.
-* To construct the client library, you will need to pass in the endpoint URL. The endpoint URL has the form `https://your-deployment-name.your-azure-region.inference.ai.azure.com`, where `your-deployment-name` is your unique model deployment name and `your-azure-region` is the Azure region where the model is deployed (e.g. `eastus2`).
+* To construct the client library, you will need to pass in the endpoint URL. The endpoint URL has the form `https://your-host-name.your-azure-region.inference.ai.azure.com`, where `your-host-name` is your unique model deployment host name and `your-azure-region` is the Azure region where the model is deployed (e.g. `eastus2`).
 * Depending on your model deployment and authentication preference, you either need a key to authenticate against the service, or Entra ID credentials. The key is a 32-character string.
 
 ### Install the package
@@ -82,6 +82,8 @@ client = ChatCompletionsClient(
 
 ### Create and authenticate a client directly, using Entra ID
 
+_Note: At the time of this package release, not all deployments support Entra ID authentication. For those who do, follow the instructions below._
+
 To use an Entra ID token credential, first install the [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity) package:
 
 ```python
@@ -96,10 +98,12 @@ from azure.identity import DefaultAzureCredential
 
 client = ChatCompletionsClient(
     endpoint=endpoint,
-    credential=DefaultAzureCredential()
+    credential=DefaultAzureCredential(exclude_interactive_browser_credential=False)
 )
 ```
-During application development, you would typically set up the environment for authentication using Entra ID by first [Installing the Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), running `az login` in your console window, then entering your credentials in the browser window that was opened. The call to `DefaultAzureCredential()` will then succeed.
+
+During application development, you would typically set up the environment for authentication using Entra ID by first [Installing the Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), running `az login` in your console window, then entering your credentials in the browser window that was opened. The call to `DefaultAzureCredential()` will then succeed. Setting `exclude_interactive_browser_credential=False` in that call will enable launching a browser window if the user isn't already logged in.
+
 
 ### Create and authentice clients using `load_client`
 
@@ -439,7 +443,7 @@ handler.setFormatter(formatter)
 By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Authorization` which holds the key or token), and the request and response payloads. To create logs without redaction, set the method argument `logging_enable = True` when you construct the client library, or when you call any of the client's `create` methods.
 
 ```python
-# Create a Model Client with none redacted log
+# Create a chat completions client with none redacted logs
 client = ChatCompletionsClient(
     endpoint=endpoint,
     credential=AzureKeyCredential(key),

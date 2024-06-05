@@ -123,9 +123,6 @@ class StreamingChatCompletions(BaseStreamingChatCompletions):
             return True
         return self._deserialize_and_add_to_queue(element)
 
-    def __enter__(self):
-        return self
-
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         self.close()
 
@@ -164,9 +161,6 @@ class AsyncStreamingChatCompletions(BaseStreamingChatCompletions):
             await self.aclose()
             return True
         return self._deserialize_and_add_to_queue(element)
-
-    def __enter__(self):
-        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         asyncio.run(self.aclose())

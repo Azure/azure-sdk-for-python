@@ -25,6 +25,7 @@ class TestModelClient(ModelClientTestBase):
 
         client = self._load_embeddings_client(**kwargs)
         assert isinstance(client, sdk.EmbeddingsClient)
+        assert hasattr(client, "_model_info")
         response1 = client.get_model_info()
         self._print_model_info_result(response1)
         self._validate_model_info_result(
@@ -37,7 +38,11 @@ class TestModelClient(ModelClientTestBase):
     def test_get_model_info_on_embeddings_client(self, **kwargs):
 
         client = self._create_embeddings_client(**kwargs)
+        assert not hasattr(client, "_model_info")
+
         response1 = client.get_model_info()
+        assert hasattr(client, "_model_info")
+
         self._print_model_info_result(response1)
         self._validate_model_info_result(
             response1, "embedding"
@@ -72,6 +77,8 @@ class TestModelClient(ModelClientTestBase):
 
         client = self._load_chat_client(**kwargs)
         assert isinstance(client, sdk.ChatCompletionsClient)
+        assert hasattr(client, "_model_info")
+
         response1 = client.get_model_info()
         self._print_model_info_result(response1)
         self._validate_model_info_result(
@@ -84,7 +91,11 @@ class TestModelClient(ModelClientTestBase):
     def test_get_model_info_on_chat_client(self, **kwargs):
 
         client = self._create_chat_client(**kwargs)
+        assert not hasattr(client, "_model_info")
+
         response1 = client.get_model_info()
+        assert hasattr(client, "_model_info")
+
         self._print_model_info_result(response1)
         self._validate_model_info_result(
             response1, "completion"
