@@ -12,7 +12,7 @@ extends:
       CloudConfig:
         Public:
           ServiceConnection: azure-sdk-tests
-          SubscriptionConfigurationFilePath: AzureOpenAITestingSub.json
+          SubscriptionConfigurationFilePath: sdk/openai/AzureOpenAITestingSub.json
       EnvVars:
         AZ_OPENAI_ENDPOINT: $(AOAI-ENDPOINT)
         AZURE_OPENAI_KEY: $(AOAI-API-KEY)
