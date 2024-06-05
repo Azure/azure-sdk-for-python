@@ -106,7 +106,7 @@ class _QuickpulseExporter(MetricExporter):
             endpoint=self._live_endpoint,
             policies=policies
         )
-        # Create a weakref of the client to the redirect policy so the endpoint can be 
+        # Create a weakref of the client to the redirect policy so the endpoint can be
         # dynamically modified if redirect does occur
         qp_redirect_policy._qp_client_ref = weakref.ref(self._client)
 
