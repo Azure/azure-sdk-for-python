@@ -443,7 +443,7 @@ handler.setFormatter(formatter)
 By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Authorization` which holds the key or token), and the request and response payloads. To create logs without redaction, set the method argument `logging_enable = True` when you construct the client library, or when you call any of the client's `create` methods.
 
 ```python
-# Create a chat completions client with none redacted logs
+# Create a chat completions client with non redacted logs
 client = ChatCompletionsClient(
     endpoint=endpoint,
     credential=AzureKeyCredential(key),
@@ -451,7 +451,7 @@ client = ChatCompletionsClient(
 )
 ```
 
-None redacted logs are generated for log level `logging.DEBUG` only. Be sure to protect none redacted logs to avoid compromising security. For more information see [Configure logging in the Azure libraries for Python](https://aka.ms/azsdk/python/logging)
+None redacted logs are generated for log level `logging.DEBUG` only. Be sure to protect non redacted logs to avoid compromising security. For more information see [Configure logging in the Azure libraries for Python](https://aka.ms/azsdk/python/logging)
 
 ## Next steps
 

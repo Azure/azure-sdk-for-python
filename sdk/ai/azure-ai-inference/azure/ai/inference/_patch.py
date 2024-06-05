@@ -85,7 +85,7 @@ def load_client(
     """
 
     with ChatCompletionsClient(endpoint, credential, **kwargs) as client: # Pick any of the clients, it does not matter.
-        model_info = client.get_model_info() # mypy: disable-attr-defined # pyright: ignore
+        model_info = client.get_model_info() # type: ignore
 
     _LOGGER.info("model_info=%s", model_info)
     if not model_info.model_type:
