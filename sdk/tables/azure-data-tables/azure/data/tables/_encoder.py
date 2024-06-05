@@ -5,21 +5,25 @@
 # --------------------------------------------------------------------------
 import abc
 import enum
-from typing import Any, Optional, Tuple, Mapping, Union, TypeVar, Generic, Dict
+from typing import Any, Optional, Tuple, Mapping, Union, Generic, Dict
 from uuid import UUID
 from datetime import datetime
 from math import isnan
+
+from typing_extensions import TypeVar
 
 from ._entity import EdmType, TableEntity
 from ._deserialize import _convert_to_entity
 from ._common_conversion import _encode_base64, _to_utc_datetime
 
 _ODATA_SUFFIX = "@odata.type"
+PK = TypeVar("PK", default=str)
+RK = TypeVar("RK", default=str)
 T = TypeVar("T")
 
 
-class TableEntityEncoderABC(abc.ABC, Generic[T]):
-    def prepare_key(self, key: str) -> str:
+class TableEntityEncoderABC(abc.ABC, Generic[T, PK, RK]):
+    def prepare_key(self, key: Union[PK, RK]) -> str:
         """Duplicate the single quote char to escape.
 
         :param str key: The entity PartitionKey or RowKey value in table entity.
@@ -137,7 +141,7 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
     def decode_entity(self, entity: Dict[str, Union[str, int, float, bool]]) -> T: ...
 
 
-class TableEntityEncoder(TableEntityEncoderABC[Union[TableEntity, Mapping[str, Any]]]):
+class TableEntityEncoder(TableEntityEncoderABC[Union[TableEntity, Mapping[str, Any]], str, str]):
     def encode_entity(self, entity: Union[TableEntity, Mapping[str, Any]]) -> Dict[str, Union[str, int, float, bool]]:
         """Encode an entity object into JSON format to send out.
         The entity format is:
