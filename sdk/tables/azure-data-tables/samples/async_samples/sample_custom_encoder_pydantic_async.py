@@ -55,7 +55,7 @@ class Product(BaseModel):
 
 
 class MyEncoder(TableEntityEncoderABC[Product]):
-    def prepare_key(self, key: UUID) -> str:
+    def prepare_key(self, key: UUID) -> str:  # type: ignore[override]
         return super().prepare_key(str(key))
 
     def encode_entity(self, entity: Product) -> Dict[str, Union[str, int, float, bool]]:
@@ -106,7 +106,7 @@ class InsertUpdateDeleteEntity(object):
             inventory_count=42,
             barcode=b"135aefg8oj0ld58",  # cspell:disable-line
             item_details=Car(
-                color=RGBColor("30.1", "40.1", "50.1"),
+                color=RGBColor(30.1, 40.1, 50.1),
                 maker="maker",
                 model="model",
                 production_date=datetime(year=2014, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc),
@@ -122,11 +122,17 @@ class InsertUpdateDeleteEntity(object):
             result = await table_client.create_entity(entity=self.entity, encoder=MyEncoder())
             print(f"Created entity: {result}")
 
-            result = await table_client.get_entity(self.entity.partition_key, self.entity.row_key, encoder=MyEncoder())
+            result = await table_client.get_entity(
+                self.entity.partition_key,
+                self.entity.row_key,  # type: ignore[arg-type] # intend to pass a non-string RowKey
+                encoder=MyEncoder(),
+            )
             print(f"Get entity result: {result}")
 
             await table_client.delete_entity(
-                partition_key=self.entity.partition_key, row_key=self.entity.row_key, encoder=MyEncoder()
+                partition_key=self.entity.partition_key,
+                row_key=self.entity.row_key,  # type: ignore[call-overload] # intend to pass a non-string RowKey
+                encoder=MyEncoder(),
             )
             print("Successfully deleted!")
 
@@ -154,7 +160,7 @@ class InsertUpdateDeleteEntity(object):
                 partition_key=entity1.partition_key,
                 row_key=entity1.row_key,
                 item_details=Car(
-                    color=RGBColor("40.1", "50.1", "60.1"),
+                    color=RGBColor(40.1, 50.1, 60.1),
                     maker="maker2",
                     model="model2",
                     production_date=datetime(
@@ -165,24 +171,40 @@ class InsertUpdateDeleteEntity(object):
             )
 
             await table_client.upsert_entity(mode=UpdateMode.REPLACE, entity=entity2, encoder=MyEncoder())
-            inserted_entity = await table_client.get_entity(entity2.partition_key, entity2.row_key, encoder=MyEncoder())
+            inserted_entity = await table_client.get_entity(
+                entity2.partition_key,
+                entity2.row_key,  # type: ignore[arg-type] # intend to pass a non-string RowKey
+                encoder=MyEncoder(),
+            )
             print(f"Inserted entity: {inserted_entity}")
 
             await table_client.upsert_entity(mode=UpdateMode.MERGE, entity=entity1, encoder=MyEncoder())
-            merged_entity = await table_client.get_entity(entity1.partition_key, entity1.row_key, encoder=MyEncoder())
+            merged_entity = await table_client.get_entity(
+                entity1.partition_key,
+                entity1.row_key,  # type: ignore[arg-type] # intend to pass a non-string RowKey
+                encoder=MyEncoder(),
+            )
             print(f"Merged entity: {merged_entity}")
 
             entity3 = Product(
                 partition_key=entity1.partition_key,
                 row_key=entity2.row_key,
-                item_details=Car(color=RGBColor("50.1", "60.1", "70.1")),
+                item_details=Car(color=RGBColor(50.1, 60.1, 70.1)),
             )
             await table_client.update_entity(mode=UpdateMode.REPLACE, entity=entity3, encoder=MyEncoder())
-            replaced_entity = await table_client.get_entity(entity3.partition_key, entity3.row_key, encoder=MyEncoder())
+            replaced_entity = await table_client.get_entity(
+                entity3.partition_key,
+                entity3.row_key,  # type: ignore[arg-type] # intend to pass a non-string RowKey
+                encoder=MyEncoder(),
+            )
             print(f"Replaced entity: {replaced_entity}")
 
             await table_client.update_entity(mode=UpdateMode.REPLACE, entity=entity2, encoder=MyEncoder())
-            merged_entity = await table_client.get_entity(entity2.partition_key, entity2.row_key, encoder=MyEncoder())
+            merged_entity = await table_client.get_entity(
+                entity2.partition_key,
+                entity2.row_key,  # type: ignore[arg-type] # intend to pass a non-string RowKey
+                encoder=MyEncoder(),
+            )
             print(f"Merged entity: {merged_entity}")
 
             await table_client.delete_table()
