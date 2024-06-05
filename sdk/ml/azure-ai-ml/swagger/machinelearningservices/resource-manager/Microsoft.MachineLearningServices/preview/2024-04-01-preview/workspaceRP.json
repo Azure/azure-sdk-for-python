@@ -6398,6 +6398,10 @@
           "enableDataIsolation": {
             "type": "boolean"
           },
+          "allowRoleAssignmentOnRG": {
+            "description": "Determine whether we will allow workspace role assignment on resource group level.",
+            "type": "boolean"
+          },
           "enableSoftwareBillOfMaterials": {
             "description": "Flag to tell if SoftwareBillOfMaterials should be enabled for this workspace",
             "type": "boolean"
@@ -6605,6 +6609,10 @@
             "type": "string"
           },
           "enableDataIsolation": {
+            "type": "boolean"
+          },
+          "allowRoleAssignmentOnRG": {
+            "description": "Determine whether we will allow workspace role assignment on resource group level.",
             "type": "boolean"
           },
           "enableSoftwareBillOfMaterials": {

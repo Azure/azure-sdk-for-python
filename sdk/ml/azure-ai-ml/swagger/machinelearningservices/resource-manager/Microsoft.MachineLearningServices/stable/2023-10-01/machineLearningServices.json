@@ -2604,6 +2604,10 @@
           "description": "The user assigned identity resource id that represents the workspace identity.",
           "type": "string"
         },
+        "allowRoleAssignmentOnRG": {
+          "description": "Determine whether we will allow workspace role assignment on resource group level.",
+          "type": "boolean"
+        },
         "serverlessComputeSettings": {
           "description": "Settings for serverless compute created in the workspace",
           "$ref": "#/definitions/ServerlessComputeSettings"

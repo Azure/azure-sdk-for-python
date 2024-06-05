@@ -423,6 +423,17 @@
                 "description": "The authentication mode for system datastores"
             }
         },
+        "allow_roleassignment_on_rg": {
+            "type": "string",
+            "defaultValue": "false",
+            "allowedValues": [
+                "false",
+                "true"
+            ],
+            "metadata": {
+                "description": "A flag to determine if workspace should be created/update with allow role assignment on resource group level."
+            }
+        },
         "spark_runtime_version": {
             "type": "string",
             "defaultValue": "",

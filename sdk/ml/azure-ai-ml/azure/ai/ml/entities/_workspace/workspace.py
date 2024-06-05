@@ -86,6 +86,8 @@ class Workspace(Resource):
     :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
         The flag can only be set at the creation phase, it can't be updated.
     :type enable_data_isolation: bool
+    :param allow_roleassignment_on_rg: Determine whether we will allow workspace role assignment on resource group level.
+    :type allow_roleassignment_on_rg: bool
     :param serverless_compute: The serverless compute settings for the workspace.
     :type: ~azure.ai.ml.entities.ServerlessComputeSettings
     :param workspace_hub: Deprecated resource ID of an existing workspace hub to help create project workspace.
@@ -124,6 +126,7 @@ class Workspace(Resource):
         managed_network: Optional[ManagedNetwork] = None,
         system_datastores_auth_mode: Optional[str] = None,
         enable_data_isolation: bool = False,
+        allow_roleassignment_on_rg: bool = True,
         hub_id: Optional[str] = None,  # Hidden input, surfaced by Project
         workspace_hub: Optional[str] = None,  # Deprecated input maintained for backwards compat.
         serverless_compute: Optional[ServerlessComputeSettings] = None,
@@ -164,6 +167,7 @@ class Workspace(Resource):
         self.managed_network = managed_network
         self.system_datastores_auth_mode = system_datastores_auth_mode
         self.enable_data_isolation = enable_data_isolation
+        self.allow_roleassignment_on_rg = allow_roleassignment_on_rg
         if workspace_hub and not hub_id:
             hub_id = workspace_hub
         self.__hub_id = hub_id
@@ -385,6 +389,7 @@ class Workspace(Resource):
             system_datastores_auth_mode=rest_obj.system_datastores_auth_mode,
             feature_store_settings=feature_store_settings,
             enable_data_isolation=rest_obj.enable_data_isolation,
+            allow_roleassignment_on_rg=rest_obj.allow_roleassignment_on_rg,
             hub_id=rest_obj.hub_resource_id,
             workspace_id=rest_obj.workspace_id,
             serverless_compute=serverless_compute,
@@ -431,6 +436,7 @@ class Workspace(Resource):
             system_datastores_auth_mode=self.system_datastores_auth_mode,
             feature_store_settings=feature_store_settings,
             enable_data_isolation=self.enable_data_isolation,
+            allow_roleassignment_on_rg=self.allow_roleassignment_on_rg,
             hub_resource_id=self._hub_id,
             serverless_compute_settings=serverless_compute_settings,
         )

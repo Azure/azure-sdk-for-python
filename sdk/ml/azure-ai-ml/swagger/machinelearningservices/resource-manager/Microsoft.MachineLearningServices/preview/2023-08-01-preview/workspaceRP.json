@@ -3392,6 +3392,10 @@
         "enableDataIsolation": {
           "type": "boolean"
         },
+        "allowRoleAssignmentOnRG": {
+          "description": "Determine whether we will allow workspace role assignment on resource group level.",
+          "type": "boolean"
+        },
         "encryption": {
           "$ref": "#/definitions/EncryptionProperty"
         },
@@ -3588,6 +3592,10 @@
           "type": "string"
         },
         "enableDataIsolation": {
+          "type": "boolean"
+        },
+        "allowRoleAssignmentOnRG": {
+          "description": "Determine whether we will allow workspace role assignment on resource group level.",
           "type": "boolean"
         },
         "encryption": {

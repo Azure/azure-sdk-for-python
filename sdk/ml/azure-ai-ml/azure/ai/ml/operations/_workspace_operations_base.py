@@ -341,6 +341,9 @@ class WorkspaceOperationsBase(ABC):
             system_datastores_auth_mode=kwargs.get(
                 "system_datastores_auth_mode", workspace.system_datastores_auth_mode
             ),
+            allow_roleassignment_on_rg=kwargs.get(
+                "allow_roleassignment_on_rg", workspace.allow_roleassignment_on_rg
+            ),
             image_build_compute=kwargs.get("image_build_compute", workspace.image_build_compute),
             identity=identity,
             primary_user_assigned_identity=kwargs.get(
@@ -640,6 +643,9 @@ class WorkspaceOperationsBase(ABC):
         if workspace.system_datastores_auth_mode:
             _set_val(param["systemDatastoresAuthMode"], workspace.system_datastores_auth_mode)
 
+        if workspace.allow_roleassignment_on_rg:
+            _set_val(param["allow_roleassignment_on_rg"], workspace.allow_roleassignment_on_rg)
+   
         if workspace.image_build_compute:
             _set_val(param["imageBuildCompute"], workspace.image_build_compute)
 

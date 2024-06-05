@@ -35088,6 +35088,8 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
     :vartype description: str
     :ivar enable_data_isolation:
     :vartype enable_data_isolation: bool
+    :ivar allow_roleassignment_on_rg: Determine whether we will allow workspace role assignment on resource group level.
+    :vartype allow_roleassignment_on_rg: bool
     :ivar encryption:
     :vartype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
     :ivar feature_store_settings: Settings for feature store type workspace.
@@ -35142,6 +35144,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         'soft_delete_retention_in_days': {'key': 'properties.softDeleteRetentionInDays', 'type': 'int'},
         'v1_legacy_mode': {'key': 'properties.v1LegacyMode', 'type': 'bool'},
         'system_datastores_auth_mode': {'key': 'properties.systemDatastoresAuthMode', 'type': 'str'},
+        'allow_roleassignment_on_rg' : {'Key': 'properties.allowRoleAssignmentOnRG', 'type': 'bool'}
     }
 
     def __init__(
@@ -35154,6 +35157,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         container_registry: Optional[str] = None,
         description: Optional[str] = None,
         enable_data_isolation: Optional[bool] = None,
+        allow_roleassignment_on_rg: Optional[bool] = None,
         encryption: Optional["EncryptionUpdateProperties"] = None,
         feature_store_settings: Optional["FeatureStoreSettings"] = None,
         friendly_name: Optional[str] = None,
@@ -35185,6 +35189,8 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         :paramtype description: str
         :keyword enable_data_isolation:
         :paramtype enable_data_isolation: bool
+        :ivar allow_roleassignment_on_rg: Determine whether we will allow workspace role assignment on resource group level.
+        :vartype allow_roleassignment_on_rg: bool
         :keyword encryption:
         :paramtype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
         :keyword feature_store_settings: Settings for feature store type workspace.
@@ -35227,6 +35233,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         self.container_registry = container_registry
         self.description = description
         self.enable_data_isolation = enable_data_isolation
+        self.allow_roleassignment_on_rg = allow_roleassignment_on_rg
         self.encryption = encryption
         self.feature_store_settings = feature_store_settings
         self.friendly_name = friendly_name

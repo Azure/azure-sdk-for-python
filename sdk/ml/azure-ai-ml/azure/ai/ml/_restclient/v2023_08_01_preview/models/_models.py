@@ -32319,6 +32319,8 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
     :vartype description: str
     :ivar enable_data_isolation:
     :vartype enable_data_isolation: bool
+    :ivar allow_roleassignment_on_rg: Determine whether we will allow workspace role assignment on resource group level.
+    :vartype allow_roleassignment_on_rg: bool
     :ivar encryption:
     :vartype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
     :ivar feature_store_settings: Settings for feature store type workspace.
@@ -32373,6 +32375,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         'soft_delete_retention_in_days': {'key': 'properties.softDeleteRetentionInDays', 'type': 'int'},
         'v1_legacy_mode': {'key': 'properties.v1LegacyMode', 'type': 'bool'},
         'system_datastores_auth_mode': {'key': 'properties.systemDatastoresAuthMode', 'type': 'str'},
+        'allow_roleassignment_on_rg' : {'Key': 'properties.allowRoleAssignmentOnRG', 'type': 'bool'}
     }
 
     def __init__(
@@ -32396,6 +32399,8 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         :paramtype description: str
         :keyword enable_data_isolation:
         :paramtype enable_data_isolation: bool
+        :ivar allow_roleassignment_on_rg: Determine whether we will allow workspace role assignment on resource group level.
+        :vartype allow_roleassignment_on_rg: bool
         :keyword encryption:
         :paramtype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
         :keyword feature_store_settings: Settings for feature store type workspace.
@@ -32438,6 +32443,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         self.container_registry = kwargs.get('container_registry', None)
         self.description = kwargs.get('description', None)
         self.enable_data_isolation = kwargs.get('enable_data_isolation', None)
+        self.allow_roleassignment_on_rg = kwargs.get('allow_roleassignment_on_rg', None)
         self.encryption = kwargs.get('encryption', None)
         self.feature_store_settings = kwargs.get('feature_store_settings', None)
         self.friendly_name = kwargs.get('friendly_name', None)
