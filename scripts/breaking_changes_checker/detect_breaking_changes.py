@@ -81,12 +81,20 @@ def get_parameter_default(param: inspect.Parameter) -> None:
         default_value = param.default
         if default_value is None:  # the default is actually None
             default_value = "none"
-        if inspect.isfunction(default_value):
+        elif hasattr(default_value, "value"):
+            # Get the enum value
+            if isinstance(default_value.value, object):
+                # Accounting for enum values like: default = DefaultProfile()
+                default_value = default_value.value.__class__.__name__
+            else:
+                default_value = default_value.value
+        elif inspect.isfunction(default_value):
             default_value = default_value.__name__
-        if inspect.isclass(default_value):
+        elif inspect.isclass(default_value):
             default_value = default_value.__name__
-        if hasattr(default_value, "value"):
-            default_value = default_value.value
+        elif hasattr(default_value, "__class__") and default_value.__class__ == object:
+            # Some default values are objects, e.g. _UNSET = object()
+            default_value = default_value.__class__.__name__
 
     return default_value
 
@@ -156,7 +164,11 @@ def get_properties(cls: Type) -> Dict:
             analyzer = ClassTreeAnalyzer(base_class.__name__)
             analyzer.visit(module)
             cls_node = analyzer.cls_node
-            get_property_names(cls_node, attribute_names)
+            if cls_node:
+                get_property_names(cls_node, attribute_names)
+            else:
+                # Abstract base classes fail here, e.g. "collections.abc.MuttableMapping"
+                _LOGGER.info(f"Unable to get class node for {base_class.__name__}. Skipping...")
     else:
         get_property_names(cls_node, attribute_names)
     return attribute_names
@@ -209,7 +221,12 @@ def create_class_report(cls: Type) -> Dict:
     methods = [method for method in dir(cls) if not method.startswith("_") or method.startswith("__init__")]
     for method in methods:
         async_func = False
-        m = getattr(cls, method)
+        try:
+            # Some class level properties get picked up as methods. Try to get the method and skip if it fails.
+            m = getattr(cls, method)
+        except AttributeError:
+            _LOGGER.info(f"Skipping method check for {method} on {cls}.")
+    
         if inspect.isfunction(m) or inspect.ismethod(m):
             if inspect.iscoroutinefunction(m):
                 async_func = True
