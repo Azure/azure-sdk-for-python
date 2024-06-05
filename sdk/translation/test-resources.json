@@ -149,7 +149,6 @@
         "azureDocTranslationUrl": "[if(parameters('useStaticStorageResource'), concat('https://', variables('docTranslationBaseName'), '.ppe', parameters('cognitiveServicesEndpointSuffix')), concat('https://', variables('docTranslationBaseName'), parameters('cognitiveServicesEndpointSuffix')))]",
         "azureStorageEndpoint": "[concat('https://', parameters('blobStorageAccount'), '.blob.core.windows.net/')]",
         "cognitiveServiceUserRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
-        "txtAadResourceIdValue": "[parameters('text_translation_aadResourceId')]",
         "encryption": {
             "services": {
                 "blob": {
@@ -365,25 +364,29 @@
             "type": "string",
             "value": "[concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_4'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('targetContainerSasProperties_4')).serviceSasToken)]"
         },
-        "TEXT_TRANSLATION_APIKEY": {
+        "TRANSLATION_TEXT_APIKEY": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('txtUniqueSubDomainName')), '2017-04-18').key1]"
         },
-        "TEXT_TRANSLATION_ENDPOINT": {
+        "TRANSLATION_TEXT_ENDPOINT": {
             "type": "string",
             "value": "[variables('txtEndpointValue')]"
         },
-        "TEXT_TRANSLATION_CUSTOM_ENDPOINT": {
+        "TRANSLATION_TEXT_CUSTOM_ENDPOINT": {
             "type": "string",
             "value": "[variables('txtCustomEndpointValue')]"
         },
-        "TEXT_TRANSLATION_REGION": {
+        "TRANSLATION_TEXT_CUSTOM_APIKEY": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('docTranslationBaseName')), variables('docTranslationApiVersion')).key1]"
+        },
+        "TRANSLATION_TEXT_REGION": {
             "type": "string",
             "value": "[variables('txtRegionValue')]"
         },
-        "TEXT_TRANSLATION_AAD_RESOURCE_ID": {
+        "TRANSLATION_TEXT_RESOURCE_ID": {
             "type": "string",
-            "value": "[variables('txtAadResourceIdValue')]"
+            "value": "[resourceId('Microsoft.CognitiveServices/accounts', variables('txtUniqueSubDomainName'))]"
         }
     }
 }
