@@ -1473,7 +1473,11 @@ class JobOperations(_ScopeDependentOperations):
                 Code(base_path=job._base_path, path=job.trial.code),
                 azureml_type=AzureMLResourceType.CODE,
             )
-        if job.trial is not None:
+        if (
+            job.trial is not None
+            and job.trial.environment is not None
+            and not is_ARM_id_for_resource(job.trial.environment, AzureMLResourceType.ENVIRONMENT)
+        ):
             job.trial.environment = resolver(  # type: ignore[assignment]
                 job.trial.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
             )
