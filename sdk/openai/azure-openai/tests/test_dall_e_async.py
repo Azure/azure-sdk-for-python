@@ -8,7 +8,7 @@ import openai
 from devtools_testutils import AzureRecordedTestCase
 from conftest import configure_async, DALLE_AZURE, OPENAI, PREVIEW, GA
 
-@pytest.mark.skip()
+
 class TestDallEAsync(AzureRecordedTestCase):
 
     @configure_async

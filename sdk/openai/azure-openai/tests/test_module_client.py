@@ -26,7 +26,7 @@ from conftest import (
 
 audio_test_file = pathlib.Path(__file__).parent / "./assets/hello.m4a"
 
-@pytest.mark.skip()
+
 class TestModuleClient(AzureRecordedTestCase):
 
     @configure

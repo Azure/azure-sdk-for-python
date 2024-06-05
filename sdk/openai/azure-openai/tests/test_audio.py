@@ -12,7 +12,8 @@ from conftest import WHISPER_AZURE, OPENAI, PREVIEW, GA, configure, TTS_OPENAI, 
 
 audio_test_file = pathlib.Path(__file__).parent / "./assets/hello.m4a"
 audio_long_test_file = pathlib.Path(__file__).parent / "./assets/wikipediaOcelot.wav"
-@pytest.mark.skip()
+
+
 class TestAudio(AzureRecordedTestCase):
 
     @configure

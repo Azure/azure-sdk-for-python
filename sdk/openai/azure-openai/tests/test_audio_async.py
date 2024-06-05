@@ -13,7 +13,7 @@ from conftest import WHISPER_AZURE, OPENAI, PREVIEW, GA, configure_async, TTS_OP
 audio_test_file = pathlib.Path(__file__).parent / "./assets/hello.m4a"
 audio_long_test_file = pathlib.Path(__file__).parent / "./assets/wikipediaOcelot.wav"
 
-@pytest.mark.skip()
+
 class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
