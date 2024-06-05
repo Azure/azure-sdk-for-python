@@ -148,8 +148,6 @@ class WorkspaceOperationsBase(ABC):
             workspace.tags = {}
         if workspace.tags.get("createdByToolkit") is None:
             workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
-        if workspace.tags.get("AttachAppInsightsToWorkspace") is None:
-            workspace.tags["AttachAppInsightsToWorkspace"] = "false"
 
         workspace.resource_group = resource_group
         (
