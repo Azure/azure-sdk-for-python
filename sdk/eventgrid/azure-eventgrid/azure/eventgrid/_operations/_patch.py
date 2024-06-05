@@ -5,9 +5,7 @@
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import json
 import sys
-from functools import wraps
 from typing import (
     Any,
     Callable,
