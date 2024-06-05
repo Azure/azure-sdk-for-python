@@ -63,6 +63,7 @@ class SASLExternalCredential(object):
 class SASLTransportMixin:
     def _negotiate(self):
         self.write(SASL_HEADER_FRAME)
+        self.start_loop()
         _, returned_header = self.receive_frame()
         if returned_header[1] != SASL_HEADER_FRAME:
             raise ValueError(
@@ -117,8 +118,8 @@ class SASLTransport(SSLTransport, SASLTransportMixin):
         )
 
     def negotiate(self):
-        with self.block():
-            self._negotiate()
+        #with self.block():
+        self._negotiate()
 
 
 class SASLWithWebSocket(WebSocketTransport, SASLTransportMixin):

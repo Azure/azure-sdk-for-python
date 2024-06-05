@@ -290,8 +290,8 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         if wait is not True:    # wait is float/int/False
             new_frame = self._transport.receive_frame(**kwargs)
         else:
-            with self._transport.block():
-                new_frame = self._transport.receive_frame(**kwargs)
+            #with self._transport.block():
+            new_frame = self._transport.receive_frame(**kwargs)
         return self._process_incoming_frame(*new_frame)
 
     def _can_write(self) -> bool:
