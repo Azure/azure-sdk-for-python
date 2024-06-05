@@ -33,9 +33,11 @@ from azure.mgmt.msi._managed_service_identity_client import ManagedServiceIdenti
 class TestWorkspace(AzureRecordedTestCase):
 
     # WARNING: This test takes a long time to run in live mode.
-    def test_workspace_create_and_delete(
-        self, client: MLClient, randstr: Callable[[], str], location: str
-    ) -> None:
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="ARM template makes playback complex, so the test is flaky when run against recording",
+    )
+    def test_workspace_create_and_delete(self, client: MLClient, randstr: Callable[[], str], location: str) -> None:
         wps_name = f"e2etest_{randstr('wps_name')}"
         wps_description = f"{wps_name} description"
         wps_display_name = f"{wps_name} display name"
@@ -82,9 +84,11 @@ class TestWorkspace(AzureRecordedTestCase):
 
     # Despite the name, also tests create and delete by necessity to have an update-able workspace.
     # WARNING: This test takes a LONG time to run in live mode.
-    def test_workspace_update(
-        self, client: MLClient, randstr: Callable[[], str], location: str
-    ) -> None:
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="ARM template makes playback complex, so the test is flaky when run against recording",
+    )
+    def test_workspace_update(self, client: MLClient, randstr: Callable[[], str], location: str) -> None:
         wps_name = f"e2etest_{randstr('wps_name')}"
         wps_description = f"{wps_name} description"
         wps_display_name = f"{wps_name} display name"
@@ -152,10 +156,13 @@ class TestWorkspace(AzureRecordedTestCase):
         assert poller
         assert isinstance(poller, LROPoller)
 
-    pytest.mark.skip("This test was refactored out from the original workspace CRUD test because not everyone has access to the static resources referenced here. We need to refactor the testing of ACR and appinsights to not be depenedent on user access rights.")
-    def test_acr_and_appinsights_in_create(
-        self, client: MLClient, randstr: Callable[[], str], location: str
-    ) -> None:
+    pytest.mark.skip(
+        "This test was refactored out from the original workspace CRUD test because not everyone has access to the " +
+        "static resources referenced here. We need to refactor the testing of ACR and appinsights to " +
+        "not be dependent on user access rights."
+    )
+
+    def test_acr_and_appinsights_in_create(self, client: MLClient, randstr: Callable[[], str], location: str) -> None:
         wps_name = f"e2etest_{randstr('wps_name')}"
         wps_description = f"{wps_name} description"
         wps_display_name = f"{wps_name} display name"
@@ -165,8 +172,12 @@ class TestWorkspace(AzureRecordedTestCase):
             {"description": wps_description},
             {"display_name": wps_display_name},
             {"enable_data_isolation": True},
-            {"container_registry": "/subscriptions/8f338f6e-4fce-44ae-969c-fc7d8fda030e/resourceGroups/rg-mhe-e2e-test-dont-remove/providers/Microsoft.ContainerRegistry/registries/acrmhetest2"},
-            {"application_insights": "/subscriptions/8f338f6e-4fce-44ae-969c-fc7d8fda030e/resourceGroups/rg-mhe-e2e-test-dont-remove/providers/microsoft.insights/components/aimhetest2"},
+            {
+                "container_registry": "/subscriptions/8f338f6e-4fce-44ae-969c-fc7d8fda030e/resourceGroups/rg-mhe-e2e-test-dont-remove/providers/Microsoft.ContainerRegistry/registries/acrmhetest2"
+            },
+            {
+                "application_insights": "/subscriptions/8f338f6e-4fce-44ae-969c-fc7d8fda030e/resourceGroups/rg-mhe-e2e-test-dont-remove/providers/microsoft.insights/components/aimhetest2"
+            },
         ]
 
         # only test simple aspects of both a pointer and path-loaded workspace
