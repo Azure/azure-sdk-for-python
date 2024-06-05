@@ -1,5 +1,9 @@
 # Release History
 
+## 0.0.0 (2024-06-17)
+
+
+
 ## 9.2.0b1 (2024-03-18)
 
 ### Features Added
