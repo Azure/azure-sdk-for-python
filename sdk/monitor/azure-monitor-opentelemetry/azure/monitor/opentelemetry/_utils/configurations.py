@@ -71,6 +71,7 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     _default_instrumentation_options(configurations)
     _default_span_processors(configurations)
     _default_enable_live_metrics(configurations)
+    _default_views(configurations)
 
     return configurations
 
