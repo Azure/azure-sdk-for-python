@@ -1,14 +1,17 @@
 # Release History
 
-## 12.5.1 (Unreleased)
+## 12.5.1b (Unreleased)
 
 ### Features Added
-
-### Breaking Changes
+* Added to support custom encoder in entity CRUD operations.
+* Added to support custom Entity type.
+* Added to support Entity property in Tuple type.
 
 ### Bugs Fixed
+* Fixed a bug in encoder when Entity property has "@odata.type" provided.
 
 ### Other Changes
+* Removed value range validation for Entity property in int32 and int64.
 
 ## 12.5.0 (2024-01-10)
 
