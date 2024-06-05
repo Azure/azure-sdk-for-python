@@ -787,10 +787,10 @@ class BlockBlobOperations:
         _if_tags = None
         if blob_http_headers is not None:
             _blob_cache_control = blob_http_headers.blob_cache_control
-            _blob_content_md5 = blob_http_headers.blob_content_MD5
             _blob_content_disposition = blob_http_headers.blob_content_disposition
             _blob_content_encoding = blob_http_headers.blob_content_encoding
             _blob_content_language = blob_http_headers.blob_content_language
+            _blob_content_md5 = blob_http_headers.blob_content_md5
             _blob_content_type = blob_http_headers.blob_content_type
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
@@ -1013,10 +1013,10 @@ class BlockBlobOperations:
         _source_if_tags = None
         if blob_http_headers is not None:
             _blob_cache_control = blob_http_headers.blob_cache_control
-            _blob_content_md5 = blob_http_headers.blob_content_MD5
             _blob_content_disposition = blob_http_headers.blob_content_disposition
             _blob_content_encoding = blob_http_headers.blob_content_encoding
             _blob_content_language = blob_http_headers.blob_content_language
+            _blob_content_md5 = blob_http_headers.blob_content_md5
             _blob_content_type = blob_http_headers.blob_content_type
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
@@ -1536,10 +1536,10 @@ class BlockBlobOperations:
         _if_tags = None
         if blob_http_headers is not None:
             _blob_cache_control = blob_http_headers.blob_cache_control
-            _blob_content_md5 = blob_http_headers.blob_content_MD5
             _blob_content_disposition = blob_http_headers.blob_content_disposition
             _blob_content_encoding = blob_http_headers.blob_content_encoding
             _blob_content_language = blob_http_headers.blob_content_language
+            _blob_content_md5 = blob_http_headers.blob_content_md5
             _blob_content_type = blob_http_headers.blob_content_type
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
