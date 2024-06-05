@@ -152,11 +152,6 @@ class SearchField:
         "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
         "whitespace".
     :vartype index_analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :ivar normalizer: The name of the normalizer to use for the field. This option can be used only
-        with fields with filterable, sortable, or facetable enabled. Once the normalizer is chosen, it
-        cannot be changed for the field. Must be null for complex fields. Known values are:
-        "asciifolding", "elision", "lowercase", "standard", and "uppercase".
-    :vartype normalizer: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
     :ivar vector_search_dimensions: The dimensionality of the vector field.
     :vartype vector_search_dimensions: int
     :ivar vector_search_profile_name: The name of the vector search profile that specifies the algorithm
@@ -188,7 +183,6 @@ class SearchField:
         self.analyzer_name = kwargs.get("analyzer_name", None)
         self.search_analyzer_name = kwargs.get("search_analyzer_name", None)
         self.index_analyzer_name = kwargs.get("index_analyzer_name", None)
-        self.normalizer_name = kwargs.get("normalizer_name", None)
         self.synonym_map_names = kwargs.get("synonym_map_names", None)
         self.fields = kwargs.get("fields", None)
         self.vector_search_dimensions = kwargs.get("vector_search_dimensions", None)
@@ -211,7 +205,6 @@ class SearchField:
             analyzer=self.analyzer_name,
             search_analyzer=self.search_analyzer_name,
             index_analyzer=self.index_analyzer_name,
-            normalizer=self.normalizer_name,
             synonym_maps=self.synonym_map_names,
             fields=fields,
             vector_search_dimensions=self.vector_search_dimensions,
@@ -226,10 +219,6 @@ class SearchField:
         # pylint:disable=protected-access
         fields = [SearchField._from_generated(x) for x in search_field.fields] if search_field.fields else None
         hidden = not search_field.retrievable if search_field.retrievable is not None else None
-        try:
-            normalizer = search_field.normalizer
-        except AttributeError:
-            normalizer = None
         return cls(
             name=search_field.name,
             type=search_field.type,
@@ -243,7 +232,6 @@ class SearchField:
             analyzer_name=search_field.analyzer,
             search_analyzer_name=search_field.search_analyzer,
             index_analyzer_name=search_field.index_analyzer,
-            normalizer_name=normalizer,
             synonym_map_names=search_field.synonym_maps,
             fields=fields,
             vector_search_dimensions=search_field.vector_search_dimensions,
@@ -598,8 +586,6 @@ class SearchIndex:
     :vartype token_filters: list[~azure.search.documents.indexes.models.TokenFilter]
     :ivar char_filters: The character filters for the index.
     :vartype char_filters: list[~azure.search.documents.indexes.models.CharFilter]
-    :ivar normalizers: The normalizers for the index.
-    :vartype normalizers: list[~azure.search.documents.indexes.models.LexicalNormalizer]
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
         This key is used to provide an additional level of encryption-at-rest for your data when you
         want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
@@ -609,11 +595,6 @@ class SearchIndex:
         customer-managed keys is not available for free search services, and is only available for paid
         services created on or after January 1, 2019.
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
-    :ivar similarity: The type of similarity algorithm to be used when scoring and ranking the
-        documents matching a search query. The similarity algorithm can only be defined at index
-        creation time and cannot be modified on existing indexes. If null, the ClassicSimilarity
-        algorithm is used.
-    :vartype similarity: ~azure.search.documents.indexes.models.SimilarityAlgorithm
     :ivar semantic_search: Defines parameters for a search index that influence semantic capabilities.
     :vartype semantic_search: ~azure.search.documents.indexes.models.SemanticSearch
     :ivar vector_search: Defines parameters for a search index that influence scoring in a vector space.
@@ -633,9 +614,7 @@ class SearchIndex:
         self.tokenizers = kwargs.get("tokenizers", None)
         self.token_filters = kwargs.get("token_filters", None)
         self.char_filters = kwargs.get("char_filters", None)
-        self.normalizers = kwargs.get("normalizers", None)
         self.encryption_key = kwargs.get("encryption_key", None)
-        self.similarity = kwargs.get("similarity", None)
         self.semantic_search = kwargs.get("semantic_search", None)
         self.vector_search = kwargs.get("vector_search", None)
         self.e_tag = kwargs.get("e_tag", None)
@@ -667,10 +646,8 @@ class SearchIndex:
             tokenizers=tokenizers,
             token_filters=self.token_filters,
             char_filters=self.char_filters,
-            normalizers=self.normalizers,
             # pylint:disable=protected-access
             encryption_key=self.encryption_key._to_generated() if self.encryption_key else None,
-            similarity=self.similarity,
             semantic_search=self.semantic_search,
             e_tag=self.e_tag,
             vector_search=self.vector_search,
@@ -697,10 +674,6 @@ class SearchIndex:
             fields = [SearchField._from_generated(x) for x in search_index.fields]  # pylint:disable=protected-access
         else:
             fields = None
-        try:
-            normalizers = search_index.normalizers
-        except AttributeError:
-            normalizers = None
         return cls(
             name=search_index.name,
             fields=fields,
@@ -712,10 +685,8 @@ class SearchIndex:
             tokenizers=tokenizers,
             token_filters=search_index.token_filters,
             char_filters=search_index.char_filters,
-            normalizers=normalizers,
             # pylint:disable=protected-access
             encryption_key=SearchResourceEncryptionKey._from_generated(search_index.encryption_key),
-            similarity=search_index.similarity,
             semantic_search=search_index.semantic_search,
             e_tag=search_index.e_tag,
             vector_search=search_index.vector_search,
@@ -806,7 +777,6 @@ def pack_search_field(search_field: SearchField) -> _SearchField:
         analyzer_name = search_field.get("analyzer_name")
         search_analyzer_name = search_field.get("search_analyzer_name")
         index_analyzer_name = search_field.get("index_analyzer_name")
-        normalizer = search_field.get("normalizer")
         synonym_map_names = search_field.get("synonym_map_names")
         fields = search_field.get("fields")
         fields = [pack_search_field(x) for x in fields] if fields else None
@@ -824,7 +794,6 @@ def pack_search_field(search_field: SearchField) -> _SearchField:
             analyzer=analyzer_name,
             search_analyzer=search_analyzer_name,
             index_analyzer=index_analyzer_name,
-            normalizer=normalizer,
             synonym_maps=synonym_map_names,
             fields=fields,
             vector_search_dimensions=vector_search_dimensions,

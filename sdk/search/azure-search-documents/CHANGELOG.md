@@ -1,14 +1,71 @@
 # Release History
 
-## 11.6.0b5 (Unreleased)
-
-### Features Added
+## 11.5.0 (Unreleased)
 
 ### Breaking Changes
 
-### Bugs Fixed
+> These changes do not impact the API of stable versions such as 11.4.0.
+> Only code written against a beta version such as 11.4.0b11 may be affected.
+
+- Below models do not exist in this release
+  - `azure.search.documents.models.QueryLanguage`
+  - `azure.search.documents.models.QuerySpellerType`
+  - `azure.search.documents.models.QueryDebugMode`
+  - `azure.search.documents.models.HybridSearch`
+  - `azure.search.documents.models.HybridCountAndFacetMode`
+  - `azure.search.documents.models.SearchScoreThreshold`
+  - `azure.search.documents.models.VectorSimilarityThreshold`
+  - `azure.search.documents.models.VectorThreshold`
+  - `azure.search.documents.models.VectorThresholdKind`
+  - `azure.search.documents.models.VectorizableImageBinaryQuery`
+  - `azure.search.documents.models.VectorizableImageUrlQuery`
+  - `azure.search.documents.indexes.models.SearchAlias`
+  - `azure.search.documents.indexes.models.AIServicesVisionParameters`
+  - `azure.search.documents.indexes.models.AIServicesVisionVectorizer`
+  - `azure.search.documents.indexes.models.AIStudioModelCatalogName`
+  - `azure.search.documents.indexes.models.AzureMachineLearningParameters`
+  - `azure.search.documents.indexes.models.AzureMachineLearningSkill`
+  - `azure.search.documents.indexes.models.AzureMachineLearningVectorizer`
+  - `azure.search.documents.indexes.models.BM25SimilarityAlgorithm`
+  - `azure.search.documents.indexes.models.ClassicSimilarityAlgorithm`
+  - `azure.search.documents.indexes.models.CustomVectorizer`
+  - `azure.search.documents.indexes.models.CustomWebApiParameters`
+  - `azure.search.documents.indexes.models.CustomNormalizer`
+  - `azure.search.documents.indexes.models.DocumentKeysOrIds`
+  - `azure.search.documents.indexes.models.IndexingMode`
+  - `azure.search.documents.indexes.models.LexicalNormalizer`
+  - `azure.search.documents.indexes.models.LexicalNormalizerName`
+  - `azure.search.documents.indexes.models.NativeBlobSoftDeleteDeletionDetectionPolicy`
+  - `azure.search.documents.indexes.models.SearchIndexerCache`
+  - `azure.search.documents.indexes.models.SearchServiceCounters`
+  - `azure.search.documents.indexes.models.SearchServiceLimits`
+  - `azure.search.documents.indexes.models.SearchServiceStatistics`
+  - `azure.search.documents.indexes.models.SearchSuggester`
+  - `azure.search.documents.indexes.models.SimilarityAlgorithm`
+  - `azure.search.documents.indexes.models.VisionVectorizeSkill`
+  - `azure.search.documents.indexes.models.SkillNames`
+- SearchAlias alias operations do not exist in this release
+- Below properties do not exist
+  - `azure.search.documents.indexes.models.SearchIndexerDataSourceConnection.identity`
+  - `azure.search.documents.indexes.models.SearchField.normalizer_name`
+  - `azure.search.documents.indexes.models.SearchIndex.normalizers`
+  - `azure.search.documents.indexes.models.SearchIndex.similarity`
+- Below parameters do not exist
+  - `SearchIndexerClient.create_or_update_indexer.skip_indexer_reset_requirement_for_cache`
+  - `SearchIndexerClient.create_or_update_indexer.disable_cache_reprocessing_change_detection`
+  - `SearchIndexerClient.reset_documents.keys_or_ids`
+  - `SearchIndexerClient.create_or_update_data_source_connection.skip_indexer_reset_requirement_for_cache`
+  - `SearchIndexerClient.create_or_update_skillset.skip_indexer_reset_requirement_for_cache`
+  - `SearchIndexerClient.create_or_update_skillset.disable_cache_reprocessing_change_detection`
+  - `SearchIndexerClient.reset_skills.skill_names`
+  - `SearchClient.search.query_language`
+  - `SearchClient.search.query_speller`
+  - `SearchClient.search.debug`
+  - `SearchClient.search.hybrid_search`
 
 ### Other Changes
+
+- Updated default API version to `2024-07-01`.
 
 ## 11.6.0b4 (2024-05-07)
 
@@ -313,7 +370,7 @@ Minor updates.
 
 ### Features Added
 
-- Added new models: 
+- Added new models:
   - `azure.search.documents.models.QueryCaptionType`
   - `azure.search.documents.models.CaptionResult`
   - `azure.search.documents.indexes.models.CustomEntityLookupSkillLanguage`

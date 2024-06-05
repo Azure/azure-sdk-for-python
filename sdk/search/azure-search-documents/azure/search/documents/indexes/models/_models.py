@@ -1084,7 +1084,6 @@ class SearchIndexerDataSourceConnection:
         self.data_deletion_detection_policy = kwargs.get("data_deletion_detection_policy", None)
         self.e_tag = kwargs.get("e_tag", None)
         self.encryption_key = kwargs.get("encryption_key", None)
-        self.identity = kwargs.get("identity", None)
 
     def _to_generated(self):
         if self.connection_string is None or self.connection_string == "":
@@ -1102,7 +1101,6 @@ class SearchIndexerDataSourceConnection:
             data_deletion_detection_policy=self.data_deletion_detection_policy,
             e_tag=self.e_tag,
             encryption_key=self.encryption_key,
-            identity=self.identity,
         )
 
     @classmethod
@@ -1120,7 +1118,6 @@ class SearchIndexerDataSourceConnection:
             data_deletion_detection_policy=search_indexer_data_source.data_deletion_detection_policy,
             e_tag=search_indexer_data_source.e_tag,
             encryption_key=search_indexer_data_source.encryption_key,
-            identity=search_indexer_data_source.identity,
         )
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
