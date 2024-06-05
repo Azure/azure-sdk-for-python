@@ -3345,7 +3345,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob.exists()
 
         # Act
-        token_credential = self.get_credential(BlobServiceClient)
+        token_credential = self.get_credential(BlobClient)
         blob = BlobClient(
             self.bsc.url, container_name=self.container_name, blob_name=blob_name,
             credential=token_credential, audience=f'https://{storage_account_name}.blob.core.windows.net'
@@ -3365,9 +3365,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Generate an invalid credential
         creds = ClientSecretCredential(
-            self.get_settings_value("TENANT_ID"),
-            self.get_settings_value("CLIENT_ID"),
-            self.get_settings_value("CLIENT_SECRET") + 'a'
+            "00000000-0000-0000-0000-000000000000",
+            "00000000-0000-0000-0000-000000000000",
+            "00000000-0000-0000-0000-000000000000" + 'a'
         )
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=creds, retry_total=0)

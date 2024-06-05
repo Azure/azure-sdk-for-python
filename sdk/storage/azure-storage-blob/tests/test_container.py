@@ -2709,7 +2709,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         cc.exists()
 
         # Act
-        token_credential = self.get_credential(BlobServiceClient)
+        token_credential = self.get_credential(ContainerClient)
         cc = ContainerClient(
             self.account_url(storage_account_name, "blob"), 'testcont', credential=token_credential,
             audience=f'https://{storage_account_name}.blob.core.windows.net'
