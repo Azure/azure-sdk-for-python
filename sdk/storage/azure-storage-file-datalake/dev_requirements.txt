@@ -1,6 +1,7 @@
 -e ../../../tools/azure-sdk-tools
 ../../core/azure-core
 ../azure-storage-blob
+../azure-storage-extensions
 -e ../../identity/azure-identity
 aiohttp>=3.0
 adal
