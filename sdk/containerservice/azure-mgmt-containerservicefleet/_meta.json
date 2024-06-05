@@ -1,5 +1,5 @@
 {
-  "commit": "e5404d3e55f885d2cb8fdbff3fd1a03bcfc6bb4c",
+  "commit": "a013dabbe84aeb3f5d48b0e30d15fdfbb6a8d062",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.9.7",
   "use": [
@@ -8,12 +8,13 @@
   ],
   "autorest_command": "autorest specification/containerservice/resource-manager/Microsoft.ContainerService/fleet/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.13.7 --use=@autorest/modelerfour@4.27.0 --version=3.9.7 --version-tolerant=False",
   "readme": "specification/containerservice/resource-manager/Microsoft.ContainerService/fleet/readme.md",
-  "package-2023-06-preview": "2024-03-15 10:25:16 -0700 d53388b8b7574dfe861a9e6863bd4d137168cbe5 preview/2023-06-15-preview/fleets.json",
-  "package-2023-03-preview": "2024-03-15 10:25:16 -0700 d53388b8b7574dfe861a9e6863bd4d137168cbe5 preview/2023-03-15-preview/fleets.json",
-  "package-2022-09-preview": "2024-03-15 10:25:16 -0700 d53388b8b7574dfe861a9e6863bd4d137168cbe5 preview/2022-09-02-preview/fleets.json",
+  "package-2023-06-preview": "2024-04-17 10:47:28 +0800 c4e661cdf92c8f579574008d0cd11874cc303da0 preview/2023-06-15-preview/fleets.json",
+  "package-2023-03-preview": "2024-04-17 10:47:28 +0800 c4e661cdf92c8f579574008d0cd11874cc303da0 preview/2023-03-15-preview/fleets.json",
+  "package-2022-09-preview": "2024-04-03 11:54:30 -0700 aaf40b00d0d15db7d3252beeeac634da9dc09099 preview/2022-09-02-preview/fleets.json",
   "package-2022-07-preview": "2023-02-15 15:17:59 +0800 67527326606bd3c71700e2b96ff3c9ce9e655e29 preview/2022-07-02-preview/fleets.json",
   "package-2022-06-preview": "2023-02-15 15:17:59 +0800 67527326606bd3c71700e2b96ff3c9ce9e655e29 preview/2022-06-02-preview/fleets.json",
-  "package-2023-08-preview": "2024-03-15 10:25:16 -0700 d53388b8b7574dfe861a9e6863bd4d137168cbe5 preview/2023-08-15-preview/fleets.json",
-  "package-2023-10": "2024-03-15 10:25:16 -0700 d53388b8b7574dfe861a9e6863bd4d137168cbe5 stable/2023-10-15/fleets.json",
-  "package-2024-02-preview": "2024-03-15 10:25:16 -0700 d53388b8b7574dfe861a9e6863bd4d137168cbe5 preview/2024-02-02-preview/fleets.json"
+  "package-2023-08-preview": "2024-04-23 16:19:44 -0700 bce261b592674cd74a6603ea65b8561fb20ed154 preview/2023-08-15-preview/fleets.json",
+  "package-2023-10": "2024-04-23 16:19:44 -0700 bce261b592674cd74a6603ea65b8561fb20ed154 stable/2023-10-15/fleets.json",
+  "package-2024-02-preview": "2024-04-23 16:19:44 -0700 bce261b592674cd74a6603ea65b8561fb20ed154 preview/2024-02-02-preview/fleets.json",
+  "package-2024-04": "2024-04-23 16:19:44 -0700 bce261b592674cd74a6603ea65b8561fb20ed154 stable/2024-04-01/fleets.json"
 }

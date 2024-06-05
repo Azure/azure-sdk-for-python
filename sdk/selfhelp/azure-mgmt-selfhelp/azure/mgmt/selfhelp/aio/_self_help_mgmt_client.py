@@ -20,8 +20,7 @@ from ._configuration import SelfHelpMgmtClientConfiguration
 from .operations import (
     CheckNameAvailabilityOperations,
     DiagnosticsOperations,
-    DiscoverySolutionNLPSubscriptionScopeOperations,
-    DiscoverySolutionNLPTenantScopeOperations,
+    DiscoverySolutionNLPOperations,
     DiscoverySolutionOperations,
     Operations,
     SimplifiedSolutionsOperations,
@@ -55,17 +54,11 @@ class SelfHelpMgmtClient:  # pylint: disable=client-accepts-api-version-keyword,
     :vartype troubleshooters: azure.mgmt.selfhelp.aio.operations.TroubleshootersOperations
     :ivar solution_self_help: SolutionSelfHelpOperations operations
     :vartype solution_self_help: azure.mgmt.selfhelp.aio.operations.SolutionSelfHelpOperations
-    :ivar discovery_solution_nlp_tenant_scope: DiscoverySolutionNLPTenantScopeOperations operations
-    :vartype discovery_solution_nlp_tenant_scope:
-     azure.mgmt.selfhelp.aio.operations.DiscoverySolutionNLPTenantScopeOperations
-    :ivar discovery_solution_nlp_subscription_scope:
-     DiscoverySolutionNLPSubscriptionScopeOperations operations
-    :vartype discovery_solution_nlp_subscription_scope:
-     azure.mgmt.selfhelp.aio.operations.DiscoverySolutionNLPSubscriptionScopeOperations
+    :ivar discovery_solution_nlp: DiscoverySolutionNLPOperations operations
+    :vartype discovery_solution_nlp:
+     azure.mgmt.selfhelp.aio.operations.DiscoverySolutionNLPOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
-    :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
     :keyword api_version: Api Version. Default value is "2024-03-01-preview". Note that overriding
@@ -76,13 +69,9 @@ class SelfHelpMgmtClient:  # pylint: disable=client-accepts-api-version-keyword,
     """
 
     def __init__(
-        self,
-        credential: "AsyncTokenCredential",
-        subscription_id: str,
-        base_url: str = "https://management.azure.com",
-        **kwargs: Any
+        self, credential: "AsyncTokenCredential", base_url: str = "https://management.azure.com", **kwargs: Any
     ) -> None:
-        self._config = SelfHelpMgmtClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = SelfHelpMgmtClientConfiguration(credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -123,10 +112,7 @@ class SelfHelpMgmtClient:  # pylint: disable=client-accepts-api-version-keyword,
         self.solution_self_help = SolutionSelfHelpOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.discovery_solution_nlp_tenant_scope = DiscoverySolutionNLPTenantScopeOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.discovery_solution_nlp_subscription_scope = DiscoverySolutionNLPSubscriptionScopeOperations(
+        self.discovery_solution_nlp = DiscoverySolutionNLPOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

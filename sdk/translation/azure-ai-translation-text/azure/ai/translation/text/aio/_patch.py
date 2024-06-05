@@ -33,7 +33,7 @@ def patch_sdk():
     """
 
 
-class AsyncTranslatorEntraIdAuthenticationPolicy(AsyncBearerTokenCredentialPolicy): # pylint: disable=name-too-long
+class AsyncTranslatorEntraIdAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):  # pylint: disable=name-too-long
     """Translator Entra Id Authentication Policy. Adds headers that are required by Translator Service
     when global endpoint is used with Entra Id policy.
     Ocp-Apim-Subscription-Region header contains region of the Translator resource.
@@ -159,13 +159,7 @@ class TextTranslationClient(ServiceClientGenerated):
     ): ...
 
     @overload
-    def __init__(
-        self,
-        *,
-        endpoint: str,
-        api_version: str = "3.0",
-        **kwargs
-    ): ...
+    def __init__(self, *, endpoint: str, api_version: str = "3.0", **kwargs): ...
 
     def __init__(self, **kwargs):
         api_version = kwargs.get("api_version", "3.0")
