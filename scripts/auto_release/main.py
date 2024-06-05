@@ -123,6 +123,7 @@ class CodegenTestPR:
         self.tag_is_stable = False
         self.has_test = False
         self.check_package_size_result = []  # List[str]
+        self.version_suggestion = '' # if can't calculate next version, give a suggestion
 
     @property
     def target_release_date(self) -> str:
@@ -294,8 +295,8 @@ class CodegenTestPR:
         preview_tag = not self.tag_is_stable
         changelog = self.get_changelog()
         if changelog == '':
-            msg = 'it should be stable' if self.tag_is_stable else 'it should be perview'
-            return f'0.0.0 ({msg})'
+            self.version_suggestion = '(it should be stable)' if self.tag_is_stable else '(it should be perview)'
+            return "0.0.0"
         preview_version = 'rc' in last_version or 'b' in last_version
         #                                           |   preview tag                     | stable tag
         # preview version(1.0.0rc1/1.0.0b1)         | 1.0.0rc2(track1)/1.0.0b2(track2)  |  1.0.0
@@ -359,7 +360,7 @@ class CodegenTestPR:
         def edit_changelog_for_new_service_proc(content: List[str]):
             for i in range(0, len(content)):
                 if '##' in content[i]:
-                    content[i] = f'## {self.next_version} ({self.target_release_date})\n'
+                    content[i] = f'## {self.next_version}{self.version_suggestion} ({self.target_release_date})\n'
                     break
 
         modify_file(str(Path(self.sdk_code_path()) / 'CHANGELOG.md'), edit_changelog_for_new_service_proc)
