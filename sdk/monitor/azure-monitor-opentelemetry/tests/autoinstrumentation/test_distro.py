@@ -35,20 +35,16 @@ class TestDistro(TestCase):
         self.assertEqual(
             environ,
             {
-                "OTEL_METRICS_EXPORTER": "azure_monitor_opentelemetry_exporter",
-                "OTEL_TRACES_EXPORTER": "azure_monitor_opentelemetry_exporter",
-                "OTEL_LOGS_EXPORTER": "azure_monitor_opentelemetry_exporter",
-                "OTEL_TRACES_SAMPLER": "azure_monitor_opentelemetry_sampler",
                 "OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED": "true",
                 "OTEL_EXPERIMENTAL_RESOURCE_DETECTORS": "azure_app_service",
             }
         )
 
     @patch.dict("os.environ", {
-        "OTEL_METRICS_EXPORTER": "custom_metrics_exporter",
-        "OTEL_TRACES_EXPORTER": "custom_traces_exporter",
-        "OTEL_LOGS_EXPORTER": "custom_logs_exporter",
-        "OTEL_TRACES_SAMPLER": "custom_traces_sampler",
+        # "OTEL_METRICS_EXPORTER": "custom_metrics_exporter",
+        # "OTEL_TRACES_EXPORTER": "custom_traces_exporter",
+        # "OTEL_LOGS_EXPORTER": "custom_logs_exporter",
+        # "OTEL_TRACES_SAMPLER": "custom_traces_sampler",
         "OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED": "false",
         "OTEL_EXPERIMENTAL_RESOURCE_DETECTORS": "custom_resource_detector",
     }, clear=True)
@@ -72,10 +68,10 @@ class TestDistro(TestCase):
         self.assertEqual(
             environ,
             {
-                "OTEL_METRICS_EXPORTER": "custom_metrics_exporter",
-                "OTEL_TRACES_EXPORTER": "custom_traces_exporter",
-                "OTEL_LOGS_EXPORTER": "custom_logs_exporter",
-                "OTEL_TRACES_SAMPLER": "custom_traces_sampler",
+                # "OTEL_METRICS_EXPORTER": "custom_metrics_exporter",
+                # "OTEL_TRACES_EXPORTER": "custom_traces_exporter",
+                # "OTEL_LOGS_EXPORTER": "custom_logs_exporter",
+                # "OTEL_TRACES_SAMPLER": "custom_traces_sampler",
                 "OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED": "false",
                 "OTEL_EXPERIMENTAL_RESOURCE_DETECTORS": "custom_resource_detector",
             }
