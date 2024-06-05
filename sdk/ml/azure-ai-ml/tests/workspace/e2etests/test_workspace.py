@@ -161,7 +161,6 @@ class TestWorkspace(AzureRecordedTestCase):
         "static resources referenced here. We need to refactor the testing of ACR and appinsights to " +
         "not be dependent on user access rights."
     )
-
     def test_acr_and_appinsights_in_create(self, client: MLClient, randstr: Callable[[], str], location: str) -> None:
         wps_name = f"e2etest_{randstr('wps_name')}"
         wps_description = f"{wps_name} description"
