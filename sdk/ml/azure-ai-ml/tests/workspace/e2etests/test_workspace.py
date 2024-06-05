@@ -156,8 +156,9 @@ class TestWorkspace(AzureRecordedTestCase):
         assert poller
         assert isinstance(poller, LROPoller)
 
-    pytest.mark.skip(
-        "This test was refactored out from the original workspace CRUD test because not everyone has access to the " +
+    @pytest.mark.skipif(
+        condition=True,
+        reason="This test was refactored out from the original workspace CRUD test because not everyone has access to the " +
         "static resources referenced here. We need to refactor the testing of ACR and appinsights to " +
         "not be dependent on user access rights."
     )
