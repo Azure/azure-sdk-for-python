@@ -1,12 +1,10 @@
 # Release History
 
-## 1.30.2 (Unreleased)
+## 1.30.2 (2024-06-06)
 
 ### Features Added
 
 - Tracing: `DistributedTracingPolicy` will now set an attribute, `http.request.resend_count`, on HTTP spans for resent requests to indicate the resend attempt number.  #35069
-
-### Breaking Changes
 
 ### Bugs Fixed
 
