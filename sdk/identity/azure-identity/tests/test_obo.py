@@ -266,3 +266,16 @@ def test_client_assertion_func():
     access_token = credential.get_token("scope")
     assert access_token.token == expected_token
     assert func_call_count == 1
+
+
+def test_client_assertion_func_with_client_certificate():
+    """The credential should raise ValueError when ctoring with both client_assertion_func and client_certificate"""
+    with pytest.raises(ValueError) as ex:
+        credential = OnBehalfOfCredential(
+            "tenant-id",
+            "client-id",
+            client_assertion_func=lambda: "client-assertion",
+            client_certificate=b"certificate",
+            user_assertion="assertion",
+        )
+    assert "It is invalid to specify more than one of the following" in str(ex.value)

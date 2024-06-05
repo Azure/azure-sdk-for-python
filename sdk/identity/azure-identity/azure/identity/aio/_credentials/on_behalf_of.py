@@ -25,7 +25,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
     description of the on-behalf-of flow.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its "directory" ID.
-    :param str client_id: The service principal's client ID
+    :param str client_id: The service principal's client ID.
     :keyword str client_secret: Optional. A client secret to authenticate the service principal.
         One of **client_secret**, **client_certificate**, or **client_assertion_func** must be provided.
     :keyword bytes client_certificate: Optional. The bytes of a certificate in PEM or PKCS12 format including
@@ -36,7 +36,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         return a valid assertion for the target resource.
     :paramtype client_assertion_func: Callable[[], str]
     :keyword str user_assertion: Required. The access token the credential will use as the user assertion when
-        requesting on-behalf-of tokens
+        requesting on-behalf-of tokens.
 
     :keyword str authority: Authority of a Microsoft Entra endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
@@ -80,7 +80,8 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         if client_assertion_func:
             if client_certificate or client_secret:
                 raise ValueError(
-                    'Specifying both "client_assertion_func" and "client_certificate" or "client_secret" is not valid.'
+                    "It is invalid to specify more than one of the following: "
+                    '"client_assertion_func", "client_certificate" or "client_secret".'
                 )
             self._client_credential: Union[str, AadClientCertificate, Dict[str, Any]] = {
                 "client_assertion": client_assertion_func,

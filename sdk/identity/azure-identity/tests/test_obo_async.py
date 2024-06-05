@@ -343,3 +343,17 @@ async def test_client_assertion_func():
     token = await credential.get_token("scope")
     assert token.token == expected_token
     assert func_call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_client_assertion_func_with_client_certificate():
+    """The credential should raise when given both client_assertion_func and client_certificate"""
+    with pytest.raises(ValueError) as ex:
+        OnBehalfOfCredential(
+            "tenant-id",
+            "client-id",
+            client_assertion_func=lambda: "client-assertion",
+            client_certificate=b"cert",
+            user_assertion="assertion",
+        )
+    assert "It is invalid to specify more than one of the following" in str(ex.value)
