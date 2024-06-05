@@ -6,13 +6,13 @@ extends:
       ServiceDirectory: openai
       TestTimeoutInMinutes: 200
       ToxTestEnv: optional
-      UseFederatedAuth: true
       MatrixFilters:
         - PythonVersion=3.11.*
+      UseFederatedAuth: true
       CloudConfig:
         Public:
           ServiceConnection: azure-sdk-tests
-          SubscriptionConfigurationFilePath: eng/common/TestResources/sub-config/AzureOpenAITestingSub.json
+          SubscriptionConfigurationFilePath: AzureOpenAITestingSub.json
       EnvVars:
         AZ_OPENAI_ENDPOINT: $(AOAI-ENDPOINT)
         AZURE_OPENAI_KEY: $(AOAI-API-KEY)
