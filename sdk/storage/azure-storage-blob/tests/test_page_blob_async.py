@@ -123,7 +123,7 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
             storage_account_key = storage_account_key.encode('utf-8')
         bsc = BlobServiceClient(account_url, credential=storage_account_key, max_page_size=4 * 1024)
         await self._setup(bsc)
-        access_token = await self.get_credential(BlobServiceClient).get_token("https://storage.azure.com/.default")
+        access_token = self.get_credential(BlobServiceClient).get_token("https://storage.azure.com/.default")
         token = "Bearer {}".format(access_token.token)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)

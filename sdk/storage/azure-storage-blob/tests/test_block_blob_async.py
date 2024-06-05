@@ -111,7 +111,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(data=source_blob_data)
         destination_blob_client = await self._create_blob()
-        access_token = await self.get_credential(BlobServiceClient).get_token("https://storage.azure.com/.default")
+        access_token = self.get_credential(BlobServiceClient).get_token("https://storage.azure.com/.default")
         token = "Bearer {}".format(access_token.token)
 
         # Assert this operation fails without a credential
