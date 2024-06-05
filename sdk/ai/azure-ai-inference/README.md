@@ -1,7 +1,6 @@
 # Azure AI Inference client library for Python
 
-The client Library (in preview) allows you to generate predictions from foundational models deployed to Azure AI Studio and Azure Machine Learning. It supports
-Serverless API endpoints and Managed Compute Endpoints (formerly known as Managed Online Endpoints). The client library makes services calls using REST API version `2024-05-01-preview`, as documented in [Azure AI Model Inference API](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api). For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
+The client Library (in preview) allows you to generate predictions from foundational models deployed to Azure AI Studio and Azure Machine Learning Studio. It supports Serverless API endpoints and Managed Compute Endpoints (formerly known as Managed Online Endpoints). The client library makes services calls using REST API version `2024-05-01-preview`, as documented in [Azure AI Model Inference API](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api). For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
 
 Use the model inference client library to:
 
@@ -103,7 +102,6 @@ client = ChatCompletionsClient(
 ```
 
 During application development, you would typically set up the environment for authentication using Entra ID by first [Installing the Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), running `az login` in your console window, then entering your credentials in the browser window that was opened. The call to `DefaultAzureCredential()` will then succeed. Setting `exclude_interactive_browser_credential=False` in that call will enable launching a browser window if the user isn't already logged in.
-
 
 ### Create and authentice clients using `load_client`
 
