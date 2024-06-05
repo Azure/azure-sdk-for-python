@@ -482,6 +482,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         timeout,
         **kwargs: Any
     ) -> List["ServiceBusReceivedMessage"]:
+        receive_drain_timeout = .2 # 200 ms
         first_message_received = expired = False
         receiving = True
         sent_drain = False
@@ -500,10 +501,14 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     if sent_drain != receiver._handler._link._drain_state:
                         break
 
-                    # TODO: need to have some timeout logic in case the drain never comes back
-                    # if time.time() - time_sent > max(timeout, receiver._further_pull_receive_timeout):
-                    #     expired = True
-                    #     break
+                    if time.time() - time_sent > receive_drain_timeout:
+                        expired = True
+                        # Close the receiver link because it is dead.
+                        # All settlements of current messages will be done by the mgmt link.
+                        await receiver._handler._link.detach()
+                        # Set receive context to False to stop receiving messages.
+                        receiver._receive_context.clear()
+                        break
                     
                 before = amqp_receive_client._received_messages.qsize()
                 receiving = await amqp_receive_client.do_work_async()
