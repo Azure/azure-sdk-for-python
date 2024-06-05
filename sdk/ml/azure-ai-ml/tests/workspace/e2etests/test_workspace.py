@@ -158,9 +158,9 @@ class TestWorkspace(AzureRecordedTestCase):
 
     @pytest.mark.skipif(
         condition=True,
-        reason="This test was refactored out from the original workspace CRUD test because not everyone has access to the " +
-        "static resources referenced here. We need to refactor the testing of ACR and appinsights to " +
-        "not be dependent on user access rights."
+        reason="This test was refactored out from the original workspace CRUD test because not everyone has access to the "
+        + "static resources referenced here. We need to refactor the testing of ACR and appinsights to "
+        + "not be dependent on user access rights.",
     )
     def test_acr_and_appinsights_in_create(self, client: MLClient, randstr: Callable[[], str], location: str) -> None:
         wps_name = f"e2etest_{randstr('wps_name')}"
