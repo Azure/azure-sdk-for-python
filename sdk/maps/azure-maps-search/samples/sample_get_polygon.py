@@ -30,7 +30,11 @@ def get_polygon():
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
-    result = maps_search_client.get_polygon(coordinates=LatLon(47.61256, -122.204141), result_type=BoundaryResultTypeEnum.LOCALITY, resolution=ResolutionEnum.SMALL)
+    result = maps_search_client.get_polygon(
+        coordinates=LatLon(47.61256, -122.204141),
+        result_type=BoundaryResultTypeEnum.LOCALITY,
+        resolution=ResolutionEnum.SMALL
+    )
 
     print(result.geometry)
 

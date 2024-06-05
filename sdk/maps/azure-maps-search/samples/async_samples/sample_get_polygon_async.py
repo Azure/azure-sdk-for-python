@@ -18,6 +18,9 @@ USAGE:
 """
 import asyncio
 import os
+from azure.maps.search.models import ResolutionEnum
+from azure.maps.search.models import BoundaryResultTypeEnum
+from azure.maps.search.models import LatLon
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
@@ -28,9 +31,9 @@ async def get_polygon_async():
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
     async with maps_search_client:
         result = await maps_search_client.get_polygon(
-            coordinates=[-122.204141, 47.61256],
-            result_type="locality",
-            resolution="small",
+            coordinates=LatLon(47.61256, -122.204141),
+            result_type=BoundaryResultTypeEnum.LOCALITY,
+            resolution=ResolutionEnum.SMALL
         )
 
     print(result.geometry)
