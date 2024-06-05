@@ -5,14 +5,21 @@
 
 # pylint: disable=unused-import,ungrouped-imports, R0904, C0302
 from typing import Union, Any, IO, List, Optional
-
-from azure.maps.search.models import *
-from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.maps.search.models import (
+    BoundingBox,
+    LatLon,
+    GeocodingResponse,
+    GeocodingBatchRequestBody,
+    GeocodingBatchResponse,
+    ReverseGeocodingBatchRequestBody,
+    ReverseGeocodingResultTypeEnum,
+    ResolutionEnum,
+    BoundaryResultTypeEnum,
+    Boundary
+)
 from azure.core.tracing.decorator_async import distributed_trace_async
-
-from ._base_client_async import AsyncMapsSearchClientBase
-
 import azure.maps.search._generated.models as _models
+from ._base_client_async import AsyncMapsSearchClientBase
 
 class MapsSearchClient(AsyncMapsSearchClientBase):
 
@@ -110,12 +117,14 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+        bbox = [bounding_box.west, bounding_box.south, bounding_box.east, bounding_box.north] if bounding_box\
+            else None
         result = await self._search_client.get_geocoding(
             top=top,
             query=query,
             address_line=address_line,
             country_region=country_region,
-            bbox=bounding_box and [bounding_box.west, bounding_box.south, bounding_box.east, bounding_box.north] or None,
+            bbox=bbox,
             view=localized_map_view,
             coordinates=coordinates and [coordinates.lon, coordinates.lat] or None,
             admin_district=admin_district,
@@ -186,6 +195,8 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         generated_batch_items = []
         for batch_item in geocoding_batch_request_body.batch_items:
             bounding_box = batch_item.bounding_box
+            bbox = [bounding_box.west, bounding_box.south, bounding_box.east, bounding_box.north] if bounding_box\
+                else None
             coordinates = batch_item.coordinates
             generated_batch_items.append(_models.GeocodingBatchRequestItem(
                 optional_id=batch_item.optional_id,
@@ -193,7 +204,7 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
                 query=batch_item.query,
                 address_line=batch_item.address_line,
                 country_region=batch_item.country_region,
-                bbox=bounding_box and [bounding_box.west, bounding_box.south, bounding_box.east, bounding_box.north] or None,
+                bbox=bbox,
                 view=batch_item.localized_map_view,
                 coordinates=coordinates and [coordinates.lon, coordinates.lat] or None,
                 admin_district=batch_item.admin_district,

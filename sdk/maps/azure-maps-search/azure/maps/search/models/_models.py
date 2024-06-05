@@ -4,7 +4,6 @@
 # ------------------------------------
 
 from typing import Optional, List, Union
-
 from azure.maps.search._generated.models import ResultTypeEnum
 
 class LatLon:
@@ -37,6 +36,7 @@ class BoundingBox:
         self.east = east
         self.north = north
 
+# pylint: disable=too-many-instance-attributes
 class GeocodingBatchRequestItem:
     """Batch Query object.
 
@@ -95,7 +95,20 @@ class GeocodingBatchRequestItem:
      **If query is given, should not use this parameter.**.
     :paramtype postal_code: str
     """
-    def __init__(self, optional_id: Optional[str] = None, top: int = 5, query: Optional[str] = None, address_line: Optional[str] = None, country_region: Optional[str] = None, bounding_box: Optional[BoundingBox] = None, localized_map_view: str = "auto", coordinates: Optional[LatLon] = None, admin_district: Optional[str] = None, admin_district2: Optional[str] = None, admin_district3: Optional[str] = None, locality: Optional[str] = None, postal_code: Optional[str] = None):
+    def __init__(self,
+                 optional_id: Optional[str] = None,
+                 top: int = 5,
+                 query: Optional[str] = None,
+                 address_line: Optional[str] = None,
+                 country_region: Optional[str] = None,
+                 bounding_box: Optional[BoundingBox] = None,
+                 localized_map_view: str = "auto",
+                 coordinates: Optional[LatLon] = None,
+                 admin_district: Optional[str] = None,
+                 admin_district2: Optional[str] = None,
+                 admin_district3: Optional[str] = None,
+                 locality: Optional[str] = None,
+                 postal_code: Optional[str] = None):
         self.optional_id = optional_id
         self.top = top
         self.query = query
@@ -153,7 +166,11 @@ class ReverseGeocodingBatchRequestItem:
      borders and labels to align with the specified user region.
     :paramtype localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
     """
-    def __init__(self, optional_id: Optional[str] = None, coordinates: Optional[LatLon] = None, result_types: Optional[List[Union[str, ResultTypeEnum]]] = None, localized_map_view: Optional[str] = None):
+    def __init__(self,
+                 optional_id: Optional[str] = None,
+                 coordinates: Optional[LatLon] = None,
+                 result_types: Optional[List[Union[str, ResultTypeEnum]]] = None,
+                 localized_map_view: Optional[str] = None):
         self.optional_id = optional_id
         self.coordinates = coordinates
         self.result_types = result_types
