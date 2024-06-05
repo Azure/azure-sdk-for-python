@@ -9,10 +9,7 @@ extends:
       MatrixFilters:
         - PythonVersion=3.11.*
       UseFederatedAuth: true
-      CloudConfig:
-        Public:
-          ServiceConnection: azure-sdk-tests
-          SubscriptionConfigurationFilePath: sdk/openai/AzureOpenAITestingSub.json
+      SupportedClouds: 'Public'
       EnvVars:
         AZ_OPENAI_ENDPOINT: $(AOAI-ENDPOINT)
         AZURE_OPENAI_KEY: $(AOAI-API-KEY)
