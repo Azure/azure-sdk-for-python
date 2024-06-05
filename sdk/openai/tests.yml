@@ -5,6 +5,7 @@ extends:
     parameters:
       ServiceDirectory: openai
       TestTimeoutInMinutes: 200
+      ToxTestEnv: optional
       UseFederatedAuth: true
       MatrixFilters:
         - PythonVersion=3.11.*

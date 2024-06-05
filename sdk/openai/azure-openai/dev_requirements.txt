@@ -2,4 +2,3 @@
 ../../identity/azure-identity
 httpx
 aiohttp
-openai
