@@ -1584,7 +1584,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         source_blob_client = await self._create_source_blob()
-        access_token = await self.get_credential(ShareServiceClient).get_token("https://storage.azure.com/.default")
+        access_token = self.get_credential(ShareServiceClient).get_token("https://storage.azure.com/.default")
         token = "Bearer {}".format(access_token.token)
 
         destination_file_name = 'filetoupdate'
