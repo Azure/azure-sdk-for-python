@@ -1,6 +1,6 @@
 # Release History
 
-## 1.6.0 (Unreleased)
+## 1.6.0 (2024-06-05)
 
 ### Features Added
 
@@ -8,12 +8,6 @@
     ([#35932](https://github.com/Azure/azure-sdk-for-python/pull/35932))
 - Rework autoinstrumentation: Configure exporters and samplers directly
     ([#35890](https://github.com/Azure/azure-sdk-for-python/pull/35890))
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.5.0 (2024-05-31)
 
