@@ -266,7 +266,9 @@ class ClientBaseAsync(ClientBase):
             kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
-    async def _create_auth_async(self, *, auth_uri: Optional[str] = None) -> Union["uamqp_JWTTokenAsync", JWTTokenAuthAsync]:
+    async def _create_auth_async(
+        self, *, auth_uri: Optional[str] = None
+    ) -> Union["uamqp_JWTTokenAsync", JWTTokenAuthAsync]:
         """
         Create an ~uamqp.authentication.SASTokenAuthAsync instance to authenticate
         the session.
