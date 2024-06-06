@@ -26,6 +26,7 @@
 from azure.core.pipeline import policies
 from azure.core.configuration import Configuration
 from azure.core import PipelineClient
+from azure.core.pipeline.transport._urllib3 import Urllib3Transport
 from copy import deepcopy
 
 
@@ -53,7 +54,12 @@ class TestRestClientConfiguration(Configuration):
 class MockRestClient(object):
     def __init__(self, port, **kwargs):
         self._config = TestRestClientConfiguration(**kwargs)
-        self._client = PipelineClient(base_url="http://localhost:{}/".format(port), config=self._config, **kwargs)
+        transport = Urllib3Transport(**kwargs)
+        self._client = PipelineClient(
+            base_url="http://localhost:{}/".format(port),
+            config=self._config,
+            transport=transport,
+            **kwargs)
 
     def send_request(self, request, **kwargs):
         """Runs the network request through the client's chained policies.

@@ -27,20 +27,16 @@ import os
 from typing import Any, ContextManager, Iterator, Mapping, Optional, Union
 
 import urllib3
-import certifi
 from azure.core.pipeline import Pipeline
+from azure.core.utils import case_insensitive_dict
 
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError, IncompleteReadError
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.rest import HttpRequest as RestHttpRequest, HttpResponse as RestHttpResponse
+from azure.core.rest._http_response_impl import HttpResponseImpl
 
 DEFAULT_BLOCK_SIZE = 32768
-
-
-class Urllib3TransportResponse(RestHttpResponse):
-    ...
-
 
 
 class Urllib3StreamDownloadGenerator:
@@ -52,25 +48,36 @@ class Urllib3StreamDownloadGenerator:
         on the *content-encoding* header.
     """
 
-    def __init__(self, pipeline: Pipeline, response: Urllib3TransportResponse, **kwargs) -> None:
+    def __init__(self, pipeline: Pipeline, response: "Urllib3TransportResponse", **kwargs) -> None:
         self.pipeline = pipeline
         self.response = response
         decompress = kwargs.pop("decompress", True)
-
-        if decompress:
-            self.iter_content_func = self.response.internal_response.iter_bytes()
-        else:
-            self.iter_content_func = self.response.internal_response.iter_raw()
+        self.iter_content_func = self.response.internal_response.read_chunked(decode_content=decompress)
 
     def __iter__(self) -> "Urllib3StreamDownloadGenerator":
         return self
 
-    def __next__(self):
-        try:
-            return next(self.iter_content_func)
-        except StopIteration:
-            self.response.stream_contextmanager.__exit__(None, None, None)
-            raise
+    def __next__(self) -> bytes:
+        return next(self.iter_content_func)
+
+
+class Urllib3TransportResponse(HttpResponseImpl):
+    def __init__(
+        self,
+        *,
+        request: RestHttpRequest,
+        internal_response: urllib3.response.BaseHTTPResponse,
+    ) -> None:
+        headers = case_insensitive_dict(internal_response.getheaders())
+        super().__init__(
+            request=request,
+            internal_response=internal_response,
+            status_code=internal_response.status_code,
+            headers=headers,
+            reason=internal_response.reason,
+            content_type=headers.get("content-type"),
+            stream_download_generator=Urllib3StreamDownloadGenerator,
+        )
 
 
 class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
@@ -92,47 +99,28 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
             raise NotImplementedError(
                 "Proxies are not yet supported. Please pass in a configured urllib3.ProxyManager."
             )
+        # See https://github.com/Azure/azure-sdk-for-python/issues/25640 to understand why we track this
+        self._has_been_opened = False
 
-    def _cert_verify(self, url: str, kwargs: Mapping[str, Any]) -> None:
+    def _cert_verify(self, kwargs: Mapping[str, Any]) -> None:
         """Verify a SSL certificate.
 
-        :param url: The requested URL.
         :param verify: Either a boolean, in which case it controls whether we verify
             the server's TLS certificate, or a string, in which case it must be a path
             to a CA bundle to use
         :param cert: The SSL certificate to verify.
         """
         verify : Union[bool, str] = kwargs.pop("connection_verify", self._config.verify)
-        cert: Optional[str] = kwargs.pop("connection_cert", self._config.verify)
         cert_kwargs = {}
-        if url.lower().startswith("https") and verify:
-
-            cert_loc = None
-
-            # Allow self-specified cert location.
-            if verify is not True:
-                cert_loc = verify
-
-            if not cert_loc:
-                cert_loc = certifi.where()
-
-            if not cert_loc or not os.path.exists(cert_loc):
-                raise OSError(
-                    f"Could not find a suitable TLS CA certificate bundle, "
-                    f"invalid path: {cert_loc}"
-                )
-
-            cert_kwargs["cert_reqs"] = "CERT_REQUIRED"
-
-            if not os.path.isdir(cert_loc):
-                cert_kwargs["ca_certs"] = cert_loc
-            else:
-                cert_kwargs["ca_cert_dir"] = cert_loc
-        else:
+        if verify is False:
+            # We ignore verify=True as "CERT_REQUIRED" is the default for HTTPS.
             cert_kwargs["cert_reqs"] = "CERT_NONE"
-            cert_kwargs["ca_certs"] = None
-            cert_kwargs["ca_cert_dir"] = None
+        elif os.path.isdir(verify):
+            cert_kwargs["ca_cert_dir"] = verify
+        elif isinstance(verify, str):
+            cert_kwargs["ca_certs"] = verify
 
+        cert: Optional[str] = kwargs.pop("connection_cert", self._config.cert)
         if cert:
             if not isinstance(cert, str):
                 cert_kwargs["cert_file"] = cert[0]
@@ -140,24 +128,25 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
             else:
                 cert_kwargs["cert_file"] = cert
                 cert_kwargs["key_file"] = None
-            if cert_kwargs["cert_file"] and not os.path.exists(cert_kwargs["cert_file"]):
-                raise OSError(
-                    f"Could not find the TLS certificate file, "
-                    f"invalid path: {cert_kwargs['cert_file']}"
-                )
-            if cert_kwargs["key_file"] and not os.path.exists(cert_kwargs["key_file"]):
-                raise OSError(
-                    f"Could not find the TLS key file, invalid path: {cert_kwargs['key_file']}"
-                )
         kwargs.update(cert_kwargs)
     
     def open(self):
         """Assign new session if one does not already exist."""
-        if not self._pool and self._pool_owner:
-            self._pool = urllib3.PoolManager(
-                retries=False,
-                blocksize=DEFAULT_BLOCK_SIZE
+        if self._has_been_opened and not self._pool:
+            raise ValueError(
+                "HTTP transport has already been closed. "
+                "You may check if you're calling a function outside of the `with` of your client creation, "
+                "or if you called `close()` on your client already."
             )
+        if not self._pool:
+            if self._pool_owner:
+                self._pool = urllib3.PoolManager(
+                    retries=False,
+                    blocksize=DEFAULT_BLOCK_SIZE
+                )
+            else:
+                raise ValueError("pool_owner cannot be False and no pool is available")
+        self._has_been_opened = True
 
     def close(self):
         """Close the session if it is not externally owned."""
@@ -179,7 +168,7 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
         """
         if 'proxies' in kwargs:
             raise NotImplementedError(
-                "Proxies are not yet supported. Please pass in a configured urllib3.ProxyManager."
+                "Proxies are not yet supported. Please create the transport using a configured urllib3.ProxyManager."
             )
         self.open()
         connection_timeout = kwargs.pop("connection_timeout", self._config.timeout)
@@ -188,24 +177,53 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
             connect=connection_timeout,
             read=read_timeout
         )
-        self._cert_verify(request.url, kwargs)
+        self._cert_verify(kwargs)
+        stream_response: bool = kwargs.pop("stream", False)
         try:
-            response = self._pool.urlopen(
+            result = self._pool.urlopen(
                 method=request.method,
                 url=request.url,
                 body=request.content,
                 timeout=timeout,
                 headers=request.headers.items(),
-                preload_context=not kwargs.pop("stream", False),
+                preload_context=not stream_response,
                 decode_content=False,
                 redirect=False,
+                reties=False,
                 **kwargs
             )
-        except:
-            ...
+            response = Urllib3TransportResponse(
+                    request=request,
+                    internal_response=result,
+                    block_size=self.connection_config.data_block_size,
+                )
+            if not stream_response:
+                response.read()
+        except AttributeError as err:
+            if not self._pool:
+                raise ValueError() from err
+            raise
+        except (
+                urllib3.exceptions.IncompleteRead,
+                urllib3.exceptions.InvalidChunkLength) as err:
+            raise IncompleteReadError(err, error=err) from err
+        except (
+                urllib3.exceptions.RequestError,
+                urllib3.exeptions.ProtocolError,
+                urllib3.exeptions.ResponseError) as err:
+            raise ServiceResponseError(err, error=err) from err
+        except (
+                ValueError,
+                urllib3.exceptions.SSLError,
+                urllib3.exceptions.ProxyError,
+                urllib3.exceptions.ConnectTimeoutError.
+                urllib3.exceptions.PoolError) as err:
+            raise ServiceRequestError(err, error=err) from err
+        except urllib3.exceptions.HTTPError as err:
+            # Catch anything else that urllib3 gives us
+            raise ServiceResponseError(err, error=err) from err
+        return response
         
-
-
 
     def __enter__(self) -> "Urllib3Transport":
         self.open()
@@ -213,32 +231,3 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
 
     def __exit__(self, *args) -> None:
         self.close()
-
-    def send(self, request: HttpRequest, **kwargs) -> HttpXTransportResponse:
-        stream_response = kwargs.pop("stream", False)
-        parameters = {
-            "method": request.method,
-            "url": request.url,
-            "headers": request.headers.items(),
-            "data": request.data,
-            "content": request.content,
-            "files": request.files,
-            **kwargs,
-        }
-        stream_ctx: Optional[ContextManager] = None
-        try:
-            if stream_response:
-                stream_ctx = self.client.stream(**parameters)
-                if stream_ctx:
-                    response = stream_ctx.__enter__()
-            else:
-                response = self.client.request(**parameters)
-        except (
-            httpx.ReadTimeout,
-            httpx.ProtocolError,
-        ) as err:
-            raise ServiceResponseError(err, error=err)
-        except httpx.RequestError as err:
-            raise ServiceRequestError(err, error=err)
-
-        return HttpXTransportResponse(request, response, stream_contextmanager=stream_ctx)
