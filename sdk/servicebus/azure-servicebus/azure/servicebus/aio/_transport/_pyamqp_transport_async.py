@@ -284,6 +284,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         # pylint: disable=protected-access
         receiver._handler._last_activity_timestamp = time.time()
         if receiver._receive_context.is_set():
+            print("add message to queue")
             receiver._handler._received_messages.put((frame, message))
         else:
             await receiver._handler.settle_messages_async(frame[1], frame[2], 'released')
@@ -485,7 +486,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         timeout,
         **kwargs: Any
     ) -> List["ServiceBusReceivedMessage"]:
-        receive_drain_timeout = 20 # 200 ms
+        receive_drain_timeout = .2 # 200 ms
         first_message_received = expired = False
         receiving = True
         sent_drain = False
@@ -502,10 +503,10 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                         sent_drain = True
                         time_sent = time.time()
                         print("SENT DRAIN")
-                    if sent_drain != receiver._handler._link._drain_state:
+                    if sent_drain != receiver._handler._link._drain_state and time.time() - time_sent > receive_drain_timeout:
                         print("BREAKING OUT")
                         break
-                print("DO WORK")    
+
                 before = amqp_receive_client._received_messages.qsize()
                 receiving = await amqp_receive_client.do_work_async()
                 received = amqp_receive_client._received_messages.qsize() - before
@@ -525,33 +526,33 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             ):
                 batch.append(amqp_receive_client._received_messages.get())
                 amqp_receive_client._received_messages.task_done()
+            
+            # if time.time() - time_sent > receive_drain_timeout:
+            #     print("DRAIN TIMEOUT HIT, closing receiver link.")
+            #     # expired = True
+                # Close the receiver link because it is dead and reopen a new one.
+                # All settlements of current messages will be done by the mgmt link.
+                # await receiver._handler._link.detach(close=True)
+                # receiver._handler._link = None
+                # await receiver._handler._client_ready_async() # pylint: disable=protected-access
+                # Set receive context to False to stop receiving messages.
+                # receiver._receive_context.clear()
+                # break
 
-                if time.time() - time_sent > receive_drain_timeout:
-                    print("DRAIN TIMEOUT HIT, closing receiver link.")
-                    expired = True
-                    # Close the receiver link because it is dead and reopen a new one.
-                    # All settlements of current messages will be done by the mgmt link.
-                    await receiver._handler._link.detach(close=True)
-                    # receiver._handler._link = None
-                    print("Calling ready")
-                    # await receiver._handler._client_ready_async() # pylint: disable=protected-access
-                    # Set receive context to False to stop receiving messages.
-                    receiver._receive_context.clear()
-                    break
 
         # Before we return batch, if prefetch is set, receive those messages as well.
-        sent_drain = False
-        if receiver._prefetch_count > 0:
-            while sent_drain == receiver._handler._link._drain_state:
-                print("PREFETCH")
-                if not sent_drain:
-                    await receiver._amqp_transport.reset_link_credit_async(amqp_receive_client, max_message_count, drain=True)
-                    sent_drain = True
+        # sent_drain = False
+        # if receiver._prefetch_count > 0:
+        #     while sent_drain == receiver._handler._link._drain_state:
+        #         print("PREFETCH")
+        #         if not sent_drain:
+        #             await receiver._amqp_transport.reset_link_credit_async(amqp_receive_client, max_message_count, drain=True)
+        #             sent_drain = True
 
-                # # this prevents us from sending a new Flow frame if we have already sent a Drain frame
-                # if sent_drain != receiver._handler._link._drain_state:
-                #     break
-                receiving = await amqp_receive_client.do_work_async()
+        #         # # this prevents us from sending a new Flow frame if we have already sent a Drain frame
+        #         # if sent_drain != receiver._handler._link._drain_state:
+        #         #     break
+        #         receiving = await amqp_receive_client.do_work_async()
               
 
 
