@@ -645,7 +645,7 @@ class WorkspaceOperationsBase(ABC):
 
         if not workspace.allow_roleassignment_on_rg:
             _set_val(param["allowRoleAssignmentOnRG"], "false")
-   
+
         if workspace.image_build_compute:
             _set_val(param["imageBuildCompute"], workspace.image_build_compute)
 

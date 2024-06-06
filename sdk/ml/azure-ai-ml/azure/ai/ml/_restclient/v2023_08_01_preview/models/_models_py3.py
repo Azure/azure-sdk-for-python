@@ -34323,7 +34323,7 @@ class Workspace(Resource):
     :vartype discovery_url: str
     :ivar enable_data_isolation:
     :vartype enable_data_isolation: bool
-    :ivar allow_roleassignment_on_rg: Determine whether we will allow workspace role assignment on resource group level.
+    :ivar allow_roleassignment_on_rg: Determine whether allow workspace role assignment on resource group level.
     :vartype allow_roleassignment_on_rg: bool
     :ivar encryption:
     :vartype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionProperty
@@ -34545,7 +34545,7 @@ class Workspace(Resource):
         :paramtype discovery_url: str
         :keyword enable_data_isolation:
         :paramtype enable_data_isolation: bool
-        :keyword allow_roleassignment_on_rg: Determine whether we will allow workspace role assignment on resource group level.
+        :keyword allow_roleassignment_on_rg: Determine whether allow workspace role assignment on resource group level.
         :paramtype allow_roleassignment_on_rg: bool
         :keyword encryption:
         :paramtype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionProperty
@@ -35095,7 +35095,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
     :vartype description: str
     :ivar enable_data_isolation:
     :vartype enable_data_isolation: bool
-    :ivar allow_roleassignment_on_rg: Determine whether we will allow workspace role assignment on resource group level.
+    :ivar allow_roleassignment_on_rg: Determine whether allow workspace role assignment on resource group level.
     :vartype allow_roleassignment_on_rg: bool
     :ivar encryption:
     :vartype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
@@ -35196,7 +35196,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         :paramtype description: str
         :keyword enable_data_isolation:
         :paramtype enable_data_isolation: bool
-        :keyword allow_roleassignment_on_rg: Determine whether we will allow workspace role assignment on resource group level.
+        :keyword allow_roleassignment_on_rg: Determine whether allow workspace role assignment on resource group level.
         :paramtype allow_roleassignment_on_rg: bool
         :keyword encryption:
         :paramtype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties

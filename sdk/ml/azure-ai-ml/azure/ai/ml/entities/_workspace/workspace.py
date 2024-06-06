@@ -86,7 +86,7 @@ class Workspace(Resource):
     :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
         The flag can only be set at the creation phase, it can't be updated.
     :type enable_data_isolation: bool
-    :param allow_roleassignment_on_rg: Determine whether we will allow workspace role assignment on resource group level.
+    :param allow_roleassignment_on_rg: Determine whether allow workspace role assignment on resource group level.
     :type allow_roleassignment_on_rg: bool
     :param serverless_compute: The serverless compute settings for the workspace.
     :type: ~azure.ai.ml.entities.ServerlessComputeSettings
