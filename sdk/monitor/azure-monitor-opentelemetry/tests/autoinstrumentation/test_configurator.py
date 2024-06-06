@@ -29,9 +29,9 @@ class TestConfigurator(TestCase):
         sampler_mock.assert_called_once_with(1.0)
         super_mock()._configure.assert_called_once_with(
             auto_instrumentation_version="TEST_VERSION",
-            trace_exporter_names=["azure-monitor-opentelemetry-exporter"],
-            metric_exporter_names=["azure-monitor-opentelemetry-exporter"],
-            log_exporter_names=["azure-monitor-opentelemetry-exporter"],
+            trace_exporter_names=["azure_monitor_opentelemetry_exporter"],
+            metric_exporter_names=["azure_monitor_opentelemetry_exporter"],
+            log_exporter_names=["azure_monitor_opentelemetry_exporter"],
             sampler="TEST_SAMPLER",
         )
         mock_diagnostics.info.assert_called_once_with(
@@ -56,9 +56,9 @@ class TestConfigurator(TestCase):
         sampler_mock.assert_called_once_with(0.5)
         super_mock()._configure.assert_called_once_with(
             auto_instrumentation_version="TEST_VERSION",
-            trace_exporter_names=["azure-monitor-opentelemetry-exporter"],
-            metric_exporter_names=["azure-monitor-opentelemetry-exporter"],
-            log_exporter_names=["azure-monitor-opentelemetry-exporter"],
+            trace_exporter_names=["azure_monitor_opentelemetry_exporter"],
+            metric_exporter_names=["azure_monitor_opentelemetry_exporter"],
+            log_exporter_names=["azure_monitor_opentelemetry_exporter"],
             sampler="TEST_SAMPLER",
         )
         mock_diagnostics.info.assert_called_once_with(
@@ -80,9 +80,9 @@ class TestConfigurator(TestCase):
             configurator._configure()
         sampler_mock.assert_called_once_with(1.0)
         super_mock()._configure.assert_called_once_with(
-            trace_exporter_names=["azure-monitor-opentelemetry-exporter"],
-            metric_exporter_names=["azure-monitor-opentelemetry-exporter"],
-            log_exporter_names=["azure-monitor-opentelemetry-exporter"],
+            trace_exporter_names=["azure_monitor_opentelemetry_exporter"],
+            metric_exporter_names=["azure_monitor_opentelemetry_exporter"],
+            log_exporter_names=["azure_monitor_opentelemetry_exporter"],
             sampler="TEST_SAMPLER",
         )
         mock_diagnostics.info.assert_called_once_with(
