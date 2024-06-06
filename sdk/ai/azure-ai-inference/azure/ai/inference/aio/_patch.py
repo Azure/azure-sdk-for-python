@@ -13,6 +13,8 @@ import sys
 
 from io import IOBase
 from typing import Any, Dict, Union, IO, List, Optional, overload, Type, TYPE_CHECKING
+from typing_extensions import Self
+
 from azure.core.pipeline import PipelineResponse
 from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -475,9 +477,17 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
             self._model_info = await self._get_model_info(**kwargs) # pylint: disable=attribute-defined-outside-init
         return self._model_info
 
+
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
         return super().__str__() + f"\n{self._model_info}" if hasattr(self, "_model_info") else super().__str__()
+
+
+    # Remove this once https://github.com/Azure/autorest.python/issues/2619 is fixed,
+    # and you see the equivalent auto-generated method in _client.py return "Self"
+    async def __aenter__(self) -> Self:
+        await self._client.__aenter__()
+        return self
 
 
 class EmbeddingsClient(EmbeddingsClientGenerated):
@@ -705,9 +715,17 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
             self._model_info = await self._get_model_info(**kwargs) # pylint: disable=attribute-defined-outside-init
         return self._model_info
 
+
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
         return super().__str__() + f"\n{self._model_info}" if hasattr(self, "_model_info") else super().__str__()
+
+
+    # Remove this once https://github.com/Azure/autorest.python/issues/2619 is fixed,
+    # and you see the equivalent auto-generated method in _client.py return "Self"
+    async def __aenter__(self) -> Self:
+        await self._client.__aenter__()
+        return self
 
 
 class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
@@ -935,10 +953,17 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
             self._model_info = await self._get_model_info(**kwargs) # pylint: disable=attribute-defined-outside-init
         return self._model_info
 
+
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
         return super().__str__() + f"\n{self._model_info}" if hasattr(self, "_model_info") else super().__str__()
 
+
+    # Remove this once https://github.com/Azure/autorest.python/issues/2619 is fixed,
+    # and you see the equivalent auto-generated method in _client.py return "Self"
+    async def __aenter__(self) -> Self:
+        await self._client.__aenter__()
+        return self
 
 __all__: List[str] = [
     "load_client",

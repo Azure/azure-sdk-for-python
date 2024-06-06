@@ -12,6 +12,10 @@ Why do we patch auto-generated code?
 2. Add support for function load_client
 3. Add support for get_model_info, while caching the result (all clients)
 4. Add support for chat completion streaming (ChatCompletionsClient client only)
+5. __enter__ (and __aenter__) method had to be overridden due to https://github.com/Azure/autorest.python/issues/2619 (all clients).
+   Otherwise intellisense did not show the patched public methods on the client object, when the client is defined using 
+   context manager ("with" statement).
+
 """
 import json
 import logging
@@ -19,6 +23,8 @@ import sys
 
 from io import IOBase
 from typing import Any, Dict, Union, IO, List, Optional, overload, Type, TYPE_CHECKING
+from typing_extensions import Self
+
 from azure.core.pipeline import PipelineResponse
 from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
@@ -470,9 +476,17 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
             self._model_info = self._get_model_info(**kwargs) # pylint: disable=attribute-defined-outside-init
         return self._model_info
 
+
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
         return super().__str__() + f"\n{self._model_info}" if hasattr(self, "_model_info") else super().__str__()
+
+
+    # Remove this once https://github.com/Azure/autorest.python/issues/2619 is fixed,
+    # and you see the equivalent auto-generated method in _client.py return "Self"
+    def __enter__(self) -> Self:
+        self._client.__enter__()
+        return self
 
 
 class EmbeddingsClient(EmbeddingsClientGenerated):
@@ -700,9 +714,17 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
             self._model_info = self._get_model_info(**kwargs) # pylint: disable=attribute-defined-outside-init
         return self._model_info
 
+
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
         return super().__str__() + f"\n{self._model_info}" if hasattr(self, "_model_info") else super().__str__()
+
+
+    # Remove this once https://github.com/Azure/autorest.python/issues/2619 is fixed,
+    # and you see the equivalent auto-generated method in _client.py return "Self"
+    def __enter__(self) -> Self:
+        self._client.__enter__()
+        return self
 
 
 class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
@@ -930,9 +952,17 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
             self._model_info = self._get_model_info(**kwargs) # pylint: disable=attribute-defined-outside-init
         return self._model_info
 
+
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
         return super().__str__() + f"\n{self._model_info}" if hasattr(self, "_model_info") else super().__str__()
+
+
+    # Remove this once https://github.com/Azure/autorest.python/issues/2619 is fixed,
+    # and you see the equivalent auto-generated method in _client.py return "Self"
+    def __enter__(self) -> Self:
+        self._client.__enter__()
+        return self
 
 
 __all__: List[str] = [
