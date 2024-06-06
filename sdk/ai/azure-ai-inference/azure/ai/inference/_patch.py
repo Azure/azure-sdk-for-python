@@ -12,9 +12,10 @@ Why do we patch auto-generated code?
 2. Add support for function load_client
 3. Add support for get_model_info, while caching the result (all clients)
 4. Add support for chat completion streaming (ChatCompletionsClient client only)
-5. __enter__ (and __aenter__) method had to be overridden due to https://github.com/Azure/autorest.python/issues/2619 (all clients).
-   Otherwise intellisense did not show the patched public methods on the client object, when the client is defined using 
-   context manager ("with" statement).
+5. __enter__ (and __aenter__) method had to be overridden due to
+   https://github.com/Azure/autorest.python/issues/2619 (all clients).
+   Otherwise intellisense did not show the patched public methods on the client object,
+   when the client is defined using context manager ("with" statement).
 
 """
 import json
