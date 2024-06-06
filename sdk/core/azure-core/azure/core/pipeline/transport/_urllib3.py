@@ -205,22 +205,33 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
         self._cert_verify(kwargs)
         stream_response: bool = kwargs.pop("stream", False)
         try:
-            content = request.content
-        except AttributeError:
-            content = request.data or request.files
-        try:
-            result = self._pool.urlopen(
-                method=request.method,
-                url=request.url,
-                body=content,
-                timeout=timeout,
-                headers=request.headers,
-                preload_content=False,
-                decode_content=False,
-                redirect=False,
-                retries=False,
-                **kwargs
-            )
+            if request.files:
+                result = self._pool.request_encode_body(
+                    method=request.method,
+                    url=request.url,
+                    fields=request.files,
+                    encode_multipart=True,
+                    timeout=timeout,
+                    headers=request.headers,
+                    preload_content=False,
+                    decode_content=False,
+                    redirect=False,
+                    retries=False,
+                    **kwargs
+                )
+            else:
+                result = self._pool.urlopen(
+                    method=request.method,
+                    url=request.url,
+                    body=request.data,
+                    timeout=timeout,
+                    headers=request.headers,
+                    preload_content=False,
+                    decode_content=False,
+                    redirect=False,
+                    retries=False,
+                    **kwargs
+                )
             response = Urllib3TransportResponse(
                     request=request,
                     internal_response=result,
