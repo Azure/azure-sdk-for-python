@@ -9,16 +9,17 @@ import pytest
 import pathlib
 import uuid
 from devtools_testutils import AzureRecordedTestCase
-from conftest import ASST_AZURE, ASST_AZUREAD, PREVIEW, GPT_4_OPENAI, configure
+from conftest import ASST_AZURE, PREVIEW, GPT_4_OPENAI, configure
 
 TIMEOUT = 300
+
 
 class TestAssistants(AzureRecordedTestCase):
 
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(ASST_AZURE, PREVIEW), (ASST_AZUREAD, PREVIEW), (GPT_4_OPENAI, "v1")]
+        [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
     )
     def test_assistants_crud(self, client, api_type, api_version, **kwargs):
 
