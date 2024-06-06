@@ -53,7 +53,7 @@ class Urllib3StreamDownloadGenerator:
         self.pipeline = pipeline
         self.response = response
         decompress = kwargs.pop("decompress", True)
-        self.iter_content_func = self.response.internal_response.stream(
+        self.iter_content_func = self.response._internal_response.stream(
             amt=self.response._block_size,
             decode_content=decompress
         )
@@ -68,6 +68,9 @@ class Urllib3StreamDownloadGenerator:
                 urllib3.exceptions.IncompleteRead,
                 urllib3.exceptions.InvalidChunkLength) as err:
             raise IncompleteReadError(err, error=err) from err
+        except urllib3.exceptions.HTTPError as err:
+            raise ServiceResponseError(err, error=err) from err
+
 
 
 class Urllib3TransportResponse(HttpResponseImpl):
@@ -89,6 +92,12 @@ class Urllib3TransportResponse(HttpResponseImpl):
             stream_download_generator=kwargs.pop("stream_download_generator", Urllib3StreamDownloadGenerator),
             **kwargs
         )
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        # Remove the unpicklable entries.
+        state["_internal_response"] = None  # urllib3 response are not pickable (see headers comments)
+        return state
     
     def close(self) -> None:
         super().close()
@@ -206,7 +215,7 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
                 body=content,
                 timeout=timeout,
                 headers=request.headers,
-                preload_content=not stream_response,
+                preload_content=False,
                 decode_content=False,
                 redirect=False,
                 retries=False,
