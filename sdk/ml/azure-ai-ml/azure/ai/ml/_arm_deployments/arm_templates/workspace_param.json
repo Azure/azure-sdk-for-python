@@ -192,7 +192,7 @@
         "value": "false"
     },
     "allowRoleAssignmentOnRG": {
-        "value": "Enabled"
+        "value": "true"
     },
     "serverless_compute_settings": {
         "value": {}

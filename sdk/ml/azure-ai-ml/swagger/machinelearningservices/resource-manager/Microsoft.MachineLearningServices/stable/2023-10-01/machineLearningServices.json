@@ -2606,7 +2606,7 @@
         },
         "allowRoleAssignmentOnRG": {
           "description": "Determine whether we will allow workspace role assignment on resource group level.",
-          "type": "string"
+          "type": "boolean"
         },
         "serverlessComputeSettings": {
           "description": "Settings for serverless compute created in the workspace",

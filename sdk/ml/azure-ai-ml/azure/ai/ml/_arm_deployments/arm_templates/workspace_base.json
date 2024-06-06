@@ -425,10 +425,10 @@
         },
         "allowRoleAssignmentOnRG": {
             "type": "string",
-            "defaultValue": "Enabled",
+            "defaultValue": "true",
             "allowedValues": [
-                "Disabled",
-                "Enabled"
+                "true",
+                "false"
             ],
             "metadata": {
                 "description": "A flag to determine if workspace should be created/update with allow role assignment on resource group level."
