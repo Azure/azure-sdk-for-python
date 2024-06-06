@@ -341,9 +341,7 @@ class WorkspaceOperationsBase(ABC):
             system_datastores_auth_mode=kwargs.get(
                 "system_datastores_auth_mode", workspace.system_datastores_auth_mode
             ),
-            allow_roleassignment_on_rg=kwargs.get(
-                "allow_roleassignment_on_rg", workspace.allow_roleassignment_on_rg
-            ),
+            allow_roleassignment_on_rg=kwargs.get("allow_roleassignment_on_rg", workspace.allow_roleassignment_on_rg),
             image_build_compute=kwargs.get("image_build_compute", workspace.image_build_compute),
             identity=identity,
             primary_user_assigned_identity=kwargs.get(
