@@ -214,6 +214,12 @@ class AutoLockRenewer:
             renew_period_override = (
                 time_until_expiry.seconds * SHORT_RENEW_SCALING_FACTOR
             )
+        
+        _log.debug(
+            "Running lock auto-renew for %r for %r seconds",
+            renewable,
+            max_lock_renewal_duration or self._max_lock_renewal_duration
+        )
 
         renew_future = asyncio.ensure_future(
             self._auto_lock_renew(
