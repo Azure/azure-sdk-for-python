@@ -106,7 +106,7 @@ class WorkspaceOperationsBase(ABC):
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
         :raises ~azure.ai.ml.ValidationException: Raised if workspace is Project workspace and user
         specifies any of the following in workspace object: storage_account, container_registry, key_vault,
-        public_network_access, managed_network, customer_managed_key.
+        public_network_access, managed_network, customer_managed_key, system_datastores_auth_mode.
         """
         existing_workspace = None
         resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
@@ -336,6 +336,10 @@ class WorkspaceOperationsBase(ABC):
             description=kwargs.get("description", workspace.description),
             friendly_name=kwargs.get("display_name", workspace.display_name),
             public_network_access=kwargs.get("public_network_access", workspace.public_network_access),
+            system_datastores_auth_mode=kwargs.get(
+                "system_datastores_auth_mode", workspace.system_datastores_auth_mode
+            ),
+            allow_roleassignment_on_rg=kwargs.get("allow_roleassignment_on_rg", workspace.allow_roleassignment_on_rg),
             image_build_compute=kwargs.get("image_build_compute", workspace.image_build_compute),
             identity=identity,
             primary_user_assigned_identity=kwargs.get(
@@ -631,6 +635,12 @@ class WorkspaceOperationsBase(ABC):
 
         if workspace.public_network_access:
             _set_val(param["publicNetworkAccess"], workspace.public_network_access)
+
+        if workspace.system_datastores_auth_mode:
+            _set_val(param["systemDatastoresAuthMode"], workspace.system_datastores_auth_mode)
+
+        if not workspace.allow_roleassignment_on_rg:
+            _set_val(param["allowRoleAssignmentOnRG"], "false")
 
         if workspace.image_build_compute:
             _set_val(param["imageBuildCompute"], workspace.image_build_compute)
