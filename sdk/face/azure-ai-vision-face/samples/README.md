@@ -14,21 +14,23 @@ The async versions of the samples (the python sample files appended with `_async
 
 Several Azure Face Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Face:
 
-* [samples_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/samples_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/samples_authentication_async.py)) - Examples for authenticating and creating the client:
+* [sample_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_authentication_async.py)) - Examples for authenticating and creating the client:
     * From a key
     * From Microsoft Entra ID
 
-* [samples_face_liveness_detection.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/samples_face_liveness_detection.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/samples_face_liveness_detection_async.py)) - Examples for performing liveness detection
+* [sample_face_liveness_detection.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_face_liveness_detection.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_face_liveness_detection_async.py)) - Examples for performing liveness detection
 
-* [samples_face_liveness_detection_with_verification.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/samples_face_liveness_detection_with_verification.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/samples_face_liveness_detection_with_verification_async.py)) - Examples for performing liveness detection with face verification
+* [sample_face_liveness_detection_with_verification.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_face_liveness_detection_with_verification.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_face_liveness_detection_with_verification_async.py)) - Examples for performing liveness detection with face verification
 
-* [samples_face_detection.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/samples_face_detection.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/samples_face_detection_async.py)) - Examples for detecting human faces in an image:
+* [sample_face_detection.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_face_detection.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_face_detection_async.py)) - Examples for detecting human faces in an image:
     * From a binary data
     * From a URL
 
-* [samples_face_grouping.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/samples_face_grouping.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/samples_face_grouping_async.py)) - Examples for dividing candidate faces into groups based on face similarity.
+* [sample_stateless_face_verification.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_stateless_face_verification.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_stateless_face_verification_async.py)) - Examples for verifying whether two faces belong to the same person.
 
-* [samples_find_similar_faces.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/samples_find_similar_faces.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/samples_find_similar_faces_async.py)) - Examples for searching the similar-looking faces from a set of candidate faces:
+* [sample_face_grouping.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_face_grouping.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_face_grouping_async.py)) - Examples for dividing candidate faces into groups based on face similarity.
+
+* [sample_find_similar_faces.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_find_similar_faces.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/face/azure-ai-vision-face/samples/sample_find_similar_faces_async.py)) - Examples for searching the similar-looking faces from a set of candidate faces:
     * From a faceId array
     * From a large face list
 
@@ -52,7 +54,7 @@ pip install azure-ai-vision-face
 
 1. Open a terminal window and `cd` to the directory that the samples are saved in.
 2. Set the environment variables specified in the sample file you wish to run.
-3. Follow the usage described in the file, e.g. `python samples_face_detection.py`
+3. Follow the usage described in the file, e.g. `python sample_face_detection.py`
 
 ## Next steps
 

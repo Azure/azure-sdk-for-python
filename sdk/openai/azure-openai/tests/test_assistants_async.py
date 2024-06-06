@@ -9,7 +9,7 @@ import pytest
 import pathlib
 import uuid
 from devtools_testutils import AzureRecordedTestCase
-from conftest import ASST_AZURE, ASST_AZUREAD, PREVIEW, GPT_4_OPENAI, configure_async
+from conftest import ASST_AZURE, PREVIEW, GPT_4_OPENAI, configure_async
 from openai import AsyncAssistantEventHandler
 from openai.types.beta.threads import (
     Text,
@@ -19,7 +19,6 @@ from openai.types.beta.threads import (
     MessageDelta,
 )
 from openai.types.beta.threads.runs import RunStep, ToolCall, RunStepDelta, ToolCallDelta
-
 
 TIMEOUT = 300
 
@@ -187,7 +186,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(ASST_AZURE, PREVIEW), (ASST_AZUREAD, PREVIEW), (GPT_4_OPENAI, "v1")]
+        [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
     )
     async def test_assistants_crud(self, client_async, api_type, api_version, **kwargs):
         try:
