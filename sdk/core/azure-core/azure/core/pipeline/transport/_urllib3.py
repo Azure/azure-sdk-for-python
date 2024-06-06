@@ -203,7 +203,7 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
             response = Urllib3TransportResponse(
                     request=request,
                     internal_response=result,
-                    block_size=self.connection_config.data_block_size,
+                    block_size=self._config.data_block_size,
                 )
             if not stream_response:
                 response.read()
