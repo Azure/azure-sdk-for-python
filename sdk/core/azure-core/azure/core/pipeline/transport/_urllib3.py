@@ -74,7 +74,7 @@ class Urllib3TransportResponse(HttpResponseImpl):
         super().__init__(
             request=request,
             internal_response=internal_response,
-            status_code=kwargs.pop("status_code", internal_response.status_code),
+            status_code=kwargs.pop("status_code", internal_response.status),
             headers=headers,
             reason=kwargs.pop('reason', internal_response.reason),
             content_type=kwargs.pop("content-type", headers.get("content-type")),
@@ -188,10 +188,14 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
         self._cert_verify(kwargs)
         stream_response: bool = kwargs.pop("stream", False)
         try:
+            content = request.content
+        except AttributeError:
+            content = request.data or request.files
+        try:
             result = self._pool.urlopen(
                 method=request.method,
                 url=request.url,
-                body=request.content,
+                body=content,
                 timeout=timeout,
                 headers=request.headers,
                 preload_content=not stream_response,
