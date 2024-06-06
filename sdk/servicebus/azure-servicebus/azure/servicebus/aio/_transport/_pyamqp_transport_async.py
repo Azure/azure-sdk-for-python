@@ -329,8 +329,11 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         from ..._pyamqp.error import ErrorCondition
         try:
             # If receiver Link is not the same as the one that received the message, we need to settle the message over mgmt
-
-            if handler._link._is_closed:  # pylint: disable=protected-access
+            print("SETTLING")
+            # print(f"Handler link: {handler._link}")
+            # print(f"Message link: {message._receiver._handler._link}")
+            # print(f"HANDLER LINK CLOSED: {handler._link._is_closed}")
+            if handler._link._is_closed or handler._link == None or message._receiver._handler._link != handler._link:  # pylint: disable=protected-access
                 raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced, 
                                     description="Message received on a different link than the current receiver link.")
             if settle_operation == MESSAGE_COMPLETE:
@@ -482,7 +485,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         timeout,
         **kwargs: Any
     ) -> List["ServiceBusReceivedMessage"]:
-        receive_drain_timeout = .2 # 200 ms
+        receive_drain_timeout = 20 # 200 ms
         first_message_received = expired = False
         receiving = True
         sent_drain = False
@@ -498,18 +501,11 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                         await receiver._amqp_transport.reset_link_credit_async(amqp_receive_client, max_message_count, drain=True)
                         sent_drain = True
                         time_sent = time.time()
+                        print("SENT DRAIN")
                     if sent_drain != receiver._handler._link._drain_state:
+                        print("BREAKING OUT")
                         break
-
-                    if time.time() - time_sent > receive_drain_timeout:
-                        expired = True
-                        # Close the receiver link because it is dead.
-                        # All settlements of current messages will be done by the mgmt link.
-                        await receiver._handler._link.detach()
-                        # Set receive context to False to stop receiving messages.
-                        receiver._receive_context.clear()
-                        break
-                    
+                print("DO WORK")    
                 before = amqp_receive_client._received_messages.qsize()
                 receiving = await amqp_receive_client.do_work_async()
                 received = amqp_receive_client._received_messages.qsize() - before
@@ -530,10 +526,24 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 batch.append(amqp_receive_client._received_messages.get())
                 amqp_receive_client._received_messages.task_done()
 
+                if time.time() - time_sent > receive_drain_timeout:
+                    print("DRAIN TIMEOUT HIT, closing receiver link.")
+                    expired = True
+                    # Close the receiver link because it is dead and reopen a new one.
+                    # All settlements of current messages will be done by the mgmt link.
+                    await receiver._handler._link.detach(close=True)
+                    # receiver._handler._link = None
+                    print("Calling ready")
+                    # await receiver._handler._client_ready_async() # pylint: disable=protected-access
+                    # Set receive context to False to stop receiving messages.
+                    receiver._receive_context.clear()
+                    break
+
         # Before we return batch, if prefetch is set, receive those messages as well.
         sent_drain = False
         if receiver._prefetch_count > 0:
             while sent_drain == receiver._handler._link._drain_state:
+                print("PREFETCH")
                 if not sent_drain:
                     await receiver._amqp_transport.reset_link_credit_async(amqp_receive_client, max_message_count, drain=True)
                     sent_drain = True

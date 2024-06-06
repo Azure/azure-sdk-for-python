@@ -1090,7 +1090,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         timeout,
         **kwargs: Any
     ) -> List["ServiceBusReceivedMessage"]:
-        receive_drain_timeout = .2 # 200 ms
+        receive_drain_timeout = 20 # 200 ms
         first_message_received = expired = False
         receiving = True
         sent_drain = False
@@ -1110,16 +1110,6 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                     if sent_drain != receiver._handler._link._drain_state:
                         break
 
-                    # TODO: Once we have triggered a Drain=True, if we don't receive back a Drain=True before 
-                    # the drain_receive_timeout (200 ms) we should close the receiver link because it is dead.
-                    if time.time() - time_sent > receive_drain_timeout:
-                        expired = True
-                        # Close the receiver link because it is dead.
-                        # All settlements of current messages will be done by the mgmt link.
-                        receiver._handler._link.detach()
-                        # Set receive context to False to stop receiving messages.
-                        receiver._receive_context.clear()
-                        break
                 before = amqp_receive_client._received_messages.qsize()
                 receiving = amqp_receive_client.do_work()
                 received = amqp_receive_client._received_messages.qsize() - before
@@ -1140,6 +1130,18 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             ):
                 batch.append(amqp_receive_client._received_messages.get())
                 amqp_receive_client._received_messages.task_done()
+
+            if time.time() - time_sent > receive_drain_timeout:
+                print("DRAIN TIMEOUT HIT, closing receiver link.")
+                expired = True
+                # Close the receiver link because it is dead and reopen a new one.
+                # All settlements of current messages will be done by the mgmt link.
+                receiver._handler._link.detach(close=True)
+                # receiver._handler._link = None
+                # receiver._handler._client_ready()
+                # Set receive context to False to stop receiving messages.
+                receiver._receive_context.clear()
+                break
 
         # Before we return batch, if prefetch is set, receive those messages as well.
         sent_drain = False
