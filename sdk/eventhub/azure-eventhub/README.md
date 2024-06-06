@@ -430,7 +430,7 @@ producer = EventHubProducerClient(..., logging_enable=True)
 consumer = EventHubConsumerClient(..., logging_enable=True)
 ```
 
-See the `azure-eventhubs` [troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/TROUBLESHOOTING.md) for details on how to diagnose various other failure scenarios.
+See the `azure-eventhub` [troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/TROUBLESHOOTING.md) for details on how to diagnose various other failure scenarios.
 
 ## Next steps
 
