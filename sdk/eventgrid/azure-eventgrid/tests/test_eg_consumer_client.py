@@ -48,15 +48,8 @@ class TestEventGridConsumerClient(AzureRecordedTestCase):
         eventgrid_key = kwargs["eventgrid_key"]
         eventgrid_topic_name = kwargs["eventgrid_topic_name"]
         eventgrid_event_subscription_name = kwargs["eventgrid_event_subscription_name"]
-        publisher = EventGridPublisherClient(
-            eventgrid_endpoint, AzureKeyCredential(eventgrid_key), namespace_topic=eventgrid_topic_name
-        )
-        consumer = EventGridConsumerClient(
-            eventgrid_endpoint,
-            AzureKeyCredential(eventgrid_key),
-            namespace_topic=eventgrid_topic_name,
-            subscription=eventgrid_event_subscription_name,
-        )
+        publisher = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
+        consumer = self.create_eg_consumer_client(eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name)
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
             data={"sample": "cloudevent"},
@@ -78,15 +71,9 @@ class TestEventGridConsumerClient(AzureRecordedTestCase):
         eventgrid_key = kwargs["eventgrid_key"]
         eventgrid_topic_name = kwargs["eventgrid_topic_name"]
         eventgrid_event_subscription_name = kwargs["eventgrid_event_subscription_name"]
-        publisher = EventGridPublisherClient(
-            eventgrid_endpoint, AzureKeyCredential(eventgrid_key), namespace_topic=eventgrid_topic_name
-        )
-        consumer = EventGridConsumerClient(
-            eventgrid_endpoint,
-            AzureKeyCredential(eventgrid_key),
-            namespace_topic=eventgrid_topic_name,
-            subscription=eventgrid_event_subscription_name,
-        )
+        publisher = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
+        consumer = self.create_eg_consumer_client(eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name)
+
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
             data={"sample": "cloudevent"},
@@ -109,15 +96,9 @@ class TestEventGridConsumerClient(AzureRecordedTestCase):
         eventgrid_key = kwargs["eventgrid_key"]
         eventgrid_topic_name = kwargs["eventgrid_topic_name"]
         eventgrid_event_subscription_name = kwargs["eventgrid_event_subscription_name"]
-        publisher = EventGridPublisherClient(
-            eventgrid_endpoint, AzureKeyCredential(eventgrid_key), namespace_topic=eventgrid_topic_name
-        )
-        consumer = EventGridConsumerClient(
-            eventgrid_endpoint,
-            AzureKeyCredential(eventgrid_key),
-            namespace_topic=eventgrid_topic_name,
-            subscription=eventgrid_event_subscription_name,
-        )
+        publisher = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
+        consumer = self.create_eg_consumer_client(eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name)
+
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
             data={"sample": "cloudevent"},
@@ -139,15 +120,9 @@ class TestEventGridConsumerClient(AzureRecordedTestCase):
         eventgrid_key = kwargs["eventgrid_key"]
         eventgrid_topic_name = kwargs["eventgrid_topic_name"]
         eventgrid_event_subscription_name = kwargs["eventgrid_event_subscription_name"]
-        publisher = EventGridPublisherClient(
-            eventgrid_endpoint, AzureKeyCredential(eventgrid_key), namespace_topic=eventgrid_topic_name
-        )
-        consumer = EventGridConsumerClient(
-            eventgrid_endpoint,
-            AzureKeyCredential(eventgrid_key),
-            namespace_topic=eventgrid_topic_name,
-            subscription=eventgrid_event_subscription_name,
-        )
+        publisher = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
+        consumer = self.create_eg_consumer_client(eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name)
+
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
             data={"sample": "cloudevent"},

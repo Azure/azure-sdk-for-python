@@ -135,8 +135,8 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
             if exception.status_code == 404:
                 raise ResourceNotFoundError(
                     "Resource not found. "
-                    "Please check that the tier you are using, corresponds to the correct "
-                    "endpoint and/or topic name."
+                    "For Event Grid Namespaces, please specify the namespace_topic name on the client. "
+                     "For Event Grid Basic, do not specify the namespace_topic name."
                 ) from exception
             raise exception
 
