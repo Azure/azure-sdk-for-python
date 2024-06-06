@@ -43,5 +43,5 @@ class WorkspaceSchema(PathAwareSchema):
     workspace_hub = fields.Str(validate=validate_arm_str)
     managed_network = ExperimentalField(NestedField(ManagedNetworkSchema, unknown=EXCLUDE))
     enable_data_isolation = fields.Bool()
-    allow_roleassignment_on_rg = fields.Bool()
+    allow_roleassignment_on_rg = fields.Str()
     serverless_compute = NestedField(ServerlessComputeSettingsSchema)

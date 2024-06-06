@@ -644,7 +644,7 @@ class WorkspaceOperationsBase(ABC):
             _set_val(param["systemDatastoresAuthMode"], workspace.system_datastores_auth_mode)
 
         if workspace.allow_roleassignment_on_rg:
-            _set_val(param["allow_roleassignment_on_rg"], workspace.allow_roleassignment_on_rg)
+            _set_val(param["allowRoleAssignmentOnRG"], workspace.allow_roleassignment_on_rg)
    
         if workspace.image_build_compute:
             _set_val(param["imageBuildCompute"], workspace.image_build_compute)

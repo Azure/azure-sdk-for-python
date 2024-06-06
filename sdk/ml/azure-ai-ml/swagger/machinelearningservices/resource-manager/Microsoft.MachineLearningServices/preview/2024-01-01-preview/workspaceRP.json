@@ -4832,7 +4832,7 @@
         },
         "allowRoleAssignmentOnRG": {
           "description": "Determine whether we will allow workspace role assignment on resource group level.",
-          "type": "boolean"
+          "type": "string"
         },
         "enableSoftwareBillOfMaterials": {
           "description": "Flag to tell if SoftwareBillOfMaterial should be enabled for this workspace",
@@ -5045,7 +5045,7 @@
         },
         "allowRoleAssignmentOnRG": {
           "description": "Determine whether we will allow workspace role assignment on resource group level.",
-          "type": "boolean"
+          "type": "string"
         },
         "enableSoftwareBillOfMaterials": {
           "description": "Flag to tell if SoftwareBillOfMaterial should be enabled for this workspace",

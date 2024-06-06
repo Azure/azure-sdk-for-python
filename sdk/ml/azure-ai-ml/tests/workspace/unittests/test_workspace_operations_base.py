@@ -153,7 +153,7 @@ class TestWorkspaceOperation:
                 ],
             )
             ws.system_datastores_auth_mode = "identity"
-            ws.allow_roleassignment_on_rg = True
+            ws.allow_roleassignment_on_rg = "Enabled"
             return ws._to_rest_object()
 
         mock_workspace_operation_base._operation.get.side_effect = outgoing_get_call
@@ -161,7 +161,7 @@ class TestWorkspaceOperation:
         mock_workspace_operation_base._operation.get.assert_called_once()
 
         assert ws.system_datastores_auth_mode == "identity"
-        assert ws.allow_roleassignment_on_rg == True
+        assert ws.allow_roleassignment_on_rg == "Enabled"
 
         assert ws.managed_network is not None
         assert ws.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
@@ -223,7 +223,7 @@ class TestWorkspaceOperation:
             ),
             managed_network=ManagedNetwork(),
             system_datastores_auth_mode="identity",
-            allow_roleassignment_on_rg=True,
+            allow_roleassignment_on_rg="Enabled",
             primary_user_assigned_identity="resource2",
             customer_managed_key=CustomerManagedKey(key_uri="new_cmk_uri"),
         )
@@ -248,7 +248,7 @@ class TestWorkspaceOperation:
             )
             assert params.managed_network.isolation_mode == "Disabled"
             assert params.system_datastores_auth_mode == "identity"
-            assert params.allow_roleassignment_on_rg == True
+            assert params.allow_roleassignment_on_rg == "Enabled"
             assert params.managed_network.outbound_rules == {}
             assert polling is True
             assert callable(cls)

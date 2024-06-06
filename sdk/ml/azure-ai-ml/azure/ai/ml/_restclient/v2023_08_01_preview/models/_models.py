@@ -32320,7 +32320,8 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
     :ivar enable_data_isolation:
     :vartype enable_data_isolation: bool
     :ivar allow_roleassignment_on_rg: Determine whether we will allow workspace role assignment on resource group level.
-    :vartype allow_roleassignment_on_rg: bool
+     include: "Enabled", "Disabled".    
+    :vartype allow_roleassignment_on_rg: str
     :ivar encryption:
     :vartype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
     :ivar feature_store_settings: Settings for feature store type workspace.
@@ -32375,7 +32376,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         'soft_delete_retention_in_days': {'key': 'properties.softDeleteRetentionInDays', 'type': 'int'},
         'v1_legacy_mode': {'key': 'properties.v1LegacyMode', 'type': 'bool'},
         'system_datastores_auth_mode': {'key': 'properties.systemDatastoresAuthMode', 'type': 'str'},
-        'allow_roleassignment_on_rg' : {'Key': 'properties.allowRoleAssignmentOnRG', 'type': 'bool'}
+        'allow_roleassignment_on_rg' : {'Key': 'properties.allowRoleAssignmentOnRG', 'type': 'str'}
     }
 
     def __init__(
@@ -32400,7 +32401,8 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         :keyword enable_data_isolation:
         :paramtype enable_data_isolation: bool
         :ivar allow_roleassignment_on_rg: Determine whether we will allow workspace role assignment on resource group level.
-        :vartype allow_roleassignment_on_rg: bool
+         include: "Enabled", "Disabled".
+        :vartype allow_roleassignment_on_rg: str
         :keyword encryption:
         :paramtype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
         :keyword feature_store_settings: Settings for feature store type workspace.

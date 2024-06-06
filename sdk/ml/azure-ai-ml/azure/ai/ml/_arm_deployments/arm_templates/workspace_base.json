@@ -423,12 +423,12 @@
                 "description": "The authentication mode for system datastores"
             }
         },
-        "allow_roleassignment_on_rg": {
+        "allowRoleAssignmentOnRG": {
             "type": "string",
-            "defaultValue": "false",
+            "defaultValue": "Enabled",
             "allowedValues": [
-                "false",
-                "true"
+                "Disabled",
+                "Enabled"
             ],
             "metadata": {
                 "description": "A flag to determine if workspace should be created/update with allow role assignment on resource group level."

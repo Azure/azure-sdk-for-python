@@ -191,8 +191,8 @@
     "enable_data_isolation": {
         "value": "false"
     },
-    "allow_roleassignment_on_rg": {
-        "value": "true"
+    "allowRoleAssignmentOnRG": {
+        "value": "Enabled"
     },
     "serverless_compute_settings": {
         "value": {}

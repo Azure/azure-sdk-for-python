@@ -3394,7 +3394,7 @@
         },
         "allowRoleAssignmentOnRG": {
           "description": "Determine whether we will allow workspace role assignment on resource group level.",
-          "type": "boolean"
+          "type": "string"
         },
         "encryption": {
           "$ref": "#/definitions/EncryptionProperty"
@@ -3596,7 +3596,7 @@
         },
         "allowRoleAssignmentOnRG": {
           "description": "Determine whether we will allow workspace role assignment on resource group level.",
-          "type": "boolean"
+          "type": "string"
         },
         "encryption": {
           "$ref": "#/definitions/EncryptionUpdateProperties"
