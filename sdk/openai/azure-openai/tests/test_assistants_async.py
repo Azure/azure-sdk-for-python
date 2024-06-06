@@ -8,6 +8,7 @@ import time
 import pytest
 import pathlib
 import uuid
+import openai
 from devtools_testutils import AzureRecordedTestCase
 from conftest import ASST_AZURE, PREVIEW, GPT_4_OPENAI, configure_async
 from openai import AsyncAssistantEventHandler
@@ -648,7 +649,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                 **kwargs,
             )
 
-            run = await client_async.beta.threads.create_and_run(
+            run = await client_async.beta.threads.create_and_run_poll(
                 assistant_id=assistant.id,
                 thread={
                     "messages": [
@@ -656,36 +657,28 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                     ]
                 }
             )
-            start_time = time.time()
 
-            while True:
-                if time.time() - start_time > TIMEOUT:
-                    raise TimeoutError("Run timed out")
+            if run.status == "failed":
+                raise openai.OpenAIError(run.last_error.message)
+            if run.status == "requires_action":
+                run = await client_async.beta.threads.runs.submit_tool_outputs_and_poll(
+                    thread_id=run.thread_id,
+                    run_id=run.id,
+                    tool_outputs=[
+                        {
+                            "tool_call_id": run.required_action.submit_tool_outputs.tool_calls[0].id,
+                            "output": "{\"temperature\": \"22\", \"unit\": \"celsius\", \"description\": \"Sunny\"}"
+                        }
+                    ]
+                )
 
-                run = await client_async.beta.threads.runs.retrieve(thread_id=run.thread_id, run_id=run.id)
+            if run.status == "completed":
+                messages = client_async.beta.threads.messages.list(thread_id=run.thread_id)
 
-                if run.status == "requires_action":
-                    run = await client_async.beta.threads.runs.submit_tool_outputs(
-                        thread_id=run.thread_id,
-                        run_id=run.id,
-                        tool_outputs=[
-                            {
-                                "tool_call_id": run.required_action.submit_tool_outputs.tool_calls[0].id,
-                                "output": "{\"temperature\": \"22\", \"unit\": \"celsius\", \"description\": \"Sunny\"}"
-                            }
-                        ]
-                    )
+                async for message in messages:
+                    assert message.content[0].type == "text"
+                    assert message.content[0].text.value
 
-                if run.status == "completed":
-                    messages = client_async.beta.threads.messages.list(thread_id=run.thread_id)
-
-                    async for message in messages:
-                        assert message.content[0].type == "text"
-                        assert message.content[0].text.value
-
-                    break
-
-                time.sleep(5)
 
             runs = client_async.beta.threads.runs.list(thread_id=run.thread_id)
             async for r in runs:
