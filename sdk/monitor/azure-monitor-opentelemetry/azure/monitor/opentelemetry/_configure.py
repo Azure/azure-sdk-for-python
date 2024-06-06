@@ -90,6 +90,8 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
      Defaults to `False`.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
      `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
+    :keyword list[~opentelemetry.sdk.metrics.view.View] views: List of `View` objects to configure and filter
+     metric output.
     :rtype: None
     """
 
