@@ -67,7 +67,7 @@ class Urllib3TransportResponse(HttpResponseImpl):
         self,
         *,
         request: RestHttpRequest,
-        internal_response: urllib3.response.BaseHTTPResponse,
+        internal_response: urllib3.response.HTTPResponse,
     ) -> None:
         headers = case_insensitive_dict(internal_response.getheaders())
         super().__init__(
