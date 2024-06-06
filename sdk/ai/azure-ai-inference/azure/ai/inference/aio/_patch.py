@@ -13,7 +13,6 @@ import sys
 
 from io import IOBase
 from typing import Any, Dict, Union, IO, List, Optional, overload, Type, TYPE_CHECKING
-from typing_extensions import Self
 
 from azure.core.pipeline import PipelineResponse
 from azure.core.credentials import AzureKeyCredential
@@ -46,6 +45,12 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
+
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
 _LOGGER = logging.getLogger(__name__)
