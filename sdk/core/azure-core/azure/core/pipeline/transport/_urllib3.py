@@ -24,7 +24,8 @@
 #
 # --------------------------------------------------------------------------
 import os
-from typing import Any, ContextManager, Iterator, Mapping, Optional, Union
+import functools
+from typing import Any, Mapping, Optional, Union
 
 import urllib3
 from azure.core.pipeline import Pipeline
@@ -78,12 +79,17 @@ class Urllib3TransportResponse(HttpResponseImpl):
             content_type=headers.get("content-type"),
             stream_download_generator=Urllib3StreamDownloadGenerator,
         )
+    
+    def close(self) -> None:
+        super().close()
+        self._internal_response.release_conn()
 
 
 class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
-    """Implements a basic httpx HTTP sender
+    """Implements a basic urllib3 HTTP sender.
 
-    :keyword httpx.Client client: HTTPX client to use instead of the default one
+    :keyword pool: A preconfigured urllib3 PoolManager of HttpConnectionPool.
+    :paramtype pool: ~urllib3.PoolManager or ~urllib3.HTTPConnectionPool
     """
 
     def __init__(
@@ -95,20 +101,21 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
         self._pool: Optional[Union[urllib3.PoolManager, urllib3.HTTPConnectionPool]] = pool
         self._pool_owner: bool = kwargs.get("pool_owner", True)
         self._config = ConnectionConfiguration(**kwargs)
+        self._pool_cls = urllib3.PoolManager
         if 'proxies' in kwargs:
-            raise NotImplementedError(
-                "Proxies are not yet supported. Please pass in a configured urllib3.ProxyManager."
-            )
+            proxies = kwargs.pop('proxies')
+            if len(proxies) > 1:
+                raise ValueError("Only a single proxy url is supported for urllib3.")
+            proxy_url = list(proxies.values())[0]
+            self._pool_cls = functools.partial(urllib3.ProxyManager, proxy_url)
+
         # See https://github.com/Azure/azure-sdk-for-python/issues/25640 to understand why we track this
         self._has_been_opened = False
 
     def _cert_verify(self, kwargs: Mapping[str, Any]) -> None:
-        """Verify a SSL certificate.
+        """Update the request kwargs to configure the SSL certificate.
 
-        :param verify: Either a boolean, in which case it controls whether we verify
-            the server's TLS certificate, or a string, in which case it must be a path
-            to a CA bundle to use
-        :param cert: The SSL certificate to verify.
+        :param dict[str, Any] kwargs: The request context keyword args. 
         """
         verify : Union[bool, str] = kwargs.pop("connection_verify", self._config.verify)
         cert_kwargs = {}
@@ -130,7 +137,7 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
                 cert_kwargs["key_file"] = None
         kwargs.update(cert_kwargs)
     
-    def open(self):
+    def open(self) -> None:
         """Assign new session if one does not already exist."""
         if self._has_been_opened and not self._pool:
             raise ValueError(
@@ -140,7 +147,7 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
             )
         if not self._pool:
             if self._pool_owner:
-                self._pool = urllib3.PoolManager(
+                self._pool = self._pool_cls(
                     retries=False,
                     blocksize=DEFAULT_BLOCK_SIZE
                 )
@@ -148,7 +155,7 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
                 raise ValueError("pool_owner cannot be False and no pool is available")
         self._has_been_opened = True
 
-    def close(self):
+    def close(self) -> None:
         """Close the session if it is not externally owned."""
         if self._pool and self._pool_owner:
             try:
@@ -161,10 +168,9 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
     def send(self, request: RestHttpRequest, **kwargs) -> Urllib3TransportResponse:
         """Send the request using this HTTP sender.
 
-        :param request: The pipeline request object
-        :type request: ~azure.core.transport.HTTPRequest
-        :return: The pipeline response object.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :param request: The HTTP request.
+        :paramtype request: ~azure.core.rest.HttpRequest
+        :rtype: ~azure.core.rest.HttpResponse
         """
         if 'proxies' in kwargs:
             raise NotImplementedError(
@@ -209,14 +215,14 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
             raise IncompleteReadError(err, error=err) from err
         except (
                 urllib3.exceptions.RequestError,
-                urllib3.exeptions.ProtocolError,
-                urllib3.exeptions.ResponseError) as err:
+                urllib3.exceptions.ProtocolError,
+                urllib3.exceptions.ResponseError) as err:
             raise ServiceResponseError(err, error=err) from err
         except (
                 ValueError,
                 urllib3.exceptions.SSLError,
                 urllib3.exceptions.ProxyError,
-                urllib3.exceptions.ConnectTimeoutError.
+                urllib3.exceptions.ConnectTimeoutError,
                 urllib3.exceptions.PoolError) as err:
             raise ServiceRequestError(err, error=err) from err
         except urllib3.exceptions.HTTPError as err:

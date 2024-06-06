@@ -59,7 +59,8 @@ class MockRestClient(object):
             base_url="http://localhost:{}/".format(port),
             config=self._config,
             transport=transport,
-            **kwargs)
+            **kwargs
+        )
 
     def send_request(self, request, **kwargs):
         """Runs the network request through the client's chained policies.
