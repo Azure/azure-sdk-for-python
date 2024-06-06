@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Enable views configuration
+    ([#35932](https://github.com/Azure/azure-sdk-for-python/pull/35932))
 - Rework autoinstrumentation: Configure exporters and samplers directly
     ([#35890](https://github.com/Azure/azure-sdk-for-python/pull/35890))
 
