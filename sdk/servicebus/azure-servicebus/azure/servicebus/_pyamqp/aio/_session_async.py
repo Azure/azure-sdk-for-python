@@ -372,10 +372,10 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         try:
             link = self._input_handles[frame[0]]  # handle
             await link._incoming_detach(frame)  # pylint: disable=protected-access
-            # if link._is_closed:  TODO
-            #     self.links.pop(link.name, None)
-            #     self._input_handles.pop(link.remote_handle, None)
-            #     self._output_handles.pop(link.handle, None)
+            if link._is_closed:  # TODO - need for this
+                self.links.pop(link.name)
+                self._input_handles.pop(link.remote_handle)
+                self._output_handles.pop(link.handle)
         except KeyError:
             await self._set_state(SessionState.DISCARDING)
             await self._connection.close(
