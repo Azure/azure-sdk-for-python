@@ -17,6 +17,16 @@ from azure.eventhub.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType
 CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
+import logging
+import sys
+handler = logging.StreamHandler(stream=sys.stdout)
+logger = logging.getLogger('azure.eventhub')
+logger.setLevel(logging.DEBUG)
+logger.addHandler(handler)
+#uamqp_logger = logging.getLogger('uamqp')
+#uamqp_logger.setLevel(logging.DEBUG)
+#uamqp_logger.addHandler(handler)
+
 def send_data_message(producer):
     data_body = [b'aa', b'bb', b'cc']
     application_properties = {"body_type": "data"}
@@ -91,14 +101,14 @@ def receive_and_parse_message(consumer):
             print('Stopped receiving.')
 
 
-producer = EventHubProducerClient.from_connection_string(
-    conn_str=CONNECTION_STR,
-    eventhub_name=EVENTHUB_NAME
-)
-with producer:
-    send_data_message(producer)
-    send_sequence_message(producer)
-    send_value_message(producer)
+#producer = EventHubProducerClient.from_connection_string(
+#    conn_str=CONNECTION_STR,
+#    eventhub_name=EVENTHUB_NAME
+#)
+#with producer:
+#    send_data_message(producer)
+#    send_sequence_message(producer)
+#    send_value_message(producer)
 
 
 consumer = EventHubConsumerClient.from_connection_string(
