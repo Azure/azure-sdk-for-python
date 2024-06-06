@@ -124,6 +124,24 @@ def load_client(
 
 
 class ChatCompletionsClient(ChatCompletionsClientGenerated):
+    """ChatCompletionsClient.
+
+    :param endpoint: Service host. Required.
+    :type endpoint: str
+    :param credential: Credential used to authenticate requests to the service. Is either a
+     AzureKeyCredential type or a TokenCredential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials.TokenCredential
+    :keyword api_version: The API version to use for this operation. Default value is
+     "2024-05-01-preview". Note that overriding this default value may result in unsupported
+     behavior.
+    :paramtype api_version: str
+    """
+
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
+        self._model_info: Optional[_models.ModelInfo] = None
+        super().__init__(endpoint, credential, **kwargs)
+
 
     @overload
     def complete(
@@ -527,14 +545,14 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :rtype: ~azure.ai.inference.models.ModelInfo
         :raises ~azure.core.exceptions.HttpResponseError
         """
-        if not hasattr(self, "_model_info"):
+        if not self._model_info:
             self._model_info = self._get_model_info(**kwargs) # pylint: disable=attribute-defined-outside-init
         return self._model_info
 
 
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
-        return super().__str__() + f"\n{self._model_info}" if hasattr(self, "_model_info") else super().__str__()
+        return super().__str__() + f"\n{self._model_info}" if self._model_info else super().__str__()
 
 
     # Remove this once https://github.com/Azure/autorest.python/issues/2619 is fixed,
@@ -545,6 +563,24 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
 
 class EmbeddingsClient(EmbeddingsClientGenerated):
+    """EmbeddingsClient.
+
+    :param endpoint: Service host. Required.
+    :type endpoint: str
+    :param credential: Credential used to authenticate requests to the service. Is either a
+     AzureKeyCredential type or a TokenCredential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials.TokenCredential
+    :keyword api_version: The API version to use for this operation. Default value is
+     "2024-05-01-preview". Note that overriding this default value may result in unsupported
+     behavior.
+    :paramtype api_version: str
+    """
+
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
+        self._model_info: Optional[_models.ModelInfo] = None
+        super().__init__(endpoint, credential, **kwargs)
+
 
     @overload
     def embed(
@@ -765,14 +801,14 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :rtype: ~azure.ai.inference.models.ModelInfo
         :raises ~azure.core.exceptions.HttpResponseError
         """
-        if not hasattr(self, "_model_info"):
+        if not self._model_info:
             self._model_info = self._get_model_info(**kwargs) # pylint: disable=attribute-defined-outside-init
         return self._model_info
 
 
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
-        return super().__str__() + f"\n{self._model_info}" if hasattr(self, "_model_info") else super().__str__()
+        return super().__str__() + f"\n{self._model_info}" if self._model_info else super().__str__()
 
 
     # Remove this once https://github.com/Azure/autorest.python/issues/2619 is fixed,
@@ -783,6 +819,23 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
 
 
 class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
+    """ImageEmbeddingsClient.
+
+    :param endpoint: Service host. Required.
+    :type endpoint: str
+    :param credential: Credential used to authenticate requests to the service. Is either a
+     AzureKeyCredential type or a TokenCredential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials.TokenCredential
+    :keyword api_version: The API version to use for this operation. Default value is
+     "2024-05-01-preview". Note that overriding this default value may result in unsupported
+     behavior.
+    :paramtype api_version: str
+    """
+
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
+        self._model_info: Optional[_models.ModelInfo] = None
+        super().__init__(endpoint, credential, **kwargs)
 
     @overload
     def embed(
@@ -1003,14 +1056,14 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :rtype: ~azure.ai.inference.models.ModelInfo
         :raises ~azure.core.exceptions.HttpResponseError
         """
-        if not hasattr(self, "_model_info"):
+        if not self._model_info:
             self._model_info = self._get_model_info(**kwargs) # pylint: disable=attribute-defined-outside-init
         return self._model_info
 
 
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
-        return super().__str__() + f"\n{self._model_info}" if hasattr(self, "_model_info") else super().__str__()
+        return super().__str__() + f"\n{self._model_info}" if self._model_info else super().__str__()
 
 
     # Remove this once https://github.com/Azure/autorest.python/issues/2619 is fixed,
