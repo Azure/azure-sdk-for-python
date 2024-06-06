@@ -4,8 +4,8 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to get a chat completions response from
-    the service using a synchronous client, with an Azure OpenAI (AOAI) endpoint.
+    This sample demonstrates how to get a chat completions streaming response from
+    the service using an asynchronous client, with an Azure OpenAI (AOAI) endpoint.
     Two types of authentications are shown: key authentication and Entra ID
     authentication.
 
@@ -22,15 +22,16 @@ USAGE:
         * AOAI_CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret. This
             is only required for key authentication.
     4. Run the sample:
-       python sample_chat_completions_azure_openai.py
+       python sample_chat_completions_streaming_azure_openai_async.py
 """
 # mypy: disable-error-code="union-attr"
-# pyright: reportAttributeAccessIssue=false
+# pyright: reportAttributeAccessIssue=false,reportGeneralTypeIssues=false
 
+import asyncio
 
-def sample_chat_completions_azure_openai():
+async def sample_chat_completions_streaming_azure_openai_async():
     import os
-    from azure.ai.inference import ChatCompletionsClient
+    from azure.ai.inference.aio import ChatCompletionsClient
     from azure.ai.inference.models import SystemMessage, UserMessage
 
     try:
@@ -69,15 +70,25 @@ def sample_chat_completions_azure_openai():
             api_version="2024-02-15-preview",  # AOAI api-version. Update as needed.
         )
 
-    response = client.complete(
+    response = await client.complete(
+        stream=True,
         messages=[
             SystemMessage(content="You are a helpful assistant."),
-            UserMessage(content="How many feet are in a mile?"),
+            UserMessage(content="Give me 5 good reasons why I should exercise every day."),
         ]
     )
 
-    print(response.choices[0].message.content)
+    # Iterate on the response to get chat completion updates, as they arrive from the service
+    async for update in response:
+        if len(update.choices) > 0:
+            print(update.choices[0].delta.content or "", end="")
+
+    await client.close()
+
+
+async def main():
+    await sample_chat_completions_streaming_azure_openai_async()
 
 
 if __name__ == "__main__":
-    sample_chat_completions_azure_openai()
+    asyncio.run(main())

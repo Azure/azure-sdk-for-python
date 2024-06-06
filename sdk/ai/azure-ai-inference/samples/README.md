@@ -10,7 +10,72 @@ urlFragment: model-inference-samples
 
 # Samples for Azure AI Inference client library for Python
 
-These are runnable console Python scripts that show how to do chat completion, text embeddings and image embeddings using the clients in this package. Samples in this folder use the a synchronous clients. Samples in the subfolder `async_samples` use the asynchronous clients. The concepts are similar, you can easily modify any of the  synchronous samples to asynchronous.
+These are runnable console Python scripts that show how to do chat completion and text embeddings using the clients in this package. Samples in this folder use the a synchronous clients. Samples in the subfolder `async_samples` use the asynchronous clients. The concepts are similar, you can easily modify any of the  synchronous samples to asynchronous.
+
+## Prerequisites
+
+See [Prerequisites](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/README.md#prerequisites) here.
+
+## Setup
+
+* Clone or download this sample repository
+* Open a command prompt / terminal window in this samples folder
+* Install the client library for Python with pip:
+  ```bash
+  pip install azure-ai-inference
+  ```
+  or update an existing installation:
+  ```bash
+  pip install --upgrade azure-ai-inference
+  ```
+* If you plan to run the asynchronous client samples, insall the additional package [aiohttp](https://pypi.org/project/aiohttp/):
+  ```bash
+  pip install aiohttp
+  ```
+
+## Set environment variables
+
+To construct any of the clients, you will need to pass in the endpoint URL. If you are using key authentication, you also need to pass in the key associated with your deployed AI model.
+
+* The endpoint URL has the form `https://your-deployment-name.your-azure-region.inference.ai.azure.com`, where `your-deployment-name` is your unique model deployment name and `your-azure-region` is the Azure region where the model is deployed (e.g. `eastus2`).
+
+* The key is a 32-character string.
+
+For convenience, and to promote the practice of not hard-coding secrets in your source code, all samples here assume the endpoint URL and key are stored in environment variables. You will need to set these environment variables before running the samples as-is. The environment variables are mentioned in the tables below.
+
+Note that the client library does not directly read these environment variable at run time. The sample code reads the environment variables and constructs the relevant client with these values.
+
+## Serverless API and Managed Compute Endpoints
+
+| Sample type | Endpoint environment variable name | Key environment variable name  |
+|----------|----------|----------|
+| Chat completions | `CHAT_COMPLETIONS_ENDPOINT` | `CHAT_COMPLETIONS_KEY` |
+| Embeddings | `EMBEDDINGS_ENDPOINT` | `EMBEDDINGS_KEY` |
+<!--
+| Image generation | `IMAGE_GENERATION_ENDPOINT` | `IMAGE_GENERATION_KEY` |
+-->
+
+To run against a Managed Compute Endpoint, some samples also have an optional environment variable `CHAT_COMPLETIONS_DEPLOYMENT_NAME`. This is the value used to set the HTTP request header `azureml-model-deployment` when constructing the client.
+
+## Azure OpenAI Endpoints
+
+| Sample type | Endpoint environment variable name | Key environment variable name  |
+|----------|----------|----------|
+| Chat completions | `AOAI_CHAT_COMPLETIONS_ENDPOINT` | `AOAI_CHAT_COMPLETIONS_KEY` |
+| Embeddings | `AOAI_EMBEDDINGS_ENDPOINT` | `AOAI_EMBEDDINGS_KEY` |
+<!--
+| Image generation | `IMAGE_GENERATION_ENDPOINT` | `IMAGE_GENERATION_KEY` |
+-->
+
+## Running the samples
+
+To run the first sample, type:
+
+```bash
+python sample_chat_completions.py
+```
+
+similarly for the other samples.
 
 ## Synchronous client samples
 
@@ -35,6 +100,7 @@ These are runnable console Python scripts that show how to do chat completion, t
 |**File Name**|**Description**|
 |----------------|-------------|
 |[sample_embeddings.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_embeddings.py) | One embeddings operation using a synchronous client. |
+|[sample_embeddings_azure_openai.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_embeddings_azure_openai.py) | One embeddings operation using a synchronous client, against Azure OpenAI endpoint. |
 
 <!--
 ### Image embeddings
@@ -55,6 +121,7 @@ These are runnable console Python scripts that show how to do chat completion, t
 |[sample_load_client_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_load_client_async.py) | Shows how do use the function `load_async_client` to create the appropriate asynchronous client based on the provided endpoint URL. In this example, it creates an asynchronous `ChatCompletionsClient`. |
 |[sample_chat_completions_from_input_bytes_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_chat_completions_from_input_bytes_async.py) | One chat completion operation using a synchronous client, with input messages provided as `IO[bytes]`. |
 |[sample_chat_completions_from_input_json_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_chat_completions_from_input_json_async.py) | One chat completion operation using a synchronous client, with input messages provided as `MutableMapping[str, Any]` |
+|[sample_chat_completions_streaming_azure_openai_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_chat_completions_streaming_azure_openai_async.py) | One chat completion operation using an asynchronous client and streaming response against an Azure OpenAI endpoint |
 
 ### Text embeddings
 
@@ -69,51 +136,6 @@ These are runnable console Python scripts that show how to do chat completion, t
 |----------------|-------------|
 |[sample_image_embeddings_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_image_embeddings_async.py) | One image embeddings operation, on two input images, using an asynchronous client. |
 -->
-
-## Prerequisites
-
-See [Prerequisites](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/README.md#prerequisites) here.
-
-## Setup
-
-* Clone or download this sample repository
-* Open a command prompt / terminal window in this samples folder
-* Install the client library for Python with pip:
-  ```bash
-  pip install azure-ai-inference
-  ```
-* If you plan to run the asynchronous client samples, insall the additional package [aiohttp](https://pypi.org/project/aiohttp/):
-  ```bash
-  pip install aiohttp
-  ```
-
-## Set environment variables
-
-To construct any of the clients, you will need to pass in the endpoint URL. If you are using key authentication, you also need to pass in the key associated with your deployed AI model.
-
-* The endpoint URL has the form `https://your-deployment-name.your-azure-region.inference.ai.azure.com`, where `your-deployment-name` is your unique model deployment name and `your-azure-region` is the Azure region where the model is deployed (e.g. `eastus2`).
-
-* The key is a 32-character string.
-
-For convenience, and to promote the practice of not hard-coding secrets in your source code, all samples here assume the endpoint URL and key are stored in environment variables. You will need to set these environment variables before running the samples as-is. These are the environment variables used:
-
-| Sample type | Endpoint environment variable name | Key environment variable name  |
-|----------|----------|----------|
-| Chat completions | `CHAT_COMPLETIONS_ENDPOINT` | `CHAT_COMPLETIONS_KEY` |
-| Embeddings | `EMBEDDINGS_ENDPOINT` | `EMBEDDINGS_KEY` |
-| Image generation | `IMAGE_GENERATION_ENDPOINT` | `IMAGE_GENERATION_KEY` |
-
-Note that the client library does not directly read these environment variable at run time. The sample code reads the environment variables and constructs the relevant client with these values.
-
-## Running the samples
-
-To run the first sample, type:
-
-```bash
-python sample_chat_completions.py
-```
-
-similarly for the other samples.
 
 ## Troubleshooting
 

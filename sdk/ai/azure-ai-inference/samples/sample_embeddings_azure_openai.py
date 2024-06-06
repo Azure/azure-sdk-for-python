@@ -4,8 +4,8 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to get a chat completions response from
-    the service using a synchronous client, with an Azure OpenAI (AOAI) endpoint.
+    This sample demonstrates how to get text embeddings for a list of sentences
+    using a synchronous client, with an Azure OpenAI (AOAI) endpoint.
     Two types of authentications are shown: key authentication and Entra ID
     authentication.
 
@@ -14,29 +14,28 @@ USAGE:
        Entra ID authentication.
     2. Update `api_version` (the AOAI REST API version) as needed.
     3. Set one or two environment variables, depending on your authentication method:
-        * AOAI_CHAT_COMPLETIONS_ENDPOINT - Your AOAI endpoint URL, with partial path, in the form 
+        * AOAI_EMBEDDINGS_ENDPOINT - Your AOAI endpoint URL, with partial path, in the form 
             https://<your-unique-resouce-name>.openai.azure.com/openai/deployments/<your-deployment-name>
             where `your-unique-resource-name` is your globally unique AOAI resource name,
             and `your-deployment-name` is your AI Model deployment name.
             For example: https://your-unique-host.openai.azure.com/openai/deployments/gpt-4-turbo
-        * AOAI_CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret. This
+        * AOAI_EMBEDDINGS_KEY - Your model key (a 32-character string). Keep it secret. This
             is only required for key authentication.
     4. Run the sample:
-       python sample_chat_completions_azure_openai.py
+       python sample_embeddings_azure_openai.py
 """
 # mypy: disable-error-code="union-attr"
 # pyright: reportAttributeAccessIssue=false
 
 
-def sample_chat_completions_azure_openai():
+def sample_embeddings_azure_openai():
     import os
-    from azure.ai.inference import ChatCompletionsClient
-    from azure.ai.inference.models import SystemMessage, UserMessage
+    from azure.ai.inference import EmbeddingsClient
 
     try:
-        endpoint = os.environ["AOAI_CHAT_COMPLETIONS_ENDPOINT"]
+        endpoint = os.environ["AOAI_EMBEDDINGS_ENDPOINT"]
     except KeyError:
-        print("Missing environment variable 'AOAI_CHAT_COMPLETIONS_ENDPOINT'")
+        print("Missing environment variable 'AOAI_EMBEDDINGS_ENDPOINT'")
         print("Set it before running this sample.")
         exit()
 
@@ -46,13 +45,13 @@ def sample_chat_completions_azure_openai():
         from azure.core.credentials import AzureKeyCredential
 
         try:
-            key = os.environ["AOAI_CHAT_COMPLETIONS_KEY"]
+            key = os.environ["AOAI_EMBEDDINGS_KEY"]
         except KeyError:
-            print("Missing environment variable 'AOAI_CHAT_COMPLETIONS_KEY'")
+            print("Missing environment variable 'AOAI_EMBEDDINGS_KEY'")
             print("Set it before running this sample.")
             exit()
 
-        client = ChatCompletionsClient(
+        client = EmbeddingsClient(
             endpoint=endpoint,
             credential=AzureKeyCredential(""),  # Pass in an empty value.
             headers={"api-key": key},
@@ -62,22 +61,22 @@ def sample_chat_completions_azure_openai():
     else:  # Entra ID authentication
         from azure.identity import DefaultAzureCredential
 
-        client = ChatCompletionsClient(
+        client = EmbeddingsClient(
             endpoint=endpoint,
             credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
             credential_scopes=["https://cognitiveservices.azure.com/.default"],
             api_version="2024-02-15-preview",  # AOAI api-version. Update as needed.
         )
 
-    response = client.complete(
-        messages=[
-            SystemMessage(content="You are a helpful assistant."),
-            UserMessage(content="How many feet are in a mile?"),
-        ]
-    )
+    response = client.embed(input=["first phrase", "second phrase", "third phrase"])
 
-    print(response.choices[0].message.content)
+    for item in response.data:
+        length = len(item.embedding)
+        print(
+            f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
+            f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+        )
 
 
 if __name__ == "__main__":
-    sample_chat_completions_azure_openai()
+    sample_embeddings_azure_openai()

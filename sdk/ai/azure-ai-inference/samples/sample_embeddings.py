@@ -4,7 +4,7 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to get embeddings for a list of sentences 
+    This sample demonstrates how to get text embeddings for a list of sentences
     using a synchronous client.
 
 USAGE:
