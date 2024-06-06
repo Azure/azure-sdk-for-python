@@ -16,8 +16,6 @@ USAGE:
         `your-azure-region` is the Azure region where your model is deployed.
     2) EMBEDDINGS_KEY - Your model key (a 32-character string). Keep it secret.
 """
-# pyright: reportAttributeAccessIssue=false
-
 import asyncio
 
 

@@ -24,8 +24,6 @@ USAGE:
     4. Run the sample:
        python sample_embeddings_azure_openai.py
 """
-# mypy: disable-error-code="union-attr"
-# pyright: reportAttributeAccessIssue=false
 
 
 def sample_embeddings_azure_openai():

@@ -24,9 +24,6 @@ USAGE:
     4. Run the sample:
        python sample_chat_completions_streaming_azure_openai_async.py
 """
-# mypy: disable-error-code="union-attr"
-# pyright: reportAttributeAccessIssue=false,reportGeneralTypeIssues=false
-
 import asyncio
 
 async def sample_chat_completions_streaming_azure_openai_async():

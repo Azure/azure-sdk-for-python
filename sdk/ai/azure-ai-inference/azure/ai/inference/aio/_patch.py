@@ -12,7 +12,7 @@ import logging
 import sys
 
 from io import IOBase
-from typing import Any, Dict, Union, IO, List, Optional, overload, Type, TYPE_CHECKING
+from typing import Any, Dict, Union, IO, List, Literal, Optional, overload, Type, TYPE_CHECKING
 
 from azure.core.pipeline import PipelineResponse
 from azure.core.credentials import AzureKeyCredential
@@ -109,6 +109,58 @@ async def load_client(
 
 
 class ChatCompletionsClient(ChatCompletionsClientGenerated):
+
+    @overload
+    async def complete(
+        self,
+        *,
+        messages: List[_models.ChatRequestMessage],
+        content_type: str = "application/json",
+        model_extras: Optional[Dict[str, Any]] = None,
+        extras: Optional[Dict[str, str]] = None,
+        frequency_penalty: Optional[float] = None,
+        presence_penalty: Optional[float] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        max_tokens: Optional[int] = None,
+        response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = None,
+        stop: Optional[List[str]] = None,
+        stream: Literal[False] = False,
+        tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
+        tool_choice: Optional[
+            Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
+        ] = None,
+        seed: Optional[int] = None,
+        **kwargs: Any,
+    ) -> _models.ChatCompletions:
+        ...
+
+
+    @overload
+    async def complete(
+        self,
+        *,
+        messages: List[_models.ChatRequestMessage],
+        content_type: str = "application/json",
+        model_extras: Optional[Dict[str, Any]] = None,
+        extras: Optional[Dict[str, str]] = None,
+        frequency_penalty: Optional[float] = None,
+        presence_penalty: Optional[float] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        max_tokens: Optional[int] = None,
+        response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = None,
+        stop: Optional[List[str]] = None,
+        stream: Literal[True],
+        tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
+        tool_choice: Optional[
+            Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
+        ] = None,
+        seed: Optional[int] = None,
+        **kwargs: Any,
+    ) -> _models.AsyncStreamingChatCompletions:
+        ...
+
 
     @overload
     async def complete(
