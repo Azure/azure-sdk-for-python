@@ -53,13 +53,21 @@ class Urllib3StreamDownloadGenerator:
         self.pipeline = pipeline
         self.response = response
         decompress = kwargs.pop("decompress", True)
-        self.iter_content_func = self.response.internal_response.read_chunked(decode_content=decompress)
+        self.iter_content_func = self.response.internal_response.stream(
+            amt=self.response._block_size,
+            decode_content=decompress
+        )
 
     def __iter__(self) -> "Urllib3StreamDownloadGenerator":
         return self
 
     def __next__(self) -> bytes:
-        return next(self.iter_content_func)
+        try:
+            return next(self.iter_content_func)
+        except (
+                urllib3.exceptions.IncompleteRead,
+                urllib3.exceptions.InvalidChunkLength) as err:
+            raise IncompleteReadError(err, error=err) from err
 
 
 class Urllib3TransportResponse(HttpResponseImpl):
