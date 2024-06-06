@@ -235,6 +235,16 @@ class HttpRequest:
         if query:
             return {p[0]: p[-1] for p in [p.partition("=") for p in query.split("&")]}
         return {}
+    
+    @property
+    def content(self) -> Any:
+        """Alias to data and files.
+        
+        Added to provide forward compatibility to azure.core.rest.HttpRequest
+        :rtype: bytes or str or dict or None
+        :return: The body of the request
+        """
+        return self.data or self.files
 
     @property
     def body(self) -> Optional[DataType]:
