@@ -192,7 +192,7 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
                 body=request.content,
                 timeout=timeout,
                 headers=request.headers,
-                preload_context=not stream_response,
+                preload_content=not stream_response,
                 decode_content=False,
                 redirect=False,
                 reties=False,
