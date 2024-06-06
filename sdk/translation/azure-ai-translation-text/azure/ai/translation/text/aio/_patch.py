@@ -72,7 +72,7 @@ def set_authentication_policy(credential, kwargs):
     elif hasattr(credential, "get_token"):
         if not kwargs.get("authentication_policy"):
             if kwargs.get("region") and kwargs.get("resource_id"):
-                scope = kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE).rstrip("/") + DEFAULT_SCOPE
+                scope = kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE).rstrip("/").rstrip(DEFAULT_SCOPE) + DEFAULT_SCOPE
                 kwargs["authentication_policy"] = AsyncTranslatorEntraIdAuthenticationPolicy(
                     credential,
                     kwargs["resource_id"],
@@ -87,7 +87,7 @@ def set_authentication_policy(credential, kwargs):
                     )
                 scope: str = kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE)
                 if not is_cognitive_services_scope(scope):
-                    scope = scope.rstrip("/") + DEFAULT_SCOPE
+                    scope = scope.rstrip("/").rstrip(DEFAULT_SCOPE) + DEFAULT_SCOPE
                 kwargs["authentication_policy"] = AsyncBearerTokenCredentialPolicy(
                     credential, scope
                 )
