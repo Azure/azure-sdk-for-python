@@ -68,16 +68,18 @@ class Urllib3TransportResponse(HttpResponseImpl):
         *,
         request: RestHttpRequest,
         internal_response: urllib3.response.HTTPResponse,
+        **kwargs
     ) -> None:
-        headers = case_insensitive_dict(internal_response.headers)
+        headers = case_insensitive_dict(kwargs.pop("headers", internal_response.headers))
         super().__init__(
             request=request,
             internal_response=internal_response,
-            status_code=internal_response.status_code,
+            status_code=kwargs.pop("status_code", internal_response.status_code),
             headers=headers,
-            reason=internal_response.reason,
-            content_type=headers.get("content-type"),
-            stream_download_generator=Urllib3StreamDownloadGenerator,
+            reason=kwargs.pop('reason', internal_response.reason),
+            content_type=kwargs.pop("content-type", headers.get("content-type")),
+            stream_download_generator=kwargs.pop("stream_download_generator", Urllib3StreamDownloadGenerator),
+            **kwargs
         )
     
     def close(self) -> None:
@@ -195,7 +197,7 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
                 preload_content=not stream_response,
                 decode_content=False,
                 redirect=False,
-                reties=False,
+                retries=False,
                 **kwargs
             )
             response = Urllib3TransportResponse(
