@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import datetime
+from http import client
 import os
 import uuid
 
@@ -10,13 +11,12 @@ from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
 """
-FILE: sample_critical_result_inference.py
+FILE: sample_credentials.py
 
 DESCRIPTION:
-The sample_critical_result_inference.py module processes a sample radiology document with the Radiology Insights service.
+The sample_credentials.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, build a Radiology Insights job request with the sample document,
-submit it to the client and display the Critical Results description extracted by the Radiology Insights service.     
+submit it to the client, RadiologyInsightsClient, and display the Critical Results description.     
 
 
 USAGE:
@@ -27,17 +27,18 @@ USAGE:
     - AZURE_TENANT_ID - the tenant ID of your Azure AD tenant.
     - AZURE_CLIENT_SECRET - the client secret of your Azure AD application.
 
-2. python sample_critical_result_inference.py
+2. python sample_credentials.py
+    - This is an example how to use DefaultAzureCredential to authenticate the RadiologyInsightsClient.
    
 """
 
 
 class HealthInsightsSyncSamples:
     def radiology_insights_sync(self) -> None:
-
+# [START credentials]
         credential = DefaultAzureCredential()
         ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
-
+# [END credentials]
         job_id = str(uuid.uuid4())
 
         radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=credential)
@@ -104,17 +105,15 @@ class HealthInsightsSyncSamples:
         configuration = models.RadiologyInsightsModelConfiguration(verbose=False, include_evidence=True, locale="en-US")
 
         # Construct the request with the patient and configuration
-        radiology_insights_data = models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
-        job_data = models.RadiologyInsightsJob(job_data=radiology_insights_data)
+        patient_data = models.RadiologyInsightsJob(job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration))
 
         # Health Insights Radiology Insights
         try:
             poller = radiology_insights_client.begin_infer_radiology_insights(
                 id=job_id,
-                resource=job_data,
+                resource=patient_data,
             )
-            job_response = poller.result()
-            radiology_insights_result = models.RadiologyInsightsInferenceResult(job_response)
+            radiology_insights_result = models.RadiologyInsightsInferenceResult(poller.result())
             self.display_critical_results(radiology_insights_result)
         except Exception as ex:
             print(str(ex))

@@ -35,7 +35,17 @@ USAGE:
 
 
 class HealthInsightsSamples:
+    async def __aenter__(self):
+        print("Opening connection...")
+        # Open connection here
+        return self
+    
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        print("Closing connection...")
+        # Close connection here
+     
     async def radiology_insights_async(self) -> None:
+        
         # [START create_radiology_insights_client]
         KEY = os.environ["AZURE_HEALTH_INSIGHTS_API_KEY"]
         ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
@@ -106,18 +116,16 @@ class HealthInsightsSamples:
         configuration = models.RadiologyInsightsModelConfiguration(verbose=False, include_evidence=True, locale="en-US")
 
         # Construct the request with the patient and configuration
-        radiology_insights_data = models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
-        job_data = models.RadiologyInsightsJob(job_data=radiology_insights_data)
+        patient_data = models.RadiologyInsightsJob(job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration))
 
         try:
             poller = await radiology_insights_client.begin_infer_radiology_insights(
                 id=job_id,
-                resource=job_data,
+                resource=patient_data,
             )
-            job_response = await poller.result()
-            radiology_insights_result = models.RadiologyInsightsInferenceResult(job_response)
+            inference_result = await poller.result()
+            radiology_insights_result = models.RadiologyInsightsInferenceResult(inference_result)
             self.display_complete_order_discrepancy(radiology_insights_result)
-            await radiology_insights_client.close()
         except Exception as ex:
             print(str(ex))
             return
@@ -152,8 +160,8 @@ class HealthInsightsSamples:
 
 
 async def main():
-    sample = HealthInsightsSamples()
-    await sample.radiology_insights_async()
+    async with HealthInsightsSamples() as sample:
+        await sample.radiology_insights_async()
 
 
 if __name__ == "__main__":

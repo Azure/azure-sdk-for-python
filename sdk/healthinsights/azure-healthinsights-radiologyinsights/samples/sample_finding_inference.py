@@ -110,17 +110,15 @@ class HealthInsightsSyncSamples:
         configuration = models.RadiologyInsightsModelConfiguration(verbose=False, include_evidence=True, locale="en-US")
 
         # Construct the request with the patient and configuration
-        radiology_insights_data = models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
-        job_data = models.RadiologyInsightsJob(job_data=radiology_insights_data)
+        patient_data = models.RadiologyInsightsJob(job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration))
 
         # Health Insights Radiology Insights
         try:
             poller = radiology_insights_client.begin_infer_radiology_insights(
                 id=job_id,
-                resource=job_data,
+                resource=patient_data,
             )
-            job_response = poller.result()
-            radiology_insights_result = models.RadiologyInsightsInferenceResult(job_response)
+            radiology_insights_result = models.RadiologyInsightsInferenceResult(poller.result())
             self.display_finding(radiology_insights_result)
         except Exception as ex:
             print(str(ex))
