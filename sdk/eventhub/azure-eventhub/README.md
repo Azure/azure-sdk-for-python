@@ -414,7 +414,7 @@ See the `azure-eventhub` [troubleshooting guide](https://github.com/Azure/azure-
 
 - Enable `azure.eventhub` logger to collect traces from the library.
 - Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
-- Refer to [this guide](https://learn.microsoft.com/en-us/azure/developer/python/sdk/azure-sdk-logging) on configuring logging for Azure libraries for Python for additional information.
+- Refer to [this guide](https://learn.microsoft.com/azure/developer/python/sdk/azure-sdk-logging) on configuring logging for Azure libraries for Python for additional information.
 
 ```python
 import logging
