@@ -32,7 +32,6 @@ from ._models import SystemMessage
 from ._models import ToolMessage
 from ._models import UserMessage
 
-from ._enums import CapacityType
 from ._enums import ChatCompletionsResponseFormat
 from ._enums import ChatCompletionsToolSelectionPreset
 from ._enums import ChatRole
@@ -73,7 +72,6 @@ __all__ = [
     "SystemMessage",
     "ToolMessage",
     "UserMessage",
-    "CapacityType",
     "ChatCompletionsResponseFormat",
     "ChatCompletionsToolSelectionPreset",
     "ChatRole",

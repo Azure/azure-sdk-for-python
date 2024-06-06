@@ -10,15 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CapacityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Whether your capacity has been affected by the usage amount (token count) reported here."""
-
-    USAGE = "usage"
-    """Your capacity has been affected by the usage amount (token count) reported here."""
-    FIXED = "fixed"
-    """Your capacity has not been affected by the usage amount (token count) reported here."""
-
-
 class ChatCompletionsResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """An representation of a response format configuration usable by Chat Completions. Can be used to
     enable JSON

@@ -522,9 +522,6 @@ class CompletionsUsage(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar capacity_type: Indicates whether your capacity has been affected by the usage amount
-     (token count) reported here. Required. Known values are: "usage" and "fixed".
-    :vartype capacity_type: str or ~azure.ai.inference.models.CapacityType
     :ivar completion_tokens: The number of tokens generated across all completions emissions.
      Required.
     :vartype completion_tokens: int
@@ -536,9 +533,6 @@ class CompletionsUsage(_model_base.Model):
     :vartype total_tokens: int
     """
 
-    capacity_type: Union[str, "_models.CapacityType"] = rest_field()
-    """Indicates whether your capacity has been affected by the usage amount (token count) reported
-     here. Required. Known values are: \"usage\" and \"fixed\"."""
     completion_tokens: int = rest_field()
     """The number of tokens generated across all completions emissions. Required."""
     prompt_tokens: int = rest_field()
@@ -550,7 +544,6 @@ class CompletionsUsage(_model_base.Model):
     def __init__(
         self,
         *,
-        capacity_type: Union[str, "_models.CapacityType"],
         completion_tokens: int,
         prompt_tokens: int,
         total_tokens: int,
@@ -695,9 +688,6 @@ class EmbeddingsUsage(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar capacity_type: Indicates whether your capacity has been affected by the usage amount
-     (token count) reported here. Required. Known values are: "usage" and "fixed".
-    :vartype capacity_type: str or ~azure.ai.inference.models.CapacityType
     :ivar input_tokens: Number of tokens in the request prompt. Required.
     :vartype input_tokens: int
     :ivar prompt_tokens: Number of tokens used for the prompt sent to the AI model. Typically
@@ -709,9 +699,6 @@ class EmbeddingsUsage(_model_base.Model):
     :vartype total_tokens: int
     """
 
-    capacity_type: Union[str, "_models.CapacityType"] = rest_field()
-    """Indicates whether your capacity has been affected by the usage amount (token count) reported
-     here. Required. Known values are: \"usage\" and \"fixed\"."""
     input_tokens: int = rest_field()
     """Number of tokens in the request prompt. Required."""
     prompt_tokens: int = rest_field()
@@ -726,7 +713,6 @@ class EmbeddingsUsage(_model_base.Model):
     def __init__(
         self,
         *,
-        capacity_type: Union[str, "_models.CapacityType"],
         input_tokens: int,
         prompt_tokens: int,
         total_tokens: int,
