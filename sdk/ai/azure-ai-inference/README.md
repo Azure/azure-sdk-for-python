@@ -1,6 +1,6 @@
 # Azure AI Inference client library for Python
 
-The client Library (in preview) does inference, including chat completions, for AI models deployed by [Azure AI Studio](https://ai.azure.com) and [Azure Machine Learning Studio](https://ml.azure.com/). It supports Serverless API endpoints and Managed Compute Endpoints (formerly known as Managed Online Endpoints). The client library makes services calls using REST API version `2024-05-01-preview`, as documented in [Azure AI Model Inference API](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api). For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
+The client Library (in preview) does inference, including chat completions, for AI models deployed by [Azure AI Studio](https://ai.azure.com) and [Azure Machine Learning Studio](https://ml.azure.com/). It supports Serverless API endpoints and Managed Compute endpoints (formerly known as Managed Online Endpoints). The client library makes services calls using REST API version `2024-05-01-preview`, as documented in [Azure AI Model Inference API](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api). For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
 
 Use the model inference client library to:
 
@@ -181,7 +181,7 @@ In the following sections you will find simple examples of:
 * [Text Embeddings](#text-embeddings-example)
 <!-- * [Image Embeddings](#image-embeddings-example) -->
 
-The examples create a synchronous client as mentioned in [Create and authenticate clients](#create-and-authenticate-clients). Only mandatory input settings are shown for simplicity.
+The examples create a synchronous client as mentioned in [Create and authenticate a client directly, using key](#create-and-authenticate-a-client-directly-using-key). Only mandatory input settings are shown for simplicity.
 
 See the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder for full working samples for synchronous and asynchronous clients.
 
@@ -388,7 +388,7 @@ To generate embeddings for additional phrases, simply call `client.embed` multip
 
 ### Exceptions
 
-The `complete`, `embed` and `get_model_info` methods on the clients raise an [HttpResponseError](https://learn.microsoft.com/python/api/azure-core/azure.core.exceptions.httpresponseerror) exception for a non-success HTTP status code response from the service. The exception's `status_code` will be the HTTP response status code. The exception's `error.message` contains a detailed message that will allow you to diagnose the issue:
+The `complete`, `embed` and `get_model_info` methods on the clients raise an [HttpResponseError](https://learn.microsoft.com/python/api/azure-core/azure.core.exceptions.httpresponseerror) exception for a non-success HTTP status code response from the service. The exception's `status_code` will hold the HTTP response status code (with `reason` showing the friendly name). The exception's `error.message` contains a detailed message that may be helpful in diagnosing the issue:
 
 ```python
 from azure.core.exceptions import HttpResponseError
@@ -399,6 +399,7 @@ try:
     result = client.complete( ... )
 except HttpResponseError as e:
     print(f"Status code: {e.status_code} ({e.reason})")
+    print(f"{e.message}")
 ```
 
 For example, when you provide a wrong authentication key:
@@ -408,7 +409,7 @@ Status code: 401 (Unauthorized)
 Operation returned an invalid status 'Unauthorized'
 ```
 
-Or for example when you created an `EmbeddingsClient` and called `embed` on the client, but the endpoint does not
+Or when you create an `EmbeddingsClient` and call `embed` on the client, but the endpoint does not
 support the `/embeddings` route:
 
 ```text
@@ -442,18 +443,25 @@ formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
 handler.setFormatter(formatter)
 ```
 
-By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Authorization` which holds the key or token), and the request and response payloads. To create logs without redaction, set the method argument `logging_enable = True` when you construct the client library, or when you call any of the client's `create` methods.
+By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Authorization` which holds the key or token), and the request and response payloads. To create logs without redaction, do these two things:
 
-```python
-# Create a chat completions client with non redacted logs
-client = ChatCompletionsClient(
-    endpoint=endpoint,
-    credential=AzureKeyCredential(key),
-    logging_enable=True
-)
-```
+1. Set the method argument `logging_enable = True` when you construct the client library, or when you call the client's `complete` or `embed`  methods.
+    ```python
+    client = ChatCompletionsClient(
+        endpoint=endpoint,
+        credential=AzureKeyCredential(key),
+        logging_enable=True
+    )
+    ```
+1. Set the log level to `logging.DEBUG`. Logs will be redacted with any other log level.
 
-None redacted logs are generated for log level `logging.DEBUG` only. Be sure to protect non redacted logs to avoid compromising security. For more information see [Configure logging in the Azure libraries for Python](https://aka.ms/azsdk/python/logging)
+Be sure to protect non redacted logs to avoid compromising security.
+
+For more information, see [Configure logging in the Azure libraries for Python](https://aka.ms/azsdk/python/logging)
+
+### Reporting issues
+
+To report issues with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues)
 
 ## Next steps
 

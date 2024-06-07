@@ -10,7 +10,11 @@ urlFragment: model-inference-samples
 
 # Samples for Azure AI Inference client library for Python
 
-These are runnable console Python scripts that show how to do chat completion and text embeddings using the clients in this package. Samples in this folder use the a synchronous clients. Samples in the subfolder `async_samples` use the asynchronous clients. The concepts are similar, you can easily modify any of the  synchronous samples to asynchronous.
+These are runnable console Python scripts that show how to do chat completion and text embeddings against Serverless API endpoints and Managed Compute endpoints.
+
+Samples with `azure_openai` in their name show how to do chat completions and text embeddings against Azure OpenAI endpoints.
+
+Samples in this folder use the a synchronous clients. Samples in the subfolder `async_samples` use the asynchronous clients. The concepts are similar, you can easily modify any of the synchronous samples to asynchronous.
 
 ## Prerequisites
 
@@ -37,7 +41,9 @@ See [Prerequisites](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/
 
 To construct any of the clients, you will need to pass in the endpoint URL. If you are using key authentication, you also need to pass in the key associated with your deployed AI model.
 
-* The endpoint URL has the form `https://your-deployment-name.your-azure-region.inference.ai.azure.com`, where `your-deployment-name` is your unique model deployment name and `your-azure-region` is the Azure region where the model is deployed (e.g. `eastus2`).
+* For Serverless API and Managed Compute endpoints, the endpoint URL has the form `https://your-unique-resouce-name.your-azure-region.inference.ai.azure.com`, where `your-unique-resource-name` is your globally unique Azure resource name and `your-azure-region` is the Azure region where the model is deployed (e.g. `eastus2`).
+
+* For Azure OpenAI endpoints, the endpoint URL has the form `https://your-unique-resouce-name.openai.azure.com/openai/deployments/your-deployment-name`, where `your-unique-resource-name` is your globally unique Azure OpenAI resource name, and `your-deployment-name` is your AI Model deployment name.
 
 * The key is a 32-character string.
 
@@ -45,7 +51,7 @@ For convenience, and to promote the practice of not hard-coding secrets in your 
 
 Note that the client library does not directly read these environment variable at run time. The sample code reads the environment variables and constructs the relevant client with these values.
 
-## Serverless API and Managed Compute Endpoints
+## Serverless API and Managed Compute endpoints
 
 | Sample type | Endpoint environment variable name | Key environment variable name  |
 |----------|----------|----------|
@@ -57,7 +63,7 @@ Note that the client library does not directly read these environment variable a
 
 To run against a Managed Compute Endpoint, some samples also have an optional environment variable `CHAT_COMPLETIONS_DEPLOYMENT_NAME`. This is the value used to set the HTTP request header `azureml-model-deployment` when constructing the client.
 
-## Azure OpenAI Endpoints
+## Azure OpenAI endpoints
 
 | Sample type | Endpoint environment variable name | Key environment variable name  |
 |----------|----------|----------|
@@ -84,11 +90,11 @@ similarly for the other samples.
 |**File Name**|**Description**|
 |----------------|-------------|
 |[sample_chat_completions_streaming.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_streaming.py) | One chat completion operation using a synchronous client and streaming response. |
-|[sample_chat_completions_streaming_with_entra_id_auth.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_streaming_with_entra_id_auth.py) | One chat completion operation using a synchronous client and streaming response, using Entra ID authentication. This sample also shows setting the `azureml-model-deployment` HTTP request header, which may be required for Selfhosted Endpoints. |
+|[sample_chat_completions_streaming_with_entra_id_auth.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_streaming_with_entra_id_auth.py) | One chat completion operation using a synchronous client and streaming response, using Entra ID authentication. This sample also shows setting the `azureml-model-deployment` HTTP request header, which may be required for some Managed Compute endpoint. |
 |[sample_chat_completions.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions.py) | One chat completion operation using a synchronous client. |
-|[sample_chat_completions_with_history.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_history.py) | Two chat completion operations using a synchronous client, which the second completion using chat history from the first. |
+|[sample_chat_completions_with_history.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_history.py) | Two chat completion operations using a synchronous client, with the second completion using chat history from the first. |
 |[sample_chat_completions_from_input_bytes.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_from_input_bytes.py) | One chat completion operation using a synchronous client, with input messages provided as `IO[bytes]`. |
-|[sample_chat_completions_from_input_json.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_from_input_json.py) | One chat completion operation using a synchronous client, with input messages provided as `MutableMapping[str, Any]` |
+|[sample_chat_completions_from_input_json.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_from_input_json.py) | One chat completion operation using a synchronous client, with input messages provided as a dictionary (type `MutableMapping[str, Any]`) |
 |[sample_chat_completions_with_tools.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_tools.py) | Shows how do use a tool (function) in chat completions, for an AI model that supports tools |
 |[sample_load_client.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_load_client.py) | Shows how do use the function `load_client` to create the appropriate synchronous client based on the provided endpoint URL. In this example, it creates a synchronous `ChatCompletionsClient`. |
 |[sample_get_model_info.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_get_model_info.py) | Get AI model information using the chat completions client. Similarly can be done with all other clients. |
@@ -118,9 +124,9 @@ similarly for the other samples.
 |----------------|-------------|
 |[sample_chat_completions_streaming_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_chat_completions_streaming_async.py) | One chat completion operation using an asynchronous client and streaming response. |
 |[sample_chat_completions_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_chat_completions_async.py) | One chat completion operation using an asynchronous client. |
-|[sample_load_client_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_load_client_async.py) | Shows how do use the function `load_async_client` to create the appropriate asynchronous client based on the provided endpoint URL. In this example, it creates an asynchronous `ChatCompletionsClient`. |
-|[sample_chat_completions_from_input_bytes_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_chat_completions_from_input_bytes_async.py) | One chat completion operation using a synchronous client, with input messages provided as `IO[bytes]`. |
-|[sample_chat_completions_from_input_json_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_chat_completions_from_input_json_async.py) | One chat completion operation using a synchronous client, with input messages provided as `MutableMapping[str, Any]` |
+|[sample_load_client_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_load_client_async.py) | Shows how do use the function `load_client` to create the appropriate asynchronous client based on the provided endpoint URL. In this example, it creates an asynchronous `ChatCompletionsClient`. |
+|[sample_chat_completions_from_input_bytes_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_chat_completions_from_input_bytes_async.py) | One chat completion operation using an asynchronous client, with input messages provided as `IO[bytes]`. |
+|[sample_chat_completions_from_input_json_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_chat_completions_from_input_json_async.py) | One chat completion operation using an asynchronous client, with input messages provided as a dictionary (type `MutableMapping[str, Any]`) |
 |[sample_chat_completions_streaming_azure_openai_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_chat_completions_streaming_azure_openai_async.py) | One chat completion operation using an asynchronous client and streaming response against an Azure OpenAI endpoint |
 
 ### Text embeddings
