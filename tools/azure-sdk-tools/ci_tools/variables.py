@@ -71,8 +71,8 @@ def in_analyze_weekly() -> int:
     # Returns 4 if the build originates from the tests-weekly analyze job
     # 0 otherwise
     print(f"SYSTEM_DEFINITIONNAME={os.getenv('SYSTEM_DEFINITIONNAME', '')}")
-    print(f"SYSTEM_STAGENAME={os.getenv('SYSTEM_STAGENAME', '')}")
-    if "tests-weekly" in os.getenv("SYSTEM_DEFINITIONNAME", "") and os.getenv("SYSTEM_STAGENAME", "") == "Analyze_Test":
+    print(f"SYSTEM_STAGEDISPLAYNAME={os.getenv('SYSTEM_STAGEDISPLAYNAME', '')}")
+    if "tests-weekly" in os.getenv("SYSTEM_DEFINITIONNAME", "") and os.getenv("SYSTEM_STAGEDISPLAYNAME", "") == "Analyze_Test":
         return 4
     return 0
 
