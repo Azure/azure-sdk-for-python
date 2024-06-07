@@ -33,7 +33,7 @@
     },
     "variables": {
         "textAnalyticsBaseName": "[concat('textanalytics', parameters('baseName'))]",
-        "cognitiveApiVersion": "2022-03-01",
+        "cognitiveApiVersion": "2023-10-01-preview",
         "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
         "uniqueSubDomainName": "[format('{0}-{1}', parameters('baseName'), parameters('endpointPrefix'))]",
         "endpointValue": "[format('https://{0}-{1}{2}', parameters('baseName'), parameters('endpointPrefix'), parameters('cognitiveServicesEndpointSuffix'))]"
@@ -54,7 +54,7 @@
         }, 
         {
             "type": "Microsoft.CognitiveServices/accounts",
-            "apiVersion": "2022-12-01",
+            "apiVersion": "[variables('cognitiveApiVersion')]",
             "name": "[variables('uniqueSubDomainName')]",
             "location":"[parameters('location')]",
             "sku": {
@@ -78,7 +78,7 @@
     "outputs": {
         "HEALTHINSIGHTS_KEY": {
             "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts',variables('uniqueSubDomainName')), '2017-04-18').key1]"
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts',variables('uniqueSubDomainName')), variables('cognitiveApiVersion')).key1]"
         },
         "HEALTHINSIGHTS_ENDPOINT": {
             "type": "string",
