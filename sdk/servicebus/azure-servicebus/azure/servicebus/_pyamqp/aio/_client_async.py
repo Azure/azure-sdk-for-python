@@ -387,7 +387,7 @@ class AMQPClientAsync(AMQPClientSync):
                 mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
                 self._mgmt_links[node] = mgmt_link
                 await mgmt_link.open()
-        
+
         while not self.client_ready_async():
             time.sleep(0.05)
 
