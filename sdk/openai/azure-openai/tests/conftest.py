@@ -16,6 +16,7 @@ from azure.identity.aio import (
     DefaultAzureCredential as AsyncDefaultAzureCredential,
     get_bearer_token_provider as get_bearer_token_provider_async,
 )
+from ci_tools.variables import in_ci
 
 
 # for pytest.parametrize
@@ -65,8 +66,15 @@ ENV_OPENAI_CHAT_COMPLETIONS_GPT4_MODEL = "gpt-4-1106-preview"
 ENV_OPENAI_TTS_MODEL = "tts-1"
 
 
+def skip_openai_test(api_type) -> bool:
+    return in_ci() and "openai" in api_type and "tests-weekly" not in os.getenv("SYSTEM_DEFINITIONNAME", "")
+
+
 @pytest.fixture
 def client(api_type, api_version):
+    if skip_openai_test(api_type):
+        pytest.skip("Skipping openai tests - they only run on tests-weekly.")
+
     if api_type == "azure":
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
@@ -100,6 +108,9 @@ def client(api_type, api_version):
 
 @pytest.fixture
 def client_async(api_type, api_version):
+    if skip_openai_test(api_type):
+        pytest.skip("Skipping openai tests - they only run on tests-weekly.")
+
     if api_type == "azure":
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),

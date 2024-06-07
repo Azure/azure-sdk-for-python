@@ -18,6 +18,7 @@ from openai.types.beta.threads import (
     TextDelta,
     MessageDelta,
 )
+from openai.types.beta.threads import Run
 from openai.types.beta.threads.runs import RunStep, ToolCall, RunStepDelta, ToolCallDelta
 
 
@@ -180,6 +181,14 @@ class EventHandler(AssistantEventHandler):
 
 
 class TestAssistants(AzureRecordedTestCase):
+
+    def handle_run_failure(self, run: Run):
+        if run.status == "failed":
+            if "Rate limit" in run.last_error.message:
+                pytest.skip("Skipping - Rate limit reached.")
+            raise openai.OpenAIError(run.last_error.message)
+        if run.status not in ["completed", "requires_action"]:
+            raise openai.OpenAIError(f"Run in unexpected status: {run.status}")
 
     @configure
     @pytest.mark.parametrize(
@@ -496,8 +505,7 @@ class TestAssistants(AzureRecordedTestCase):
                 instructions="Please address the user as Jane Doe.",
                 additional_instructions="After solving each equation, say 'Isn't math fun?'",
             )
-            if run.status == "failed":
-                raise openai.OpenAIError(run.last_error.message)
+            self.handle_run_failure(run)
             if run.status == "completed":
                 messages = client.beta.threads.messages.list(thread_id=thread.id)
 
@@ -540,7 +548,7 @@ class TestAssistants(AzureRecordedTestCase):
             )
             client.beta.vector_stores.files.upload_and_poll(
                 vector_store_id=vector_store.id,
-                file_id=path
+                file=path
             )
             assistant = client.beta.assistants.create(
                 name="python test",
@@ -562,8 +570,7 @@ class TestAssistants(AzureRecordedTestCase):
                     ]
                 }
             )
-            if run.status == "failed":
-                raise openai.OpenAIError(run.last_error.message)
+            self.handle_run_failure(run)
             if run.status == "completed":
                 messages = client.beta.threads.messages.list(thread_id=run.thread_id)
 
@@ -631,8 +638,7 @@ class TestAssistants(AzureRecordedTestCase):
                     ]
                 }
             )
-            if run.status == "failed":
-                raise openai.OpenAIError(run.last_error.message)
+            self.handle_run_failure(run)
             if run.status == "requires_action":
                 run = client.beta.threads.runs.submit_tool_outputs_and_poll(
                     thread_id=run.thread_id,
@@ -644,7 +650,7 @@ class TestAssistants(AzureRecordedTestCase):
                         }
                     ]
                 )
-
+            self.handle_run_failure(run)
             if run.status == "completed":
                 messages = client.beta.threads.messages.list(thread_id=run.thread_id)
 
@@ -666,10 +672,13 @@ class TestAssistants(AzureRecordedTestCase):
                     thread_id=run.thread_id,
                     run_id=r.id
                 )
+                for step in run_steps:
+                    assert step.id
+
                 retrieved_step = client.beta.threads.runs.steps.retrieve(
                     thread_id=run.thread_id,
                     run_id=r.id,
-                    step_id=run_steps.data[0].id
+                    step_id=step.id
                 )
                 assert retrieved_step.id
                 assert retrieved_step.created_at

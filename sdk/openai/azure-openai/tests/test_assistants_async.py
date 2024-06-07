@@ -4,7 +4,6 @@
 # ------------------------------------
 
 import os
-import time
 import pytest
 import pathlib
 import uuid
@@ -19,9 +18,8 @@ from openai.types.beta.threads import (
     TextDelta,
     MessageDelta,
 )
+from openai.types.beta.threads import Run
 from openai.types.beta.threads.runs import RunStep, ToolCall, RunStepDelta, ToolCallDelta
-
-TIMEOUT = 300
 
 
 class AsyncEventHandler(AsyncAssistantEventHandler):
@@ -183,6 +181,14 @@ class AsyncEventHandler(AsyncAssistantEventHandler):
 
 class TestAssistantsAsync(AzureRecordedTestCase):
 
+    def handle_run_failure(self, run: Run):
+        if run.status == "failed":
+            if "Rate limit" in run.last_error.message:
+                pytest.skip("Skipping - Rate limit reached.")
+            raise openai.OpenAIError(run.last_error.message)
+        if run.status not in ["completed", "requires_action"]:
+            raise openai.OpenAIError(f"Run in unexpected status: {run.status}")
+
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
@@ -240,7 +246,6 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                 ],
                 metadata={"key": "value"},
             )
-
             retrieved_thread = await client_async.beta.threads.retrieve(
                 thread_id=thread.id,
             )
@@ -482,7 +487,6 @@ class TestAssistantsAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
     async def test_assistants_runs_code(self, client_async, api_type, api_version, **kwargs):
-
         try:
             assistant = await client_async.beta.assistants.create(
                 name="python test",
@@ -498,31 +502,19 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                 content="I need to solve the equation `3x + 11 = 14`. Can you help me?",
             )
 
-            run = await client_async.beta.threads.runs.create(
+            run = await client_async.beta.threads.runs.create_and_poll(
                 thread_id=thread.id,
                 assistant_id=assistant.id,
                 instructions="Please address the user as Jane Doe.",
                 additional_instructions="After solving each equation, say 'Isn't math fun?'",
             )
+            self.handle_run_failure(run)
+            if run.status == "completed":
+                messages = client_async.beta.threads.messages.list(thread_id=thread.id)
 
-            start_time = time.time()
-
-            while True:
-                if time.time() - start_time > TIMEOUT:
-                    raise TimeoutError("Run timed out")
-
-                run = await client_async.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
-
-                if run.status == "completed":
-                    messages = client_async.beta.threads.messages.list(thread_id=thread.id)
-
-                    async for message in messages:
-                        assert message.content[0].type == "text"
-                        assert message.content[0].text.value
-
-                    break
-                else:
-                    time.sleep(5)
+                async for message in messages:
+                    assert message.content[0].type == "text"
+                    assert message.content[0].text.value
 
             run = await client_async.beta.threads.runs.update(
                 thread_id=thread.id,
@@ -554,14 +546,13 @@ class TestAssistantsAsync(AzureRecordedTestCase):
 
         path = pathlib.Path(file_name)
 
-        file = await client_async.files.create(
-            file=open(path, "rb"),
-            purpose="assistants"
-        )
         try:
             vector_store = await client_async.beta.vector_stores.create(
                 name="Support FAQ",
-                file_ids=[file.id]
+            )
+            await client_async.beta.vector_stores.files.upload_and_poll(
+                vector_store_id=vector_store.id,
+                file=path
             )
             assistant = await client_async.beta.assistants.create(
                 name="python test",
@@ -583,7 +574,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                     ]
                 }
             )
-
+            self.handle_run_failure(run)
             if run.status == "completed":
                 messages = client_async.beta.threads.messages.list(thread_id=run.thread_id)
 
@@ -604,11 +595,6 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             )
             assert delete_thread.id
             assert delete_thread.deleted is True
-            deleted_vector_store_file = await client_async.beta.vector_stores.files.delete(
-                vector_store_id=vector_store.id,
-                file_id=file.id
-            )
-            assert deleted_vector_store_file.deleted is True
             deleted_vector_store = await client_async.beta.vector_stores.delete(
                 vector_store_id=vector_store.id
             )
@@ -657,9 +643,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                     ]
                 }
             )
-
-            if run.status == "failed":
-                raise openai.OpenAIError(run.last_error.message)
+            self.handle_run_failure(run)
             if run.status == "requires_action":
                 run = await client_async.beta.threads.runs.submit_tool_outputs_and_poll(
                     thread_id=run.thread_id,
@@ -671,7 +655,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                         }
                     ]
                 )
-
+            self.handle_run_failure(run)
             if run.status == "completed":
                 messages = client_async.beta.threads.messages.list(thread_id=run.thread_id)
 
