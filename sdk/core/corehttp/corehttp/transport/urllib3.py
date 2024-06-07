@@ -137,6 +137,9 @@ class Urllib3StreamDownloadGenerator:
                 urllib3.exceptions.InvalidChunkLength) as err:
             raise IncompleteReadError(err, error=err) from err
         except urllib3.exceptions.HTTPError as err:
+            msg = err.__str__()
+            if "IncompleteRead" in msg:
+                raise IncompleteReadError(err, error=err) from err
             raise ServiceResponseError(err, error=err) from err
 
 
@@ -278,6 +281,19 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
                     method=request.method,
                     url=request.url,
                     body=body,
+                    timeout=timeout,
+                    headers=request.headers,
+                    preload_content=False,
+                    decode_content=False,
+                    redirect=False,
+                    retries=False,
+                    **kwargs
+                )
+            elif isinstance(request._data, Mapping):
+                result = self._pool.request_encode_body(
+                    method=request.method,
+                    url=request.url,
+                    fields=request._data,
                     timeout=timeout,
                     headers=request.headers,
                     preload_content=False,

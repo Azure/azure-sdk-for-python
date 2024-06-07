@@ -32,7 +32,7 @@ from urllib3.fields import RequestField
 from urllib3.filepost import encode_multipart_formdata
 from azure.core.pipeline import Pipeline
 
-from ..exceptions import (
+from azure.core.exceptions import (
     ServiceRequestError,
     ServiceResponseError,
     IncompleteReadError,
@@ -72,7 +72,6 @@ def _encode_files(files):
             fn, fp, ft = v
         else:
             fn, fp, ft, fh = v
-
         if isinstance(fp, (str, bytes, bytearray)):
             fdata = fp
         elif hasattr(fp, "read"):
@@ -81,13 +80,12 @@ def _encode_files(files):
             continue
         else:
             fdata = fp
-
         rf = RequestField(name=k, data=fdata, filename=fn, headers=fh)
         rf.make_multipart(content_type=ft)
         new_fields.append(rf)
-
     body, content_type = encode_multipart_formdata(new_fields)
     return body, content_type
+
 
 class Urllib3StreamDownloadGenerator:
     """Generator for streaming response data.
@@ -120,6 +118,9 @@ class Urllib3StreamDownloadGenerator:
                 urllib3.exceptions.InvalidChunkLength) as err:
             raise IncompleteReadError(err, error=err) from err
         except urllib3.exceptions.HTTPError as err:
+            msg = err.__str__()
+            if "IncompleteRead" in msg:
+                raise IncompleteReadError(err, error=err) from err
             raise ServiceResponseError(err, error=err) from err
 
 
@@ -261,6 +262,19 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
                     method=request.method,
                     url=request.url,
                     body=body,
+                    timeout=timeout,
+                    headers=request.headers,
+                    preload_content=False,
+                    decode_content=False,
+                    redirect=False,
+                    retries=False,
+                    **kwargs
+                )
+            elif isinstance(request.data, Mapping):
+                result = self._pool.request_encode_body(
+                    method=request.method,
+                    url=request.url,
+                    fields=request.data,
                     timeout=timeout,
                     headers=request.headers,
                     preload_content=False,
