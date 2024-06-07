@@ -4,7 +4,6 @@
 # ------------------------------------
 
 import os
-import time
 import pytest
 import pathlib
 import uuid
@@ -20,8 +19,6 @@ from openai.types.beta.threads import (
     MessageDelta,
 )
 from openai.types.beta.threads.runs import RunStep, ToolCall, RunStepDelta, ToolCallDelta
-
-TIMEOUT = 300
 
 
 class EventHandler(AssistantEventHandler):
@@ -493,32 +490,21 @@ class TestAssistants(AzureRecordedTestCase):
                 content="I need to solve the equation `3x + 11 = 14`. Can you help me?",
             )
 
-            run = client.beta.threads.runs.create(
+            run = client.beta.threads.runs.create_and_poll(
                 thread_id=thread.id,
                 assistant_id=assistant.id,
                 instructions="Please address the user as Jane Doe.",
                 additional_instructions="After solving each equation, say 'Isn't math fun?'",
             )
+            if run.status == "failed":
+                raise openai.OpenAIError(run.last_error.message)
+            if run.status == "completed":
+                messages = client.beta.threads.messages.list(thread_id=thread.id)
 
-            start_time = time.time()
+                for message in messages:
+                    assert message.content[0].type == "text"
+                    assert message.content[0].text.value
 
-            while True:
-                if time.time() - start_time > TIMEOUT:
-                    raise TimeoutError("Run timed out")
-
-                run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
-
-                if run.status == "completed":
-                    messages = client.beta.threads.messages.list(thread_id=thread.id)
-
-                    for message in messages:
-                        assert message.content[0].type == "text"
-                        assert message.content[0].text.value
-
-                    break
-                else:
-                    time.sleep(5)
-            
             run = client.beta.threads.runs.update(
                 thread_id=thread.id,
                 run_id=run.id,
@@ -548,17 +534,14 @@ class TestAssistants(AzureRecordedTestCase):
 
         path = pathlib.Path(file_name)
 
-        file = client.files.create(
-            file=open(path, "rb"),
-            purpose="assistants"
-        )
-
         try:
             vector_store = client.beta.vector_stores.create(
-                name="Support FAQ",
-                file_ids=[file.id]
+                name="Support FAQ"
             )
-
+            client.beta.vector_stores.files.upload_and_poll(
+                vector_store_id=vector_store.id,
+                file_id=path
+            )
             assistant = client.beta.assistants.create(
                 name="python test",
                 instructions="You help answer questions about Contoso company policy.",
@@ -579,7 +562,8 @@ class TestAssistants(AzureRecordedTestCase):
                     ]
                 }
             )
-
+            if run.status == "failed":
+                raise openai.OpenAIError(run.last_error.message)
             if run.status == "completed":
                 messages = client.beta.threads.messages.list(thread_id=run.thread_id)
 
@@ -600,11 +584,6 @@ class TestAssistants(AzureRecordedTestCase):
             )
             assert delete_thread.id
             assert delete_thread.deleted is True
-            deleted_vector_store_file = client.beta.vector_stores.files.delete(
-                vector_store_id=vector_store.id,
-                file_id=file.id
-            )
-            assert deleted_vector_store_file.deleted is True
             deleted_vector_store = client.beta.vector_stores.delete(
                 vector_store_id=vector_store.id
             )
