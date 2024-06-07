@@ -28,8 +28,6 @@ import functools
 from typing import Any, Mapping, Optional, Union
 
 import urllib3
-from urllib3.fields import RequestField
-from urllib3.filepost import encode_multipart_formdata
 
 from ..runtime.pipeline import Pipeline
 from ..exceptions import (
@@ -41,7 +39,7 @@ from ..exceptions import (
 from ..transport import HttpTransport
 from ..rest import HttpRequest as RestHttpRequest, HttpResponse as RestHttpResponse
 from ..rest._http_response_impl import HttpResponseImpl
-from ..rest._aiohttp import _CIMultiDict
+
 
 DEFAULT_BLOCK_SIZE = 32768
 
@@ -119,7 +117,7 @@ class Urllib3TransportResponse(HttpResponseImpl):
         internal_response: urllib3.response.HTTPResponse,
         **kwargs
     ) -> None:
-        headers = _CIMultiDict(kwargs.pop("headers", internal_response.headers))
+        headers = kwargs.pop("headers", internal_response.headers)
         super().__init__(
             request=request,
             internal_response=internal_response,
@@ -136,7 +134,7 @@ class Urllib3TransportResponse(HttpResponseImpl):
         # Remove the unpicklable entries.
         state["_internal_response"] = None  # urllib3 response are not pickable (see headers comments)
         return state
-    
+
     def close(self) -> None:
         super().close()
         self._internal_response.release_conn()
@@ -193,7 +191,7 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
                 cert_kwargs["cert_file"] = cert
                 cert_kwargs["key_file"] = None
         kwargs.update(cert_kwargs)
-    
+
     def open(self) -> None:
         """Assign new session if one does not already exist."""
         if self._has_been_opened and not self._pool:
@@ -225,9 +223,11 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
         """Send the request using this HTTP sender.
 
         :param request: The HTTP request.
-        :paramtype request: ~azure.core.rest.HttpRequest
+        :type request: ~azure.core.rest.HttpRequest
         :rtype: ~azure.core.rest.HttpResponse
+        :return: The Http response.
         """
+        # pylint: disable=protected-access
         if 'proxies' in kwargs:
             raise NotImplementedError(
                 "Proxies are not yet supported. Please create the transport using a configured urllib3.ProxyManager."
@@ -314,7 +314,6 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
             # Catch anything else that urllib3 gives us
             raise ServiceResponseError(err, error=err) from err
         return response
-        
 
     def __enter__(self) -> "Urllib3Transport":
         self.open()
