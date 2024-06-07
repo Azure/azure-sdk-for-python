@@ -26,3 +26,5 @@ CUSTOM_FILTER_KEY = "CSTM"  # cspell:disable-line
 PERCENTAGE_FILTER_KEY = "PRCNT"  # cspell:disable-line
 TIME_WINDOW_FILTER_KEY = "TIME"
 TARGETING_FILTER_KEY = "TRGT"  # cspell:disable-line
+
+HTTPS_PREFIX = "https://"

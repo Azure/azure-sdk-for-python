@@ -31,16 +31,13 @@ from typing import (
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
-    ConfigurationSetting,
 )
-from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
 from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 from ._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
-    FEATURE_FLAG_PREFIX,
     REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE,
     ServiceFabricEnvironmentVariable,
     AzureFunctionEnvironmentVariable,
@@ -48,9 +45,6 @@ from ._constants import (
     ContainerAppEnvironmentVariable,
     KubernetesEnvironmentVariable,
     EMPTY_LABEL,
-    PERCENTAGE_FILTER_NAMES,
-    TIME_WINDOW_FILTER_NAMES,
-    TARGETING_FILTER_NAMES,
     CUSTOM_FILTER_KEY,
     PERCENTAGE_FILTER_KEY,
     TIME_WINDOW_FILTER_KEY,
@@ -601,14 +595,18 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
         for client in active_clients:
             try:
-                configuration_settings, sentinel_keys = client.load_configuration_settings(self._selects, self._refresh_on, **kwargs)
+                configuration_settings, sentinel_keys = client.load_configuration_settings(
+                    self._selects, self._refresh_on, **kwargs
+                )
                 configuration_settings_processed = {}
                 for config in configuration_settings:
                     key = self._process_key_name(config)
                     value = self._process_key_value(config)
                     configuration_settings_processed[key] = value
                 if self._feature_flag_enabled:
-                    feature_flags, feature_flag_sentinel_keys = client.load_feature_flags(self._feature_flag_selectors, self._feature_flag_refresh_enabled, **kwargs)
+                    feature_flags, feature_flag_sentinel_keys = client.load_feature_flags(
+                        self._feature_flag_selectors, self._feature_flag_refresh_enabled, **kwargs
+                    )
                     configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = {}
                     configuration_settings_processed[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
                     self._refresh_on_feature_flags = feature_flag_sentinel_keys

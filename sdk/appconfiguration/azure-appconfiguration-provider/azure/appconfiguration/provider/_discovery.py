@@ -9,7 +9,7 @@ import time
 from dataclasses import dataclass
 import dns.resolver
 from dns.resolver import NXDOMAIN, LifetimeTimeout, NoNameservers
-from ._constants import DISABLE_APPCONFIGURATION_DISCOVERY
+from ._constants import DISABLE_APPCONFIGURATION_DISCOVERY, HTTPS_PREFIX
 
 
 @dataclass
@@ -18,7 +18,7 @@ class SRVRecord:
     weight: int
     port: int
     target: str
-    protocol: str = "https://"
+    protocol: str = HTTPS_PREFIX
 
     def __init__(self, answer):
         self.priority = answer.priority
@@ -41,13 +41,13 @@ def find_auto_failover_endpoints(endpoint):
     srv_records = [origin] + _find_replicas(origin.target)
     endpoints = []
     for srv_record in srv_records:
-        if _validate(known_domain, srv_record.target) and not srv_record.target == endpoint.removeprefix("https://"):
-            endpoints.append("https://" + srv_record.target)
+        if _validate(known_domain, srv_record.target) and not srv_record.target == endpoint.removeprefix(HTTPS_PREFIX):
+            endpoints.append(HTTPS_PREFIX + srv_record.target)
     return endpoints
 
 
 def _find_origin(domain):
-    uri = domain.removeprefix("https://")
+    uri = domain.removeprefix(HTTPS_PREFIX)
     request = f"_origin._tcp.{uri}"
     srv_records = _request_record(request)
     if not srv_records:
