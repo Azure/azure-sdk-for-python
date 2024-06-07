@@ -133,8 +133,8 @@ def build_search_get_polygon_request(
     *,
     coordinates: List[float],
     view: Optional[str] = None,
-    result_type: Union[str, _models.BoundaryResultTypeEnum] = "countryRegion",
-    resolution: Union[str, _models.ResolutionEnum] = "medium",
+    result_type: Union[str, _models.BoundaryResultType] = "countryRegion",
+    resolution: Union[str, _models.Resolution] = "medium",
     client_id: Optional[str] = None,
     accept_language: Optional[str] = None,
     **kwargs: Any
@@ -171,7 +171,7 @@ def build_search_get_polygon_request(
 def build_search_get_reverse_geocoding_request(  # pylint: disable=name-too-long
     *,
     coordinates: List[float],
-    result_types: Optional[List[Union[str, _models.ReverseGeocodingResultTypeEnum]]] = None,
+    result_types: Optional[List[Union[str, _models.ResultType]]] = None,
     view: Optional[str] = None,
     client_id: Optional[str] = None,
     accept_language: Optional[str] = None,
@@ -269,9 +269,9 @@ class SearchOperations:
         postal_code: Optional[str] = None,
         **kwargs: Any
     ) -> _models.GeocodingResponse:
-        """Use to get latitude and longitude coordinates of a street address or name of a place.
+        """Use to get longitude and latitude coordinates of a street address or name of a place.
 
-        The ``Get Geocoding`` API is an HTTP ``GET`` request that returns the latitude and longitude
+        The ``Get Geocoding`` API is an HTTP ``GET`` request that returns the longitude and latitude
         coordinates of the location being searched.
 
         In many cases, the complete search service might be too much, for instance if you are only
@@ -470,7 +470,7 @@ class SearchOperations:
 
 
         *
-          `\ ``GeocodingResponse`` </rest/api/maps/search/get-geocoding#geocodingresponse>`_ - If the
+          `\\ ``GeocodingResponse`` </rest/api/maps/search/get-geocoding#geocodingresponse>`_ - If the
         query completed successfully.
 
         *
@@ -552,7 +552,7 @@ class SearchOperations:
 
 
         *
-          `\ ``GeocodingResponse`` </rest/api/maps/search/get-geocoding#geocodingresponse>`_ - If the
+          `\\ ``GeocodingResponse`` </rest/api/maps/search/get-geocoding#geocodingresponse>`_ - If the
         query completed successfully.
 
         *
@@ -634,7 +634,7 @@ class SearchOperations:
 
 
         *
-          `\ ``GeocodingResponse`` </rest/api/maps/search/get-geocoding#geocodingresponse>`_ - If the
+          `\\ ``GeocodingResponse`` </rest/api/maps/search/get-geocoding#geocodingresponse>`_ - If the
         query completed successfully.
 
         *
@@ -711,8 +711,8 @@ class SearchOperations:
         *,
         coordinates: List[float],
         view: Optional[str] = None,
-        result_type: Union[str, _models.BoundaryResultTypeEnum] = "countryRegion",
-        resolution: Union[str, _models.ResolutionEnum] = "medium",
+        result_type: Union[str, _models.BoundaryResultType] = "countryRegion",
+        resolution: Union[str, _models.Resolution] = "medium",
         **kwargs: Any
     ) -> _models.Boundary:
         """Use to get polygon data of a geographical area shape such as a city or a country region.
@@ -731,13 +731,15 @@ class SearchOperations:
          Please refer to `Supported Views <https://aka.ms/AzureMapsLocalizationViews>`_ for details and
          to see the available Views. Default value is None.
         :paramtype view: str
-        :keyword result_type: The geopolitical concept to return a boundary for. Known values are:
-         "countryRegion", "adminDistrict", "adminDistrict2", "postalCode", "postalCode2", "postalCode3",
-         "postalCode4", "neighborhood", and "locality". Default value is "countryRegion".
-        :paramtype result_type: str or ~azure.maps.search.models.BoundaryResultTypeEnum
-        :keyword resolution: Resolution determines the amount of points to send back. Known values are:
-         "small", "medium", "large", and "huge". Default value is "medium".
-        :paramtype resolution: str or ~azure.maps.search.models.ResolutionEnum
+        :keyword result_type: The geopolitical concept to return a boundary for. If not specified, the
+         default is ``countryRegion`` result type. Known values are: "countryRegion", "adminDistrict",
+         "adminDistrict2", "postalCode", "postalCode2", "postalCode3", "postalCode4", "neighborhood",
+         and "locality". Default value is "countryRegion".
+        :paramtype result_type: str or ~azure.maps.search.models.BoundaryResultType
+        :keyword resolution: Resolution determines the amount of points to send back. If not specified,
+         the default is medium resolution. Known values are: "small", "medium", "large", and "huge".
+         Default value is "medium".
+        :paramtype resolution: str or ~azure.maps.search.models.Resolution
         :return: Boundary
         :rtype: ~azure.maps.search.models.Boundary
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -794,11 +796,11 @@ class SearchOperations:
         self,
         *,
         coordinates: List[float],
-        result_types: Optional[List[Union[str, _models.ReverseGeocodingResultTypeEnum]]] = None,
+        result_types: Optional[List[Union[str, _models.ResultType]]] = None,
         view: Optional[str] = None,
         **kwargs: Any
     ) -> _models.GeocodingResponse:
-        """Use to get a street address and location info from latitude and longitude coordinates.
+        """Use to get a street address and location info from longitude and latitude coordinates.
 
         The ``Get Reverse Geocoding`` API is an HTTP ``GET`` request used to translate a coordinate
         (example: 37.786505, -122.3862) into a human understandable street address. Useful in tracking
@@ -829,7 +831,7 @@ class SearchOperations:
          returned. For example, if you specify Address and AdminDistrict1 as entity types and entities
          were found for both types, only the Address entity information is returned in the response.
          Default value is None.
-        :paramtype result_types: list[str or ~azure.maps.search.models.ReverseGeocodingResultTypeEnum]
+        :paramtype result_types: list[str or ~azure.maps.search.models.ResultType]
         :keyword view: A string that represents an `ISO 3166-1 Alpha-2 region/country code
          <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_. This will alter Geopolitical disputed
          borders and labels to align with the specified user region. By default, the View parameter is
@@ -955,7 +957,7 @@ class SearchOperations:
 
 
         *
-          `\ ``GeocodingResponse`` </rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ -
+          `\\ ``GeocodingResponse`` </rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ -
         If the query completed successfully.
 
         *
@@ -1037,7 +1039,7 @@ class SearchOperations:
 
 
         *
-          `\ ``GeocodingResponse`` </rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ -
+          `\\ ``GeocodingResponse`` </rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ -
         If the query completed successfully.
 
         *
@@ -1120,7 +1122,7 @@ class SearchOperations:
 
 
         *
-          `\ ``GeocodingResponse`` </rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ -
+          `\\ ``GeocodingResponse`` </rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ -
         If the query completed successfully.
 
         *

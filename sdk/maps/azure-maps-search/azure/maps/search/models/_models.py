@@ -4,7 +4,7 @@
 # ------------------------------------
 
 from typing import Optional, List, Union
-from azure.maps.search._generated.models import ResultTypeEnum
+from azure.maps.search._generated.models import ResultType
 
 class LatLon:
     """Represents coordinate latitude and longitude
@@ -160,7 +160,7 @@ class ReverseGeocodingBatchRequestItem:
      When entities of more than one entity type are found, only the most specific entity is
      returned. For example, if you specify Address and AdminDistrict1 as entity types and entities
      were found for both types, only the Address entity information is returned in the response.
-    :paramtype result_types: list[str or ~azure.maps.search.models.ResultTypeEnum]
+    :paramtype result_types: list[str or ~azure.maps.search.models.ResultType]
     :keyword localized_map_view: A string that specifies an `ISO 3166-1 Alpha-2 region/country code
      <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_. This will alter Geopolitical disputed
      borders and labels to align with the specified user region.
@@ -169,7 +169,7 @@ class ReverseGeocodingBatchRequestItem:
     def __init__(self,
                  optional_id: Optional[str] = None,
                  coordinates: Optional[LatLon] = None,
-                 result_types: Optional[List[Union[str, ResultTypeEnum]]] = None,
+                 result_types: Optional[List[Union[str, ResultType]]] = None,
                  localized_map_view: Optional[str] = None):
         self.optional_id = optional_id
         self.coordinates = coordinates

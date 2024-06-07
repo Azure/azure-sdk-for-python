@@ -7,7 +7,7 @@ import os
 
 from azure.core.credentials import AzureKeyCredential
 from azure.maps.search import MapsSearchClient
-from azure.maps.search._generated.models import BoundaryResultTypeEnum, ResolutionEnum
+from azure.maps.search._generated.models import BoundaryResultType, Resolution
 from azure.maps.search.models import GeocodingBatchRequestItem, GeocodingBatchRequestBody, \
     ReverseGeocodingBatchRequestItem, ReverseGeocodingBatchRequestBody, LatLon
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, is_live
@@ -100,8 +100,8 @@ class TestMapsSearchClient(AzureRecordedTestCase):
     def test_get_polygon(self):
         result = self.client.get_polygon(
             coordinates=LatLon(47.630356, -122.138679),
-            result_type=BoundaryResultTypeEnum.LOCALITY,
-            resolution=ResolutionEnum.SMALL)
+            result_type=BoundaryResultType.LOCALITY,
+            resolution=Resolution.SMALL)
 
         assert result.geometry is not None
         assert len(result.geometry.geometries) > 0

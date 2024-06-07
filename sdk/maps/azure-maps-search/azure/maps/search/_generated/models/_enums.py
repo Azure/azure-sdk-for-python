@@ -10,8 +10,8 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class BoundaryResultTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """BoundaryResultTypeEnum."""
+class BoundaryResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BoundaryResultType."""
 
     COUNTRY_REGION = "countryRegion"
     """Country or region."""
@@ -37,7 +37,7 @@ class BoundaryResultTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A concentrated area of human settlement, such as a city, town or village."""
 
 
-class CalculationMethodEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class CalculationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The method that was used to compute the geocode point."""
 
     INTERPOLATION = "Interpolation"
@@ -51,7 +51,7 @@ class CalculationMethodEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The geocode point was matched to the rooftop of a building."""
 
 
-class ConfidenceEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class Confidence(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The level of confidence that the geocoded location result is a match. Use this value with the
     match code to determine for more complete information about the match.
 
@@ -60,7 +60,7 @@ class ConfidenceEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     HIGH = "High"
-    """If the confidence is set to ``High``\ , one or more strong matches were found. Multiple
+    """If the confidence is set to ``High``\\ , one or more strong matches were found. Multiple
     ``High`` confidence matches are sorted in ranked order by importance when applicable. For
     example, landmarks have importance but addresses do not.
     
@@ -89,13 +89,13 @@ class ConfidenceEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LOW = "Low"
 
 
-class FeatureCollectionEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class FeatureCollection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of a FeatureCollection object must be FeatureCollection."""
 
     FEATURE_COLLECTION = "FeatureCollection"
 
 
-class FeatureTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class FeatureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of a feature must be Feature."""
 
     FEATURE = "Feature"
@@ -127,16 +127,16 @@ class GeoJsonObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """``GeoJSON FeatureCollection`` object."""
 
 
-class MatchCodesEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """MatchCodesEnum."""
+class MatchCodes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MatchCodes."""
 
     GOOD = "Good"
     AMBIGUOUS = "Ambiguous"
     UP_HIERARCHY = "UpHierarchy"
 
 
-class ResolutionEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ResolutionEnum."""
+class Resolution(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Resolution."""
 
     SMALL = "small"
     """Return the boundary geometry with the least amount of points."""
@@ -148,8 +148,8 @@ class ResolutionEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Return the boundary geometry with more or the same amount of points as large."""
 
 
-class ResultTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ResultTypeEnum."""
+class ResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ResultType."""
 
     ADDRESS = "Address"
     NEIGHBORHOOD = "Neighborhood"
@@ -160,8 +160,8 @@ class ResultTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COUNTRY_REGION = "CountryRegion"
 
 
-class ReverseGeocodingResultTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ReverseGeocodingResultTypeEnum."""
+class ReverseGeocodingResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ReverseGeocodingResultType."""
 
     ADDRESS = "Address"
     NEIGHBORHOOD = "Neighborhood"
@@ -172,8 +172,8 @@ class ReverseGeocodingResultTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMet
     COUNTRY_REGION = "CountryRegion"
 
 
-class UsageTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """UsageTypeEnum."""
+class UsageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """UsageType."""
 
     DISPLAY = "Display"
     ROUTE = "Route"

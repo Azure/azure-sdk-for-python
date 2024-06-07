@@ -48,17 +48,17 @@ from ._models import Intersection
 from ._models import ReverseGeocodingBatchRequestBody
 from ._models import ReverseGeocodingBatchRequestItem
 
-from ._enums import BoundaryResultTypeEnum
-from ._enums import CalculationMethodEnum
-from ._enums import ConfidenceEnum
-from ._enums import FeatureCollectionEnum
-from ._enums import FeatureTypeEnum
+from ._enums import BoundaryResultType
+from ._enums import CalculationMethod
+from ._enums import Confidence
+from ._enums import FeatureCollection
+from ._enums import FeatureType
 from ._enums import GeoJsonObjectType
-from ._enums import MatchCodesEnum
-from ._enums import ResolutionEnum
-from ._enums import ResultTypeEnum
-from ._enums import ReverseGeocodingResultTypeEnum
-from ._enums import UsageTypeEnum
+from ._enums import MatchCodes
+from ._enums import Resolution
+from ._enums import ResultType
+from ._enums import ReverseGeocodingResultType
+from ._enums import UsageType
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -105,17 +105,17 @@ __all__ = [
     "Intersection",
     "ReverseGeocodingBatchRequestBody",
     "ReverseGeocodingBatchRequestItem",
-    "BoundaryResultTypeEnum",
-    "CalculationMethodEnum",
-    "ConfidenceEnum",
-    "FeatureCollectionEnum",
-    "FeatureTypeEnum",
+    "BoundaryResultType",
+    "CalculationMethod",
+    "Confidence",
+    "FeatureCollection",
+    "FeatureType",
     "GeoJsonObjectType",
-    "MatchCodesEnum",
-    "ResolutionEnum",
-    "ResultTypeEnum",
-    "ReverseGeocodingResultTypeEnum",
-    "UsageTypeEnum",
+    "MatchCodes",
+    "Resolution",
+    "ResultType",
+    "ReverseGeocodingResultType",
+    "UsageType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

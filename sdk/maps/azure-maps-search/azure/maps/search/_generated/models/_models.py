@@ -636,7 +636,7 @@ class FeaturesItem(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar type: The type of a feature must be Feature. "Feature"
-    :vartype type: str or ~azure.maps.search.models.FeatureTypeEnum
+    :vartype type: str or ~azure.maps.search.models.FeatureType
     :ivar id: ID for feature returned.
     :vartype id: str
     :ivar properties:
@@ -665,7 +665,7 @@ class FeaturesItem(_serialization.Model):
         self,
         *,
         geometry: "_models.GeoJsonPoint",
-        type: Optional[Union[str, "_models.FeatureTypeEnum"]] = None,
+        type: Optional[Union[str, "_models.FeatureType"]] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         properties: Optional["_models.FeaturesItemProperties"] = None,
         bbox: Optional[List[float]] = None,
@@ -673,7 +673,7 @@ class FeaturesItem(_serialization.Model):
     ) -> None:
         """
         :keyword type: The type of a feature must be Feature. "Feature"
-        :paramtype type: str or ~azure.maps.search.models.FeatureTypeEnum
+        :paramtype type: str or ~azure.maps.search.models.FeatureType
         :keyword id: ID for feature returned.
         :paramtype id: str
         :keyword properties:
@@ -715,7 +715,7 @@ class FeaturesItemProperties(_serialization.Model):
      The confidence of a geocoded location is based on many factors including the relative
      importance of the geocoded location and the user’s location, if specified. Known values are:
      "High", "Medium", and "Low".
-    :vartype confidence: str or ~azure.maps.search.models.ConfidenceEnum
+    :vartype confidence: str or ~azure.maps.search.models.Confidence
     :ivar match_codes: One or more match code values that represent the geocoding level for each
      location in the response.
 
@@ -732,19 +732,19 @@ class FeaturesItemProperties(_serialization.Model):
 
      The possible values are:
 
-     ``Good``\ : The location has only one match or all returned matches are considered strong
+     ``Good``\\ : The location has only one match or all returned matches are considered strong
      matches. For example, a query for New York returns several Good matches.
 
-     ``Ambiguous``\ : The location is one of a set of possible matches. For example, when you query
-     for the street address 128 Main St., the response may return two locations for 128 North Main
-     St. and 128 South Main St. because there is not enough information to determine which option to
-     choose.
+     ``Ambiguous``\\ : The location is one of a set of possible matches. For example, when you
+     query for the street address 128 Main St., the response may return two locations for 128 North
+     Main St. and 128 South Main St. because there is not enough information to determine which
+     option to choose.
 
-     ``UpHierarchy``\ : The location represents a move up the geographic hierarchy. This occurs
+     ``UpHierarchy``\\ : The location represents a move up the geographic hierarchy. This occurs
      when a match for the location request was not found, so a less precise result is returned. For
      example, if a match for the requested address cannot be found, then a match code of
      ``UpHierarchy`` with a RoadBlock entity type may be returned.
-    :vartype match_codes: list[str or ~azure.maps.search.models.MatchCodesEnum]
+    :vartype match_codes: list[str or ~azure.maps.search.models.MatchCodes]
     :ivar address: The address of the result.
     :vartype address: ~azure.maps.search.models.Address
     :ivar geocode_points: A collection of geocode points that differ in how they were calculated
@@ -764,8 +764,8 @@ class FeaturesItemProperties(_serialization.Model):
         self,
         *,
         type: Optional[str] = None,
-        confidence: Optional[Union[str, "_models.ConfidenceEnum"]] = None,
-        match_codes: Optional[List[Union[str, "_models.MatchCodesEnum"]]] = None,
+        confidence: Optional[Union[str, "_models.Confidence"]] = None,
+        match_codes: Optional[List[Union[str, "_models.MatchCodes"]]] = None,
         address: Optional["_models.Address"] = None,
         geocode_points: Optional[List["_models.GeocodePointsItem"]] = None,
         **kwargs: Any
@@ -790,7 +790,7 @@ class FeaturesItemProperties(_serialization.Model):
          The confidence of a geocoded location is based on many factors including the relative
          importance of the geocoded location and the user’s location, if specified. Known values are:
          "High", "Medium", and "Low".
-        :paramtype confidence: str or ~azure.maps.search.models.ConfidenceEnum
+        :paramtype confidence: str or ~azure.maps.search.models.Confidence
         :keyword match_codes: One or more match code values that represent the geocoding level for each
          location in the response.
 
@@ -807,19 +807,19 @@ class FeaturesItemProperties(_serialization.Model):
 
          The possible values are:
 
-         ``Good``\ : The location has only one match or all returned matches are considered strong
+         ``Good``\\ : The location has only one match or all returned matches are considered strong
          matches. For example, a query for New York returns several Good matches.
 
-         ``Ambiguous``\ : The location is one of a set of possible matches. For example, when you query
-         for the street address 128 Main St., the response may return two locations for 128 North Main
-         St. and 128 South Main St. because there is not enough information to determine which option to
-         choose.
+         ``Ambiguous``\\ : The location is one of a set of possible matches. For example, when you
+         query for the street address 128 Main St., the response may return two locations for 128 North
+         Main St. and 128 South Main St. because there is not enough information to determine which
+         option to choose.
 
-         ``UpHierarchy``\ : The location represents a move up the geographic hierarchy. This occurs
+         ``UpHierarchy``\\ : The location represents a move up the geographic hierarchy. This occurs
          when a match for the location request was not found, so a less precise result is returned. For
          example, if a match for the requested address cannot be found, then a match code of
          ``UpHierarchy`` with a RoadBlock entity type may be returned.
-        :paramtype match_codes: list[str or ~azure.maps.search.models.MatchCodesEnum]
+        :paramtype match_codes: list[str or ~azure.maps.search.models.MatchCodes]
         :keyword address: The address of the result.
         :paramtype address: ~azure.maps.search.models.Address
         :keyword geocode_points: A collection of geocode points that differ in how they were calculated
@@ -842,14 +842,14 @@ class GeocodePointsItem(_serialization.Model):
     :vartype geometry: ~azure.maps.search.models.GeoJsonPoint
     :ivar calculation_method: The method that was used to compute the geocode point. Known values
      are: "Interpolation", "InterpolationOffset", "Parcel", and "Rooftop".
-    :vartype calculation_method: str or ~azure.maps.search.models.CalculationMethodEnum
+    :vartype calculation_method: str or ~azure.maps.search.models.CalculationMethod
     :ivar usage_types: The best use for the geocode point.
      Each geocode point is defined as a ``Route`` point, a ``Display`` point or both.
      Use ``Route`` points if you are creating a route to the location. Use ``Display`` points if
      you are showing the location on a map. For example, if the location is a park, a ``Route``
      point may specify an entrance to the park where you can enter with a car, and a ``Display``
      point may be a point that specifies the center of the park.
-    :vartype usage_types: list[str or ~azure.maps.search.models.UsageTypeEnum]
+    :vartype usage_types: list[str or ~azure.maps.search.models.UsageType]
     """
 
     _attribute_map = {
@@ -862,8 +862,8 @@ class GeocodePointsItem(_serialization.Model):
         self,
         *,
         geometry: Optional["_models.GeoJsonPoint"] = None,
-        calculation_method: Optional[Union[str, "_models.CalculationMethodEnum"]] = None,
-        usage_types: Optional[List[Union[str, "_models.UsageTypeEnum"]]] = None,
+        calculation_method: Optional[Union[str, "_models.CalculationMethod"]] = None,
+        usage_types: Optional[List[Union[str, "_models.UsageType"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -872,14 +872,14 @@ class GeocodePointsItem(_serialization.Model):
         :paramtype geometry: ~azure.maps.search.models.GeoJsonPoint
         :keyword calculation_method: The method that was used to compute the geocode point. Known
          values are: "Interpolation", "InterpolationOffset", "Parcel", and "Rooftop".
-        :paramtype calculation_method: str or ~azure.maps.search.models.CalculationMethodEnum
+        :paramtype calculation_method: str or ~azure.maps.search.models.CalculationMethod
         :keyword usage_types: The best use for the geocode point.
          Each geocode point is defined as a ``Route`` point, a ``Display`` point or both.
          Use ``Route`` points if you are creating a route to the location. Use ``Display`` points if
          you are showing the location on a map. For example, if the location is a park, a ``Route``
          point may specify an entrance to the park where you can enter with a car, and a ``Display``
          point may be a point that specifies the center of the park.
-        :paramtype usage_types: list[str or ~azure.maps.search.models.UsageTypeEnum]
+        :paramtype usage_types: list[str or ~azure.maps.search.models.UsageType]
         """
         super().__init__(**kwargs)
         self.geometry = geometry
@@ -1130,7 +1130,7 @@ class GeocodingBatchResponseItem(_serialization.Model):
     :vartype optional_id: str
     :ivar type: The type of a FeatureCollection object must be FeatureCollection.
      "FeatureCollection"
-    :vartype type: str or ~azure.maps.search.models.FeatureCollectionEnum
+    :vartype type: str or ~azure.maps.search.models.FeatureCollection
     :ivar features:
     :vartype features: list[~azure.maps.search.models.FeaturesItem]
     :ivar next_link: The is the link to the next page of the features returned. If it's the last
@@ -1152,7 +1152,7 @@ class GeocodingBatchResponseItem(_serialization.Model):
         self,
         *,
         optional_id: Optional[str] = None,
-        type: Optional[Union[str, "_models.FeatureCollectionEnum"]] = None,
+        type: Optional[Union[str, "_models.FeatureCollection"]] = None,
         features: Optional[List["_models.FeaturesItem"]] = None,
         next_link: Optional[str] = None,
         error: Optional["_models.ErrorDetail"] = None,
@@ -1163,7 +1163,7 @@ class GeocodingBatchResponseItem(_serialization.Model):
         :paramtype optional_id: str
         :keyword type: The type of a FeatureCollection object must be FeatureCollection.
          "FeatureCollection"
-        :paramtype type: str or ~azure.maps.search.models.FeatureCollectionEnum
+        :paramtype type: str or ~azure.maps.search.models.FeatureCollection
         :keyword features:
         :paramtype features: list[~azure.maps.search.models.FeaturesItem]
         :keyword next_link: The is the link to the next page of the features returned. If it's the last
@@ -1213,7 +1213,7 @@ class GeocodingResponse(_serialization.Model):
 
     :ivar type: The type of a FeatureCollection object must be FeatureCollection.
      "FeatureCollection"
-    :vartype type: str or ~azure.maps.search.models.FeatureCollectionEnum
+    :vartype type: str or ~azure.maps.search.models.FeatureCollection
     :ivar features:
     :vartype features: list[~azure.maps.search.models.FeaturesItem]
     :ivar next_link: The is the link to the next page of the features returned. If it's the last
@@ -1230,7 +1230,7 @@ class GeocodingResponse(_serialization.Model):
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "_models.FeatureCollectionEnum"]] = None,
+        type: Optional[Union[str, "_models.FeatureCollection"]] = None,
         features: Optional[List["_models.FeaturesItem"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
@@ -1238,7 +1238,7 @@ class GeocodingResponse(_serialization.Model):
         """
         :keyword type: The type of a FeatureCollection object must be FeatureCollection.
          "FeatureCollection"
-        :paramtype type: str or ~azure.maps.search.models.FeatureCollectionEnum
+        :paramtype type: str or ~azure.maps.search.models.FeatureCollection
         :keyword features:
         :paramtype features: list[~azure.maps.search.models.FeaturesItem]
         :keyword next_link: The is the link to the next page of the features returned. If it's the last
@@ -1747,8 +1747,8 @@ class GeoJsonPointData(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar coordinates: A ``Position`` is an array of numbers with two or more elements. The first
-     two elements are *longitude* and *latitude*\ , precisely in that order. *Altitude/Elevation* is
-     an optional third element. Please refer to `RFC 7946
+     two elements are *longitude* and *latitude*\\ , precisely in that order. *Altitude/Elevation*
+     is an optional third element. Please refer to `RFC 7946
      <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details. Required.
     :vartype coordinates: list[float]
     """
@@ -1764,7 +1764,7 @@ class GeoJsonPointData(_serialization.Model):
     def __init__(self, *, coordinates: List[float], **kwargs: Any) -> None:
         """
         :keyword coordinates: A ``Position`` is an array of numbers with two or more elements. The
-         first two elements are *longitude* and *latitude*\ , precisely in that order.
+         first two elements are *longitude* and *latitude*\\ , precisely in that order.
          *Altitude/Elevation* is an optional third element. Please refer to `RFC 7946
          <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details. Required.
         :paramtype coordinates: list[float]
@@ -1780,8 +1780,8 @@ class GeoJsonPoint(GeoJsonGeometry, GeoJsonPointData):
     All required parameters must be populated in order to send to server.
 
     :ivar coordinates: A ``Position`` is an array of numbers with two or more elements. The first
-     two elements are *longitude* and *latitude*\ , precisely in that order. *Altitude/Elevation* is
-     an optional third element. Please refer to `RFC 7946
+     two elements are *longitude* and *latitude*\\ , precisely in that order. *Altitude/Elevation*
+     is an optional third element. Please refer to `RFC 7946
      <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details. Required.
     :vartype coordinates: list[float]
     :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
@@ -1809,7 +1809,7 @@ class GeoJsonPoint(GeoJsonGeometry, GeoJsonPointData):
     def __init__(self, *, coordinates: List[float], bbox: Optional[List[float]] = None, **kwargs: Any) -> None:
         """
         :keyword coordinates: A ``Position`` is an array of numbers with two or more elements. The
-         first two elements are *longitude* and *latitude*\ , precisely in that order.
+         first two elements are *longitude* and *latitude*\\ , precisely in that order.
          *Altitude/Elevation* is an optional third element. Please refer to `RFC 7946
          <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details. Required.
         :paramtype coordinates: list[float]
@@ -2024,7 +2024,7 @@ class ReverseGeocodingBatchRequestItem(_serialization.Model):
      When entities of more than one entity type are found, only the most specific entity is
      returned. For example, if you specify Address and AdminDistrict1 as entity types and entities
      were found for both types, only the Address entity information is returned in the response.
-    :vartype result_types: list[str or ~azure.maps.search.models.ResultTypeEnum]
+    :vartype result_types: list[str or ~azure.maps.search.models.ReverseGeocodingResultType]
     :ivar view: A string that specifies an `ISO 3166-1 Alpha-2 region/country code
      <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_. This will alter Geopolitical disputed
      borders and labels to align with the specified user region.
@@ -2047,7 +2047,7 @@ class ReverseGeocodingBatchRequestItem(_serialization.Model):
         *,
         optional_id: Optional[str] = None,
         coordinates: Optional[List[float]] = None,
-        result_types: Optional[List[Union[str, "_models.ResultTypeEnum"]]] = None,
+        result_types: Optional[List[Union[str, "_models.ReverseGeocodingResultType"]]] = None,
         view: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -2076,7 +2076,7 @@ class ReverseGeocodingBatchRequestItem(_serialization.Model):
          When entities of more than one entity type are found, only the most specific entity is
          returned. For example, if you specify Address and AdminDistrict1 as entity types and entities
          were found for both types, only the Address entity information is returned in the response.
-        :paramtype result_types: list[str or ~azure.maps.search.models.ResultTypeEnum]
+        :paramtype result_types: list[str or ~azure.maps.search.models.ReverseGeocodingResultType]
         :keyword view: A string that specifies an `ISO 3166-1 Alpha-2 region/country code
          <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_. This will alter Geopolitical disputed
          borders and labels to align with the specified user region.

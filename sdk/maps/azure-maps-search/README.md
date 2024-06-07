@@ -194,8 +194,8 @@ This sample demonstrates how to search polygons.
 ```python
 import os
 
-from azure.maps.search.models import ResolutionEnum
-from azure.maps.search.models import BoundaryResultTypeEnum
+from azure.maps.search.models import Resolution
+from azure.maps.search.models import BoundaryResultType
 from azure.maps.search.models import LatLon
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
@@ -206,7 +206,7 @@ def get_polygon():
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
-    result = maps_search_client.get_polygon(coordinates=LatLon(47.61256, -122.204141), result_type=BoundaryResultTypeEnum.LOCALITY, resolution=ResolutionEnum.SMALL)
+    result = maps_search_client.get_polygon(coordinates=LatLon(47.61256, -122.204141), result_type=BoundaryResultType.LOCALITY, resolution=Resolution.SMALL)
 
     print(result.geometry)
 

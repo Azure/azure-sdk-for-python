@@ -12,9 +12,9 @@ from azure.maps.search.models import (
     GeocodingBatchRequestBody,
     GeocodingBatchResponse,
     ReverseGeocodingBatchRequestBody,
-    ReverseGeocodingResultTypeEnum,
-    ResolutionEnum,
-    BoundaryResultTypeEnum,
+    ReverseGeocodingResultType,
+    Resolution,
+    BoundaryResultType,
     Boundary
 )
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -226,7 +226,7 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
             self,
             *,
             coordinates: LatLon,
-            result_types: Optional[List[Union[str, ReverseGeocodingResultTypeEnum]]] = None,
+            result_types: Optional[List[Union[str, ReverseGeocodingResultType]]] = None,
             localized_map_view: Optional[str] = None,
             **kwargs: Any
     ) -> GeocodingResponse:
@@ -261,7 +261,7 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
          returned. For example, if you specify Address and AdminDistrict1 as entity types and entities
          were found for both types, only the Address entity information is returned in the response.
          Default value is None.
-        :paramtype result_types: list[str or ~azure.maps.search.models.ReverseGeocodingResultTypeEnum]
+        :paramtype result_types: list[str or ~azure.maps.search.models.ReverseGeocodingResultType]
         :keyword localized_map_view: A string that represents an `ISO 3166-1 Alpha-2 region/country code
          <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_. This will alter Geopolitical disputed
          borders and labels to align with the specified user region. By default, the View parameter is
@@ -364,8 +364,8 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
             *,
             coordinates: LatLon,
             localized_map_view: Optional[str] = None,
-            result_type: Union[str, BoundaryResultTypeEnum] = "countryRegion",
-            resolution: Union[str, ResolutionEnum] = "medium",
+            result_type: Union[str, BoundaryResultType] = "countryRegion",
+            resolution: Union[str, Resolution] = "medium",
             **kwargs: Any
     ) -> Boundary:
         """Use to get polygon data of a geographical area shape such as a city or a country region.
@@ -387,10 +387,10 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         :keyword result_type: The geopolitical concept to return a boundary for. Known values are:
          "countryRegion", "adminDistrict", "adminDistrict2", "postalCode", "postalCode2", "postalCode3",
          "postalCode4", "neighborhood", and "locality". Default value is "countryRegion".
-        :paramtype result_type: str or ~azure.maps.search.models.BoundaryResultTypeEnum
+        :paramtype result_type: str or ~azure.maps.search.models.BoundaryResultType
         :keyword resolution: Resolution determines the amount of points to send back. Known values are:
          "small", "medium", "large", and "huge". Default value is "medium".
-        :paramtype resolution: str or ~azure.maps.search.models.ResolutionEnum
+        :paramtype resolution: str or ~azure.maps.search.models.Resolution
         :return: Boundary
         :rtype: ~azure.maps.search.models.Boundary
         :raises ~azure.core.exceptions.HttpResponseError:
