@@ -242,7 +242,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._raw_download_offset = 0
         # The offset the stream has been read to in bytes or chars depending on mode
         self._read_offset = 0
-        # The offset into current_content that has been consumed in bytes of chars depending on mode
+        # The offset into current_content that has been consumed in bytes or chars depending on mode
         self._current_content_offset = 0
 
         self._text_mode: Optional[bool] = None
@@ -434,6 +434,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 start = self._download_start + len(self._current_content)
                 current_progress = len(self._current_content)
             else:
+                warnings.warn("Calling `chunks` on a partially read stream will result"
+                              "in some data being re-downloaded.")
                 start = self._download_start
                 current_progress = 0
 
