@@ -1,16 +1,10 @@
-parameters:
-- name: Location
-  displayName: Location
-  type: string
-  default: eastus
-
 trigger: none
 
 extends:
     template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: healthinsights
-      Location: '${{ parameters.Location }}'
+      Location: eastus
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(HEALTHINSIGHTS_SUBSCRIPTION_ID)
         AZURE_CLIENT_ID: $(HEALTHINSIGHTS_CLIENT_ID)
