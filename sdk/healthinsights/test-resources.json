@@ -32,6 +32,7 @@
         }
     },
     "variables": {
+        "authorizationApiVersion": "2018-09-01-preview",
         "textAnalyticsBaseName": "[concat('textanalytics', parameters('baseName'))]",
         "cognitiveApiVersion": "2017-04-18",
         "textAnalyticsBaseName": "[concat('textanalytics', parameters('baseName'))]",
