@@ -399,7 +399,7 @@ try:
     result = client.complete( ... )
 except HttpResponseError as e:
     print(f"Status code: {e.status_code} ({e.reason})")
-    print(f"{e.message}")
+    print(e.message)
 ```
 
 For example, when you provide a wrong authentication key:
