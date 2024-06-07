@@ -370,7 +370,11 @@ def _format_data_helper(data: "FileType") -> Union[Tuple[Optional[str], str], Tu
             except (AttributeError, TypeError):
                 pass
             content_type = "application/octet-stream"
-        file_bytes = data
+            # urllib3 does not support streaming file-like objects in multipart. Requests also just reads them. Httpx actually
+            # seems to chunk an IO object. 
+            file_bytes = data.read()
+        else:
+            file_bytes = data
     if content_type:
         return (filename, file_bytes, content_type)
     return (filename, cast(str, file_bytes))

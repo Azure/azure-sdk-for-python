@@ -28,16 +28,34 @@ import functools
 from typing import Any, Mapping, Optional, Union
 
 import urllib3
-from azure.core.pipeline import Pipeline
+from ..runtime.pipeline import Pipeline
 
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError, IncompleteReadError
-from azure.core.configuration import ConnectionConfiguration
-from azure.core.pipeline.transport import HttpTransport
-from azure.core.rest import HttpRequest as RestHttpRequest, HttpResponse as RestHttpResponse
-from azure.core.rest._http_response_impl import HttpResponseImpl
+from ..exceptions import ServiceRequestError, ServiceResponseError, IncompleteReadError
+from ..transport import HttpTransport
+from ..rest import HttpRequest as RestHttpRequest, HttpResponse as RestHttpResponse
+from ..rest._http_response_impl import HttpResponseImpl
 
 DEFAULT_BLOCK_SIZE = 32768
 
+
+class ConnectionConfiguration:
+    """HTTP transport connection configuration settings."""
+
+    def __init__(
+        self,  # pylint: disable=unused-argument
+        *,
+        connection_timeout: float = 300,
+        read_timeout: float = 300,
+        connection_verify: Union[bool, str] = True,
+        connection_cert: Optional[str] = None,
+        connection_data_block_size: int = 4096,
+        **kwargs: Any,
+    ) -> None:
+        self.timeout = connection_timeout
+        self.read_timeout = read_timeout
+        self.verify = connection_verify
+        self.cert = connection_cert
+        self.data_block_size = connection_data_block_size
 
 class Urllib3StreamDownloadGenerator:
     """Generator for streaming response data.

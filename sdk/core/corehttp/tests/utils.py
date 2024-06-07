@@ -48,6 +48,13 @@ try:
 except (ImportError, SyntaxError):
     pass
 
+try:
+    from corehttp.transport.urllib3 import Urllib3TransportResponse, Urllib3Transport
+    SYNC_TRANSPORTS.append(Urllib3Transport)
+    SYNC_TRANSPORT_RESPONSES.append(Urllib3TransportResponse)
+except (ImportError, SyntaxError):
+    pass
+
 HTTP_RESPONSES = [RestHttpResponse]
 ASYNC_HTTP_RESPONSES = [RestAsyncHttpResponse]
 

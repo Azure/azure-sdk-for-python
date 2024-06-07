@@ -31,7 +31,8 @@ def test_iter_raw(client):
             assert response.is_stream_consumed  # we follow httpx behavior here
             raw += part
         assert raw == b"Hello, world!"
-    assert response._internal_response._content_consumed
+    #assert response._internal_response._content_consumed
+    assert response._internal_response.isclosed()
     assert response.is_closed
     assert response.is_stream_consumed
 
@@ -77,7 +78,8 @@ def test_iter_bytes(client):
             assert not response.is_closed
             assert response.is_stream_consumed  # we follow httpx behavior here
             raw += chunk
-        assert response._internal_response._content_consumed
+        #assert response._internal_response._content_consumed
+        assert response._internal_response.isclosed()
         assert response.is_closed
         assert response.is_stream_consumed
         assert raw == b"Hello, world!"
