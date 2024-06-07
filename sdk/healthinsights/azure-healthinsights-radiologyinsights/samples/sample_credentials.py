@@ -35,13 +35,14 @@ USAGE:
 
 class HealthInsightsSyncSamples:
     def radiology_insights_sync(self) -> None:
-# [START credentials]
+        # [START credentials]
         credential = DefaultAzureCredential()
         ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
-# [END credentials]
-        job_id = str(uuid.uuid4())
 
         radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=credential)
+        # [END credentials]
+        
+        job_id = str(uuid.uuid4())
 
         doc_content1 = """CLINICAL HISTORY:   
         20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.

@@ -42,14 +42,14 @@ class HealthInsightsSamples:
         # Close connection here
 
     async def radiology_insights_async(self) -> None:
-        # [START create_radiology_insights_client]
+        
         KEY = os.environ["AZURE_HEALTH_INSIGHTS_API_KEY"]
         ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
         job_id = str(uuid.uuid4())
 
         radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
-        # [END create_radiology_insights_client]
+        
         doc_content1 = """CLINICAL HISTORY:   
         20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
         COMPARISON:   
@@ -127,14 +127,14 @@ class HealthInsightsSamples:
             return
 
     def display_critical_results(self, radiology_insights_result):
-        # [START display_critical_results]
+        # [START display_critical_result]
         for patient_result in radiology_insights_result.patient_results:
             for ri_inference in patient_result.inferences:
                 if ri_inference.kind == models.RadiologyInsightsInferenceType.CRITICAL_RESULT:
                     critical_result = ri_inference.result
                     print(f"Critical Result Inference found: {critical_result.description}")
 
-    # [END display_critical_results]
+    # [END display_critical_result]
 
 
 async def main():

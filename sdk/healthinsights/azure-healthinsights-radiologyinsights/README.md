@@ -37,9 +37,27 @@ You can find the endpoint for your Health Insights service resource using the [A
 az cognitiveservices account show --name "resource-name" --resource-group "resource-group-name" --query "properties.endpoint"
 ```
 
+#### Create a RadiologyInsightsClient with AzureDefaultCredential
+
+DefaultAzureCredential provides different ways to authenticate with the service. Documentation about this can be found [here][azure_credential]
+
+<!-- SNIPPET:sample_credentials.credentials-->
+```Python 
+import os
+from azure.identity import DefaultAzureCredential
+from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
+
+credential = DefaultAzureCredential()
+ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
+radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=credential)
+```
+<!-- SNIPPET:sample_credentials.credentials-->
+
 #### Get the API Key
 
-You can get the **API Key** from the Health Insights service resource in the Azure Portal.
+Another wway to authenticate is using the API Key:
+
+You can also get the **API Key** from the Health Insights service resource in the Azure Portal.
 Alternatively, you can use **Azure CLI** snippet below to get the API key of your resource.
 
 ```PowerShell
@@ -50,7 +68,7 @@ az cognitiveservices account keys list --resource-group <your-resource-group-nam
 
 Once you have the value for the API key, you can pass it as a string into an instance of **AzureKeyCredential**. Use the key as the credential parameter to authenticate the client:
 
-<!-- SNIPPET:sample_critical_result_inference_async.create_radiology_insights_client-->
+<!-- SNIPPET:sample_age_mismatch_inference_async.create_radiology_insights_client-->
 ```Python 
 import os
 from azure.core.credentials import AzureKeyCredential
@@ -61,7 +79,7 @@ ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
 radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
 ```
-<!-- SNIPPET:sample_critical_result_inference_async.create_radiology_insights_client-->
+<!-- SNIPPET:sample_age_mismatch_inference_async.create_radiology_insights_client-->
 
 ### Long-Running Operations
 
@@ -111,6 +129,76 @@ For an example how to create a client, a request and get the result see the exam
 1. Open a terminal window and `cd` to the directory that the samples are saved in.
 2. Set the environment variables specified in the sample file you wish to run.
 
+### Create a request for the RadiologyInsights service
+
+<!-- SNIPPET:sample_age_mismatch_inference_async.create_radiology_insights_request-->
+```Python
+doc_content1 = """CLINICAL HISTORY:   
+        20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
+        COMPARISON:   
+        Right upper quadrant sonographic performed 1 day prior.
+        TECHNIQUE:   
+        Transabdominal grayscale pelvic sonography with duplex color Doppler and spectral waveform analysis of the ovaries.
+        FINDINGS:   
+        The uterus is unremarkable given the transabdominal technique with endometrial echo complex within physiologic normal limits. The ovaries are symmetric in size, measuring 2.5 x 1.2 x 3.0 cm and the left measuring 2.8 x 1.5 x 1.9 cm.\n On duplex imaging, Doppler signal is symmetric.
+        IMPRESSION:   
+        1. Normal pelvic sonography. Findings of testicular torsion.
+        A new US pelvis within the next 6 months is recommended.
+        These results have been discussed with Dr. Jones at 3 PM on November 5 2020."""
+
+        # Create ordered procedure
+        procedure_coding = models.Coding(
+            system="Http://hl7.org/fhir/ValueSet/cpt-all",
+            code="USPELVIS",
+            display="US PELVIS COMPLETE",
+        )
+        procedure_code = models.CodeableConcept(coding=[procedure_coding])
+        ordered_procedure = models.OrderedProcedure(description="US PELVIS COMPLETE", code=procedure_code)
+        # Create encounter
+        start = datetime.datetime(2021, 8, 28, 0, 0, 0, 0)
+        end = datetime.datetime(2021, 8, 28, 0, 0, 0, 0)
+        encounter = models.PatientEncounter(
+            id="encounter2",
+            class_property=models.EncounterClass.IN_PATIENT,
+            period=models.TimePeriod(start=start, end=end),
+        )
+        # Create patient info
+        birth_date = datetime.date(1959, 11, 11)
+        patient_info = models.PatientDetails(sex=models.PatientSex.FEMALE, birth_date=birth_date)
+        # Create author
+        author = models.DocumentAuthor(id="author2", full_name="authorName2")
+
+        create_date_time = datetime.datetime(2024, 2, 19, 0, 0, 0, 0, tzinfo=datetime.timezone.utc)
+        patient_document1 = models.PatientDocument(
+            type=models.DocumentType.NOTE,
+            clinical_type=models.ClinicalDocumentType.RADIOLOGY_REPORT,
+            id="doc2",
+            content=models.DocumentContent(source_type=models.DocumentContentSourceType.INLINE, value=doc_content1),
+            created_at=create_date_time,
+            specialty_type=models.SpecialtyType.RADIOLOGY,
+            administrative_metadata=models.DocumentAdministrativeMetadata(
+                ordered_procedures=[ordered_procedure], encounter_id="encounter2"
+            ),
+            authors=[author],
+            language="en",
+        )
+
+        # Construct patient
+        patient1 = models.PatientRecord(
+            id="patient_id2",
+            details=patient_info,
+            encounters=[encounter],
+            patient_documents=[patient_document1],
+        )
+
+        # Create a configuration
+        configuration = models.RadiologyInsightsModelConfiguration(verbose=False, include_evidence=True, locale="en-US")
+
+        # Construct the request with the patient and configuration
+        patient_data = models.RadiologyInsightsJob(job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration))
+```
+<!-- SNIPPET:sample_age_mismatch_inference_async.create_radiology_insights_request-->
+
 ### Get Age Mismatch Inference information
 
 <!-- SNIPPET:sample_age_mismatch_inference_async.display_age_mismatch-->
@@ -135,7 +223,7 @@ for patient_result in radiology_insights_result.patient_results:
 
 ### Get Critical Result Inference information
 
-<!-- SNIPPET:sample_critical_result_inference_async.display_critical_results-->
+<!-- SNIPPET:sample_critical_result_inference_async.display_critical_result-->
 ```Python
 for patient_result in radiology_insights_result.patient_results:
     for ri_inference in patient_result.inferences:
@@ -144,7 +232,7 @@ for patient_result in radiology_insights_result.patient_results:
                 print(
                 f"Critical Result Inference found: {critical_result.description}")
 ```
-<!-- SNIPPET:sample_critical_result_inference_async.display_critical_results-->
+<!-- SNIPPET:sample_critical_result_inference_async.display_critical_result-->
 
 ### Get Finding Inference information
 
@@ -277,3 +365,4 @@ additional questions or comments.
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [python]: https://www.python.org/downloads/
 [sample_folder]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthinsights/azure-healthinsights-radiologyinsights/samples
+[azure_credential]: https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential

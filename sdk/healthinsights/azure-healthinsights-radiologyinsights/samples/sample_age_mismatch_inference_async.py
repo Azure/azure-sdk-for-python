@@ -54,6 +54,8 @@ class HealthInsightsSamples:
 
         radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
         # [END create_radiology_insights_client]
+        
+        # [START create_radiology_insights_request]
         doc_content1 = """CLINICAL HISTORY:   
         20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
         COMPARISON:   
@@ -117,7 +119,7 @@ class HealthInsightsSamples:
 
         # Construct the request with the patient and configuration
         patient_data = models.RadiologyInsightsJob(job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration))
-
+        # [END create_radiology_insights_request]
         try:
             poller = await radiology_insights_client.begin_infer_radiology_insights(
                 id=job_id,
