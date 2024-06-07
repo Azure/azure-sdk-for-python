@@ -595,6 +595,11 @@ class SearchIndex:
         customer-managed keys is not available for free search services, and is only available for paid
         services created on or after January 1, 2019.
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
+    :ivar similarity: The type of similarity algorithm to be used when scoring and ranking the
+        documents matching a search query. The similarity algorithm can only be defined at index
+        creation time and cannot be modified on existing indexes. If null, the ClassicSimilarity
+        algorithm is used.
+    :vartype similarity: ~azure.search.documents.indexes.models.SimilarityAlgorithm
     :ivar semantic_search: Defines parameters for a search index that influence semantic capabilities.
     :vartype semantic_search: ~azure.search.documents.indexes.models.SemanticSearch
     :ivar vector_search: Defines parameters for a search index that influence scoring in a vector space.
@@ -615,6 +620,7 @@ class SearchIndex:
         self.token_filters = kwargs.get("token_filters", None)
         self.char_filters = kwargs.get("char_filters", None)
         self.encryption_key = kwargs.get("encryption_key", None)
+        self.similarity = kwargs.get("similarity", None)
         self.semantic_search = kwargs.get("semantic_search", None)
         self.vector_search = kwargs.get("vector_search", None)
         self.e_tag = kwargs.get("e_tag", None)
@@ -648,6 +654,7 @@ class SearchIndex:
             char_filters=self.char_filters,
             # pylint:disable=protected-access
             encryption_key=self.encryption_key._to_generated() if self.encryption_key else None,
+            similarity=self.similarity,
             semantic_search=self.semantic_search,
             e_tag=self.e_tag,
             vector_search=self.vector_search,
@@ -687,6 +694,7 @@ class SearchIndex:
             char_filters=search_index.char_filters,
             # pylint:disable=protected-access
             encryption_key=SearchResourceEncryptionKey._from_generated(search_index.encryption_key),
+            similarity=search_index.similarity,
             semantic_search=search_index.semantic_search,
             e_tag=search_index.e_tag,
             vector_search=search_index.vector_search,

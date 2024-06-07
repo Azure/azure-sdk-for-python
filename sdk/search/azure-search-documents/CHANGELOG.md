@@ -26,8 +26,6 @@
   - `azure.search.documents.indexes.models.AzureMachineLearningParameters`
   - `azure.search.documents.indexes.models.AzureMachineLearningSkill`
   - `azure.search.documents.indexes.models.AzureMachineLearningVectorizer`
-  - `azure.search.documents.indexes.models.BM25SimilarityAlgorithm`
-  - `azure.search.documents.indexes.models.ClassicSimilarityAlgorithm`
   - `azure.search.documents.indexes.models.CustomVectorizer`
   - `azure.search.documents.indexes.models.CustomWebApiParameters`
   - `azure.search.documents.indexes.models.CustomNormalizer`
@@ -37,11 +35,6 @@
   - `azure.search.documents.indexes.models.LexicalNormalizerName`
   - `azure.search.documents.indexes.models.NativeBlobSoftDeleteDeletionDetectionPolicy`
   - `azure.search.documents.indexes.models.SearchIndexerCache`
-  - `azure.search.documents.indexes.models.SearchServiceCounters`
-  - `azure.search.documents.indexes.models.SearchServiceLimits`
-  - `azure.search.documents.indexes.models.SearchServiceStatistics`
-  - `azure.search.documents.indexes.models.SearchSuggester`
-  - `azure.search.documents.indexes.models.SimilarityAlgorithm`
   - `azure.search.documents.indexes.models.VisionVectorizeSkill`
   - `azure.search.documents.indexes.models.SkillNames`
 - SearchAlias alias operations do not exist in this release
@@ -49,7 +42,6 @@
   - `azure.search.documents.indexes.models.SearchIndexerDataSourceConnection.identity`
   - `azure.search.documents.indexes.models.SearchField.normalizer_name`
   - `azure.search.documents.indexes.models.SearchIndex.normalizers`
-  - `azure.search.documents.indexes.models.SearchIndex.similarity`
 - Below parameters do not exist
   - `SearchIndexerClient.create_or_update_indexer.skip_indexer_reset_requirement_for_cache`
   - `SearchIndexerClient.create_or_update_indexer.disable_cache_reprocessing_change_detection`
