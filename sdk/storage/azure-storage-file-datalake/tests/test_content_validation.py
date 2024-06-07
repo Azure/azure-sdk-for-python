@@ -35,7 +35,7 @@ class TestStorageContentValidation(StorageRecordedTestCase):
     def _setup(self, account_name, account_key):
         credential = {"account_name": account_name, "account_key": account_key}
         self.dsc = DataLakeServiceClient(self.account_url(account_name, "dfs"), credential=credential, logging_enable=True)
-        self.file_system = self.dsc.get_file_system_client(self.get_resource_name('ufilesystem'))
+        self.file_system = self.dsc.get_file_system_client(self.get_resource_name('filesystem'))
         self.file_system.create_file_system()
 
     def teardown_method(self, _):

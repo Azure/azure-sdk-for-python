@@ -21,7 +21,7 @@ class TestStorageContentValidation(AsyncStorageRecordedTestCase):
     async def _setup(self, account_name, account_key):
         credential = {"account_name": account_name, "account_key": account_key}
         self.dsc = DataLakeServiceClient(self.account_url(account_name, "dfs"), credential=credential, logging_enable=True)
-        self.file_system = self.dsc.get_file_system_client(self.get_resource_name('ufilesystem'))
+        self.file_system = self.dsc.get_file_system_client(self.get_resource_name('filesystem'))
         await self.file_system.create_file_system()
 
     # TODO: Figure out how to get this to run automatically
@@ -138,3 +138,4 @@ class TestStorageContentValidation(AsyncStorageRecordedTestCase):
         # Assert
         result = await file.download_file()
         assert await result.readall() == content * len(data_list)
+        await self._teardown()
