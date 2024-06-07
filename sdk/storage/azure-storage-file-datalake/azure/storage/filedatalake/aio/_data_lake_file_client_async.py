@@ -430,11 +430,12 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         return await upload_datalake_file(**options)
 
     @distributed_trace_async
-    async def append_data(self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-                          offset,  # type: int
-                          length=None,  # type: Optional[int]
-                          **kwargs):
-        # type: (...) -> Dict[str, Union[str, datetime, int]]
+    async def append_data(
+        self, data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+        offset: int,
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, "datetime", int]]:
         """Append data to the file.
 
         :param data: Content to be appended to file
@@ -444,13 +445,23 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :type length: int or None
         :keyword bool flush:
             If true, will commit the data after it is appended.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash of the block content. The storage
-            service checks the hash of the content that has arrived
-            with the hash that was sent. This is primarily valuable for detecting
-            bitflips on the wire if using http instead of https as https (the default)
-            will already validate. Note that this MD5 hash is not stored with the
-            file.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any hash calculated is NOT stored with the blob.
+            The possible options for content validation are as follows:
+            bool - Passing a boolean is now deprecated. Will perform basic checksum validation via a pipeline
+                   policy that calculates an MD5 hash for each request body and sends it to the service to verify
+                   it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
+                   of https. If using this option, the memory-efficient upload algorithm will not be used.
+            'auto' - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
+            'crc64' - This is currently the preferred choice for performance reasons and the level of validation.
+                      Performs validation using Azure Storage's specific implementation of CRC64 with a custom
+                      polynomial. This also uses a more sophisticated algorithm internally that may help catch
+                      client-side data integrity issues.
+                      NOTE: This requires the `azure-storage-extensions` package to be installed.
+            'md5' - Performs validation using MD5. Where available this may use a more sophisticated algorithm
+                    internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
+                    not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
+        :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword lease_action:
             Used to perform lease operations along with appending data.
 

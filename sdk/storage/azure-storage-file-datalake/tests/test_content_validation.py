@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from io import BytesIO
+
 import pytest
 from azure.storage.filedatalake import (
     DataLakeServiceClient
@@ -22,6 +24,11 @@ def assert_content_md5(request):
 def assert_content_crc64(request):
     if request.http_request.query.get('action') == 'append':
         assert request.http_request.headers.get('x-ms-content-crc64') is not None
+
+
+def assert_structured_message(request):
+    if request.http_request.query.get('action') == 'append':
+        assert request.http_request.headers.get('x-ms-structured-body') is not None
 
 
 class TestStorageContentValidation(StorageRecordedTestCase):
@@ -83,3 +90,61 @@ class TestStorageContentValidation(StorageRecordedTestCase):
 
         # Assert
         assert response
+
+    @DataLakePreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy
+    def test_append_data(self, a, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        file = self.file_system.get_file_client(self._get_file_reference())
+        data1 = b'abcde' * 512
+        data2 = '你好世界' * 10
+        encoded = data2.encode('utf-8')
+        assert_method = assert_structured_message if a == 'crc64' else assert_content_md5
+
+        # Act
+        file.create_file()
+        file.append_data(data1, 0, validate_content=a, raw_request_hook=assert_method)
+        file.append_data(data2, len(data1), encoding='utf-8', validate_content=a, raw_request_hook=assert_method)
+        file.flush_data(len(data1) + len(encoded))
+
+        # Assert
+        content = file.download_file()
+        assert content.readall() == data1 + encoded
+
+    @DataLakePreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy
+    def test_append_data_data_types(self, a, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        file = self.file_system.get_file_client(self._get_file_reference())
+        assert_method = assert_structured_message if a == 'crc64' else assert_content_md5
+
+        content = b'abcde' * 1030  # 5 KiB + 30
+        byte_io = BytesIO(content)
+
+        def generator():
+            for i in range(0, len(content), 500):
+                yield content[i: i + 500]
+
+        data_list = [byte_io, generator()]
+
+        # Act
+        offset = 0
+        file.create_file()
+        for j in range(len(data_list)):
+            file.append_data(data_list[j], offset, validate_content=a, raw_request_hook=assert_method)
+            offset += len(content)
+            file.flush_data(offset)
+
+        # Assert
+        result = file.download_file()
+        assert result.readall() == content * len(data_list)
