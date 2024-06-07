@@ -416,6 +416,24 @@
                 "description": "Managed network settings to be used for the workspace. If not specified, isolation mode Disabled is the default"
             }
         },
+        "systemDatastoresAuthMode": {
+            "type": "string",
+            "defaultValue": "accesskey",
+            "metadata": {
+                "description": "The authentication mode for system datastores"
+            }
+        },
+        "allowRoleAssignmentOnRG": {
+            "type": "string",
+            "defaultValue": "true",
+            "allowedValues": [
+                "true",
+                "false"
+            ],
+            "metadata": {
+                "description": "A flag to determine if workspace should be created/update with allow role assignment on resource group level."
+            }
+        },
         "spark_runtime_version": {
             "type": "string",
             "defaultValue": "",
@@ -795,9 +813,8 @@
                 "description": "[parameters('description')]",
                 "storageAccount": "[variables('storageAccount')]",
                 "keyVault": "[variables('keyVault')]",
-                "applicationInsights": "[variables('applicationInsights')]",
                 "containerRegistry": "[if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null'))]",
-                "applicationInsights": "[if(not(equals(parameters('applicationInsightsOption'), 'none')), variables('containerRegistry'), json('null'))]",
+                "applicationInsights": "[if(not(equals(parameters('applicationInsightsOption'), 'none')), variables('applicationInsights'), json('null'))]",
                 "hbiWorkspace": "[parameters('confidential_data')]",
                 "imageBuildCompute": "[parameters('imageBuildCompute')]",
                 "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
@@ -910,7 +927,7 @@
                                 "description": "[parameters('description')]",
                                 "storageAccount": "[variables('storageAccount')]",
                                 "keyVault": "[variables('keyVault')]",
-                                "applicationInsights": "[variables('applicationInsights')]",
+                                "applicationInsights": "[if(not(equals(parameters('applicationInsightsOption'), 'none')), variables('applicationInsights'), json('null'))]",
                                 "containerRegistry": "[if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null'))]",
                                 "hbiWorkspace": "[parameters('confidential_data')]",
                                 "imageBuildCompute": "[parameters('imageBuildCompute')]",

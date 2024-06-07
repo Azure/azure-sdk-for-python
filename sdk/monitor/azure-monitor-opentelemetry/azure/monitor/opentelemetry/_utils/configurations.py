@@ -37,6 +37,7 @@ from azure.monitor.opentelemetry._constants import (
     RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
     SPAN_PROCESSORS_ARG,
+    VIEWS_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry._version import VERSION
@@ -70,6 +71,7 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     _default_instrumentation_options(configurations)
     _default_span_processors(configurations)
     _default_enable_live_metrics(configurations)
+    _default_views(configurations)
 
     return configurations
 
@@ -153,6 +155,10 @@ def _default_span_processors(configurations):
 
 def _default_enable_live_metrics(configurations):
     configurations.setdefault(ENABLE_LIVE_METRICS_ARG, False)
+
+
+def _default_views(configurations):
+    configurations.setdefault(VIEWS_ARG, [])
 
 
 def _get_otel_disabled_instrumentations():

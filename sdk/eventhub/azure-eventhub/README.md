@@ -408,7 +408,30 @@ Refer to [IoT Hub Connection String Sample](https://github.com/Azure/azure-sdk-f
 
 ## Troubleshooting
 
-See the `azure-eventhubs` [troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/TROUBLESHOOTING.md) for details on how to diagnose various failure scenarios.
+See the `azure-eventhub` [troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/TROUBLESHOOTING.md) for details on how to diagnose various failure scenarios.
+
+### Logging
+
+- Enable `azure.eventhub` logger to collect traces from the library.
+- Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
+- Refer to [this guide](https://learn.microsoft.com/azure/developer/python/sdk/azure-sdk-logging) on configuring logging for Azure libraries for Python for additional information.
+
+```python
+import logging
+import sys
+
+handler = logging.StreamHandler(stream=sys.stdout)
+logger = logging.getLogger('azure.eventhub')
+logger.setLevel(logging.DEBUG)
+logger.addHandler(handler)
+
+...
+
+from azure.eventhub import EventHubProducerClient, EventHubConsumerClient
+
+producer = EventHubProducerClient(..., logging_enable=True)
+consumer = EventHubConsumerClient(..., logging_enable=True)
+```
 
 ## Next steps
 
