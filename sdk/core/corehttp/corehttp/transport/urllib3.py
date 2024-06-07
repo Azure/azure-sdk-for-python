@@ -45,47 +45,15 @@ from ..rest._aiohttp import _CIMultiDict
 
 DEFAULT_BLOCK_SIZE = 32768
 
-def _encode_files(files):
-    """Build the body for a multipart/form-data request.
-
-    Adpated from requests:
-    https://github.com/psf/requests/blob/main/src/requests/models.py#L137-L203
-
-    Will successfully encode files when passed as a dict or a list of
-    tuples. Order is retained if data is a list of tuples but arbitrary
-    if parameters are supplied as a dict.
-    The tuples may be 2-tuples (filename, fileobj), 3-tuples (filename, fileobj, contentype)
-    or 4-tuples (filename, fileobj, contentype, custom_headers).
-    """
+def _read_files(files):
     new_fields = []
     if isinstance(files, Mapping):
         files = list(files.items())
     for k, v in files:
-        # support for explicit filename
-        ft = None
-        fh = None
-        if len(v) == 2:
-            fn, fp = v
-        elif len(v) == 3:
-            fn, fp, ft = v
-        else:
-            fn, fp, ft, fh = v
+        updated = tuple(i.read() if hasattr(i, 'read') else i for i in v)
+        new_fields.append((k, updated))
+    return dict(new_fields)
 
-        if isinstance(fp, (str, bytes, bytearray)):
-            fdata = fp
-        elif hasattr(fp, "read"):
-            fdata = fp.read()
-        elif fp is None:
-            continue
-        else:
-            fdata = fp
-
-        rf = RequestField(name=k, data=fdata, filename=fn, headers=fh)
-        rf.make_multipart(content_type=ft)
-        new_fields.append(rf)
-
-    body, content_type = encode_multipart_formdata(new_fields)
-    return body, content_type
 
 class ConnectionConfiguration:
     """HTTP transport connection configuration settings."""
@@ -275,12 +243,12 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
         stream_response: bool = kwargs.pop("stream", False)
         try:
             if request._files:
-                body, content_type = _encode_files(request._files)
-                request.headers["Content-Type"] = content_type
-                result = self._pool.urlopen(
+                files = _read_files(request._files)
+                result = self._pool.request_encode_body(
                     method=request.method,
                     url=request.url,
-                    body=body,
+                    fields=files,
+                    encode_multipart=True,
                     timeout=timeout,
                     headers=request.headers,
                     preload_content=False,
