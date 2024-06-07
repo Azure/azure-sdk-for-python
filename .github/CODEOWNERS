@@ -184,10 +184,10 @@
 
 # ServiceLabel: %Cosmos
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @kushagraThapar @simorenoh @xinlian12 @annatisch @bambriz
+/sdk/cosmos/                                                         @kushagraThapar @simorenoh @xinlian12 @annatisch @bambriz @pilchie
 
 # ServiceLabel: %Cosmos %Service Attention
-#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @AbhinavTrips @bambriz
+#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @AbhinavTrips @bambriz @pilchie
 
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
@@ -208,6 +208,10 @@
 # PRLabel: %Image Analysis
 # ServiceLabel: %Image Analysis %Service Attention
 /sdk/vision/azure-ai-vision-imageanalysis/                           @dargilco @rhurey
+
+# PRLabel: %AI Model Inference
+# ServiceLabel: %AI Model Inference %Service Attention
+/sdk/ai/azure-ai-inference/                                          @dargilco
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
@@ -1005,6 +1009,7 @@
 # Eng Sys
 ###########
 /eng/                                                                @scbedd @weshaggard @benbp
+/eng/common/                                                         @Azure/azure-sdk-eng
 
 /tools/                                                              @scbedd @mccoyp
 

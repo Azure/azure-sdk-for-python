@@ -1,5 +1,16 @@
 # Release History
 
+## 9.0.0b3 (2024-05-30)
+
+### Features Added
+
+  - Added operation MachineRunCommandsOperations.begin_update
+  - Added operation group GatewaysOperations
+  - Added operation group LicensesOperations
+  - Added operation group NetworkSecurityPerimeterConfigurationsOperations
+  - Added operation group SettingsOperations
+  - Model LicenseDetails has a new parameter volume_license_details
+
 ## 9.0.0b2 (2024-04-22)
 
 ### Features Added

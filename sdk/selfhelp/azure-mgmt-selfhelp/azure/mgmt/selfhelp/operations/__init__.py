@@ -14,8 +14,7 @@ from ._solution_operations import SolutionOperations
 from ._simplified_solutions_operations import SimplifiedSolutionsOperations
 from ._troubleshooters_operations import TroubleshootersOperations
 from ._solution_self_help_operations import SolutionSelfHelpOperations
-from ._discovery_solution_nlp_tenant_scope_operations import DiscoverySolutionNLPTenantScopeOperations
-from ._discovery_solution_nlp_subscription_scope_operations import DiscoverySolutionNLPSubscriptionScopeOperations
+from ._discovery_solution_nlp_operations import DiscoverySolutionNLPOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -30,8 +29,7 @@ __all__ = [
     "SimplifiedSolutionsOperations",
     "TroubleshootersOperations",
     "SolutionSelfHelpOperations",
-    "DiscoverySolutionNLPTenantScopeOperations",
-    "DiscoverySolutionNLPSubscriptionScopeOperations",
+    "DiscoverySolutionNLPOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

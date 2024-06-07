@@ -8,7 +8,7 @@ from azure.monitor.opentelemetry.exporter._constants import (  # pylint: disable
     _AZURE_MONITOR_DISTRO_VERSION_ARG,
 )
 
-# --------------------Configuration------------------------------------------
+# --------------------Distro Configuration------------------------------------------
 
 CONNECTION_STRING_ARG = "connection_string"
 ENABLE_LIVE_METRICS_ARG = "enable_live_metrics"
@@ -22,6 +22,15 @@ INSTRUMENTATION_OPTIONS_ARG = "instrumentation_options"
 RESOURCE_ARG = "resource"
 SAMPLING_RATIO_ARG = "sampling_ratio"
 SPAN_PROCESSORS_ARG = "span_processors"
+VIEWS_ARG = "views"
+
+
+# --------------------Autoinstrumentation Configuration------------------------------------------
+
+LOG_EXPORTER_NAMES_ARG = "log_exporter_names"
+METRIC_EXPORTER_NAMES_ARG = "metric_exporter_names"
+SAMPLER_ARG = "sampler"
+TRACE_EXPORTER_NAMES_ARG = "trace_exporter_names"
 
 
 # --------------------Diagnostic/status logging------------------------------

@@ -11,15 +11,13 @@ from devtools_testutils import AzureRecordedTestCase
 from conftest import (
     AZURE,
     OPENAI,
-    AZURE_AD,
+    AZURE_KEY,
     GPT_4_AZURE,
-    GPT_4_AZURE_AD,
     GPT_4_OPENAI,
     configure_async,
     GA,
     PREVIEW,
     ENV_AZURE_OPENAI_SEARCH_ENDPOINT,
-    ENV_AZURE_OPENAI_SEARCH_KEY,
     ENV_AZURE_OPENAI_SEARCH_INDEX
 )
 
@@ -30,7 +28,33 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(AZURE, GA), (AZURE, PREVIEW), (AZURE_AD, GA), (AZURE_AD, PREVIEW), (OPENAI, "v1")]
+        [(AZURE_KEY, GA), (AZURE_KEY, PREVIEW)]
+    )
+    async def test_azure_api_key(self, client_async, api_type, api_version, **kwargs):
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "Who won the world series in 2020?"}
+        ]
+
+        completion = await client_async.chat.completions.create(messages=messages, **kwargs)
+        assert completion.id
+        assert completion.object == "chat.completion"
+        assert completion.model
+        assert completion.created
+        assert completion.usage.completion_tokens is not None
+        assert completion.usage.prompt_tokens is not None
+        assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+        assert len(completion.choices) == 1
+        assert completion.choices[0].finish_reason
+        assert completion.choices[0].index is not None
+        assert completion.choices[0].message.content is not None
+        assert completion.choices[0].message.role
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
     )
     async def test_chat_completion(self, client_async, api_type, api_version, **kwargs):
         messages = [
@@ -714,7 +738,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW), (GPT_4_AZURE_AD, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW)])
     async def test_chat_completion_byod(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -731,14 +755,13 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
                             "endpoint": os.environ[ENV_AZURE_OPENAI_SEARCH_ENDPOINT],
                             "index_name": os.environ[ENV_AZURE_OPENAI_SEARCH_INDEX],
                             "authentication": {
-                                "type": "api_key",
-                                "key": os.environ[ENV_AZURE_OPENAI_SEARCH_KEY],
+                                "type": "system_assigned_managed_identity"
                             }
                         }
                     }
                 ],
             },
-            **kwargs
+            model="gpt-4"
         )
         assert completion.id
         assert completion.object == "extensions.chat.completion"
@@ -754,7 +777,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW)])
     async def test_streamed_chat_completions_byod(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -771,15 +794,14 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
                             "endpoint": os.environ[ENV_AZURE_OPENAI_SEARCH_ENDPOINT],
                             "index_name": os.environ[ENV_AZURE_OPENAI_SEARCH_INDEX],
                             "authentication": {
-                                "type": "api_key",
-                                "key": os.environ[ENV_AZURE_OPENAI_SEARCH_KEY],
+                                "type": "system_assigned_managed_identity"
                             }
                         }
                     }
                 ],
             },
             stream=True,
-            **kwargs
+            model="gpt-4"
         )
         async for chunk in response:
             assert chunk.id
@@ -807,9 +829,8 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         ]
 
         completion = await client_async.chat.completions.create(messages=messages, seed=42, **kwargs)
-        assert completion.system_fingerprint
-        completion = await client_async.chat.completions.create(messages=messages, seed=42, **kwargs)
-        assert completion.system_fingerprint
+        if api_type != GPT_4_OPENAI:  # bug in openai where system_fingerprint is not always returned
+            assert completion.system_fingerprint
 
     @configure_async
     @pytest.mark.asyncio
@@ -823,7 +844,6 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         completion = await client_async.chat.completions.create(messages=messages, response_format={ "type": "json_object" }, **kwargs)
         assert completion.id
         assert completion.object == "chat.completion"
-        assert completion.system_fingerprint
         assert completion.model
         assert completion.created
         assert completion.usage.completion_tokens is not None

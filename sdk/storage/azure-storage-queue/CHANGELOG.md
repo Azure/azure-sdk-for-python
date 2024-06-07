@@ -3,7 +3,8 @@
 ## 12.11.0b1 (Unreleased)
 
 ### Features Added
-
+- Updated OAuth implementation to use the AAD scope returned in a Bearer challenge.
+- Fixed an issue where client specified service versions may be ignored.
 
 ## 12.10.0 (2024-05-07)
 
