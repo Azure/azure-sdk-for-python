@@ -591,7 +591,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     Failed to refresh configuration settings. No Azure App Configuration stores successfully refreshed.
                     """
                 )
-            self._on_refresh_success()
+            if self._on_refresh_success:
+                self._on_refresh_success()
         finally:
             self._refresh_lock.release()
 
@@ -636,7 +637,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     self._dict = configuration_settings_processed
                 return
             except Exception as e:
-                breakpoint()
                 self._replica_client_manager.backoff(client)
             raise RuntimeError(
                 "Failed to load configuration settings. No Azure App Configuration stores successfully loaded from."

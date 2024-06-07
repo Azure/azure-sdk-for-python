@@ -41,13 +41,13 @@ def find_auto_failover_endpoints(endpoint):
     srv_records = [origin] + _find_replicas(origin.target)
     endpoints = []
     for srv_record in srv_records:
-        if _validate(known_domain, srv_record.target):
-            endpoints.append(srv_record.target)
+        if _validate(known_domain, srv_record.target) and not srv_record.target == endpoint.removeprefix("https://"):
+            endpoints.append("https://" + srv_record.target)
     return endpoints
 
 
 def _find_origin(domain):
-    uri = domain.lstrip("https://")
+    uri = domain.removeprefix("https://")
     request = f"_origin._tcp.{uri}"
     srv_records = _request_record(request)
     if not srv_records:
