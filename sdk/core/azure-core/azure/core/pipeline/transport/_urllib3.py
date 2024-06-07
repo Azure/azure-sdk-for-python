@@ -28,16 +28,66 @@ import functools
 from typing import Any, Mapping, Optional, Union
 
 import urllib3
+from urllib3.fields import RequestField
+from urllib3.filepost import encode_multipart_formdata
 from azure.core.pipeline import Pipeline
 
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError, IncompleteReadError
+from ..exceptions import (
+    ServiceRequestError,
+    ServiceResponseError,
+    IncompleteReadError,
+    DecodeError
+)
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.pipeline.transport import HttpTransport
+from azure.core.rest._aiohttp import _CIMultiDict
 from azure.core.rest import HttpRequest as RestHttpRequest, HttpResponse as RestHttpResponse
 from azure.core.rest._http_response_impl import HttpResponseImpl
 
 DEFAULT_BLOCK_SIZE = 32768
 
+
+def _encode_files(files):
+    """Build the body for a multipart/form-data request.
+
+    Adpated from requests:
+    https://github.com/psf/requests/blob/main/src/requests/models.py#L137-L203
+
+    Will successfully encode files when passed as a dict or a list of
+    tuples. Order is retained if data is a list of tuples but arbitrary
+    if parameters are supplied as a dict.
+    The tuples may be 2-tuples (filename, fileobj), 3-tuples (filename, fileobj, contentype)
+    or 4-tuples (filename, fileobj, contentype, custom_headers).
+    """
+    new_fields = []
+    if isinstance(files, Mapping):
+        files = list(files.items())
+    for k, v in files:
+        # support for explicit filename
+        ft = None
+        fh = None
+        if len(v) == 2:
+            fn, fp = v
+        elif len(v) == 3:
+            fn, fp, ft = v
+        else:
+            fn, fp, ft, fh = v
+
+        if isinstance(fp, (str, bytes, bytearray)):
+            fdata = fp
+        elif hasattr(fp, "read"):
+            fdata = fp.read()
+        elif fp is None:
+            continue
+        else:
+            fdata = fp
+
+        rf = RequestField(name=k, data=fdata, filename=fn, headers=fh)
+        rf.make_multipart(content_type=ft)
+        new_fields.append(rf)
+
+    body, content_type = encode_multipart_formdata(new_fields)
+    return body, content_type
 
 class Urllib3StreamDownloadGenerator:
     """Generator for streaming response data.
@@ -63,6 +113,8 @@ class Urllib3StreamDownloadGenerator:
     def __next__(self) -> bytes:
         try:
             return next(self.iter_content_func)
+        except urllib3.exceptions.DecodeError as err:
+            raise DecodeError(err, error=err) from err
         except (
                 urllib3.exceptions.IncompleteRead,
                 urllib3.exceptions.InvalidChunkLength) as err:
@@ -79,7 +131,7 @@ class Urllib3TransportResponse(HttpResponseImpl):
         internal_response: urllib3.response.HTTPResponse,
         **kwargs
     ) -> None:
-        headers = kwargs.pop("headers", internal_response.headers)
+        headers = _CIMultiDict(kwargs.pop("headers", internal_response.headers))
         super().__init__(
             request=request,
             internal_response=internal_response,
@@ -203,11 +255,12 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
         stream_response: bool = kwargs.pop("stream", False)
         try:
             if request.files:
-                result = self._pool.request_encode_body(
+                body, content_type = _encode_files(request._files)
+                request.headers["Content-Type"] = content_type
+                result = self._pool.urlopen(
                     method=request.method,
                     url=request.url,
-                    fields=request.files,
-                    encode_multipart=True,
+                    body=body,
                     timeout=timeout,
                     headers=request.headers,
                     preload_content=False,
