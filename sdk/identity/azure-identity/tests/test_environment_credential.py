@@ -6,18 +6,13 @@ import itertools
 import os
 
 from azure.identity import CredentialUnavailableError, EnvironmentCredential
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import EnvironmentVariables, CLIENT_SECRET_VARS, CERT_VARS, USERNAME_PASSWORD_VARS
 import pytest
 
 from helpers import mock
 
 
-ALL_VARIABLES = {
-    _
-    for _ in EnvironmentVariables.CLIENT_SECRET_VARS
-    + EnvironmentVariables.CERT_VARS
-    + EnvironmentVariables.USERNAME_PASSWORD_VARS
-}
+ALL_VARIABLES = {_ for _ in CLIENT_SECRET_VARS + CERT_VARS + USERNAME_PASSWORD_VARS}
 
 
 def test_incomplete_configuration():
@@ -36,9 +31,9 @@ def test_incomplete_configuration():
 @pytest.mark.parametrize(
     "credential_name,envvars",
     (
-        ("ClientSecretCredential", EnvironmentVariables.CLIENT_SECRET_VARS),
-        ("CertificateCredential", EnvironmentVariables.CERT_VARS),
-        ("UsernamePasswordCredential", EnvironmentVariables.USERNAME_PASSWORD_VARS),
+        ("ClientSecretCredential", CLIENT_SECRET_VARS),
+        ("CertificateCredential", CERT_VARS),
+        ("UsernamePasswordCredential", USERNAME_PASSWORD_VARS),
     ),
 )
 def test_passes_authority_argument(credential_name, envvars):
