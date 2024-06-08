@@ -14,19 +14,17 @@ import importlib
 from datetime import datetime
 from typing import TYPE_CHECKING
 from ._client import BatchClient as GenerateBatchClient
-from azure.identity import ClientSecretCredential
 from azure.core.credentials import TokenCredential
 
 # from ._batch_service_client import BatchClient as GenerateBatchClient
 
-from msrest import Serializer
+from ._serialization import Serializer
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
-from msrest import Serializer
-from msrest.serialization import TZ_UTC
+from ._serialization import TZ_UTC
 from azure.core.pipeline import PipelineRequest
 
 # from ._operations import (
@@ -169,7 +167,7 @@ class BatchClient(GenerateBatchClient):
     def __init__(
         self,
         endpoint: str,
-        credential: Union[ClientSecretCredential, AzureNamedKeyCredential, TokenCredential],
+        credential: Union[AzureNamedKeyCredential, TokenCredential],
         **kwargs
     ):
         super().__init__(
