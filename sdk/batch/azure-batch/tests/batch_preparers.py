@@ -281,22 +281,27 @@ class JobPreparer(AzureMgmtPreparer):
     def _get_batch_pool_id(self, **kwargs):
         try:
             pool_id = kwargs[self.batch_pool_parameter_name].name
-            return azure.batch.models.PoolInformation(pool_id=pool_id)
+            return azure.batch.models.BatchPoolInfo(pool_id=pool_id)
         except KeyError:
-            auto_pool = azure.batch.models.AutoPoolSpecification(
-                pool_lifetime_option=azure.batch.models.PoolLifetimeOption.job,
-                pool=azure.batch.models.PoolSpecification(
-                    vm_size="small",
-                    cloud_service_configuration=azure.batch.models.CloudServiceConfiguration(os_family="5"),
+            auto_pool = azure.batch.models.BatchAutoPoolSpecification(
+                pool_lifetime_option=azure.batch.models.BatchPoolLifetimeOption.job,
+                pool=azure.batch.models.BatchPoolSpecification(
+                    vm_size="standard_d2_v2",
+                    virtual_machine_configuration=azure.batch.models.VirtualMachineConfiguration(
+                        image_reference=azure.batch.models.ImageReference(
+                            publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"
+                        ),
+                        node_agent_sku_id="batch.node.ubuntu 18.04",
+                    ),
                 ),
             )
-            return azure.batch.models.PoolInformation(auto_pool_specification=auto_pool)
+            return azure.batch.models.BatchPoolInfo(auto_pool_specification=auto_pool)
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
             self.client = self._get_batch_client(**kwargs)
             pool = self._get_batch_pool_id(**kwargs)
-            self.resource = azure.batch.models.BatchJobCreateOptions(id=name, pool_info=pool, **self.extra_args)
+            self.resource = azure.batch.models.BatchJobCreateContent(id=name, pool_info=pool, **self.extra_args)
             try:
                 self.client.create_job(self.resource)
             except azure.core.exceptions.HttpResponseError as e:

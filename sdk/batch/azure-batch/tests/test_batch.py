@@ -178,7 +178,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
             vm_size=DEFAULT_VM_SIZE,
             network_configuration=network_config,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
+                image_reference=models.ImageReference(
+                    publisher="Canonical", 
+                    offer="UbuntuServer", 
+                    sku="18.04-LTS"
+                ),
                 node_agent_sku_id="batch.node.ubuntu 18.04",
             ),
         )
@@ -212,7 +216,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
             id=self.get_resource_name("batch_disk_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
+                image_reference=models.ImageReference(
+                    publisher="Canonical", 
+                    offer="UbuntuServer", 
+                    sku="18.04-LTS"
+                ),
                 node_agent_sku_id="batch.node.ubuntu 18.04",
                 data_disks=[data_disk],
             ),
@@ -315,7 +323,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 node_agent_sku_id="batch.node.ubuntu 18.04",
-                image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
+                image_reference=models.ImageReference(
+                    publisher="Canonical", 
+                    offer="UbuntuServer", 
+                    sku="18.04-LTS"
+                ),
             ),
             start_task=models.BatchStartTask(
                 command_line='cmd.exe /c "echo hello world"',
@@ -532,7 +544,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
         )
         virtual_machine_config = models.VirtualMachineConfiguration(
             node_agent_sku_id="batch.node.ubuntu 18.04",
-            image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
+            image_reference=models.ImageReference(
+                publisher="Canonical", 
+                offer="UbuntuServer", 
+                sku="18.04-LTS"
+            ),
         )
         pool = models.BatchPoolCreateContent(
             id=self.get_resource_name("batch_network_"),
@@ -665,7 +681,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
         virtual_machine_config = models.VirtualMachineConfiguration(
             node_agent_sku_id="batch.node.ubuntu 18.04",
             extensions=[extension],
-            image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
+            image_reference=models.ImageReference(
+                publisher="Canonical", 
+                offer="UbuntuServer", 
+                sku="18.04-LTS"
+            ),
         )
         batch_pool = models.BatchPoolCreateContent(
             id=self.get_resource_name("batch_network_"),
@@ -713,12 +733,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Add User
         user_name = "BatchPythonSDKUser"
         nodes = list(await async_wrapper(client.list_nodes(batch_pool.name)))
-        user = models.BatchNodeUserCreateParameters(name=user_name, password="secret", is_admin=False)
+        user = models.BatchNodeUserCreateContent(name=user_name, password="secret", is_admin=False)
         response = await async_wrapper(client.create_node_user(batch_pool.name, nodes[0].id, user))
         assert response is None
 
         # Test Update User
-        user = models.BatchNodeUserUpdateParameters(password="liilef#$DdRGSa_ewkjh")
+        user = models.BatchNodeUserUpdateContent(password="liilef#$DdRGSa_ewkjh")
         response = await async_wrapper(client.replace_node_user(batch_pool.name, nodes[0].id, user_name, user))
         assert response is None
 
@@ -776,7 +796,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert len(nodes) == 1
         node = nodes[0].id
         task_id = "test_task"
-        task_param = models.BatchTaskCreateParameters(id=task_id, command_line='cmd /c "echo hello world"')
+        task_param = models.BatchTaskCreateContent(id=task_id, command_line='cmd /c "echo hello world"')
         response = await async_wrapper(client.create_task(batch_job.id, task_param))
         assert response is None
         task = await async_wrapper(client.get_task(batch_job.id, task_id))
@@ -856,7 +876,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             ],
             default=models.ExitOptions(job_action=models.BatchJobAction.none),
         )
-        task_param = models.BatchTaskCreateParameters(
+        task_param = models.BatchTaskCreateContent(
             id=self.get_resource_name("batch_task1_"),
             command_line='cmd /c "echo hello world"',
             exit_conditions=exit_conditions,
@@ -884,7 +904,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                         container_url=container_url, path="taskLogs/output.txt"
                     )
                 ),
-                upload_options=models.OutputFileUploadOptions(
+                upload_options=models.OutputFileUploadConfig(
                     upload_condition=models.OutputFileUploadCondition.task_completion
                 ),
             ),
@@ -895,12 +915,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
                         container_url=container_url, path="taskLogs/error.txt"
                     )
                 ),
-                upload_options=models.OutputFileUploadOptions(
+                upload_options=models.OutputFileUploadConfig(
                     upload_condition=models.OutputFileUploadCondition.task_failure
                 ),
             ),
         ]
-        task_param = models.BatchTaskCreateParameters(
+        task_param = models.BatchTaskCreateContent(
             id=self.get_resource_name("batch_task2_"),
             command_line='cmd /c "echo hello world"',
             output_files=outputs,
@@ -914,7 +934,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         auto_user = models.AutoUserSpecification(
             scope=models.AutoUserScope.task, elevation_level=models.ElevationLevel.admin
         )
-        task_param = models.BatchTaskCreateParameters(
+        task_param = models.BatchTaskCreateContent(
             id=self.get_resource_name("batch_task3_"),
             command_line='cmd /c "echo hello world"',
             user_identity=models.UserIdentity(auto_user=auto_user),
@@ -926,7 +946,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert task.user_identity.auto_user.elevation_level == models.ElevationLevel.admin
 
         # Test Create Task with Token Settings
-        task_param = models.BatchTaskCreateParameters(
+        task_param = models.BatchTaskCreateContent(
             id=self.get_resource_name("batch_task4_"),
             command_line='cmd /c "echo hello world"',
             authentication_token_settings=models.AuthenticationTokenSettings(access=[models.AccessScope.job]),
@@ -937,12 +957,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert task.authentication_token_settings.access[0] == models.AccessScope.job
 
         # Test Create Task with Container Settings
-        task_param = models.BatchTaskCreateParameters(
+        task_param = models.BatchTaskCreateContent(
             id=self.get_resource_name("batch_task5_"),
             command_line='cmd /c "echo hello world"',
             container_settings=models.BatchTaskContainerSettings(
                 image_name="windows_container:latest",
-                registry=models.ContainerRegistry(username="username", password="password"),
+                registry=models.ContainerRegistryReference(username="username", password="password"),
             ),
         )
         await async_wrapper(client.create_task(batch_job.id, task_param))
@@ -952,7 +972,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert task.container_settings.registry.username == "username"
 
         # Test Create Task with Run-As-User
-        task_param = models.BatchTaskCreateParameters(
+        task_param = models.BatchTaskCreateContent(
             id=self.get_resource_name("batch_task6_"),
             command_line='cmd /c "echo hello world"',
             user_identity=models.UserIdentity(username="task-user"),
@@ -966,7 +986,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         tasks = []
         for i in range(7, 10):
             tasks.append(
-                models.BatchTaskCreateParameters(
+                models.BatchTaskCreateContent(
                     id=self.get_resource_name("batch_task{}_".format(i)),
                     command_line='cmd /c "echo hello world"',
                 )
@@ -974,7 +994,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         result = await async_wrapper(client.create_task_collection(batch_job.id, task_collection=tasks))
         assert isinstance(result, models.BatchTaskAddCollectionResult)
         assert len(result.value) == 3
-        assert result.value[0].status == models.BatchTaskAddStatus.success
+        assert result.value[0].status.lower() == models.BatchTaskAddStatus.success
 
         # Test List Tasks
         tasks = list(await async_wrapper(client.list_tasks(batch_job.id)))
@@ -1028,7 +1048,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 file_path="resourceFile{}".format(str(i)),
             )
             resource_files.append(resource_file)
-        task = models.BatchTaskCreateParameters(id=task_id, command_line="sleep 1", resource_files=resource_files)
+        task = models.BatchTaskCreateContent(id=task_id, command_line="sleep 1", resource_files=resource_files)
         tasks_to_add.append(task)
         await self.assertCreateTasksError(
             "RequestBodyTooLarge",
@@ -1055,7 +1075,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             )
             resource_files.append(resource_file)
         for i in range(733):
-            task = models.BatchTaskCreateParameters(
+            task = models.BatchTaskCreateContent(
                 id=task_id + str(i),
                 command_line="sleep 1",
                 resource_files=resource_files,
@@ -1078,23 +1098,31 @@ class TestBatch(AzureMgmtRecordedTestCase):
             pool_lifetime_option=models.BatchPoolLifetimeOption.job,
             pool=models.BatchPoolSpecification(
                 vm_size=DEFAULT_VM_SIZE,
-                cloud_service_configuration=models.CloudServiceConfiguration(os_family="5"),
+                virtual_machine_configuration=models.VirtualMachineConfiguration(
+                    image_reference=models.ImageReference(
+                        publisher="Canonical", 
+                        offer="UbuntuServer", 
+                        sku="18.04-LTS",
+                        version="latest",
+                    ),
+                    node_agent_sku_id="batch.node.ubuntu 18.04",
+                ),
             ),
         )
         job_prep = models.BatchJobPreparationTask(command_line='cmd /c "echo hello world"')
         job_release = models.BatchJobReleaseTask(command_line='cmd /c "echo goodbye world"')
-        job_param = models.BatchJobCreateParameters(
+        job_param = models.BatchJobCreateContent(
             id=self.get_resource_name("batch_job1_"),
             pool_info=models.BatchPoolInfo(auto_pool_specification=auto_pool),
             job_preparation_task=job_prep,
             job_release_task=job_release,
         )
 
-        now = datetime.datetime.now()
+        now = datetime.datetime.now(datetime.timezone.utc)
         # stamp = mktime(now.timetuple())
         # currenttime =  format_date_time(stamp) #--> Wed, 22 Oct 2008 10:52:40 GMT
 
-        response = await async_wrapper(client.create_job(job=job_param, ocp_date=now))
+        response = await async_wrapper(client.create_job(job=job_param, ocpdate=now))
 
         # response = client.create_job(job=job_param,ocp_date="Wed, 3 May 2023 21:49:13 GMT")
         # response = client.create_job(job=job_param,ocp_date=datetime.datetime.utcnow())
@@ -1111,7 +1139,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
 
         # Test Patch Job
-        options = models.BatchJobUpdateParameters(priority=900)
+        options = models.BatchJobUpdateContent(priority=900)
         response = await async_wrapper(client.update_job(job_param.id, options))
         assert response is None
 
@@ -1122,7 +1150,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert job.priority == 900
 
         # Test Create Job with Auto Complete
-        job_auto_param = models.BatchJobCreateParameters(
+        job_auto_param = models.BatchJobCreateContent(
             id=self.get_resource_name("batch_job2_"),
             on_all_tasks_complete=models.OnAllBatchTasksComplete.TERMINATE_JOB,
             on_task_failure=models.OnBatchTaskFailure.PERFORM_EXIT_OPTIONS_JOB_ACTION,
@@ -1144,7 +1172,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await async_wrapper(
             client.disable_job(
                 job_id=job_param.id,
-                parameters=models.BatchJobDisableParameters(disable_tasks="requeue"),
+                content=models.BatchJobDisableContent(disable_tasks="requeue"),
             )
         )
         assert response is None
