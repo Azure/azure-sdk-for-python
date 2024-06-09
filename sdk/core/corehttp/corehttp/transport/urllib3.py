@@ -50,7 +50,7 @@ def _read_files(files):
     for k, v in files:
         updated = tuple(i.read() if hasattr(i, 'read') else i for i in v)
         new_fields.append((k, updated))
-    return dict(new_fields)
+    return new_fields
 
 
 class ConnectionConfiguration:
