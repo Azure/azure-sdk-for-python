@@ -28,11 +28,12 @@ from typing import List
 
 # pylint: disable=undefined-all-variable
 
-if sys.version_info >= (3, 7):
+if sys.version_info >= (3, 8):
     __all__ = [
         "PyodideTransport",
         "HttpXTransport",
         "AsyncHttpXTransport",
+        "Urllib3Transport"
     ]
 
     def __dir__() -> List[str]:
@@ -60,5 +61,11 @@ if sys.version_info >= (3, 7):
                 return AsyncHttpXTransport
             except ImportError as err:
                 raise ImportError("httpx package is not installed") from err
+        if name == "Urllib3Transport":
+            try:
+                from ._urllib3 import Urllib3Transport
 
+                return Urllib3Transport
+            except ImportError as err:
+                raise ImportError("urllib3 package is not installed") from err
         raise AttributeError(f"module 'azure.core.experimental.transport' has no attribute {name}")
