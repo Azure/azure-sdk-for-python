@@ -244,6 +244,7 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
                     method=request.method,
                     url=request.url,
                     fields=request.data,
+                    encode_multipart=False,
                     timeout=timeout,
                     headers=request.headers,
                     preload_content=False,
