@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import os
 import functools
-from typing import Any, Mapping, Optional, Union
+from typing import Any, Callable, Mapping, Optional, Union, Dict, cast
 
 import urllib3
 
@@ -148,20 +148,20 @@ class Urllib3TransportResponse(HttpResponseImpl):
 class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
     """Implements a basic urllib3 HTTP sender.
 
-    :keyword pool: A preconfigured urllib3 PoolManager of HttpConnectionPool.
-    :paramtype pool: ~urllib3.PoolManager or ~urllib3.HTTPConnectionPool
+    :keyword pool: A preconfigured urllib3 PoolManager.
+    :paramtype pool: ~urllib3.PoolManager
     """
 
     def __init__(
         self,
         *,
-        pool: Optional[Union[urllib3.PoolManager, urllib3.HTTPConnectionPool]] = None,
+        pool: Optional[urllib3.PoolManager] = None,
         **kwargs
     ) -> None:
-        self._pool: Optional[Union[urllib3.PoolManager, urllib3.HTTPConnectionPool]] = pool
+        self._pool: Optional[urllib3.PoolManager] = pool
         self._pool_owner: bool = kwargs.get("pool_owner", True)
         self._config = ConnectionConfiguration(**kwargs)
-        self._pool_cls = urllib3.PoolManager
+        self._pool_cls: Callable[..., urllib3.PoolManager] = urllib3.PoolManager
         if 'proxies' in kwargs:
             proxies = kwargs.pop('proxies')
             if len(proxies) > 1:
@@ -172,18 +172,18 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
         # See https://github.com/Azure/azure-sdk-for-python/issues/25640 to understand why we track this
         self._has_been_opened = False
 
-    def _cert_verify(self, kwargs: Mapping[str, Any]) -> None:
+    def _cert_verify(self, kwargs: Dict[str, Any]) -> None:
         """Update the request kwargs to configure the SSL certificate.
 
         :param dict[str, Any] kwargs: The request context keyword args. 
         """
         verify : Union[bool, str] = kwargs.pop("connection_verify", self._config.verify)
-        cert_kwargs = {}
+        cert_kwargs: Dict[str, Optional[str]] = {}
         if verify is False:
             # We ignore verify=True as "CERT_REQUIRED" is the default for HTTPS.
             cert_kwargs["cert_reqs"] = "CERT_NONE"
         elif os.path.isdir(verify):
-            cert_kwargs["ca_cert_dir"] = verify
+            cert_kwargs["ca_cert_dir"] = cast(str, verify)
         elif isinstance(verify, str):
             cert_kwargs["ca_certs"] = verify
 
@@ -216,12 +216,9 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
         self._has_been_opened = True
 
     def close(self) -> None:
-        """Close the session if it is not externally owned."""
+        """Close the pool if it is not externally owned."""
         if self._pool and self._pool_owner:
-            try:
-                self._pool.clear()  # Used for an instance of PoolManager/ProxyManager
-            except AttributeError:
-                self._pool.close()  # Used for an instance of HTTPConnectionPool/HTTPSConnectionPool
+            self._pool.clear()
             self._pool = None
 
     def send(self, request: RestHttpRequest, **kwargs) -> Urllib3TransportResponse:
@@ -246,6 +243,7 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
         )
         self._cert_verify(kwargs)
         stream_response: bool = kwargs.pop("stream", False)
+        self._pool = cast(urllib3.PoolManager, self._pool)
         try:
             if request._files:
                 fields = []
