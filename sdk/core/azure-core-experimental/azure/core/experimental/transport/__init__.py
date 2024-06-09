@@ -29,12 +29,7 @@ from typing import List
 # pylint: disable=undefined-all-variable
 
 if sys.version_info >= (3, 8):
-    __all__ = [
-        "PyodideTransport",
-        "HttpXTransport",
-        "AsyncHttpXTransport",
-        "Urllib3Transport"
-    ]
+    __all__ = ["PyodideTransport", "HttpXTransport", "AsyncHttpXTransport", "Urllib3Transport"]
 
     def __dir__() -> List[str]:
         return __all__

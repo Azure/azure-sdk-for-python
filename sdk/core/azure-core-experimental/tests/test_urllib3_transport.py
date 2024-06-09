@@ -1,4 +1,3 @@
-
 import urllib3
 import pytest
 import io
@@ -13,7 +12,8 @@ PLACEHOLDER_ENDPOINT = "https://my-resource-group.cognitiveservices.azure.com/"
 
 
 def mock_successful_post() -> urllib3.response.HTTPResponse:
-    return urllib3.response.HTTPResponse(status=200, body=io.BytesIO(b"Hello, world!"))
+    return urllib3.response.HTTPResponse(status=200, body=io.BytesIO(b"Hello, world!"), preload_content=False)
+
 
 class TestUrllib3Transport:
 
