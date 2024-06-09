@@ -45,16 +45,19 @@ from azure.core.rest._http_response_impl import HttpResponseImpl
 DEFAULT_BLOCK_SIZE = 32768
 
 
-def _read_files(files):
-    new_fields = []
+def _read_files(fields, files):
+    if files is None:
+        return
     if isinstance(files, Mapping):
         files = list(files.items())
     for k, v in files:
-        print(k, v)
-        updated = tuple(i.read() if hasattr(i, 'read') else i for i in v)
-        new_fields.append((k, updated))
-    return new_fields
-
+        if hasattr(v, 'read'):
+            updated = v.read()
+        elif isinstance(v, tuple):
+            updated = tuple(i.read() if hasattr(i, 'read') else i for i in v)
+        else:
+            updated = v
+        fields.append((k, updated))
 
 class Urllib3StreamDownloadGenerator:
     """Generator for streaming response data.
@@ -226,11 +229,13 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
         stream_response: bool = kwargs.pop("stream", False)
         try:
             if request.files:
-                files = _read_files(request.files)
+                fields = []
+                _read_files(fields, request.data)
+                _read_files(fields, request.files)
                 result = self._pool.request_encode_body(
                     method=request.method,
                     url=request.url,
-                    fields=files,
+                    fields=fields,
                     encode_multipart=True,
                     timeout=timeout,
                     headers=request.headers,
