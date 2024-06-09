@@ -26,12 +26,12 @@ def test_iter_raw(client):
         raw = b""
         for part in response.iter_raw():
             assert not response._internal_response.isclosed()
-            #assert not response._internal_response._content_consumed
+            # assert not response._internal_response._content_consumed
             assert not response.is_closed
             assert response.is_stream_consumed  # we follow httpx behavior here
             raw += part
         assert raw == b"Hello, world!"
-    #assert response._internal_response._content_consumed
+    # assert response._internal_response._content_consumed
     assert response._internal_response.isclosed()
     assert response.is_closed
     assert response.is_stream_consumed
@@ -74,11 +74,11 @@ def test_iter_bytes(client):
         raw = b""
         for chunk in response.iter_bytes():
             assert not response._internal_response.isclosed()
-            #assert not response._internal_response._content_consumed
+            # assert not response._internal_response._content_consumed
             assert not response.is_closed
             assert response.is_stream_consumed  # we follow httpx behavior here
             raw += chunk
-        #assert response._internal_response._content_consumed
+        # assert response._internal_response._content_consumed
         assert response._internal_response.isclosed()
         assert response.is_closed
         assert response.is_stream_consumed

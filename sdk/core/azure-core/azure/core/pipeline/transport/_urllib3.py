@@ -30,12 +30,7 @@ from typing import Any, Callable, Mapping, Optional, Union, Dict, cast, List, Tu
 import urllib3
 
 from azure.core.pipeline import Pipeline
-from azure.core.exceptions import (
-    ServiceRequestError,
-    ServiceResponseError,
-    IncompleteReadError,
-    DecodeError
-)
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError, IncompleteReadError, DecodeError
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.rest import HttpRequest as RestHttpRequest, HttpResponse as RestHttpResponse
@@ -57,10 +52,10 @@ def _read_files(fields, files):
     if isinstance(files, Mapping):
         files = list(files.items())
     for k, v in files:
-        if hasattr(v, 'read'):
+        if hasattr(v, "read"):
             updated = v.read()
         elif isinstance(v, tuple):
-            updated = tuple(i.read() if hasattr(i, 'read') else i for i in v)
+            updated = tuple(i.read() if hasattr(i, "read") else i for i in v)
         else:
             updated = v
         fields.append((k, updated))
@@ -80,8 +75,7 @@ class Urllib3StreamDownloadGenerator:
         self.response = response
         decompress: bool = kwargs.pop("decompress", True)
         self.iter_content_func: Iterator[bytes] = self.response._internal_response.stream(
-            amt=self.response._block_size,
-            decode_content=decompress
+            amt=self.response._block_size, decode_content=decompress
         )
 
     def __iter__(self) -> "Urllib3StreamDownloadGenerator":
@@ -92,9 +86,7 @@ class Urllib3StreamDownloadGenerator:
             return next(self.iter_content_func)
         except urllib3.exceptions.DecodeError as err:
             raise DecodeError(err, error=err) from err
-        except (
-                urllib3.exceptions.IncompleteRead,
-                urllib3.exceptions.InvalidChunkLength) as err:
+        except (urllib3.exceptions.IncompleteRead, urllib3.exceptions.InvalidChunkLength) as err:
             raise IncompleteReadError(err, error=err) from err
         except urllib3.exceptions.HTTPError as err:
             msg = err.__str__()
@@ -105,11 +97,7 @@ class Urllib3StreamDownloadGenerator:
 
 class Urllib3TransportResponse(HttpResponseImpl):
     def __init__(
-        self,
-        *,
-        request: RestHttpRequest,
-        internal_response: urllib3.response.HTTPResponse,
-        **kwargs: Any
+        self, *, request: RestHttpRequest, internal_response: urllib3.response.HTTPResponse, **kwargs: Any
     ) -> None:
         headers = kwargs.pop("headers", internal_response.headers)
         super().__init__(
@@ -117,7 +105,7 @@ class Urllib3TransportResponse(HttpResponseImpl):
             internal_response=internal_response,
             status_code=kwargs.pop("status_code", internal_response.status),
             headers=headers,
-            reason=kwargs.pop('reason', internal_response.reason),
+            reason=kwargs.pop("reason", internal_response.reason),
             content_type=kwargs.pop("content-type", headers.get("content-type")),
             stream_download_generator=kwargs.pop("stream_download_generator", Urllib3StreamDownloadGenerator),
             **kwargs
@@ -141,18 +129,13 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
     :paramtype pool: ~urllib3.PoolManager
     """
 
-    def __init__(
-        self,
-        *,
-        pool: Optional[urllib3.PoolManager] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, pool: Optional[urllib3.PoolManager] = None, **kwargs: Any) -> None:
         self._pool: Optional[urllib3.PoolManager] = pool
         self._pool_owner: bool = kwargs.get("pool_owner", True)
         self._config = ConnectionConfiguration(**kwargs)
         self._pool_cls: Callable[..., urllib3.PoolManager] = urllib3.PoolManager
-        if 'proxies' in kwargs:
-            proxies = kwargs.pop('proxies')
+        if "proxies" in kwargs:
+            proxies = kwargs.pop("proxies")
             if len(proxies) > 1:
                 raise ValueError("Only a single proxy url is supported for urllib3.")
             proxy_url = list(proxies.values())[0]
@@ -164,9 +147,9 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
     def _cert_verify(self, kwargs: Dict[str, Any]) -> None:
         """Update the request kwargs to configure the SSL certificate.
 
-        :param dict[str, Any] kwargs: The request context keyword args. 
+        :param dict[str, Any] kwargs: The request context keyword args.
         """
-        verify : Union[bool, str] = kwargs.pop("connection_verify", self._config.verify)
+        verify: Union[bool, str] = kwargs.pop("connection_verify", self._config.verify)
         cert_kwargs: Dict[str, Optional[str]] = {}
         if verify is False:
             # We ignore verify=True as "CERT_REQUIRED" is the default for HTTPS.
@@ -196,10 +179,7 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
             )
         if not self._pool:
             if self._pool_owner:
-                self._pool = self._pool_cls(
-                    retries=False,
-                    blocksize=DEFAULT_BLOCK_SIZE
-                )
+                self._pool = self._pool_cls(retries=False, blocksize=DEFAULT_BLOCK_SIZE)
             else:
                 raise ValueError("pool_owner cannot be False and no pool is available")
         self._has_been_opened = True
@@ -218,17 +198,14 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
         :rtype: ~azure.core.rest.HttpResponse
         :return: The HTTP response.
         """
-        if 'proxies' in kwargs:
+        if "proxies" in kwargs:
             raise NotImplementedError(
                 "Proxies are not yet supported. Please create the transport using a configured urllib3.ProxyManager."
             )
         self.open()
         connection_timeout = kwargs.pop("connection_timeout", self._config.timeout)
         read_timeout = kwargs.pop("read_timeout", self._config.read_timeout)
-        timeout=urllib3.util.Timeout(
-            connect=connection_timeout,
-            read=read_timeout
-        )
+        timeout = urllib3.util.Timeout(connect=connection_timeout, read=read_timeout)
         self._cert_verify(kwargs)
         stream_response: bool = kwargs.pop("stream", False)
         self._pool = cast(urllib3.PoolManager, self._pool)
@@ -278,31 +255,31 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
                     **kwargs
                 )
             response = Urllib3TransportResponse(
-                    request=request,
-                    internal_response=result,
-                    block_size=self._config.data_block_size,
-                )
+                request=request,
+                internal_response=result,
+                block_size=self._config.data_block_size,
+            )
             if not stream_response:
                 response.read()
         except AttributeError as err:
             if not self._pool:
                 raise ValueError() from err
             raise
-        except (
-                urllib3.exceptions.IncompleteRead,
-                urllib3.exceptions.InvalidChunkLength) as err:
+        except (urllib3.exceptions.IncompleteRead, urllib3.exceptions.InvalidChunkLength) as err:
             raise IncompleteReadError(err, error=err) from err
         except (
-                urllib3.exceptions.RequestError,
-                urllib3.exceptions.ProtocolError,
-                urllib3.exceptions.ResponseError) as err:
+            urllib3.exceptions.RequestError,
+            urllib3.exceptions.ProtocolError,
+            urllib3.exceptions.ResponseError,
+        ) as err:
             raise ServiceResponseError(err, error=err) from err
         except (
-                ValueError,
-                urllib3.exceptions.SSLError,
-                urllib3.exceptions.ProxyError,
-                urllib3.exceptions.ConnectTimeoutError,
-                urllib3.exceptions.PoolError) as err:
+            ValueError,
+            urllib3.exceptions.SSLError,
+            urllib3.exceptions.ProxyError,
+            urllib3.exceptions.ConnectTimeoutError,
+            urllib3.exceptions.PoolError,
+        ) as err:
             raise ServiceRequestError(err, error=err) from err
         except urllib3.exceptions.HTTPError as err:
             # Catch anything else that urllib3 gives us

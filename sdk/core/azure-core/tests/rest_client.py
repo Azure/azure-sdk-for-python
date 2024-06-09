@@ -56,10 +56,7 @@ class MockRestClient(object):
         self._config = TestRestClientConfiguration(**kwargs)
         transport = Urllib3Transport(**kwargs)
         self._client = PipelineClient(
-            base_url="http://localhost:{}/".format(port),
-            config=self._config,
-            transport=transport,
-            **kwargs
+            base_url="http://localhost:{}/".format(port), config=self._config, transport=transport, **kwargs
         )
 
     def send_request(self, request, **kwargs):

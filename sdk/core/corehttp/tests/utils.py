@@ -50,6 +50,7 @@ except (ImportError, SyntaxError):
 
 try:
     from corehttp.transport.urllib3 import Urllib3TransportResponse, Urllib3Transport
+
     SYNC_TRANSPORTS.append(Urllib3Transport)
     SYNC_TRANSPORT_RESPONSES.append(Urllib3TransportResponse)
 except (ImportError, SyntaxError):

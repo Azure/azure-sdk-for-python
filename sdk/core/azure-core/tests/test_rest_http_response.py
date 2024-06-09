@@ -336,7 +336,7 @@ def test_readonly(send_request):
     """Make sure everything that is readonly is readonly"""
     response = send_request(HttpRequest("GET", "/health"))
 
-    #assert isinstance(response, RestRequestsTransportResponse)
+    # assert isinstance(response, RestRequestsTransportResponse)
     from azure.core.pipeline.transport import RequestsTransportResponse
 
     readonly_checks(response, old_response_class=RequestsTransportResponse)
