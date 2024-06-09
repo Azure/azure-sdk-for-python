@@ -25,11 +25,12 @@
 # --------------------------------------------------------------------------
 import os
 import functools
-from typing import Any, Callable, Mapping, Optional, Union, Dict, cast
+from typing import Any, Callable, Mapping, Optional, Union, Dict, cast, List, Tuple, Iterable
 
 import urllib3
-from azure.core.pipeline import Pipeline
+from urllib3.fields import _TYPE_FIELD_VALUE_TUPLE
 
+from azure.core.pipeline import Pipeline
 from azure.core.exceptions import (
     ServiceRequestError,
     ServiceResponseError,
@@ -59,6 +60,7 @@ def _read_files(fields, files):
             updated = v
         fields.append((k, updated))
 
+
 class Urllib3StreamDownloadGenerator:
     """Generator for streaming response data.
 
@@ -68,11 +70,11 @@ class Urllib3StreamDownloadGenerator:
         on the *content-encoding* header.
     """
 
-    def __init__(self, pipeline: Pipeline, response: "Urllib3TransportResponse", **kwargs) -> None:
+    def __init__(self, pipeline: Pipeline, response: "Urllib3TransportResponse", **kwargs: Any) -> None:
         self.pipeline = pipeline
         self.response = response
-        decompress = kwargs.pop("decompress", True)
-        self.iter_content_func = self.response._internal_response.stream(
+        decompress: bool = kwargs.pop("decompress", True)
+        self.iter_content_func: Iterable[bytes] = self.response._internal_response.stream(
             amt=self.response._block_size,
             decode_content=decompress
         )
@@ -102,7 +104,7 @@ class Urllib3TransportResponse(HttpResponseImpl):
         *,
         request: RestHttpRequest,
         internal_response: urllib3.response.HTTPResponse,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         headers = kwargs.pop("headers", internal_response.headers)
         super().__init__(
@@ -138,7 +140,7 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
         self,
         *,
         pool: Optional[urllib3.PoolManager] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         self._pool: Optional[urllib3.PoolManager] = pool
         self._pool_owner: bool = kwargs.get("pool_owner", True)
@@ -203,7 +205,7 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
             self._pool.clear()
             self._pool = None
 
-    def send(self, request: RestHttpRequest, **kwargs) -> Urllib3TransportResponse:
+    def send(self, request: RestHttpRequest, **kwargs: Any) -> RestHttpResponse:
         """Send the request using this HTTP sender.
 
         :param request: The HTTP request.
@@ -227,7 +229,7 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
         self._pool = cast(urllib3.PoolManager, self._pool)
         try:
             if request.files:
-                fields = []
+                fields: List[Tuple[str, _TYPE_FIELD_VALUE_TUPLE]] = []
                 _read_files(fields, request.data)
                 _read_files(fields, request.files)
                 result = self._pool.request_encode_body(
@@ -306,5 +308,5 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
         self.open()
         return self
 
-    def __exit__(self, *args) -> None:
+    def __exit__(self, *args: Any) -> None:
         self.close()
