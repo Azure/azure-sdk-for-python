@@ -25,10 +25,9 @@
 # --------------------------------------------------------------------------
 import os
 import functools
-from typing import Any, Callable, Iterable, List, Mapping, Optional, Tuple, Union, Dict, cast
+from typing import Any, Callable, Iterator, List, Mapping, Optional, Tuple, Union, Dict, cast
 
 import urllib3
-from urllib3.fields import _TYPE_FIELD_VALUE_TUPLE
 
 from ..runtime.pipeline import Pipeline
 from ..exceptions import (
@@ -43,7 +42,12 @@ from ..rest._http_response_impl import HttpResponseImpl
 
 
 DEFAULT_BLOCK_SIZE = 32768
-
+_TYPE_FIELD_VALUE = Union[str, bytes]
+_TYPE_FIELD_VALUE_TUPLE = Union[
+    _TYPE_FIELD_VALUE,
+    Tuple[str, _TYPE_FIELD_VALUE],
+    Tuple[str, _TYPE_FIELD_VALUE, str],
+]
 
 def _read_files(fields, files):
     if files is None:
@@ -93,7 +97,7 @@ class Urllib3StreamDownloadGenerator:
         self.pipeline = pipeline
         self.response = response
         decompress: bool = kwargs.pop("decompress", True)
-        self.iter_content_func: Iterable[bytes] = self.response._internal_response.stream(
+        self.iter_content_func: Iterator[bytes] = self.response._internal_response.stream(
             amt=self.response._block_size,
             decode_content=decompress
         )
