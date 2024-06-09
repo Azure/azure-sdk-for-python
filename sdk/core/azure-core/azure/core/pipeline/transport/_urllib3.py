@@ -230,7 +230,7 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
                 fields = []
                 _read_files(fields, request.data)
                 _read_files(fields, request.files)
-                result = cast(self._pool).request_encode_body(
+                result = self._pool.request_encode_body(
                     method=request.method,
                     url=request.url,
                     fields=fields,
