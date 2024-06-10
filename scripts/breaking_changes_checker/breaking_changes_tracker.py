@@ -116,6 +116,7 @@ class BreakingChangesTracker:
         self.function_name = None
         self.parameter_name = None
         self.ignore = kwargs.get("ignore", None)
+        self.changelog = kwargs.get("changelog", False)
 
     def __str__(self):
         formatted = "\n"
@@ -128,8 +129,8 @@ class BreakingChangesTracker:
         return formatted
 
     def run_checks(self) -> None:
-        # TODO: this should be conditional based on what folks want reported
-        self.run_non_breaking_change_diff_checks()
+        if self.changelog:
+            self.run_non_breaking_change_diff_checks()
         self.run_breaking_change_diff_checks()
         self.check_parameter_ordering()  # not part of diff
 

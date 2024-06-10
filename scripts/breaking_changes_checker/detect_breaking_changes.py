@@ -275,7 +275,7 @@ def test_compare_reports(pkg_dir: str, version: str, changelog: bool) -> None:
         current = json.load(fd)
     diff = jsondiff.diff(stable, current)
 
-    bc = BreakingChangesTracker(stable, current, diff, package_name)
+    bc = BreakingChangesTracker(stable, current, diff, package_name, changelog=changelog)
     bc.run_checks()
 
     remove_json_files(pkg_dir)
