@@ -24,34 +24,37 @@ ASYNC_TRANSPORT_RESPONSES = []
 try:
     from azure.core.experimental.transport import Urllib3Transport, Urllib3TransportResponse
 
-    SYNC_TRANSPORTS.append(Urllib3Transport)
+    SYNC_TRANSPORTS.append(
+        (Urllib3Transport, PipelineTransportHttpRequest),
+        (Urllib3Transport, RestHttpRequest)
+    )
     SYNC_TRANSPORT_RESPONSES.append(Urllib3TransportResponse)
 except (ImportError, SyntaxError):
     pass
 
-try:
-    from azure.core.experimental.transport import (
-        HttpXTransport,
-        HttpXTransportResponse,
-        AsyncHttpXTransport,
-        AsyncHttpXTransportResponse
-    )
+# try:
+#     from azure.core.experimental.transport import (
+#         HttpXTransport,
+#         HttpXTransportResponse,
+#         AsyncHttpXTransport,
+#         AsyncHttpXTransportResponse
+#     )
 
-    SYNC_TRANSPORTS.append(HttpXTransport)
-    SYNC_TRANSPORT_RESPONSES.append(HttpXTransportResponse)
-    ASYNC_TRANSPORTS.append(AsyncHttpXTransport)
-    ASYNC_TRANSPORT_RESPONSES.append(AsyncHttpXTransportResponse)
-except (ImportError, SyntaxError):
-    pass
+#     SYNC_TRANSPORTS.append(HttpXTransport)
+#     SYNC_TRANSPORT_RESPONSES.append(HttpXTransportResponse)
+#     ASYNC_TRANSPORTS.append(AsyncHttpXTransport)
+#     ASYNC_TRANSPORT_RESPONSES.append(AsyncHttpXTransportResponse)
+# except (ImportError, SyntaxError):
+#     pass
 
 
-try:
-    from azure.core.experimental.transport import PyodideTransport, PyodideTransportResponse
+# try:
+#     from azure.core.experimental.transport import PyodideTransport, PyodideTransportResponse
 
-    ASYNC_TRANSPORTS.append(PyodideTransport)
-    ASYNC_TRANSPORT_RESPONSES.append(PyodideTransportResponse)
-except (ImportError, SyntaxError):
-    pass
+#     ASYNC_TRANSPORTS.append(PyodideTransport)
+#     ASYNC_TRANSPORT_RESPONSES.append(PyodideTransportResponse)
+# except (ImportError, SyntaxError):
+#     pass
 
 
 
