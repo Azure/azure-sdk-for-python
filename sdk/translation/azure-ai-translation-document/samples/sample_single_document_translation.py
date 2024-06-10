@@ -21,7 +21,7 @@ import os
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.translation.document import SingleDocumentTranslationClient
 from azure.ai.translation.document.models import DocumentTranslateContent
-from azure.core.rest._helpers import FileType
+
 
 TEST_INPUT_FILE_NAME = os.path.abspath(
     os.path.join(os.path.abspath(__file__), "..", "../tests/TestData/test-input.txt")
@@ -41,7 +41,7 @@ def sample_single_document_translation():
     with open(TEST_INPUT_FILE_NAME, "r") as file:
         file_contents = file.read()
 
-    document_content: FileType = (file_name, file_contents, file_type)
+    document_content = (file_name, file_contents, file_type)
     document_translate_content = DocumentTranslateContent(document=document_content)
 
     response_stream = client.document_translate(body=document_translate_content, target_language=target_languages)

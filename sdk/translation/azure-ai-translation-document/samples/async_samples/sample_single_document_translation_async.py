@@ -21,7 +21,7 @@ import asyncio, os
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.translation.document.aio import SingleDocumentTranslationClient
 from azure.ai.translation.document.models import DocumentTranslateContent
-from azure.core.rest._helpers import FileType
+
 
 async def sample_single_document_translation_async():
     # [START synchronous_document_translation_async]
@@ -44,7 +44,7 @@ async def sample_single_document_translation_async():
     with open(file_path, "r") as file:
         file_contents = file.read()
 
-    document_content: FileType = (file_name, file_contents, file_type)
+    document_content = (file_name, file_contents, file_type)
     document_translate_content = DocumentTranslateContent(document=document_content)
 
     async with client:
