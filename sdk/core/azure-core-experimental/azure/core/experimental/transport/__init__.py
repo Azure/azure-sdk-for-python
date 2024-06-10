@@ -23,44 +23,80 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import sys
 from typing import List
 
-# pylint: disable=undefined-all-variable
 
-if sys.version_info >= (3, 8):
-    __all__ = ["PyodideTransport", "HttpXTransport", "AsyncHttpXTransport", "Urllib3Transport"]
+__all__ = [
+    "PyodideTransport",
+    "PyodideTransportResponse",
+    "HttpXTransport",
+    "HttpXTransportResponse",
+    "AsyncHttpXTransport",
+    "AsyncHttpXTransportResponse",
+    "Urllib3Transport",
+    "Urllib3TransportResponse"
+]
 
-    def __dir__() -> List[str]:
-        return __all__
 
-    def __getattr__(name: str):
-        if name == "PyodideTransport":
-            try:
-                from ._pyodide import PyodideTransport
+def __dir__() -> List[str]:
+    return __all__
 
-                return PyodideTransport
-            except ImportError as err:
-                raise ImportError("pyodide package is not installed") from err
-        if name == "HttpXTransport":
-            try:
-                from ._httpx import HttpXTransport
+def __getattr__(name: str):
+    if name == "PyodideTransport":
+        try:
+            from ._pyodide import PyodideTransport
 
-                return HttpXTransport
-            except ImportError as err:
-                raise ImportError("httpx package is not installed") from err
-        if name == "AsyncHttpXTransport":
-            try:
-                from ._httpx_async import AsyncHttpXTransport
+            return PyodideTransport
+        except ImportError as err:
+            raise ImportError("pyodide package is not installed") from err
+    if name == "PyodideTransportResponse":
+        try:
+            from ._pyodide import PyodideTransportResponse
 
-                return AsyncHttpXTransport
-            except ImportError as err:
-                raise ImportError("httpx package is not installed") from err
-        if name == "Urllib3Transport":
-            try:
-                from ._urllib3 import Urllib3Transport
+            return PyodideTransportResponse
+        except ImportError as err:
+            raise ImportError("pyodide package is not installed") from err
+    if name == "HttpXTransport":
+        try:
+            from ._httpx import HttpXTransport
 
-                return Urllib3Transport
-            except ImportError as err:
-                raise ImportError("urllib3 package is not installed") from err
-        raise AttributeError(f"module 'azure.core.experimental.transport' has no attribute {name}")
+            return HttpXTransport
+        except ImportError as err:
+            raise ImportError("httpx package is not installed") from err
+    if name == "HttpXTransportResponse":
+        try:
+            from ._httpx import HttpXTransportResponse
+
+            return HttpXTransportResponse
+        except ImportError as err:
+            raise ImportError("httpx package is not installed") from err
+    if name == "AsyncHttpXTransport":
+        try:
+            from ._httpx_async import AsyncHttpXTransport
+
+            return AsyncHttpXTransport
+        except ImportError as err:
+            raise ImportError("httpx package is not installed") from err
+    if name == "AsyncHttpXTransportResponse":
+        try:
+            from ._httpx_async import AsyncHttpXTransportResponse
+
+            return AsyncHttpXTransportResponse
+        except ImportError as err:
+            raise ImportError("httpx package is not installed") from err
+    if name == "Urllib3Transport":
+        try:
+            from ._urllib3 import Urllib3Transport
+
+            return Urllib3Transport
+        except ImportError as err:
+            raise ImportError("urllib3 package is not installed") from err
+    if name == "Urllib3TransportResponse":
+        try:
+            from ._urllib3 import Urllib3TransportResponse
+
+            return Urllib3TransportResponse
+        except ImportError as err:
+            raise ImportError("urllib3 package is not installed") from err
+    raise AttributeError(f"module 'azure.core.experimental.transport' has no attribute {name}")
+
