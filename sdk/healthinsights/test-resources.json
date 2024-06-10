@@ -10,14 +10,14 @@
             }
         },
         "textAnalyticsResourceGroupName": {
-             "defaultValue": "/subscriptions/ad436375-8308-4393-85cb-1a7de099ec6e/resourceGroups/radiologyinsights-testing/providers/Microsoft.CognitiveServices/accounts/karota4h",
+             "defaultValue": "/subscriptions/ad436375-8308-4393-85cb-1a7de099ec6e/resourceGroups/radiologyinsights-testing/providers/Microsoft.CognitiveServices/accounts/henkslanguageresource4",
             "type": "String",
             "metadata": {
                 "description": "The textAnalyticsResourceGroupName of the resource. By default, ."
             }
         },
         "textAnalyticsName": {
-            "defaultValue": "karoritest",
+            "defaultValue": "henkshealthinsights4",
             "type": "string",
             "metadata": {
                 "description": "The textAnalyticsName of the resource. By default, ."
@@ -25,7 +25,7 @@
         },
         "location": {
             "type": "string",
-            "defaultValue": "East US",
+            "defaultValue": "eastus2euap",
             "metadata": {
                 "description": "The location of the resource. By default, this is the same as the resource group."
             }
