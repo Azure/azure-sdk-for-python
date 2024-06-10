@@ -4,7 +4,7 @@
     "parameters": {
         "baseName": {
             "type": "string",
-            "defaultValue": "[resourceGroup().name]",
+            "defaultValue": "radiologyinsights-testing",
             "metadata": {
                 "description": "The base resource name."
             }
