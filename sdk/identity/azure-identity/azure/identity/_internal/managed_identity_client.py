@@ -50,10 +50,10 @@ class ManagedIdentityClientBase(abc.ABC):
             except DecodeError as ex:
                 if response.http_response.content_type.startswith("application/json"):
                     message = "Failed to deserialize JSON from response"
+                    raise ClientAuthenticationError(message=message, response=response.http_response) from ex
                 else:
                     message = 'Unexpected content type "{}"'.format(response.http_response.content_type)
-                    raise CredentialUnavailableError(message=message, response=response.http_response) from ex
-                raise ClientAuthenticationError(message=message, response=response.http_response) from ex
+                    raise CredentialUnavailableError(message=message, response=response.http_response) from ex                
 
         if not content:
             raise ClientAuthenticationError(message="No token received.", response=response.http_response)
