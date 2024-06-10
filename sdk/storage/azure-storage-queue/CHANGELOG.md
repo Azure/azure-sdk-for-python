@@ -1,6 +1,6 @@
 # Release History
 
-## 12.11.0b1 (Unreleased)
+## 12.11.0b1 (2024-06-11)
 
 ### Features Added
 - Updated OAuth implementation to use the AAD scope returned in a Bearer challenge.
