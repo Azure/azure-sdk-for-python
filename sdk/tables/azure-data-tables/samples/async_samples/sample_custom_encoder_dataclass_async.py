@@ -27,25 +27,13 @@ from datetime import datetime, timezone
 from uuid import uuid4, UUID
 from dotenv import find_dotenv, load_dotenv
 from dataclasses import dataclass, asdict
-from typing import Dict, Union, Optional, NamedTuple
+from typing import Dict, Union, Optional
 from azure.data.tables import TableEntityEncoderABC, UpdateMode
 from azure.data.tables.aio import TableClient
 
 
-RGBColor = NamedTuple("RGBColor", [("Red", float), ("Green", float), ("Blue", float)])
-
-
 @dataclass
 class Car:
-    color: Optional[RGBColor] = None
-    maker: Optional[str] = None
-    model: Optional[str] = None
-    production_date: Optional[datetime] = None
-    mileage: Optional[int] = None
-
-
-@dataclass
-class Product:
     partition_key: str
     row_key: UUID
     price: Optional[float] = None
@@ -53,14 +41,19 @@ class Product:
     product_id: Optional[UUID] = None
     inventory_count: Optional[int] = None
     barcode: Optional[bytes] = None
-    item_details: Optional[Car] = None
+    color: Optional[str] = None
+    maker: Optional[str] = None
+    model: Optional[str] = None
+    production_date: Optional[datetime] = None
+    mileage: Optional[int] = None
+    is_second_hand: Optional[bool] = None
 
 
-class MyEncoder(TableEntityEncoderABC[Product]):
+class MyEncoder(TableEntityEncoderABC[Car]):
     def prepare_key(self, key: UUID) -> str:  # type: ignore[override]
         return super().prepare_key(str(key))
 
-    def encode_entity(self, entity: Product) -> Dict[str, Union[str, int, float, bool]]:
+    def encode_entity(self, entity: Car) -> Dict[str, Union[str, int, float, bool]]:
         encoded = {}
         for key, value in asdict(entity).items():
             if key == "partition_key":
@@ -68,16 +61,6 @@ class MyEncoder(TableEntityEncoderABC[Product]):
                 continue
             if key == "row_key":
                 encoded["RowKey"] = str(value)  # this property should be "RowKey" in encoded result
-                continue
-            if key == "item_details" and value is not None:
-                for k, v in value.items():
-                    if isinstance(v, RGBColor):
-                        edm_type, v = self._prepare_value_in_rgb(v)
-                    else:
-                        edm_type, v = self.prepare_value(k, v)
-                    if edm_type:
-                        encoded[f"{k}@odata.type"] = edm_type.value if hasattr(edm_type, "value") else edm_type
-                    encoded[k] = v
                 continue
             edm_type, value = self.prepare_value(key, value)
             if edm_type:
@@ -99,7 +82,7 @@ class InsertUpdateDeleteEntity(object):
         self.connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
         self.table_name = "CustomEncoderDataClassAsync"
 
-        self.entity = Product(
+        self.entity = Car(
             partition_key="PK",
             row_key=uuid4(),
             price=4.99,
@@ -107,13 +90,12 @@ class InsertUpdateDeleteEntity(object):
             product_id=uuid4(),
             inventory_count=42,
             barcode=b"135aefg8oj0ld58",  # cspell:disable-line
-            item_details=Car(
-                color=RGBColor(30.1, 40.1, 50.1),
-                maker="maker",
-                model="model",
-                production_date=datetime(year=2014, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc),
-                mileage=2**31,  # an int64 integer
-            ),
+            color="white",
+            maker="maker",
+            model="model",
+            production_date=datetime(year=2014, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc),
+            mileage=2**31,  # an int64 integer
+            is_second_hand=True,
         )
 
     async def create_delete_entity(self):
@@ -149,7 +131,7 @@ class InsertUpdateDeleteEntity(object):
         async with table_client:
             await table_client.create_table()
 
-            entity1 = Product(
+            entity1 = Car(
                 partition_key="PK",
                 row_key=uuid4(),
                 price=4.99,
@@ -158,18 +140,17 @@ class InsertUpdateDeleteEntity(object):
                 inventory_count=42,
                 barcode=b"135aefg8oj0ld58",  # cspell:disable-line
             )
-            entity2 = Product(
+            entity2 = Car(
                 partition_key=entity1.partition_key,
                 row_key=entity1.row_key,
-                item_details=Car(
-                    color=RGBColor(40.1, 50.1, 60.1),
-                    maker="maker2",
-                    model="model2",
-                    production_date=datetime(
-                        year=2014, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc
-                    ),
-                    mileage=2**31,  # an int64 integer
+                color="red",
+                maker="maker2",
+                model="model2",
+                production_date=datetime(
+                    year=2014, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc
                 ),
+                mileage=2**31,  # an int64 integer
+                is_second_hand=True,
             )
 
             await table_client.upsert_entity(mode=UpdateMode.REPLACE, entity=entity2, encoder=MyEncoder())
@@ -188,10 +169,10 @@ class InsertUpdateDeleteEntity(object):
             )
             print(f"Merged entity: {merged_entity}")
 
-            entity3 = Product(
+            entity3 = Car(
                 partition_key=entity1.partition_key,
                 row_key=entity2.row_key,
-                item_details=Car(color=RGBColor(50.1, 60.1, 70.1)),
+                color="white",
             )
             await table_client.update_entity(mode=UpdateMode.REPLACE, entity=entity3, encoder=MyEncoder())
             replaced_entity = await table_client.get_entity(
