@@ -1,11 +1,11 @@
 # Release History
 
-## 12.5.1b (Unreleased)
+## 12.5.1b1 (Unreleased)
 
 ### Features Added
 * Added to support custom encoder in entity CRUD operations.
 * Added to support custom Entity type.
-* Added to support Entity property in Tuple type.
+* Added to support Entity property in Tuple and Enum types.
 
 ### Bugs Fixed
 * Fixed a bug in encoder when Entity property has "@odata.type" provided.
