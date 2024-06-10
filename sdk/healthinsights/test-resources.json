@@ -9,6 +9,20 @@
                 "description": "The base resource name."
             }
         },
+        "textAnalyticsResourceGroupName": {
+             "defaultValue": "/subscriptions/ad436375-8308-4393-85cb-1a7de099ec6e/resourceGroups/radiologyinsights-testing/providers/Microsoft.CognitiveServices/accounts/karota4h",
+            "type": "String",
+            "metadata": {
+                "description": "The textAnalyticsResourceGroupName of the resource. By default, ."
+            }
+        },
+        "textAnalyticsName": {
+            "defaultValue": "karoritest",
+            "type": "string",
+            "metadata": {
+                "description": "The textAnalyticsName of the resource. By default, ."
+            }
+        },
         "location": {
             "type": "string",
             "defaultValue": "[resourceGroup().location]",
@@ -33,25 +47,13 @@
     },
     "variables": {
         "textAnalyticsBaseName": "[concat('textanalytics', parameters('baseName'))]",
+        "textAnalyticsResourceId":"[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('textAnalyticsResourceGroupName'), '/providers/Microsoft.CognitiveServices/accounts/', parameters('textAnalyticsName'))]",
         "cognitiveApiVersion": "2023-10-01-preview",
         "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
         "uniqueSubDomainName": "[format('{0}-{1}', parameters('baseName'), parameters('endpointPrefix'))]",
         "endpointValue": "[format('https://{0}-{1}{2}', parameters('baseName'), parameters('endpointPrefix'), parameters('cognitiveServicesEndpointSuffix'))]"
     },
     "resources": [
-       {
-            "type": "Microsoft.CognitiveServices/accounts",
-            "name": "[variables('textAnalyticsBaseName')]",
-            "apiVersion": "[variables('cognitiveApiVersion')]",
-            "sku": {
-                "name": "S"
-            },
-            "kind": "TextAnalytics",
-            "location": "[parameters('location')]",
-            "properties": {
-                "customSubDomainName": "[variables('textAnalyticsBaseName')]"
-            }
-        }, 
         {
             "type": "Microsoft.CognitiveServices/accounts",
             "apiVersion": "[variables('cognitiveApiVersion')]",
@@ -62,6 +64,9 @@
             },
             "kind": "HealthInsights",
             "properties": {
+                "apiProperties": {
+                    "TA4HResourceId": "[variables('textAnalyticsResourceId')]"
+                },
                 "customSubDomainName": "[variables('uniqueSubDomainName')]"
             }
         },
