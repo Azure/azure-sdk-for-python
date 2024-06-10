@@ -16,7 +16,6 @@ import datetime as dt
 
 from devtools_testutils import AzureRecordedTestCase
 from azure.core.messaging import CloudEvent
-from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid.aio import EventGridConsumerClient, EventGridPublisherClient
 from eventgrid_preparer import (
     EventGridPreparer,

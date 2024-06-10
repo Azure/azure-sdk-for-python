@@ -44,10 +44,11 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
-    :keyword namespace_topic: The name of the topic to publish events to. Required for EventGrid Namespaces.
-     Default value is None, which is used for EventGrid Basic.
+    :keyword namespace_topic: The name of the topic to publish events to. Required for Event Grid Namespaces.
+     Default value is None, which is used for Event Grid Basic.
     :paramtype namespace_topic: str or None
-    :keyword api_version: The API version to use for this operation. Default value is "2024-06-01".
+    :keyword api_version: The API version to use for this operation. Default value for Event Grid Namespace
+     is "2024-06-01", default value for Event Grid Basic is "2018-01-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
