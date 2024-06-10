@@ -1,14 +1,24 @@
 # Release History
 
-## 1.30.2 (Unreleased)
+## 1.30.3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.30.2 (2024-06-06)
 
 ### Features Added
 
 - Tracing: `DistributedTracingPolicy` will now set an attribute, `http.request.resend_count`, on HTTP spans for resent requests to indicate the resend attempt number.  #35069
 
-### Breaking Changes
-
 ### Bugs Fixed
+
+- Raise correct exception if transport is used while already closed  #35559
 
 ### Other Changes
 

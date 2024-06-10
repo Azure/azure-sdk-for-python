@@ -1,5 +1,19 @@
 # Release History
 
+## 8.0.0 (2024-06-06)
+
+### Features Added
+
+  - Model DynamicsCrmLinkedService has a new parameter credential
+  - Model ExpressionV2 has a new parameter operators
+  - Model LakeHouseTableDataset has a new parameter schema_type_properties_schema
+  - Model SalesforceServiceCloudV2Source has a new parameter query
+  - Model SalesforceV2Source has a new parameter query
+
+### Breaking Changes
+
+  - Model ExpressionV2 no longer has parameter operator
+
 ## 7.1.0 (2024-05-08)
 
 ### Features Added

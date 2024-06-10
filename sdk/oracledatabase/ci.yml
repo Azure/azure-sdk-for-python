@@ -10,7 +10,7 @@ trigger:
     - restapi*
   paths:
     include:
-    - sdk/Oracle/
+    - sdk/oracledatabase/
 
 pr:
   branches:
@@ -22,12 +22,12 @@ pr:
     - restapi*
   paths:
     include:
-    - sdk/Oracle/
+    - sdk/oracledatabase/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
-    ServiceDirectory: Oracle
+    ServiceDirectory: oracledatabase
     TestProxy: true
     Artifacts:
     - name: azure-mgmt-oracledatabase

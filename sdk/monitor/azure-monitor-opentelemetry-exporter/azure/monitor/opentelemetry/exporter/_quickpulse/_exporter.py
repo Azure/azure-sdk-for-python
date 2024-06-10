@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 import logging
 from typing import Any, Optional
+import weakref
 
 from opentelemetry.context import (
     _SUPPRESS_INSTRUMENTATION_KEY,
@@ -28,10 +29,12 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _LONG_PING_INTERVAL_SECONDS,
     _POST_CANCEL_INTERVAL_SECONDS,
     _POST_INTERVAL_SECONDS,
+    _QUICKPULSE_SUBSCRIBED_HEADER_NAME,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._generated._configuration import QuickpulseClientConfiguration
 from azure.monitor.opentelemetry.exporter._quickpulse._generated._client import QuickpulseClient
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import MonitoringDataPoint
+from azure.monitor.opentelemetry.exporter._quickpulse._policy import _QuickpulseRedirectPolicy
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _get_global_quickpulse_state,
     _is_ping_state,
@@ -85,9 +88,10 @@ class _QuickpulseExporter(MetricExporter):
         # TODO: Support AADaudience (scope)/credentials
         # Pass `None` for now until swagger definition is fixed
         config = QuickpulseClientConfiguration(credential=None)  # type: ignore
+        qp_redirect_policy = _QuickpulseRedirectPolicy(permit_redirects=False)
         policies = [
-            # TODO: Support redirect
-            config.redirect_policy,
+            # Custom redirect policy for QP
+            qp_redirect_policy,
             # Needed for serialization
             ContentDecodePolicy(),
             # Logging for client calls
@@ -102,6 +106,9 @@ class _QuickpulseExporter(MetricExporter):
             endpoint=self._live_endpoint,
             policies=policies
         )
+        # Create a weakref of the client to the redirect policy so the endpoint can be
+        # dynamically modified if redirect does occur
+        qp_redirect_policy._qp_client_ref = weakref.ref(self._client)
 
         MetricExporter.__init__(
             self,
@@ -146,7 +153,7 @@ class _QuickpulseExporter(MetricExporter):
                 # If no response, assume unsuccessful
                 result = MetricExportResult.FAILURE
             else:
-                header = post_response._response_headers.get("x-ms-qps-subscribed")  # pylint: disable=protected-access
+                header = post_response._response_headers.get(_QUICKPULSE_SUBSCRIBED_HEADER_NAME)  # pylint: disable=protected-access
                 if header != "true":
                     # User leaving the live metrics page will be treated as an unsuccessful
                     result = MetricExportResult.FAILURE
@@ -240,7 +247,7 @@ class _QuickpulseMetricReader(MetricReader):
                     self._base_monitoring_data_point,
                 )
                 if ping_response:
-                    header = ping_response._response_headers.get("x-ms-qps-subscribed")  # pylint: disable=protected-access
+                    header = ping_response._response_headers.get(_QUICKPULSE_SUBSCRIBED_HEADER_NAME)  # pylint: disable=protected-access
                     if header and header == "true":
                         # Switch state to post if subscribed
                         _set_global_quickpulse_state(_QuickpulseState.POST_SHORT)
