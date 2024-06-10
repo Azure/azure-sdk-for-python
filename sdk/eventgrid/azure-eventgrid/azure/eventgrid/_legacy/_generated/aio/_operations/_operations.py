@@ -18,93 +18,31 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
-from .._serialization import Serializer
+from ... import models as _models
+from ..._operations._operations import (
+    build_event_grid_publisher_publish_cloud_event_events_request,
+    build_event_grid_publisher_publish_custom_event_events_request,
+    build_event_grid_publisher_publish_events_request,
+)
 from .._vendor import EventGridPublisherClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
-_SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
-
-
-def build_event_grid_publisher_publish_events_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: Literal["2018-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-01-01"))
-    # Construct URL
-    _url = "/api/events"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_event_grid_publisher_publish_cloud_event_events_request(
-    *, json: List[_models.CloudEvent], **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: Literal["2018-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-01-01"))
-    # Construct URL
-    _url = "/api/events"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
-
-
-def build_event_grid_publisher_publish_custom_event_events_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: Literal["2018-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-01-01"))
-    # Construct URL
-    _url = "/api/events"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
 class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
     @overload
-    def publish_events(  # pylint: disable=inconsistent-return-statements
+    async def publish_events(  # pylint: disable=inconsistent-return-statements
         self,
         topic_hostname: str,
         events: List[_models.EventGridEvent],
@@ -128,7 +66,7 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         """
 
     @overload
-    def publish_events(  # pylint: disable=inconsistent-return-statements
+    async def publish_events(  # pylint: disable=inconsistent-return-statements
         self, topic_hostname: str, events: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Publishes a batch of events to an Azure Event Grid topic.
@@ -146,8 +84,8 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
-    def publish_events(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def publish_events(  # pylint: disable=inconsistent-return-statements
         self, topic_hostname: str, events: Union[List[_models.EventGridEvent], IO], **kwargs: Any
     ) -> None:
         """Publishes a batch of events to an Azure Event Grid topic.
@@ -201,7 +139,7 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -214,8 +152,8 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         if cls:
             return cls(pipeline_response, None, {})
 
-    @distributed_trace
-    def publish_cloud_event_events(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def publish_cloud_event_events(  # pylint: disable=inconsistent-return-statements
         self, topic_hostname: str, events: List[_models.CloudEvent], **kwargs: Any
     ) -> None:
         """Publishes a batch of events to an Azure Event Grid topic.
@@ -241,7 +179,8 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: str = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", "application/cloudevents-batch+json; charset=utf-8")
+            "content_type",
+            _headers.pop("Content-Type", "application/cloudevents-batch+json; charset=utf-8"),
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -260,7 +199,7 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -274,7 +213,7 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
             return cls(pipeline_response, None, {})
 
     @overload
-    def publish_custom_event_events(  # pylint: disable=inconsistent-return-statements
+    async def publish_custom_event_events(  # pylint: disable=inconsistent-return-statements
         self, topic_hostname: str, events: List[JSON], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Publishes a batch of events to an Azure Event Grid topic.
@@ -293,7 +232,7 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         """
 
     @overload
-    def publish_custom_event_events(  # pylint: disable=inconsistent-return-statements
+    async def publish_custom_event_events(  # pylint: disable=inconsistent-return-statements
         self, topic_hostname: str, events: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Publishes a batch of events to an Azure Event Grid topic.
@@ -311,8 +250,8 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
-    def publish_custom_event_events(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def publish_custom_event_events(  # pylint: disable=inconsistent-return-statements
         self, topic_hostname: str, events: Union[List[JSON], IO], **kwargs: Any
     ) -> None:
         """Publishes a batch of events to an Azure Event Grid topic.
@@ -366,7 +305,7 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 

@@ -24,30 +24,30 @@ from azure.core.credentials import AzureKeyCredential
 domain_key = os.environ["EVENTGRID_DOMAIN_KEY"]
 domain_hostname = os.environ["EVENTGRID_DOMAIN_ENDPOINT"]
 
+
 async def publish():
     credential = AzureKeyCredential(domain_key)
     client = EventGridPublisherClient(domain_hostname, credential)
 
-    await client.send([
-        EventGridEvent(
-            topic="MyCustomDomainTopic1",
-            event_type="Contoso.Items.ItemReceived",
-            data={
-                "itemSku": "Contoso Item SKU #1"
-            },
-            subject="Door1",
-            data_version="2.0"
-        ),
-        EventGridEvent(
-            topic="MyCustomDomainTopic2",
-            event_type="Contoso.Items.ItemReceived",
-            data={
-                "itemSku": "Contoso Item SKU #2"
-            },
-            subject="Door1",
-            data_version="2.0"
-        )
-    ])
+    await client.send(
+        [
+            EventGridEvent(
+                topic="MyCustomDomainTopic1",
+                event_type="Contoso.Items.ItemReceived",
+                data={"itemSku": "Contoso Item SKU #1"},
+                subject="Door1",
+                data_version="2.0",
+            ),
+            EventGridEvent(
+                topic="MyCustomDomainTopic2",
+                event_type="Contoso.Items.ItemReceived",
+                data={"itemSku": "Contoso Item SKU #2"},
+                subject="Door1",
+                data_version="2.0",
+            ),
+        ]
+    )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(publish())

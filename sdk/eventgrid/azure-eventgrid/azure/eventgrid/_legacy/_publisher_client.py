@@ -26,7 +26,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
     ResourceExistsError,
-    map_error
+    map_error,
 )
 from azure.core.messaging import CloudEvent
 
@@ -34,7 +34,7 @@ from ._models import EventGridEvent
 from ._helpers import (
     _get_authentication_policy,
     _is_cloud_event,
-    _is_eventgrid_event,
+    _is_eventgrid_event_format,
     _eventgrid_data_typecheck,
     _build_request,
     _cloud_event_to_generated,
@@ -71,7 +71,7 @@ SendType = Union[
 ListEventType = Union[List[CloudEvent], List[EventGridEvent], List[Dict]]
 
 
-class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-version-keyword
+class EventGridPublisherClient(object):  # pylint: disable=client-accepts-api-version-keyword
     """EventGridPublisherClient publishes events to an EventGrid topic or domain.
     It can be used to publish either an EventGridEvent, a CloudEvent or a Custom Schema.
 
@@ -103,13 +103,13 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
     """
 
     def __init__(
-            self,
-            endpoint: str,
-            credential: Union["AzureKeyCredential", "AzureSasCredential", "TokenCredential"],
-            *,
-            api_version: Optional[str] = None,
-            **kwargs: Any
-        ) -> None:
+        self,
+        endpoint: str,
+        credential: Union["AzureKeyCredential", "AzureSasCredential", "TokenCredential"],
+        *,
+        api_version: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         self._endpoint = endpoint
         self._client = EventGridPublisherClientImpl(
             policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
@@ -139,13 +139,7 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
         return policies
 
     @distributed_trace
-    def send(
-        self,
-        events: SendType,
-        *,
-        channel_name: Optional[str] = None,
-        **kwargs: Any
-        ) -> None:
+    def send(self, events: SendType, *, channel_name: Optional[str] = None, **kwargs: Any) -> None:
         """Sends events to a topic or a domain specified during the client initialization.
 
         A single instance or a list of dictionaries, CloudEvents or EventGridEvents are accepted.
@@ -218,25 +212,25 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
         content_type = kwargs.pop("content_type", "application/json; charset=utf-8")
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
-                events = [
-                    _cloud_event_to_generated(e, **kwargs)
-                    for e in events  # pylint: disable=protected-access
-                ]
+                events = [_cloud_event_to_generated(e, **kwargs) for e in events]  # pylint: disable=protected-access
             except AttributeError:
                 ## this is either a dictionary or a CNCF cloud event
-                events = [
-                    _from_cncf_events(e) for e in events
-                ]
+                events = [_from_cncf_events(e) for e in events]
             content_type = "application/cloudevents-batch+json; charset=utf-8"
-        elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
+        elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event_format(events[0]):
             for event in events:
                 _eventgrid_data_typecheck(event)
         response = self._client.send_request(  # pylint: disable=protected-access
             _build_request(
-                self._endpoint,content_type, events, channel_name=channel_name, api_version=self._api_version),
-                **kwargs
+                self._endpoint, content_type, events, channel_name=channel_name, api_version=self._api_version
+            ),
+            **kwargs
         )
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         if response.status_code != 200:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
