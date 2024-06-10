@@ -127,7 +127,7 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
 
     Missing features:
 
-     - Support for pre-request proxy configuration override. Proxy configuration is currently
+     - Support for per-request proxy configuration override. Proxy configuration is currently
        only supported at client/transport construction.
      - Response headers dictionary behaviour differs from the default 'requests' transport.
 
