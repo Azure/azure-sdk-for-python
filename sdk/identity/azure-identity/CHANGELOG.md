@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Raised `CredentialUnavailableError` in IMDS credential if the response is not json. ([#35938](https://github.com/Azure/azure-sdk-for-python/pull/35938))
+
 ### Other Changes
 
 ## 1.17.0b2 (2024-06-11)
