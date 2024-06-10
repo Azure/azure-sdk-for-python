@@ -5,18 +5,15 @@
 import os
 import sys
 import time
-
-try:
-    from unittest import mock
-except ImportError:  # python < 3.3
-    import mock  # type: ignore
+from unittest import mock
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
-from azure.identity import ManagedIdentityCredential
+from azure.identity import ManagedIdentityCredential, CredentialUnavailableError
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.imds import IMDS_AUTHORITY, IMDS_TOKEN_PATH
 from azure.identity._internal.user_agent import USER_AGENT
+from azure.identity._internal import within_credential_chain
 import pytest
 
 from helpers import build_aad_response, validating_transport, mock_response, Request
@@ -684,6 +681,21 @@ def test_imds_tenant_id():
     with mock.patch.dict("os.environ", clear=True):
         token = ManagedIdentityCredential(transport=transport).get_token(scope, tenant_id="tenant_id")
     assert token == expected_token
+
+
+def test_imds_text_response():
+    within_credential_chain.set(True)
+    response = mock.Mock(
+        text=lambda encoding=None: b"{This is a text response}",
+        headers={"content-type": "text/html; charset=UTF-8"},
+        content_type="text/html; charset=UTF-8",
+        status_code=200,
+    )
+    mock_send = mock.Mock(return_value=response)
+    credential = ManagedIdentityCredential(transport=mock.Mock(send=mock_send))
+    with pytest.raises(CredentialUnavailableError):
+        token = credential.get_token("")
+    within_credential_chain.set(False)
 
 
 def test_client_id_none():
