@@ -75,13 +75,13 @@ To publish events, dict representation of the models could also be used as follo
 [publisher-service-doc]: https://docs.microsoft.com/azure/event-grid/concepts
 
 
-[python-eg-namespace-authenticate]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/namespace/samples/sync_samples/sample_namespace_authentication.py
-[python-eg-namespace-publish-cncf]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/namespace/samples/sync_samples/sample_publish_cncf_events.py
-[python-eg-namespace-publish-cloud]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/namespace/samples/sync_samples/sample_publish_cloud_event.py
-[python-eg-namespace-consume]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/namespace/samples/sync_samples/sample_consume_process_events.py
+[python-eg-namespace-authenticate]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/namespace/sync_samples/sample_namespace_authentication.py
+[python-eg-namespace-publish-cncf]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/namespace/sync_samples/sample_publish_cncf_events.py
+[python-eg-namespace-publish-cloud]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/namespace/sync_samples/sample_publish_cloud_event.py
+[python-eg-namespace-consume]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/namespace/sync_samples/sample_consume_process_events.py
 
 
-[python-eg-namespace-authenticate-async]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/namespace/samples/async_samples/sample_namespace_authentication_async.py
-[python-eg-namespace-publish-cncf-async]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/namespace/samples/async_samples/sample_publish_cncf_events_async.py
-[python-eg-namespace-publish-cloud-async]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/namespace/samples/async_samples/sample_publish_cloud_event_async.py
-[python-eg-namespace-consume-async]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/namespace/samples/async_samples/sample_consume_process_events_async.py
+[python-eg-namespace-authenticate-async]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/namespace/async_samples/sample_namespace_authentication_async.py
+[python-eg-namespace-publish-cncf-async]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/namespace/async_samples/sample_publish_cncf_events_async.py
+[python-eg-namespace-publish-cloud-async]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/namespace/async_samples/sample_publish_cloud_event_async.py
+[python-eg-namespace-consume-async]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/namespace/async_samples/sample_consume_process_events_async.py
