@@ -11,7 +11,10 @@ import base64
 from urllib.parse import quote
 
 from azure.core.pipeline.transport import HttpRequest
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
+from azure.core.pipeline.policies import (
+    AzureKeyCredentialPolicy,
+    BearerTokenCredentialPolicy,
+)
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from ._generated._serialization import Serializer
 from ._signature_credential_policy import EventGridSasCredentialPolicy
@@ -23,6 +26,7 @@ from ._generated.models import (
 
 if TYPE_CHECKING:
     from datetime import datetime
+
 
 def generate_sas(
     endpoint: str,
@@ -52,18 +56,15 @@ def generate_sas(
             :caption: Generate a shared access signature.
 
     """
-    full_endpoint = "{}?apiVersion={}".format(
-        endpoint, api_version
-    )
+    full_endpoint = "{}?apiVersion={}".format(endpoint, api_version)
     encoded_resource = quote(full_endpoint, safe=constants.SAFE_ENCODE)
     encoded_expiration_utc = quote(str(expiration_date_utc), safe=constants.SAFE_ENCODE)
 
     unsigned_sas = "r={}&e={}".format(encoded_resource, encoded_expiration_utc)
-    signature = quote(
-        _generate_hmac(shared_access_key, unsigned_sas), safe=constants.SAFE_ENCODE
-    )
+    signature = quote(_generate_hmac(shared_access_key, unsigned_sas), safe=constants.SAFE_ENCODE)
     signed_sas = "{}&s={}".format(unsigned_sas, signature)
     return signed_sas
+
 
 def _generate_hmac(key, message):
     decoded_key = base64.b64decode(key)
@@ -77,18 +78,11 @@ def _get_authentication_policy(credential, bearer_token_policy=BearerTokenCreden
     if credential is None:
         raise ValueError("Parameter 'self._credential' must not be None.")
     if hasattr(credential, "get_token"):
-        return bearer_token_policy(
-            credential,
-            constants.DEFAULT_EVENTGRID_SCOPE
-        )
+        return bearer_token_policy(credential, constants.DEFAULT_EVENTGRID_SCOPE)
     if isinstance(credential, AzureKeyCredential):
-        return AzureKeyCredentialPolicy(
-            credential=credential, name=constants.EVENTGRID_KEY_HEADER
-        )
+        return AzureKeyCredentialPolicy(credential=credential, name=constants.EVENTGRID_KEY_HEADER)
     if isinstance(credential, AzureSasCredential):
-        return EventGridSasCredentialPolicy(
-            credential=credential, name=constants.EVENTGRID_TOKEN_HEADER
-        )
+        return EventGridSasCredentialPolicy(credential=credential, name=constants.EVENTGRID_TOKEN_HEADER)
     raise ValueError(
         "The provided credential should be an instance of a TokenCredential, AzureSasCredential or AzureKeyCredential"
     )
@@ -102,7 +96,8 @@ def _is_cloud_event(event):
     except TypeError:
         return False
 
-def _is_eventgrid_event(event):
+
+def _is_eventgrid_event_format(event):
     # type: (Any) -> bool
     required = ("subject", "eventType", "data", "dataVersion", "id", "eventTime")
     try:
@@ -123,6 +118,7 @@ def _eventgrid_data_typecheck(event):
             "https://docs.microsoft.com/en-us/azure/event-grid/event-schema"
         )
 
+
 def _cloud_event_to_generated(cloud_event, **kwargs):
     if isinstance(cloud_event.data, bytes):
         data_base64 = cloud_event.data
@@ -142,10 +138,11 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
         datacontenttype=cloud_event.datacontenttype,
         subject=cloud_event.subject,
         additional_properties=cloud_event.extensions,
-        **kwargs
+        **kwargs,
     )
 
-def _from_cncf_events(event): # pylint: disable=inconsistent-return-statements
+
+def _from_cncf_events(event):  # pylint: disable=inconsistent-return-statements
     """This takes in a CNCF cloudevent and returns a dictionary.
     If cloud events library is not installed, the event is returned back.
 
@@ -156,11 +153,12 @@ def _from_cncf_events(event): # pylint: disable=inconsistent-return-statements
     """
     try:
         from cloudevents.http import to_json
+
         return json.loads(to_json(event))
     except (AttributeError, ImportError):
         # means this is not a CNCF event
         return event
-    except Exception as err: # pylint: disable=broad-except
+    except Exception as err:  # pylint: disable=broad-except
         msg = """Failed to serialize the event. Please ensure your
         CloudEvents is correctly formatted (https://pypi.org/project/cloudevents/)"""
         raise ValueError(msg) from err
@@ -169,26 +167,21 @@ def _from_cncf_events(event): # pylint: disable=inconsistent-return-statements
 def _build_request(endpoint, content_type, events, *, channel_name=None, api_version=constants.DEFAULT_API_VERSION):
     serialize = Serializer()
     header_parameters: Dict[str, Any] = {}
-    header_parameters['Content-Type'] = serialize.header("content_type", content_type, 'str')
+    header_parameters["Content-Type"] = serialize.header("content_type", content_type, "str")
 
     if channel_name:
-        header_parameters['aeg-channel-name'] = channel_name
+        header_parameters["aeg-channel-name"] = channel_name
 
     query_parameters: Dict[str, Any] = {}
-    query_parameters['api-version'] = serialize.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = serialize.query("api_version", api_version, "str")
 
-    body = serialize.body(events, '[object]')
+    body = serialize.body(events, "[object]")
     if body is None:
         data = None
     else:
         data = json.dumps(body)
-        header_parameters['Content-Length'] = str(len(data))
+        header_parameters["Content-Length"] = str(len(data))
 
-    request = HttpRequest(
-        method="POST",
-        url=endpoint,
-        headers=header_parameters,
-        data=data
-    )
+    request = HttpRequest(method="POST", url=endpoint, headers=header_parameters, data=data)
     request.format_parameters(query_parameters)
     return request

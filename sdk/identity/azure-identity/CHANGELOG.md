@@ -4,11 +4,7 @@
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- `OnBehalfOfCredential` now supports client assertion callbacks through the `client_assertion_func` keyword argument. This enables authenticating with client assertions such as federated credentials.  ([#35812](https://github.com/Azure/azure-sdk-for-python/pull/35812))
 
 ## 1.17.0b1 (2024-05-13)
 
