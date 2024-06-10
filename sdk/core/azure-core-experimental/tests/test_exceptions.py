@@ -5,7 +5,6 @@
 # -------------------------------------------------------------------------
 import pytest
 
-# module under test
 from azure.core.exceptions import HttpResponseError
 
 from rest_client import MockRestClient
@@ -14,9 +13,9 @@ from utils import SYNC_TRANSPORTS, create_http_request
 
 class TestExceptions:
 
-    @pytest.mark.parametrize("transport,request", SYNC_TRANSPORTS)
-    def test_httpresponse_error_with_response(self, port, transport, request):
-        request = create_http_request(request, "GET", url="http://localhost:{}/basic/string".format(port))
+    @pytest.mark.parametrize("transport,requesttype", SYNC_TRANSPORTS)
+    def test_httpresponse_error_with_response(self, port, transport, requesttype):
+        request = create_http_request(requesttype, "GET", url="http://localhost:{}/basic/string".format(port))
         client = MockRestClient(port, transport=transport())
         response = client.send_request(request, stream=False)
         error = HttpResponseError(response=response)
@@ -25,9 +24,9 @@ class TestExceptions:
         assert error.reason == "OK"
         assert isinstance(error.status_code, int)
 
-    @pytest.mark.parametrize("transport,request", SYNC_TRANSPORTS)
-    def test_malformed_json(self, port, transport, request):
-        request = create_http_request(request, "/errors/malformed-json")
+    @pytest.mark.parametrize("transport,requesttype", SYNC_TRANSPORTS)
+    def test_malformed_json(self, port, transport, requesttype):
+        request = create_http_request(requesttype, "/errors/malformed-json")
         client = MockRestClient(port, transport=transport())
         response = client.send_request(request)
         with pytest.raises(HttpResponseError) as ex:
@@ -37,9 +36,9 @@ class TestExceptions:
             == 'Operation returned an invalid status \'BAD REQUEST\'\nContent: {"code": 400, "error": {"global": ["MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API"]'
         )
 
-    @pytest.mark.parametrize("transport,request", SYNC_TRANSPORTS)
-    def test_text(self, port, transport, request):
-        request = create_http_request(request, "GET", "/errors/text")
+    @pytest.mark.parametrize("transport,requesttype", SYNC_TRANSPORTS)
+    def test_text(self, port, transport, requesttype):
+        request = create_http_request(requesttype, "GET", "/errors/text")
         client = MockRestClient(port, transport=transport())
         response = client.send_request(request)
         with pytest.raises(HttpResponseError) as ex:
