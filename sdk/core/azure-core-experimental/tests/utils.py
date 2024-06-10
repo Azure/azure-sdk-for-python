@@ -24,10 +24,8 @@ ASYNC_TRANSPORT_RESPONSES = []
 try:
     from azure.core.experimental.transport import Urllib3Transport, Urllib3TransportResponse
 
-    SYNC_TRANSPORTS.append(
-        (Urllib3Transport, PipelineTransportHttpRequest),
-        (Urllib3Transport, RestHttpRequest)
-    )
+    SYNC_TRANSPORTS.append((Urllib3Transport, PipelineTransportHttpRequest))
+    SYNC_TRANSPORTS.append((Urllib3Transport, RestHttpRequest))
     SYNC_TRANSPORT_RESPONSES.append(Urllib3TransportResponse)
 except (ImportError, SyntaxError):
     pass
