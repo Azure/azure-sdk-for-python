@@ -68,9 +68,6 @@ class MyEncoder(TableEntityEncoderABC[Car]):
             encoded[key] = value
         return encoded
 
-    def _prepare_value_in_rgb(self, color):
-        return None, f"{color[0]}, {color[1]}, {color[2]}"
-
 
 class InsertUpdateDeleteEntity(object):
     def __init__(self):
