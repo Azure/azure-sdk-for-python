@@ -22,7 +22,7 @@ from ._shared.models import (
     PhoneNumberIdentifier,
 )
 from ._generated.models._enums import PlaySourceType
-from ._generated.models._enums import PlaySourceType, RecordingStorageKind
+from ._generated.models._enums import RecordingStorageKind
 from ._utils import (
     deserialize_phone_identifier,
     deserialize_identifier,
@@ -138,7 +138,7 @@ class GroupCallLocator:
 
     def _to_generated(self):
         return CallLocator(kind=self.kind, group_call_id=self.group_call_id)
-    
+
     class RecordingStorage:
         """Recording Storage for the recording.
         :param kind: Defines the kind of external storage.
@@ -153,7 +153,9 @@ class GroupCallLocator:
         :param kind: Defines the kind of external storage.
         :type kind: ~azure.communication.callautomation.RecordingStorageKind or str
         """
-        kind: Literal[RecordingStorageKind.AZURE_COMMUNICATION_SERVICES] = RecordingStorageKind.AZURE_COMMUNICATION_SERVICES
+        kind: Literal[RecordingStorageKind
+                      .AZURE_COMMUNICATION_SERVICES
+                      ] = RecordingStorageKind.AZURE_COMMUNICATION_SERVICES
         """The kind of recording storage is set to AZURE_COMMUNICATION_SERVICES"""
 
     class AzureBlobContainerRecordingStorage(RecordingStorage):
