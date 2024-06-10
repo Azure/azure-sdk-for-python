@@ -4,20 +4,20 @@
     "parameters": {
         "baseName": {
             "type": "string",
-            "defaultValue": "radiologyinsights-testing",
+            "defaultValue": "RadiologyInsights-Testing",
             "metadata": {
                 "description": "The base resource name."
             }
         },
         "textAnalyticsResourceGroupName": {
-             "defaultValue": "/subscriptions/ad436375-8308-4393-85cb-1a7de099ec6e/resourceGroups/radiologyinsights-testing/providers/Microsoft.CognitiveServices/accounts/henkslanguageresource4",
+             "defaultValue": "/subscriptions/ad436375-8308-4393-85cb-1a7de099ec6e/resourceGroups/RadiologyInsights-Testing/providers/Microsoft.CognitiveServices/accounts/HenksLanguageResource4",
             "type": "String",
             "metadata": {
                 "description": "The textAnalyticsResourceGroupName of the resource. By default, ."
             }
         },
         "textAnalyticsName": {
-            "defaultValue": "henkshealthinsights4",
+            "defaultValue": "HenksHealthInsights4",
             "type": "string",
             "metadata": {
                 "description": "The textAnalyticsName of the resource. By default, ."
