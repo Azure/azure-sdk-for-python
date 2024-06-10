@@ -34,6 +34,9 @@ class BreakingChangeType(str, Enum):
     ADDED_CLIENT_METHOD = "AddedClientMethod"
     ADDED_CLASS = "AddedClass"
     ADDED_CLASS_METHOD = "AddedClassMethod"
+    ADDED_CLASS_METHOD_PROPERTY = "AddedClassMethodProperty"
+    ADDED_CLASS_PROPERTY = "AddedClassProperty"
+    ADDED_FUNCTION_PARAMETER = "AddedFunctionParameter"
 
 class BreakingChangesTracker:
     REMOVED_OR_RENAMED_CLIENT_MSG = \
@@ -102,6 +105,12 @@ class BreakingChangesTracker:
         "The model or publicly exposed class '{}.{}' was added in the current version"
     ADDED_CLASS_METHOD_MSG = \
         "The '{}.{}' method '{}' was added in the current version"
+    ADDED_CLASS_METHOD_PROPERTY_MSG = \
+        "The model or publicly exposed class '{}.{}' had property '{}' added in the {} method the current version"
+    ADDED_FUNCTION_PARAMETER_MSG = \
+        "The function '{}.{}' had parameter '{}' added in the current version"
+    ADDED_CLASS_PROPERTY_MSG = \
+        "The model or publicly exposed class '{}.{}' had property '{}' added in the current version"
 
 
     def __init__(self, stable: Dict, current: Dict, diff: Dict, package_name: str, **kwargs: Any) -> None:
@@ -128,7 +137,6 @@ class BreakingChangesTracker:
         return formatted
 
     def run_checks(self) -> None:
-        # TODO: this should be conditional based on what folks want reported
         self.run_non_breaking_change_diff_checks()
         self.run_breaking_change_diff_checks()
         self.check_parameter_ordering()  # not part of diff
@@ -181,7 +189,6 @@ class BreakingChangesTracker:
                     stable_methods_node = stable_class_nodes[self.class_name]["methods"]
                     for method_name, method_components in class_components.get("methods", {}).items():
                         self.function_name = method_name
-                        # current_methods_node = self.current[self.module_name]["class_nodes"][self.class_name]["methods"]
                         if self.function_name not in stable_methods_node and \
                                 not isinstance(self.function_name, jsondiff.Symbol):
                             if self.class_name.endswith("Client"):
@@ -200,6 +207,28 @@ class BreakingChangesTracker:
                                     self.module_name, class_name, method_name
                                 )
                                 self.features_added.append(fa)
+                        else:
+                            # Check existing methods for new parameters
+                            stable_parameters_node = stable_methods_node[self.function_name]["parameters"]
+                            current_parameters_node = self.current[self.module_name]["class_nodes"][self.class_name]["methods"][self.function_name]["parameters"]
+                            for param_name, param_components in method_components.get("parameters", {}).items():
+                                self.parameter_name = param_name
+                                if self.parameter_name not in stable_parameters_node and \
+                                        not isinstance(self.parameter_name, jsondiff.Symbol):
+                                    # TODO: Skip init parameters that will be reported as new class properties
+                                    self.check_non_positional_parameter_added(
+                                        current_parameters_node[param_name]
+                                    )
+                    stable_property_node = stable_class_nodes[self.class_name]["properties"]
+                    for property_name, property_components in class_components.get("properties", {}).items():
+                        if property_name not in stable_property_node and \
+                                not isinstance(property_name, jsondiff.Symbol):
+                            fa = (
+                                self.ADDED_CLASS_PROPERTY_MSG,
+                                BreakingChangeType.ADDED_CLASS_PROPERTY,
+                                self.module_name, class_name, property_name
+                            )
+                            self.features_added.append(fa)
 
 
     def run_class_level_diff_checks(self, module: Dict) -> None:
@@ -482,6 +511,44 @@ class BreakingChangesTracker:
                                 self.parameter_name, stable_default, default
                             )
                         )
+
+    def check_positional_parameter_added(self, current_parameters_node: Dict) -> None:
+        if current_parameters_node["param_type"] == "positional_or_keyword" and \
+                current_parameters_node["default"] != "none":
+            if self.class_name:
+                self.breaking_changes.append(
+                    (
+                        self.ADDED_POSITIONAL_PARAM_TO_METHOD_MSG, BreakingChangeType.ADDED_POSITIONAL_PARAM,
+                        self.module_name, self.class_name, self.function_name,
+                        current_parameters_node["param_type"], self.parameter_name
+                    )
+                )
+            else:
+                self.breaking_changes.append(
+                    (
+                        self.ADDED_POSITIONAL_PARAM_TO_FUNCTION_MSG, BreakingChangeType.ADDED_POSITIONAL_PARAM,
+                        self.module_name, self.function_name,
+                        current_parameters_node["param_type"], self.parameter_name
+                    )
+                )
+
+    def check_non_positional_parameter_added(self, current_parameters_node: Dict) -> None:
+        if current_parameters_node["param_type"] != "positional_or_keyword" and \
+                current_parameters_node["default"] != "none":
+            if self.class_name:
+                self.features_added.append(
+                    (
+                        self.ADDED_CLASS_METHOD_PROPERTY_MSG, BreakingChangeType.ADDED_CLASS_METHOD_PROPERTY,
+                        self.module_name, self.class_name, self.parameter_name, self.function_name
+                    )
+                )
+            else:
+                self.features_added.append(
+                    (
+                        self.ADDED_FUNCTION_PARAMETER, BreakingChangeType.ADDED_FUNCTION_PARAMETER,
+                        self.module_name, self.function_name, self.parameter_name
+                    )
+                )
 
     def check_positional_parameter_added(self, current_parameters_node: Dict) -> None:
         if current_parameters_node["param_type"] == "positional_or_keyword" and \
