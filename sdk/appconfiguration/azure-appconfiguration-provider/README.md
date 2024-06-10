@@ -42,6 +42,7 @@ Currently the Azure App Configuration Provider enables:
 
 * Connecting to an App Configuration Store using a connection string or Azure Active Directory.
 * Selecting multiple sets of configurations using `SettingSelector`.
+* Loading Feature Flags
 * Dynamic Refresh
 * Trim prefixes off key names.
 * Resolving Key Vault References, requires AAD.
@@ -53,7 +54,6 @@ Currently the Azure App Configuration Provider enables:
 List of features we are going to add to the Python Provider in the future.
 
 * Geo-Replication support
-* Feature Management
 * Configuration Placeholders
 
 ## Examples
@@ -178,7 +178,7 @@ alpha = config["feature_management"]["feature_flags"]["Alpha"]
 print(alpha["enabled"])
 ```
 
-By default all feature flags with no label are loaded. If you want to load feature flags with a specific label you can use `SettingSelector` to filter the feature flags.
+By default all feature flags with no label are loaded when `feature_flags_enabled` is set to `True`. . If you want to load feature flags with a specific label you can use `SettingSelector` to filter the feature flags.
 
 ```python
 from azure.appconfiguration.provider import load, SettingSelector
@@ -192,6 +192,9 @@ To enable refresh for feature flags you need to enable refresh. This will allow 
 
 ```python
 config = load(endpoint=endpoint, credential=DefaultAzureCredential(), feature_flags_enabled=True, feature_flag_refresh_enabled=True)
+
+...
+
 config.refresh()
 ```
 

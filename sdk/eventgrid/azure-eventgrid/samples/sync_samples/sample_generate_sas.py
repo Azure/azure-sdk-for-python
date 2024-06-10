@@ -22,7 +22,7 @@ from datetime import datetime, timedelta
 topic_key = os.environ["EVENTGRID_TOPIC_KEY"]
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
-#represents the expiration date for sas
+# represents the expiration date for sas
 expiration_date_utc = datetime.utcnow() + timedelta(hours=10)
 
 signature = generate_sas(endpoint, topic_key, expiration_date_utc)

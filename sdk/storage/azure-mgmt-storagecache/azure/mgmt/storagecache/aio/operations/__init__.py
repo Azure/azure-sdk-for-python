@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from ._aml_filesystems_operations import AmlFilesystemsOperations
+from ._import_jobs_operations import ImportJobsOperations
 from ._storage_cache_management_client_operations import StorageCacheManagementClientOperationsMixin
 from ._operations import Operations
 from ._skus_operations import SkusOperations
@@ -23,6 +24,7 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AmlFilesystemsOperations",
+    "ImportJobsOperations",
     "StorageCacheManagementClientOperationsMixin",
     "Operations",
     "SkusOperations",
