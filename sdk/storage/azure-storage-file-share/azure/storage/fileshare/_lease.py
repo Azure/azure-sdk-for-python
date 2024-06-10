@@ -7,8 +7,8 @@
 
 import uuid
 
-from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, TypeVar, TYPE_CHECKING
+from typing import (
+    Union, Optional, Any, TYPE_CHECKING
 )
 
 from azure.core.tracing.decorator import distributed_trace
@@ -19,8 +19,7 @@ from ._generated.operations import FileOperations, ShareOperations
 
 if TYPE_CHECKING:
     from datetime import datetime
-    ShareFileClient = TypeVar("ShareFileClient")
-    ShareClient = TypeVar("ShareClient")
+    from azure.storage.fileshare import ShareClient, ShareFileClient
 
 
 class ShareLeaseClient(object):  # pylint: disable=client-accepts-api-version-keyword
@@ -47,9 +46,9 @@ class ShareLeaseClient(object):  # pylint: disable=client-accepts-api-version-ke
         need to be specified in order to acquire a new lease, or break one.
     """
     def __init__(
-            self, client, lease_id=None
-    ):  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
-        # type: (Union[ShareFileClient, ShareClient], Optional[str]) -> None
+        self, client: Union["ShareFileClient", "ShareClient"],
+        lease_id: Optional[str] =None
+    ) -> None:  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
         self.id = lease_id or str(uuid.uuid4())
         self.last_modified = None
         self.etag = None

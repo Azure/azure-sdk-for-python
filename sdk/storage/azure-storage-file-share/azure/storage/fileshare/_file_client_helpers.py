@@ -111,7 +111,7 @@ def _upload_range_from_url_options(
 
 
 def _get_ranges_options(
-    snapshot: str,
+    snapshot: Optional[str],
     offset: Optional[int] = None,
     length: Optional[int] = None,
     previous_sharesnapshot: Optional[Union[str, Dict[str, Any]]] = None,
