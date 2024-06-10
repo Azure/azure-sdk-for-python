@@ -11,6 +11,8 @@
 ### Other Changes
 - Support for MicrosoftTeamsAppIdentifier CommunicationIdentifier
 
+## 1.2.0b1 (Unreleased)
+
 ## 1.1.0 (2023-11-23)
 ### Features Added
 - Mid Call actions support overriding callback url.
