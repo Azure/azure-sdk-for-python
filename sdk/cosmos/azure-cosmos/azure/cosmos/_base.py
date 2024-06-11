@@ -319,6 +319,12 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     if options.get("correlatedActivityId"):
         headers[http_constants.HttpHeaders.CorrelatedActivityId] = options["correlatedActivityId"]
 
+    # If it is an operation at the container level, verify the rid of the container to see if the cache needs to be
+    # refreshed.
+    if resource_type != 'dbs' and options.get("containerRID"):
+        rid = options.pop("containerRID")
+        headers[http_constants.HttpHeaders.IntendedCollectionRID] = rid
+
     return headers
 
 

@@ -134,6 +134,7 @@ class HttpHeaders:
     PopulateIndexMetrics = "x-ms-cosmos-populateindexmetrics"
     ResourceQuota = "x-ms-resource-quota"
     ResourceUsage = "x-ms-resource-usage"
+    IntendedCollectionRID = "x-ms-cosmos-intended-collection-rid"
 
     # Quota Info
     MaxEntityCount = "x-ms-root-entity-max-count"
@@ -399,6 +400,7 @@ class SubStatusCodes:
     # 400: Bad Request Substatus
     PARTITION_KEY_MISMATCH = 1001
     CROSS_PARTITION_QUERY_NOT_SERVABLE = 1004
+    COLLECTION_RID_MISMATCH = 1024
 
     # 410: StatusCodeType_Gone: substatus
     NAME_CACHE_IS_STALE = 1000

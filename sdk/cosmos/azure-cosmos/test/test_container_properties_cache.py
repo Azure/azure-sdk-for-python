@@ -4,7 +4,7 @@
 
 """End-to-end test.
 """
-
+import copy
 import unittest
 import uuid
 
@@ -28,6 +28,7 @@ class TestContainerPropertiesCache(unittest.TestCase):
     last_headers = []
     client: cosmos_client.CosmosClient = None
 
+
     @classmethod
     def setUpClass(cls):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
@@ -37,20 +38,20 @@ class TestContainerPropertiesCache(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
+        cls.databaseForTest = cls.client.create_database_if_not_exists(cls.configs.TEST_DATABASE_ID)
 
     def test_container_properties_cache(self):
         client = self.client
-        database_name = "Container Properties Cache Test DB " + str(uuid.uuid4())
-        created_db = client.create_database(database_name)
-        container_name = str(uuid.uuid4())
+        database_name = self.configs.TEST_DATABASE_ID
+        created_db = self.databaseForTest
+        container_name = "Container Properties Cache Test " + str(uuid.uuid4())
         container_pk = "PK"
         # Create The Container
         try:
             client.get_database_client(database_name).create_container(id=container_name, partition_key=PartitionKey(
                 path="/" + container_pk))
         except exceptions.CosmosResourceExistsError:
-            pass
+            self.fail("Container Should not Already Exist.")
         # Delete The cache as this is meant to test calling operations on a preexisting container
         # and not a freshly made one. It's a private attribute so use mangled name.
         client.client_connection._CosmosClientConnection__container_properties_cache = {}
@@ -71,7 +72,371 @@ class TestContainerPropertiesCache(unittest.TestCase):
         # Now we can compare the RID and Partition Key Definition
         self.assertEqual(cached_properties.get("_rid"), fresh_container_read.get("_rid"))
         self.assertEqual(cached_properties.get("partitionKey"), fresh_container_read.get("partitionKey"))
-        client.delete_database(created_db)
+        created_db.delete_container(container_name)
+
+    def test_container_recreate_create_upsert_replace_item(self):
+        client = self.client
+        created_db = self.databaseForTest
+        container_name = str(uuid.uuid4())
+        container_pk = "PK"
+        container2_pk = "partkey"
+        # Create The Container
+        try:
+            created_container = created_db.create_container(id=container_name, partition_key=PartitionKey(
+                path="/" + container_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+
+        # This Simulates a container recreate. We save the old cache and then create
+        # a new container with different partition key definition
+        # for these three operations we extract the partition key value from the document
+        # with a stale cache we end up extracting the wrong one so these will retry extracting
+        # the partition key after refreshing the cache. Test to make sure a container recreate doesn't affect it.
+        old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
+        created_db.delete_container(created_container)
+        try:
+            created_container = created_db.create_container(id=container_name, partition_key=PartitionKey(
+                path="/" + container2_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+        # let's test create by replacing current container properties cache with old one
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        try:
+            created_container.create_item(body={'id': 'item1', container2_pk: 'val'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+        # Do the same thing for upsert operation
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        try:
+            created_container.upsert_item(dict(id="item2", partkey="value"))
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+        # Finally test replace item
+        item = created_container.read_item("item1", partition_key="val")
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        try:
+            created_container.replace_item(item=item, body={'id': 'item1', container2_pk: 'val'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+
+        # Now a negative test. We will try creating an item as if we were attempting to create it with the old container
+        # This should result in an error of 400 as the container has been recreated.
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        try:
+            created_container.create_item(body={'id': 'item3', container_pk: 'val'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, 400)
+        created_db.delete_container(container_name)
+
+    def test_container_recreate_create_upsert_replace_item_sub_partitioning(self):
+        client = self.client
+        created_db = self.databaseForTest
+        container_name = str(uuid.uuid4())
+        container_pk = ["/country", "/state"]
+        container2_pk = ["/county", "/city"]
+        # Create The Container
+        try:
+            created_container = created_db.create_container(id=container_name, partition_key=PartitionKey(
+                path=container_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+
+        # This Simulates a container recreate. We save the old cache and then create
+        # a new container with different partition key definition
+        # for these three operations we extract the partition key value from the document
+        # with a stale cache we end up extracting the wrong one so these will retry extracting
+        # the partition key after refreshing the cache. Test to make sure a container recreate doesn't affect it.
+        old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
+        created_db.delete_container(created_container)
+        try:
+            created_container = created_db.create_container(id=container_name, partition_key=PartitionKey(
+                path=container2_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+        # let's test create by replacing current container properties cache with old one
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        try:
+            created_container.create_item(body={'id': 'item1', 'county': 'ventura', 'city': 'oxnard'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+        # Do the same thing for upsert operation
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        try:
+            created_container.upsert_item(dict(id="item2", county='Santa Barbara', city='Santa Barbara'))
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+        # Finally test replace item
+        item = created_container.read_item("item1", partition_key=['ventura', 'oxnard'])
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        try:
+            created_container.replace_item(item=item, body={'id': 'item1', 'county': 'ventura', 'city': 'oxnard'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+
+        # Now a negative test. We will try creating an item as if we were attempting to create it with the old container
+        # This should result in an error of 400 as the container has been recreated.
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        try:
+            created_container.create_item(body={'id': 'item3', 'country': 'USA', 'state': 'CA'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, 400)
+        created_db.delete_container(container_name)
+
+    def test_offer_throughput_container_recreate(self):
+        client = self.client
+        created_db = self.databaseForTest
+        container_name = str(uuid.uuid4())
+        container_pk = "PK"
+        container2_pk = "partkey"
+        # Create The Container
+        try:
+            created_container = created_db.create_container(id=container_name, partition_key=PartitionKey(
+                path="/" + container_pk), offer_throughput=600)
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+
+        # This Simulates a container recreate. We save the old cache and then create
+        # a new container with different container properties
+        old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
+        created_db.delete_container(created_container)
+        try:
+            created_container = created_db.create_container(id=container_name, partition_key=PartitionKey(
+                path="/" + container2_pk), offer_throughput=800)
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+        # let's test offer throughput by replacing current container properties cache with old one
+        # Check to make sure it equals the new created container's throughput.
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        try:
+            offer = created_container.read_offer()
+            self.assertEqual(offer.offer_throughput, 800)
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+
+        # Now check for replace throughput
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        new_throughput = 900
+        try:
+            new_offer = created_container.replace_throughput(new_throughput)
+            self.assertEqual(new_offer.offer_throughput, new_throughput)
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+        created_db.delete_container(container_name)
+
+    def test_offer_throughput_container_recreate_sub_partition(self):
+        client = self.client
+        created_db = self.databaseForTest
+        container_name = str(uuid.uuid4())
+        container_pk = ["/country", "/state"]
+        container2_pk = ["/county", "/city"]
+        # Create The Container
+        try:
+            created_container = created_db.create_container(id=container_name, partition_key=PartitionKey(
+                path=container_pk), offer_throughput=600)
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+
+        # This Simulates a container recreate. We save the old cache and then create
+        # a new container with different container properties
+        old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
+        created_db.delete_container(created_container)
+        try:
+            created_container = created_db.create_container(id=container_name, partition_key=PartitionKey(
+                path=container2_pk), offer_throughput=800)
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+        # let's test offer throughput by replacing current container properties cache with old one
+        # Check to make sure it equals the new created container's throughput.
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        try:
+            offer = created_container.read_offer()
+            self.assertEqual(offer.offer_throughput, 800)
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+
+        # Now check for replace throughput
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        new_throughput = 900
+        try:
+            new_offer = created_container.replace_throughput(new_throughput)
+            self.assertEqual(new_offer.offer_throughput, new_throughput)
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+        created_db.delete_container(container_name)
+
+    def test_container_recreate_read_item(self):
+        client = self.client
+        created_db = self.databaseForTest
+        container_name = str(uuid.uuid4())
+        container_pk = "PK"
+        container2_pk = "partkey"
+        # Create The Container
+        try:
+            created_container = created_db.create_container(id=container_name, partition_key=PartitionKey(
+                path="/" + container_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+        # create an item to read
+        try:
+            item_to_read = created_container.create_item(body={'id': 'item1', container_pk: 'val'})
+            item_to_read2 = created_container.create_item(body={'id': 'item2', container_pk: 'OtherValue'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+
+        # Recreate container
+        old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
+        created_db.delete_container(created_container)
+        try:
+            created_container = created_db.create_container(id=container_name, partition_key=PartitionKey(
+                path="/" + container2_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+        try:
+            created_container.create_item(body={'id': 'item1', container2_pk: 'val'})
+            created_container.create_item(body={'id': 'item2', container2_pk: 'DifferentValue'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        # Will fail because original container is deleted
+        try:
+            created_container.read_item(item=item_to_read, partition_key="val")
+            self.fail("Read should not succeed as item no longer exists.")
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, 404)
+        # Will succeed because item id and partition key value are the same as an existing one in the new container
+        # But read items are not the same as their RID will be different
+        read_item = created_container.read_item(item="item1", partition_key="val")
+        self.assertNotEqual(read_item, item_to_read)
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        try:
+            # Cache will refresh but will error out since item no longer exists
+            created_container.read_item(item=item_to_read2, partition_key="OtherValue")
+            self.fail("Read should not succeed as item no longer exists.")
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, 404)
+        created_db.delete_container(container_name)
+
+    def test_container_recreate_read_item_sub_partition(self):
+        client = self.client
+        created_db = self.databaseForTest
+        container_name = str(uuid.uuid4())
+        container_pk = ["/country", "/state"]
+        container2_pk = ["/county", "/city"]
+        # Create The Container
+        try:
+            created_container = created_db.create_container(id=container_name, partition_key=PartitionKey(
+                path=container_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+        try:
+            item_to_read = created_container.create_item(body={'id': 'item1', 'country': 'USA', 'state': 'CA'})
+            item_to_read2 = created_container.create_item(body={'id': 'item2', 'country': 'MEX', 'state': 'Michoacán'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+        # Recreate container
+        old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
+        created_db.delete_container(created_container)
+        try:
+            created_container = created_db.create_container(id=container_name, partition_key=PartitionKey(
+                path=container2_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+        try:
+            created_container.create_item(body={'id': 'item1', 'county': 'ventura', 'city': 'oxnard'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        try:
+            # Cache will refresh but will error out since item no longer exists
+            created_container.read_item(item=item_to_read, partition_key=['USA', 'CA'])
+            self.fail("Read should not succeed as item no longer exists.")
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, 404)
+        created_db.delete_container(container_name)
+
+    def test_container_recreate_delete_item(self):
+        client = self.client
+        created_db = self.databaseForTest
+        container_name = str(uuid.uuid4())
+        container_pk = "PK"
+        container2_pk = "partkey"
+        # Create The Container
+        try:
+            created_container = created_db.create_container(id=container_name, partition_key=PartitionKey(
+                path="/" + container_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+        # create items
+        try:
+            item_to_delete = created_container.create_item(body={'id': 'item1', container_pk: 'val'})
+            created_container.create_item(body={'id': 'item2', container_pk: 'OtherValue'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+
+        # Recreate container
+        old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
+        created_db.delete_container(created_container)
+        try:
+            created_container = created_db.create_container(id=container_name, partition_key=PartitionKey(
+                path="/" + container2_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+        try:
+            created_container.create_item(body={'id': 'item1', container2_pk: 'val'})
+            created_container.create_item(body={'id': 'item2', container2_pk: 'DifferentValue'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        # Should fail as the item no longer exists
+        try:
+            created_container.delete_item(item_to_delete, partition_key='val')
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, 404)
+        created_db.delete_container(container_name)
+
+    def test_container_recreate_delete_item_sub_partition(self):
+        client = self.client
+        created_db = self.databaseForTest
+        container_name = str(uuid.uuid4())
+        container_pk = ["/country", "/state"]
+        container2_pk = ["/county", "/city"]
+        # Create The Container
+        try:
+            created_container = created_db.create_container(id=container_name, partition_key=PartitionKey(
+                path=container_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+        # create items
+        try:
+            item_to_del = created_container.create_item(body={'id': 'item1', 'country': 'USA', 'state': 'CA'})
+            created_container.create_item(body={'id': 'item2', 'country': 'MEX', 'state': 'Michoacán'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+
+        # Recreate container
+        old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
+        created_db.delete_container(created_container)
+        try:
+            created_container = created_db.create_container(id=container_name, partition_key=PartitionKey(
+                path=container2_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+        try:
+            created_container.create_item(body={'id': 'item1', 'county': 'ventura', 'city': 'oxnard'})
+            created_container.create_item(body={'id': 'item2',
+                                                               'county': 'santa barbara', 'city': 'santa barbara'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        # Should fail as the item no longer exists
+        try:
+            created_container.delete_item(item_to_del, partition_key=['USA', 'CA'])
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, 404)
+        created_db.delete_container(container_name)
+
+
+
 
 
 if __name__ == '__main__':

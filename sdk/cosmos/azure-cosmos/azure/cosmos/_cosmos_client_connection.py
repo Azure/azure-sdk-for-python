@@ -3202,15 +3202,27 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         options: Mapping[str, Any]
     ) -> Dict[str, Any]:
         collection_link = base.TrimBeginningAndEndingSlashes(collection_link)
-        # TODO: Refresh the cache if partition is extracted automatically and we get a 400.1001
-        partitionKeyDefinition = self._get_partition_key_definition(collection_link)
         new_options = dict(options)
-        # If the collection doesn't have a partition key definition, skip it as it's a legacy collection
-        if partitionKeyDefinition:
-            # If the user has passed in the partitionKey in options use that else extract it from the document
-            if "partitionKey" not in options:
-                partitionKeyValue = self._ExtractPartitionKey(partitionKeyDefinition, document)
-                new_options["partitionKey"] = partitionKeyValue
+        # If we get an Empty or Undefined Partition key, refresh the container properties cache
+        # and try one more time.
+        for attempts in range(2):
+            # Refresh cache on second attempt
+            if attempts == 1:
+                self._refresh_container_properties_cache(collection_link)
+                new_options["containerRID"] = self.__container_properties_cache[collection_link]["_rid"]
+            partitionKeyDefinition = self._get_partition_key_definition(collection_link)
+            partitionKeyValue = None
+            # If the collection doesn't have a partition key definition, skip it as it's a legacy collection
+            if partitionKeyDefinition:
+                # If the user has passed in the partitionKey in options use that else extract it from the document
+                if "partitionKey" not in options:
+                    partitionKeyValue = self._ExtractPartitionKey(partitionKeyDefinition, document)
+                    new_options["partitionKey"] = partitionKeyValue
+            else:
+                break
+            # If we successfully extract the partition key, break out of loop
+            if partitionKeyValue and not isinstance(partitionKeyValue, _Empty) and not isinstance(partitionKeyValue, _Undefined):  # pylint: disable=line-too-long
+                break
         return new_options
 
     # Extracts the partition key from the document using the partitionKey definition
@@ -3271,6 +3283,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def refresh_routing_map_provider(self) -> None:
         # re-initializes the routing map provider, effectively refreshing the current partition key range cache
         self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
+
+    def _refresh_container_properties_cache(self, container_link: str):
+        # If container properties cache is stale, refresh it by reading the container.
+        container = self.ReadContainer(container_link, options=None)
+        # Only cache Container Properties that will not change in the lifetime of the container
+        self._set_container_properties_cache(container_link, _set_properties_cache(container))
 
     def _UpdateSessionIfRequired(
         self,

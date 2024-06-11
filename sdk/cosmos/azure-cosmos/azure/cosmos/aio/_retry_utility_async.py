@@ -37,6 +37,7 @@ from .. import _default_retry_policy
 from .. import _session_retry_policy
 from .. import _gone_retry_policy
 from .. import _timeout_failover_retry_policy
+from .._container_recreate_retry_policy import ContainerRecreateRetryPolicy
 
 
 # pylint: disable=protected-access
@@ -75,6 +76,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
         client.connection_policy, global_endpoint_manager, *args
     )
 
+    container_recreate_retry_policy = ContainerRecreateRetryPolicy(client, *args)
+
     while True:
         client_timeout = kwargs.get('timeout')
         start_time = time.time()
@@ -109,15 +112,24 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 retry_policy = sessionRetry_policy
             elif exceptions._partition_range_is_gone(e):
                 retry_policy = partition_key_range_gone_retry_policy
+            elif exceptions._container_recreate_exception(e):
+                retry_policy = container_recreate_retry_policy
             elif e.status_code in (StatusCodes.REQUEST_TIMEOUT, e.status_code == StatusCodes.SERVICE_UNAVAILABLE):
                 retry_policy = timeout_failover_retry_policy
             else:
                 retry_policy = defaultRetry_policy
 
+            try:
+                # This supports retry policies that need to be awaited
+                should_retry = await retry_policy.ShouldRetryAsync(e)
+            except AttributeError:
+                # If the method doesn't need to be awaited we proceed with a regular method call
+                should_retry = retry_policy.ShouldRetry(e)
+
             # If none of the retry policies applies or there is no retry needed, set the
             # throttle related response headers and re-throw the exception back arg[0]
             # is the request. It needs to be modified for write forbidden exception
-            if not retry_policy.ShouldRetry(e):
+            if not should_retry:
                 if not client.last_response_headers:
                     client.last_response_headers = {}
                 client.last_response_headers[
@@ -129,6 +141,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 if args and args[0].should_clear_session_token_on_session_read_failure:
                     client.session.clear_session_token(client.last_response_headers)
                 raise
+            elif isinstance(retry_policy, ContainerRecreateRetryPolicy):
+                args[3].headers[retry_policy.intendedHeaders] = retry_policy.container_rid
 
             # Wait for retry_after_in_milliseconds time before the next retry
             await asyncio.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)

@@ -127,3 +127,12 @@ def _partition_range_is_gone(e):
             and e.sub_status == http_constants.SubStatusCodes.PARTITION_KEY_RANGE_GONE):
         return True
     return False
+
+
+def _container_recreate_exception(e):
+    if (e.status_code == http_constants.StatusCodes.BAD_REQUEST
+            and e.sub_status == http_constants.SubStatusCodes.COLLECTION_RID_MISMATCH)\
+            or (e.status_code == http_constants.StatusCodes.NOT_FOUND)\
+            or isinstance(e, CosmosResourceNotFoundError):
+        return True
+    return False

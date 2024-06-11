@@ -36,6 +36,7 @@ from . import _default_retry_policy
 from . import _session_retry_policy
 from . import _gone_retry_policy
 from . import _timeout_failover_retry_policy
+from . import _container_recreate_retry_policy
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 
@@ -77,6 +78,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
         client.connection_policy, global_endpoint_manager, *args
     )
 
+    container_recreate_retry_policy = _container_recreate_retry_policy.ContainerRecreateRetryPolicy(client, *args)
+
     while True:
         client_timeout = kwargs.get('timeout')
         start_time = time.time()
@@ -112,6 +115,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 retry_policy = sessionRetry_policy
             elif exceptions._partition_range_is_gone(e):
                 retry_policy = partition_key_range_gone_retry_policy
+            elif exceptions._container_recreate_exception(e):
+                retry_policy = container_recreate_retry_policy
             elif e.status_code in (StatusCodes.REQUEST_TIMEOUT, e.status_code == StatusCodes.SERVICE_UNAVAILABLE):
                 retry_policy = timeout_failover_retry_policy
 
@@ -130,6 +135,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 if args and args[0].should_clear_session_token_on_session_read_failure:
                     client.session.clear_session_token(client.last_response_headers)
                 raise
+            elif isinstance(retry_policy, _container_recreate_retry_policy.ContainerRecreateRetryPolicy):
+                args[3].headers[retry_policy.intendedHeaders] = retry_policy.container_rid
 
             # Wait for retry_after_in_milliseconds time before the next retry
             time.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)

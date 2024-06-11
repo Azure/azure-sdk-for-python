@@ -67,7 +67,7 @@ from ..partition_key import (
     _Undefined,
     PartitionKey,
     _return_undefined_or_empty_partition_key,
-    NonePartitionKeyValue
+    NonePartitionKeyValue, _Empty
 )
 from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
@@ -3052,27 +3052,40 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     # Adds the partition key to options
     async def _AddPartitionKey(self, collection_link, document, options):
         collection_link = base.TrimBeginningAndEndingSlashes(collection_link)
+        new_options = dict(options)
+        # If we get an Empty or Undefined Partition key, refresh the container properties cache
+        # and try one more time.
+        for attempts in range(2):
+            # Refresh cache on second attempt
+            if attempts == 1:
+                await self._refresh_container_properties_cache(collection_link)
+                new_options["containerRID"] = self.__container_properties_cache[collection_link]["_rid"]
 
-        # TODO: Refresh the cache if partition is extracted automatically and we get a 400.1001
+            # If the document collection link is present in the cache, then use the cached partitionkey definition
+            if collection_link in self.__container_properties_cache:
+                cached_container = self.__container_properties_cache.get(collection_link)
+                partitionKeyDefinition = cached_container.get("partitionKey")
+            # Else read the collection from backend and add it to the cache
+            else:
+                container = await self.ReadContainer(collection_link)
+                partitionKeyDefinition = container.get("partitionKey")
+                self.__container_properties_cache[collection_link] = _set_properties_cache(container)
+                new_options["containerRID"] = self.__container_properties_cache[collection_link]["_rid"]
 
-        # If the document collection link is present in the cache, then use the cached partitionkey definition
-        if collection_link in self.__container_properties_cache:
-            cached_container = self.__container_properties_cache.get(collection_link)
-            partitionKeyDefinition = cached_container.get("partitionKey")
-        # Else read the collection from backend and add it to the cache
-        else:
-            container = await self.ReadContainer(collection_link)
-            partitionKeyDefinition = container.get("partitionKey")
-            self.__container_properties_cache[collection_link] = _set_properties_cache(container)
+            # If the collection doesn't have a partition key definition, skip it as it's a legacy collection
+            if partitionKeyDefinition:
+                # If the user has passed in the partitionKey in options use that else extract it from the document
+                if "partitionKey" not in options:
+                    partitionKeyValue = self._ExtractPartitionKey(partitionKeyDefinition, document)
+                    new_options["partitionKey"] = partitionKeyValue
+            else:
+                break
+            # If we successfully extract the partition key, break out of loop
+            if partitionKeyValue and not isinstance(partitionKeyValue, _Empty) and not isinstance(partitionKeyValue,
+                                                                                                  _Undefined):  # pylint: disable=line-too-long
+                break
 
-        # If the collection doesn't have a partition key definition, skip it as it's a legacy collection
-        if partitionKeyDefinition:
-            # If the user has passed in the partitionKey in options use that else extract it from the document
-            if "partitionKey" not in options:
-                partitionKeyValue = self._ExtractPartitionKey(partitionKeyDefinition, document)
-                options["partitionKey"] = partitionKeyValue
-
-        return options
+        return new_options
 
     # Extracts the partition key from the document using the partitionKey definition
     def _ExtractPartitionKey(self, partitionKeyDefinition, document):
@@ -3127,6 +3140,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def refresh_routing_map_provider(self) -> None:
         # re-initializes the routing map provider, effectively refreshing the current partition key range cache
         self._routing_map_provider = SmartRoutingMapProvider(self)
+
+    async def _refresh_container_properties_cache(self, container_link: str):
+        # If container properties cache is stale, refresh it by reading the container.
+        container = await self.ReadContainer(container_link, options=None)
+        # Only cache Container Properties that will not change in the lifetime of the container
+        self._set_container_properties_cache(container_link, _set_properties_cache(container))
 
     async def _GetQueryPlanThroughGateway(self, query: str, resource_link: str, **kwargs) -> List[Dict[str, Any]]:
         supported_query_features = (documents._QueryFeature.Aggregate + "," +

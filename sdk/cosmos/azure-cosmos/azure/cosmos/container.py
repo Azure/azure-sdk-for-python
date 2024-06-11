@@ -94,9 +94,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
 
     def _get_properties(self) -> Dict[str, Any]:
-        if self.container_link not in self.client_connection._container_properties_cache:  # pylint: disable=protected-access, line-too-long
+        if self.container_link not in self.__get_client_container_caches():
             self.read()
-        return self.client_connection._container_properties_cache[self.container_link]  # pylint: disable=protected-access, line-too-long
+        return self.__get_client_container_caches().get(self.container_link)
 
     @property
     def is_system_key(self) -> bool:
@@ -130,6 +130,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if partition_key == NonePartitionKeyValue:
             return _return_undefined_or_empty_partition_key(self.is_system_key)
         return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
+
+    def __get_client_container_caches(self):
+        return self.client_connection._container_properties_cache  # pylint: disable=protected-access
 
     @distributed_trace
     def read(  # pylint:disable=docstring-missing-param
@@ -245,7 +248,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
         return self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
     @distributed_trace
@@ -297,6 +301,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         if hasattr(response_hook, "clear"):
             response_hook.clear()
+
+        if self.container_link in self.__get_client_container_caches():
+            feed_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
 
         items = self.client_connection.ReadItems(
             collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs)
@@ -356,7 +363,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         if hasattr(response_hook, "clear"):
             response_hook.clear()
-
+        if self.container_link in self.__get_client_container_caches():
+            feed_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
         result = self.client_connection.QueryItemsChangeFeed(
             self.container_link, options=feed_options, response_hook=response_hook, **kwargs
         )
@@ -475,7 +483,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["responseContinuationTokenLimitInKb"] = continuation_token_limit
         if hasattr(response_hook, "clear"):
             response_hook.clear()
-
+        if self.container_link in self.__get_client_container_caches():
+            feed_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
         items = self.client_connection.QueryItems(
             database_or_container_link=self.container_link,
             query=query if parameters is None else {"query": query, "parameters": parameters},
@@ -564,6 +573,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
 
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
+
         return self.client_connection.ReplaceItem(
             document_link=item_link, new_document=body, options=request_options, **kwargs
         )
@@ -627,6 +639,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 UserWarning,
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
 
         return self.client_connection.UpsertItem(
             database_or_container_link=self.container_link,
@@ -702,7 +716,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["populateQueryMetrics"] = populate_query_metrics
         if indexing_directive is not None:
             request_options["indexingDirective"] = indexing_directive
-
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
         return self.client_connection.CreateItem(
             database_or_container_link=self.container_link, document=body, options=request_options, **kwargs)
 
@@ -767,6 +782,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if filter_predicate is not None:
             request_options["filterPredicate"] = filter_predicate
 
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
         item_link = self._get_document_link(item)
         return self.client_connection.PatchItem(
             document_link=item_link, operations=patch_operations, options=request_options, **kwargs)
@@ -887,7 +904,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
-
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
         document_link = self._get_document_link(item)
         self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
 
@@ -921,17 +939,31 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.cosmos.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
-        properties = self._get_properties()
-        link = properties["_self"]
-        query_spec = {
-            "query": "SELECT * FROM root r WHERE r.resource=@link",
-            "parameters": [{"name": "@link", "value": link}],
-        }
-        throughput_properties = list(self.client_connection.QueryOffers(query_spec, **kwargs))
-        if not throughput_properties:
-            raise CosmosResourceNotFoundError(
-                status_code=StatusCodes.NOT_FOUND,
-                message="Could not find ThroughputProperties for container " + self.container_link)
+        throughput_properties: List[Dict[str, Any]]
+        # In case of a container recreate we will run this a second time
+        for attempt in range(2):
+            if attempt == 1:
+                # Refresh cache if no offer throughput was received the first time
+                self.read()
+            properties = self._get_properties()
+            link = properties["_self"]
+            query_spec = {
+                "query": "SELECT * FROM root r WHERE r.resource=@link",
+                "parameters": [{"name": "@link", "value": link}],
+            }
+            options: Mapping[str, Any] = {}
+
+            throughput_properties = list(self.client_connection.QueryOffers(query_spec, options, **kwargs))
+            if not throughput_properties:
+                # Try one more time after refreshing the container properties cache
+                if attempt < 1:
+                    continue
+                else:
+                    raise CosmosResourceNotFoundError(
+                        status_code=StatusCodes.NOT_FOUND,
+                        message="Could not find ThroughputProperties for container " + self.container_link)
+            else:
+                break
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, throughput_properties)
@@ -956,17 +988,29 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             or the throughput properties could not be updated.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        properties = self._get_properties()
-        link = properties["_self"]
-        query_spec = {
-            "query": "SELECT * FROM root r WHERE r.resource=@link",
-            "parameters": [{"name": "@link", "value": link}],
-        }
-        throughput_properties = list(self.client_connection.QueryOffers(query_spec, **kwargs))
-        if not throughput_properties:
-            raise CosmosResourceNotFoundError(
-                status_code=StatusCodes.NOT_FOUND,
-                message="Could not find Offer for container " + self.container_link)
+        throughput_properties: List[Dict[str, Any]]
+        # In case of a container recreate we will run this a second time
+        for attempt in range(2):
+            if attempt == 1:
+                # Refresh cache if no offer throughput was received the first time
+                self.read()
+            properties = self._get_properties()
+            link = properties["_self"]
+            query_spec = {
+                "query": "SELECT * FROM root r WHERE r.resource=@link",
+                "parameters": [{"name": "@link", "value": link}],
+            }
+            throughput_properties = list(self.client_connection.QueryOffers(query_spec, **kwargs))
+            if not throughput_properties:
+                # Try one more time after refreshing the container properties cache
+                if attempt < 1:
+                    continue
+                else:
+                    raise CosmosResourceNotFoundError(
+                        status_code=StatusCodes.NOT_FOUND,
+                        message="Could not find Offer for container " + self.container_link)
+            else:
+                break
         new_throughput_properties = throughput_properties[0].copy()
         _replace_throughput(throughput=throughput, new_throughput_properties=new_throughput_properties)
         data = self.client_connection.ReplaceOffer(
@@ -991,6 +1035,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
+        if self.container_link in self.__get_client_container_caches():
+            feed_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
 
         result = self.client_connection.ReadConflicts(
             collection_link=self.container_link, feed_options=feed_options, **kwargs
@@ -1032,6 +1078,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
         if partition_key is not None:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
+        if self.container_link in self.__get_client_container_caches():
+            feed_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
 
         result = self.client_connection.QueryConflicts(
             collection_link=self.container_link,
@@ -1064,6 +1112,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options = build_options(kwargs)
         if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
 
         return self.client_connection.ReadConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
@@ -1092,6 +1142,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options = build_options(kwargs)
         if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
 
         self.client_connection.DeleteConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
@@ -1139,6 +1191,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options = build_options(kwargs)
         # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
         request_options["partitionKey"] = self._set_partition_key(partition_key)
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
 
         self.client_connection.DeleteAllItemsByPartitionKey(
             collection_link=self.container_link, options=request_options, **kwargs)
