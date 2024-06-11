@@ -26,6 +26,7 @@ USAGE:
 """
 import asyncio
 
+
 async def sample_chat_completions_streaming_azure_openai_async():
     import os
     from azure.ai.inference.aio import ChatCompletionsClient
@@ -72,7 +73,7 @@ async def sample_chat_completions_streaming_azure_openai_async():
         messages=[
             SystemMessage(content="You are a helpful assistant."),
             UserMessage(content="Give me 5 good reasons why I should exercise every day."),
-        ]
+        ],
     )
 
     # Iterate on the response to get chat completion updates, as they arrive from the service
