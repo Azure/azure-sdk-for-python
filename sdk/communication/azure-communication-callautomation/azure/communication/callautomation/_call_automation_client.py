@@ -337,9 +337,9 @@ class CallAutomationClient:
             call_intelligence_options=call_intelligence_options,
             answered_by=serialize_communication_user_identifier(
                 self.source) if self.source else None,
-            media_streaming_options=media_streaming.to_generated(
+            media_streaming_options=media_streaming._to_generated(
             ) if media_streaming else None,
-            transcription_options=transcription.to_generated()
+            transcription_options=transcription._to_generated()
             if transcription else None,
             operation_context=operation_context
         )
