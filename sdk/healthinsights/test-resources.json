@@ -10,14 +10,14 @@
             }
         },
         "textAnalyticsResourceGroupName": {
-             "defaultValue": "/subscriptions/ad436375-8308-4393-85cb-1a7de099ec6e/resourceGroups/RadiologyInsights-Testing/providers/Microsoft.CognitiveServices/accounts/HenksLanguageResource4",
-            "type": "String",
+            "defaultValue": "RadiologyInsights-Testing",
+            "type": "String"
             "metadata": {
                 "description": "The textAnalyticsResourceGroupName of the resource. By default, ."
             }
         },
         "textAnalyticsName": {
-            "defaultValue": "HenksHealthInsights4",
+            "defaultValue": "ta4htomderay",
             "type": "string",
             "metadata": {
                 "description": "The textAnalyticsName of the resource. By default, ."
@@ -47,13 +47,35 @@
     },
     "variables": {
         "textAnalyticsBaseName": "[concat('textanalytics', parameters('baseName'))]",
-        "textAnalyticsResourceId":"[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('textAnalyticsResourceGroupName'), '/providers/Microsoft.CognitiveServices/accounts/', parameters('textAnalyticsName'))]",
+        "textAnalyticsResourceId":"[concat('/subscriptions/ad436375-8308-4393-85cb-1a7de099ec6e/resourceGroups/', parameters('textAnalyticsResourceGroupName'), '/providers/Microsoft.CognitiveServices/accounts/', parameters('textAnalyticsName'))]",
         "cognitiveApiVersion": "2023-10-01-preview",
-        "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
+        "roleDefinitionId": "[concat('/subscriptions/ad436375-8308-4393-85cb-1a7de099ec6e/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
         "uniqueSubDomainName": "[format('{0}-{1}', parameters('baseName'), parameters('endpointPrefix'))]",
         "endpointValue": "[format('https://{0}-{1}{2}', parameters('baseName'), parameters('endpointPrefix'), parameters('cognitiveServicesEndpointSuffix'))]"
     },
     "resources": [
+         {
+            "type": "Microsoft.CognitiveServices/accounts",
+            "apiVersion": "2023-10-01-preview",
+            "name": "[parameters('textAnalyticsName')]",
+            "location": "eastus2euap",
+            "sku": {
+                "name": "S"
+            },
+            "kind": "TextAnalytics",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "apiProperties": {},
+                "customSubDomainName": "[parameters('textAnalyticsName')]",
+                "networkAcls": {
+                    "defaultAction": "Allow",
+                    "virtualNetworkRules": [],
+                    "ipRules": []
+                },
+                "publicNetworkAccess": "Enabled"
+            },
         {
             "type": "Microsoft.CognitiveServices/accounts",
             "apiVersion": "[variables('cognitiveApiVersion')]",
@@ -63,6 +85,9 @@
                 "name": "S0"
             },
             "kind": "HealthInsights",
+            "identity": {
+                "type": "SystemAssigned"
+            },
             "properties": {
                 "apiProperties": {
                     "TA4HResourceId": "[variables('textAnalyticsResourceId')]"
