@@ -19,29 +19,11 @@ from azure.eventgrid import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
 from cloudevents.http import CloudEvent
 
-# To EventGrid Basic
 topic_key = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_KEY"]
 endpoint = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT"]
 
 credential = AzureKeyCredential(topic_key)
 client = EventGridPublisherClient(endpoint, credential)
-
-client.send(
-    [
-        CloudEvent(
-            attributes={"type": "cloudevent", "source": "/cncf/cloud/event/1.0", "subject": "testing-cncf-event"},
-            data=b"This is a cncf cloud event.",
-        )
-    ]
-)
-
-# To Event Grid Namespaces
-topic_endpoint = os.environ["EVENTGRID_ENDPOINT"]
-topic_key = os.environ["EVENTGRID_KEY"]
-topic_name = os.environ["EVENTGRID_TOPIC_NAME"]
-
-credential = AzureKeyCredential(topic_key)
-client = EventGridPublisherClient(topic_endpoint, credential, namespace_topic=topic_name)
 
 client.send(
     [
