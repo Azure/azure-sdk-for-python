@@ -7,6 +7,9 @@ import pytest
 import types
 import io
 
+import urllib3
+import httpx
+
 ############################## LISTS USED TO PARAMETERIZE TESTS ##############################
 from azure.core.rest import HttpRequest as RestHttpRequest
 from azure.core.pipeline.transport import HttpRequest as PipelineTransportHttpRequest
@@ -24,26 +27,25 @@ ASYNC_TRANSPORT_RESPONSES = []
 try:
     from azure.core.experimental.transport import Urllib3Transport, Urllib3TransportResponse
 
-    SYNC_TRANSPORTS.append((Urllib3Transport, PipelineTransportHttpRequest))
-    SYNC_TRANSPORTS.append((Urllib3Transport, RestHttpRequest))
+    SYNC_TRANSPORTS.append(Urllib3Transport)
     SYNC_TRANSPORT_RESPONSES.append(Urllib3TransportResponse)
 except (ImportError, SyntaxError):
     pass
 
-# try:
-#     from azure.core.experimental.transport import (
-#         HttpXTransport,
-#         HttpXTransportResponse,
-#         AsyncHttpXTransport,
-#         AsyncHttpXTransportResponse
-#     )
+try:
+    from azure.core.experimental.transport import (
+        HttpXTransport,
+        HttpXTransportResponse,
+        AsyncHttpXTransport,
+        AsyncHttpXTransportResponse
+    )
 
-#     SYNC_TRANSPORTS.append(HttpXTransport)
-#     SYNC_TRANSPORT_RESPONSES.append(HttpXTransportResponse)
-#     ASYNC_TRANSPORTS.append(AsyncHttpXTransport)
-#     ASYNC_TRANSPORT_RESPONSES.append(AsyncHttpXTransportResponse)
-# except (ImportError, SyntaxError):
-#     pass
+    # SYNC_TRANSPORTS.append(HttpXTransport)
+    # SYNC_TRANSPORT_RESPONSES.append(HttpXTransportResponse)
+    # ASYNC_TRANSPORTS.append(AsyncHttpXTransport)
+    # ASYNC_TRANSPORT_RESPONSES.append(AsyncHttpXTransportResponse)
+except (ImportError, SyntaxError):
+    pass
 
 
 # try:
@@ -67,22 +69,50 @@ def request_and_responses_product(*args):
 
 def create_http_request(http_request, *args, **kwargs):
     if hasattr(http_request, "content"):
-        method = args[0]
-        url = args[1]
+        try:
+            method = args[0]
+        except IndexError:
+            method = kwargs.pop('method')
+        try:
+            url = args[1]
+        except IndexError:
+            url = kwargs.pop('url')
         try:
             headers = args[2]
         except IndexError:
-            headers = None
+            headers = kwargs.pop('headers', None)
         try:
             files = args[3]
         except IndexError:
-            files = None
+            files = kwargs.pop('files', None)
         try:
             data = args[4]
         except IndexError:
-            data = None
+            data = kwargs.pop('data', None)
         return http_request(method=method, url=url, headers=headers, files=files, data=data, **kwargs)
     return http_request(*args, **kwargs)
+
+
+def create_transport_from_connection(transport):
+    if transport == Urllib3Transport:
+        return Urllib3Transport(pool=urllib3.PoolManager(), pool_owner=False)
+    elif transport == HttpXTransport:
+        return HttpXTransport(client=httpx.Client(), client_owner=False)
+    raise ValueError(f"Unexpected transport type: {transport}")
+
+
+def assert_transport_connection(transport, is_closed=True):
+    if isinstance(transport, Urllib3Transport):
+        if is_closed:
+            assert transport._pool is None
+        else:
+            assert transport._pool
+    elif isinstance(transport, HttpXTransport):
+        if is_closed:
+            assert transport._client is None
+        else:
+            assert transport._client
+    raise ValueError(f"Unexpected transport type: {transport}")
 
 
 def create_transport_response(http_response, *args, **kwargs):
