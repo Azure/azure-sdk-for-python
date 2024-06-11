@@ -19,8 +19,6 @@ import os
 from azure.eventgrid import EventGridPublisherClient, EventGridConsumerClient
 from azure.core.credentials import AzureKeyCredential
 
-
-# To Event Grid Basic
 topic_key = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_KEY"]
 endpoint = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT"]
 
@@ -41,25 +39,3 @@ client.send(
     ]
 )
 # [END publish_cloud_event_dict]
-
-# To Event Grid Namespaces
-topic_endpoint = os.environ["EVENTGRID_ENDPOINT"]
-topic_key = os.environ["EVENTGRID_KEY"]
-topic_name = os.environ["EVENTGRID_TOPIC_NAME"]
-sub = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
-
-credential = AzureKeyCredential(topic_key)
-client = EventGridPublisherClient(topic_endpoint, credential, namespace_topic=topic_name)
-
-client.send(
-    [
-        {
-            "type": "Contoso.Items.ItemReceived",
-            "source": "/contoso/items",
-            "data": {"itemSku": "Contoso Item SKU #1"},
-            "subject": "Door1",
-            "specversion": "1.0",
-            "id": "randomclouduuid11",
-        }
-    ]
-)
