@@ -9,18 +9,11 @@
                 "description": "The base resource name."
             }
         },
-        "textAnalyticsResourceGroupName": {
-            "defaultValue": "RadiologyInsights-Testing",
-            "type": "String"
-            "metadata": {
-                "description": "The textAnalyticsResourceGroupName of the resource. By default, ."
-            }
-        },
         "textAnalyticsName": {
             "defaultValue": "ta4htomderay",
             "type": "string",
             "metadata": {
-                "description": "The textAnalyticsName of the resource. By default, ."
+                "description": "The textAnalyticsName of the resource."
             }
         },
         "location": {
@@ -47,7 +40,7 @@
     },
     "variables": {
         "textAnalyticsBaseName": "[concat('textanalytics', parameters('baseName'))]",
-        "textAnalyticsResourceId":"[concat('/subscriptions/ad436375-8308-4393-85cb-1a7de099ec6e/resourceGroups/', parameters('textAnalyticsResourceGroupName'), '/providers/Microsoft.CognitiveServices/accounts/', parameters('textAnalyticsName'))]",
+        "textAnalyticsResourceId":"[concat('/subscriptions/ad436375-8308-4393-85cb-1a7de099ec6e/resourceGroups/', parameters('baseName'), '/providers/Microsoft.CognitiveServices/accounts/', parameters('textAnalyticsName'))]",
         "cognitiveApiVersion": "2023-10-01-preview",
         "roleDefinitionId": "[concat('/subscriptions/ad436375-8308-4393-85cb-1a7de099ec6e/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
         "uniqueSubDomainName": "[format('{0}-{1}', parameters('baseName'), parameters('endpointPrefix'))]",
