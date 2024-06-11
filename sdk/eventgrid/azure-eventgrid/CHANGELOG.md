@@ -5,7 +5,7 @@
 ### Features Added
 
 - This is a GA of the `EventGridConsumerClient`, the `EventGridConsumerClient` supports the following operations for Cloud Events in Event Grid Namespace: `receive`, `release`, `acknowledge`, `reject` and `renew_locks`.
-- The `EventGridPublisherClient` now supports the Event Grid Namespace tier. Intialize the client with the namespace endpoint, and the `namespace_topic` kwarg to send Cloud Events to an Event Grid Namespace topic.
+- The `EventGridPublisherClient` now supports the Event Grid Namespace tier. Initialize the client with the namespace endpoint, and the `namespace_topic` kwarg to send Cloud Events to an Event Grid Namespace topic.
 
 ## 4.20.0b2 (2024-04-25)
 
