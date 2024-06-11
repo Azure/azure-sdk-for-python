@@ -9,13 +9,6 @@
                 "description": "The base resource name."
             }
         },
-        "textAnalyticsName": {
-            "defaultValue": "ta4htomderay",
-            "type": "string",
-            "metadata": {
-                "description": "The textAnalyticsName of the resource."
-            }
-        },
         "location": {
             "type": "string",
             "defaultValue": "eastus2euap",
@@ -40,7 +33,7 @@
     },
     "variables": {
         "textAnalyticsBaseName": "[concat('textanalytics', parameters('baseName'))]",
-        "textAnalyticsResourceId":"[concat('/subscriptions/ad436375-8308-4393-85cb-1a7de099ec6e/resourceGroups/', parameters('baseName'), '/providers/Microsoft.CognitiveServices/accounts/', parameters('textAnalyticsName'))]",
+        "textAnalyticsResourceId":"[concat('/subscriptions/ad436375-8308-4393-85cb-1a7de099ec6e/resourceGroups/', parameters('baseName'), '/providers/Microsoft.CognitiveServices/accounts/ta4htomderay')]",
         "cognitiveApiVersion": "2023-10-01-preview",
         "roleDefinitionId": "[concat('/subscriptions/ad436375-8308-4393-85cb-1a7de099ec6e/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
         "uniqueSubDomainName": "[format('{0}-{1}', parameters('baseName'), parameters('endpointPrefix'))]",
@@ -50,7 +43,7 @@
             {
             "type": "Microsoft.CognitiveServices/accounts",
             "apiVersion": "2023-10-01-preview",
-            "name": "[parameters('textAnalyticsName')]",
+            "name": "ta4htomderay",
             "location": "eastus2euap",
             "sku": {
                 "name": "S"
@@ -61,7 +54,7 @@
             },
             "properties": {
                 "apiProperties": {},
-                "customSubDomainName": "[parameters('textAnalyticsName')]"
+                "customSubDomainName": "ta4htomderay"
             }
         },
         {
@@ -96,15 +89,15 @@
     "outputs": {
         "LANGUAGE_API_KEY": {
           "type": "string",
-          "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName')), '2017-04-18').key1]"
+          "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts/ta4htomderay'), '2017-04-18').key1]"
         },
         "LANGUAGE_API_KEY_ALT": {
           "type": "string",
-          "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName')), '2017-04-18').key2]"
+          "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts/ta4htomderay'), '2017-04-18').key2]"
         },
         "ENDPOINT": {
           "type": "string",
-          "value": "[concat('https://', variables('textAnalyticsName'), parameters('cognitiveServicesEndpointSuffix'), '/')]"
+          "value": "[concat('https://ta4htomderay', parameters('cognitiveServicesEndpointSuffix'), '/')]"
         },
         "HEALTHINSIGHTS_KEY": {
             "type": "string",
