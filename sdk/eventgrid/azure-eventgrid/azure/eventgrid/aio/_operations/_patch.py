@@ -114,8 +114,6 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
 
     def _http_response_error_handler(self, exception):
         if isinstance(exception, HttpResponseError):
-            if exception.status_code == 400:
-                raise HttpResponseError("Invalid event data. Please check the data and try again.") from exception
             if exception.status_code == 404:
                 raise ResourceNotFoundError(
                     "Resource not found. "

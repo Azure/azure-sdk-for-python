@@ -87,14 +87,14 @@ class EventGridPublisherClient(object):  # pylint: disable=client-accepts-api-ve
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sync_samples/sample_authentication.py
+        .. literalinclude:: ../samples/basic/sync_samples/sample_authentication.py
             :start-after: [START client_auth_with_key_cred]
             :end-before: [END client_auth_with_key_cred]
             :language: python
             :dedent: 0
             :caption: Creating the EventGridPublisherClient with an endpoint and AzureKeyCredential.
 
-        .. literalinclude:: ../samples/sync_samples/sample_authentication.py
+        .. literalinclude:: ../samples/basic/sync_samples/sample_authentication.py
             :start-after: [START client_auth_with_sas_cred]
             :end-before: [END client_auth_with_sas_cred]
             :language: python

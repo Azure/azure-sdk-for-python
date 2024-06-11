@@ -97,7 +97,7 @@ class EventGridConsumerClient(InternalEventGridConsumerClient):
     Consumes and manages events from a namespace topic
     and event subscription specified during the client initialization.
 
-    :param endpoint: The host name of the namespace, e.g.
+    :param endpoint: The endpoint of the Event Grid tier (basic or namespace), e.g.
      namespaceName1.westus-1.eventgrid.azure.net. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a

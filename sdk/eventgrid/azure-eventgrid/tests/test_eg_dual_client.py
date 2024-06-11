@@ -40,7 +40,6 @@ class TestEventGridDualClient(AzureRecordedTestCase):
             subscription=subscription,
         )
         return client
-    
 
     @pytest.mark.live_test_only
     @EventGridPreparer()
@@ -50,7 +49,7 @@ class TestEventGridDualClient(AzureRecordedTestCase):
         event_endpoint = kwargs["eventgrid_topic_endpoint"]
         namespace_client = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
         basic_client = self.create_eg_publisher_client(event_endpoint)
-        
+
         event = {
             "id": uuid.uuid4(),
             "data": {
@@ -76,7 +75,7 @@ class TestEventGridDualClient(AzureRecordedTestCase):
         custom_event_endpoint = kwargs["eventgrid_custom_event_topic_endpoint"]
         namespace_client = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
         basic_client = self.create_eg_publisher_client(custom_event_endpoint)
-        
+
         custom_event = {
             "customSubject": "sample",
             "customEventType": "sample.event",
@@ -100,7 +99,7 @@ class TestEventGridDualClient(AzureRecordedTestCase):
         channel_name = kwargs["eventgrid_partner_channel_name"]
         namespace_client = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
         basic_client = self.create_eg_publisher_client(cloud_event_endpoint)
-        
+
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
             data={"sample": "cloudevent"},

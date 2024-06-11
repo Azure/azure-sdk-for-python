@@ -49,7 +49,9 @@ class TestEventGridConsumerClient(AzureRecordedTestCase):
         eventgrid_topic_name = kwargs["eventgrid_topic_name"]
         eventgrid_event_subscription_name = kwargs["eventgrid_event_subscription_name"]
         publisher = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
-        consumer = self.create_eg_consumer_client(eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name)
+        consumer = self.create_eg_consumer_client(
+            eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name
+        )
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
             data={"sample": "cloudevent"},
@@ -72,7 +74,9 @@ class TestEventGridConsumerClient(AzureRecordedTestCase):
         eventgrid_topic_name = kwargs["eventgrid_topic_name"]
         eventgrid_event_subscription_name = kwargs["eventgrid_event_subscription_name"]
         publisher = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
-        consumer = self.create_eg_consumer_client(eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name)
+        consumer = self.create_eg_consumer_client(
+            eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name
+        )
 
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
@@ -97,7 +101,9 @@ class TestEventGridConsumerClient(AzureRecordedTestCase):
         eventgrid_topic_name = kwargs["eventgrid_topic_name"]
         eventgrid_event_subscription_name = kwargs["eventgrid_event_subscription_name"]
         publisher = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
-        consumer = self.create_eg_consumer_client(eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name)
+        consumer = self.create_eg_consumer_client(
+            eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name
+        )
 
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
@@ -121,7 +127,9 @@ class TestEventGridConsumerClient(AzureRecordedTestCase):
         eventgrid_topic_name = kwargs["eventgrid_topic_name"]
         eventgrid_event_subscription_name = kwargs["eventgrid_event_subscription_name"]
         publisher = self.create_eg_publisher_client(eventgrid_endpoint, eventgrid_topic_name)
-        consumer = self.create_eg_consumer_client(eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name)
+        consumer = self.create_eg_consumer_client(
+            eventgrid_endpoint, eventgrid_topic_name, eventgrid_event_subscription_name
+        )
 
         cloud_event = CloudEvent(
             source="http://samplesource.dev",

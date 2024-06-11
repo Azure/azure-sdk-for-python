@@ -37,7 +37,7 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
     If dictionaries are provided and sending to a namespace topic,
     the dictionary must follow the CloudEvent schema.
 
-    :param endpoint: The host name of the namespace, e.g.
+    :param endpoint: The endpoint of the Event Grid tier (basic or namespace), e.g.
      namespaceName1.westus-1.eventgrid.azure.net. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
