@@ -11,7 +11,7 @@
     },
     "subscriptionId": {
       "type": "string",
-      "defaultValue": "[parameters('subscriptionId')]",
+      "defaultValue": "[subscription().subscriptionId]",
       "metadata": {
         "description": "The subscription ID to which the application and resources belong."
       }
