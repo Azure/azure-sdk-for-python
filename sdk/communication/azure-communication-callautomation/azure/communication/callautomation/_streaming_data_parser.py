@@ -7,17 +7,26 @@
 from typing import Union
 import json
 from azure.communication.callautomation._shared.models import identifier_from_raw_id
-from azure.communication.callautomation._models import (TranscriptionMetadata,TranscriptionData,WordData)
+from azure.communication.callautomation._models import (
+    TranscriptionMetadata,
+    TranscriptionData,
+    WordData,
+    AudioMetadata,
+    AudioData)
 
 class StreamingDataParser:
     @staticmethod
-    def parse(packet_data: Union[str, bytes]) -> Union[TranscriptionMetadata, TranscriptionData]:
+    def parse(packet_data: Union[str, bytes]) -> Union[
+        TranscriptionMetadata,
+        TranscriptionData,
+        AudioMetadata,
+        AudioData]:
         """
         Parse the incoming packets.
         :param packet_data: Transcription packet data.
         :type packet_data: Union[str, bytes]
-        :return: Union[TranscriptionMetadata, TranscriptionData]
-        :rtype: TranscriptionMetadata, TranscriptionData
+        :return: Union[TranscriptionMetadata, TranscriptionData, AudioMetadata, AudioData]
+        :rtype: TranscriptionMetadata, TranscriptionData, AudioMetadata, AudioData
         :raises: ValueError
         """
         if isinstance(packet_data, str):
@@ -52,4 +61,20 @@ class StreamingDataParser:
                 result_state=json_object['transcriptionData']['resultStatus']
             )
             return transcription_data
+        if kind == 'AudioMetadata':
+            audio_metadata = AudioMetadata(
+                subscription_id=json_object['audioMetadata']['subscriptionId'],
+                encoding=json_object['audioMetadata']['encoding'],
+                sample_rate=json_object['audioMetadata']['sampleRate'],
+                channels=json_object['audioMetadata']['channels'],
+                length=json_object['audioMetadata']['length']
+            )
+            return audio_metadata
+        if kind == 'AudioData':
+            audio_data = AudioData(
+                data=json_object['audioData']['data'],
+                time_stamp=json_object['audioData']['timestamp'],
+                is_silent=json_object['audioData']['silent']
+            )
+            return audio_data
         raise ValueError(string_json)
