@@ -24,37 +24,29 @@ SYNC_TRANSPORT_RESPONSES = []
 ASYNC_TRANSPORT_RESPONSES = []
 
 
-try:
-    from azure.core.experimental.transport import Urllib3Transport, Urllib3TransportResponse
+from azure.core.experimental.transport import Urllib3Transport, Urllib3TransportResponse
 
-    SYNC_TRANSPORTS.append(Urllib3Transport)
-    SYNC_TRANSPORT_RESPONSES.append(Urllib3TransportResponse)
-except (ImportError, SyntaxError):
-    pass
-
-try:
-    from azure.core.experimental.transport import (
-        HttpXTransport,
-        HttpXTransportResponse,
-        AsyncHttpXTransport,
-        AsyncHttpXTransportResponse
-    )
-
-    # SYNC_TRANSPORTS.append(HttpXTransport)
-    # SYNC_TRANSPORT_RESPONSES.append(HttpXTransportResponse)
-    # ASYNC_TRANSPORTS.append(AsyncHttpXTransport)
-    # ASYNC_TRANSPORT_RESPONSES.append(AsyncHttpXTransportResponse)
-except (ImportError, SyntaxError):
-    pass
+SYNC_TRANSPORTS.append(Urllib3Transport)
+SYNC_TRANSPORT_RESPONSES.append(Urllib3TransportResponse)
 
 
-# try:
-#     from azure.core.experimental.transport import PyodideTransport, PyodideTransportResponse
+from azure.core.experimental.transport import (
+    HttpXTransport,
+    HttpXTransportResponse,
+    AsyncHttpXTransport,
+    AsyncHttpXTransportResponse
+)
 
-#     ASYNC_TRANSPORTS.append(PyodideTransport)
-#     ASYNC_TRANSPORT_RESPONSES.append(PyodideTransportResponse)
-# except (ImportError, SyntaxError):
-#     pass
+# SYNC_TRANSPORTS.append(HttpXTransport)
+# SYNC_TRANSPORT_RESPONSES.append(HttpXTransportResponse)
+# ASYNC_TRANSPORTS.append(AsyncHttpXTransport)
+# ASYNC_TRANSPORT_RESPONSES.append(AsyncHttpXTransportResponse)
+
+
+from azure.core.experimental.transport import PyodideTransport, PyodideTransportResponse
+
+#ASYNC_TRANSPORTS.append(PyodideTransport)
+#ASYNC_TRANSPORT_RESPONSES.append(PyodideTransportResponse)
 
 
 
@@ -112,7 +104,8 @@ def assert_transport_connection(transport, is_closed=True):
             assert transport._client is None
         else:
             assert transport._client
-    raise ValueError(f"Unexpected transport type: {transport}")
+    else:
+        raise ValueError(f"Unexpected transport type: {transport}")
 
 
 def create_transport_response(http_response, *args, **kwargs):
@@ -144,51 +137,6 @@ def create_http_response(http_response, *args, **kwargs):
             **kwargs
         )
     return http_response(*args, **kwargs)
-
-
-def readonly_checks(response, old_response_class):
-    # though we want these properties to be completely readonly, it doesn't work
-    # for the backcompat properties
-    assert isinstance(response.request, RestHttpRequest)
-    assert isinstance(response.status_code, int)
-    assert response.headers
-    assert response.content_type == "text/html; charset=utf-8"
-
-    assert response.is_closed
-    with pytest.raises(AttributeError):
-        response.is_closed = False
-
-    assert response.is_stream_consumed
-    with pytest.raises(AttributeError):
-        response.is_stream_consumed = False
-
-    # you can set encoding
-    assert response.encoding == "utf-8"
-    response.encoding = "blah"
-    assert response.encoding == "blah"
-
-    assert isinstance(response.url, str)
-    with pytest.raises(AttributeError):
-        response.url = "http://fakeurl"
-
-    assert response.content is not None
-    with pytest.raises(AttributeError):
-        response.content = b"bad"
-
-    old_response = old_response_class(response.request, response.internal_response, response.block_size)
-    for attr in dir(response):
-        if attr[0] == "_":
-            # don't care about private variables
-            continue
-        if type(getattr(response, attr)) == types.MethodType:
-            # methods aren't "readonly"
-            continue
-        if attr == "encoding":
-            # encoding is the only settable new attr
-            continue
-        if not attr in vars(old_response):
-            with pytest.raises(AttributeError):
-                setattr(response, attr, "new_value")
 
 
 class NamedIo(io.BytesIO):
