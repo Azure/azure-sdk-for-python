@@ -8,10 +8,12 @@ from unittest import mock
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
+from azure.identity import CredentialUnavailableError
 from azure.identity.aio import ManagedIdentityCredential
 from azure.identity._credentials.imds import IMDS_AUTHORITY, IMDS_TOKEN_PATH
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
+from azure.identity._internal import within_credential_chain
 
 import pytest
 
@@ -714,6 +716,24 @@ async def test_imds_user_assigned_identity():
     with mock.patch.dict("os.environ", clear=True):
         token = await ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
     assert token == expected_token
+
+
+@pytest.mark.asyncio
+async def test_imds_text_response():
+    async def send(request, **kwargs):
+        response = mock.Mock(
+            text=lambda encoding=None: b"{This is a text response}",
+            headers={"content-type": "text/html; charset=UTF-8"},
+            content_type="text/html; charset=UTF-8",
+            status_code=200,
+        )
+        return response
+
+    within_credential_chain.set(True)
+    credential = ManagedIdentityCredential(transport=mock.Mock(send=send))
+    with pytest.raises(CredentialUnavailableError):
+        token = await credential.get_token("")
+    within_credential_chain.set(False)
 
 
 @pytest.mark.asyncio
